@@ -1,0 +1,91 @@
+[
+  {
+    "id": "evaluating-digital-scholarship-tools-for-research",
+    "slug": "evaluating-digital-scholarship-tools-for-research",
+    "title": "Evaluating Digital Scholarship Tools for Research",
+    "format": "Workshop",
+    "time": "90 min",
+    "pathways": [
+      "academic",
+      "communications"
+    ],
+    "stages": [
+      "preparing-grant",
+      "active-project"
+    ],
+    "tags": [
+      "digital",
+      "tools",
+      "literacy"
+    ],
+    "featuredHome": false,
+    "file": "content/workshops/evaluating-digital-scholarship-tools-for-research.md",
+    "libcalUrl": ""
+  },
+  {
+    "id": "narrative-cv",
+    "slug": "narrative-cv",
+    "title": "Narrative CV development",
+    "format": "Workshop",
+    "time": "60-90 min",
+    "pathways": [
+      "academic"
+    ],
+    "stages": [
+      "preparing-grant",
+      "active-project"
+    ],
+    "tags": [
+      "assessment",
+      "story",
+      "impact"
+    ],
+    "featuredHome": true,
+    "file": "content/workshops/narrative-cv.md",
+    "libcalUrl": ""
+  },
+  {
+    "id": "open-scholarship",
+    "slug": "open-scholarship",
+    "title": "Open Science and Open Scholarship practices",
+    "format": "Workshop",
+    "time": "60 min",
+    "pathways": [
+      "academic"
+    ],
+    "stages": [
+      "active-project",
+      "concluded-project"
+    ],
+    "tags": [
+      "open",
+      "sharing",
+      "integrity"
+    ],
+    "featuredHome": true,
+    "file": "content/workshops/open-scholarship.md",
+    "libcalUrl": ""
+  },
+  {
+    "id": "rdm-guidance",
+    "slug": "rdm-guidance",
+    "title": "Research Data Management guidance",
+    "format": "Consultation",
+    "time": "60 min",
+    "pathways": [
+      "academic"
+    ],
+    "stages": [
+      "preparing-grant",
+      "active-project"
+    ],
+    "tags": [
+      "data",
+      "ethics",
+      "planning"
+    ],
+    "featuredHome": true,
+    "file": "content/workshops/research-data-management.md",
+    "libcalUrl": ""
+  }
+]
