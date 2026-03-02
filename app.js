@@ -337,56 +337,54 @@
     section.dataset.page = "home";
 
     const container = el("div", "container");
-    const hero = el("div", "hero");
-    const left = el("div", "hero-left");
-    const right = el("div", "hero-right");
-
+    const introSection = el("section", "home-intro");
     const introBlock = el("div", "intro-block");
     data.home.hero.summary.forEach((line) => {
       if (line === "Explore support through seven connected pathways:") {
-        const paragraph = el("p", "lead");
-        paragraph.appendChild(document.createTextNode(line));
-        introBlock.appendChild(paragraph);
-
-        const linksList = el("ul", "pathway-inline-list");
-        const pathwayItems = data.explore.pathways.items;
-        pathwayItems.forEach((pathway) => {
-          const key = pathwayIdToKey[pathway.id];
-          const link = el("a", "pathway-inline-link nowrap", pathway.title);
-          link.href = `#explore?pathway=${key}`;
-          link.addEventListener("click", (event) => {
-            event.preventDefault();
-            navigateTo("explore", null, { pathway: key });
-          });
-          const item = el("li");
-          item.appendChild(link);
-          linksList.appendChild(item);
-        });
-        introBlock.appendChild(linksList);
-      } else {
-        const paragraph = el("p", "lead");
-        const segments = line.split("\n");
-        segments.forEach((segment, index) => {
-          paragraph.appendChild(document.createTextNode(segment));
-          if (index < segments.length - 1) {
-            paragraph.appendChild(document.createElement("br"));
-          }
-        });
-        introBlock.appendChild(paragraph);
+        return;
       }
+      const paragraph = el("p", "lead");
+      const segments = line.split("\n");
+      segments.forEach((segment, index) => {
+        paragraph.appendChild(document.createTextNode(segment));
+        if (index < segments.length - 1) {
+          paragraph.appendChild(document.createElement("br"));
+        }
+      });
+      introBlock.appendChild(paragraph);
     });
 
-    const cta = el("a", "intro-cta btn btn-ghost-burgundy btn-small", data.home.hero.ctaLabel);
-    cta.href = data.home.hero.ctaTarget;
-    cta.addEventListener("click", (event) => {
+    introSection.appendChild(introBlock);
+    container.appendChild(introSection);
+    container.appendChild(el("hr", "section-divider"));
+
+    const pathwayItems = data.explore.pathways.items;
+    const pathwaysSection = el("section", "home-pathways");
+    const pathwayGrid = el("div", "pathway-grid");
+    const pathwayCards = new Map();
+    pathwayItems.forEach((pathway) => {
+      const card = el("button", "pathway-card");
+      card.type = "button";
+      card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
+      card.appendChild(el("h3", null, pathway.title));
+      card.appendChild(el("p", "card-text", pathway.summary));
+      card.addEventListener("click", () => togglePathway(pathway.id));
+      pathwayGrid.appendChild(card);
+      pathwayCards.set(pathway.id, card);
+    });
+    pathwaysSection.appendChild(pathwayGrid);
+    const pathwaysLink = el("a", "home-pathways-link btn btn-ghost-burgundy btn-small", "Explore Pathways →");
+    pathwaysLink.href = "#explore";
+    pathwaysLink.addEventListener("click", (event) => {
       event.preventDefault();
-      navigateTo("explore", "pathways-section");
+      navigateTo("explore");
     });
-    introBlock.appendChild(cta);
-    left.appendChild(introBlock);
+    pathwaysSection.appendChild(pathwaysLink);
+    container.appendChild(pathwaysSection);
+    container.appendChild(el("hr", "section-divider"));
 
-    right.appendChild(el("h2", "prompt-title", data.home.hero.prompt));
-
+    const stageSection = el("section", "home-stage-section");
+    stageSection.appendChild(el("h2", "prompt-title", data.home.hero.prompt));
     const cardGrid = el("div", "journey-grid");
     data.home.hero.cards.forEach((card) => {
       const cardButton = el("button", "journey-card");
@@ -404,11 +402,153 @@
       });
       cardGrid.appendChild(cardButton);
     });
+    stageSection.appendChild(cardGrid);
+    container.appendChild(stageSection);
 
-    right.appendChild(cardGrid);
-    hero.appendChild(left);
-    hero.appendChild(right);
-    container.appendChild(hero);
+    let activePathwayId = "";
+    let pathwayModalOverlay = null;
+    let pathwayModalKeyHandler = null;
+
+    const updateActiveCards = () => {
+      pathwayCards.forEach((card, id) => {
+        const isActive = id === activePathwayId;
+        card.classList.toggle("is-active", isActive);
+        card.setAttribute("aria-expanded", isActive ? "true" : "false");
+      });
+    };
+
+    const closePathwayModal = () => {
+      if (pathwayModalOverlay && pathwayModalOverlay.parentNode === modalRoot) {
+        modalRoot.removeChild(pathwayModalOverlay);
+      }
+      pathwayModalOverlay = null;
+      if (pathwayModalKeyHandler) {
+        document.removeEventListener("keydown", pathwayModalKeyHandler);
+        pathwayModalKeyHandler = null;
+      }
+      document.body.classList.remove("is-modal-open");
+      activePathwayId = "";
+      updateActiveCards();
+    };
+
+    const renderPathwayModal = (pathway) => {
+      clear(modalRoot);
+      if (pathwayModalKeyHandler) {
+        document.removeEventListener("keydown", pathwayModalKeyHandler);
+        pathwayModalKeyHandler = null;
+      }
+
+      const overlay = el("div", "pathway-modal-overlay");
+      const wrapper = el("div", "pathway-modal");
+      wrapper.setAttribute("role", "dialog");
+      wrapper.setAttribute("aria-modal", "true");
+      wrapper.setAttribute("aria-label", pathway.title);
+      wrapper.tabIndex = -1;
+
+      const header = el("div", "pathway-modal-header");
+      header.appendChild(el("h3", null, pathway.title));
+      const closeControl = el("button", "pathway-modal-close", "X");
+      closeControl.type = "button";
+      closeControl.setAttribute("aria-label", "Close pathway details");
+      closeControl.addEventListener("click", closePathwayModal);
+      header.appendChild(closeControl);
+      wrapper.appendChild(header);
+
+      wrapper.appendChild(el("p", "card-text", pathway.summary));
+      wrapper.appendChild(el("p", "pathway-label", pathway.label));
+
+      const actionList = el("ul", "pathway-actions");
+      pathway.actions.forEach((item) => {
+        actionList.appendChild(el("li", null, item));
+      });
+      wrapper.appendChild(actionList);
+
+      wrapper.appendChild(el("h4", "pathway-support-title", data.explore.pathways.supportTitle));
+      const supportList = el("ul", "pathway-supports");
+      pathway.supports.forEach((item) => {
+        supportList.appendChild(el("li", null, item));
+      });
+      wrapper.appendChild(supportList);
+
+      const ctaRow = el("div", "pathway-cta");
+      const relatedButton = el("button", "btn", data.explore.pathways.buttons.related);
+      relatedButton.type = "button";
+      relatedButton.addEventListener("click", () => {
+        closePathwayModal();
+        navigateTo("explore", "opportunity-explorer", { pathway: pathwayIdToKey[pathway.id] || pathway.id });
+      });
+
+      const contactWrap = el("div", "pathway-contact");
+      contactWrap.appendChild(el("span", "pathway-contact-text", data.explore.pathways.buttons.contactPrompt));
+      const contactButton = el("button", "btn", data.explore.pathways.buttons.contactAction);
+      contactButton.type = "button";
+      contactButton.addEventListener("click", () => {
+        closePathwayModal();
+        navigateTo("about", "contact");
+      });
+      contactWrap.appendChild(contactButton);
+      ctaRow.appendChild(relatedButton);
+      ctaRow.appendChild(contactWrap);
+      wrapper.appendChild(ctaRow);
+
+      const navRow = el("div", "pathway-nav");
+      const currentIndex = pathwayItems.findIndex((item) => item.id === pathway.id);
+      const previousIndex = (currentIndex - 1 + pathwayItems.length) % pathwayItems.length;
+      const nextIndex = (currentIndex + 1) % pathwayItems.length;
+      const prevButton = el("button", "btn", data.explore.pathways.buttons.previous);
+      prevButton.type = "button";
+      prevButton.addEventListener("click", () => {
+        openPathway(pathwayItems[previousIndex].id);
+      });
+      const nextButton = el("button", "btn", data.explore.pathways.buttons.next);
+      nextButton.type = "button";
+      nextButton.addEventListener("click", () => {
+        openPathway(pathwayItems[nextIndex].id);
+      });
+      const closeButton = el("button", "btn", data.explore.pathways.buttons.close);
+      closeButton.type = "button";
+      closeButton.addEventListener("click", closePathwayModal);
+      navRow.appendChild(prevButton);
+      navRow.appendChild(nextButton);
+      navRow.appendChild(closeButton);
+      wrapper.appendChild(navRow);
+
+      overlay.appendChild(wrapper);
+      overlay.addEventListener("click", (event) => {
+        if (event.target === overlay) {
+          closePathwayModal();
+        }
+      });
+
+      pathwayModalKeyHandler = (event) => {
+        if (event.key === "Escape") {
+          closePathwayModal();
+        }
+      };
+      document.addEventListener("keydown", pathwayModalKeyHandler);
+      document.body.classList.add("is-modal-open");
+      modalRoot.appendChild(overlay);
+      pathwayModalOverlay = overlay;
+      wrapper.focus();
+    };
+
+    function openPathway(pathwayId) {
+      const pathway = pathwayItems.find((item) => item.id === pathwayId);
+      if (!pathway) {
+        return;
+      }
+      activePathwayId = pathwayId;
+      updateActiveCards();
+      renderPathwayModal(pathway);
+    }
+
+    function togglePathway(pathwayId) {
+      if (activePathwayId === pathwayId && pathwayModalOverlay) {
+        closePathwayModal();
+        return;
+      }
+      openPathway(pathwayId);
+    }
 
     container.appendChild(el("hr", "section-divider"));
 
@@ -447,6 +587,7 @@
 
     grantsSection.appendChild(grantsGrid);
     container.appendChild(grantsSection);
+    container.appendChild(el("hr", "section-divider"));
 
     const popular = el("section", "popular-section");
     popular.appendChild(el("h2", "section-title", "Popular support"));
@@ -488,6 +629,13 @@
     popular.appendChild(popularGrid);
     container.appendChild(popular);
     section.appendChild(container);
+    section.openPathwayByKey = (pathwayKey) => {
+      const pathwayId = pathwayKeyToId[(pathwayKey || "").toLowerCase()];
+      if (pathwayId) {
+        openPathway(pathwayId);
+      }
+    };
+    section.closePathwayModal = closePathwayModal;
     return section;
   };
 
@@ -600,6 +748,38 @@
     });
     topics.appendChild(topicGrid);
     grid.appendChild(topics);
+
+    if (data.learn.resources && Array.isArray(data.learn.resources.cards)) {
+      const resources = el("div", "learn-resources");
+      resources.appendChild(el("h2", "section-title", data.learn.resources.title));
+      const resourceGrid = el("div", "topic-grid");
+      data.learn.resources.cards.forEach((resource) => {
+        const card = el("div", "topic-card resource-card");
+        const resourceLink = el("a", "resource-link", resource.title);
+        resourceLink.href = resource.url;
+        resourceLink.target = "_blank";
+        resourceLink.rel = "noopener noreferrer";
+        const heading = el("h3", null);
+        heading.appendChild(resourceLink);
+        card.appendChild(heading);
+        if (resource.description) {
+          card.appendChild(el("p", null, resource.description));
+        }
+        const meta = el("div", "resource-meta");
+        const whyLine = el("div", "meta-line");
+        whyLine.appendChild(el("span", "meta-label", "Why use:"));
+        whyLine.appendChild(el("span", "meta-value", resource.whyUse || ""));
+        const forWhatLine = el("div", "meta-line");
+        forWhatLine.appendChild(el("span", "meta-label", "For what:"));
+        forWhatLine.appendChild(el("span", "meta-value", resource.forWhat || ""));
+        meta.appendChild(whyLine);
+        meta.appendChild(forWhatLine);
+        card.appendChild(meta);
+        resourceGrid.appendChild(card);
+      });
+      resources.appendChild(resourceGrid);
+      grid.appendChild(resources);
+    }
 
     container.appendChild(grid);
     section.appendChild(container);
@@ -900,28 +1080,6 @@
     const baseOpportunities = data.explore.opportunities.map((item) => ({ ...item, sourceType: "default" }));
     const exploreItems = [...baseOpportunities, ...content.workshops];
 
-    const pathwaysSection = el("section", "pathways-section");
-    pathwaysSection.id = "pathways-section";
-    pathwaysSection.appendChild(el("h2", "section-title", data.explore.pathways.title));
-    if (data.explore.pathways.intro) {
-      pathwaysSection.appendChild(el("p", "lead", data.explore.pathways.intro));
-    }
-
-    const pathwayGrid = el("div", "pathway-grid");
-    const pathwayCards = new Map();
-    data.explore.pathways.items.forEach((pathway) => {
-      const card = el("button", "pathway-card");
-      card.type = "button";
-      card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
-      card.appendChild(el("h3", null, pathway.title));
-      card.appendChild(el("p", "card-text", pathway.summary));
-      card.addEventListener("click", () => togglePathway(pathway.id));
-      pathwayGrid.appendChild(card);
-      pathwayCards.set(pathway.id, card);
-    });
-    pathwaysSection.appendChild(pathwayGrid);
-    container.appendChild(pathwaysSection);
-
     const controls = el("div", "explore-controls");
 
     const searchWrap = el("div", "search-bar");
@@ -1009,19 +1167,6 @@
 
     section.appendChild(container);
 
-    const pathwayItems = data.explore.pathways.items;
-    let activePathwayId = "";
-    let pathwayModalOverlay = null;
-    let pathwayModalKeyHandler = null;
-
-    const updateActiveCards = () => {
-      pathwayCards.forEach((card, id) => {
-        const isActive = id === activePathwayId;
-        card.classList.toggle("is-active", isActive);
-        card.setAttribute("aria-expanded", isActive ? "true" : "false");
-      });
-    };
-
     const applyPathwayFilter = (pathwayTitle) => {
       const control = filterControls.get("pathway");
       if (control) {
@@ -1032,151 +1177,9 @@
       explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
-    const closePathwayModal = () => {
-      if (pathwayModalOverlay && pathwayModalOverlay.parentNode === modalRoot) {
-        modalRoot.removeChild(pathwayModalOverlay);
-      }
-      pathwayModalOverlay = null;
-      if (pathwayModalKeyHandler) {
-        document.removeEventListener("keydown", pathwayModalKeyHandler);
-        pathwayModalKeyHandler = null;
-      }
-      document.body.classList.remove("is-modal-open");
-      activePathwayId = "";
-      updateActiveCards();
-    };
-
-    const renderPathwayModal = (pathway) => {
-      clear(modalRoot);
-      if (pathwayModalKeyHandler) {
-        document.removeEventListener("keydown", pathwayModalKeyHandler);
-        pathwayModalKeyHandler = null;
-      }
-
-      const overlay = el("div", "pathway-modal-overlay");
-      const wrapper = el("div", "pathway-modal");
-      wrapper.setAttribute("role", "dialog");
-      wrapper.setAttribute("aria-modal", "true");
-      wrapper.setAttribute("aria-label", pathway.title);
-      wrapper.tabIndex = -1;
-      const header = el("div", "pathway-modal-header");
-      header.appendChild(el("h3", null, pathway.title));
-      const closeControl = el("button", "pathway-modal-close", "×");
-      closeControl.type = "button";
-      closeControl.setAttribute("aria-label", "Close pathway details");
-      closeControl.addEventListener("click", closePathwayModal);
-      header.appendChild(closeControl);
-      wrapper.appendChild(header);
-
-      wrapper.appendChild(el("p", "card-text", pathway.summary));
-      wrapper.appendChild(el("p", "pathway-label", pathway.label));
-
-      const actionList = el("ul", "pathway-actions");
-      pathway.actions.forEach((item) => {
-        actionList.appendChild(el("li", null, item));
-      });
-      wrapper.appendChild(actionList);
-
-      wrapper.appendChild(el("h4", "pathway-support-title", data.explore.pathways.supportTitle));
-      const supportList = el("ul", "pathway-supports");
-      pathway.supports.forEach((item) => {
-        supportList.appendChild(el("li", null, item));
-      });
-      wrapper.appendChild(supportList);
-
-      const ctaRow = el("div", "pathway-cta");
-      const relatedButton = el("button", "btn", data.explore.pathways.buttons.related);
-      relatedButton.type = "button";
-      relatedButton.addEventListener("click", () => {
-        closePathwayModal();
-        applyPathwayFilter(pathway.title);
-      });
-      const contactWrap = el("div", "pathway-contact");
-      contactWrap.appendChild(el("span", "pathway-contact-text", data.explore.pathways.buttons.contactPrompt));
-      const contactButton = el("button", "btn", data.explore.pathways.buttons.contactAction);
-      contactButton.type = "button";
-      contactButton.addEventListener("click", () => {
-        closePathwayModal();
-        navigateTo("about", "contact");
-      });
-      contactWrap.appendChild(contactButton);
-      ctaRow.appendChild(relatedButton);
-      ctaRow.appendChild(contactWrap);
-      wrapper.appendChild(ctaRow);
-
-      const navRow = el("div", "pathway-nav");
-      const currentIndex = pathwayItems.findIndex((item) => item.id === pathway.id);
-      const previousIndex = (currentIndex - 1 + pathwayItems.length) % pathwayItems.length;
-      const nextIndex = (currentIndex + 1) % pathwayItems.length;
-      const prevButton = el("button", "btn", data.explore.pathways.buttons.previous);
-      prevButton.type = "button";
-      prevButton.addEventListener("click", () => {
-        openPathway(pathwayItems[previousIndex].id);
-      });
-      const nextButton = el("button", "btn", data.explore.pathways.buttons.next);
-      nextButton.type = "button";
-      nextButton.addEventListener("click", () => {
-        openPathway(pathwayItems[nextIndex].id);
-      });
-      const closeButton = el("button", "btn", data.explore.pathways.buttons.close);
-      closeButton.type = "button";
-      closeButton.addEventListener("click", closePathwayModal);
-      navRow.appendChild(prevButton);
-      navRow.appendChild(nextButton);
-      navRow.appendChild(closeButton);
-      wrapper.appendChild(navRow);
-
-      overlay.appendChild(wrapper);
-      overlay.addEventListener("click", (event) => {
-        if (event.target === overlay) {
-          closePathwayModal();
-        }
-      });
-
-      pathwayModalKeyHandler = (event) => {
-        if (event.key === "Escape") {
-          closePathwayModal();
-        }
-      };
-      document.addEventListener("keydown", pathwayModalKeyHandler);
-      document.body.classList.add("is-modal-open");
-      modalRoot.appendChild(overlay);
-      pathwayModalOverlay = overlay;
-      wrapper.focus();
-    };
-
-    function openPathway(pathwayId) {
-      const pathway = pathwayItems.find((item) => item.id === pathwayId);
-      if (!pathway) {
-        return;
-      }
-      activePathwayId = pathwayId;
-      updateActiveCards();
-      renderPathwayModal(pathway);
-    }
-
-    function closePathway() {
-      closePathwayModal();
-    }
-
-    function togglePathway(pathwayId) {
-      if (activePathwayId === pathwayId && pathwayModalOverlay) {
-        closePathway();
-        return;
-      }
-      openPathway(pathwayId);
-    }
-
     const closeModal = () => {
       clear(modalRoot);
       document.body.classList.remove("is-modal-open");
-      if (pathwayModalKeyHandler) {
-        document.removeEventListener("keydown", pathwayModalKeyHandler);
-        pathwayModalKeyHandler = null;
-      }
-      pathwayModalOverlay = null;
-      activePathwayId = "";
-      updateActiveCards();
     }
 
     const updateResults = (items) => {
@@ -1356,10 +1359,10 @@
       }
     };
 
-    const openPathwayByKey = (pathwayKey) => {
-      const pathwayId = pathwayKeyToId[(pathwayKey || "").toLowerCase()];
-      if (pathwayId) {
-        openPathway(pathwayId);
+    const applyPathwayFilterByKey = (pathwayKey) => {
+      const pathwayTitle = pathwayKeyToTitle[(pathwayKey || "").toLowerCase()];
+      if (pathwayTitle) {
+        applyPathwayFilter(pathwayTitle);
       }
     };
 
@@ -1375,9 +1378,8 @@
     applyFilters();
 
     section.applyStageFilter = applyStageFilter;
-    section.openPathwayByKey = openPathwayByKey;
+    section.applyPathwayFilterByKey = applyPathwayFilterByKey;
     section.focusWorkshopById = focusWorkshopById;
-    section.closePathwayModal = closePathwayModal;
     return section;
   };
 
@@ -1431,6 +1433,12 @@
     if (routeFooter) {
       routeFooter.classList.toggle("is-visible", validPage !== "home");
     }
+    if (validPage !== "home") {
+      const homePage = pages.get("home");
+      if (homePage && homePage.closePathwayModal) {
+        homePage.closePathwayModal();
+      }
+    }
 
     if (validPage === "explore") {
       const explorePage = pages.get("explore");
@@ -1438,13 +1446,21 @@
         explorePage.applyStageFilter(state.pendingStage);
         state.pendingStage = "";
       }
-      if (explorePage && explorePage.openPathwayByKey && state.pendingPathwayKey) {
-        explorePage.openPathwayByKey(state.pendingPathwayKey);
+      if (explorePage && explorePage.applyPathwayFilterByKey && state.pendingPathwayKey) {
+        explorePage.applyPathwayFilterByKey(state.pendingPathwayKey);
         state.pendingPathwayKey = "";
       }
       if (explorePage && explorePage.focusWorkshopById && state.pendingWorkshopId) {
         explorePage.focusWorkshopById(state.pendingWorkshopId);
         state.pendingWorkshopId = "";
+      }
+    }
+
+    if (validPage === "home") {
+      const homePage = pages.get("home");
+      if (homePage && homePage.openPathwayByKey && state.pendingPathwayKey) {
+        homePage.openPathwayByKey(state.pendingPathwayKey);
+        state.pendingPathwayKey = "";
       }
     }
 
@@ -1475,7 +1491,9 @@
     const queryString = query.toString();
     const nextHash = `${pageToHash(validPage)}${queryString ? `?${queryString}` : ""}`;
     const sameHash = window.location.hash === nextHash;
-    state.pendingPathwayKey = validPage === "explore" ? (options.pathway || "").toLowerCase() : "";
+    state.pendingPathwayKey = (validPage === "home" || validPage === "explore")
+      ? (options.pathway || "").toLowerCase()
+      : "";
     state.pendingWorkshopId = validPage === "explore" ? (options.workshop || "") : "";
 
     showPage(validPage, anchorId);
@@ -1513,8 +1531,10 @@
     buildPages();
 
     const initialRoute = parseRouteFromHash(window.location.hash);
-    if (initialRoute.page === "explore") {
+    if (initialRoute.page === "home" || initialRoute.page === "explore") {
       state.pendingPathwayKey = (initialRoute.params.get("pathway") || "").toLowerCase();
+    }
+    if (initialRoute.page === "explore") {
       state.pendingWorkshopId = initialRoute.params.get("workshop") || "";
     }
     showPage(initialRoute.page);
@@ -1525,7 +1545,7 @@
         return;
       }
       const nextRoute = parseRouteFromHash(window.location.hash);
-      state.pendingPathwayKey = nextRoute.page === "explore"
+      state.pendingPathwayKey = (nextRoute.page === "home" || nextRoute.page === "explore")
         ? (nextRoute.params.get("pathway") || "").toLowerCase()
         : "";
       state.pendingWorkshopId = nextRoute.page === "explore"

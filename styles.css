@@ -245,6 +245,38 @@ label {
   text-decoration: underline;
 }
 
+.home-intro {
+  margin-bottom: 24px;
+}
+
+.home-pathways {
+  margin: 0 0 32px;
+}
+
+.home-pathways .pathway-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.home-pathways .pathway-card[data-pathway="academic"] {
+  grid-column: 1 / -1;
+}
+
+.home-pathways-link {
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.home-stage-section {
+  margin: 0 0 40px;
+}
+
+.home-stage-section .journey-card {
+  min-height: 132px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
 .intro-cta {
   display: inline-flex;
   align-items: center;
@@ -542,6 +574,20 @@ label {
 
 .topic-card p {
   color: var(--muted);
+}
+
+.resource-card .resource-link {
+  color: var(--link);
+}
+
+.resource-card .resource-link:hover {
+  text-decoration: underline;
+}
+
+.resource-meta {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .pathways-section {
@@ -1279,6 +1325,10 @@ label {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .home-pathways .pathway-card[data-pathway="academic"] {
+    grid-column: 1 / -1;
+  }
+
   .filter-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1313,6 +1363,10 @@ label {
 
   .pathway-grid {
     grid-template-columns: 1fr;
+  }
+
+  .home-pathways .pathway-card[data-pathway="academic"] {
+    grid-column: auto;
   }
 
   .filter-grid {

@@ -352,6 +352,18 @@ window.PATHWAYS_DATA = {
           body: "Early planning makes it easier to align methods, partners, and outputs with real-world outcomes."
         }
       ]
+    },
+    resources: {
+      title: "Recommended Resources",
+      cards: [
+        {
+          title: "Research Impact Canada",
+          url: "https://researchimpact.ca/",
+          description: "A national network and knowledge hub focused on research impact practice, tools, and examples across institutions.",
+          whyUse: "Find practical frameworks, examples, and shared language for planning and communicating impact.",
+          forWhat: "Impact planning, knowledge mobilization strategy, and training materials."
+        }
+      ]
     }
   },
   explore: {
