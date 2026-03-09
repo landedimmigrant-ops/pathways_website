@@ -278,6 +278,13 @@ label {
   margin: 0 0 40px;
 }
 
+.home-stage-intro {
+  margin: 0 0 16px;
+  font-size: 21px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
 .home-stage-section .journey-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -812,6 +819,76 @@ label {
 
 .explorer-section {
   margin-top: 40px;
+}
+
+.pathway-context {
+  border: 1px solid var(--pathway-accent, #912338);
+  background: var(--pathway-accent, #912338);
+  color: var(--pathway-foreground, #ffffff);
+  padding: 16px 18px;
+  margin: 0 0 20px;
+}
+
+.pathway-context.is-hidden {
+  display: none;
+}
+
+.pathway-context .is-hidden {
+  display: none;
+}
+
+.pathway-context-top,
+.pathway-context-bottom {
+  display: grid;
+  gap: 10px;
+}
+
+.pathway-context-bottom {
+  margin-top: 8px;
+}
+
+.pathway-context .section-title {
+  margin: 0 0 8px;
+  color: inherit;
+}
+
+.pathway-context .card-text {
+  margin: 0 0 10px;
+  color: inherit;
+}
+
+.pathway-context-body {
+  margin: 0 0 14px;
+  color: inherit;
+}
+
+.pathway-context-label {
+  margin: 2px 0 0;
+  font-weight: 600;
+}
+
+.pathway-context-list,
+.pathway-context-supports {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.pathway-context-list li,
+.pathway-context-supports li {
+  margin-bottom: 6px;
+}
+
+.pathway-context-clear {
+  border-color: currentColor;
+  color: inherit;
+  background: transparent;
+  margin-top: 14px;
+}
+
+.pathway-context-clear:hover {
+  border-color: currentColor;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .explore-controls {

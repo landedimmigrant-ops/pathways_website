@@ -5,6 +5,8 @@
   }
   // TEMP: hide Stories in navigation and page rendering without deleting feature code.
   const STORIES_ENABLED = false;
+  // TEMP: hide Upcoming grants section on Home without deleting its code.
+  const UPCOMING_GRANTS_ENABLED = false;
 
   const siteHeader = document.getElementById("site-header");
   const appRoot = document.getElementById("app");
@@ -65,6 +67,7 @@
     acc[pathwayIdToKey[id]] = id;
     return acc;
   }, {});
+  const normalizePathwayKey = (value) => String(value || "").trim().toLowerCase().replace(/_/g, "-");
   const supportAnchorByJourneyId = {
     "developing-project": "support-developing",
     "ongoing-project": "support-active",
@@ -84,6 +87,10 @@
   const pathwayKeyToTitle = data.explore.pathways.items.reduce((acc, pathway) => {
     const key = pathwayIdToKey[pathway.id] || pathway.id;
     acc[key] = pathway.title;
+    return acc;
+  }, {});
+  const pathwayTitleToKey = Object.keys(pathwayKeyToTitle).reduce((acc, key) => {
+    acc[pathwayKeyToTitle[key]] = key;
     return acc;
   }, {});
   const supportAnchorIds = new Set(((data.support && data.support.sections) || []).map((section) => section.id));
@@ -316,7 +323,7 @@
     navItems.forEach((item) => {
       const li = el("li");
       const link = el("a", "nav-link", item.label);
-      link.href = `#${item.id}`;
+      link.href = item.id === "explore" ? "#opportunities" : `#${item.id}`;
       link.dataset.page = item.id;
       link.addEventListener("click", (event) => {
         event.preventDefault();
@@ -375,61 +382,26 @@
     container.appendChild(el("hr", "section-divider"));
 
     const pathwayItems = data.explore.pathways.items;
-    const supportSearchConfig = data.support.search || {
-      label: "Find support and services",
-      placeholder: "Find support and services",
-      ariaLabel: "Find support and services"
-    };
     const pathwaysSection = el("section", "home-pathways");
     const pathwayGrid = el("div", "pathway-grid");
-    const pathwayCards = new Map();
     pathwayItems.forEach((pathway) => {
       const card = el("button", "pathway-card");
       card.type = "button";
-      card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
+      const pathwayKey = pathwayIdToKey[pathway.id] || pathway.id;
+      card.dataset.pathway = pathwayKey;
       card.appendChild(el("h3", null, pathway.title));
       card.appendChild(el("p", "card-text", pathway.summary));
-      card.addEventListener("click", () => togglePathway(pathway.id));
+      card.addEventListener("click", () => {
+        navigateTo("explore", "", { pathway: pathwayKey });
+      });
       pathwayGrid.appendChild(card);
-      pathwayCards.set(pathway.id, card);
     });
     pathwaysSection.appendChild(pathwayGrid);
-    const pathwaysLink = el("a", "home-pathways-link btn btn-ghost-burgundy btn-small", "Explore Pathways →");
-    pathwaysLink.href = "#explore";
-    pathwaysLink.addEventListener("click", (event) => {
-      event.preventDefault();
-      navigateTo("explore");
-    });
-    pathwaysSection.appendChild(pathwaysLink);
     container.appendChild(pathwaysSection);
-
-    const homeSearchSection = el("section", "home-support-search");
-    const homeControls = el("div", "explore-controls");
-    const homeSearchWrap = el("div", "search-bar");
-    const homeSearchLabel = el("label", null, supportSearchConfig.label);
-    const homeSearchInput = el("input");
-    const homeSearchId = "home-support-search-input";
-    homeSearchInput.id = homeSearchId;
-    homeSearchLabel.setAttribute("for", homeSearchId);
-    homeSearchInput.type = "search";
-    homeSearchInput.placeholder = supportSearchConfig.placeholder;
-    homeSearchInput.setAttribute("aria-label", supportSearchConfig.ariaLabel);
-    homeSearchInput.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter") return;
-      event.preventDefault();
-      const value = homeSearchInput.value.trim();
-      navigateTo("explore", "opportunity-explorer", { searchQuery: value });
-    });
-    homeSearchWrap.appendChild(homeSearchLabel);
-    homeSearchWrap.appendChild(homeSearchInput);
-    homeControls.appendChild(homeSearchWrap);
-    homeSearchSection.appendChild(homeControls);
-    container.appendChild(homeSearchSection);
-
     container.appendChild(el("hr", "section-divider"));
 
     const stageSection = el("section", "home-stage-section");
-    stageSection.appendChild(el("h2", "prompt-title", data.home.hero.prompt));
+    stageSection.appendChild(el("p", "home-stage-intro", "You can also explore Pathways based on where you are in your research."));
     const cardGrid = el("div", "journey-grid");
     data.home.hero.cards.forEach((card) => {
       const cardLink = el("a", "journey-card");
@@ -443,189 +415,46 @@
     stageSection.appendChild(cardGrid);
     container.appendChild(stageSection);
 
-    let activePathwayId = "";
-    let pathwayModalOverlay = null;
-    let pathwayModalKeyHandler = null;
-
-    const updateActiveCards = () => {
-      pathwayCards.forEach((card, id) => {
-        const isActive = id === activePathwayId;
-        card.classList.toggle("is-active", isActive);
-        card.setAttribute("aria-expanded", isActive ? "true" : "false");
-      });
-    };
-
-    const closePathwayModal = () => {
-      if (pathwayModalOverlay && pathwayModalOverlay.parentNode === modalRoot) {
-        modalRoot.removeChild(pathwayModalOverlay);
-      }
-      pathwayModalOverlay = null;
-      if (pathwayModalKeyHandler) {
-        document.removeEventListener("keydown", pathwayModalKeyHandler);
-        pathwayModalKeyHandler = null;
-      }
-      document.body.classList.remove("is-modal-open");
-      activePathwayId = "";
-      updateActiveCards();
-    };
-
-    const renderPathwayModal = (pathway) => {
-      clear(modalRoot);
-      if (pathwayModalKeyHandler) {
-        document.removeEventListener("keydown", pathwayModalKeyHandler);
-        pathwayModalKeyHandler = null;
-      }
-
-      const overlay = el("div", "pathway-modal-overlay");
-      const wrapper = el("div", "pathway-modal");
-      wrapper.setAttribute("role", "dialog");
-      wrapper.setAttribute("aria-modal", "true");
-      wrapper.setAttribute("aria-label", pathway.title);
-      wrapper.tabIndex = -1;
-
-      const header = el("div", "pathway-modal-header");
-      header.appendChild(el("h3", null, pathway.title));
-      const closeControl = el("button", "pathway-modal-close", "X");
-      closeControl.type = "button";
-      closeControl.setAttribute("aria-label", "Close pathway details");
-      closeControl.addEventListener("click", closePathwayModal);
-      header.appendChild(closeControl);
-      wrapper.appendChild(header);
-
-      wrapper.appendChild(el("p", "card-text", pathway.summary));
-      wrapper.appendChild(el("p", "pathway-label", pathway.label));
-
-      const actionList = el("ul", "pathway-actions");
-      pathway.actions.forEach((item) => {
-        actionList.appendChild(el("li", null, item));
-      });
-      wrapper.appendChild(actionList);
-
-      wrapper.appendChild(el("h4", "pathway-support-title", data.explore.pathways.supportTitle));
-      const supportList = el("ul", "pathway-supports");
-      pathway.supports.forEach((item) => {
-        supportList.appendChild(el("li", null, item));
-      });
-      wrapper.appendChild(supportList);
-
-      const ctaRow = el("div", "pathway-cta");
-      const relatedButton = el("button", "btn", data.explore.pathways.buttons.related);
-      relatedButton.type = "button";
-      relatedButton.addEventListener("click", () => {
-        closePathwayModal();
-        navigateTo("explore", "opportunity-explorer", { pathway: pathwayIdToKey[pathway.id] || pathway.id });
-      });
-
-      const contactWrap = el("div", "pathway-contact");
-      contactWrap.appendChild(el("span", "pathway-contact-text", data.explore.pathways.buttons.contactPrompt));
-      const contactButton = el("button", "btn", data.explore.pathways.buttons.contactAction);
-      contactButton.type = "button";
-      contactButton.addEventListener("click", () => {
-        closePathwayModal();
-        navigateTo("about", "contact");
-      });
-      contactWrap.appendChild(contactButton);
-      ctaRow.appendChild(relatedButton);
-      ctaRow.appendChild(contactWrap);
-      wrapper.appendChild(ctaRow);
-
-      const navRow = el("div", "pathway-nav");
-      const currentIndex = pathwayItems.findIndex((item) => item.id === pathway.id);
-      const previousIndex = (currentIndex - 1 + pathwayItems.length) % pathwayItems.length;
-      const nextIndex = (currentIndex + 1) % pathwayItems.length;
-      const prevButton = el("button", "btn", data.explore.pathways.buttons.previous);
-      prevButton.type = "button";
-      prevButton.addEventListener("click", () => {
-        openPathway(pathwayItems[previousIndex].id);
-      });
-      const nextButton = el("button", "btn", data.explore.pathways.buttons.next);
-      nextButton.type = "button";
-      nextButton.addEventListener("click", () => {
-        openPathway(pathwayItems[nextIndex].id);
-      });
-      const closeButton = el("button", "btn", data.explore.pathways.buttons.close);
-      closeButton.type = "button";
-      closeButton.addEventListener("click", closePathwayModal);
-      navRow.appendChild(prevButton);
-      navRow.appendChild(nextButton);
-      navRow.appendChild(closeButton);
-      wrapper.appendChild(navRow);
-
-      overlay.appendChild(wrapper);
-      overlay.addEventListener("click", (event) => {
-        if (event.target === overlay) {
-          closePathwayModal();
-        }
-      });
-
-      pathwayModalKeyHandler = (event) => {
-        if (event.key === "Escape") {
-          closePathwayModal();
-        }
-      };
-      document.addEventListener("keydown", pathwayModalKeyHandler);
-      document.body.classList.add("is-modal-open");
-      modalRoot.appendChild(overlay);
-      pathwayModalOverlay = overlay;
-      wrapper.focus();
-    };
-
-    function openPathway(pathwayId) {
-      const pathway = pathwayItems.find((item) => item.id === pathwayId);
-      if (!pathway) {
-        return;
-      }
-      activePathwayId = pathwayId;
-      updateActiveCards();
-      renderPathwayModal(pathway);
-    }
-
-    function togglePathway(pathwayId) {
-      if (activePathwayId === pathwayId && pathwayModalOverlay) {
-        closePathwayModal();
-        return;
-      }
-      openPathway(pathwayId);
-    }
-
     container.appendChild(el("hr", "section-divider"));
 
-    const grantsSection = el("section", "upcoming-grants-section");
-    grantsSection.appendChild(el("h2", "section-title", data.home.upcomingGrants.title));
-    grantsSection.appendChild(el("p", "card-text", data.home.upcomingGrants.lead));
+    if (UPCOMING_GRANTS_ENABLED) {
+      const grantsSection = el("section", "upcoming-grants-section");
+      grantsSection.appendChild(el("h2", "section-title", data.home.upcomingGrants.title));
+      grantsSection.appendChild(el("p", "card-text", data.home.upcomingGrants.lead));
 
-    const grantsGrid = el("div", "topic-grid");
-    data.home.upcomingGrants.items.slice(0, 3).forEach((item) => {
-      const tile = el("article", "opportunity-card");
-      tile.style.aspectRatio = "1 / 1";
-      tile.style.display = "flex";
-      tile.style.flexDirection = "column";
+      const grantsGrid = el("div", "topic-grid");
+      data.home.upcomingGrants.items.slice(0, 3).forEach((item) => {
+        const tile = el("article", "opportunity-card");
+        tile.style.aspectRatio = "1 / 1";
+        tile.style.display = "flex";
+        tile.style.flexDirection = "column";
 
-      tile.appendChild(el("h3", null, item.title));
-      tile.appendChild(el("p", "card-text", item.description));
+        tile.appendChild(el("h3", null, item.title));
+        tile.appendChild(el("p", "card-text", item.description));
 
-      const meta = el("div", "contact-list");
-      meta.appendChild(el("div", null, `Type: ${item.type}`));
-      meta.appendChild(el("div", null, `Amount: ${item.amount}`));
-      meta.appendChild(el("div", null, `Duration: ${item.duration}`));
-      tile.appendChild(meta);
+        const meta = el("div", "contact-list");
+        meta.appendChild(el("div", null, `Type: ${item.type}`));
+        meta.appendChild(el("div", null, `Amount: ${item.amount}`));
+        meta.appendChild(el("div", null, `Duration: ${item.duration}`));
+        tile.appendChild(meta);
 
-      const actions = el("div", "card-actions");
-      actions.style.marginTop = "auto";
-      const viewLink = el("a", "route-footer-link", data.home.upcomingGrants.ctaLabel);
-      viewLink.href = "#explore";
-      viewLink.addEventListener("click", (event) => {
-        event.preventDefault();
-        navigateTo("explore");
+        const actions = el("div", "card-actions");
+        actions.style.marginTop = "auto";
+        const viewLink = el("a", "route-footer-link", data.home.upcomingGrants.ctaLabel);
+        viewLink.href = "#explore";
+        viewLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          navigateTo("explore");
+        });
+        actions.appendChild(viewLink);
+        tile.appendChild(actions);
+        grantsGrid.appendChild(tile);
       });
-      actions.appendChild(viewLink);
-      tile.appendChild(actions);
-      grantsGrid.appendChild(tile);
-    });
 
-    grantsSection.appendChild(grantsGrid);
-    container.appendChild(grantsSection);
-    container.appendChild(el("hr", "section-divider"));
+      grantsSection.appendChild(grantsGrid);
+      container.appendChild(grantsSection);
+      container.appendChild(el("hr", "section-divider"));
+    }
 
     const popular = el("section", "popular-section");
     popular.appendChild(el("h2", "section-title", "Popular support"));
@@ -665,15 +494,15 @@
     });
 
     popular.appendChild(popularGrid);
+    const exploreOpportunitiesButton = el("a", "btn btn-ghost-burgundy btn-small", "Explore Opportunities →");
+    exploreOpportunitiesButton.href = "#opportunities";
+    exploreOpportunitiesButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      navigateTo("explore");
+    });
+    popular.appendChild(exploreOpportunitiesButton);
     container.appendChild(popular);
     section.appendChild(container);
-    section.openPathwayByKey = (pathwayKey) => {
-      const pathwayId = pathwayKeyToId[(pathwayKey || "").toLowerCase()];
-      if (pathwayId) {
-        openPathway(pathwayId);
-      }
-    };
-    section.closePathwayModal = closePathwayModal;
     return section;
   };
 
@@ -1239,6 +1068,29 @@
     container.appendChild(el("h1", null, data.explore.title));
     const baseOpportunities = data.explore.opportunities.map((item) => ({ ...item, sourceType: "default" }));
     const exploreItems = [...baseOpportunities, ...content.workshops];
+    const pathwayAccentByKey = {
+      academic: "#912338",
+      community: "#db0272",
+      innovation: "#da3a16",
+      commercialization: "#573996",
+      communications: "#e5a712",
+      policy: "#0072a8",
+      "research-creation": "#508212"
+    };
+    const pathwayTextByKey = {
+      academic: "#ffffff",
+      community: "#ffffff",
+      innovation: "#ffffff",
+      commercialization: "#ffffff",
+      communications: "#1a1a1a",
+      policy: "#ffffff",
+      "research-creation": "#ffffff"
+    };
+    const pathwayContextByKey = data.explore.pathways.items.reduce((acc, item) => {
+      const key = pathwayIdToKey[item.id] || item.id;
+      acc[key] = item;
+      return acc;
+    }, {});
 
     const controls = el("div", "explore-controls");
 
@@ -1310,6 +1162,35 @@
 
     const explorerSection = el("section", "explorer-section");
     explorerSection.id = "opportunity-explorer";
+    const pathwayContext = el("section", "pathway-context is-hidden");
+    const pathwayContextTop = el("div", "pathway-context-top");
+    const pathwayContextTitle = el("h2", "section-title");
+    const pathwayContextSummary = el("p", "card-text");
+    const pathwayContextSecondary = el("p", "pathway-context-body is-hidden");
+    pathwayContextTop.appendChild(pathwayContextTitle);
+    pathwayContextTop.appendChild(pathwayContextSummary);
+    pathwayContextTop.appendChild(pathwayContextSecondary);
+
+    const pathwayContextBottom = el("div", "pathway-context-bottom");
+    const pathwayContextLabel = el("p", "pathway-context-label");
+    const pathwayContextActions = el("ul", "pathway-context-list");
+    pathwayContextBottom.appendChild(pathwayContextLabel);
+    pathwayContextBottom.appendChild(pathwayContextActions);
+
+    const clearPathwayButton = el("button", "btn btn-small pathway-context-clear", "Clear pathway filter");
+    clearPathwayButton.type = "button";
+    clearPathwayButton.addEventListener("click", () => {
+      const control = filterControls.get("pathway");
+      if (control) {
+        control.value = "";
+      }
+      state.filters.pathway = "";
+      applyFilters();
+    });
+    pathwayContext.appendChild(pathwayContextTop);
+    pathwayContext.appendChild(pathwayContextBottom);
+    pathwayContext.appendChild(clearPathwayButton);
+    explorerSection.appendChild(pathwayContext);
     explorerSection.appendChild(el("p", "lead", data.explore.intro));
     explorerSection.appendChild(controls);
 
@@ -1327,6 +1208,48 @@
 
     section.appendChild(container);
 
+    const updatePathwayContext = () => {
+      const selectedTitle = state.filters.pathway;
+      if (!selectedTitle) {
+        pathwayContext.classList.add("is-hidden");
+        pathwayContext.style.removeProperty("--pathway-accent");
+        pathwayContext.style.removeProperty("--pathway-foreground");
+        return;
+      }
+      const selectedKey = normalizePathwayKey(pathwayTitleToKey[selectedTitle] || selectedTitle);
+      const contextPathway = pathwayContextByKey[selectedKey];
+      if (!contextPathway) {
+        pathwayContext.classList.add("is-hidden");
+        pathwayContext.style.removeProperty("--pathway-accent");
+        pathwayContext.style.removeProperty("--pathway-foreground");
+        return;
+      }
+      pathwayContextTitle.textContent = contextPathway.title;
+      pathwayContextSummary.textContent = contextPathway.summary;
+      const secondaryText = contextPathway.secondary
+        || contextPathway.secondarySummary
+        || contextPathway.description
+        || contextPathway.body
+        || "";
+      if (secondaryText) {
+        pathwayContextSecondary.textContent = secondaryText;
+        pathwayContextSecondary.classList.remove("is-hidden");
+      } else {
+        pathwayContextSecondary.textContent = "";
+        pathwayContextSecondary.classList.add("is-hidden");
+      }
+      pathwayContextLabel.textContent = contextPathway.label || "What this pathway supports";
+
+      clear(pathwayContextActions);
+      (contextPathway.actions || []).slice(0, 4).forEach((item) => {
+        pathwayContextActions.appendChild(el("li", null, item));
+      });
+
+      pathwayContext.style.setProperty("--pathway-accent", pathwayAccentByKey[selectedKey] || "#912338");
+      pathwayContext.style.setProperty("--pathway-foreground", pathwayTextByKey[selectedKey] || "#ffffff");
+      pathwayContext.classList.remove("is-hidden");
+    };
+
     const applyPathwayFilter = (pathwayTitle) => {
       const control = filterControls.get("pathway");
       if (control) {
@@ -1334,7 +1257,9 @@
         state.filters.pathway = pathwayTitle;
         applyFilters();
       }
-      explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (pathwayTitle) {
+        explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     };
 
     const closeModal = () => {
@@ -1440,6 +1365,7 @@
       });
 
       updateResults(filtered);
+      updatePathwayContext();
     };
 
     const openModal = (opp) => {
@@ -1520,7 +1446,7 @@
     };
 
     const applyPathwayFilterByKey = (pathwayKey) => {
-      const pathwayTitle = pathwayKeyToTitle[(pathwayKey || "").toLowerCase()];
+      const pathwayTitle = pathwayKeyToTitle[normalizePathwayKey(pathwayKey)];
       if (pathwayTitle) {
         applyPathwayFilter(pathwayTitle);
       }
@@ -1636,14 +1562,6 @@
       state.pendingExploreSearch = "";
     }
 
-    if (validPage === "home") {
-      const homePage = pages.get("home");
-      if (homePage && homePage.openPathwayByKey && state.pendingPathwayKey) {
-        homePage.openPathwayByKey(state.pendingPathwayKey);
-        state.pendingPathwayKey = "";
-      }
-    }
-
     if (validPage === "support") {
       const supportPage = pages.get("support");
       if (supportPage && supportPage.applySearchTerm) {
@@ -1667,7 +1585,9 @@
 
   const pageToHash = (pageId) => {
     const validPage = pages.has(pageId) ? pageId : "home";
-    return validPage === "home" ? "#home" : `#${validPage}`;
+    if (validPage === "home") return "#home";
+    if (validPage === "explore") return "#opportunities";
+    return `#${validPage}`;
   };
 
   const navigateTo = (pageId, anchorId, options = {}) => {
@@ -1691,8 +1611,8 @@
     const queryString = query.toString();
     const nextHash = `${pageToHash(validPage)}${queryString ? `?${queryString}` : ""}`;
     const sameHash = window.location.hash === nextHash;
-    state.pendingPathwayKey = (validPage === "home" || validPage === "explore")
-      ? (options.pathway || "").toLowerCase()
+    state.pendingPathwayKey = validPage === "explore"
+      ? normalizePathwayKey(options.pathway)
       : "";
     state.pendingWorkshopId = validPage === "explore" ? (options.workshop || "") : "";
     state.pendingExploreSearch = validPage === "explore" ? (options.searchQuery || "") : "";
@@ -1724,7 +1644,8 @@
       return { page: "support", params: new URLSearchParams(), anchorId: raw };
     }
     const [pagePart, queryPart = ""] = raw.split("?");
-    const page = pagePart && pages.has(pagePart) ? pagePart : "home";
+    const normalizedPagePart = pagePart === "opportunities" ? "explore" : pagePart;
+    const page = normalizedPagePart && pages.has(normalizedPagePart) ? normalizedPagePart : "home";
     return { page, params: new URLSearchParams(queryPart), anchorId: "" };
   };
 
@@ -1736,8 +1657,8 @@
     buildPages();
 
     const initialRoute = parseRouteFromHash(window.location.hash);
-    if (initialRoute.page === "home" || initialRoute.page === "explore") {
-      state.pendingPathwayKey = (initialRoute.params.get("pathway") || "").toLowerCase();
+    if (initialRoute.page === "explore") {
+      state.pendingPathwayKey = normalizePathwayKey(initialRoute.params.get("pathway"));
     }
     if (initialRoute.page === "explore") {
       state.pendingWorkshopId = initialRoute.params.get("workshop") || "";
@@ -1754,8 +1675,8 @@
         return;
       }
       const nextRoute = parseRouteFromHash(window.location.hash);
-      state.pendingPathwayKey = (nextRoute.page === "home" || nextRoute.page === "explore")
-        ? (nextRoute.params.get("pathway") || "").toLowerCase()
+      state.pendingPathwayKey = nextRoute.page === "explore"
+        ? normalizePathwayKey(nextRoute.params.get("pathway"))
         : "";
       state.pendingWorkshopId = nextRoute.page === "explore"
         ? (nextRoute.params.get("workshop") || "")
