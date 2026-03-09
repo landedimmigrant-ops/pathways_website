@@ -88,9 +88,9 @@ window.PATHWAYS_DATA = {
     hero: {
       title: "Pathways to Impact",
       summary: [
-        "Pathways to Impact is a university-wide research support program that helps you plan for impact from the earliest idea to final outputs.",
-        "Explore support through seven connected pathways:",
-        "Each pathway connects you to practical guidance, consultations, and learning opportunities so you can make intentional choices and strengthen the academic, scientific, and societal value of your work."
+        "Pathways to Impact helps you explore how your research can create change.",
+        "Research impact can take many forms. Your work may influence academic scholarship, inform policy, support communities, inspire innovation, or shape public understanding.",
+        "The Pathways help you discover different ways your research can have impact and connect you to practical support across the university."
       ],
       ctaLabel: "Explore the Pathways →",
       ctaTarget: "#explore",

@@ -218,7 +218,8 @@ label {
 }
 
 .intro-block {
-  max-width: 720px;
+  max-width: 100%;
+  width: 100%;
   display: grid;
   gap: 12px;
   margin-bottom: 24px;
@@ -249,6 +250,12 @@ label {
   margin-bottom: 24px;
 }
 
+.home-intro .lead {
+  font-size: 21px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
 .home-pathways {
   margin: 0 0 32px;
 }
@@ -259,6 +266,7 @@ label {
 
 .home-pathways .pathway-card[data-pathway="academic"] {
   grid-column: 1 / -1;
+  text-align: center;
 }
 
 .home-pathways-link {
