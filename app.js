@@ -3,6 +3,8 @@
   if (!data) {
     return;
   }
+  // TEMP: hide Stories in navigation and page rendering without deleting feature code.
+  const STORIES_ENABLED = false;
 
   const siteHeader = document.getElementById("site-header");
   const appRoot = document.getElementById("app");
@@ -295,7 +297,8 @@
     const navItems = data.navigation
       .map((item) => (item.id === "start" ? { id: "home", label: "Home" } : item))
       .filter((item, index, list) => list.findIndex((entry) => entry.id === item.id) === index)
-      .filter((item) => ["home", "learn", "explore", "stories", "about"].includes(item.id));
+      .filter((item) => ["home", "learn", "explore", "stories", "about"].includes(item.id))
+      .filter((item) => STORIES_ENABLED || item.id !== "stories");
 
     navItems.forEach((item) => {
       const li = el("li");
@@ -1389,7 +1392,7 @@
     const learnPage = buildLearn();
     const pathwaysVisionPage = buildPathwaysVision();
     const explorePage = buildExplore();
-    const storiesPage = buildStories();
+    const storiesPage = STORIES_ENABLED ? buildStories() : null;
     const aboutPage = buildAbout();
 
     pages.set("home", homePage);
@@ -1397,7 +1400,9 @@
     pages.set("learn", learnPage);
     pages.set("pathways-vision", pathwaysVisionPage);
     pages.set("explore", explorePage);
-    pages.set("stories", storiesPage);
+    if (STORIES_ENABLED && storiesPage) {
+      pages.set("stories", storiesPage);
+    }
     pages.set("about", aboutPage);
 
     appRoot.appendChild(homePage);
@@ -1405,7 +1410,9 @@
     appRoot.appendChild(learnPage);
     appRoot.appendChild(pathwaysVisionPage);
     appRoot.appendChild(explorePage);
-    appRoot.appendChild(storiesPage);
+    if (STORIES_ENABLED && storiesPage) {
+      appRoot.appendChild(storiesPage);
+    }
     appRoot.appendChild(aboutPage);
   };
 
