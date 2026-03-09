@@ -270,11 +270,20 @@ label {
   margin: 0 0 40px;
 }
 
+.home-stage-section .journey-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .home-stage-section .journey-card {
   min-height: 132px;
   display: grid;
   align-content: start;
   gap: 8px;
+}
+
+.home-stage-section .journey-card .card-text {
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .intro-cta {
@@ -308,11 +317,14 @@ label {
 }
 
 .journey-card {
+  display: block;
   text-align: left;
   border: 1px solid var(--border);
   background: #f8f8f8;
   padding: 16px;
   font: inherit;
+  color: var(--text);
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -1313,6 +1325,10 @@ label {
   }
 
   .journey-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-stage-section .journey-grid {
     grid-template-columns: 1fr;
   }
 

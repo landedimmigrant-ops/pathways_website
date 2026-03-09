@@ -8,10 +8,10 @@ window.PATHWAYS_DATA = {
     homeAriaLabel: "Go to Pathways to Impact home"
   },
   navigation: [
-    { id: "start", label: "Start" },
-    { id: "learn", label: "Learn" },
+    { id: "home", label: "Home" },
+    { id: "support", label: "Support" },
     { id: "explore", label: "Explore" },
-    { id: "stories", label: "Stories" },
+    { id: "learn", label: "Learn" },
     { id: "about", label: "About" }
   ],
   units: [
@@ -94,27 +94,22 @@ window.PATHWAYS_DATA = {
       ],
       ctaLabel: "Explore the Pathways →",
       ctaTarget: "#explore",
-      prompt: "Where are you in your research journey?",
+      prompt: "Where are you in your research?",
       cards: [
         {
-          id: "developing-idea",
+          id: "developing-project",
           title: "Developing an Idea",
-          description: "Clarify the problem, identify partners, and map potential impact."
+          description: "Shaping research questions, building collaborations, and preparing funding applications."
         },
         {
-          id: "preparing-grant",
-          title: "Preparing a Grant",
-          description: "Strengthen your proposal with a focused impact plan and evidence."
+          id: "ongoing-project",
+          title: "Active Research",
+          description: "Managing an ongoing project, building partnerships, generating outputs, and planning impact pathways."
         },
         {
-          id: "active-project",
-          title: "Active Project",
-          description: "Build engagement activities, track outcomes, and adapt as you go."
-        },
-        {
-          id: "concluded-project",
-          title: "Concluded Project",
-          description: "Share results, document outcomes, and plan next steps."
+          id: "wrapping-up-project",
+          title: "Wrapping Up",
+          description: "Sharing results, translating research into policy or practice, and preparing future directions."
         }
       ]
     },
@@ -197,9 +192,9 @@ window.PATHWAYS_DATA = {
     },
     journeys: [
       {
-        id: "developing-idea",
+        id: "developing-project",
         title: "Developing an Idea",
-        description: "Shape the research question and early impact goals.",
+        description: "Shaping research questions, building collaborations, and preparing funding applications.",
         stage: "Developing an Idea",
         modules: [
           {
@@ -214,20 +209,6 @@ window.PATHWAYS_DATA = {
             type: "Workshop",
             time: "90 min"
           },
-          {
-            title: "Evidence scan",
-            description: "Review existing evidence and situate your contribution.",
-            type: "Consult",
-            time: "60 min"
-          }
-        ]
-      },
-      {
-        id: "preparing-grant",
-        title: "Preparing a Grant",
-        description: "Strengthen your proposal with a clear pathway to impact.",
-        stage: "Preparing a Grant",
-        modules: [
           {
             title: "Impact plan review",
             description: "Refine objectives, outputs, and intended outcomes.",
@@ -247,6 +228,12 @@ window.PATHWAYS_DATA = {
             time: "2 hrs"
           },
           {
+            title: "Preparing a grant application",
+            description: "Pull your impact plan, partner roles, and evidence into a clear grant-ready package.",
+            type: "Consult",
+            time: "60 min"
+          },
+          {
             title: "Knowledge mobilization brief",
             description: "Outline how findings will reach the right audiences.",
             type: "Consult",
@@ -255,10 +242,10 @@ window.PATHWAYS_DATA = {
         ]
       },
       {
-        id: "active-project",
-        title: "Active Project",
-        description: "Deliver engagement, track outcomes, and adjust your plan.",
-        stage: "Active Project",
+        id: "ongoing-project",
+        title: "Active Research",
+        description: "Managing an ongoing project, building partnerships, generating outputs, and planning impact pathways.",
+        stage: "Active Research",
         modules: [
           {
             title: "Engagement plan clinic",
@@ -281,10 +268,10 @@ window.PATHWAYS_DATA = {
         ]
       },
       {
-        id: "concluded-project",
-        title: "Concluded Project",
-        description: "Capture outcomes, share results, and plan next steps.",
-        stage: "Concluded Project",
+        id: "wrapping-up-project",
+        title: "Wrapping Up",
+        description: "Sharing results, translating research into policy or practice, and preparing future directions.",
+        stage: "Wrapping Up",
         modules: [
           {
             title: "Impact documentation",
@@ -304,6 +291,45 @@ window.PATHWAYS_DATA = {
             type: "Consult",
             time: "45 min"
           }
+        ]
+      }
+    ]
+  },
+  support: {
+    title: "Research Support",
+    intro: "Find guidance and support based on where you are in your research journey.",
+    sections: [
+      {
+        id: "support-developing",
+        title: "Developing an Idea",
+        description: "Shaping research questions, building collaborations, and preparing funding applications.",
+        lead: "This stage may include support such as:",
+        supports: [
+          "Grant development guidance",
+          "Partnership exploration",
+          "Impact planning"
+        ]
+      },
+      {
+        id: "support-active",
+        title: "Active Research",
+        description: "Managing an ongoing project, building partnerships, generating outputs, and planning impact pathways.",
+        lead: "This stage may include support such as:",
+        supports: [
+          "Research data management",
+          "Community engagement strategies",
+          "Knowledge mobilization planning"
+        ]
+      },
+      {
+        id: "support-wrapping",
+        title: "Wrapping Up",
+        description: "Sharing results, translating research into policy or practice, and preparing future directions.",
+        lead: "This stage may include support such as:",
+        supports: [
+          "Publication impact strategies",
+          "Policy engagement",
+          "Public communication"
         ]
       }
     ]
@@ -571,7 +597,7 @@ window.PATHWAYS_DATA = {
         id: "opp-partner-readiness",
         title: "Partner readiness check",
         category: "Engagement",
-        stage: "Preparing a Grant",
+        stage: "Developing an Idea",
         format: "Consult",
         time: "45 min",
         pathway: ["Community Engagement", "Commercialization"],
@@ -587,7 +613,7 @@ window.PATHWAYS_DATA = {
         id: "opp-grant-narrative",
         title: "Grant impact narrative workshop",
         category: "Proposal",
-        stage: "Preparing a Grant",
+        stage: "Developing an Idea",
         format: "Workshop",
         time: "2 hrs",
         pathway: ["Communications", "Policy", "Commercialization"],
@@ -603,7 +629,7 @@ window.PATHWAYS_DATA = {
         id: "opp-engagement-plan",
         title: "Engagement plan clinic",
         category: "Engagement",
-        stage: "Active Project",
+        stage: "Active Research",
         format: "Workshop",
         time: "90 min",
         pathway: ["Community Engagement", "Communications"],
@@ -619,7 +645,7 @@ window.PATHWAYS_DATA = {
         id: "opp-outcome-tracking",
         title: "Outcome tracking consult",
         category: "Evaluation",
-        stage: "Active Project",
+        stage: "Active Research",
         format: "Consult",
         time: "45 min",
         pathway: ["Policy", "Academic Scholarship"],
@@ -635,7 +661,7 @@ window.PATHWAYS_DATA = {
         id: "opp-impact-documentation",
         title: "Impact documentation",
         category: "Evidence",
-        stage: "Concluded Project",
+        stage: "Wrapping Up",
         format: "Consult",
         time: "60 min",
         pathway: ["Communications", "Policy", "Commercialization", "Research Creation"],
@@ -651,7 +677,7 @@ window.PATHWAYS_DATA = {
         id: "opp-knowledge-sharing",
         title: "Knowledge sharing strategy",
         category: "Communication",
-        stage: "Concluded Project",
+        stage: "Wrapping Up",
         format: "Workshop",
         time: "90 min",
         pathway: ["Communications", "Community Engagement", "Research Creation"],

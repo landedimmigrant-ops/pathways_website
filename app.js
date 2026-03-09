@@ -63,17 +63,28 @@
     acc[pathwayIdToKey[id]] = id;
     return acc;
   }, {});
+  const supportAnchorByJourneyId = {
+    "developing-project": "support-developing",
+    "ongoing-project": "support-active",
+    "wrapping-up-project": "support-wrapping"
+  };
 
   const stageKeyToLabel = data.start.journeys.reduce((acc, journey) => {
     acc[journey.id] = journey.stage || journey.title;
     return acc;
   }, {});
+  // Keep backward compatibility with legacy workshop stage keys from the markdown manifest.
+  stageKeyToLabel["developing-idea"] = "Developing an Idea";
+  stageKeyToLabel["preparing-grant"] = "Developing an Idea";
+  stageKeyToLabel["active-project"] = "Active Research";
+  stageKeyToLabel["concluded-project"] = "Wrapping Up";
 
   const pathwayKeyToTitle = data.explore.pathways.items.reduce((acc, pathway) => {
     const key = pathwayIdToKey[pathway.id] || pathway.id;
     acc[key] = pathway.title;
     return acc;
   }, {});
+  const supportAnchorIds = new Set(((data.support && data.support.sections) || []).map((section) => section.id));
   const unitById = (data.units || []).reduce((acc, unit) => {
     acc[unit.id] = unit;
     return acc;
@@ -297,7 +308,7 @@
     const navItems = data.navigation
       .map((item) => (item.id === "start" ? { id: "home", label: "Home" } : item))
       .filter((item, index, list) => list.findIndex((entry) => entry.id === item.id) === index)
-      .filter((item) => ["home", "learn", "explore", "stories", "about"].includes(item.id))
+      .filter((item) => ["home", "support", "explore", "learn", "about", "stories"].includes(item.id))
       .filter((item) => STORIES_ENABLED || item.id !== "stories");
 
     navItems.forEach((item) => {
@@ -390,20 +401,13 @@
     stageSection.appendChild(el("h2", "prompt-title", data.home.hero.prompt));
     const cardGrid = el("div", "journey-grid");
     data.home.hero.cards.forEach((card) => {
-      const cardButton = el("button", "journey-card");
-      cardButton.type = "button";
-      cardButton.dataset.journey = card.id;
-      cardButton.appendChild(el("h3", null, card.title));
-      cardButton.appendChild(el("p", "card-text", card.description));
-      cardButton.addEventListener("click", () => {
-        navigateTo("start");
-        const details = journeyDetails.get(card.id);
-        if (details) {
-          details.open = true;
-          details.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      });
-      cardGrid.appendChild(cardButton);
+      const cardLink = el("a", "journey-card");
+      const supportAnchor = supportAnchorByJourneyId[card.id];
+      cardLink.href = supportAnchor ? `#${supportAnchor}` : "#support";
+      cardLink.dataset.journey = card.id;
+      cardLink.appendChild(el("h3", null, card.title));
+      cardLink.appendChild(el("p", "card-text", card.description));
+      cardGrid.appendChild(cardLink);
     });
     stageSection.appendChild(cardGrid);
     container.appendChild(stageSection);
@@ -703,6 +707,79 @@
     });
 
     container.appendChild(journeysWrap);
+    section.appendChild(container);
+    return section;
+  };
+
+  const buildSupport = () => {
+    const section = el("section", "page page-support");
+    section.dataset.page = "support";
+
+    const container = el("div", "container");
+    container.appendChild(el("h1", null, data.support.title));
+    container.appendChild(el("p", "lead", data.support.intro));
+
+    const supportSectionsById = (data.support.sections || []).reduce((acc, item) => {
+      acc[item.id] = item;
+      return acc;
+    }, {});
+
+    const supportWrap = el("div", "journeys");
+    data.start.journeys.forEach((journey) => {
+      const anchorId = supportAnchorByJourneyId[journey.id] || journey.id;
+      const supportSection = supportSectionsById[anchorId];
+      const details = el("details", "journey");
+      details.id = anchorId;
+      const summary = el("summary", "journey-summary");
+      summary.appendChild(el("h3", null, journey.title));
+      summary.appendChild(el("p", "card-text", journey.description));
+      details.appendChild(summary);
+
+      const body = el("div", "modules");
+      if (supportSection && supportSection.lead) {
+        body.appendChild(el("p", "module-text", supportSection.lead));
+      }
+      journey.modules.forEach((module) => {
+        const card = el("div", "module-card");
+        card.appendChild(el("h4", null, module.title));
+        card.appendChild(el("p", "module-text", module.description));
+
+        const meta = el("div", "module-meta");
+        const typeItem = el("div", "meta-item");
+        typeItem.appendChild(el("span", "meta-label", data.start.labels.type));
+        typeItem.appendChild(el("span", "meta-value", module.type));
+        const timeItem = el("div", "meta-item");
+        timeItem.appendChild(el("span", "meta-label", data.start.labels.time));
+        timeItem.appendChild(el("span", "meta-value", module.time));
+        meta.appendChild(typeItem);
+        meta.appendChild(timeItem);
+        card.appendChild(meta);
+        body.appendChild(card);
+      });
+
+      const actionRow = el("div", "module-actions");
+      const oppButton = el("button", "btn", data.start.actions.opportunities);
+      oppButton.type = "button";
+      oppButton.addEventListener("click", () => {
+        navigateTo("explore");
+        applyStageFilter(journey.stage);
+      });
+
+      const contactButton = el("button", "btn primary", data.start.actions.contact);
+      contactButton.type = "button";
+      contactButton.addEventListener("click", () => {
+        navigateTo("about", "contact");
+      });
+
+      actionRow.appendChild(oppButton);
+      actionRow.appendChild(contactButton);
+      body.appendChild(actionRow);
+
+      details.appendChild(body);
+      supportWrap.appendChild(details);
+    });
+
+    container.appendChild(supportWrap);
     section.appendChild(container);
     return section;
   };
@@ -1389,6 +1466,7 @@
   const buildPages = () => {
     const homePage = buildHome();
     const startPage = buildStart();
+    const supportPage = buildSupport();
     const learnPage = buildLearn();
     const pathwaysVisionPage = buildPathwaysVision();
     const explorePage = buildExplore();
@@ -1397,6 +1475,7 @@
 
     pages.set("home", homePage);
     pages.set("start", startPage);
+    pages.set("support", supportPage);
     pages.set("learn", learnPage);
     pages.set("pathways-vision", pathwaysVisionPage);
     pages.set("explore", explorePage);
@@ -1407,6 +1486,7 @@
 
     appRoot.appendChild(homePage);
     appRoot.appendChild(startPage);
+    appRoot.appendChild(supportPage);
     appRoot.appendChild(learnPage);
     appRoot.appendChild(pathwaysVisionPage);
     appRoot.appendChild(explorePage);
@@ -1474,6 +1554,9 @@
     if (anchorId) {
       const target = document.getElementById(anchorId);
       if (target) {
+        if (target.tagName === "DETAILS") {
+          target.open = true;
+        }
         target.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     } else {
@@ -1523,11 +1606,14 @@
   const parseRouteFromHash = (hashValue) => {
     const raw = (hashValue || "").replace("#", "");
     if (!raw) {
-      return { page: "home", params: new URLSearchParams() };
+      return { page: "home", params: new URLSearchParams(), anchorId: "" };
+    }
+    if (supportAnchorIds.has(raw)) {
+      return { page: "support", params: new URLSearchParams(), anchorId: raw };
     }
     const [pagePart, queryPart = ""] = raw.split("?");
     const page = pagePart && pages.has(pagePart) ? pagePart : "home";
-    return { page, params: new URLSearchParams(queryPart) };
+    return { page, params: new URLSearchParams(queryPart), anchorId: "" };
   };
 
   const init = async () => {
@@ -1544,7 +1630,7 @@
     if (initialRoute.page === "explore") {
       state.pendingWorkshopId = initialRoute.params.get("workshop") || "";
     }
-    showPage(initialRoute.page);
+    showPage(initialRoute.page, initialRoute.anchorId);
 
     window.addEventListener("hashchange", () => {
       if (state.suppressNextHashChange) {
@@ -1558,7 +1644,7 @@
       state.pendingWorkshopId = nextRoute.page === "explore"
         ? (nextRoute.params.get("workshop") || "")
         : "";
-      showPage(nextRoute.page);
+      showPage(nextRoute.page, nextRoute.anchorId);
     });
 
     window.applyStageFilter = applyStageFilter;
