@@ -48,6 +48,8 @@
     pendingStage: "",
     pendingPathwayKey: "",
     pendingWorkshopId: "",
+    pendingExploreSearch: "",
+    pendingSupportSearch: "",
     suppressNextHashChange: false
   };
   const pathwayIdToKey = {
@@ -373,6 +375,11 @@
     container.appendChild(el("hr", "section-divider"));
 
     const pathwayItems = data.explore.pathways.items;
+    const supportSearchConfig = data.support.search || {
+      label: "Find support and services",
+      placeholder: "Find support and services",
+      ariaLabel: "Find support and services"
+    };
     const pathwaysSection = el("section", "home-pathways");
     const pathwayGrid = el("div", "pathway-grid");
     const pathwayCards = new Map();
@@ -395,6 +402,30 @@
     });
     pathwaysSection.appendChild(pathwaysLink);
     container.appendChild(pathwaysSection);
+
+    const homeSearchSection = el("section", "home-support-search");
+    const homeControls = el("div", "explore-controls");
+    const homeSearchWrap = el("div", "search-bar");
+    const homeSearchLabel = el("label", null, supportSearchConfig.label);
+    const homeSearchInput = el("input");
+    const homeSearchId = "home-support-search-input";
+    homeSearchInput.id = homeSearchId;
+    homeSearchLabel.setAttribute("for", homeSearchId);
+    homeSearchInput.type = "search";
+    homeSearchInput.placeholder = supportSearchConfig.placeholder;
+    homeSearchInput.setAttribute("aria-label", supportSearchConfig.ariaLabel);
+    homeSearchInput.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      const value = homeSearchInput.value.trim();
+      navigateTo("explore", "opportunity-explorer", { searchQuery: value });
+    });
+    homeSearchWrap.appendChild(homeSearchLabel);
+    homeSearchWrap.appendChild(homeSearchInput);
+    homeControls.appendChild(homeSearchWrap);
+    homeSearchSection.appendChild(homeControls);
+    container.appendChild(homeSearchSection);
+
     container.appendChild(el("hr", "section-divider"));
 
     const stageSection = el("section", "home-stage-section");
@@ -723,8 +754,29 @@
       acc[item.id] = item;
       return acc;
     }, {});
+    const supportSearchConfig = data.support.search || {
+      label: "Find support and services",
+      placeholder: "Find support and services",
+      ariaLabel: "Find support and services"
+    };
+
+    const controls = el("div", "explore-controls");
+    const searchWrap = el("div", "search-bar");
+    const searchLabel = el("label", null, supportSearchConfig.label);
+    const searchInput = el("input");
+    const searchId = "support-search-input";
+    searchInput.id = searchId;
+    searchLabel.setAttribute("for", searchId);
+    searchInput.type = "search";
+    searchInput.placeholder = supportSearchConfig.placeholder;
+    searchInput.setAttribute("aria-label", supportSearchConfig.ariaLabel);
+    searchWrap.appendChild(searchLabel);
+    searchWrap.appendChild(searchInput);
+    controls.appendChild(searchWrap);
+    container.appendChild(controls);
 
     const supportWrap = el("div", "journeys");
+    const supportEntries = [];
     data.start.journeys.forEach((journey) => {
       const anchorId = supportAnchorByJourneyId[journey.id] || journey.id;
       const supportSection = supportSectionsById[anchorId];
@@ -777,7 +829,35 @@
 
       details.appendChild(body);
       supportWrap.appendChild(details);
+
+      const searchText = [
+        journey.title,
+        journey.description,
+        supportSection && supportSection.lead,
+        ...(supportSection && Array.isArray(supportSection.supports) ? supportSection.supports : []),
+        ...journey.modules.flatMap((module) => [module.title, module.description, module.type, module.time])
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      supportEntries.push({ details, searchText });
     });
+
+    const applySupportSearch = () => {
+      const term = searchInput.value.trim().toLowerCase();
+      supportEntries.forEach((entry) => {
+        const matches = !term || entry.searchText.includes(term);
+        entry.details.hidden = !matches;
+        if (term && matches) {
+          entry.details.open = true;
+        }
+      });
+    };
+    searchInput.addEventListener("input", applySupportSearch);
+    section.applySearchTerm = (rawTerm) => {
+      searchInput.value = (rawTerm || "").trim();
+      applySupportSearch();
+    };
 
     container.appendChild(supportWrap);
     section.appendChild(container);
@@ -1455,11 +1535,20 @@
       explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
+    const applySearchTerm = (rawSearch) => {
+      const normalized = (rawSearch || "").trim();
+      state.search = normalized;
+      searchInput.value = normalized;
+      applyFilters();
+      explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
     applyFilters();
 
     section.applyStageFilter = applyStageFilter;
     section.applyPathwayFilterByKey = applyPathwayFilterByKey;
     section.focusWorkshopById = focusWorkshopById;
+    section.applySearchTerm = applySearchTerm;
     return section;
   };
 
@@ -1541,6 +1630,10 @@
         explorePage.focusWorkshopById(state.pendingWorkshopId);
         state.pendingWorkshopId = "";
       }
+      if (explorePage && explorePage.applySearchTerm) {
+        explorePage.applySearchTerm(state.pendingExploreSearch);
+      }
+      state.pendingExploreSearch = "";
     }
 
     if (validPage === "home") {
@@ -1549,6 +1642,14 @@
         homePage.openPathwayByKey(state.pendingPathwayKey);
         state.pendingPathwayKey = "";
       }
+    }
+
+    if (validPage === "support") {
+      const supportPage = pages.get("support");
+      if (supportPage && supportPage.applySearchTerm) {
+        supportPage.applySearchTerm(state.pendingSupportSearch);
+      }
+      state.pendingSupportSearch = "";
     }
 
     if (anchorId) {
@@ -1578,6 +1679,15 @@
     if (options.workshop) {
       query.set("workshop", options.workshop);
     }
+    if (validPage === "explore" && Object.prototype.hasOwnProperty.call(options, "searchQuery")) {
+      const q = (options.searchQuery || "").trim();
+      if (q) {
+        query.set("q", q);
+      }
+    }
+    if (validPage === "support" && options.supportSearch) {
+      query.set("q", options.supportSearch);
+    }
     const queryString = query.toString();
     const nextHash = `${pageToHash(validPage)}${queryString ? `?${queryString}` : ""}`;
     const sameHash = window.location.hash === nextHash;
@@ -1585,6 +1695,8 @@
       ? (options.pathway || "").toLowerCase()
       : "";
     state.pendingWorkshopId = validPage === "explore" ? (options.workshop || "") : "";
+    state.pendingExploreSearch = validPage === "explore" ? (options.searchQuery || "") : "";
+    state.pendingSupportSearch = validPage === "support" ? (options.supportSearch || "") : "";
 
     showPage(validPage, anchorId);
 
@@ -1629,6 +1741,10 @@
     }
     if (initialRoute.page === "explore") {
       state.pendingWorkshopId = initialRoute.params.get("workshop") || "";
+      state.pendingExploreSearch = initialRoute.params.get("q") || "";
+    }
+    if (initialRoute.page === "support") {
+      state.pendingSupportSearch = initialRoute.params.get("q") || "";
     }
     showPage(initialRoute.page, initialRoute.anchorId);
 
@@ -1643,6 +1759,12 @@
         : "";
       state.pendingWorkshopId = nextRoute.page === "explore"
         ? (nextRoute.params.get("workshop") || "")
+        : "";
+      state.pendingExploreSearch = nextRoute.page === "explore"
+        ? (nextRoute.params.get("q") || "")
+        : "";
+      state.pendingSupportSearch = nextRoute.page === "support"
+        ? (nextRoute.params.get("q") || "")
         : "";
       showPage(nextRoute.page, nextRoute.anchorId);
     });

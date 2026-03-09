@@ -298,6 +298,11 @@ window.PATHWAYS_DATA = {
   support: {
     title: "Research Support",
     intro: "Find guidance and support based on where you are in your research journey.",
+    search: {
+      label: "Find support and services",
+      placeholder: "Find support and services",
+      ariaLabel: "Find support and services"
+    },
     sections: [
       {
         id: "support-developing",
