@@ -1,105 +1,90 @@
 # Pathways SPA — Context Summary (Restart Notes)
 
-Last updated: 2026-02-27
+Last updated: 2026-03-09
 
 ## What This Repo Is
-- Static single-page app (SPA) deployed via Netlify drag-and-drop.
-- No build tools, no backend.
-- Main files: `index.html`, `styles.css`, `app.js`, `data.js`.
+- Static single-page app (SPA), no build step, no backend.
+- Core files: `index.html`, `styles.css`, `app.js`, `data.js`.
+- Content files: workshop manifest + markdown in `content/workshops/`, plus `pathways_to_impact.md` for the vision page.
 
-## How To Run Locally
-- Markdown/workshop/vision content is loaded via `fetch()`, so `file://` will usually fail.
-- Use a local HTTP server from the project root:
+## Local Run (Important)
+- `fetch()` is used for markdown/json content, so opening with `file://` may fail.
+- Run from project root:
   - `python3 -m http.server 8000`
-  - Open `http://localhost:8000`
+  - open `http://localhost:8000`
 
-## Routes / Pages (Hash Routing)
-- `#home` (landing)
+## Current Routes
+- `#home`
 - `#start`
 - `#learn`
 - `#explore`
 - `#stories`
 - `#about`
-- `#pathways-vision` (not in main nav; accessed from About)
+- `#pathways-vision` (not in main nav)
 
-Deep links supported:
-- `#explore?pathway=<key>` auto-opens pathway details modal for that pathway.
-- `#explore?workshop=<id>` can focus/highlight a workshop in Explore (used by Popular support).
+## Deep Linking Behavior
+- `#home?pathway=<key>` opens pathway modal on Home.
+- `#explore?pathway=<key>` opens Explore and applies pathway filter.
+- `#explore?workshop=<id>` opens Explore and focuses that workshop via search.
 
-## Key Functionality Added / Changed
+## Header + Footer Behavior
+- Header nav shows: Home, Learn, Explore, Stories, About.
+- Site title remains “Pathways to Impact”.
+- Footer helper link “Lost? Start with your research stage →” appears on all routes except Home.
 
-### Explore (Pathways + Explorer)
-- Top section shows 7 pathway boxes (color-coded by official palette) with `data-pathway` identifiers.
-- Clicking a pathway opens a modal overlay (no scroll-jump) with:
-  - title, framing sentence, label line, bullets, featured supports
-  - Previous / Next browsing
-  - Close via X, ESC, or backdrop click
-  - “View related opportunities” applies pathway filter and scrolls to explorer list
+## Home Page (Current Structure)
+Order is:
+1. Intro text block
+2. Pathway boxes grid (moved from Explore)
+   - 7 pathway color blocks
+   - Academic pathway is full-width row; remaining boxes are 3x2
+   - clicking a pathway opens modal (X/ESC/backdrop close, prev/next supported)
+   - single CTA button below grid: “Explore Pathways →”
+3. “Where are you in your research journey?” 2x2 stage grid
+4. Upcoming grants (3 tiles)
+5. Popular support (3 tiles; uses featured workshops when available)
 
-### Workshops: File-Based “Database”
+## Explore Page (Current)
+- Focused on opportunity/workshop explorer only.
+- Search + filters (stage, category, format, time, pathway).
+- Results cards with metadata, tags, and detail modal.
+- Workshop cards can show `Register` when `libcalUrl` exists; otherwise `View details`.
+
+## Learn Page
+- Includes:
+  - What is research impact
+  - Myths vs realities
+  - Focus topics cards
+  - Recommended Resources section (placeholder currently includes Research Impact Canada)
+
+## About + Vision
+- About contains:
+  - “About Pathways” with concise paragraph
+  - “Read the Pathways Vision →” link + one-line description
+  - “Partners across the university” accordion with nested partner accordions
+  - “Contact Us” section at bottom
+- `#pathways-vision` loads full text from `pathways_to_impact.md` and renders longform view with progressive expanders for very long sections.
+
+## File-Based Workshop Content
 - Manifest: `content/workshops.json`
-- Content folder: `content/workshops/*.md`
-- Loader in `app.js` fetches the manifest + each markdown file, then renders workshop cards + detail view.
-- Minimal markdown renderer supports headings (`#`, `##`), paragraphs, and lists (`-`).
-- Front matter is stripped if present (`--- ... ---`).
+- Workshop files: `content/workshops/*.md`
+- Loader in `app.js` fetches manifest + markdown, parses minimal markdown, and renders workshop content.
+- Manifest regeneration script:
+  - `python3 scripts/generate_workshops_manifest.py`
 
-Manifest generation:
-- Script: `scripts/generate_workshops_manifest.py`
-- Purpose: regenerate `content/workshops.json` based on `.md` files without a build system.
+## Data Model Notes
+- `data.js` is still the primary site content source.
+- `units[]` dictionary exists for partner metadata and short codes.
+- `workshopUnitTags` exists and is applied to workshop cards/tags.
 
-### Landing (“Home”)
-- Journey/stage cards navigate to `#start`.
-- Pathway list is rendered as a vertical list; each pathway name deep-links to `#explore?pathway=...`.
-- Sections present (in order under the hero area):
-  - Upcoming grants (3 mock tiles)
-  - Popular support (3 tiles, usually featured workshops; routes into Explore)
+## Styling Notes
+- Concordia-aligned visual system with official palette utilities.
+- Pathway boxes are color-coded and hover to white.
+- Neutral clickable tiles use off-white default (`#F8F8F8`) and white on hover/focus.
+- Focus-visible styles are enabled.
 
-### About
-- Units dictionary added for future tagging and partners display:
-  - `data.js`: top-level `units[]` with `shortCode` (RD, LIB, etc.) + URLs + group.
-- Added `workshopUnitTags` mapping in `data.js` (applied at load time) for:
-  - Narrative CV development → `RD`
-  - Open Science and Open Scholarship practices → `LIB`
-  - Research Data Management guidance → `LIB`
-- About page structure (current):
-  - Single “About Pathways” heading + one merged paragraph
-  - Major accordion: “Partners across the university” (triangle style), containing nested unit accordions
-  - “Contact Us” restored at the bottom
-
-### Pathways Vision Page
-- New route: `#pathways-vision`
-- Loads long-form markdown from: `pathways_to_impact.md` (project root)
-- Displays:
-  - Back link to About
-  - Title + intro line
-  - Markdown rendered into readable longform layout
-  - Auto-collapses very long sections using `<details>/<summary>` (“Read more”)
-  - Highlights a “definition-like” paragraph if detected (subtle grey background + burgundy border)
-
-## Styling System Notes
-- Inter font loaded via Google Fonts in `index.html`.
-- Container: `max-width: 940px; padding: 0 16px;`
-- Focus-visible outline enabled (do not remove).
-- Official Concordia palette utilities exist (e.g., `.bg-burgundy`, `.bg-blue`, etc.).
-- Pathway cards use palette colors + hover-to-white behavior.
-- Neutral clickable cards (journey + opportunity cards) use off-white background default (`#F8F8F8`) and turn white on hover/focus; pathway cards excluded.
-
-## Important Files To Know
-- `data.js`
-  - primary site content (copy, labels, pathways content, About partners structure)
-  - `units[]` dictionary + `workshopUnitTags`
-- `app.js`
-  - router, page builders, Explore pathway modal, workshop loader/renderer, Pathways Vision loader/page
-- `styles.css`
-  - Concordia-aligned styling, pathway colors, modal styles, accordion/triangle styles, longform vision styles
-- `content/workshops.json`
-  - workshop manifest (edit or regenerate via script)
-- `content/workshops/*.md`
-  - workshop bodies
-- `pathways_to_impact.md`
-  - Pathways Vision long-form source
-
-## Known Gotchas
-- `file://` will not load `content/workshops.json` or `pathways_to_impact.md` due to browser security; serve over HTTP.
-- Main navigation is generated from `data.navigation`, but header rendering maps `start -> home` and filters to the main set.
-
+## Git / Deployment State
+- Branch: `main`
+- Remote: `origin -> https://github.com/landedimmigrant-ops/pathways_website.git`
+- Local history includes: `first draft`, `draft 2`, and merge of `origin/main`.
+- Can deploy via GitHub Pages (main/root) or Netlify drag-and-drop.
