@@ -821,6 +821,66 @@ label {
   margin-top: 40px;
 }
 
+.pathway-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.pathway-tab {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  color: #ffffff;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.pathway-tab[data-pathway="academic"] {
+  background: #912338;
+}
+
+.pathway-tab[data-pathway="community"] {
+  background: #db0272;
+}
+
+.pathway-tab[data-pathway="innovation"] {
+  background: #da3a16;
+}
+
+.pathway-tab[data-pathway="commercialization"] {
+  background: #573996;
+}
+
+.pathway-tab[data-pathway="policy"] {
+  background: #0072a8;
+}
+
+.pathway-tab[data-pathway="communications"] {
+  background: #e5a712;
+  color: #1a1a1a;
+}
+
+.pathway-tab[data-pathway="research-creation"] {
+  background: #508212;
+}
+
+.pathway-tab:not(.is-active):hover {
+  background: #ffffff;
+  color: #1a1a1a;
+  border-color: #e6e6e6;
+}
+
+.pathway-tab.is-active {
+  border-color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
 .pathway-context {
   border: 1px solid var(--pathway-accent, #912338);
   background: var(--pathway-accent, #912338);
@@ -911,7 +971,7 @@ label {
 
 .filter-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 

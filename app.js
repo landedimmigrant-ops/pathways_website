@@ -392,7 +392,7 @@
       card.appendChild(el("h3", null, pathway.title));
       card.appendChild(el("p", "card-text", pathway.summary));
       card.addEventListener("click", () => {
-        navigateTo("explore", "", { pathway: pathwayKey });
+        navigateTo("explore", "", { pathway: pathwayKey.replace(/-/g, "_") });
       });
       pathwayGrid.appendChild(card);
     });
@@ -1114,6 +1114,9 @@
     const filterGrid = el("div", "filter-grid");
 
     data.explore.filters.forEach((filter) => {
+      if (filter.id === "pathway") {
+        return;
+      }
       const control = el("div", "filter-control");
       const label = el("label", null, filter.label);
       const select = el("select");
@@ -1125,21 +1128,16 @@
       allOption.value = "";
       select.appendChild(allOption);
 
-      let values = [];
-      if (filter.id === "pathway") {
-        values = data.explore.pathways.items.map((item) => item.title);
-      } else {
-        const valueSet = new Set();
-        exploreItems.forEach((opp) => {
-          const value = opp[filter.id];
-          if (Array.isArray(value)) {
-            value.forEach((entry) => valueSet.add(entry));
-          } else if (value) {
-            valueSet.add(value);
-          }
-        });
-        values = Array.from(valueSet).sort();
-      }
+      const valueSet = new Set();
+      exploreItems.forEach((opp) => {
+        const value = opp[filter.id];
+        if (Array.isArray(value)) {
+          value.forEach((entry) => valueSet.add(entry));
+        } else if (value) {
+          valueSet.add(value);
+        }
+      });
+      const values = Array.from(valueSet).sort();
 
       values.forEach((value) => {
         const option = el("option", null, value);
@@ -1162,6 +1160,25 @@
 
     const explorerSection = el("section", "explorer-section");
     explorerSection.id = "opportunity-explorer";
+    const pathwayTabs = el("div", "pathway-tabs");
+    const pathwayTabButtons = new Map();
+    data.explore.pathways.items.forEach((item) => {
+      const pathwayKey = pathwayIdToKey[item.id] || item.id;
+      const tab = el("button", "pathway-tab", item.title);
+      tab.type = "button";
+      tab.dataset.pathway = pathwayKey;
+      tab.setAttribute("aria-pressed", "false");
+      tab.addEventListener("click", () => {
+        if (state.filters.pathway === item.title) {
+          clearPathwayFilter();
+          return;
+        }
+        applyPathwayFilter(item.title);
+      });
+      pathwayTabButtons.set(pathwayKey, tab);
+      pathwayTabs.appendChild(tab);
+    });
+    explorerSection.appendChild(pathwayTabs);
     const pathwayContext = el("section", "pathway-context is-hidden");
     const pathwayContextTop = el("div", "pathway-context-top");
     const pathwayContextTitle = el("h2", "section-title");
@@ -1180,12 +1197,7 @@
     const clearPathwayButton = el("button", "btn btn-small pathway-context-clear", "Clear pathway filter");
     clearPathwayButton.type = "button";
     clearPathwayButton.addEventListener("click", () => {
-      const control = filterControls.get("pathway");
-      if (control) {
-        control.value = "";
-      }
-      state.filters.pathway = "";
-      applyFilters();
+      clearPathwayFilter();
     });
     pathwayContext.appendChild(pathwayContextTop);
     pathwayContext.appendChild(pathwayContextBottom);
@@ -1250,13 +1262,24 @@
       pathwayContext.classList.remove("is-hidden");
     };
 
+    const updatePathwayTabs = () => {
+      const selectedTitle = state.filters.pathway;
+      const selectedKey = normalizePathwayKey(pathwayTitleToKey[selectedTitle] || selectedTitle);
+      pathwayTabButtons.forEach((tab, key) => {
+        const isActive = Boolean(selectedTitle) && key === selectedKey;
+        tab.classList.toggle("is-active", isActive);
+        tab.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    };
+
+    const clearPathwayFilter = () => {
+      state.filters.pathway = "";
+      applyFilters();
+    };
+
     const applyPathwayFilter = (pathwayTitle) => {
-      const control = filterControls.get("pathway");
-      if (control) {
-        control.value = pathwayTitle;
-        state.filters.pathway = pathwayTitle;
-        applyFilters();
-      }
+      state.filters.pathway = pathwayTitle || "";
+      applyFilters();
       if (pathwayTitle) {
         explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -1366,6 +1389,7 @@
 
       updateResults(filtered);
       updatePathwayContext();
+      updatePathwayTabs();
     };
 
     const openModal = (opp) => {
@@ -1449,6 +1473,8 @@
       const pathwayTitle = pathwayKeyToTitle[normalizePathwayKey(pathwayKey)];
       if (pathwayTitle) {
         applyPathwayFilter(pathwayTitle);
+      } else {
+        clearPathwayFilter();
       }
     };
 
@@ -1473,6 +1499,7 @@
 
     section.applyStageFilter = applyStageFilter;
     section.applyPathwayFilterByKey = applyPathwayFilterByKey;
+    section.clearPathwayFilter = clearPathwayFilter;
     section.focusWorkshopById = focusWorkshopById;
     section.applySearchTerm = applySearchTerm;
     return section;
@@ -1535,12 +1562,6 @@
     if (routeFooter) {
       routeFooter.classList.toggle("is-visible", validPage !== "home");
     }
-    if (validPage !== "home") {
-      const homePage = pages.get("home");
-      if (homePage && homePage.closePathwayModal) {
-        homePage.closePathwayModal();
-      }
-    }
 
     if (validPage === "explore") {
       const explorePage = pages.get("explore");
@@ -1548,7 +1569,7 @@
         explorePage.applyStageFilter(state.pendingStage);
         state.pendingStage = "";
       }
-      if (explorePage && explorePage.applyPathwayFilterByKey && state.pendingPathwayKey) {
+      if (explorePage && explorePage.applyPathwayFilterByKey) {
         explorePage.applyPathwayFilterByKey(state.pendingPathwayKey);
         state.pendingPathwayKey = "";
       }
