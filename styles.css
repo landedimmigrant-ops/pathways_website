@@ -1023,6 +1023,9 @@ label {
 .explore-controls {
   display: grid;
   gap: 16px;
+  border: 1px solid #e6e6e6;
+  background: #f8f8f8;
+  padding: 18px;
   margin-bottom: 24px;
 }
 

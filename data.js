@@ -9,7 +9,7 @@ window.PATHWAYS_DATA = {
   },
   navigation: [
     { id: "home", label: "Home" },
-    { id: "explore", label: "Explore" },
+    { id: "explore", label: "Support" },
     { id: "learn", label: "Learn" },
     { id: "about", label: "About" }
   ],
@@ -397,12 +397,12 @@ window.PATHWAYS_DATA = {
     }
   },
   explore: {
-    title: "Explore",
-    intro: "Use the filters to find support that fits your stage, goals, and time available.",
+    title: "Support",
+    intro: "",
     search: {
-      label: "Search support",
-      placeholder: "Search support",
-      ariaLabel: "Search support"
+      label: "Search",
+      placeholder: "Search",
+      ariaLabel: "Search"
     },
     filters: [
       {

@@ -51,7 +51,6 @@
     pendingPathwayKey: "",
     pendingWorkshopId: "",
     pendingExploreSearch: "",
-    lastPrimaryFilter: "",
     suppressNextHashChange: false
   };
   const pathwayIdToKey = {
@@ -507,7 +506,7 @@
     });
 
     popular.appendChild(popularGrid);
-    const exploreButton = el("a", "btn btn-ghost-burgundy btn-small", "Explore →");
+    const exploreButton = el("a", "btn btn-ghost-burgundy btn-small", "Support →");
     exploreButton.href = "#explore";
     exploreButton.addEventListener("click", (event) => {
       event.preventDefault();
@@ -974,7 +973,7 @@
       contactForm.appendChild(stageField);
 
       const needsField = el("div", "contact-form-field");
-      const needsLabel = el("label", null, "Tell us what support you need");
+      const needsLabel = el("label", null, "Tell us what you want to explore");
       const needsInput = el("textarea");
       needsInput.name = "needs";
       needsInput.rows = 5;
@@ -1182,25 +1181,13 @@
         description: "This stage supports researchers preparing final outputs, sharing results, strengthening visibility, and considering next steps beyond the project."
       }
     };
+    const explorePrimaryState = {
+      mode: "none",
+      selectedPathway: "",
+      selectedStage: ""
+    };
 
     const controls = el("div", "explore-controls");
-
-    const searchWrap = el("div", "search-bar");
-    const searchLabel = el("label", null, data.explore.search.label);
-    const searchInput = el("input");
-    const searchId = "search-input";
-    searchInput.id = searchId;
-    searchLabel.setAttribute("for", searchId);
-    searchInput.type = "search";
-    searchInput.placeholder = data.explore.search.placeholder;
-    searchInput.setAttribute("aria-label", data.explore.search.ariaLabel);
-    searchInput.addEventListener("input", (event) => {
-      state.search = event.target.value.trim();
-      applyFilters();
-    });
-    searchWrap.appendChild(searchLabel);
-    searchWrap.appendChild(searchInput);
-    controls.appendChild(searchWrap);
 
     const filterGrid = el("div", "filter-grid");
 
@@ -1248,6 +1235,23 @@
     });
 
     controls.appendChild(filterGrid);
+
+    const searchWrap = el("div", "search-bar");
+    const searchLabel = el("label", null, data.explore.search.label);
+    const searchInput = el("input");
+    const searchId = "search-input";
+    searchInput.id = searchId;
+    searchLabel.setAttribute("for", searchId);
+    searchInput.type = "search";
+    searchInput.placeholder = data.explore.search.placeholder;
+    searchInput.setAttribute("aria-label", data.explore.search.ariaLabel);
+    searchInput.addEventListener("input", (event) => {
+      state.search = event.target.value.trim();
+      applyFilters();
+    });
+    searchWrap.appendChild(searchLabel);
+    searchWrap.appendChild(searchInput);
+    controls.appendChild(searchWrap);
 
     const explorerSection = el("section", "explorer-section");
     explorerSection.id = "opportunity-explorer";
@@ -1336,7 +1340,9 @@
     stageContext.appendChild(clearStageButton);
     explorerSection.appendChild(stageContext);
 
-    explorerSection.appendChild(el("p", "lead", data.explore.intro));
+    if (data.explore.intro && data.explore.intro.trim()) {
+      explorerSection.appendChild(el("p", "lead", data.explore.intro));
+    }
     explorerSection.appendChild(controls);
 
     const resultsMeta = el("div", "results-meta");
@@ -1409,22 +1415,10 @@
     };
 
     const updatePrimaryContext = () => {
-      const hasPathwayFilter = Boolean(state.filters.pathway);
-      const hasStageFilter = Boolean(state.filters.stage);
-      const hasPathwayContext = updatePathwayContext();
-      const hasStageContext = updateStageContext();
-
-      let visibleContext = "";
-      if (hasPathwayFilter && hasStageFilter) {
-        visibleContext = state.lastPrimaryFilter === "stage" ? "stage" : "pathway";
-      } else if (hasPathwayFilter) {
-        visibleContext = "pathway";
-      } else if (hasStageFilter) {
-        visibleContext = "stage";
-      }
-
-      pathwayContext.classList.toggle("is-hidden", !(visibleContext === "pathway" && hasPathwayContext));
-      stageContext.classList.toggle("is-hidden", !(visibleContext === "stage" && hasStageContext));
+      const showPathwayContext = explorePrimaryState.mode === "pathway" && updatePathwayContext();
+      const showStageContext = explorePrimaryState.mode === "stage" && updateStageContext();
+      pathwayContext.classList.toggle("is-hidden", !showPathwayContext);
+      stageContext.classList.toggle("is-hidden", !showStageContext);
     };
 
     const updatePathwayTabs = () => {
@@ -1448,25 +1442,31 @@
     };
 
     const clearPathwayFilter = () => {
+      explorePrimaryState.mode = "none";
+      explorePrimaryState.selectedPathway = "";
+      explorePrimaryState.selectedStage = "";
       state.filters.pathway = "";
-      state.lastPrimaryFilter = state.filters.stage ? "stage" : "";
+      state.filters.stage = "";
       applyFilters();
     };
 
     const clearStageFilter = () => {
-      state.filters.stage = "";
-      state.lastPrimaryFilter = state.filters.pathway ? "pathway" : "";
-      applyFilters();
+      clearPathwayFilter();
     };
 
     const applyPathwayFilter = (pathwayTitle) => {
-      state.filters.pathway = pathwayTitle || "";
-      if (pathwayTitle) {
-        state.filters.stage = "";
+      const normalizedTitle = pathwayTitle || "";
+      if (!normalizedTitle) {
+        clearPathwayFilter();
+        return;
       }
-      state.lastPrimaryFilter = pathwayTitle ? "pathway" : (state.filters.stage ? "stage" : "");
+      explorePrimaryState.mode = "pathway";
+      explorePrimaryState.selectedPathway = normalizedTitle;
+      explorePrimaryState.selectedStage = "";
+      state.filters.pathway = normalizedTitle;
+      state.filters.stage = "";
       applyFilters();
-      if (pathwayTitle) {
+      if (normalizedTitle) {
         explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     };
@@ -1478,9 +1478,11 @@
         clearStageFilter();
         return;
       }
+      explorePrimaryState.mode = "stage";
+      explorePrimaryState.selectedStage = stageLabel;
+      explorePrimaryState.selectedPathway = "";
       state.filters.stage = stageLabel;
       state.filters.pathway = "";
-      state.lastPrimaryFilter = "stage";
       applyFilters();
       explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
     };
@@ -1769,12 +1771,17 @@
 
     if (validPage === "explore") {
       const explorePage = pages.get("explore");
-      if (explorePage && explorePage.applyStageFilterByKey) {
-        explorePage.applyStageFilterByKey(state.pendingStageKey);
+      if (explorePage) {
+        const hasPendingPathway = Boolean(state.pendingPathwayKey);
+        const hasPendingStage = Boolean(state.pendingStageKey);
+        if (hasPendingPathway && explorePage.applyPathwayFilterByKey) {
+          explorePage.applyPathwayFilterByKey(state.pendingPathwayKey);
+        } else if (hasPendingStage && explorePage.applyStageFilterByKey) {
+          explorePage.applyStageFilterByKey(state.pendingStageKey);
+        } else if (explorePage.clearPathwayFilter) {
+          explorePage.clearPathwayFilter();
+        }
         state.pendingStageKey = "";
-      }
-      if (explorePage && explorePage.applyPathwayFilterByKey) {
-        explorePage.applyPathwayFilterByKey(state.pendingPathwayKey);
         state.pendingPathwayKey = "";
       }
       if (explorePage && explorePage.focusWorkshopById && state.pendingWorkshopId) {
