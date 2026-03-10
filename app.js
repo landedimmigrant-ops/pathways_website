@@ -47,11 +47,11 @@
       format: "",
       time: ""
     },
-    pendingStage: "",
+    pendingStageKey: "",
     pendingPathwayKey: "",
     pendingWorkshopId: "",
     pendingExploreSearch: "",
-    pendingSupportSearch: "",
+    lastPrimaryFilter: "",
     suppressNextHashChange: false
   };
   const pathwayIdToKey = {
@@ -68,21 +68,31 @@
     return acc;
   }, {});
   const normalizePathwayKey = (value) => String(value || "").trim().toLowerCase().replace(/_/g, "-");
-  const supportAnchorByJourneyId = {
-    "developing-project": "support-developing",
-    "ongoing-project": "support-active",
-    "wrapping-up-project": "support-wrapping"
+  const normalizeStageKey = (value) => String(value || "").trim().toLowerCase().replace(/_/g, "-");
+  const journeyIdToStageKey = {
+    "developing-project": "developing",
+    "ongoing-project": "active",
+    "wrapping-up-project": "finishing"
   };
-
-  const stageKeyToLabel = data.start.journeys.reduce((acc, journey) => {
-    acc[journey.id] = journey.stage || journey.title;
+  const stageLabelByKey = data.start.journeys.reduce((acc, journey) => {
+    const stageLabel = journey.stage || journey.title;
+    const stageKey = journeyIdToStageKey[journey.id] || normalizeStageKey(stageLabel);
+    acc[stageKey] = stageLabel;
+    acc[journey.id] = stageLabel;
+    return acc;
+  }, {});
+  const stageKeyByLabel = Object.keys(stageLabelByKey).reduce((acc, key) => {
+    const label = stageLabelByKey[key];
+    if (label && !acc[label]) {
+      acc[label] = key;
+    }
     return acc;
   }, {});
   // Keep backward compatibility with legacy workshop stage keys from the markdown manifest.
-  stageKeyToLabel["developing-idea"] = "Developing an Idea";
-  stageKeyToLabel["preparing-grant"] = "Developing an Idea";
-  stageKeyToLabel["active-project"] = "Active Research";
-  stageKeyToLabel["concluded-project"] = "Wrapping Up";
+  stageLabelByKey["developing-idea"] = "Developing an Idea";
+  stageLabelByKey["preparing-grant"] = "Developing an Idea";
+  stageLabelByKey["active-project"] = "Active Research";
+  stageLabelByKey["concluded-project"] = "Finishing a Project";
 
   const pathwayKeyToTitle = data.explore.pathways.items.reduce((acc, pathway) => {
     const key = pathwayIdToKey[pathway.id] || pathway.id;
@@ -93,7 +103,6 @@
     acc[pathwayKeyToTitle[key]] = key;
     return acc;
   }, {});
-  const supportAnchorIds = new Set(((data.support && data.support.sections) || []).map((section) => section.id));
   const unitById = (data.units || []).reduce((acc, unit) => {
     acc[unit.id] = unit;
     return acc;
@@ -272,7 +281,7 @@
           unitTags: Array.isArray(entry.unitTags) && entry.unitTags.length
             ? entry.unitTags
             : (data.workshopUnitTags && Array.isArray(data.workshopUnitTags[entry.id]) ? data.workshopUnitTags[entry.id] : []),
-          stage: (entry.stages || []).map((stage) => stageKeyToLabel[stage] || stage),
+          stage: (entry.stages || []).map((stage) => stageLabelByKey[stage] || stageLabelByKey[normalizeStageKey(stage)] || stage),
           pathway: (entry.pathways || []).map((pathway) => pathwayKeyToTitle[pathway] || pathway)
         };
       }));
@@ -317,13 +326,13 @@
     const navItems = data.navigation
       .map((item) => (item.id === "start" ? { id: "home", label: "Home" } : item))
       .filter((item, index, list) => list.findIndex((entry) => entry.id === item.id) === index)
-      .filter((item) => ["home", "support", "explore", "learn", "about", "stories"].includes(item.id))
+      .filter((item) => ["home", "explore", "learn", "about", "stories"].includes(item.id))
       .filter((item) => STORIES_ENABLED || item.id !== "stories");
 
     navItems.forEach((item) => {
       const li = el("li");
       const link = el("a", "nav-link", item.label);
-      link.href = item.id === "explore" ? "#opportunities" : `#${item.id}`;
+      link.href = `#${item.id}`;
       link.dataset.page = item.id;
       link.addEventListener("click", (event) => {
         event.preventDefault();
@@ -344,11 +353,11 @@
   const buildFooter = () => {
     routeFooter = el("footer", "route-footer");
     const container = el("div", "container");
-    const link = el("a", "route-footer-link", "Lost? Start with your research stage →");
-    link.href = "#start";
+    const link = el("a", "route-footer-link", "Lost? Tell us what you need →");
+    link.href = "#about";
     link.addEventListener("click", (event) => {
       event.preventDefault();
-      navigateTo("start");
+      navigateTo("about", "contact-form");
     });
     container.appendChild(link);
     routeFooter.appendChild(container);
@@ -405,11 +414,15 @@
     const cardGrid = el("div", "journey-grid");
     data.home.hero.cards.forEach((card) => {
       const cardLink = el("a", "journey-card");
-      const supportAnchor = supportAnchorByJourneyId[card.id];
-      cardLink.href = supportAnchor ? `#${supportAnchor}` : "#support";
+      const stageKey = journeyIdToStageKey[card.id] || normalizeStageKey(card.title);
+      cardLink.href = `#explore?stage=${encodeURIComponent(stageKey)}`;
       cardLink.dataset.journey = card.id;
       cardLink.appendChild(el("h3", null, card.title));
       cardLink.appendChild(el("p", "card-text", card.description));
+      cardLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        navigateTo("explore", "", { stage: stageKey });
+      });
       cardGrid.appendChild(cardLink);
     });
     stageSection.appendChild(cardGrid);
@@ -494,13 +507,13 @@
     });
 
     popular.appendChild(popularGrid);
-    const exploreOpportunitiesButton = el("a", "btn btn-ghost-burgundy btn-small", "Explore Opportunities →");
-    exploreOpportunitiesButton.href = "#opportunities";
-    exploreOpportunitiesButton.addEventListener("click", (event) => {
+    const exploreButton = el("a", "btn btn-ghost-burgundy btn-small", "Explore →");
+    exploreButton.href = "#explore";
+    exploreButton.addEventListener("click", (event) => {
       event.preventDefault();
       navigateTo("explore");
     });
-    popular.appendChild(exploreOpportunitiesButton);
+    popular.appendChild(exploreButton);
     container.appendChild(popular);
     section.appendChild(container);
     return section;
@@ -936,6 +949,70 @@
         });
         contactSection.appendChild(list);
       }
+
+      const contactForm = el("form", "contact-form");
+      contactForm.id = "contact-form";
+      contactForm.noValidate = true;
+
+      const stageField = el("div", "contact-form-field");
+      const stageLabel = el("label", null, "Where are you in your project?");
+      const stageSelect = el("select");
+      stageSelect.name = "projectStage";
+      stageSelect.required = true;
+      [
+        { value: "", label: "Select a stage" },
+        { value: "developing", label: "Developing an Idea" },
+        { value: "active", label: "Active Research" },
+        { value: "finishing", label: "Finishing a Project" }
+      ].forEach((optionValue) => {
+        const option = el("option", null, optionValue.label);
+        option.value = optionValue.value;
+        stageSelect.appendChild(option);
+      });
+      stageField.appendChild(stageLabel);
+      stageField.appendChild(stageSelect);
+      contactForm.appendChild(stageField);
+
+      const needsField = el("div", "contact-form-field");
+      const needsLabel = el("label", null, "Tell us what support you need");
+      const needsInput = el("textarea");
+      needsInput.name = "needs";
+      needsInput.rows = 5;
+      needsInput.required = true;
+      needsInput.placeholder = "Briefly describe your needs.";
+      needsField.appendChild(needsLabel);
+      needsField.appendChild(needsInput);
+      contactForm.appendChild(needsField);
+
+      const emailField = el("div", "contact-form-field");
+      const emailLabel = el("label", null, "Best email for follow-up");
+      const emailInput = el("input");
+      emailInput.type = "email";
+      emailInput.name = "email";
+      emailInput.required = true;
+      emailInput.placeholder = "name@university.ca";
+      emailField.appendChild(emailLabel);
+      emailField.appendChild(emailInput);
+      contactForm.appendChild(emailField);
+
+      const actions = el("div", "contact-form-actions");
+      const submitButton = el("button", "btn primary", "Send request");
+      submitButton.type = "submit";
+      actions.appendChild(submitButton);
+      contactForm.appendChild(actions);
+
+      const followUpNote = el("p", "contact-form-note", "We will follow up as soon as possible.");
+      contactForm.appendChild(followUpNote);
+
+      const confirmation = el("p", "contact-form-confirmation is-hidden", "Thanks. Your request was received. We will follow up ASAP.");
+      contactForm.appendChild(confirmation);
+
+      contactForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        confirmation.classList.remove("is-hidden");
+      });
+
+      contactSection.appendChild(contactForm);
       grid.appendChild(contactSection);
     }
 
@@ -1091,6 +1168,20 @@
       acc[key] = item;
       return acc;
     }, {});
+    const stageContextByKey = {
+      developing: {
+        title: "Developing an Idea",
+        description: "This stage supports early project development, including shaping research questions, identifying collaborators, planning impact, and preparing funding applications."
+      },
+      active: {
+        title: "Active Research",
+        description: "This stage supports researchers managing an ongoing project, including knowledge sharing, partnerships, outputs, and decisions about how research will create impact in practice."
+      },
+      finishing: {
+        title: "Finishing a Project",
+        description: "This stage supports researchers preparing final outputs, sharing results, strengthening visibility, and considering next steps beyond the project."
+      }
+    };
 
     const controls = el("div", "explore-controls");
 
@@ -1114,7 +1205,7 @@
     const filterGrid = el("div", "filter-grid");
 
     data.explore.filters.forEach((filter) => {
-      if (filter.id === "pathway") {
+      if (filter.id === "pathway" || filter.id === "stage") {
         return;
       }
       const control = el("div", "filter-control");
@@ -1179,6 +1270,34 @@
       pathwayTabs.appendChild(tab);
     });
     explorerSection.appendChild(pathwayTabs);
+
+    const stageTabs = el("div", "stage-tabs");
+    const stageTabButtons = new Map();
+    data.start.journeys.forEach((journey) => {
+      const stageLabel = journey.stage || journey.title;
+      const stageKey = journeyIdToStageKey[journey.id] || normalizeStageKey(stageLabel);
+      const tab = el("button", "stage-tab", stageLabel);
+      tab.type = "button";
+      tab.dataset.stage = stageKey;
+      tab.setAttribute("aria-pressed", "false");
+      tab.addEventListener("click", () => {
+        if (state.filters.stage === stageLabel) {
+          clearStageFilter();
+          return;
+        }
+        applyStageFilterByKey(stageKey);
+      });
+      stageTabButtons.set(stageKey, tab);
+      stageTabs.appendChild(tab);
+    });
+    const stageTabsIntro = el(
+      "p",
+      "card-text stage-filters-label",
+      "Find guidance and support based on where you are in your research journey."
+    );
+    explorerSection.appendChild(stageTabsIntro);
+    explorerSection.appendChild(stageTabs);
+
     const pathwayContext = el("section", "pathway-context is-hidden");
     const pathwayContextTop = el("div", "pathway-context-top");
     const pathwayContextTitle = el("h2", "section-title");
@@ -1203,6 +1322,20 @@
     pathwayContext.appendChild(pathwayContextBottom);
     pathwayContext.appendChild(clearPathwayButton);
     explorerSection.appendChild(pathwayContext);
+
+    const stageContext = el("section", "stage-context is-hidden");
+    const stageContextTitle = el("h2", "section-title");
+    const stageContextBody = el("p", "card-text");
+    const clearStageButton = el("button", "btn btn-small stage-context-clear", "Clear stage filter");
+    clearStageButton.type = "button";
+    clearStageButton.addEventListener("click", () => {
+      clearStageFilter();
+    });
+    stageContext.appendChild(stageContextTitle);
+    stageContext.appendChild(stageContextBody);
+    stageContext.appendChild(clearStageButton);
+    explorerSection.appendChild(stageContext);
+
     explorerSection.appendChild(el("p", "lead", data.explore.intro));
     explorerSection.appendChild(controls);
 
@@ -1223,18 +1356,16 @@
     const updatePathwayContext = () => {
       const selectedTitle = state.filters.pathway;
       if (!selectedTitle) {
-        pathwayContext.classList.add("is-hidden");
         pathwayContext.style.removeProperty("--pathway-accent");
         pathwayContext.style.removeProperty("--pathway-foreground");
-        return;
+        return false;
       }
       const selectedKey = normalizePathwayKey(pathwayTitleToKey[selectedTitle] || selectedTitle);
       const contextPathway = pathwayContextByKey[selectedKey];
       if (!contextPathway) {
-        pathwayContext.classList.add("is-hidden");
         pathwayContext.style.removeProperty("--pathway-accent");
         pathwayContext.style.removeProperty("--pathway-foreground");
-        return;
+        return false;
       }
       pathwayContextTitle.textContent = contextPathway.title;
       pathwayContextSummary.textContent = contextPathway.summary;
@@ -1259,7 +1390,41 @@
 
       pathwayContext.style.setProperty("--pathway-accent", pathwayAccentByKey[selectedKey] || "#912338");
       pathwayContext.style.setProperty("--pathway-foreground", pathwayTextByKey[selectedKey] || "#ffffff");
-      pathwayContext.classList.remove("is-hidden");
+      return true;
+    };
+
+    const updateStageContext = () => {
+      const selectedStageLabel = state.filters.stage;
+      if (!selectedStageLabel) {
+        return false;
+      }
+      const selectedStageKey = normalizeStageKey(stageKeyByLabel[selectedStageLabel] || selectedStageLabel);
+      const contextStage = stageContextByKey[selectedStageKey];
+      if (!contextStage) {
+        return false;
+      }
+      stageContextTitle.textContent = contextStage.title;
+      stageContextBody.textContent = contextStage.description;
+      return true;
+    };
+
+    const updatePrimaryContext = () => {
+      const hasPathwayFilter = Boolean(state.filters.pathway);
+      const hasStageFilter = Boolean(state.filters.stage);
+      const hasPathwayContext = updatePathwayContext();
+      const hasStageContext = updateStageContext();
+
+      let visibleContext = "";
+      if (hasPathwayFilter && hasStageFilter) {
+        visibleContext = state.lastPrimaryFilter === "stage" ? "stage" : "pathway";
+      } else if (hasPathwayFilter) {
+        visibleContext = "pathway";
+      } else if (hasStageFilter) {
+        visibleContext = "stage";
+      }
+
+      pathwayContext.classList.toggle("is-hidden", !(visibleContext === "pathway" && hasPathwayContext));
+      stageContext.classList.toggle("is-hidden", !(visibleContext === "stage" && hasStageContext));
     };
 
     const updatePathwayTabs = () => {
@@ -1272,16 +1437,65 @@
       });
     };
 
+    const updateStageTabs = () => {
+      const selectedStageLabel = state.filters.stage;
+      const selectedStageKey = normalizeStageKey(stageKeyByLabel[selectedStageLabel] || selectedStageLabel);
+      stageTabButtons.forEach((tab, key) => {
+        const isActive = Boolean(selectedStageLabel) && key === selectedStageKey;
+        tab.classList.toggle("is-active", isActive);
+        tab.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    };
+
     const clearPathwayFilter = () => {
       state.filters.pathway = "";
+      state.lastPrimaryFilter = state.filters.stage ? "stage" : "";
+      applyFilters();
+    };
+
+    const clearStageFilter = () => {
+      state.filters.stage = "";
+      state.lastPrimaryFilter = state.filters.pathway ? "pathway" : "";
       applyFilters();
     };
 
     const applyPathwayFilter = (pathwayTitle) => {
       state.filters.pathway = pathwayTitle || "";
+      if (pathwayTitle) {
+        state.filters.stage = "";
+      }
+      state.lastPrimaryFilter = pathwayTitle ? "pathway" : (state.filters.stage ? "stage" : "");
       applyFilters();
       if (pathwayTitle) {
         explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    const applyStageFilter = (stage) => {
+      const stageKey = normalizeStageKey(stage);
+      const stageLabel = stageLabelByKey[stageKey] || stage || "";
+      if (!stageLabel) {
+        clearStageFilter();
+        return;
+      }
+      state.filters.stage = stageLabel;
+      state.filters.pathway = "";
+      state.lastPrimaryFilter = "stage";
+      applyFilters();
+      explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    const applyStageFilterByKey = (stageKey) => {
+      const normalizedKey = normalizeStageKey(stageKey);
+      if (!normalizedKey) {
+        clearStageFilter();
+        return;
+      }
+      const stageLabel = stageLabelByKey[normalizedKey];
+      if (stageLabel) {
+        applyStageFilter(stageLabel);
+      } else {
+        clearStageFilter();
       }
     };
 
@@ -1388,8 +1602,9 @@
       });
 
       updateResults(filtered);
-      updatePathwayContext();
+      updatePrimaryContext();
       updatePathwayTabs();
+      updateStageTabs();
     };
 
     const openModal = (opp) => {
@@ -1459,16 +1674,6 @@
       modalRoot.appendChild(overlay);
     };
 
-    const applyStageFilter = (stage) => {
-      const control = filterControls.get("stage");
-      if (control) {
-        control.value = stage;
-        state.filters.stage = stage;
-        applyFilters();
-        control.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    };
-
     const applyPathwayFilterByKey = (pathwayKey) => {
       const pathwayTitle = pathwayKeyToTitle[normalizePathwayKey(pathwayKey)];
       if (pathwayTitle) {
@@ -1498,7 +1703,9 @@
     applyFilters();
 
     section.applyStageFilter = applyStageFilter;
+    section.applyStageFilterByKey = applyStageFilterByKey;
     section.applyPathwayFilterByKey = applyPathwayFilterByKey;
+    section.clearStageFilter = clearStageFilter;
     section.clearPathwayFilter = clearPathwayFilter;
     section.focusWorkshopById = focusWorkshopById;
     section.applySearchTerm = applySearchTerm;
@@ -1508,7 +1715,6 @@
   const buildPages = () => {
     const homePage = buildHome();
     const startPage = buildStart();
-    const supportPage = buildSupport();
     const learnPage = buildLearn();
     const pathwaysVisionPage = buildPathwaysVision();
     const explorePage = buildExplore();
@@ -1517,7 +1723,6 @@
 
     pages.set("home", homePage);
     pages.set("start", startPage);
-    pages.set("support", supportPage);
     pages.set("learn", learnPage);
     pages.set("pathways-vision", pathwaysVisionPage);
     pages.set("explore", explorePage);
@@ -1528,7 +1733,6 @@
 
     appRoot.appendChild(homePage);
     appRoot.appendChild(startPage);
-    appRoot.appendChild(supportPage);
     appRoot.appendChild(learnPage);
     appRoot.appendChild(pathwaysVisionPage);
     appRoot.appendChild(explorePage);
@@ -1565,9 +1769,9 @@
 
     if (validPage === "explore") {
       const explorePage = pages.get("explore");
-      if (explorePage && explorePage.applyStageFilter && state.pendingStage) {
-        explorePage.applyStageFilter(state.pendingStage);
-        state.pendingStage = "";
+      if (explorePage && explorePage.applyStageFilterByKey) {
+        explorePage.applyStageFilterByKey(state.pendingStageKey);
+        state.pendingStageKey = "";
       }
       if (explorePage && explorePage.applyPathwayFilterByKey) {
         explorePage.applyPathwayFilterByKey(state.pendingPathwayKey);
@@ -1581,14 +1785,6 @@
         explorePage.applySearchTerm(state.pendingExploreSearch);
       }
       state.pendingExploreSearch = "";
-    }
-
-    if (validPage === "support") {
-      const supportPage = pages.get("support");
-      if (supportPage && supportPage.applySearchTerm) {
-        supportPage.applySearchTerm(state.pendingSupportSearch);
-      }
-      state.pendingSupportSearch = "";
     }
 
     if (anchorId) {
@@ -1607,7 +1803,7 @@
   const pageToHash = (pageId) => {
     const validPage = pages.has(pageId) ? pageId : "home";
     if (validPage === "home") return "#home";
-    if (validPage === "explore") return "#opportunities";
+    if (validPage === "explore") return "#explore";
     return `#${validPage}`;
   };
 
@@ -1616,6 +1812,9 @@
     const query = new URLSearchParams();
     if (options.pathway) {
       query.set("pathway", options.pathway);
+    }
+    if (options.stage) {
+      query.set("stage", options.stage);
     }
     if (options.workshop) {
       query.set("workshop", options.workshop);
@@ -1626,18 +1825,17 @@
         query.set("q", q);
       }
     }
-    if (validPage === "support" && options.supportSearch) {
-      query.set("q", options.supportSearch);
-    }
     const queryString = query.toString();
     const nextHash = `${pageToHash(validPage)}${queryString ? `?${queryString}` : ""}`;
     const sameHash = window.location.hash === nextHash;
     state.pendingPathwayKey = validPage === "explore"
       ? normalizePathwayKey(options.pathway)
       : "";
+    state.pendingStageKey = validPage === "explore"
+      ? normalizeStageKey(options.stage)
+      : "";
     state.pendingWorkshopId = validPage === "explore" ? (options.workshop || "") : "";
     state.pendingExploreSearch = validPage === "explore" ? (options.searchQuery || "") : "";
-    state.pendingSupportSearch = validPage === "support" ? (options.supportSearch || "") : "";
 
     showPage(validPage, anchorId);
 
@@ -1652,7 +1850,7 @@
     if (explorePage && explorePage.applyStageFilter) {
       explorePage.applyStageFilter(stage);
     } else {
-      state.pendingStage = stage;
+      state.pendingStageKey = normalizeStageKey(stageKeyByLabel[stage] || stage);
     }
   };
 
@@ -1660,9 +1858,6 @@
     const raw = (hashValue || "").replace("#", "");
     if (!raw) {
       return { page: "home", params: new URLSearchParams(), anchorId: "" };
-    }
-    if (supportAnchorIds.has(raw)) {
-      return { page: "support", params: new URLSearchParams(), anchorId: raw };
     }
     const [pagePart, queryPart = ""] = raw.split("?");
     const normalizedPagePart = pagePart === "opportunities" ? "explore" : pagePart;
@@ -1679,14 +1874,14 @@
 
     const initialRoute = parseRouteFromHash(window.location.hash);
     if (initialRoute.page === "explore") {
+      state.pendingStageKey = normalizeStageKey(initialRoute.params.get("stage"));
+    }
+    if (initialRoute.page === "explore") {
       state.pendingPathwayKey = normalizePathwayKey(initialRoute.params.get("pathway"));
     }
     if (initialRoute.page === "explore") {
       state.pendingWorkshopId = initialRoute.params.get("workshop") || "";
       state.pendingExploreSearch = initialRoute.params.get("q") || "";
-    }
-    if (initialRoute.page === "support") {
-      state.pendingSupportSearch = initialRoute.params.get("q") || "";
     }
     showPage(initialRoute.page, initialRoute.anchorId);
 
@@ -1696,6 +1891,9 @@
         return;
       }
       const nextRoute = parseRouteFromHash(window.location.hash);
+      state.pendingStageKey = nextRoute.page === "explore"
+        ? normalizeStageKey(nextRoute.params.get("stage"))
+        : "";
       state.pendingPathwayKey = nextRoute.page === "explore"
         ? normalizePathwayKey(nextRoute.params.get("pathway"))
         : "";
@@ -1703,9 +1901,6 @@
         ? (nextRoute.params.get("workshop") || "")
         : "";
       state.pendingExploreSearch = nextRoute.page === "explore"
-        ? (nextRoute.params.get("q") || "")
-        : "";
-      state.pendingSupportSearch = nextRoute.page === "support"
         ? (nextRoute.params.get("q") || "")
         : "";
       showPage(nextRoute.page, nextRoute.anchorId);
