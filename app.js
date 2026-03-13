@@ -375,13 +375,25 @@
         return;
       }
       const paragraph = el("p", "lead");
-      const segments = line.split("\n");
-      segments.forEach((segment, index) => {
-        paragraph.appendChild(document.createTextNode(segment));
-        if (index < segments.length - 1) {
-          paragraph.appendChild(document.createElement("br"));
-        }
-      });
+      if (line === "If you are new to research impact, start with the Learn section.") {
+        paragraph.appendChild(document.createTextNode("If you are new to research impact, start with the "));
+        const learnLink = el("a", null, "Learn");
+        learnLink.href = "#learn";
+        learnLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          navigateTo("learn");
+        });
+        paragraph.appendChild(learnLink);
+        paragraph.appendChild(document.createTextNode(" section."));
+      } else {
+        const segments = line.split("\n");
+        segments.forEach((segment, index) => {
+          paragraph.appendChild(document.createTextNode(segment));
+          if (index < segments.length - 1) {
+            paragraph.appendChild(document.createElement("br"));
+          }
+        });
+      }
       introBlock.appendChild(paragraph);
     });
 
