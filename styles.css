@@ -566,6 +566,26 @@ label {
   gap: 20px;
 }
 
+.learn-impact {
+  order: 1;
+}
+
+.learn-impact-planner {
+  order: 2;
+}
+
+.learn-myths {
+  order: 3;
+}
+
+.learn-topics {
+  order: 4;
+}
+
+.learn-resources {
+  order: 5;
+}
+
 .myths {
   display: grid;
   gap: 12px;
@@ -573,7 +593,34 @@ label {
 
 .myth-card {
   border: 1px solid var(--border);
+  background: #f8f8f8;
+  transition: background-color 0.2s ease;
+}
+
+.myth-card:hover,
+.myth-card[open] {
+  background: #ffffff;
+}
+
+.myth-summary {
+  list-style: none;
+  cursor: pointer;
   padding: 14px;
+}
+
+.myth-summary::-webkit-details-marker {
+  display: none;
+}
+
+.myth-summary .myth-line {
+  margin-bottom: 0;
+}
+
+.myth-body {
+  border-top: 1px solid var(--border);
+  padding: 12px 14px 14px;
+  display: grid;
+  gap: 8px;
 }
 
 .myth-line {
@@ -615,6 +662,192 @@ label {
   display: grid;
   gap: 6px;
   margin-top: 10px;
+}
+
+.learn-impact-planner {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.impact-planner-shell {
+  display: grid;
+  gap: 16px;
+}
+
+.impact-planner-entry.is-hidden,
+.impact-planner-workflow.is-hidden,
+.impact-planner-summary.is-hidden {
+  display: none;
+}
+
+.impact-planner-card {
+  border: 1px solid var(--border);
+  background: #f8f8f8;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.impact-planner-question {
+  margin: 0;
+}
+
+.impact-stage-list {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 4px;
+}
+
+.impact-step-progress {
+  display: grid;
+  gap: 8px;
+}
+
+.impact-step-counter {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.impact-progress-track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.impact-progress-step {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: #ffffff;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.impact-progress-step.is-complete {
+  background: #912338;
+  border-color: #912338;
+  color: #ffffff;
+}
+
+.impact-progress-step.is-active {
+  border-color: #912338;
+  box-shadow: inset 0 0 0 1px #912338;
+}
+
+.impact-step-body {
+  display: grid;
+  gap: 12px;
+}
+
+.impact-field {
+  display: grid;
+  gap: 6px;
+}
+
+.impact-textarea,
+.impact-input,
+.impact-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+  background: #ffffff;
+}
+
+.impact-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.impact-helper-title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.96rem;
+}
+
+.impact-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.impact-preview {
+  border: 1px solid var(--border);
+  background: #ffffff;
+  padding: 12px;
+}
+
+.impact-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.impact-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  padding: 8px 10px;
+  font-size: 0.92rem;
+}
+
+.impact-chip input {
+  margin-top: 3px;
+}
+
+.impact-examples {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.impact-example-group {
+  border: 1px solid var(--border);
+  background: #ffffff;
+  padding: 10px 12px;
+}
+
+.impact-example-group .simple-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.impact-planner-nav,
+.impact-planner-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.impact-summary-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.impact-summary-block {
+  border: 1px solid var(--border);
+  background: #ffffff;
+  padding: 10px 12px;
+}
+
+.impact-summary-block h4 {
+  margin-bottom: 8px;
+}
+
+.impact-summary-block .card-text {
+  margin: 0 0 6px;
 }
 
 .pathways-section {
@@ -1617,6 +1850,11 @@ label {
   }
 
   .opportunity-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .impact-chip-grid,
+  .impact-examples {
     grid-template-columns: 1fr;
   }
 }

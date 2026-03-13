@@ -736,15 +736,24 @@
     myths.appendChild(el("h2", "section-title", data.learn.myths.title));
     const mythsWrap = el("div", "myths");
     data.learn.myths.items.forEach((item) => {
-      const card = el("div", "myth-card");
+      const card = el("details", "myth-card");
+      const summary = el("summary", "myth-summary");
       const mythLine = el("div", "myth-line");
       mythLine.appendChild(el("span", "line-label", data.learn.myths.labels.myth));
       mythLine.appendChild(el("span", null, item.myth));
+      summary.appendChild(mythLine);
+      card.appendChild(summary);
+
+      const body = el("div", "myth-body");
+      const mythBreakdown = el("div", "myth-line");
+      mythBreakdown.appendChild(el("span", "line-label", data.learn.myths.labels.myth));
+      mythBreakdown.appendChild(el("span", null, item.myth));
       const realityLine = el("div", "myth-line");
       realityLine.appendChild(el("span", "line-label", data.learn.myths.labels.reality));
       realityLine.appendChild(el("span", null, item.reality));
-      card.appendChild(mythLine);
-      card.appendChild(realityLine);
+      body.appendChild(mythBreakdown);
+      body.appendChild(realityLine);
+      card.appendChild(body);
       mythsWrap.appendChild(card);
     });
     myths.appendChild(mythsWrap);
@@ -795,6 +804,465 @@
     }
 
     container.appendChild(grid);
+
+    if (data.learn.impactPlanning) {
+      const planner = data.learn.impactPlanning;
+      const plannerSection = el("section", "learn-impact-planner");
+      plannerSection.appendChild(el("h2", "section-title", planner.title));
+      if (planner.subtitle) {
+        plannerSection.appendChild(el("p", "card-text", planner.subtitle));
+      }
+
+      const plannerState = {
+        started: false,
+        stepIndex: 0,
+        showSummary: false,
+        values: {
+          change: "",
+          outcome1: "",
+          outcome2: "",
+          outcome3: "",
+          outputTypes: [],
+          otherOutputType: "",
+          outputsText: "",
+          outputConnection: "",
+          pathwaySelections: [],
+          pathwayReflection: "",
+          indicator1: "",
+          indicator2: ""
+        }
+      };
+
+      const plannerShell = el("div", "impact-planner-shell");
+      const entryPanel = el("div", "impact-planner-entry");
+      const workflowPanel = el("div", "impact-planner-workflow is-hidden");
+      const summaryPanel = el("div", "impact-planner-summary is-hidden");
+      plannerShell.appendChild(entryPanel);
+      plannerShell.appendChild(workflowPanel);
+      plannerShell.appendChild(summaryPanel);
+      plannerSection.appendChild(plannerShell);
+
+      const escapeTextForExport = (value) => String(value || "").trim() || "—";
+
+      const buildSummaryText = () => {
+        const lines = [];
+        lines.push(planner.summary.title);
+        lines.push("");
+        lines.push(`${planner.stages[0].title}`);
+        lines.push(escapeTextForExport(plannerState.values.change));
+        lines.push("");
+        lines.push(`${planner.stages[1].title}`);
+        lines.push(`Outcome 1: ${escapeTextForExport(plannerState.values.outcome1)}`);
+        lines.push(`Outcome 2: ${escapeTextForExport(plannerState.values.outcome2)}`);
+        lines.push(`Outcome 3: ${escapeTextForExport(plannerState.values.outcome3)}`);
+        lines.push("");
+        lines.push(`${planner.stages[2].title}`);
+        lines.push(`Output types: ${plannerState.values.outputTypes.length ? plannerState.values.outputTypes.join(", ") : "—"}`);
+        if (plannerState.values.outputTypes.includes("Other")) {
+          lines.push(`Other output type: ${escapeTextForExport(plannerState.values.otherOutputType)}`);
+        }
+        lines.push(`Main outputs: ${escapeTextForExport(plannerState.values.outputsText)}`);
+        lines.push(`Output connection: ${escapeTextForExport(plannerState.values.outputConnection)}`);
+        lines.push("");
+        lines.push(`${planner.stages[3].title}`);
+        lines.push(`Selected pathways: ${plannerState.values.pathwaySelections.length ? plannerState.values.pathwaySelections.join(", ") : "—"}`);
+        lines.push(`Reflection: ${escapeTextForExport(plannerState.values.pathwayReflection)}`);
+        lines.push("");
+        lines.push(`${planner.stages[4].title}`);
+        lines.push(`Indicator 1: ${escapeTextForExport(plannerState.values.indicator1)}`);
+        lines.push(`Indicator 2: ${escapeTextForExport(plannerState.values.indicator2)}`);
+        return lines.join("\n");
+      };
+
+      const renderSummary = () => {
+        clear(summaryPanel);
+        const card = el("div", "impact-planner-card");
+        card.appendChild(el("h3", null, planner.summary.title));
+        if (planner.summary.intro) {
+          card.appendChild(el("p", "card-text", planner.summary.intro));
+        }
+
+        const summaryGrid = el("div", "impact-summary-grid");
+        const addSummaryBlock = (title, bodyNodes) => {
+          const block = el("section", "impact-summary-block");
+          block.appendChild(el("h4", null, title));
+          bodyNodes.forEach((node) => block.appendChild(node));
+          summaryGrid.appendChild(block);
+        };
+
+        addSummaryBlock(planner.stages[0].title, [el("p", "card-text", escapeTextForExport(plannerState.values.change))]);
+
+        addSummaryBlock(planner.stages[1].title, [
+          el("p", "card-text", `Outcome 1: ${escapeTextForExport(plannerState.values.outcome1)}`),
+          el("p", "card-text", `Outcome 2: ${escapeTextForExport(plannerState.values.outcome2)}`),
+          el("p", "card-text", `Outcome 3: ${escapeTextForExport(plannerState.values.outcome3)}`)
+        ]);
+
+        const outputTypesText = plannerState.values.outputTypes.length ? plannerState.values.outputTypes.join(", ") : "—";
+        const outputNodes = [
+          el("p", "card-text", `Output types: ${outputTypesText}`),
+          el("p", "card-text", `Main outputs: ${escapeTextForExport(plannerState.values.outputsText)}`),
+          el("p", "card-text", `Output connection: ${escapeTextForExport(plannerState.values.outputConnection)}`)
+        ];
+        if (plannerState.values.outputTypes.includes("Other")) {
+          outputNodes.splice(1, 0, el("p", "card-text", `Other output type: ${escapeTextForExport(plannerState.values.otherOutputType)}`));
+        }
+        addSummaryBlock(planner.stages[2].title, outputNodes);
+
+        const pathwayText = plannerState.values.pathwaySelections.length
+          ? plannerState.values.pathwaySelections.join(", ")
+          : "—";
+        addSummaryBlock(planner.stages[3].title, [
+          el("p", "card-text", `Selected pathways: ${pathwayText}`),
+          el("p", "card-text", `Reflection: ${escapeTextForExport(plannerState.values.pathwayReflection)}`)
+        ]);
+
+        addSummaryBlock(planner.stages[4].title, [
+          el("p", "card-text", `Indicator 1: ${escapeTextForExport(plannerState.values.indicator1)}`),
+          el("p", "card-text", `Indicator 2: ${escapeTextForExport(plannerState.values.indicator2)}`)
+        ]);
+
+        card.appendChild(summaryGrid);
+
+        const actions = el("div", "impact-planner-actions");
+        const downloadButton = el("button", "btn", planner.labels.download);
+        downloadButton.type = "button";
+        downloadButton.addEventListener("click", () => {
+          const blob = new Blob([buildSummaryText()], { type: "text/plain;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement("a");
+          anchor.href = url;
+          anchor.download = "impact-planning-summary.txt";
+          anchor.click();
+          URL.revokeObjectURL(url);
+        });
+        actions.appendChild(downloadButton);
+
+        const copyButton = el("button", "btn", planner.labels.copy);
+        copyButton.type = "button";
+        copyButton.addEventListener("click", async () => {
+          const summaryText = buildSummaryText();
+          try {
+            await navigator.clipboard.writeText(summaryText);
+            copyButton.textContent = "Copied";
+            window.setTimeout(() => {
+              copyButton.textContent = planner.labels.copy;
+            }, 1500);
+          } catch (_error) {
+            copyButton.textContent = "Copy unavailable";
+            window.setTimeout(() => {
+              copyButton.textContent = planner.labels.copy;
+            }, 1500);
+          }
+        });
+        actions.appendChild(copyButton);
+
+        const consultLink = el("a", "btn primary", planner.labels.consult);
+        consultLink.href = "#about";
+        consultLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          navigateTo("about", "contact-form");
+        });
+        actions.appendChild(consultLink);
+
+        const backButton = el("button", "btn btn-ghost", "Back to module");
+        backButton.type = "button";
+        backButton.addEventListener("click", () => {
+          plannerState.showSummary = false;
+          renderPlanner();
+        });
+        actions.appendChild(backButton);
+
+        const resetButton = el("button", "btn btn-ghost", planner.labels.reset);
+        resetButton.type = "button";
+        resetButton.addEventListener("click", () => {
+          plannerState.started = false;
+          plannerState.stepIndex = 0;
+          plannerState.showSummary = false;
+          plannerState.values = {
+            change: "",
+            outcome1: "",
+            outcome2: "",
+            outcome3: "",
+            outputTypes: [],
+            otherOutputType: "",
+            outputsText: "",
+            outputConnection: "",
+            pathwaySelections: [],
+            pathwayReflection: "",
+            indicator1: "",
+            indicator2: ""
+          };
+          renderPlanner();
+        });
+        actions.appendChild(resetButton);
+
+        card.appendChild(actions);
+        summaryPanel.appendChild(card);
+      };
+
+      const renderPlanner = () => {
+        entryPanel.classList.toggle("is-hidden", plannerState.started);
+        workflowPanel.classList.toggle("is-hidden", !plannerState.started || plannerState.showSummary);
+        summaryPanel.classList.toggle("is-hidden", !plannerState.showSummary);
+
+        clear(entryPanel);
+        clear(workflowPanel);
+
+        const entryCard = el("div", "impact-planner-card");
+        entryCard.appendChild(el("h3", "impact-planner-question", planner.entryQuestion));
+        (planner.entryBody || []).forEach((line) => {
+          entryCard.appendChild(el("p", "card-text", line));
+        });
+        const stageList = el("ol", "impact-stage-list");
+        (planner.stages || []).forEach((stage, index) => {
+          stageList.appendChild(el("li", null, `${index + 1}. ${stage.title}`));
+        });
+        entryCard.appendChild(stageList);
+        const startButton = el("button", "btn primary", planner.labels.start);
+        startButton.type = "button";
+        startButton.addEventListener("click", () => {
+          plannerState.started = true;
+          plannerState.stepIndex = 0;
+          plannerState.showSummary = false;
+          renderPlanner();
+        });
+        entryCard.appendChild(startButton);
+        entryPanel.appendChild(entryCard);
+
+        if (!plannerState.started || plannerState.showSummary) {
+          if (plannerState.showSummary) {
+            renderSummary();
+          }
+          return;
+        }
+
+        const currentStep = planner.stages[plannerState.stepIndex];
+        const promptConfig = planner.prompts[currentStep.id];
+        const card = el("div", "impact-planner-card");
+
+        const progress = el("div", "impact-step-progress");
+        progress.appendChild(
+          el(
+            "p",
+            "impact-step-counter",
+            `${planner.labels.stagePrefix} ${plannerState.stepIndex + 1} ${planner.labels.of} ${planner.stages.length}`
+          )
+        );
+        const progressTrack = el("div", "impact-progress-track");
+        planner.stages.forEach((stage, index) => {
+          const marker = el("button", "impact-progress-step", `${index + 1}`);
+          marker.type = "button";
+          marker.setAttribute("aria-label", stage.title);
+          marker.classList.toggle("is-active", index === plannerState.stepIndex);
+          marker.classList.toggle("is-complete", index < plannerState.stepIndex);
+          marker.addEventListener("click", () => {
+            plannerState.stepIndex = index;
+            renderPlanner();
+          });
+          progressTrack.appendChild(marker);
+        });
+        progress.appendChild(progressTrack);
+        card.appendChild(progress);
+
+        card.appendChild(el("h3", null, currentStep.title));
+        const body = el("div", "impact-step-body");
+
+        const addLabeledTextarea = (labelText, key, placeholder, optional = false) => {
+          const field = el("div", "impact-field");
+          const label = el("label", null, optional ? `${labelText} (${planner.labels.optional})` : labelText);
+          const textarea = el("textarea", "impact-textarea");
+          textarea.value = plannerState.values[key] || "";
+          textarea.placeholder = placeholder || "";
+          textarea.rows = 4;
+          textarea.addEventListener("input", (event) => {
+            plannerState.values[key] = event.target.value;
+          });
+          field.appendChild(label);
+          field.appendChild(textarea);
+          body.appendChild(field);
+        };
+
+        if (currentStep.id === "change") {
+          (promptConfig.intro || []).forEach((line) => {
+            body.appendChild(el("p", "card-text", line));
+          });
+          addLabeledTextarea(promptConfig.fieldLabel, "change", promptConfig.placeholder);
+          if (promptConfig.helperTitle) {
+            body.appendChild(el("p", "impact-helper-title", promptConfig.helperTitle));
+          }
+          if (promptConfig.helperPrompts && promptConfig.helperPrompts.length) {
+            const helperList = el("ul", "simple-list");
+            promptConfig.helperPrompts.forEach((prompt) => helperList.appendChild(el("li", null, prompt)));
+            body.appendChild(helperList);
+          }
+          if (promptConfig.note) {
+            body.appendChild(el("p", "impact-note", promptConfig.note));
+          }
+        }
+
+        if (currentStep.id === "outcomes") {
+          if (plannerState.values.change.trim()) {
+            const changePreview = el("div", "impact-preview");
+            changePreview.appendChild(el("p", "meta-label", "Your change statement"));
+            changePreview.appendChild(el("p", "card-text", plannerState.values.change));
+            body.appendChild(changePreview);
+          }
+          body.appendChild(el("p", "card-text", promptConfig.intro));
+          (promptConfig.fields || []).forEach((fieldConfig, index) => {
+            addLabeledTextarea(fieldConfig.label, fieldConfig.id, fieldConfig.placeholder, index > 0);
+          });
+          if (promptConfig.check) {
+            body.appendChild(el("p", "impact-note", promptConfig.check));
+          }
+        }
+
+        if (currentStep.id === "outputs") {
+          body.appendChild(el("p", "card-text", promptConfig.intro));
+          body.appendChild(el("p", "impact-helper-title", promptConfig.typesLabel));
+          const typeGrid = el("div", "impact-chip-grid");
+          (promptConfig.outputTypes || []).forEach((typeLabel) => {
+            const option = el("label", "impact-chip");
+            const check = el("input");
+            check.type = "checkbox";
+            check.checked = plannerState.values.outputTypes.includes(typeLabel);
+            check.addEventListener("change", (event) => {
+              if (event.target.checked) {
+                plannerState.values.outputTypes = [...plannerState.values.outputTypes, typeLabel];
+              } else {
+                plannerState.values.outputTypes = plannerState.values.outputTypes.filter((entry) => entry !== typeLabel);
+                if (typeLabel === "Other") {
+                  plannerState.values.otherOutputType = "";
+                }
+              }
+              renderPlanner();
+            });
+            option.appendChild(check);
+            option.appendChild(el("span", null, typeLabel));
+            typeGrid.appendChild(option);
+          });
+          body.appendChild(typeGrid);
+          if (plannerState.values.outputTypes.includes("Other")) {
+            const otherField = el("div", "impact-field");
+            otherField.appendChild(el("label", null, promptConfig.otherLabel));
+            const otherInput = el("input", "impact-input");
+            otherInput.type = "text";
+            otherInput.value = plannerState.values.otherOutputType;
+            otherInput.placeholder = "Describe your output type";
+            otherInput.addEventListener("input", (event) => {
+              plannerState.values.otherOutputType = event.target.value;
+            });
+            otherField.appendChild(otherInput);
+            body.appendChild(otherField);
+          }
+          addLabeledTextarea(promptConfig.outputsLabel, "outputsText", promptConfig.outputsPlaceholder);
+
+          const connectionField = el("div", "impact-field");
+          connectionField.appendChild(el("label", null, promptConfig.linkLabel));
+          const select = el("select", "impact-select");
+          const defaultOption = el("option", null, "Select");
+          defaultOption.value = "";
+          select.appendChild(defaultOption);
+          (promptConfig.outputConnectionOptions || []).forEach((choice) => {
+            const option = el("option", null, choice);
+            option.value = choice;
+            select.appendChild(option);
+          });
+          select.value = plannerState.values.outputConnection || "";
+          select.addEventListener("change", (event) => {
+            plannerState.values.outputConnection = event.target.value;
+          });
+          connectionField.appendChild(select);
+          body.appendChild(connectionField);
+        }
+
+        if (currentStep.id === "pathways") {
+          body.appendChild(el("p", "card-text", promptConfig.intro));
+          const pathwayGrid = el("div", "impact-chip-grid");
+          (promptConfig.options || []).forEach((optionLabel) => {
+            const option = el("label", "impact-chip");
+            const check = el("input");
+            check.type = "checkbox";
+            check.checked = plannerState.values.pathwaySelections.includes(optionLabel);
+            check.addEventListener("change", (event) => {
+              if (event.target.checked) {
+                plannerState.values.pathwaySelections = [...plannerState.values.pathwaySelections, optionLabel];
+              } else {
+                plannerState.values.pathwaySelections = plannerState.values.pathwaySelections.filter((entry) => entry !== optionLabel);
+              }
+            });
+            option.appendChild(check);
+            option.appendChild(el("span", null, optionLabel));
+            pathwayGrid.appendChild(option);
+          });
+          body.appendChild(pathwayGrid);
+          addLabeledTextarea(promptConfig.reflectionLabel, "pathwayReflection", promptConfig.reflectionPlaceholder, true);
+        }
+
+        if (currentStep.id === "indicators") {
+          body.appendChild(el("p", "card-text", promptConfig.intro));
+          body.appendChild(el("p", "impact-helper-title", promptConfig.smartTitle));
+          const smartList = el("ul", "simple-list");
+          (promptConfig.smartItems || []).forEach((item) => smartList.appendChild(el("li", null, item)));
+          body.appendChild(smartList);
+          (promptConfig.fields || []).forEach((fieldConfig, index) => {
+            addLabeledTextarea(fieldConfig.label, fieldConfig.id, fieldConfig.placeholder, index > 0);
+          });
+          const examplesWrap = el("div", "impact-examples");
+          const outcomeExamples = el("div", "impact-example-group");
+          outcomeExamples.appendChild(el("p", "impact-helper-title", "Outcome indicator examples"));
+          const outcomeList = el("ul", "simple-list");
+          (promptConfig.examples?.outcome || []).forEach((example) => outcomeList.appendChild(el("li", null, example)));
+          outcomeExamples.appendChild(outcomeList);
+          examplesWrap.appendChild(outcomeExamples);
+
+          const outputExamples = el("div", "impact-example-group");
+          outputExamples.appendChild(el("p", "impact-helper-title", "Output indicator examples"));
+          const outputList = el("ul", "simple-list");
+          (promptConfig.examples?.output || []).forEach((example) => outputList.appendChild(el("li", null, example)));
+          outputExamples.appendChild(outputList);
+          examplesWrap.appendChild(outputExamples);
+          body.appendChild(examplesWrap);
+        }
+
+        card.appendChild(body);
+
+        const nav = el("div", "impact-planner-nav");
+        if (plannerState.stepIndex > 0) {
+          const backButton = el("button", "btn", planner.labels.back);
+          backButton.type = "button";
+          backButton.addEventListener("click", () => {
+            plannerState.stepIndex = Math.max(0, plannerState.stepIndex - 1);
+            renderPlanner();
+          });
+          nav.appendChild(backButton);
+        }
+        const nextButton = el(
+          "button",
+          "btn primary",
+          plannerState.stepIndex === planner.stages.length - 1
+            ? planner.labels.openSummary
+            : `${planner.labels.continue} — ${planner.stages[plannerState.stepIndex + 1].title}`
+        );
+        nextButton.type = "button";
+        nextButton.addEventListener("click", () => {
+          if (plannerState.stepIndex >= planner.stages.length - 1) {
+            plannerState.showSummary = true;
+          } else {
+            plannerState.stepIndex += 1;
+          }
+          renderPlanner();
+        });
+        nav.appendChild(nextButton);
+        card.appendChild(nav);
+
+        workflowPanel.appendChild(card);
+      };
+
+      renderPlanner();
+      grid.appendChild(plannerSection);
+    }
+
     section.appendChild(container);
     return section;
   };

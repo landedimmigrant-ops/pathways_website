@@ -394,6 +394,134 @@ window.PATHWAYS_DATA = {
           forWhat: "Impact planning, knowledge mobilization strategy, and training materials."
         }
       ]
+    },
+    impactPlanning: {
+      title: "Plan Your Impact",
+      subtitle: "An interactive module draft — from change statement to indicators",
+      entryQuestion: "What change do you want your research to contribute to?",
+      entryBody: [
+        "This short planning tool helps you articulate the difference your research can make and connect that vision to concrete, measurable steps.",
+        "You will move through five stages at your own pace. There are no wrong answers."
+      ],
+      stages: [
+        { id: "change", title: "Your Change Statement" },
+        { id: "outcomes", title: "Your Outcomes" },
+        { id: "outputs", title: "Your Outputs" },
+        { id: "pathways", title: "Your Pathway Connection" },
+        { id: "indicators", title: "Your Indicators" }
+      ],
+      labels: {
+        stagePrefix: "Step",
+        of: "of",
+        optional: "optional",
+        continue: "Continue",
+        back: "Back",
+        start: "Begin with your Change Statement",
+        openSummary: "See your Impact Planning Summary",
+        reset: "Reset draft",
+        download: "Download summary",
+        copy: "Copy summary text",
+        consult: "Book a consultation"
+      },
+      prompts: {
+        change: {
+          intro: [
+            "A change statement describes the difference you ultimately want your research to contribute to. It does not need to be perfectly defined.",
+            "It may go beyond the scope of your current project. The bigger picture gives your work direction."
+          ],
+          fieldLabel: "Write your change statement",
+          placeholder: "e.g., I want to contribute to a society where Indigenous youth have equitable access to mental health support in their own communities.",
+          helperTitle: "Try asking yourself",
+          helperPrompts: [
+            "If my research succeeds, what will be different — and for whom?",
+            "What problem am I ultimately trying to help solve?",
+            "Who is my research for, in the largest sense?"
+          ],
+          note: "A good change statement can be ambitious and still humble. You are situating your work within a larger vision of change."
+        },
+        outcomes: {
+          intro: "Outcomes are the real-world changes that would show your research is making a difference. They are what changes for others.",
+          fields: [
+            { id: "outcome1", label: "Outcome 1", placeholder: "Describe the first change you expect to contribute to..." },
+            { id: "outcome2", label: "Outcome 2", placeholder: "Describe a second change (optional)..." },
+            { id: "outcome3", label: "Outcome 3", placeholder: "Add another if relevant (optional)..." }
+          ],
+          check: "Check: Does this describe something that changes for someone else, beyond your control?"
+        },
+        outputs: {
+          intro: "Outputs are the things you directly produce: publications, tools, events, partnerships, datasets, policy briefs, artworks, and more.",
+          typesLabel: "Common output types (select all that apply):",
+          outputTypes: [
+            "Peer-reviewed publications",
+            "Policy briefs / reports",
+            "Workshops or events",
+            "Datasets or tools",
+            "Community partnerships",
+            "Training programs",
+            "Media or communications",
+            "Other"
+          ],
+          otherLabel: "Other output type",
+          outputsLabel: "Describe your main output(s)",
+          outputsPlaceholder: "e.g., A peer-reviewed article and an accompanying plain-language summary for partner organizations.",
+          linkLabel: "Which outcome does this output support most?",
+          outputConnectionOptions: [
+            "Outcome 1",
+            "Outcome 2",
+            "Outcome 3",
+            "Not linked yet"
+          ]
+        },
+        pathways: {
+          intro: "Based on what you have described, select any pathways that feel relevant. It is fine to choose more than one.",
+          options: [
+            "Academic Scholarship",
+            "Community Engagement",
+            "Innovation",
+            "Commercialization",
+            "Policy",
+            "Communications",
+            "Research Creation",
+            "Not sure yet",
+            "None of these fit"
+          ],
+          reflectionLabel: "Why does your research connect to these pathways? (optional)",
+          reflectionPlaceholder: "Describe the connection, or note any tensions or surprises in how your work maps to these pathways."
+        },
+        indicators: {
+          intro: "Indicators help you track whether your research is creating the changes you described. They are for reflection and planning, not compliance.",
+          smartTitle: "SMART check",
+          smartItems: [
+            "Specific — what exactly are you measuring, and why does it matter?",
+            "Measurable — how will you track it? What counts as progress?",
+            "Achievable — is data collection realistic within your scope?",
+            "Relevant — does this indicator reflect your intended change?",
+            "Time-bound — by when will you observe progress?"
+          ],
+          fields: [
+            { id: "indicator1", label: "Indicator for Outcome 1", placeholder: "Describe how you will measure progress for Outcome 1..." },
+            { id: "indicator2", label: "Indicator for Outcome 2", placeholder: "Describe how you will measure progress for Outcome 2 (if applicable)..." }
+          ],
+          examples: {
+            outcome: [
+              "Changes in behavior by your target audience",
+              "Shifts in public or stakeholder attitudes",
+              "Policy or practice changes informed by findings",
+              "New collaborations or networks formed"
+            ],
+            output: [
+              "Number of publications, briefs, or tools created",
+              "Number of events or workshops delivered",
+              "Number of partner organizations reached",
+              "Media references or citations in policy documents"
+            ]
+          }
+        }
+      },
+      summary: {
+        title: "Your Impact Planning Summary",
+        intro: "Here is your impact plan, built from your responses. Use it in grant development, team planning, or consultation sessions."
+      }
     }
   },
   explore: {
