@@ -11,6 +11,18 @@
   const modalRoot = document.getElementById("modal-root");
   let routeFooter = null;
   let contextBar = null;
+  let contextStage = "";
+  let contextPathwayKey = "";
+
+  const pathwayColors = {
+    "academic": "#912338",
+    "community": "#db0272",
+    "innovation": "#da3a16",
+    "commercialization": "#573996",
+    "communications": "#e5a712",
+    "policy": "#0072a8",
+    "research-creation": "#508212"
+  };
 
   document.title = data.meta.title || "";
 
@@ -311,7 +323,7 @@
     const navItems = data.navigation
       .map((item) => (item.id === "start" ? { id: "home", label: "Home" } : item))
       .filter((item, index, list) => list.findIndex((entry) => entry.id === item.id) === index)
-      .filter((item) => ["home", "support", "explore", "learn", "about", "stories"].includes(item.id))
+      .filter((item) => ["home", "start", "support", "explore", "learn", "about", "stories"].includes(item.id))
       .filter((item) => STORIES_ENABLED || item.id !== "stories");
 
     navItems.forEach((item) => {
@@ -358,14 +370,23 @@
 
   const buildFooter = () => {
     routeFooter = el("footer", "route-footer");
-    const container = el("div", "container");
-    const link = el("a", "route-footer-link", "Lost? Start with your research stage →");
-    link.href = "#start";
-    link.addEventListener("click", (event) => {
-      event.preventDefault();
-      navigateTo("start");
+    const container = el("div", "container footer-inner");
+    container.appendChild(el("span", "footer-prompt", "Not sure where to go?"));
+    const footerLinks = el("div", "footer-links");
+    [
+      { label: "Start from my research stage", page: "support" },
+      { label: "Browse all opportunities", page: "explore" },
+      { label: "Contact us", page: "about", anchor: "contact" }
+    ].forEach((item) => {
+      const a = el("a", "footer-link", item.label);
+      a.href = `#${item.page}`;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        navigateTo(item.page, item.anchor || undefined);
+      });
+      footerLinks.appendChild(a);
     });
-    container.appendChild(link);
+    container.appendChild(footerLinks);
     routeFooter.appendChild(container);
     document.body.insertBefore(routeFooter, modalRoot);
   };
@@ -386,6 +407,25 @@
     bar.appendChild(inner);
     siteHeader.insertAdjacentElement("afterend", bar);
     contextBar = bar;
+  };
+
+  const setContextStage = (stageName) => {
+    contextStage = stageName;
+    if (contextBar) {
+      contextBar.querySelector(".context-bar-stage").textContent = stageName;
+      contextBar.hidden = !stageName;
+      contextBar.style.removeProperty("--pathway-thread-color");
+      contextBar.removeAttribute("data-pathway");
+    }
+  };
+
+  const setContextPathway = (pathwayKey) => {
+    contextPathwayKey = pathwayKey;
+    const color = pathwayColors[pathwayKey];
+    if (contextBar && color) {
+      contextBar.style.setProperty("--pathway-thread-color", color);
+      contextBar.setAttribute("data-pathway", pathwayKey);
+    }
   };
 
   const buildHome = () => {
@@ -464,10 +504,7 @@
       const supportAnchor = supportAnchorByJourneyId[stageCard.id];
       stageBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (contextBar) {
-          contextBar.querySelector(".context-bar-stage").textContent = stageCard.title;
-          contextBar.hidden = false;
-        }
+        setContextStage(stageCard.title);
         navigateTo("support", supportAnchor || undefined);
       });
       entryStages.appendChild(stageBtn);
@@ -476,6 +513,16 @@
     entryGrid.appendChild(entryCard3);
 
     entrySection.appendChild(entryGrid);
+
+    // Quick match trigger
+    const quickMatchRow = el("div", "quick-match-row");
+    quickMatchRow.appendChild(el("span", "quick-match-label", "Not sure where to start?"));
+    const quickMatchBtn = el("button", "btn-link quick-match-trigger", "Answer 2 quick questions \u2192");
+    quickMatchBtn.type = "button";
+    quickMatchBtn.addEventListener("click", () => openQuickMatch());
+    quickMatchRow.appendChild(quickMatchBtn);
+    entrySection.appendChild(quickMatchRow);
+
     container.appendChild(entrySection);
     container.appendChild(el("hr", "section-divider"));
 
@@ -498,6 +545,38 @@
       pathwayGrid.appendChild(card);
       pathwayCards.set(pathway.id, card);
     });
+    // === Visual research journey timeline ===
+    const timelineSection = el("section", "journey-timeline-section");
+    const timelineInner = el("div", "journey-timeline");
+    data.home.hero.cards.forEach((card, index) => {
+      const step = el("div", "timeline-step");
+      step.dataset.journey = card.id;
+      const node = el("button", "timeline-node");
+      node.type = "button";
+      node.setAttribute("aria-label", `Go to ${card.title} support`);
+      const num = el("span", "timeline-num", String(index + 1));
+      node.appendChild(num);
+      const label = el("div", "timeline-label");
+      label.appendChild(el("strong", "timeline-title", card.title));
+      label.appendChild(el("span", "timeline-desc", card.description));
+      const supportAnchor = supportAnchorByJourneyId[card.id];
+      node.addEventListener("click", () => {
+        setContextStage(card.title);
+        navigateTo("support", supportAnchor || undefined);
+      });
+      step.appendChild(node);
+      step.appendChild(label);
+      if (index < data.home.hero.cards.length - 1) {
+        timelineInner.appendChild(step);
+        timelineInner.appendChild(el("div", "timeline-connector"));
+      } else {
+        timelineInner.appendChild(step);
+      }
+    });
+    timelineSection.appendChild(timelineInner);
+    container.appendChild(timelineSection);
+    container.appendChild(el("hr", "section-divider"));
+
     pathwaysSection.appendChild(el("p", "pathways-section-label", "Or explore by impact pathway"));
     pathwaysSection.appendChild(pathwayGrid);
     const pathwaysLink = el("a", "home-pathways-link btn btn-ghost-burgundy btn-small", "Explore Pathways →");
@@ -667,6 +746,7 @@
       activePathwayId = pathwayId;
       updateActiveCards();
       renderPathwayModal(pathway);
+      setContextPathway(pathwayIdToKey[pathwayId] || pathwayId);
     }
 
     function togglePathway(pathwayId) {
@@ -1039,6 +1119,21 @@
     }
 
     container.appendChild(grid);
+
+    const learnCta = el("section", "learn-cta");
+    learnCta.appendChild(el("h2", "section-title", "Ready to put this into practice?"));
+    const ctaRow = el("div", "learn-cta-row");
+    const ctaBrowse = el("button", "btn btn-primary", "Browse support and workshops \u2192");
+    ctaBrowse.type = "button";
+    ctaBrowse.addEventListener("click", () => navigateTo("explore"));
+    const ctaStage = el("button", "btn", "Find support for my stage \u2192");
+    ctaStage.type = "button";
+    ctaStage.addEventListener("click", () => navigateTo("support"));
+    ctaRow.appendChild(ctaBrowse);
+    ctaRow.appendChild(ctaStage);
+    learnCta.appendChild(ctaRow);
+    container.appendChild(learnCta);
+
     section.appendChild(container);
     return section;
   };
@@ -1335,16 +1430,43 @@
     const container = el("div", "container");
     container.appendChild(el("h1", null, data.explore.title));
 
+    // === Tabs ===
+    const tabsBar = el("div", "explore-tabs");
+    const tabFind = el("button", "explore-tab is-active", "Find Support");
+    tabFind.type = "button";
+    tabFind.dataset.tab = "find";
+    const tabPathways = el("button", "explore-tab", "Impact Pathways");
+    tabPathways.type = "button";
+    tabPathways.dataset.tab = "pathways";
+    tabsBar.appendChild(tabFind);
+    tabsBar.appendChild(tabPathways);
+    container.appendChild(tabsBar);
+
+    const baseOpportunities = data.explore.opportunities.map((item) => ({ ...item, sourceType: "default" }));
+    const exploreItems = [...baseOpportunities, ...content.workshops];
+
+    // === Find Support tab content ===
+    const findTabContent = el("div", "explore-tab-content is-active");
+    findTabContent.dataset.tabContent = "find";
+
     const exploreSupportBridge = el("p", "page-bridge");
     exploreSupportBridge.appendChild(document.createTextNode("Looking for stage-based guidance? "));
     const toSupportLink = el("a", "bridge-link", "View by research stage \u2192");
     toSupportLink.href = "#support";
     toSupportLink.addEventListener("click", (e) => { e.preventDefault(); navigateTo("support"); });
     exploreSupportBridge.appendChild(toSupportLink);
-    container.appendChild(exploreSupportBridge);
+    findTabContent.appendChild(exploreSupportBridge);
 
-    const baseOpportunities = data.explore.opportunities.map((item) => ({ ...item, sourceType: "default" }));
-    const exploreItems = [...baseOpportunities, ...content.workshops];
+    // Recommended for you (shown when context stage is active)
+    const recommendedSection = el("div", "recommended-section");
+    recommendedSection.hidden = true;
+    const recommendedHeader = el("div", "recommended-header");
+    const recommendedTitle = el("p", "recommended-label", "");
+    recommendedHeader.appendChild(recommendedTitle);
+    const recommendedGrid = el("div", "opportunity-grid recommended-grid");
+    recommendedSection.appendChild(recommendedHeader);
+    recommendedSection.appendChild(recommendedGrid);
+    findTabContent.appendChild(recommendedSection);
 
     const controls = el("div", "explore-controls");
 
@@ -1429,7 +1551,45 @@
 
     explorerSection.appendChild(resultsMeta);
     explorerSection.appendChild(resultsGrid);
-    container.appendChild(explorerSection);
+    findTabContent.appendChild(explorerSection);
+    container.appendChild(findTabContent);
+
+    // === Impact Pathways tab content ===
+    const pathwaysTabContent = el("div", "explore-tab-content");
+    pathwaysTabContent.dataset.tabContent = "pathways";
+    pathwaysTabContent.appendChild(el("p", "page-intro", data.explore.pathways.intro));
+    const explorePathwayGrid = el("div", "pathway-grid explore-pathway-grid");
+    data.explore.pathways.items.forEach((pathway) => {
+      const card = el("button", "pathway-card");
+      card.type = "button";
+      card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
+      card.appendChild(el("p", "pathway-card-label", pathway.title));
+      card.appendChild(el("p", "pathway-card-summary", pathway.summary));
+      card.addEventListener("click", () => {
+        tabFind.click();
+        const pathwayTitle = pathway.title;
+        const control = filterControls.get("pathway");
+        if (control) {
+          control.value = pathwayTitle;
+          state.filters.pathway = pathwayTitle;
+          applyFilters();
+        }
+        explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      explorePathwayGrid.appendChild(card);
+    });
+    pathwaysTabContent.appendChild(explorePathwayGrid);
+    container.appendChild(pathwaysTabContent);
+
+    // Tab switching logic
+    [tabFind, tabPathways].forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabFind.classList.toggle("is-active", tab === tabFind);
+        tabPathways.classList.toggle("is-active", tab === tabPathways);
+        findTabContent.classList.toggle("is-active", tab === tabFind);
+        pathwaysTabContent.classList.toggle("is-active", tab === tabPathways);
+      });
+    });
 
     section.appendChild(container);
 
@@ -1456,6 +1616,22 @@
         const empty = el("div", "empty-state");
         empty.appendChild(el("h3", null, data.explore.empty.title));
         empty.appendChild(el("p", "card-text", data.explore.empty.body));
+        const emptyActions = el("div", "empty-actions");
+        const clearBtn = el("button", "btn", "Clear all filters");
+        clearBtn.type = "button";
+        clearBtn.addEventListener("click", () => {
+          state.search = "";
+          state.filters = { pathway: "", stage: "", category: "", format: "", time: "" };
+          searchInput.value = "";
+          filterControls.forEach((control) => { control.value = ""; });
+          applyFilters();
+        });
+        const contactLink = el("a", "bridge-link", "Contact us for help \u2192");
+        contactLink.href = "#about";
+        contactLink.addEventListener("click", (e) => { e.preventDefault(); navigateTo("about", "contact"); });
+        emptyActions.appendChild(clearBtn);
+        emptyActions.appendChild(contactLink);
+        empty.appendChild(emptyActions);
         resultsGrid.appendChild(empty);
         return;
       }
@@ -1520,7 +1696,36 @@
       });
     };
 
+    const updateRecommended = () => {
+      if (!contextStage) {
+        recommendedSection.hidden = true;
+        return;
+      }
+      const matches = exploreItems.filter((opp) => {
+        const stages = Array.isArray(opp.stage) ? opp.stage : [opp.stage];
+        return stages.includes(contextStage);
+      }).slice(0, 3);
+      if (!matches.length) {
+        recommendedSection.hidden = true;
+        return;
+      }
+      recommendedTitle.textContent = `Recommended for: ${contextStage}`;
+      clear(recommendedGrid);
+      matches.forEach((opp) => {
+        const card = el("div", "opportunity-card rec-card");
+        card.appendChild(el("h3", null, opp.title));
+        card.appendChild(el("p", "card-text", opp.summary));
+        const viewBtn = el("button", "btn primary", "View details");
+        viewBtn.type = "button";
+        viewBtn.addEventListener("click", () => openModal(opp));
+        card.appendChild(viewBtn);
+        recommendedGrid.appendChild(card);
+      });
+      recommendedSection.hidden = false;
+    };
+
     const applyFilters = () => {
+      updateRecommended();
       const searchTerm = state.search.toLowerCase();
       const matchesField = (value, selected) => {
         if (!selected) return true;
@@ -1656,6 +1861,126 @@
     section.focusWorkshopById = focusWorkshopById;
     section.applySearchTerm = applySearchTerm;
     return section;
+  };
+
+  const openQuickMatch = () => {
+    clear(modalRoot);
+    document.body.classList.add("is-modal-open");
+
+    const impactOptions = data.explore.pathways.items.map((p) => ({
+      label: p.summary.replace(/\.$/, ""),
+      pathwayId: p.id,
+      pathwayTitle: p.title,
+      pathwayKey: pathwayIdToKey[p.id] || p.id
+    }));
+
+    let selectedStage = null;
+    let selectedPathwayId = null;
+
+    const overlay = el("div", "modal-overlay quick-match-overlay");
+    const modal = el("div", "modal quick-match-modal");
+
+    const closeQM = () => {
+      clear(modalRoot);
+      document.body.classList.remove("is-modal-open");
+    };
+
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) closeQM(); });
+
+    const renderStep1 = () => {
+      clear(modal);
+      modal.appendChild(el("p", "qm-step-label", "Step 1 of 2"));
+      modal.appendChild(el("h3", "qm-question", "Where are you in your research?"));
+      const options = el("div", "qm-options");
+      data.home.hero.cards.forEach((card) => {
+        const btn = el("button", "qm-option" + (selectedStage === card.id ? " is-selected" : ""), card.title);
+        btn.type = "button";
+        const desc = el("span", "qm-option-desc", card.description);
+        btn.appendChild(desc);
+        btn.addEventListener("click", () => {
+          selectedStage = card.id;
+          renderStep2();
+        });
+        options.appendChild(btn);
+      });
+      modal.appendChild(options);
+      const closeBtn = el("button", "qm-close", "\u00d7");
+      closeBtn.type = "button";
+      closeBtn.setAttribute("aria-label", "Close");
+      closeBtn.addEventListener("click", closeQM);
+      modal.appendChild(closeBtn);
+    };
+
+    const renderStep2 = () => {
+      clear(modal);
+      modal.appendChild(el("p", "qm-step-label", "Step 2 of 2"));
+      modal.appendChild(el("h3", "qm-question", "What kind of impact matters most to you?"));
+      const options = el("div", "qm-options qm-options--grid");
+      impactOptions.forEach((opt) => {
+        const btn = el("button", "qm-option qm-option--compact" + (selectedPathwayId === opt.pathwayId ? " is-selected" : ""));
+        btn.type = "button";
+        btn.appendChild(el("span", "qm-option-pathway-label", opt.pathwayTitle));
+        btn.appendChild(el("span", "qm-option-desc", opt.label));
+        btn.addEventListener("click", () => {
+          selectedPathwayId = opt.pathwayId;
+          renderResult(opt);
+        });
+        options.appendChild(btn);
+      });
+      modal.appendChild(options);
+      const backBtn = el("button", "btn-link qm-back", "\u2190 Back");
+      backBtn.type = "button";
+      backBtn.addEventListener("click", renderStep1);
+      modal.appendChild(backBtn);
+      const closeBtn = el("button", "qm-close", "\u00d7");
+      closeBtn.type = "button";
+      closeBtn.setAttribute("aria-label", "Close");
+      closeBtn.addEventListener("click", closeQM);
+      modal.appendChild(closeBtn);
+    };
+
+    const renderResult = (opt) => {
+      clear(modal);
+      const stageCard = data.home.hero.cards.find((c) => c.id === selectedStage);
+      modal.appendChild(el("p", "qm-step-label", "Your recommendation"));
+      modal.appendChild(el("h3", "qm-result-pathway", opt.pathwayTitle));
+      modal.appendChild(el("p", "qm-result-desc", opt.label + "."));
+      if (stageCard) {
+        modal.appendChild(el("p", "qm-result-stage", `For your stage: ${stageCard.title}`));
+      }
+      const actions = el("div", "qm-result-actions");
+      const exploreBtn = el("button", "btn btn-primary", "Explore this pathway \u2192");
+      exploreBtn.type = "button";
+      exploreBtn.addEventListener("click", () => {
+        closeQM();
+        if (stageCard) setContextStage(stageCard.title);
+        navigateTo("explore", "opportunity-explorer", { pathway: opt.pathwayKey });
+      });
+      const supportBtn = el("button", "btn", "Find support for my stage \u2192");
+      supportBtn.type = "button";
+      supportBtn.addEventListener("click", () => {
+        closeQM();
+        const supportAnchor = supportAnchorByJourneyId[selectedStage];
+        if (stageCard) setContextStage(stageCard.title);
+        navigateTo("support", supportAnchor || undefined);
+      });
+      actions.appendChild(exploreBtn);
+      actions.appendChild(supportBtn);
+      modal.appendChild(actions);
+      const restartBtn = el("button", "btn-link qm-back", "Start over");
+      restartBtn.type = "button";
+      restartBtn.addEventListener("click", () => { selectedStage = null; selectedPathwayId = null; renderStep1(); });
+      modal.appendChild(restartBtn);
+      const closeBtn = el("button", "qm-close", "\u00d7");
+      closeBtn.type = "button";
+      closeBtn.setAttribute("aria-label", "Close");
+      closeBtn.addEventListener("click", closeQM);
+      modal.appendChild(closeBtn);
+    };
+
+    renderStep1();
+    overlay.appendChild(modal);
+    modalRoot.appendChild(overlay);
   };
 
   const buildPages = () => {

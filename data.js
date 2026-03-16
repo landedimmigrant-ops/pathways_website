@@ -9,6 +9,7 @@ window.PATHWAYS_DATA = {
   },
   navigation: [
     { id: "home", label: "Home" },
+    { id: "start", label: "My Pathway" },
     { id: "support", label: "Support" },
     { id: "explore", label: "Explore" },
     { id: "learn", label: "Learn" },
