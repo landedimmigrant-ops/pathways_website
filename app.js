@@ -492,26 +492,6 @@
     entryCard2.appendChild(entryBrowseLink);
     entryGrid.appendChild(entryCard2);
 
-    // Door 3: Research stage → Support
-    const entryCard3 = el("div", "home-entry-card");
-    entryCard3.appendChild(el("p", "entry-card-label", "Know your research stage?"));
-    entryCard3.appendChild(el("h3", "entry-card-title", "Find stage-based support"));
-    entryCard3.appendChild(el("p", "entry-card-desc", "Get guidance tailored to where you are in your research journey."));
-    const entryStages = el("div", "entry-card-stages");
-    data.home.hero.cards.forEach((stageCard) => {
-      const stageBtn = el("button", "entry-stage-btn", stageCard.title);
-      stageBtn.type = "button";
-      const supportAnchor = supportAnchorByJourneyId[stageCard.id];
-      stageBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        setContextStage(stageCard.title);
-        navigateTo("support", supportAnchor || undefined);
-      });
-      entryStages.appendChild(stageBtn);
-    });
-    entryCard3.appendChild(entryStages);
-    entryGrid.appendChild(entryCard3);
-
     entrySection.appendChild(entryGrid);
 
     // Quick match trigger
@@ -523,15 +503,8 @@
     quickMatchRow.appendChild(quickMatchBtn);
     entrySection.appendChild(quickMatchRow);
 
-    container.appendChild(entrySection);
-    container.appendChild(el("hr", "section-divider"));
-
+    // === Pathways grid (primary entry) ===
     const pathwayItems = data.explore.pathways.items;
-    const supportSearchConfig = data.support.search || {
-      label: "Find support and services",
-      placeholder: "Find support and services",
-      ariaLabel: "Find support and services"
-    };
     const pathwaysSection = el("section", "home-pathways");
     const pathwayGrid = el("div", "pathway-grid");
     const pathwayCards = new Map();
@@ -545,8 +518,20 @@
       pathwayGrid.appendChild(card);
       pathwayCards.set(pathway.id, card);
     });
-    // === Visual research journey timeline ===
+    pathwaysSection.appendChild(pathwayGrid);
+    const pathwaysLink = el("a", "home-pathways-link btn btn-ghost-burgundy btn-small", "Explore Pathways →");
+    pathwaysLink.href = "#explore";
+    pathwaysLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      navigateTo("explore");
+    });
+    pathwaysSection.appendChild(pathwaysLink);
+    container.appendChild(pathwaysSection);
+    container.appendChild(el("hr", "section-divider"));
+
+    // === Research stage timeline (secondary entry) ===
     const timelineSection = el("section", "journey-timeline-section");
+    timelineSection.appendChild(el("p", "pathways-section-label", "You can also explore Pathway services based on where you are in your research."));
     const timelineInner = el("div", "journey-timeline");
     data.home.hero.cards.forEach((card, index) => {
       const step = el("div", "timeline-step");
@@ -577,39 +562,8 @@
     container.appendChild(timelineSection);
     container.appendChild(el("hr", "section-divider"));
 
-    pathwaysSection.appendChild(el("p", "pathways-section-label", "Or explore by impact pathway"));
-    pathwaysSection.appendChild(pathwayGrid);
-    const pathwaysLink = el("a", "home-pathways-link btn btn-ghost-burgundy btn-small", "Explore Pathways →");
-    pathwaysLink.href = "#explore";
-    pathwaysLink.addEventListener("click", (event) => {
-      event.preventDefault();
-      navigateTo("explore");
-    });
-    pathwaysSection.appendChild(pathwaysLink);
-    container.appendChild(pathwaysSection);
-
-    const homeSearchSection = el("section", "home-support-search");
-    const homeControls = el("div", "explore-controls");
-    const homeSearchWrap = el("div", "search-bar");
-    const homeSearchLabel = el("label", null, supportSearchConfig.label);
-    const homeSearchInput = el("input");
-    const homeSearchId = "home-support-search-input";
-    homeSearchInput.id = homeSearchId;
-    homeSearchLabel.setAttribute("for", homeSearchId);
-    homeSearchInput.type = "search";
-    homeSearchInput.placeholder = supportSearchConfig.placeholder;
-    homeSearchInput.setAttribute("aria-label", supportSearchConfig.ariaLabel);
-    homeSearchInput.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter") return;
-      event.preventDefault();
-      const value = homeSearchInput.value.trim();
-      navigateTo("explore", "opportunity-explorer", { searchQuery: value });
-    });
-    homeSearchWrap.appendChild(homeSearchLabel);
-    homeSearchWrap.appendChild(homeSearchInput);
-    homeControls.appendChild(homeSearchWrap);
-    homeSearchSection.appendChild(homeControls);
-    // Search and stage cards are now handled by the three-door entry section above.
+    // === Two-door entry (learn + find support) ===
+    container.appendChild(entrySection);
 
     let activePathwayId = "";
     let pathwayModalOverlay = null;
