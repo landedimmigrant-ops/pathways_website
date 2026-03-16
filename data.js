@@ -89,9 +89,9 @@ window.PATHWAYS_DATA = {
     hero: {
       title: "Pathways to Impact",
       summary: [
-        "Pathways to Impact helps you explore how your research can create change.",
-        "Research impact can take many forms. Your work may influence academic scholarship, inform policy, support communities, inspire innovation, or shape public understanding.",
-        "The Pathways help you discover different ways your research can have impact and connect you to practical support across the university."
+        "Pathways to Impact is a coordinated support system for creating impact through research.",
+        "These supports are organized around seven impact pathways. Explore them and combine services to build a pathway that fits your research and where you are in your project.",
+        "If you are new to research impact, start with the Learn section."
       ],
       ctaLabel: "Explore the Pathways →",
       ctaTarget: "#explore",
@@ -109,7 +109,7 @@ window.PATHWAYS_DATA = {
         },
         {
           id: "wrapping-up-project",
-          title: "Wrapping Up",
+          title: "Finishing a Project",
           description: "Sharing results, translating research into policy or practice, and preparing future directions."
         }
       ]
@@ -270,9 +270,9 @@ window.PATHWAYS_DATA = {
       },
       {
         id: "wrapping-up-project",
-        title: "Wrapping Up",
+        title: "Finishing a Project",
         description: "Sharing results, translating research into policy or practice, and preparing future directions.",
-        stage: "Wrapping Up",
+        stage: "Finishing a Project",
         modules: [
           {
             title: "Impact documentation",
@@ -298,7 +298,7 @@ window.PATHWAYS_DATA = {
   },
   support: {
     title: "Research Support",
-    intro: "Find guidance and support based on where you are in your research journey.",
+    intro: "Across the university, units offer workshops, consultations, clinics, and other services that support different ways research creates change, from advancing scholarship to informing policy, supporting communities, inspiring innovation, or shaping public understanding.",
     search: {
       label: "Find support and services",
       placeholder: "Find support and services",
@@ -329,7 +329,7 @@ window.PATHWAYS_DATA = {
       },
       {
         id: "support-wrapping",
-        title: "Wrapping Up",
+        title: "Finishing a Project",
         description: "Sharing results, translating research into policy or practice, and preparing future directions.",
         lead: "This stage may include support such as:",
         supports: [
@@ -399,12 +399,12 @@ window.PATHWAYS_DATA = {
     }
   },
   explore: {
-    title: "Explore Opportunities",
-    intro: "Use the filters to find support that fits your stage, goals, and time available.",
+    title: "Support",
+    intro: "",
     search: {
-      label: "Search opportunities",
-      placeholder: "Search by topic, method, or audience",
-      ariaLabel: "Search opportunities"
+      label: "Search",
+      placeholder: "Search",
+      ariaLabel: "Search"
     },
     filters: [
       {
@@ -667,7 +667,7 @@ window.PATHWAYS_DATA = {
         id: "opp-impact-documentation",
         title: "Impact documentation",
         category: "Evidence",
-        stage: "Wrapping Up",
+        stage: "Finishing a Project",
         format: "Consult",
         time: "60 min",
         pathway: ["Communications", "Policy", "Commercialization", "Research Creation"],
@@ -683,7 +683,7 @@ window.PATHWAYS_DATA = {
         id: "opp-knowledge-sharing",
         title: "Knowledge sharing strategy",
         category: "Communication",
-        stage: "Wrapping Up",
+        stage: "Finishing a Project",
         format: "Workshop",
         time: "90 min",
         pathway: ["Communications", "Community Engagement", "Research Creation"],
