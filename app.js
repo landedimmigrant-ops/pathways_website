@@ -492,8 +492,8 @@
       const card = el("button", "pathway-card");
       card.type = "button";
       card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
-      card.appendChild(el("h3", null, pathway.title));
-      card.appendChild(el("p", "card-text", pathway.summary));
+      card.appendChild(el("p", "pathway-card-label", pathway.title));
+      card.appendChild(el("p", "pathway-card-summary", pathway.summary));
       card.addEventListener("click", () => togglePathway(pathway.id));
       pathwayGrid.appendChild(card);
       pathwayCards.set(pathway.id, card);
@@ -573,7 +573,7 @@
       wrapper.tabIndex = -1;
 
       const header = el("div", "pathway-modal-header");
-      header.appendChild(el("h3", null, pathway.title));
+      header.appendChild(el("p", "pathway-modal-label", pathway.title));
       const closeControl = el("button", "pathway-modal-close", "X");
       closeControl.type = "button";
       closeControl.setAttribute("aria-label", "Close pathway details");
@@ -581,7 +581,7 @@
       header.appendChild(closeControl);
       wrapper.appendChild(header);
 
-      wrapper.appendChild(el("p", "card-text", pathway.summary));
+      wrapper.appendChild(el("p", "pathway-modal-summary", pathway.summary));
       wrapper.appendChild(el("p", "pathway-label", pathway.label));
 
       const actionList = el("ul", "pathway-actions");

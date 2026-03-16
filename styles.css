@@ -632,7 +632,9 @@ label {
 }
 
 .pathway-card h3,
-.pathway-card .card-text {
+.pathway-card .card-text,
+.pathway-card-label,
+.pathway-card-summary {
   color: inherit;
   overflow-wrap: normal;
   word-break: normal;
@@ -648,6 +650,27 @@ label {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.pathway-card-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 6px;
+  opacity: 0.75;
+}
+
+.pathway-card-summary {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.45;
+  margin: 0;
+  text-wrap: balance;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
   overflow: hidden;
 }
 
@@ -803,6 +826,25 @@ label {
   line-height: 1;
   font-size: 22px;
   cursor: pointer;
+}
+
+.pathway-modal-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  margin: 0;
+  flex: 1;
+}
+
+.pathway-modal-summary {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin: 0 0 12px;
+  text-wrap: balance;
 }
 
 .pathway-modal-close:hover {
