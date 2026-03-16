@@ -1533,3 +1533,123 @@ label {
   color: var(--muted);
   margin: 0 0 16px;
 }
+
+/* ── Header row + hamburger ──────────────────────────────────── */
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  .nav-hamburger {
+    display: flex;
+  }
+
+  .main-nav {
+    display: none;
+    width: 100%;
+  }
+
+  .site-header.is-nav-open .main-nav {
+    display: block;
+  }
+
+  .site-header.is-nav-open .nav-list {
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  .site-header.is-nav-open .nav-link {
+    display: block;
+    padding: 12px 0;
+    font-size: 18px;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+/* ── Persistent context bar ─────────────────────────────────── */
+
+.context-bar {
+  background: #f9f3f4;
+  border-bottom: 1px solid #e8c8ce;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.context-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.context-bar-label {
+  color: var(--muted);
+}
+
+.context-bar-stage {
+  color: var(--burgundy);
+}
+
+.context-bar-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 2px;
+  margin-left: 4px;
+}
+
+.context-bar-clear:hover {
+  color: var(--burgundy);
+}
+
+/* ── Page bridge links (Support ↔ Explore) ──────────────────── */
+
+.page-bridge {
+  font-size: 15px;
+  color: var(--muted);
+  margin: -8px 0 24px;
+}
+
+.bridge-link {
+  color: var(--burgundy);
+  font-weight: 500;
+}

@@ -10,6 +10,7 @@
   const appRoot = document.getElementById("app");
   const modalRoot = document.getElementById("modal-root");
   let routeFooter = null;
+  let contextBar = null;
 
   document.title = data.meta.title || "";
 
@@ -327,7 +328,28 @@
     });
 
     nav.appendChild(navList);
-    brandBlock.appendChild(brandLink);
+
+    const hamburger = el("button", "nav-hamburger");
+    hamburger.type = "button";
+    hamburger.setAttribute("aria-label", "Toggle navigation");
+    hamburger.setAttribute("aria-expanded", "false");
+    for (let i = 0; i < 3; i++) {
+      hamburger.appendChild(el("span", "hamburger-bar"));
+    }
+    hamburger.addEventListener("click", () => {
+      const isOpen = siteHeader.classList.toggle("is-nav-open");
+      hamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+    navList.addEventListener("click", () => {
+      siteHeader.classList.remove("is-nav-open");
+      hamburger.setAttribute("aria-expanded", "false");
+    });
+
+    const headerRow = el("div", "header-row");
+    headerRow.appendChild(brandLink);
+    headerRow.appendChild(hamburger);
+
+    brandBlock.appendChild(headerRow);
     brandBlock.appendChild(nav);
     container.appendChild(brandBlock);
     header.appendChild(container);
@@ -346,6 +368,24 @@
     container.appendChild(link);
     routeFooter.appendChild(container);
     document.body.insertBefore(routeFooter, modalRoot);
+  };
+
+  const buildContextBar = () => {
+    const bar = el("div", "context-bar");
+    bar.hidden = true;
+    const inner = el("div", "container context-bar-inner");
+    const label = el("span", "context-bar-label", "Exploring: ");
+    const stageEl = el("strong", "context-bar-stage", "");
+    const clearBtn = el("button", "context-bar-clear", "\u00d7");
+    clearBtn.type = "button";
+    clearBtn.setAttribute("aria-label", "Clear research stage context");
+    clearBtn.addEventListener("click", () => { bar.hidden = true; });
+    inner.appendChild(label);
+    inner.appendChild(stageEl);
+    inner.appendChild(clearBtn);
+    bar.appendChild(inner);
+    siteHeader.insertAdjacentElement("afterend", bar);
+    contextBar = bar;
   };
 
   const buildHome = () => {
@@ -424,6 +464,10 @@
       const supportAnchor = supportAnchorByJourneyId[stageCard.id];
       stageBtn.addEventListener("click", (e) => {
         e.stopPropagation();
+        if (contextBar) {
+          contextBar.querySelector(".context-bar-stage").textContent = stageCard.title;
+          contextBar.hidden = false;
+        }
         navigateTo("support", supportAnchor || undefined);
       });
       entryStages.appendChild(stageBtn);
@@ -794,6 +838,14 @@
     const container = el("div", "container");
     container.appendChild(el("h1", null, data.support.title));
     container.appendChild(el("p", "lead", data.support.intro));
+
+    const supportExploreBridge = el("p", "page-bridge");
+    supportExploreBridge.appendChild(document.createTextNode("Want to browse all opportunities? "));
+    const toExploreLink = el("a", "bridge-link", "Browse opportunities \u2192");
+    toExploreLink.href = "#explore";
+    toExploreLink.addEventListener("click", (e) => { e.preventDefault(); navigateTo("explore"); });
+    supportExploreBridge.appendChild(toExploreLink);
+    container.appendChild(supportExploreBridge);
 
     const supportSectionsById = (data.support.sections || []).reduce((acc, item) => {
       acc[item.id] = item;
@@ -1282,6 +1334,15 @@
 
     const container = el("div", "container");
     container.appendChild(el("h1", null, data.explore.title));
+
+    const exploreSupportBridge = el("p", "page-bridge");
+    exploreSupportBridge.appendChild(document.createTextNode("Looking for stage-based guidance? "));
+    const toSupportLink = el("a", "bridge-link", "View by research stage \u2192");
+    toSupportLink.href = "#support";
+    toSupportLink.addEventListener("click", (e) => { e.preventDefault(); navigateTo("support"); });
+    exploreSupportBridge.appendChild(toSupportLink);
+    container.appendChild(exploreSupportBridge);
+
     const baseOpportunities = data.explore.opportunities.map((item) => ({ ...item, sourceType: "default" }));
     const exploreItems = [...baseOpportunities, ...content.workshops];
 
@@ -1777,6 +1838,7 @@
     await loadWorkshopContent();
     await loadPathwaysVisionContent();
     buildHeader();
+    buildContextBar();
     buildFooter();
     buildPages();
 
