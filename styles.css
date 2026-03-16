@@ -1396,4 +1396,140 @@ label {
   .filter-grid {
     grid-template-columns: 1fr;
   }
+
+  .home-entry-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Home: three-door entry section ─────────────────────────── */
+
+.home-entry-section {
+  padding: 8px 0 4px;
+}
+
+.home-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.home-entry-card {
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  background: #fff;
+  text-align: left;
+}
+
+.home-entry-card:hover,
+.home-entry-card:focus-within {
+  border-color: var(--burgundy);
+  box-shadow: 0 2px 16px rgba(145, 35, 56, 0.08);
+}
+
+.home-entry-card:focus {
+  outline: 2px solid var(--burgundy);
+  outline-offset: 2px;
+}
+
+.entry-card-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--burgundy);
+  margin: 0;
+}
+
+.home-entry-card h3.entry-card-title {
+  font-size: 18px;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.entry-card-desc {
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0;
+  flex: 1;
+  line-height: 1.5;
+}
+
+.entry-card-cta {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--burgundy);
+  display: inline-block;
+  margin-top: 2px;
+  text-decoration: none;
+}
+
+.entry-card-cta:hover {
+  text-decoration: underline;
+}
+
+.entry-card-search {
+  margin-top: 2px;
+}
+
+.entry-card-search input[type="search"] {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.entry-card-search input[type="search"]:focus {
+  border-color: var(--burgundy);
+  background: #fff;
+}
+
+.entry-card-stages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.entry-stage-btn {
+  background: #f8f8f8;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+  line-height: 1.3;
+}
+
+.entry-stage-btn:hover {
+  background: #f9f3f4;
+  border-color: var(--burgundy);
+  color: var(--burgundy);
+}
+
+.pathways-section-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 0 0 16px;
 }

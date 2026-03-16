@@ -372,6 +372,67 @@
 
     introSection.appendChild(introBlock);
     container.appendChild(introSection);
+
+    // === Three-door entry section ===
+    const entrySection = el("section", "home-entry-section");
+    const entryGrid = el("div", "home-entry-grid");
+
+    // Door 1: New to impact → Learn
+    const entryCard1 = el("div", "home-entry-card");
+    entryCard1.setAttribute("tabindex", "0");
+    entryCard1.appendChild(el("p", "entry-card-label", "New to research impact?"));
+    entryCard1.appendChild(el("h3", "entry-card-title", "Learn what impact means"));
+    entryCard1.appendChild(el("p", "entry-card-desc", "Explore frameworks, examples, and how to think about your research\u2019s reach."));
+    entryCard1.appendChild(el("span", "entry-card-cta", "Start learning \u2192"));
+    entryCard1.addEventListener("click", () => navigateTo("learn"));
+    entryCard1.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigateTo("learn"); } });
+    entryGrid.appendChild(entryCard1);
+
+    // Door 2: Find a specific service → Explore
+    const entryCard2 = el("div", "home-entry-card");
+    entryCard2.appendChild(el("p", "entry-card-label", "Looking for something specific?"));
+    entryCard2.appendChild(el("h3", "entry-card-title", "Find support or workshops"));
+    entryCard2.appendChild(el("p", "entry-card-desc", "Search consultations, workshops, and services by topic, stage, or format."));
+    const entrySearchWrap = el("div", "entry-card-search");
+    const entrySearchInput = el("input");
+    entrySearchInput.type = "search";
+    entrySearchInput.placeholder = "Search support and services\u2026";
+    entrySearchInput.setAttribute("aria-label", "Search support and services");
+    entrySearchInput.addEventListener("click", (e) => e.stopPropagation());
+    entrySearchInput.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+      navigateTo("explore", "opportunity-explorer", { searchQuery: entrySearchInput.value.trim() });
+    });
+    entrySearchWrap.appendChild(entrySearchInput);
+    entryCard2.appendChild(entrySearchWrap);
+    const entryBrowseLink = el("a", "entry-card-cta", "Browse all \u2192");
+    entryBrowseLink.href = "#explore";
+    entryBrowseLink.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); navigateTo("explore"); });
+    entryCard2.appendChild(entryBrowseLink);
+    entryGrid.appendChild(entryCard2);
+
+    // Door 3: Research stage → Support
+    const entryCard3 = el("div", "home-entry-card");
+    entryCard3.appendChild(el("p", "entry-card-label", "Know your research stage?"));
+    entryCard3.appendChild(el("h3", "entry-card-title", "Find stage-based support"));
+    entryCard3.appendChild(el("p", "entry-card-desc", "Get guidance tailored to where you are in your research journey."));
+    const entryStages = el("div", "entry-card-stages");
+    data.home.hero.cards.forEach((stageCard) => {
+      const stageBtn = el("button", "entry-stage-btn", stageCard.title);
+      stageBtn.type = "button";
+      const supportAnchor = supportAnchorByJourneyId[stageCard.id];
+      stageBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        navigateTo("support", supportAnchor || undefined);
+      });
+      entryStages.appendChild(stageBtn);
+    });
+    entryCard3.appendChild(entryStages);
+    entryGrid.appendChild(entryCard3);
+
+    entrySection.appendChild(entryGrid);
+    container.appendChild(entrySection);
     container.appendChild(el("hr", "section-divider"));
 
     const pathwayItems = data.explore.pathways.items;
@@ -393,6 +454,7 @@
       pathwayGrid.appendChild(card);
       pathwayCards.set(pathway.id, card);
     });
+    pathwaysSection.appendChild(el("p", "pathways-section-label", "Or explore by impact pathway"));
     pathwaysSection.appendChild(pathwayGrid);
     const pathwaysLink = el("a", "home-pathways-link btn btn-ghost-burgundy btn-small", "Explore Pathways →");
     pathwaysLink.href = "#explore";
@@ -424,24 +486,7 @@
     homeSearchWrap.appendChild(homeSearchInput);
     homeControls.appendChild(homeSearchWrap);
     homeSearchSection.appendChild(homeControls);
-    container.appendChild(homeSearchSection);
-
-    container.appendChild(el("hr", "section-divider"));
-
-    const stageSection = el("section", "home-stage-section");
-    stageSection.appendChild(el("h2", "prompt-title", data.home.hero.prompt));
-    const cardGrid = el("div", "journey-grid");
-    data.home.hero.cards.forEach((card) => {
-      const cardLink = el("a", "journey-card");
-      const supportAnchor = supportAnchorByJourneyId[card.id];
-      cardLink.href = supportAnchor ? `#${supportAnchor}` : "#support";
-      cardLink.dataset.journey = card.id;
-      cardLink.appendChild(el("h3", null, card.title));
-      cardLink.appendChild(el("p", "card-text", card.description));
-      cardGrid.appendChild(cardLink);
-    });
-    stageSection.appendChild(cardGrid);
-    container.appendChild(stageSection);
+    // Search and stage cards are now handled by the three-door entry section above.
 
     let activePathwayId = "";
     let pathwayModalOverlay = null;
