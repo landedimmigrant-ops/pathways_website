@@ -1552,13 +1552,8 @@
     applyFilters();
 
     const openResearchStageTab = (journeyId) => {
-      tabResearch.click();
-      const anchorId = supportAnchorByJourneyId[journeyId] || journeyId;
-      const details = document.getElementById(anchorId);
-      if (details) {
-        details.open = true;
-        details.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      const stageLabel = stageKeyToLabel[journeyId] || journeyId;
+      applyStageFilter(stageLabel);
     };
 
     section.applyStageFilter = applyStageFilter;
