@@ -852,6 +852,21 @@ label {
   margin-top: 8px;
 }
 
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.btn-icon--close {
+  font-size: 28px;
+}
+
 .pathway-viewer .pathway-nav .btn {
   background: transparent;
   color: #fff;

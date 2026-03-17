@@ -655,18 +655,21 @@
       const currentIndex = pathwayItems.findIndex((item) => item.id === pathway.id);
       const previousIndex = (currentIndex - 1 + pathwayItems.length) % pathwayItems.length;
       const nextIndex = (currentIndex + 1) % pathwayItems.length;
-      const prevButton = el("button", "btn", data.explore.pathways.buttons.previous);
+      const prevButton = el("button", "btn btn-icon", "\u2190");
       prevButton.type = "button";
+      prevButton.setAttribute("aria-label", data.explore.pathways.buttons.previous);
       prevButton.addEventListener("click", () => {
         openPathway(pathwayItems[previousIndex].id);
       });
-      const nextButton = el("button", "btn", data.explore.pathways.buttons.next);
+      const nextButton = el("button", "btn btn-icon", "\u2192");
       nextButton.type = "button";
+      nextButton.setAttribute("aria-label", data.explore.pathways.buttons.next);
       nextButton.addEventListener("click", () => {
         openPathway(pathwayItems[nextIndex].id);
       });
-      const closeButton = el("button", "btn", data.explore.pathways.buttons.close);
+      const closeButton = el("button", "btn btn-icon btn-icon--close", "\u00d7");
       closeButton.type = "button";
+      closeButton.setAttribute("aria-label", data.explore.pathways.buttons.close);
       closeButton.addEventListener("click", closePathwayModal);
       navRow.appendChild(prevButton);
       navRow.appendChild(nextButton);
@@ -1451,11 +1454,13 @@
     const panelHeader = el("div", "pathway-viewer-header");
     const panelTitle = el("h2", null, "");
     const panelNav = el("div", "pathway-nav");
-    const panelPrevBtn = el("button", "btn", data.explore.pathways.buttons.previous);
+    const panelPrevBtn = el("button", "btn btn-icon", "\u2190");
     panelPrevBtn.type = "button";
-    const panelNextBtn = el("button", "btn", data.explore.pathways.buttons.next);
+    panelPrevBtn.setAttribute("aria-label", data.explore.pathways.buttons.previous);
+    const panelNextBtn = el("button", "btn btn-icon", "\u2192");
     panelNextBtn.type = "button";
-    const panelCloseBtn = el("button", "btn", "\u2715 Close");
+    panelNextBtn.setAttribute("aria-label", data.explore.pathways.buttons.next);
+    const panelCloseBtn = el("button", "btn btn-icon btn-icon--close", "\u00d7");
     panelCloseBtn.type = "button";
     panelCloseBtn.addEventListener("click", closeExplorePanel);
     panelNav.appendChild(panelPrevBtn);
