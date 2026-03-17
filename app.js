@@ -323,7 +323,7 @@
     const navItems = data.navigation
       .map((item) => (item.id === "start" ? { id: "home", label: "Home" } : item))
       .filter((item, index, list) => list.findIndex((entry) => entry.id === item.id) === index)
-      .filter((item) => ["home", "start", "support", "explore", "learn", "about", "stories"].includes(item.id))
+      .filter((item) => ["home", "explore", "learn", "about", "stories"].includes(item.id))
       .filter((item) => STORIES_ENABLED || item.id !== "stories");
 
     navItems.forEach((item) => {
@@ -374,7 +374,7 @@
     container.appendChild(el("span", "footer-prompt", "Not sure where to go?"));
     const footerLinks = el("div", "footer-links");
     [
-      { label: "Start from my research stage", page: "support" },
+      { label: "Start from my research stage", page: "explore" },
       { label: "Browse all opportunities", page: "explore" },
       { label: "Contact us", page: "about", anchor: "contact" }
     ].forEach((item) => {
@@ -1386,30 +1386,162 @@
 
     // === Tabs ===
     const tabsBar = el("div", "explore-tabs");
-    const tabFind = el("button", "explore-tab is-active", "Find Support");
-    tabFind.type = "button";
-    tabFind.dataset.tab = "find";
-    const tabPathways = el("button", "explore-tab", "Impact Pathways");
+    const tabPathways = el("button", "explore-tab is-active", "Pathways");
     tabPathways.type = "button";
     tabPathways.dataset.tab = "pathways";
-    tabsBar.appendChild(tabFind);
+    const tabResearch = el("button", "explore-tab", "Research Stage");
+    tabResearch.type = "button";
+    tabResearch.dataset.tab = "research";
+    const tabServices = el("button", "explore-tab", "Browse Services");
+    tabServices.type = "button";
+    tabServices.dataset.tab = "services";
     tabsBar.appendChild(tabPathways);
+    tabsBar.appendChild(tabResearch);
+    tabsBar.appendChild(tabServices);
     container.appendChild(tabsBar);
 
     const baseOpportunities = data.explore.opportunities.map((item) => ({ ...item, sourceType: "default" }));
     const exploreItems = [...baseOpportunities, ...content.workshops];
 
-    // === Find Support tab content ===
-    const findTabContent = el("div", "explore-tab-content is-active");
-    findTabContent.dataset.tabContent = "find";
+    // === Pathways tab content ===
+    const pathwaysTabContent = el("div", "explore-tab-content is-active");
+    pathwaysTabContent.dataset.tabContent = "pathways";
+    pathwaysTabContent.appendChild(el("p", "page-intro", data.explore.pathways.intro));
+    const explorePathwayGrid = el("div", "pathway-grid explore-pathway-grid");
+    data.explore.pathways.items.forEach((pathway) => {
+      const card = el("button", "pathway-card");
+      card.type = "button";
+      card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
+      card.appendChild(el("p", "pathway-card-label", pathway.title));
+      card.appendChild(el("p", "pathway-card-summary", pathway.summary));
+      card.addEventListener("click", () => {
+        tabServices.click();
+        const pathwayTitle = pathway.title;
+        const control = filterControls.get("pathway");
+        if (control) {
+          control.value = pathwayTitle;
+          state.filters.pathway = pathwayTitle;
+          applyFilters();
+        }
+        explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      explorePathwayGrid.appendChild(card);
+    });
+    pathwaysTabContent.appendChild(explorePathwayGrid);
+    container.appendChild(pathwaysTabContent);
 
-    const exploreSupportBridge = el("p", "page-bridge");
-    exploreSupportBridge.appendChild(document.createTextNode("Looking for stage-based guidance? "));
-    const toSupportLink = el("a", "bridge-link", "View by research stage \u2192");
-    toSupportLink.href = "#support";
-    toSupportLink.addEventListener("click", (e) => { e.preventDefault(); navigateTo("support"); });
-    exploreSupportBridge.appendChild(toSupportLink);
-    findTabContent.appendChild(exploreSupportBridge);
+    // === Research Stage tab content ===
+    const researchTabContent = el("div", "explore-tab-content");
+    researchTabContent.dataset.tabContent = "research";
+
+    if (data.support) {
+      researchTabContent.appendChild(el("p", "lead", data.support.intro));
+
+      const supportSectionsById = (data.support.sections || []).reduce((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+      }, {});
+      const supportSearchConfig = data.support.search || {
+        label: "Find support and services",
+        placeholder: "Find support and services",
+        ariaLabel: "Find support and services"
+      };
+
+      const researchControls = el("div", "explore-controls");
+      const researchSearchWrap = el("div", "search-bar");
+      const researchSearchLabel = el("label", null, supportSearchConfig.label);
+      const researchSearchInput = el("input");
+      const researchSearchId = "research-search-input";
+      researchSearchInput.id = researchSearchId;
+      researchSearchLabel.setAttribute("for", researchSearchId);
+      researchSearchInput.type = "search";
+      researchSearchInput.placeholder = supportSearchConfig.placeholder;
+      researchSearchInput.setAttribute("aria-label", supportSearchConfig.ariaLabel);
+      researchSearchWrap.appendChild(researchSearchLabel);
+      researchSearchWrap.appendChild(researchSearchInput);
+      researchControls.appendChild(researchSearchWrap);
+      researchTabContent.appendChild(researchControls);
+
+      const journeysWrap = el("div", "journeys");
+      const researchEntries = [];
+      data.start.journeys.forEach((journey) => {
+        const anchorId = supportAnchorByJourneyId[journey.id] || journey.id;
+        const supportSection = supportSectionsById[anchorId];
+        const details = el("details", "journey");
+        details.id = anchorId;
+        const summary = el("summary", "journey-summary");
+        summary.appendChild(el("h3", null, journey.title));
+        summary.appendChild(el("p", "card-text", journey.description));
+        details.appendChild(summary);
+
+        const body = el("div", "modules");
+        if (supportSection && supportSection.lead) {
+          body.appendChild(el("p", "module-text", supportSection.lead));
+        }
+        journey.modules.forEach((module) => {
+          const card = el("div", "module-card");
+          card.appendChild(el("h4", null, module.title));
+          card.appendChild(el("p", "module-text", module.description));
+          const meta = el("div", "module-meta");
+          const typeItem = el("div", "meta-item");
+          typeItem.appendChild(el("span", "meta-label", data.start.labels.type));
+          typeItem.appendChild(el("span", "meta-value", module.type));
+          const timeItem = el("div", "meta-item");
+          timeItem.appendChild(el("span", "meta-label", data.start.labels.time));
+          timeItem.appendChild(el("span", "meta-value", module.time));
+          meta.appendChild(typeItem);
+          meta.appendChild(timeItem);
+          card.appendChild(meta);
+          body.appendChild(card);
+        });
+
+        const actionRow = el("div", "module-actions");
+        const oppButton = el("button", "btn", data.start.actions.opportunities);
+        oppButton.type = "button";
+        oppButton.addEventListener("click", () => {
+          tabServices.click();
+          applyStageFilter(journey.stage);
+        });
+        const contactButton = el("button", "btn primary", data.start.actions.contact);
+        contactButton.type = "button";
+        contactButton.addEventListener("click", () => { navigateTo("about", "contact"); });
+        actionRow.appendChild(oppButton);
+        actionRow.appendChild(contactButton);
+        body.appendChild(actionRow);
+        details.appendChild(body);
+        journeysWrap.appendChild(details);
+
+        const searchText = [
+          journey.title,
+          journey.description,
+          supportSection && supportSection.lead,
+          ...(supportSection && Array.isArray(supportSection.supports) ? supportSection.supports : []),
+          ...journey.modules.flatMap((module) => [module.title, module.description, module.type, module.time])
+        ].filter(Boolean).join(" ").toLowerCase();
+        researchEntries.push({ details, searchText });
+      });
+
+      const applyResearchSearch = () => {
+        const term = researchSearchInput.value.trim().toLowerCase();
+        researchEntries.forEach((entry) => {
+          const matches = !term || entry.searchText.includes(term);
+          entry.details.hidden = !matches;
+          if (term && matches) entry.details.open = true;
+        });
+      };
+      researchSearchInput.addEventListener("input", applyResearchSearch);
+      researchTabContent.applySearchTerm = (rawTerm) => {
+        researchSearchInput.value = (rawTerm || "").trim();
+        applyResearchSearch();
+      };
+
+      researchTabContent.appendChild(journeysWrap);
+    }
+    container.appendChild(researchTabContent);
+
+    // === Browse Services tab content ===
+    const servicesTabContent = el("div", "explore-tab-content");
+    servicesTabContent.dataset.tabContent = "services";
 
     // Recommended for you (shown when context stage is active)
     const recommendedSection = el("div", "recommended-section");
@@ -1420,7 +1552,7 @@
     const recommendedGrid = el("div", "opportunity-grid recommended-grid");
     recommendedSection.appendChild(recommendedHeader);
     recommendedSection.appendChild(recommendedGrid);
-    findTabContent.appendChild(recommendedSection);
+    servicesTabContent.appendChild(recommendedSection);
 
     const controls = el("div", "explore-controls");
 
@@ -1505,43 +1637,18 @@
 
     explorerSection.appendChild(resultsMeta);
     explorerSection.appendChild(resultsGrid);
-    findTabContent.appendChild(explorerSection);
-    container.appendChild(findTabContent);
-
-    // === Impact Pathways tab content ===
-    const pathwaysTabContent = el("div", "explore-tab-content");
-    pathwaysTabContent.dataset.tabContent = "pathways";
-    pathwaysTabContent.appendChild(el("p", "page-intro", data.explore.pathways.intro));
-    const explorePathwayGrid = el("div", "pathway-grid explore-pathway-grid");
-    data.explore.pathways.items.forEach((pathway) => {
-      const card = el("button", "pathway-card");
-      card.type = "button";
-      card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
-      card.appendChild(el("p", "pathway-card-label", pathway.title));
-      card.appendChild(el("p", "pathway-card-summary", pathway.summary));
-      card.addEventListener("click", () => {
-        tabFind.click();
-        const pathwayTitle = pathway.title;
-        const control = filterControls.get("pathway");
-        if (control) {
-          control.value = pathwayTitle;
-          state.filters.pathway = pathwayTitle;
-          applyFilters();
-        }
-        explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-      explorePathwayGrid.appendChild(card);
-    });
-    pathwaysTabContent.appendChild(explorePathwayGrid);
-    container.appendChild(pathwaysTabContent);
+    servicesTabContent.appendChild(explorerSection);
+    container.appendChild(servicesTabContent);
 
     // Tab switching logic
-    [tabFind, tabPathways].forEach((tab) => {
+    const allTabs = [tabPathways, tabResearch, tabServices];
+    const allContents = [pathwaysTabContent, researchTabContent, servicesTabContent];
+    allTabs.forEach((tab, i) => {
       tab.addEventListener("click", () => {
-        tabFind.classList.toggle("is-active", tab === tabFind);
-        tabPathways.classList.toggle("is-active", tab === tabPathways);
-        findTabContent.classList.toggle("is-active", tab === tabFind);
-        pathwaysTabContent.classList.toggle("is-active", tab === tabPathways);
+        allTabs.forEach((t, j) => {
+          t.classList.toggle("is-active", t === tab);
+          allContents[j].classList.toggle("is-active", t === tab);
+        });
       });
     });
 
@@ -1775,6 +1882,7 @@
     };
 
     const applyStageFilter = (stage) => {
+      tabServices.click();
       const control = filterControls.get("stage");
       if (control) {
         control.value = stage;
