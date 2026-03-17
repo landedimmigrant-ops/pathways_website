@@ -704,11 +704,8 @@
     }
 
     function togglePathway(pathwayId) {
-      if (activePathwayId === pathwayId && pathwayModalOverlay) {
-        closePathwayModal();
-        return;
-      }
-      openPathway(pathwayId);
+      const pathwayKey = pathwayIdToKey[pathwayId] || pathwayId;
+      navigateTo("explore", null, { pathway: pathwayKey });
     }
 
     container.appendChild(el("hr", "section-divider"));
@@ -1407,27 +1404,184 @@
     const pathwaysTabContent = el("div", "explore-tab-content is-active");
     pathwaysTabContent.dataset.tabContent = "pathways";
     pathwaysTabContent.appendChild(el("p", "page-intro", data.explore.pathways.intro));
+
+    const pathwayItems = data.explore.pathways.items;
+    let activeExplorePathwayId = null;
+
+    // --- Pill row (compact, visible when a pathway is active) ---
+    const pillRow = el("div", "pathway-pill-row");
+    pillRow.hidden = true;
+    const pillButtons = new Map();
+    pathwayItems.forEach((pathway) => {
+      const key = pathwayIdToKey[pathway.id] || pathway.id;
+      const pill = el("button", "pathway-pill");
+      pill.type = "button";
+      pill.dataset.pathway = key;
+      pill.textContent = pathway.title;
+      const color = pathwayColors[key];
+      if (color) pill.style.background = color;
+      pill.addEventListener("click", () => {
+        if (activeExplorePathwayId === pathway.id) {
+          closeExplorePanel();
+        } else {
+          openExplorePanel(pathway);
+        }
+      });
+      pillButtons.set(pathway.id, pill);
+      pillRow.appendChild(pill);
+    });
+    pathwaysTabContent.appendChild(pillRow);
+
+    // --- Full pathway grid (default view) ---
     const explorePathwayGrid = el("div", "pathway-grid explore-pathway-grid");
-    data.explore.pathways.items.forEach((pathway) => {
+    pathwayItems.forEach((pathway) => {
       const card = el("button", "pathway-card");
       card.type = "button";
       card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
       card.appendChild(el("p", "pathway-card-label", pathway.title));
       card.appendChild(el("p", "pathway-card-summary", pathway.summary));
-      card.addEventListener("click", () => {
-        tabServices.click();
-        const pathwayTitle = pathway.title;
-        const control = filterControls.get("pathway");
-        if (control) {
-          control.value = pathwayTitle;
-          state.filters.pathway = pathwayTitle;
-          applyFilters();
-        }
-        explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
+      card.addEventListener("click", () => openExplorePanel(pathway));
       explorePathwayGrid.appendChild(card);
     });
     pathwaysTabContent.appendChild(explorePathwayGrid);
+
+    // --- Inline panel (slide-in, colored) ---
+    const pathwayPanel = el("div", "pathway-viewer");
+    const panelCard = el("div", "pathway-viewer-card");
+
+    const panelHeader = el("div", "pathway-viewer-header");
+    const panelTitle = el("h2", null, "");
+    const panelNav = el("div", "pathway-nav");
+    const panelPrevBtn = el("button", "btn", data.explore.pathways.buttons.previous);
+    panelPrevBtn.type = "button";
+    const panelNextBtn = el("button", "btn", data.explore.pathways.buttons.next);
+    panelNextBtn.type = "button";
+    const panelCloseBtn = el("button", "btn", "\u2715 Close");
+    panelCloseBtn.type = "button";
+    panelCloseBtn.addEventListener("click", closeExplorePanel);
+    panelNav.appendChild(panelPrevBtn);
+    panelNav.appendChild(panelNextBtn);
+    panelNav.appendChild(panelCloseBtn);
+    panelHeader.appendChild(panelTitle);
+    panelHeader.appendChild(panelNav);
+    panelCard.appendChild(panelHeader);
+
+    const panelSummary = el("p", "pathway-modal-summary", "");
+    const panelLabel = el("p", "pathway-label", "");
+    const panelActions = el("ul", "pathway-actions");
+    panelCard.appendChild(panelSummary);
+    panelCard.appendChild(panelLabel);
+    panelCard.appendChild(panelActions);
+    pathwayPanel.appendChild(panelCard);
+    pathwaysTabContent.appendChild(pathwayPanel);
+
+    // --- Related services section (below panel) ---
+    const pathwayServicesSection = el("div", "pathway-services-section");
+    pathwayServicesSection.hidden = true;
+    pathwayServicesSection.appendChild(el("h3", "pathway-services-title", "Related services"));
+    const pathwayServicesGrid = el("div", "opportunity-grid");
+    pathwayServicesSection.appendChild(pathwayServicesGrid);
+    pathwaysTabContent.appendChild(pathwayServicesSection);
+
+    // --- Open/close logic ---
+    function openExplorePanel(pathway) {
+      activeExplorePathwayId = pathway.id;
+      const key = pathwayIdToKey[pathway.id] || pathway.id;
+      const color = pathwayColors[key];
+      const currentIndex = pathwayItems.indexOf(pathway);
+      const prevIndex = (currentIndex - 1 + pathwayItems.length) % pathwayItems.length;
+      const nextIndex = (currentIndex + 1) % pathwayItems.length;
+
+      // Grid → pills
+      explorePathwayGrid.hidden = true;
+      pillRow.hidden = false;
+      pillButtons.forEach((btn, id) => btn.classList.toggle("is-active", id === pathway.id));
+
+      // Panel content
+      panelTitle.textContent = pathway.title;
+      panelSummary.textContent = pathway.summary;
+      panelLabel.textContent = pathway.label;
+      clear(panelActions);
+      (pathway.actions || []).forEach((action) => panelActions.appendChild(el("li", null, action)));
+      pathwayPanel.style.background = color || "var(--burgundy)";
+      pathwayPanel.classList.add("is-open");
+
+      // Prev/Next handlers
+      panelPrevBtn.onclick = () => openExplorePanel(pathwayItems[prevIndex]);
+      panelNextBtn.onclick = () => openExplorePanel(pathwayItems[nextIndex]);
+
+      // Filtered services
+      const pathwayTitle = pathway.title;
+      const filtered = exploreItems.filter((opp) => {
+        const val = opp.pathway;
+        return Array.isArray(val) ? val.includes(pathwayTitle) : val === pathwayTitle;
+      });
+      clear(pathwayServicesGrid);
+      if (filtered.length) {
+        filtered.forEach((opp) => {
+          const card = el("div", "opportunity-card");
+          card.appendChild(el("h3", null, opp.title));
+          card.appendChild(el("p", "card-text", opp.summary));
+          const meta = el("div", "opportunity-meta");
+          [
+            { label: data.explore.labels.category, value: opp.category },
+            { label: data.explore.labels.stage, value: opp.stage },
+            { label: data.explore.labels.format, value: opp.format },
+            { label: data.explore.labels.time, value: opp.time }
+          ].forEach((item) => {
+            const displayValue = Array.isArray(item.value) ? item.value.join(", ") : item.value;
+            if (!displayValue) return;
+            const line = el("div", "meta-line");
+            line.appendChild(el("span", "meta-label", item.label));
+            line.appendChild(el("span", "meta-value", displayValue));
+            meta.appendChild(line);
+          });
+          card.appendChild(meta);
+          const tagList = el("div", "tag-list");
+          (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
+          card.appendChild(tagList);
+          const cardActions = el("div", "card-actions");
+          if (opp.sourceType === "workshop") {
+            const btn = el("button", "btn primary", opp.libcalUrl ? "Register" : data.explore.buttons.details);
+            btn.type = "button";
+            btn.addEventListener("click", () => {
+              if (opp.libcalUrl) window.open(opp.libcalUrl, "_blank", "noopener");
+              else openModal(opp);
+            });
+            cardActions.appendChild(btn);
+          } else {
+            const detailBtn = el("button", "btn primary", data.explore.buttons.details);
+            detailBtn.type = "button";
+            detailBtn.addEventListener("click", () => openModal(opp));
+            cardActions.appendChild(detailBtn);
+          }
+          card.appendChild(cardActions);
+          pathwayServicesGrid.appendChild(card);
+        });
+      } else {
+        pathwayServicesGrid.appendChild(el("p", "empty-state", "No services found for this pathway."));
+      }
+      pathwayServicesSection.hidden = false;
+      pathwayPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function closeExplorePanel() {
+      activeExplorePathwayId = null;
+      pathwayPanel.classList.remove("is-open");
+      pathwayServicesSection.hidden = true;
+      pillRow.hidden = true;
+      explorePathwayGrid.hidden = false;
+      pillButtons.forEach((btn) => btn.classList.remove("is-active"));
+    }
+
+    section.openPathwayInTab = (pathwayKey) => {
+      const pathway = pathwayItems.find((p) => (pathwayIdToKey[p.id] || p.id) === pathwayKey);
+      if (pathway) {
+        tabPathways.click();
+        openExplorePanel(pathway);
+      }
+    };
+
     container.appendChild(pathwaysTabContent);
 
     // === Research Stage tab content ===
@@ -2115,8 +2269,8 @@
         explorePage.applyStageFilter(state.pendingStage);
         state.pendingStage = "";
       }
-      if (explorePage && explorePage.applyPathwayFilterByKey && state.pendingPathwayKey) {
-        explorePage.applyPathwayFilterByKey(state.pendingPathwayKey);
+      if (explorePage && explorePage.openPathwayInTab && state.pendingPathwayKey) {
+        explorePage.openPathwayInTab(state.pendingPathwayKey);
         state.pendingPathwayKey = "";
       }
       if (explorePage && explorePage.focusWorkshopById && state.pendingWorkshopId) {
@@ -2130,11 +2284,7 @@
     }
 
     if (validPage === "home") {
-      const homePage = pages.get("home");
-      if (homePage && homePage.openPathwayByKey && state.pendingPathwayKey) {
-        homePage.openPathwayByKey(state.pendingPathwayKey);
-        state.pendingPathwayKey = "";
-      }
+      state.pendingPathwayKey = "";
     }
 
     if (validPage === "support") {
@@ -2184,7 +2334,7 @@
     const queryString = query.toString();
     const nextHash = `${pageToHash(validPage)}${queryString ? `?${queryString}` : ""}`;
     const sameHash = window.location.hash === nextHash;
-    state.pendingPathwayKey = (validPage === "home" || validPage === "explore")
+    state.pendingPathwayKey = validPage === "explore"
       ? (options.pathway || "").toLowerCase()
       : "";
     state.pendingWorkshopId = validPage === "explore" ? (options.workshop || "") : "";
@@ -2230,7 +2380,7 @@
     buildPages();
 
     const initialRoute = parseRouteFromHash(window.location.hash);
-    if (initialRoute.page === "home" || initialRoute.page === "explore") {
+    if (initialRoute.page === "explore") {
       state.pendingPathwayKey = (initialRoute.params.get("pathway") || "").toLowerCase();
     }
     if (initialRoute.page === "explore") {
@@ -2248,7 +2398,7 @@
         return;
       }
       const nextRoute = parseRouteFromHash(window.location.hash);
-      state.pendingPathwayKey = (nextRoute.page === "home" || nextRoute.page === "explore")
+      state.pendingPathwayKey = nextRoute.page === "explore"
         ? (nextRoute.params.get("pathway") || "").toLowerCase()
         : "";
       state.pendingWorkshopId = nextRoute.page === "explore"

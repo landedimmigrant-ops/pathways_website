@@ -717,18 +717,53 @@ label {
   border-color: var(--border);
 }
 
-.pathway-viewer {
-  margin-top: 24px;
-  border: 1px solid var(--border);
-  padding: 20px;
-  background: #fff;
+/* ── Pathway pill row (compact, shown when a pathway is active) ── */
+
+.pathway-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
-.pathway-viewer.is-hidden {
-  display: none;
+.pathway-pill {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  border: 2px solid transparent;
+  cursor: pointer;
+  line-height: 1.3;
+  transition: opacity 0.15s, border-color 0.15s;
+}
+
+.pathway-pill[data-pathway="communications"] {
+  color: #1a1a1a;
+}
+
+.pathway-pill.is-active {
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.pathway-pill:hover {
+  opacity: 0.85;
+}
+
+/* ── Pathway inline panel (slide-in, colored bg) ─────────────── */
+
+.pathway-viewer {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s ease;
+}
+
+.pathway-viewer.is-open {
+  max-height: 1200px;
 }
 
 .pathway-viewer-card {
+  padding: 28px 32px 24px;
   display: grid;
   gap: 12px;
 }
@@ -740,10 +775,31 @@ label {
   gap: 16px;
 }
 
+.pathway-viewer h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.pathway-viewer .pathway-modal-summary {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 17px;
+  margin: 0;
+}
+
 .pathway-label {
   color: var(--muted);
-  font-weight: 600;
+  font-weight: 700;
   margin: 8px 0 0;
+}
+
+.pathway-viewer .pathway-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .pathway-actions,
@@ -751,6 +807,14 @@ label {
   padding-left: 20px;
   margin: 8px 0 0;
   color: var(--muted);
+}
+
+.pathway-viewer .pathway-actions {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.pathway-viewer .pathway-actions li {
+  margin-bottom: 4px;
 }
 
 .pathway-support-title {
@@ -779,9 +843,32 @@ label {
 
 .pathway-nav {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-top: 8px;
+}
+
+.pathway-viewer .pathway-nav .btn {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.pathway-viewer .pathway-nav .btn:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Pathway related services section ────────────────────────── */
+
+.pathway-services-section {
+  margin-top: 36px;
+}
+
+.pathway-services-title {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 20px;
 }
 
 .pathway-modal-overlay {
