@@ -50,6 +50,7 @@
     pendingWorkshopId: "",
     pendingExploreSearch: "",
     pendingSupportSearch: "",
+    pendingResearchJourneyId: "",
     suppressNextHashChange: false
   };
   const pathwayIdToKey = {
@@ -433,11 +434,16 @@
     const cardGrid = el("div", "journey-grid");
     data.home.hero.cards.forEach((card) => {
       const cardLink = el("a", "journey-card");
-      const supportAnchor = supportAnchorByJourneyId[card.id];
-      cardLink.href = supportAnchor ? `#${supportAnchor}` : "#support";
+      cardLink.href = "#explore";
       cardLink.dataset.journey = card.id;
       cardLink.appendChild(el("h3", null, card.title));
       cardLink.appendChild(el("p", "card-text", card.description));
+      cardLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        setContextStage(card.title);
+        state.pendingResearchJourneyId = card.id;
+        navigateTo("explore");
+      });
       cardGrid.appendChild(cardLink);
     });
     stageSection.appendChild(cardGrid);
@@ -1545,7 +1551,18 @@
 
     applyFilters();
 
+    const openResearchStageTab = (journeyId) => {
+      tabResearch.click();
+      const anchorId = supportAnchorByJourneyId[journeyId] || journeyId;
+      const details = document.getElementById(anchorId);
+      if (details) {
+        details.open = true;
+        details.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
     section.applyStageFilter = applyStageFilter;
+    section.openResearchStageTab = openResearchStageTab;
     section.applyPathwayFilterByKey = applyPathwayFilterByKey;
     section.focusWorkshopById = focusWorkshopById;
     section.applySearchTerm = applySearchTerm;
@@ -1629,6 +1646,10 @@
       if (explorePage && explorePage.focusWorkshopById && state.pendingWorkshopId) {
         explorePage.focusWorkshopById(state.pendingWorkshopId);
         state.pendingWorkshopId = "";
+      }
+      if (explorePage && explorePage.openResearchStageTab && state.pendingResearchJourneyId) {
+        explorePage.openResearchStageTab(state.pendingResearchJourneyId);
+        state.pendingResearchJourneyId = "";
       }
       if (explorePage && explorePage.applySearchTerm) {
         explorePage.applySearchTerm(state.pendingExploreSearch);
