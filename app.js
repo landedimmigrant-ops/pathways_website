@@ -1430,7 +1430,6 @@
       pillButtons.set(pathway.id, pill);
       pillRow.appendChild(pill);
     });
-    pathwaysTabContent.appendChild(pillRow);
 
     // --- Full pathway grid (default view) ---
     const explorePathwayGrid = el("div", "pathway-grid explore-pathway-grid");
@@ -1474,6 +1473,7 @@
     panelCard.appendChild(panelActions);
     pathwayPanel.appendChild(panelCard);
     pathwaysTabContent.appendChild(pathwayPanel);
+    pathwaysTabContent.appendChild(pillRow);
 
     // --- Related services section (below panel) ---
     const pathwayServicesSection = el("div", "pathway-services-section");
