@@ -440,7 +440,6 @@
       cardLink.appendChild(el("p", "card-text", card.description));
       cardLink.addEventListener("click", (event) => {
         event.preventDefault();
-        setContextStage(card.title);
         state.pendingResearchJourneyId = card.id;
         navigateTo("explore");
       });
