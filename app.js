@@ -63,6 +63,7 @@
     pendingWorkshopId: "",
     pendingExploreSearch: "",
     pendingSupportSearch: "",
+    pendingResearchJourneyId: "",
     suppressNextHashChange: false
   };
   const pathwayIdToKey = {
@@ -546,8 +547,8 @@
       label.appendChild(el("span", "timeline-desc", card.description));
       const supportAnchor = supportAnchorByJourneyId[card.id];
       node.addEventListener("click", () => {
-        setContextStage(card.title);
-        navigateTo("support", supportAnchor || undefined);
+        state.pendingResearchJourneyId = card.id;
+        navigateTo("explore");
       });
       step.appendChild(node);
       step.appendChild(label);
@@ -1594,32 +1595,12 @@
     researchTabContent.dataset.tabContent = "research";
 
     if (data.support) {
-      researchTabContent.appendChild(el("p", "lead", data.support.intro));
+      researchTabContent.appendChild(el("p", "lead", "Recommended support services and resources based on the stage of your research."));
 
       const supportSectionsById = (data.support.sections || []).reduce((acc, item) => {
         acc[item.id] = item;
         return acc;
       }, {});
-      const supportSearchConfig = data.support.search || {
-        label: "Find support and services",
-        placeholder: "Find support and services",
-        ariaLabel: "Find support and services"
-      };
-
-      const researchControls = el("div", "explore-controls");
-      const researchSearchWrap = el("div", "search-bar");
-      const researchSearchLabel = el("label", null, supportSearchConfig.label);
-      const researchSearchInput = el("input");
-      const researchSearchId = "research-search-input";
-      researchSearchInput.id = researchSearchId;
-      researchSearchLabel.setAttribute("for", researchSearchId);
-      researchSearchInput.type = "search";
-      researchSearchInput.placeholder = supportSearchConfig.placeholder;
-      researchSearchInput.setAttribute("aria-label", supportSearchConfig.ariaLabel);
-      researchSearchWrap.appendChild(researchSearchLabel);
-      researchSearchWrap.appendChild(researchSearchInput);
-      researchControls.appendChild(researchSearchWrap);
-      researchTabContent.appendChild(researchControls);
 
       const journeysWrap = el("div", "journeys");
       const researchEntries = [];
@@ -1680,19 +1661,7 @@
         researchEntries.push({ details, searchText });
       });
 
-      const applyResearchSearch = () => {
-        const term = researchSearchInput.value.trim().toLowerCase();
-        researchEntries.forEach((entry) => {
-          const matches = !term || entry.searchText.includes(term);
-          entry.details.hidden = !matches;
-          if (term && matches) entry.details.open = true;
-        });
-      };
-      researchSearchInput.addEventListener("input", applyResearchSearch);
-      researchTabContent.applySearchTerm = (rawTerm) => {
-        researchSearchInput.value = (rawTerm || "").trim();
-        applyResearchSearch();
-      };
+      researchTabContent.applySearchTerm = () => {};
 
       researchTabContent.appendChild(journeysWrap);
     }
@@ -2081,6 +2050,15 @@
     section.applyPathwayFilterByKey = applyPathwayFilterByKey;
     section.focusWorkshopById = focusWorkshopById;
     section.applySearchTerm = applySearchTerm;
+    section.openResearchStage = (journeyId) => {
+      tabResearch.click();
+      const anchorId = supportAnchorByJourneyId[journeyId] || journeyId;
+      const details = researchTabContent.querySelector(`#${anchorId}`);
+      if (details) {
+        details.open = true;
+        details.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
     return section;
   };
 
@@ -2281,6 +2259,10 @@
       if (explorePage && explorePage.focusWorkshopById && state.pendingWorkshopId) {
         explorePage.focusWorkshopById(state.pendingWorkshopId);
         state.pendingWorkshopId = "";
+      }
+      if (explorePage && explorePage.openResearchStage && state.pendingResearchJourneyId) {
+        explorePage.openResearchStage(state.pendingResearchJourneyId);
+        state.pendingResearchJourneyId = "";
       }
       if (explorePage && explorePage.applySearchTerm) {
         explorePage.applySearchTerm(state.pendingExploreSearch);

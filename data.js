@@ -296,7 +296,7 @@ window.PATHWAYS_DATA = {
   },
   support: {
     title: "Research Support",
-    intro: "Across the university, units offer workshops, consultations, clinics, and other services that support different ways research creates change, from advancing scholarship to informing policy, supporting communities, inspiring innovation, or shaping public understanding.",
+    intro: "Support services and resources are available wherever you are in your research journey.",
     search: {
       label: "Find support and services",
       placeholder: "Find support and services",
