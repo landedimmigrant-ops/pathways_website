@@ -187,7 +187,8 @@ window.PATHWAYS_DATA = {
     },
     actions: {
       opportunities: "See related opportunities",
-      contact: "Contact"
+      contact: "Contact",
+      modulePrompt: "What do you need help with?"
     },
     journeys: [
       {
@@ -197,46 +198,74 @@ window.PATHWAYS_DATA = {
         stage: "Developing an Idea",
         modules: [
           {
-            title: "Impact framing consult",
+            title: "Framing my research impact",
             description: "Clarify the public need and the change your research could support.",
             type: "Consult",
-            time: "45-60 min"
+            time: "45–60 min",
+            workshopIds: ["opp-impact-framing"]
           },
           {
-            title: "Stakeholder mapping workshop",
-            description: "Identify potential partners, communities, and decision-makers.",
+            title: "Mapping stakeholders",
+            description: "Identify potential partners, communities, and decision-makers relevant to your research.",
             type: "Workshop",
-            time: "90 min"
+            time: "90 min",
+            workshopIds: []
           },
           {
-            title: "Impact plan review",
-            description: "Refine objectives, outputs, and intended outcomes.",
+            title: "Refining my impact plan",
+            description: "Review objectives, outputs, and intended outcomes with a specialist.",
             type: "Consult",
-            time: "60 min"
+            time: "60 min",
+            workshopIds: []
           },
           {
-            title: "Partner readiness check",
-            description: "Assess engagement plans and partnership roles.",
+            title: "Assessing partner readiness",
+            description: "Review engagement plans and clarify partnership roles before committing.",
             type: "Consult",
-            time: "45 min"
+            time: "45 min",
+            workshopIds: ["opp-partner-readiness"]
           },
           {
-            title: "Grant narrative workshop",
+            title: "Writing grant content",
             description: "Translate impact goals into persuasive, funder-ready language.",
             type: "Workshop",
-            time: "2 hrs"
+            time: "2 hrs",
+            workshopIds: ["opp-grant-narrative"]
           },
           {
             title: "Preparing a grant application",
-            description: "Pull your impact plan, partner roles, and evidence into a clear grant-ready package.",
+            description: "Pull your impact plan, partner roles, and evidence into a grant-ready package.",
             type: "Consult",
-            time: "60 min"
+            time: "60 min",
+            workshopIds: []
           },
           {
-            title: "Knowledge mobilization brief",
-            description: "Outline how findings will reach the right audiences.",
+            title: "Planning knowledge mobilization",
+            description: "Outline how your findings will reach the right audiences at the right time.",
             type: "Consult",
-            time: "60 min"
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Identifying funding sources",
+            description: "Find and evaluate relevant funding opportunities for your research goals.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: []
+          },
+          {
+            title: "Reviewing existing literature",
+            description: "Build an evidence base and understand the research landscape around your topic.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: []
+          },
+          {
+            title: "Designing my study",
+            description: "Get support on research methods, ethics, and data collection planning.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
           }
         ]
       },
@@ -247,22 +276,60 @@ window.PATHWAYS_DATA = {
         stage: "Active Research",
         modules: [
           {
-            title: "Engagement plan clinic",
-            description: "Design activities that keep partners involved and informed.",
+            title: "Engaging partners & communities",
+            description: "Design activities that keep partners involved and informed throughout your project.",
             type: "Workshop",
-            time: "90 min"
+            time: "90 min",
+            workshopIds: ["opp-engagement-plan"]
           },
           {
-            title: "Outcome tracking consult",
-            description: "Select indicators and simple tools to document progress.",
+            title: "Tracking outcomes & progress",
+            description: "Select indicators and simple tools to document progress toward your goals.",
             type: "Consult",
-            time: "45 min"
+            time: "45 min",
+            workshopIds: ["opp-outcome-tracking"]
           },
           {
-            title: "Mid-project reflection",
-            description: "Assess what is working and update the pathway if needed.",
+            title: "Reflecting on my approach",
+            description: "Assess what is working and update your impact pathway if needed.",
             type: "Consult",
-            time: "60 min"
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Collecting & analyzing data",
+            description: "Get support on data methods, tools, and sense-making for your research.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: []
+          },
+          {
+            title: "Documenting impact stories",
+            description: "Capture evidence and narratives of change as they happen in your project.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: ["opp-impact-documentation"]
+          },
+          {
+            title: "Reporting to funders",
+            description: "Structure progress reports that clearly highlight impact and outcomes.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Communicating work in progress",
+            description: "Share early findings with communities, media, or stakeholders effectively.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: []
+          },
+          {
+            title: "Managing project changes",
+            description: "Get help adapting scope, partnerships, or timelines when things shift.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: []
           }
         ]
       },
@@ -273,22 +340,60 @@ window.PATHWAYS_DATA = {
         stage: "Finishing a Project",
         modules: [
           {
-            title: "Impact documentation",
-            description: "Gather evidence and short narratives of change.",
+            title: "Documenting my impact",
+            description: "Gather evidence and narratives of change to tell your research impact story.",
             type: "Consult",
-            time: "60 min"
+            time: "60 min",
+            workshopIds: ["opp-impact-documentation"]
           },
           {
-            title: "Knowledge sharing strategy",
-            description: "Select the best formats to reach priority audiences.",
+            title: "Sharing knowledge effectively",
+            description: "Select the best formats and channels to reach your priority audiences.",
             type: "Workshop",
-            time: "90 min"
+            time: "90 min",
+            workshopIds: ["opp-knowledge-sharing"]
           },
           {
-            title: "Future pathways session",
-            description: "Identify follow-on opportunities and sustain outcomes.",
+            title: "Planning future research",
+            description: "Identify follow-on opportunities and strategies to sustain your outcomes.",
             type: "Consult",
-            time: "45 min"
+            time: "45 min",
+            workshopIds: []
+          },
+          {
+            title: "Publishing results",
+            description: "Navigate academic and non-academic publishing options for your findings.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Translating research to policy",
+            description: "Shape policy briefs, advocacy materials, or decision-maker engagement strategies.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: []
+          },
+          {
+            title: "Engaging media & the public",
+            description: "Get support with communications, media outreach, and public-facing outputs.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: []
+          },
+          {
+            title: "Sharing data & materials",
+            description: "Plan data archiving, open access publishing, and research material sharing.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Evaluating my impact",
+            description: "Assess what changed, gather feedback, and reflect on your research outcomes.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: ["opp-impact-dashboard"]
           }
         ]
       }

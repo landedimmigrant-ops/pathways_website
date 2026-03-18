@@ -1594,77 +1594,239 @@
     const researchTabContent = el("div", "explore-tab-content");
     researchTabContent.dataset.tabContent = "research";
 
-    if (data.support) {
-      researchTabContent.appendChild(el("p", "lead", "Recommended support services and resources based on the stage of your research."));
+    researchTabContent.appendChild(el("p", "lead", "Recommended support services and resources based on the stage of your research."));
 
-      const supportSectionsById = (data.support.sections || []).reduce((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-      }, {});
+    const journeys = data.start.journeys;
+    let activeResearchJourneyId = null;
 
-      const journeysWrap = el("div", "journeys");
-      const researchEntries = [];
-      data.start.journeys.forEach((journey) => {
-        const anchorId = supportAnchorByJourneyId[journey.id] || journey.id;
-        const supportSection = supportSectionsById[anchorId];
-        const details = el("details", "journey");
-        details.id = anchorId;
-        const summary = el("summary", "journey-summary");
-        summary.appendChild(el("h3", null, journey.title));
-        summary.appendChild(el("p", "card-text", journey.description));
-        details.appendChild(summary);
+    // Helper: build one opportunity card for the research panel
+    function buildResearchOpportunityCard(opp) {
+      const card = el("div", "opportunity-card");
+      card.appendChild(el("h3", null, opp.title));
+      card.appendChild(el("p", "card-text", opp.summary));
+      const meta = el("div", "opportunity-meta");
+      [
+        { label: data.explore.labels.category, value: opp.category },
+        { label: data.explore.labels.stage, value: opp.stage },
+        { label: data.explore.labels.format, value: opp.format },
+        { label: data.explore.labels.time, value: opp.time }
+      ].forEach((item) => {
+        const displayValue = Array.isArray(item.value) ? item.value.join(", ") : item.value;
+        if (!displayValue) return;
+        const line = el("div", "meta-line");
+        line.appendChild(el("span", "meta-label", item.label));
+        line.appendChild(el("span", "meta-value", displayValue));
+        meta.appendChild(line);
+      });
+      card.appendChild(meta);
+      const cardActions = el("div", "card-actions");
+      if (opp.sourceType === "workshop") {
+        const btn = el("button", "btn primary", opp.libcalUrl ? "Register" : data.explore.buttons.details);
+        btn.type = "button";
+        btn.addEventListener("click", () => {
+          if (opp.libcalUrl) window.open(opp.libcalUrl, "_blank", "noopener");
+          else openModal(opp);
+        });
+        cardActions.appendChild(btn);
+      } else {
+        const detailBtn = el("button", "btn primary", data.explore.buttons.details);
+        detailBtn.type = "button";
+        detailBtn.addEventListener("click", () => openModal(opp));
+        cardActions.appendChild(detailBtn);
+      }
+      card.appendChild(cardActions);
+      return card;
+    }
 
-        const body = el("div", "modules");
-        if (supportSection && supportSection.lead) {
-          body.appendChild(el("p", "module-text", supportSection.lead));
+    // --- Pill row (compact, visible when a stage is active) ---
+    const researchPillRow = el("div", "pathway-pill-row");
+    researchPillRow.hidden = true;
+    const researchPillButtons = new Map();
+    journeys.forEach((journey) => {
+      const pill = el("button", "pathway-pill");
+      pill.type = "button";
+      pill.textContent = journey.title;
+      pill.addEventListener("click", () => {
+        if (activeResearchJourneyId === journey.id) {
+          closeResearchPanel();
+        } else {
+          openResearchPanel(journey);
         }
-        journey.modules.forEach((module) => {
-          const card = el("div", "module-card");
-          card.appendChild(el("h4", null, module.title));
-          card.appendChild(el("p", "module-text", module.description));
-          const meta = el("div", "module-meta");
-          const typeItem = el("div", "meta-item");
-          typeItem.appendChild(el("span", "meta-label", data.start.labels.type));
-          typeItem.appendChild(el("span", "meta-value", module.type));
-          const timeItem = el("div", "meta-item");
-          timeItem.appendChild(el("span", "meta-label", data.start.labels.time));
-          timeItem.appendChild(el("span", "meta-value", module.time));
-          meta.appendChild(typeItem);
-          meta.appendChild(timeItem);
-          card.appendChild(meta);
-          body.appendChild(card);
-        });
+      });
+      researchPillButtons.set(journey.id, pill);
+      researchPillRow.appendChild(pill);
+    });
 
-        const actionRow = el("div", "module-actions");
-        const oppButton = el("button", "btn", data.start.actions.opportunities);
-        oppButton.type = "button";
-        oppButton.addEventListener("click", () => {
-          tabServices.click();
-          applyStageFilter(journey.stage);
-        });
-        const contactButton = el("button", "btn primary", data.start.actions.contact);
-        contactButton.type = "button";
-        contactButton.addEventListener("click", () => { navigateTo("about", "contact"); });
-        actionRow.appendChild(oppButton);
-        actionRow.appendChild(contactButton);
-        body.appendChild(actionRow);
-        details.appendChild(body);
-        journeysWrap.appendChild(details);
+    // --- Stage card grid (Level 1) ---
+    const researchStageGrid = el("div", "research-stage-grid pathway-grid");
+    journeys.forEach((journey, idx) => {
+      const card = el("button", "research-stage-card");
+      card.type = "button";
+      card.appendChild(el("p", "research-stage-num", `Stage ${idx + 1}`));
+      card.appendChild(el("p", "research-stage-title", journey.title));
+      card.appendChild(el("p", "research-stage-desc", journey.description));
+      card.addEventListener("click", () => openResearchPanel(journey));
+      researchStageGrid.appendChild(card);
+    });
 
-        const searchText = [
-          journey.title,
-          journey.description,
-          supportSection && supportSection.lead,
-          ...(supportSection && Array.isArray(supportSection.supports) ? supportSection.supports : []),
-          ...journey.modules.flatMap((module) => [module.title, module.description, module.type, module.time])
-        ].filter(Boolean).join(" ").toLowerCase();
-        researchEntries.push({ details, searchText });
+    // --- Inline panel (Level 2 + 3) ---
+    const researchViewer = el("div", "research-viewer");
+    const researchViewerCard = el("div", "research-viewer-card");
+
+    const researchViewerHeader = el("div", "research-viewer-header");
+    const researchPanelTitle = el("h2", null, "");
+    const researchPanelNav = el("div", "pathway-nav");
+    const researchPrevBtn = el("button", "btn btn-icon", "\u2190");
+    researchPrevBtn.type = "button";
+    researchPrevBtn.setAttribute("aria-label", "Previous stage");
+    const researchNextBtn = el("button", "btn btn-icon", "\u2192");
+    researchNextBtn.type = "button";
+    researchNextBtn.setAttribute("aria-label", "Next stage");
+    const researchCloseBtn = el("button", "btn btn-icon btn-icon--close", "\u00d7");
+    researchCloseBtn.type = "button";
+    researchCloseBtn.addEventListener("click", closeResearchPanel);
+    researchPanelNav.appendChild(researchPrevBtn);
+    researchPanelNav.appendChild(researchNextBtn);
+    researchPanelNav.appendChild(researchCloseBtn);
+    researchViewerHeader.appendChild(researchPanelTitle);
+    researchViewerHeader.appendChild(researchPanelNav);
+    researchViewerCard.appendChild(researchViewerHeader);
+
+    const researchPanelDesc = el("p", "research-viewer-desc", "");
+    researchViewerCard.appendChild(researchPanelDesc);
+
+    const researchModulePrompt = el("p", "research-module-prompt", data.start.actions.modulePrompt);
+    researchViewerCard.appendChild(researchModulePrompt);
+
+    // Module chips (Level 2)
+    const researchModuleChips = el("div", "research-module-chips");
+    researchViewerCard.appendChild(researchModuleChips);
+
+    // Module detail (Level 3)
+    const researchModuleDetail = el("div", "research-module-detail");
+    researchModuleDetail.hidden = true;
+    const researchModuleDetailTitle = el("h3", "research-module-detail-title", "");
+    const researchModuleDetailDesc = el("p", "research-module-detail-desc", "");
+    const researchModuleDetailMeta = el("div", "module-meta");
+    const researchModuleTypeItem = el("div", "meta-item");
+    researchModuleTypeItem.appendChild(el("span", "meta-label", data.start.labels.type));
+    const researchModuleTypeValue = el("span", "meta-value", "");
+    researchModuleTypeItem.appendChild(researchModuleTypeValue);
+    const researchModuleTimeItem = el("div", "meta-item");
+    researchModuleTimeItem.appendChild(el("span", "meta-label", data.start.labels.time));
+    const researchModuleTimeValue = el("span", "meta-value", "");
+    researchModuleTimeItem.appendChild(researchModuleTimeValue);
+    researchModuleDetailMeta.appendChild(researchModuleTypeItem);
+    researchModuleDetailMeta.appendChild(researchModuleTimeItem);
+    const researchResourcesHeading = el("h4", "research-resources-heading", "Relevant workshops \u0026 services");
+    const researchResourcesGrid = el("div", "opportunity-grid");
+    const researchSeeAllLink = el("a", "bridge-link", "");
+    researchSeeAllLink.href = "#";
+    researchModuleDetail.appendChild(researchModuleDetailTitle);
+    researchModuleDetail.appendChild(researchModuleDetailDesc);
+    researchModuleDetail.appendChild(researchModuleDetailMeta);
+    researchModuleDetail.appendChild(researchResourcesHeading);
+    researchModuleDetail.appendChild(researchResourcesGrid);
+    researchModuleDetail.appendChild(researchSeeAllLink);
+    researchViewerCard.appendChild(researchModuleDetail);
+
+    // Panel CTAs
+    const researchPanelActions = el("div", "module-actions");
+    const researchOppBtn = el("button", "btn", data.start.actions.opportunities);
+    researchOppBtn.type = "button";
+    const researchContactBtn = el("button", "btn primary", data.start.actions.contact);
+    researchContactBtn.type = "button";
+    researchContactBtn.addEventListener("click", () => { navigateTo("about", "contact"); });
+    researchPanelActions.appendChild(researchOppBtn);
+    researchPanelActions.appendChild(researchContactBtn);
+    researchViewerCard.appendChild(researchPanelActions);
+
+    researchViewer.appendChild(researchViewerCard);
+
+    researchTabContent.appendChild(researchStageGrid);
+    researchTabContent.appendChild(researchPillRow);
+    researchTabContent.appendChild(researchViewer);
+
+    function openResearchPanel(journey) {
+      activeResearchJourneyId = journey.id;
+      const currentIndex = journeys.indexOf(journey);
+      const prevIndex = (currentIndex - 1 + journeys.length) % journeys.length;
+      const nextIndex = (currentIndex + 1) % journeys.length;
+
+      researchStageGrid.hidden = true;
+      researchPillRow.hidden = false;
+      researchPillButtons.forEach((btn, id) => btn.classList.toggle("is-active", id === journey.id));
+
+      researchPanelTitle.textContent = journey.title;
+      researchPanelDesc.textContent = journey.description;
+      researchModuleDetail.hidden = true;
+
+      clear(researchModuleChips);
+      journey.modules.forEach((module) => {
+        const chip = el("button", "research-module-chip", module.title);
+        chip.type = "button";
+        chip.addEventListener("click", () => openResearchModule(journey, module, chip));
+        researchModuleChips.appendChild(chip);
       });
 
-      researchTabContent.applySearchTerm = () => {};
+      researchPrevBtn.onclick = () => openResearchPanel(journeys[prevIndex]);
+      researchNextBtn.onclick = () => openResearchPanel(journeys[nextIndex]);
+      researchOppBtn.onclick = () => {
+        tabServices.click();
+        applyStageFilter(journey.stage);
+      };
 
-      researchTabContent.appendChild(journeysWrap);
+      researchViewer.classList.add("is-open");
+      researchViewer.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+
+    function closeResearchPanel() {
+      activeResearchJourneyId = null;
+      researchViewer.classList.remove("is-open");
+      researchPillRow.hidden = true;
+      researchStageGrid.hidden = false;
+      researchModuleDetail.hidden = true;
+      researchPillButtons.forEach((btn) => btn.classList.remove("is-active"));
+    }
+
+    function openResearchModule(journey, module, chipEl) {
+      researchModuleChips.querySelectorAll(".research-module-chip").forEach(c => c.classList.remove("is-active"));
+      chipEl.classList.add("is-active");
+
+      researchModuleDetailTitle.textContent = module.title;
+      researchModuleDetailDesc.textContent = module.description;
+      researchModuleTypeValue.textContent = module.type;
+      researchModuleTimeValue.textContent = module.time;
+
+      const workshopIds = Array.isArray(module.workshopIds) ? module.workshopIds : [];
+      let matched;
+      if (workshopIds.length > 0) {
+        matched = exploreItems.filter(opp => workshopIds.includes(opp.id));
+      } else {
+        matched = exploreItems.filter(opp => {
+          const val = opp.stage;
+          return Array.isArray(val) ? val.includes(journey.stage) : val === journey.stage;
+        }).slice(0, 4);
+      }
+
+      clear(researchResourcesGrid);
+      if (matched.length) {
+        matched.forEach(opp => researchResourcesGrid.appendChild(buildResearchOpportunityCard(opp)));
+      } else {
+        researchResourcesGrid.appendChild(el("p", "empty-state", "No services found. Check back soon."));
+      }
+
+      researchSeeAllLink.textContent = `See all support for ${journey.title} \u2192`;
+      researchSeeAllLink.onclick = (e) => {
+        e.preventDefault();
+        tabServices.click();
+        applyStageFilter(journey.stage);
+      };
+
+      researchModuleDetail.hidden = false;
+    }
+
+    researchTabContent.applySearchTerm = () => {};
     container.appendChild(researchTabContent);
 
     // === Browse Services tab content ===
@@ -2052,12 +2214,8 @@
     section.applySearchTerm = applySearchTerm;
     section.openResearchStage = (journeyId) => {
       tabResearch.click();
-      const anchorId = supportAnchorByJourneyId[journeyId] || journeyId;
-      const details = researchTabContent.querySelector(`#${anchorId}`);
-      if (details) {
-        details.open = true;
-        details.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      const journey = journeys.find(j => j.id === journeyId);
+      if (journey) openResearchPanel(journey);
     };
     return section;
   };
