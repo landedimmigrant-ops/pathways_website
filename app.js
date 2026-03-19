@@ -2108,67 +2108,98 @@
       clear(modalRoot);
       document.body.classList.add("is-modal-open");
       const overlay = el("div", "modal-overlay");
+
+      // Sticky top bar
+      const topbar = el("div", "modal-topbar");
+      const backBtn = el("button", "modal-back-btn", "\u2190 Back to Browse Services");
+      backBtn.type = "button";
+      backBtn.addEventListener("click", closeModal);
+      topbar.appendChild(backBtn);
+      const topbarActions = el("div", "modal-topbar-actions");
+      if (opp.libcalUrl) {
+        const registerBtn = el("a", "btn primary", "Register");
+        registerBtn.href = opp.libcalUrl;
+        registerBtn.target = "_blank";
+        registerBtn.rel = "noopener";
+        topbarActions.appendChild(registerBtn);
+      }
+      topbar.appendChild(topbarActions);
+      overlay.appendChild(topbar);
+
+      // Page content
       const modal = el("div", "modal");
 
-      const header = el("div", "modal-header");
-      header.appendChild(el("h3", null, opp.title));
-      const closeButton = el("button", "btn", data.explore.buttons.close);
-      closeButton.type = "button";
-      closeButton.addEventListener("click", closeModal);
-      header.appendChild(closeButton);
-      modal.appendChild(header);
+      // Kicker + title
+      if (opp.category) modal.appendChild(el("p", "modal-kicker", opp.category));
+      modal.appendChild(el("h1", "modal-title", opp.title));
 
-      const body = el("div", "modal-body");
-      if (opp.sourceType === "workshop") {
-        const workshopContent = el("div", "modal-section");
-        workshopContent.innerHTML = opp.html;
-        body.appendChild(workshopContent);
-        modal.appendChild(body);
-        overlay.appendChild(modal);
-        overlay.addEventListener("click", (event) => {
-          if (event.target === overlay) {
-            closeModal();
-          }
-        });
-        modalRoot.appendChild(overlay);
-        return;
+      // Metadata bar
+      const metaBar = el("div", "modal-meta-bar");
+      [
+        { label: "Format", value: Array.isArray(opp.format) ? opp.format.join(", ") : opp.format },
+        { label: "Time", value: Array.isArray(opp.time) ? opp.time.join(", ") : opp.time },
+        { label: "Stage", value: Array.isArray(opp.stage) ? opp.stage.join(", ") : opp.stage },
+        { label: "Pathway", value: Array.isArray(opp.pathway) ? opp.pathway.join(", ") : opp.pathway }
+      ].forEach(({ label, value }) => {
+        if (!value) return;
+        const item = el("div", "modal-meta-item");
+        item.innerHTML = `<strong>${label}:</strong> ${value}`;
+        metaBar.appendChild(item);
+      });
+      modal.appendChild(metaBar);
+
+      // Tags
+      const allTags = [...(opp.tags || []), ...(opp.unitTags || [])];
+      if (allTags.length) {
+        const tagBar = el("div", "modal-tag-bar");
+        allTags.forEach(tag => tagBar.appendChild(el("span", "tag", tag)));
+        modal.appendChild(tagBar);
       }
 
-      const overview = el("div", "modal-section");
-      overview.appendChild(el("h4", null, data.explore.labels.overview));
-      overview.appendChild(el("p", null, opp.summary));
-      body.appendChild(overview);
-
-      const who = el("div", "modal-section");
-      who.appendChild(el("h4", null, data.explore.labels.who));
-      who.appendChild(el("p", null, opp.details.who));
-      body.appendChild(who);
-
-      const what = el("div", "modal-section");
-      what.appendChild(el("h4", null, data.explore.labels.what));
-      what.appendChild(el("p", null, opp.details.what));
-      body.appendChild(what);
-
-      const outcomes = el("div", "modal-section");
-      outcomes.appendChild(el("h4", null, data.explore.labels.outcomes));
-      outcomes.appendChild(el("p", null, opp.details.outcomes));
-      body.appendChild(outcomes);
-
-      const meta = el("div", "modal-section");
-      meta.appendChild(el("h4", null, data.explore.labels.tags));
-      const metaList = el("div", "tag-list");
-      opp.tags.forEach((tag) => metaList.appendChild(el("span", "tag", tag)));
-      meta.appendChild(metaList);
-      body.appendChild(meta);
-
-      modal.appendChild(body);
-      overlay.appendChild(modal);
-      overlay.addEventListener("click", (event) => {
-        if (event.target === overlay) {
-          closeModal();
+      // Body content
+      const body = el("div", "modal-body");
+      if (opp.sourceType === "workshop" && opp.html) {
+        body.innerHTML = opp.html;
+      } else {
+        if (opp.summary) body.appendChild(el("p", null, opp.summary));
+        if (opp.details) {
+          if (opp.details.who) {
+            body.appendChild(el("h2", null, data.explore.labels.who));
+            body.appendChild(el("p", null, opp.details.who));
+          }
+          if (opp.details.what) {
+            body.appendChild(el("h2", null, data.explore.labels.what));
+            body.appendChild(el("p", null, opp.details.what));
+          }
+          if (opp.details.outcomes) {
+            body.appendChild(el("h2", null, data.explore.labels.outcomes));
+            body.appendChild(el("p", null, opp.details.outcomes));
+          }
         }
-      });
+      }
+      modal.appendChild(body);
+
+      // Register CTA at bottom
+      if (opp.libcalUrl) {
+        const bottomCta = el("div", "modal-bottom-cta");
+        const bottomBtn = el("a", "btn primary", "Register via LibCal");
+        bottomBtn.href = opp.libcalUrl;
+        bottomBtn.target = "_blank";
+        bottomBtn.rel = "noopener";
+        bottomCta.appendChild(bottomBtn);
+        modal.appendChild(bottomCta);
+      }
+
+      overlay.appendChild(modal);
+
+      // Keyboard close
+      const onKeydown = (e) => {
+        if (e.key === "Escape") { closeModal(); document.removeEventListener("keydown", onKeydown); }
+      };
+      document.addEventListener("keydown", onKeydown);
+
       modalRoot.appendChild(overlay);
+      overlay.scrollTo(0, 0);
     };
 
     const applyStageFilter = (stage) => {
