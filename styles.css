@@ -1308,39 +1308,44 @@ label {
   margin: 0 0 20px;
 }
 
-/* ── Research Stage breadcrumb row ──────────────────────────────── */
+/* ── Research Stage tab row ─────────────────────────────────────── */
 
-.research-breadcrumb-row {
+.research-stage-tabs {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 4px;
+  align-items: flex-end;
+  margin-bottom: 0;
+}
+
+.research-stage-tab {
+  padding: 9px 20px;
+  border: 1.5px solid var(--border);
+  border-bottom: none;
+  background: #f0f0f0;
+  border-radius: 8px 8px 0 0;
   font-size: 14px;
-}
-
-.research-back-btn {
-  background: none;
-  border: none;
-  padding: 4px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--burgundy);
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.research-back-btn:hover {
-  color: #6b1a28;
-}
-
-.research-breadcrumb-sep {
-  color: var(--muted);
-}
-
-.research-breadcrumb-current {
-  color: var(--text);
   font-weight: 500;
+  cursor: pointer;
+  color: #666;
+  position: relative;
+  margin-bottom: -1px;
+  z-index: 1;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s;
+}
+
+.research-stage-tab:hover {
+  background: #e4e4e4;
+  color: var(--text);
+}
+
+.research-stage-tab.is-active {
+  background: #fff;
+  border-color: var(--burgundy);
+  border-bottom: 1px solid #fff;
+  color: var(--burgundy);
+  font-weight: 700;
+  z-index: 3;
 }
 
 /* ── Research Stage interactive panel ───────────────────────────── */
@@ -1404,7 +1409,8 @@ label {
 
 .research-viewer-card {
   background: #fff;
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
+  border-radius: 0 8px 8px 8px;
   padding: 28px 32px 24px;
   display: flex;
   flex-direction: column;
@@ -1480,7 +1486,26 @@ label {
     grid-template-columns: 1fr;
   }
 
+  .research-stage-tabs {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .research-stage-tab {
+    border-radius: 6px;
+    border-bottom: 1.5px solid var(--border);
+    margin-bottom: 0;
+    font-size: 13px;
+    padding: 7px 14px;
+  }
+
+  .research-stage-tab.is-active {
+    border-color: var(--burgundy);
+    border-bottom-color: var(--burgundy);
+  }
+
   .research-viewer-card {
+    border-radius: 8px;
     padding: 20px 16px;
   }
 }

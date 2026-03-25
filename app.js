@@ -3116,18 +3116,18 @@
       return card;
     }
 
-    // --- Breadcrumb row (visible when a stage panel is open) ---
-    const researchPillRow = el("div", "research-breadcrumb-row");
+    // --- Stage tab row (shown when a stage panel is open, all three tabs visible) ---
+    const researchPillRow = el("div", "research-stage-tabs");
     researchPillRow.hidden = true;
-    const researchBackBtn = el("button", "research-back-btn");
-    researchBackBtn.type = "button";
-    researchBackBtn.textContent = "\u2190 Research Stages";
-    researchBackBtn.addEventListener("click", closeResearchPanel);
-    const researchBreadcrumbSep = el("span", "research-breadcrumb-sep", "/");
-    const researchBreadcrumbCurrent = el("span", "research-breadcrumb-current", "");
-    researchPillRow.appendChild(researchBackBtn);
-    researchPillRow.appendChild(researchBreadcrumbSep);
-    researchPillRow.appendChild(researchBreadcrumbCurrent);
+    const researchPillButtons = new Map();
+    journeys.forEach((journey) => {
+      const tab = el("button", "research-stage-tab");
+      tab.type = "button";
+      tab.textContent = journey.title;
+      tab.addEventListener("click", () => openResearchPanel(journey));
+      researchPillButtons.set(journey.id, tab);
+      researchPillRow.appendChild(tab);
+    });
 
     // --- Stage card grid (Level 1) ---
     const researchStageGrid = el("div", "research-stage-grid pathway-grid");
@@ -3212,7 +3212,7 @@
 
       researchStageGrid.hidden = true;
       researchPillRow.hidden = false;
-      researchBreadcrumbCurrent.textContent = journey.title;
+      researchPillButtons.forEach((btn, id) => btn.classList.toggle("is-active", id === journey.id));
 
       researchPanelTitle.textContent = journey.title;
       researchPanelDesc.textContent = journey.description;
@@ -3246,6 +3246,7 @@
       researchViewer.classList.remove("is-open");
       researchPillRow.hidden = true;
       researchStageGrid.hidden = false;
+      researchPillButtons.forEach((btn) => btn.classList.remove("is-active"));
     }
 
     function openResearchModule(journey, module, chipEl) {
