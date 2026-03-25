@@ -296,6 +296,11 @@ label {
   color: #6a2a8a;
 }
 
+.format-badge--tool {
+  background: #e6f6f4;
+  color: #1a7a6e;
+}
+
 /* ── "Not sure" strip ───────────────────────────────────────── */
 
 .home-not-sure-strip {
@@ -3085,74 +3090,6 @@ label {
   font-size: 18px;
   color: var(--muted);
   margin-bottom: 24px;
-}
-
-/* ── Research stage — Tools nudge ────────────────────────────────── */
-.research-tools-nudge {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: #f5edf0;
-  border: 1px solid #d4a8c7;
-  border-left: 4px solid var(--burgundy);
-  border-radius: 8px;
-  padding: 0.9rem 1rem;
-  margin: 1rem 0 0.5rem;
-  flex-wrap: wrap;
-}
-.tools-nudge-icon { font-size: 1.1rem; flex-shrink: 0; }
-.tools-nudge-text { font-size: 0.88rem; color: #444; flex: 1; min-width: 160px; }
-.tools-nudge-btn { flex-shrink: 0; white-space: nowrap; }
-
-/* ── Module detail — tools callout ───────────────────────────────── */
-.module-tools-callout {
-  margin-top: 1.25rem;
-}
-.module-tools-callout-inner {
-  background: #f5edf0;
-  border: 1px solid #d4a8c7;
-  border-left: 4px solid var(--burgundy);
-  border-radius: 8px;
-  padding: 1rem 1.1rem;
-}
-.module-tools-callout-heading {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--burgundy);
-  margin: 0 0 0.35rem;
-}
-.module-tools-callout-body {
-  font-size: 0.85rem;
-  color: #555;
-  margin: 0 0 0.75rem;
-  line-height: 1.5;
-}
-.module-tools-callout-btns {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-/* ── Pathway modal — tools callout (Academic Scholarship) ─────────── */
-.pathway-tools-callout {
-  background: #f5edf0;
-  border: 1px solid #d4a8c7;
-  border-left: 4px solid var(--burgundy);
-  border-radius: 8px;
-  padding: 1rem 1.1rem;
-  margin: 1rem 0;
-}
-.pathway-tools-callout-heading {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--burgundy);
-  margin: 0 0 0.35rem;
-}
-.pathway-tools-callout-body {
-  font-size: 0.85rem;
-  color: #555;
-  margin: 0 0 0.75rem;
-  line-height: 1.5;
 }
 
 /* ── Learn page — Tools CTA card ─────────────────────────────────── */

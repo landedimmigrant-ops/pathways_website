@@ -1,5 +1,29 @@
 [
   {
+    "id": "learn-impact-planner",
+    "title": "Impact Planning Module",
+    "format": "Tool",
+    "time": "45–60 min",
+    "pathways": ["academic"],
+    "stages": ["Developing an Idea"],
+    "tags": ["impact planning", "grant preparation", "impact pathways", "outcomes", "impact plan"],
+    "summary": "Map your research outputs to outcomes, identify your impact pathways, and build a structured impact plan you can take into a consultation or grant application.",
+    "internalRoute": "learn",
+    "featuredHome": false
+  },
+  {
+    "id": "learn-narrative-cv",
+    "title": "Narrative CV Builder",
+    "format": "Tool",
+    "time": "60–90 min",
+    "pathways": ["academic"],
+    "stages": ["Developing an Idea"],
+    "tags": ["narrative cv", "grant writing", "academic scholarship", "tri-agency", "TCV", "personal statement"],
+    "summary": "Draft your Tri-agency Narrative CV section by section. Guided prompts walk you through your contributions, mentorship, and personal statement.",
+    "internalRoute": "tools-narrative",
+    "featuredHome": false
+  },
+  {
     "id": "4th-space-public-engagement",
     "slug": "4th-space_research-activation-public-engagement",
     "title": "4th Space Research Activation & Public Engagement Support",
