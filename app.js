@@ -588,6 +588,24 @@
       });
       wrapper.appendChild(supportList);
 
+      // Tools callout — shown for Academic Scholarship pathway
+      if (pathway.id === "academic-scholarship") {
+        const pathwayToolsCallout = el("div", "pathway-tools-callout");
+        pathwayToolsCallout.appendChild(el("p", "pathway-tools-callout-heading", "\uD83D\uDEE0 Prepare your application with the interactive tools in Learn"));
+        pathwayToolsCallout.appendChild(el("p", "pathway-tools-callout-body", "Use the Impact Planner to map your contribution and the Narrative CV module to draft your Tri-agency CV sections."));
+        const pathwayToolsBtns = el("div", "module-tools-callout-btns");
+        const ptPlannerBtn = el("button", "btn btn-primary", "Impact Planner \u2192");
+        ptPlannerBtn.type = "button";
+        ptPlannerBtn.addEventListener("click", () => { closePathwayModal(); navigateTo("learn"); });
+        const ptNarrativeBtn = el("button", "btn", "Narrative CV \u2192");
+        ptNarrativeBtn.type = "button";
+        ptNarrativeBtn.addEventListener("click", () => { closePathwayModal(); navigateTo("tools-narrative"); });
+        pathwayToolsBtns.appendChild(ptPlannerBtn);
+        pathwayToolsBtns.appendChild(ptNarrativeBtn);
+        pathwayToolsCallout.appendChild(pathwayToolsBtns);
+        wrapper.appendChild(pathwayToolsCallout);
+      }
+
       const ctaRow = el("div", "pathway-cta");
       const relatedButton = el("button", "btn", data.explore.pathways.buttons.related);
       relatedButton.type = "button";
@@ -3153,6 +3171,19 @@
     const researchModuleChips = el("div", "research-module-chips");
     researchViewerCard.appendChild(researchModuleChips);
 
+    // Tools nudge (shown for Developing an Idea stage)
+    const researchToolsNudge = el("div", "research-tools-nudge");
+    researchToolsNudge.hidden = true;
+    const nudgeIcon = el("span", "tools-nudge-icon", "\uD83D\uDCCB");
+    const nudgeText = el("span", "tools-nudge-text", "Start by mapping your research impact with the Impact Planner, then build your Narrative CV outline.");
+    const nudgeBtn = el("button", "btn btn-primary tools-nudge-btn", "Go to Tools \u2192");
+    nudgeBtn.type = "button";
+    nudgeBtn.addEventListener("click", () => navigateTo("learn"));
+    researchToolsNudge.appendChild(nudgeIcon);
+    researchToolsNudge.appendChild(nudgeText);
+    researchToolsNudge.appendChild(nudgeBtn);
+    researchViewerCard.appendChild(researchToolsNudge);
+
     // Module detail (Level 3)
     const researchModuleDetail = el("div", "research-module-detail");
     researchModuleDetail.hidden = true;
@@ -3173,12 +3204,31 @@
     const researchResourcesGrid = el("div", "opportunity-grid");
     const researchSeeAllLink = el("a", "bridge-link", "");
     researchSeeAllLink.href = "#";
+    // Module tools callout (shown for grant/funding/narrative/application modules)
+    const moduleToolsCallout = el("div", "module-tools-callout");
+    moduleToolsCallout.hidden = true;
+    const calloutInner = el("div", "module-tools-callout-inner");
+    calloutInner.appendChild(el("p", "module-tools-callout-heading", "\uD83D\uDEE0 Use the interactive tools in Learn"));
+    calloutInner.appendChild(el("p", "module-tools-callout-body", "The Impact Planner helps you map outcomes and pathways before writing. The Narrative CV module helps you translate that plan into funder-ready language."));
+    const calloutBtns = el("div", "module-tools-callout-btns");
+    const plannerBtn = el("button", "btn btn-primary", "Impact Planner \u2192");
+    plannerBtn.type = "button";
+    plannerBtn.addEventListener("click", () => navigateTo("learn"));
+    const narrativeBtn = el("button", "btn", "Narrative CV \u2192");
+    narrativeBtn.type = "button";
+    narrativeBtn.addEventListener("click", () => navigateTo("tools-narrative"));
+    calloutBtns.appendChild(plannerBtn);
+    calloutBtns.appendChild(narrativeBtn);
+    calloutInner.appendChild(calloutBtns);
+    moduleToolsCallout.appendChild(calloutInner);
+
     researchModuleDetail.appendChild(researchModuleDetailTitle);
     researchModuleDetail.appendChild(researchModuleDetailDesc);
     researchModuleDetail.appendChild(researchModuleDetailMeta);
     researchModuleDetail.appendChild(researchResourcesHeading);
     researchModuleDetail.appendChild(researchResourcesGrid);
     researchModuleDetail.appendChild(researchSeeAllLink);
+    researchModuleDetail.appendChild(moduleToolsCallout);
     researchViewerCard.appendChild(researchModuleDetail);
 
     // Panel CTAs
@@ -3211,6 +3261,7 @@
       researchPanelTitle.textContent = journey.title;
       researchPanelDesc.textContent = journey.description;
       researchModuleDetail.hidden = true;
+      researchToolsNudge.hidden = journey.id !== "developing-project";
 
       clear(researchModuleChips);
       journey.modules.forEach((module) => {
@@ -3273,6 +3324,9 @@
         tabServices.click();
         applyStageFilter(journey.stage);
       };
+
+      const TOOLS_MODULE_KEYWORDS = ["grant", "funding", "application", "narrative", "proposal"];
+      moduleToolsCallout.hidden = !TOOLS_MODULE_KEYWORDS.some(kw => module.title.toLowerCase().includes(kw));
 
       researchModuleDetail.hidden = false;
     }
