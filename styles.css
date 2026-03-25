@@ -3140,6 +3140,389 @@ label {
   color: var(--burgundy);
 }
 
+/* ── What is a Narrative CV? — Impact 101 module ─────────────────── */
+
+.ncv-module {
+  margin-top: 2.5rem;
+}
+
+.ncv-module-divider {
+  border-top: 2px solid var(--border);
+  margin-bottom: 2.5rem;
+}
+
+.ncv-module-header {
+  margin-bottom: 2rem;
+}
+
+.ncv-module-kicker {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  margin-bottom: 8px;
+}
+
+.ncv-module-header h2 {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.ncv-module-lead {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 620px;
+  margin: 0;
+}
+
+/* Sections */
+.ncv-section {
+  margin-bottom: 3rem;
+  scroll-margin-top: 80px;
+}
+
+.ncv-section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.ncv-section-num {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: #f9ebed;
+  color: var(--burgundy);
+  border-radius: 4px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ncv-section-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.ncv-body {
+  font-size: 15px;
+  color: var(--text);
+  margin-bottom: 12px;
+  line-height: 1.65;
+}
+
+/* Summary card */
+.ncv-summary-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.ncv-summary-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* Callout */
+.ncv-callout {
+  border-left: 3px solid var(--burgundy);
+  background: #f9ebed;
+  padding: 14px 18px;
+  border-radius: 0 8px 8px 0;
+  margin: 18px 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.ncv-callout.ncv-callout--blue {
+  border-left-color: #1a5276;
+  background: #eaf1f8;
+}
+
+.ncv-callout strong {
+  display: inline;
+  font-weight: 700;
+}
+
+/* Section cards (3-up) */
+.ncv-section-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.ncv-section-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.ncv-card-num {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  margin-bottom: 6px;
+}
+
+.ncv-section-card h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  line-height: 1.3;
+}
+
+.ncv-section-card p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Compare table */
+.ncv-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 18px 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.ncv-compare-table thead tr {
+  background: #f6f6f6;
+}
+
+.ncv-compare-table th {
+  padding: 11px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.ncv-compare-table td {
+  padding: 11px 14px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.ncv-compare-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ncv-td-label {
+  font-weight: 600;
+  color: var(--muted);
+  width: 28%;
+}
+
+/* Accordion */
+.ncv-expand-block {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.ncv-expand-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  gap: 10px;
+  font-family: inherit;
+}
+
+.ncv-expand-btn:hover {
+  background: #fafafa;
+}
+
+.ncv-chevron {
+  font-size: 13px;
+  color: var(--muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.ncv-expand-btn[aria-expanded="true"] .ncv-chevron {
+  transform: rotate(180deg);
+}
+
+.ncv-expand-body {
+  display: none;
+  padding: 14px 16px 16px;
+  font-size: 14px;
+  color: var(--text);
+  border-top: 1px solid var(--border);
+  line-height: 1.6;
+}
+
+.ncv-expand-body.is-open {
+  display: block;
+}
+
+.ncv-expand-body .ncv-body {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.ncv-expand-body .ncv-list {
+  padding-left: 20px;
+  margin: 8px 0 12px;
+}
+
+.ncv-expand-body .ncv-list li {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+/* Myth/concern rows */
+.ncv-myths {
+  margin: 14px 0;
+}
+
+.ncv-myth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ncv-myth-box {
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.ncv-myth-box p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.ncv-myth-box--concern {
+  background: #fdf3f3;
+  border: 1px solid #f5c6c6;
+}
+
+.ncv-myth-box--reality {
+  background: #f9ebed;
+  border: 1px solid #e8b4bb;
+}
+
+.ncv-myth-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ncv-myth-box--concern .ncv-myth-label { color: #c0392b; }
+.ncv-myth-box--reality .ncv-myth-label { color: var(--burgundy); }
+
+/* Tags */
+.ncv-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.ncv-tag {
+  background: #f4f4f4;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* Note text */
+.ncv-note {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* CTA strip */
+.ncv-cta-strip {
+  background: var(--burgundy);
+  color: #fff;
+  border-radius: 10px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+
+.ncv-cta-text h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.ncv-cta-text p {
+  font-size: 14px;
+  opacity: 0.88;
+  margin: 0;
+}
+
+.ncv-cta-strip .btn.btn-primary {
+  background: #fff;
+  color: var(--burgundy);
+  border-color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ncv-cta-strip .btn.btn-primary:hover {
+  background: #f5e8eb;
+  border-color: #f5e8eb;
+}
+
+@media (max-width: 620px) {
+  .ncv-myth-row { grid-template-columns: 1fr; }
+  .ncv-section-cards { grid-template-columns: 1fr; }
+  .ncv-cta-strip { flex-direction: column; align-items: flex-start; }
+  .ncv-compare-table { font-size: 13px; }
+  .ncv-compare-table th, .ncv-compare-table td { padding: 9px 10px; }
+}
+
 /* ── Tools landing page ───────────────────────────────────────────── */
 .page-tools .container {
   max-width: 900px;

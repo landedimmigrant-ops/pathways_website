@@ -926,6 +926,164 @@
     return section;
   };
 
+  // ── What is a Narrative CV? — Impact 101 module ──────────────────────────
+  const buildNarrativeCV101 = () => {
+    const wrap = el("div", "ncv-module");
+    wrap.appendChild(el("div", "ncv-module-divider"));
+    const moduleHeader = el("div", "ncv-module-header");
+    moduleHeader.appendChild(el("span", "ncv-module-kicker", "Before you start — Step 2"));
+    moduleHeader.appendChild(el("h2", null, "What is a Narrative CV?"));
+    moduleHeader.appendChild(el("p", "ncv-module-lead", "A short orientation before you begin drafting. Read the overview, then expand any section for more detail."));
+    wrap.appendChild(moduleHeader);
+
+    // Helper: accordion block
+    const makeExpand = (btnText, bodyEl) => {
+      const block = el("div", "ncv-expand-block");
+      const btn = el("button", "ncv-expand-btn");
+      btn.type = "button";
+      btn.setAttribute("aria-expanded", "false");
+      btn.appendChild(el("span", null, btnText));
+      btn.appendChild(el("span", "ncv-chevron", "\u25be"));
+      const body = el("div", "ncv-expand-body");
+      body.appendChild(bodyEl);
+      btn.addEventListener("click", () => {
+        const open = btn.getAttribute("aria-expanded") === "true";
+        btn.setAttribute("aria-expanded", String(!open));
+        body.classList.toggle("is-open", !open);
+      });
+      block.appendChild(btn);
+      block.appendChild(body);
+      return block;
+    };
+
+    // Helper: section wrapper
+    const makeSection = (num, title, children) => {
+      const sec = el("div", "ncv-section");
+      const hdr = el("div", "ncv-section-header");
+      hdr.appendChild(el("span", "ncv-section-num", String(num).padStart(2, "0")));
+      hdr.appendChild(el("h3", null, title));
+      sec.appendChild(hdr);
+      children.forEach((c) => sec.appendChild(c));
+      return sec;
+    };
+
+    // Helper: compare table
+    const makeTable = (headers, rows) => {
+      const table = el("table", "ncv-compare-table");
+      const thead = el("thead"); const theadRow = el("tr");
+      headers.forEach((h) => theadRow.appendChild(el("th", null, h)));
+      thead.appendChild(theadRow); table.appendChild(thead);
+      const tbody = el("tbody");
+      rows.forEach((cells) => {
+        const row = el("tr");
+        cells.forEach((c, i) => row.appendChild(el("td", i === 0 ? "ncv-td-label" : null, c)));
+        tbody.appendChild(row);
+      });
+      table.appendChild(tbody);
+      return table;
+    };
+
+    // Helper: ul list
+    const makeUl = (items) => {
+      const ul = el("ul", "ncv-list");
+      items.forEach((text) => ul.appendChild(el("li", null, text)));
+      return ul;
+    };
+
+    // Helper: callout
+    const makeCallout = (strongText, bodyText, mod) => {
+      const div = el("div", mod ? `ncv-callout ncv-callout--${mod}` : "ncv-callout");
+      div.appendChild(el("strong", null, strongText));
+      div.appendChild(el("span", null, bodyText));
+      return div;
+    };
+
+    // ── Section 1: Why narrative CVs exist ──────────────────────────────────
+    const s1card = el("div", "ncv-summary-card");
+    s1card.appendChild(el("p", null, "A Narrative CV asks you to describe your research contributions in your own words \u2014 not just list them. It was developed in response to a growing recognition that traditional CVs, with their rows of publications and metrics, miss most of what makes research valuable."));
+    const s1p = el("p", "ncv-body", "Tri-agency funders in Canada (SSHRC, NSERC, CIHR) and the Fonds de recherche du Qu\u00e9bec adopted narrative formats to address a specific problem: impact that matters most is often the hardest to count. Partnerships, mentorship, policy influence, community work, creative practice \u2014 none of these translate well into citation counts or journal rankings.");
+    const s1callout = makeCallout("The core shift \u2014 ", "A traditional CV says what you did. A Narrative CV says what changed because of what you did, and why that matters.");
+    const s1expBody = el("div");
+    ["The shift toward narrative formats is part of a broader global movement in research assessment \u2014 sometimes called \u201cresponsible research assessment.\u201d Key documents driving this include the San Francisco Declaration on Research Assessment (DORA), the Leiden Manifesto, and the Coalition for Advancing Research Assessment (CoARA).", "In Canada, the Tri-agency Narrative CV was introduced in 2021, piloted with select programs, and has since expanded. It replaces or supplements the traditional CV-style Common CV in specific competitions. The FRQ in Qu\u00e9bec developed its own parallel format (CV-FRQ) with similar principles.", "The practical implication: reviewers are now explicitly asked to evaluate contributions qualitatively, not just count outputs. Your job in the Narrative CV is to make that evaluation easy for them by describing what you did, what your specific role was, who was affected, and what evidence exists."].forEach((t) => s1expBody.appendChild(el("p", "ncv-body", t)));
+    s1expBody.appendChild(el("p", "ncv-body", "Which funders currently use narrative CV formats:"));
+    const tags = el("div", "ncv-tag-row");
+    ["SSHRC", "NSERC", "CIHR", "FRQ (Qu\u00e9bec)", "Wellcome Trust (UK)", "UKRI (UK)", "NWO (Netherlands)"].forEach((t) => tags.appendChild(el("span", "ncv-tag", t)));
+    s1expBody.appendChild(tags);
+    s1expBody.appendChild(el("p", "ncv-note", "Always check specific program guidelines \u2014 not every competition from these funders uses the narrative format yet."));
+    wrap.appendChild(makeSection(1, "Why narrative CVs exist", [s1card, s1p, s1callout, makeExpand("More context: the policy shift behind narrative CVs", s1expBody)]));
+
+    // ── Section 2: The three sections ───────────────────────────────────────
+    const s2p = el("p", "ncv-body", "The Tri-agency CV (TCV) and CV-FRQ are both organized around three sections. You do not have to write them in order \u2014 most researchers find it easier to start with their contributions, then mentorship, then write the personal statement last.");
+    const s2cards = el("div", "ncv-section-cards");
+    [{ num: "Section 1", title: "Personal Statement", body: "Your research identity: who you are, what drives your work, and where you are headed. Written last, but appears first." }, { num: "Section 2", title: "Most Significant Contributions", body: "Up to 10 contributions that give the most complete picture of your research. Not necessarily your most recent \u2014 your most representative." }, { num: "Section 3", title: "Supervisory \u0026 Mentorship Activities", body: "How you have supported the development of other researchers, trainees, students, and collaborators." }].forEach(({ num, title, body }) => {
+      const card = el("div", "ncv-section-card");
+      card.appendChild(el("div", "ncv-card-num", num));
+      card.appendChild(el("h4", null, title));
+      card.appendChild(el("p", null, body));
+      s2cards.appendChild(card);
+    });
+    const s2expABody = el("div");
+    s2expABody.appendChild(el("p", "ncv-body", "Contributions go well beyond publications. The TCV instructions explicitly invite a wide range of outputs and activities. You can include:"));
+    s2expABody.appendChild(makeUl(["Journal articles, books, book chapters, reports", "Datasets, software, open-access resources", "Policy briefs, technical reports, submissions to government consultations", "Community partnerships, co-designed research projects", "Creative works, performances, exhibitions, films", "Methods or frameworks you developed that others have adopted", "Training programs, workshops, or curricula you created", "Patents, licences, spin-off ventures", "Grants you led that enabled others\u2019 research", "Media coverage, public engagement, or science communication work"]));
+    s2expABody.appendChild(el("p", "ncv-note", "The key question is: what gives the most complete picture of your research and its effects? Not: what is the longest list of outputs I can generate."));
+    const s2expBBody = el("div");
+    s2expBBody.appendChild(el("p", "ncv-body", "This section is broader than formal graduate supervision. It includes any role in which you supported someone else\u2019s development as a researcher or professional:"));
+    s2expBBody.appendChild(makeUl(["Graduate supervision (MA, PhD, postdoctoral)", "Undergraduate research mentoring (honours theses, research assistants)", "Informal mentoring of early-career researchers or colleagues", "Community researcher training and capacity building", "Industry or government collaborator development", "Equity, diversity, and inclusion practices in your lab or team", "Peer mentoring, committee work, or writing retreats you organized"]));
+    s2expBBody.appendChild(el("p", "ncv-note", "If you are early in your career, or your discipline does not include graduate supervision, describe any informal support, training, or inclusive practices in your research environment. Context matters \u2014 reviewers are trained to read this section with career stage in mind."));
+    wrap.appendChild(makeSection(2, "The three sections", [s2p, s2cards, makeExpand("What counts as a \u201ccontribution\u201d?", s2expABody), makeExpand("What counts as \u201csupervisory and mentorship activity\u201d?", s2expBBody)]));
+
+    // ── Section 3: TCV vs CV-FRQ ────────────────────────────────────────────
+    const s3p = el("p", "ncv-body", "If you are applying to a Tri-agency program, you will use the TCV. If you are applying to a Fonds de recherche du Qu\u00e9bec program, you will use the CV-FRQ. The structure is similar, but a few practical differences matter.");
+    const s3table = makeTable(["Feature", "Tri-agency CV (TCV)", "CV-FRQ"], [["Funders", "SSHRC, NSERC, CIHR", "FRQSC, FRQNT, FRQS"], ["Personal Statement focus", "Your expertise relative to this specific opportunity or project", "Your fit with the program\u2019s objectives and how your work complements the team"], ["Hyperlinks", "Not permitted (self-contained document). Exception: audio/visual creative works.", "Permitted for supporting materials"], ["Contributions section name", "Most Significant Contributions", "R\u00e9alisations les plus significatives"], ["Language", "English or French", "French required for most programs"], ["Page limits", "Varies by competition \u2014 always check the program guide", "Varies by competition \u2014 always check the program guide"]]);
+    wrap.appendChild(makeSection(3, "TCV vs CV-FRQ \u2014 key differences", [s3p, s3table, makeCallout("Not sure which one you need? ", "Check the specific program\u2019s application guide. If you are applying to both a Tri-agency and an FRQ competition, you will need to prepare both \u2014 but most of your content will transfer with minor adjustments.", "blue")]));
+
+    // ── Section 4: How it differs from traditional CV ───────────────────────
+    const s4p = el("p", "ncv-body", "The biggest shift is not structural \u2014 it is rhetorical. A Narrative CV asks you to move from listing to explaining, and from passive to active voice.");
+    const s4table = makeTable(["Dimension", "Traditional CV", "Narrative CV"], [["Structure", "Chronological lists by category", "Thematic descriptions by contribution"], ["Voice", "Passive or implied (\u201cpublished,\u201d \u201cpresented\u201d)", "Active, first-person (\u201cI developed,\u201d \u201cI led\u201d)"], ["What it shows", "Volume and recency of outputs", "Quality, significance, and effect of contributions"], ["Your role", "Often unclear (team authorship, collaborative work)", "Explicitly stated for each contribution"], ["Evidence of impact", "Citation counts, journal rankings, h-index", "Qualitative and quantitative evidence of real-world effect"], ["Scope", "Exhaustive inventory", "Curated selection (3\u201310 most significant contributions)"]]);
+    const s4expABody = el("div");
+    ["Yes \u2014 and it is not just permitted, it is the point. Funders want to understand your individual contribution to collaborative work. Using \u201cwe\u201d throughout makes it impossible for reviewers to assess your specific role.", "The guidance from the workshop is practical: replace \u201cwe\u201d with \u201cI\u201d or \u201cI led a team that\u2026\u201d You can acknowledge collaboration while still making your own contribution legible.", "Many researchers \u2014 particularly those trained in disciplines with strong norms around collective authorship, or those from cultures where self-promotion feels uncomfortable \u2014 find this the hardest shift to make. It is worth sitting with that discomfort, because reviewers will be asking \u201cwhat did this person do?\u201d for every entry."].forEach((t) => s4expABody.appendChild(el("p", "ncv-body", t)));
+    const s4expBBody = el("div");
+    s4expBBody.appendChild(el("p", "ncv-body", "Citation counts are one form of evidence, but they systematically undervalue applied, community-engaged, and practice-based research. Alternative forms include:"));
+    s4expBBody.appendChild(makeUl(["Adoption: \u201cThis method was adopted by [organization] for\u2026\u201d", "Policy uptake: \u201cCited in [government body]\u2019s [year] guidelines as\u2026\u201d", "Media coverage: \u201cFeatured in [outlet], reaching an estimated [audience]\u201d", "Partnership outcomes: \u201cLed to [number] follow-on collaborations with [sectors]\u201d", "Teaching integration: \u201cUsed as a teaching resource in [number] institutions\u201d", "Community acknowledgement: \u201c[Organization] credited this work with\u2026\u201d", "Independent replication: \u201cReplicated by research groups in [locations]\u201d", "Career outcomes of trainees: \u201cThree former graduate students now hold [roles]\u201d"]));
+    s4expBBody.appendChild(el("p", "ncv-note", "Qualitative evidence is explicitly invited by the TCV format. A well-placed sentence describing real-world uptake is often more compelling than a citation count."));
+    wrap.appendChild(makeSection(4, "How it differs from a traditional CV", [s4p, s4table, makeExpand("Is it really okay to say \u201cI\u201d throughout?", s4expABody), makeExpand("What evidence can I use besides citation counts?", s4expBBody)]));
+
+    // ── Section 5: Common concerns ──────────────────────────────────────────
+    const s5p = el("p", "ncv-body", "These come up in almost every workshop. You are not alone in thinking any of them.");
+    const s5myths = el("div", "ncv-myths");
+    [{ concern: "I don\u2019t have enough impact yet \u2014 this format will make that obvious.", reality: "Reviewers evaluate contributions relative to career stage. Early-career researchers are not expected to have the same scope as senior colleagues. Describe what you have done and what you are building toward." }, { concern: "My research is fundamental \u2014 I can\u2019t point to real-world impact.", reality: "Fundamental research has impact on knowledge, methods, fields, and the people you trained. Academic impact \u2014 influencing how others think, what gets studied, how problems get framed \u2014 counts fully." }, { concern: "My best contributions were collaborative \u2014 I can\u2019t claim them individually.", reality: "You can and should describe collaborative work. The task is to clarify your specific role within it \u2014 what decisions you made, what you developed, what you were responsible for \u2014 while acknowledging the team context." }, { concern: "Describing my own work this way feels like self-promotion.", reality: "You are not inventing impact \u2014 you are making visible what already happened. Reviewers cannot fund what they cannot see. Describing your work clearly is a professional responsibility, not a personality trait." }].forEach(({ concern, reality }) => {
+      const row = el("div", "ncv-myth-row");
+      const mythBox = el("div", "ncv-myth-box ncv-myth-box--concern");
+      mythBox.appendChild(el("div", "ncv-myth-label", "Concern")); mythBox.appendChild(el("p", null, concern));
+      const realBox = el("div", "ncv-myth-box ncv-myth-box--reality");
+      realBox.appendChild(el("div", "ncv-myth-label", "Reality")); realBox.appendChild(el("p", null, reality));
+      row.appendChild(mythBox); row.appendChild(realBox); s5myths.appendChild(row);
+    });
+    const s5expBody = el("div");
+    ["This is one of the places where Narrative CVs actually work better for you than traditional ones. Rather than forcing your work into a single disciplinary metric system, you can describe what your contributions mean across the fields they touch.", "Practically: name the relevant communities, explain the significance in plain language, and let the evidence span multiple fields. You do not need to pick one home discipline and pretend the rest of your work does not exist."].forEach((t) => s5expBody.appendChild(el("p", "ncv-body", t)));
+    wrap.appendChild(makeSection(5, "Common concerns", [s5p, s5myths, makeExpand("I work across disciplines \u2014 which field\u2019s norms do I use?", s5expBody)]));
+
+    // ── Section 6: What reviewers look for ──────────────────────────────────
+    const s6card = el("div", "ncv-summary-card");
+    s6card.appendChild(el("p", null, "Reviewers are not scoring your productivity. They are asking: Does this researcher know what their work has contributed, and can they explain it clearly to someone outside their immediate field?"));
+    const s6p = el("p", "ncv-body", "Four things that consistently score higher in reviewed contributions:");
+    const makeS6Exp = (title, ...paras) => { const d = el("div"); paras.forEach((t) => d.appendChild(el("p", "ncv-body", t))); return makeExpand(title, d); };
+    wrap.appendChild(makeSection(6, "What reviewers actually look for", [s6card, s6p, makeS6Exp("1 \u2014 Ownership: \u201cI\u201d not \u201cwe\u201d", "Reviewers need to identify your contribution specifically. If every sentence uses \u201cwe,\u201d they cannot. Be precise: \u201cI designed the study,\u201d \u201cI developed the algorithm,\u201d \u201cI led the community consultation process.\u201d You can acknowledge the team in the same sentence \u2014 just make your role explicit."), makeS6Exp("2 \u2014 Specificity: named outcomes, not vague claims", "\u201cWidely cited\u201d means less than \u201ccited in 47 studies across clinical, policy, and engineering applications.\u201d \u201cWorked with communities\u201d means less than \u201cco-designed a food security protocol with three urban Indigenous organizations in Montr\u00e9al, subsequently adopted by the City\u2019s housing strategy.\u201d", "Specificity is not bragging \u2014 it is evidence. Vague claims read as weak because they are unverifiable. Named outcomes, organizations, and numbers give reviewers something concrete to evaluate."), makeS6Exp("3 \u2014 Significance: why this mattered to the field or world", "Describe not just what you did, but what it made possible. What existed before your work that was incomplete, incorrect, or absent? What changed? What can others now do or know that they could not before?", "This does not require hyperbole. A modest, precise claim \u2014 \u201cThis dataset is the first longitudinal record of X in the Y region, and has since been used by three government agencies and two international research groups\u201d \u2014 is far more powerful than a broad assertion about importance."), makeS6Exp("4 \u2014 Coherence: a research story, not a list", "The best Narrative CVs read as a coherent body of work, not a set of disconnected items. The personal statement frames the whole. The contributions are curated, not exhaustive. Together they answer the question: \u201cWhat is this researcher building, and why does it matter?\u201d", "You do not have to force all your work into a single theme \u2014 researchers whose work genuinely spans several areas can describe that breadth as a form of strength. But the narrative should feel intentional, not accidental.")]));
+
+    // ── CTA strip ────────────────────────────────────────────────────────────
+    const cta = el("div", "ncv-cta-strip");
+    const ctaText = el("div", "ncv-cta-text");
+    ctaText.appendChild(el("h3", null, "Ready to start drafting?"));
+    ctaText.appendChild(el("p", null, "Use the guided module to build your Narrative CV outline, one section at a time."));
+    const ctaBtn = el("button", "btn btn-primary", "Start Step 2 \u2192");
+    ctaBtn.type = "button";
+    ctaBtn.addEventListener("click", () => navigateTo("tools-narrative"));
+    cta.appendChild(ctaText); cta.appendChild(ctaBtn);
+    wrap.appendChild(cta);
+
+    return wrap;
+  };
+
   const buildLearn = () => {
     const section = el("section", "page page-learn");
     section.dataset.page = "learn";
@@ -964,7 +1122,7 @@
 
     const step2Card = el("div", "tools-step-card");
     step2Card.appendChild(el("div", "tools-step-card-step", "Step 2"));
-    step2Card.appendChild(el("h2", null, "Build Your Research Story"));
+    step2Card.appendChild(el("h2", null, "Build Your Narrative CV"));
     step2Card.appendChild(el("p", null, "Develop a draft outline of your Narrative CV using guided prompts and real examples."));
     step2Card.appendChild(el("div", "tools-step-card-time", "\u23f1 60\u201390 min"));
     const step2Btn = el("button", "btn btn-primary", "Start \u2192");
@@ -1084,6 +1242,7 @@
     }
 
     impact101Content.appendChild(grid);
+    impact101Content.appendChild(buildNarrativeCV101());
 
     // ── Wire up tabs ─────────────────────────────────────────────────────
     container.appendChild(toolsContent);
@@ -1591,7 +1750,7 @@
 
     const step2Card = el("div", "tools-step-card");
     step2Card.appendChild(el("div", "tools-step-card-step", "Step 2"));
-    step2Card.appendChild(el("h2", null, "Build Your Research Story"));
+    step2Card.appendChild(el("h2", null, "Build Your Narrative CV"));
     step2Card.appendChild(el("p", null, "Develop a draft outline of your Narrative CV using guided prompts and real examples."));
     step2Card.appendChild(el("div", "tools-step-card-time", "\u23f1 60\u201390 min"));
     const step2Btn = el("button", "btn btn-primary", "Start \u2192");
@@ -1772,7 +1931,7 @@
 
     // Progress panel
     const progressPanel = el("aside", "narrative-progress-panel");
-    const progressTitle = el("h2", null, "Build Your Research Story");
+    const progressTitle = el("h2", null, "Build Your Narrative CV");
     progressPanel.appendChild(progressTitle);
 
     const STAGE_LABELS = [
