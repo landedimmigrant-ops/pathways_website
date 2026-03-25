@@ -1184,40 +1184,29 @@
     topics.appendChild(el("h2", "section-title", data.learn.topics.title));
     const topicGrid = el("div", "topic-grid");
 
-    // Regular info cards
-    data.learn.topics.cards.forEach((topic) => {
-      const card = el("div", "topic-card");
-      card.appendChild(el("h3", null, topic.title));
-      card.appendChild(el("p", null, topic.body));
-      topicGrid.appendChild(card);
-    });
+    // Helper — build + register a full module page
+    const makeModulePage = (id, title, contentEl) => {
+      const pg = el("div", "page learn-module-page");
+      const backBtn = el("button", "learn-module-back");
+      backBtn.type = "button";
+      backBtn.innerHTML = "\u2190 Back to Learn";
+      backBtn.addEventListener("click", () => navigateTo("learn"));
+      pg.appendChild(backBtn);
+      pg.appendChild(el("div", "topic-card-kicker", "Module"));
+      pg.appendChild(el("h1", "learn-module-title", title));
+      if (contentEl) {
+        pg.appendChild(contentEl);
+      } else {
+        const ph = el("div", "learn-module-placeholder");
+        ph.appendChild(el("p", null, "Waiting for content."));
+        pg.appendChild(ph);
+      }
+      pages.set(id, pg);
+      appRoot.appendChild(pg);
+    };
 
-    // Impact Myths module card — expandable
-    const mythsModCard = el("button", "topic-card topic-card--expandable");
-    mythsModCard.type = "button";
-    mythsModCard.appendChild(el("div", "topic-card-kicker", "Module"));
-    mythsModCard.appendChild(el("h3", null, data.learn.myths.title));
-    mythsModCard.appendChild(el("p", null, "Common misconceptions about research impact and what the evidence actually shows."));
-    const mythsHint = el("span", "topic-card-hint", "Open module \u2192");
-    mythsModCard.appendChild(mythsHint);
-    topicGrid.appendChild(mythsModCard);
-
-    // Narrative CV module card — expandable
-    const ncvCard = el("button", "topic-card topic-card--expandable");
-    ncvCard.type = "button";
-    ncvCard.appendChild(el("div", "topic-card-kicker", "Module"));
-    ncvCard.appendChild(el("h3", null, "What is a Narrative CV?"));
-    ncvCard.appendChild(el("p", null, "Why narrative CVs exist, the three sections, TCV vs CV-FRQ differences, common concerns, and what reviewers look for."));
-    const ncvHint = el("span", "topic-card-hint", "Open module \u2192");
-    ncvCard.appendChild(ncvHint);
-    topicGrid.appendChild(ncvCard);
-
-    topics.appendChild(topicGrid);
-
-    // Myths expand panel
-    const mythsPanel = el("div", "topic-expand-panel");
-    mythsPanel.hidden = true;
-    const mythsWrapInner = el("div", "myths");
+    // Build myths content element
+    const mythsContentEl = el("div", "myths");
     data.learn.myths.items.forEach((item) => {
       const card = el("div", "myth-card");
       const mythLine = el("div", "myth-line");
@@ -1228,43 +1217,39 @@
       realityLine.appendChild(el("span", null, item.reality));
       card.appendChild(mythLine);
       card.appendChild(realityLine);
-      mythsWrapInner.appendChild(card);
-    });
-    mythsPanel.appendChild(mythsWrapInner);
-    topics.appendChild(mythsPanel);
-
-    // NCV expand panel
-    const ncvPanel = el("div", "topic-expand-panel");
-    ncvPanel.hidden = true;
-    ncvPanel.appendChild(buildNarrativeCV101());
-    topics.appendChild(ncvPanel);
-
-    // Module card toggle — only one open at a time
-    mythsModCard.addEventListener("click", () => {
-      const opening = !mythsModCard.classList.contains("is-active");
-      // close NCV if open
-      ncvCard.classList.remove("is-active");
-      ncvPanel.hidden = true;
-      ncvHint.textContent = "Open module \u2192";
-      // toggle myths
-      mythsModCard.classList.toggle("is-active", opening);
-      mythsPanel.hidden = !opening;
-      mythsHint.textContent = opening ? "Close \u00d7" : "Open module \u2192";
-      if (opening) mythsPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      mythsContentEl.appendChild(card);
     });
 
-    ncvCard.addEventListener("click", () => {
-      const opening = !ncvCard.classList.contains("is-active");
-      // close myths if open
-      mythsModCard.classList.remove("is-active");
-      mythsPanel.hidden = true;
-      mythsHint.textContent = "Open module \u2192";
-      // toggle NCV
-      ncvCard.classList.toggle("is-active", opening);
-      ncvPanel.hidden = !opening;
-      ncvHint.textContent = opening ? "Close \u00d7" : "Open module \u2192";
-      if (opening) ncvPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    // Register module pages (placeholder or real content)
+    const topicModules = [
+      { id: "learn-module-disciplines", title: "Impact across disciplines", content: null },
+      { id: "learn-module-evidence",    title: "Evidence that counts",       content: null },
+      { id: "learn-module-plan-early",  title: "Why plan early",             content: null },
+      { id: "learn-module-myths",       title: data.learn.myths.title,       content: mythsContentEl },
+      { id: "learn-module-ncv",         title: "What is a Narrative CV?",    content: buildNarrativeCV101() }
+    ];
+    topicModules.forEach(({ id, title, content }) => makeModulePage(id, title, content));
+
+    // All topic cards — each opens its module page
+    const allModuleCards = [
+      { id: "learn-module-disciplines", title: "Impact across disciplines",  body: "Different fields generate different kinds of impact. Learn how to articulate yours in ways that fit your discipline." },
+      { id: "learn-module-evidence",    title: "Evidence that counts",        body: "Discover qualitative and quantitative evidence that can demonstrate change over time." },
+      { id: "learn-module-plan-early",  title: "Why plan early",              body: "Early planning makes it easier to align methods, partners, and outputs with real-world outcomes." },
+      { id: "learn-module-myths",       title: data.learn.myths.title,        body: "Common misconceptions about research impact and what the evidence actually shows." },
+      { id: "learn-module-ncv",         title: "What is a Narrative CV?",     body: "Why narrative CVs exist, the three sections, TCV vs CV-FRQ differences, common concerns, and what reviewers look for." }
+    ];
+    allModuleCards.forEach(({ id, title, body }) => {
+      const card = el("button", "topic-card topic-card--expandable");
+      card.type = "button";
+      card.appendChild(el("div", "topic-card-kicker", "Module"));
+      card.appendChild(el("h3", null, title));
+      card.appendChild(el("p", null, body));
+      card.appendChild(el("span", "topic-card-hint", "Open module \u2192"));
+      card.addEventListener("click", () => navigateTo(id));
+      topicGrid.appendChild(card);
     });
+
+    topics.appendChild(topicGrid);
 
     grid.appendChild(topics);
 
@@ -4136,6 +4121,7 @@
   const setActiveNav = (pageId) => {
     const activePageId = pageId === "pathways-vision" ? "about"
       : pageId === "tools-narrative" || pageId === "tools" ? "learn"
+      : pageId.startsWith("learn-module") ? "learn"
       : pageId;
     const links = siteHeader.querySelectorAll(".nav-link");
     links.forEach((link) => {
