@@ -844,12 +844,13 @@ label {
 }
 
 .topic-card-hint {
-  display: inline-block;
-  font-size: 13px;
+  display: block;
+  font-size: 16px;
   font-weight: 600;
   color: var(--burgundy);
   margin-top: auto;
   padding-top: 0.5rem;
+  text-align: right;
 }
 
 /* Expand panel below topic grid */

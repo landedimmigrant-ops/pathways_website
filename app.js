@@ -1242,7 +1242,7 @@
       card.type = "button";
       card.appendChild(el("h3", null, title));
       card.appendChild(el("p", null, body));
-      card.appendChild(el("span", "topic-card-hint", "Open module \u2192"));
+      card.appendChild(el("span", "topic-card-hint", "\u2192"));
       card.addEventListener("click", () => navigateTo(id));
       topicGrid.appendChild(card);
     });
