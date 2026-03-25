@@ -283,7 +283,7 @@
         throw new Error("Manifest must be an array");
       }
 
-      const workshops = await Promise.all(manifest.map(async (entry) => {
+      const results = await Promise.allSettled(manifest.map(async (entry) => {
         // Tool entries have no markdown file — enrich directly
         if (!entry.file) {
           return {
@@ -321,7 +321,9 @@
         };
       }));
 
-      content.workshops = workshops;
+      content.workshops = results
+        .filter((r) => r.status === "fulfilled")
+        .map((r) => r.value);
     } catch (error) {
       console.warn("Workshop content failed to load.", error);
       content.workshops = [];
