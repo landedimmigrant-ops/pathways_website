@@ -929,7 +929,6 @@
   // ── What is a Narrative CV? — Impact 101 module ──────────────────────────
   const buildNarrativeCV101 = () => {
     const wrap = el("div", "ncv-module");
-    wrap.appendChild(el("div", "ncv-module-divider"));
     const moduleHeader = el("div", "ncv-module-header");
     moduleHeader.appendChild(el("span", "ncv-module-kicker", "Before you start — Step 2"));
     moduleHeader.appendChild(el("h2", null, "What is a Narrative CV?"));
@@ -1206,7 +1205,30 @@
       card.appendChild(el("p", null, topic.body));
       topicGrid.appendChild(card);
     });
+    // Narrative CV topic card — expandable
+    const ncvCard = el("button", "topic-card topic-card--expandable");
+    ncvCard.type = "button";
+    ncvCard.appendChild(el("h3", null, "What is a Narrative CV?"));
+    ncvCard.appendChild(el("p", null, "Why narrative CVs exist, the three sections, TCV vs CV-FRQ differences, common concerns, and what reviewers look for."));
+    const ncvHint = el("span", "topic-card-hint", "Open module \u2192");
+    ncvCard.appendChild(ncvHint);
+    topicGrid.appendChild(ncvCard);
+
     topics.appendChild(topicGrid);
+
+    // Expand panel — shown below grid when card is clicked
+    const ncvPanel = el("div", "topic-expand-panel");
+    ncvPanel.hidden = true;
+    ncvPanel.appendChild(buildNarrativeCV101());
+    topics.appendChild(ncvPanel);
+
+    ncvCard.addEventListener("click", () => {
+      const open = ncvCard.classList.toggle("is-active");
+      ncvPanel.hidden = !open;
+      ncvHint.textContent = open ? "Close \u00d7" : "Open module \u2192";
+      if (open) ncvPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
     grid.appendChild(topics);
 
     if (data.learn.resources && Array.isArray(data.learn.resources.cards)) {
@@ -1242,7 +1264,6 @@
     }
 
     impact101Content.appendChild(grid);
-    impact101Content.appendChild(buildNarrativeCV101());
 
     // ── Wire up tabs ─────────────────────────────────────────────────────
     container.appendChild(toolsContent);
