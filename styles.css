@@ -3268,6 +3268,16 @@ label {
   margin-top: 2.5rem;
 }
 
+.narrative-ncv-learn-link {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+}
+
+.narrative-ncv-learn-link a {
+  color: var(--burgundy);
+  text-decoration: underline;
+}
+
 .ncv-module-divider {
   border-top: 2px solid var(--border);
   margin-bottom: 2.5rem;

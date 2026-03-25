@@ -1231,11 +1231,11 @@
 
     // All topic cards — each opens its module page
     const allModuleCards = [
-      { id: "learn-module-disciplines", title: "Impact across disciplines",  body: "Different fields generate different kinds of impact. Learn how to articulate yours in ways that fit your discipline." },
-      { id: "learn-module-evidence",    title: "Evidence that counts",        body: "Discover qualitative and quantitative evidence that can demonstrate change over time." },
-      { id: "learn-module-plan-early",  title: "Why plan early",              body: "Early planning makes it easier to align methods, partners, and outputs with real-world outcomes." },
+      { id: "learn-module-ncv",         title: "What is a Narrative CV?",     body: "Why narrative CVs exist, the three sections, TCV vs CV-FRQ differences, common concerns, and what reviewers look for." },
       { id: "learn-module-myths",       title: data.learn.myths.title,        body: "Common misconceptions about research impact and what the evidence actually shows." },
-      { id: "learn-module-ncv",         title: "What is a Narrative CV?",     body: "Why narrative CVs exist, the three sections, TCV vs CV-FRQ differences, common concerns, and what reviewers look for." }
+      { id: "learn-module-disciplines", title: "Impact across disciplines",   body: "Different fields generate different kinds of impact. Learn how to articulate yours in ways that fit your discipline." },
+      { id: "learn-module-evidence",    title: "Evidence that counts",        body: "Discover qualitative and quantitative evidence that can demonstrate change over time." },
+      { id: "learn-module-plan-early",  title: "Why plan early",              body: "Early planning makes it easier to align methods, partners, and outputs with real-world outcomes." }
     ];
     allModuleCards.forEach(({ id, title, body }) => {
       const card = el("button", "topic-card topic-card--expandable");
@@ -2100,6 +2100,12 @@
         "This module walks you through the three sections of the Tri-agency CV (TCV) one at a time. You will write an imperfect first draft, then strengthen it. By the end, you will have a working outline you can take into a consultation or continue refining on your own.",
         "There is no right order. Most researchers find it easier to start with their contributions, then mentorship, then write the personal statement last \u2014 when the story is clearer."
       ].forEach((text) => intro.appendChild(el("p", "card-text", text)));
+      const ncvLearnLink = el("p", "narrative-ncv-learn-link");
+      const ncvA = el("a", null, "Want to know more about what a Narrative CV is? Read the overview \u2192");
+      ncvA.href = "#learn-module-ncv";
+      ncvA.addEventListener("click", (e) => { e.preventDefault(); navigateTo("learn-module-ncv"); });
+      ncvLearnLink.appendChild(ncvA);
+      intro.appendChild(ncvLearnLink);
       wrap.appendChild(intro);
 
       // Funder toggle
