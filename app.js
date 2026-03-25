@@ -1093,16 +1093,16 @@
 
     // ── Tab bar ──────────────────────────────────────────────────────────
     const learnTabsBar = el("div", "explore-tabs");
-    const tabTools = el("button", "explore-tab is-active", "Tools");
-    tabTools.type = "button";
-    const tabImpact101 = el("button", "explore-tab", "Impact 101");
+    const tabImpact101 = el("button", "explore-tab is-active", "Impact 101");
     tabImpact101.type = "button";
-    learnTabsBar.appendChild(tabTools);
+    const tabTools = el("button", "explore-tab", "Tools");
+    tabTools.type = "button";
     learnTabsBar.appendChild(tabImpact101);
+    learnTabsBar.appendChild(tabTools);
     container.appendChild(learnTabsBar);
 
     // ── Tools tab content ────────────────────────────────────────────────
-    const toolsContent = el("div", "explore-tab-content is-active");
+    const toolsContent = el("div", "explore-tab-content");
 
     const toolsIntro = el("p", "lead", "Two interactive tools to help you plan and tell your research story.");
     toolsContent.appendChild(toolsIntro);
@@ -1169,7 +1169,7 @@
     toolsContent.appendChild(plannerArea);
 
     // ── Impact 101 tab content ───────────────────────────────────────────
-    const impact101Content = el("div", "explore-tab-content");
+    const impact101Content = el("div", "explore-tab-content is-active");
 
     const grid = el("div", "learn-grid");
 
@@ -1192,7 +1192,6 @@
       backBtn.innerHTML = "\u2190 Back to Learn";
       backBtn.addEventListener("click", () => navigateTo("learn"));
       pg.appendChild(backBtn);
-      pg.appendChild(el("div", "topic-card-kicker", "Module"));
       pg.appendChild(el("h1", "learn-module-title", title));
       if (contentEl) {
         pg.appendChild(contentEl);
@@ -1241,7 +1240,6 @@
     allModuleCards.forEach(({ id, title, body }) => {
       const card = el("button", "topic-card topic-card--expandable");
       card.type = "button";
-      card.appendChild(el("div", "topic-card-kicker", "Module"));
       card.appendChild(el("h3", null, title));
       card.appendChild(el("p", null, body));
       card.appendChild(el("span", "topic-card-hint", "Open module \u2192"));
@@ -1288,11 +1286,11 @@
     impact101Content.appendChild(grid);
 
     // ── Wire up tabs ─────────────────────────────────────────────────────
-    container.appendChild(toolsContent);
     container.appendChild(impact101Content);
+    container.appendChild(toolsContent);
 
-    const learnTabs = [tabTools, tabImpact101];
-    const learnContents = [toolsContent, impact101Content];
+    const learnTabs = [tabImpact101, tabTools];
+    const learnContents = [impact101Content, toolsContent];
     learnTabs.forEach((tab) => {
       tab.addEventListener("click", () => {
         learnTabs.forEach((t, j) => {
