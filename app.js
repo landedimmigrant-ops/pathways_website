@@ -3173,50 +3173,21 @@
     const researchPanelDesc = el("p", "research-viewer-desc", "");
     researchViewerCard.appendChild(researchPanelDesc);
 
-    const researchModulePrompt = el("p", "research-module-prompt", data.start.actions.modulePrompt);
-    researchViewerCard.appendChild(researchModulePrompt);
-
-    // Module chips (Level 2)
+    // Module chips — topic filters
     const researchModuleChips = el("div", "research-module-chips");
     researchViewerCard.appendChild(researchModuleChips);
 
-    // Module detail (Level 3)
-    const researchModuleDetail = el("div", "research-module-detail");
-    researchModuleDetail.hidden = true;
-    const researchModuleDetailTitle = el("h3", "research-module-detail-title", "");
-    const researchModuleDetailDesc = el("p", "research-module-detail-desc", "");
-    const researchModuleDetailMeta = el("div", "module-meta");
-    const researchModuleTypeItem = el("div", "meta-item");
-    researchModuleTypeItem.appendChild(el("span", "meta-label", data.start.labels.type));
-    const researchModuleTypeValue = el("span", "meta-value", "");
-    researchModuleTypeItem.appendChild(researchModuleTypeValue);
-    const researchModuleTimeItem = el("div", "meta-item");
-    researchModuleTimeItem.appendChild(el("span", "meta-label", data.start.labels.time));
-    const researchModuleTimeValue = el("span", "meta-value", "");
-    researchModuleTimeItem.appendChild(researchModuleTimeValue);
-    researchModuleDetailMeta.appendChild(researchModuleTypeItem);
-    researchModuleDetailMeta.appendChild(researchModuleTimeItem);
-    const researchResourcesHeading = el("h4", "research-resources-heading", "Relevant workshops \u0026 services");
-    const researchResourcesGrid = el("div", "opportunity-grid");
-    const researchSeeAllLink = el("a", "bridge-link", "");
-    researchSeeAllLink.href = "#";
-
-    researchModuleDetail.appendChild(researchModuleDetailTitle);
-    researchModuleDetail.appendChild(researchModuleDetailDesc);
-    researchModuleDetail.appendChild(researchModuleDetailMeta);
-    researchModuleDetail.appendChild(researchResourcesHeading);
-    researchModuleDetail.appendChild(researchResourcesGrid);
-    researchModuleDetail.appendChild(researchSeeAllLink);
-    researchViewerCard.appendChild(researchModuleDetail);
+    // Services section — visible immediately on stage open, filtered by active chip
+    const researchServicesSection = el("div", "research-services-section");
+    const researchServicesGrid = el("div", "opportunity-grid");
+    researchServicesSection.appendChild(researchServicesGrid);
+    researchViewerCard.appendChild(researchServicesSection);
 
     // Panel CTAs
     const researchPanelActions = el("div", "module-actions");
-    const researchOppBtn = el("button", "btn", data.start.actions.opportunities);
-    researchOppBtn.type = "button";
     const researchContactBtn = el("button", "btn primary", data.start.actions.contact);
     researchContactBtn.type = "button";
     researchContactBtn.addEventListener("click", () => { navigateTo("about", "contact"); });
-    researchPanelActions.appendChild(researchOppBtn);
     researchPanelActions.appendChild(researchContactBtn);
     researchViewerCard.appendChild(researchPanelActions);
 
@@ -3225,6 +3196,19 @@
     researchTabContent.appendChild(researchStageGrid);
     researchTabContent.appendChild(researchPillRow);
     researchTabContent.appendChild(researchViewer);
+
+    function loadStageServices(journey) {
+      const matched = exploreItems.filter(opp => {
+        const val = opp.stage;
+        return Array.isArray(val) ? val.includes(journey.stage) : val === journey.stage;
+      });
+      clear(researchServicesGrid);
+      if (matched.length) {
+        matched.forEach(opp => researchServicesGrid.appendChild(buildResearchOpportunityCard(opp)));
+      } else {
+        researchServicesGrid.appendChild(el("p", "empty-state", "No services found for this stage yet."));
+      }
+    }
 
     function openResearchPanel(journey) {
       activeResearchJourneyId = journey.id;
@@ -3238,22 +3222,26 @@
 
       researchPanelTitle.textContent = journey.title;
       researchPanelDesc.textContent = journey.description;
-      researchModuleDetail.hidden = true;
 
       clear(researchModuleChips);
       journey.modules.forEach((module) => {
         const chip = el("button", "research-module-chip", module.title);
         chip.type = "button";
-        chip.addEventListener("click", () => openResearchModule(journey, module, chip));
+        chip.addEventListener("click", () => {
+          if (chip.classList.contains("is-active")) {
+            chip.classList.remove("is-active");
+            loadStageServices(journey);
+          } else {
+            openResearchModule(journey, module, chip);
+          }
+        });
         researchModuleChips.appendChild(chip);
       });
 
+      loadStageServices(journey);
+
       researchPrevBtn.onclick = () => openResearchPanel(journeys[prevIndex]);
       researchNextBtn.onclick = () => openResearchPanel(journeys[nextIndex]);
-      researchOppBtn.onclick = () => {
-        tabServices.click();
-        applyStageFilter(journey.stage);
-      };
 
       researchViewer.classList.add("is-open");
       researchViewer.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -3264,18 +3252,12 @@
       researchViewer.classList.remove("is-open");
       researchPillRow.hidden = true;
       researchStageGrid.hidden = false;
-      researchModuleDetail.hidden = true;
       researchPillButtons.forEach((btn) => btn.classList.remove("is-active"));
     }
 
     function openResearchModule(journey, module, chipEl) {
       researchModuleChips.querySelectorAll(".research-module-chip").forEach(c => c.classList.remove("is-active"));
       chipEl.classList.add("is-active");
-
-      researchModuleDetailTitle.textContent = module.title;
-      researchModuleDetailDesc.textContent = module.description;
-      researchModuleTypeValue.textContent = module.type;
-      researchModuleTimeValue.textContent = module.time;
 
       const workshopIds = Array.isArray(module.workshopIds) ? module.workshopIds : [];
       let matched;
@@ -3285,24 +3267,15 @@
         matched = exploreItems.filter(opp => {
           const val = opp.stage;
           return Array.isArray(val) ? val.includes(journey.stage) : val === journey.stage;
-        }).slice(0, 4);
+        });
       }
 
-      clear(researchResourcesGrid);
+      clear(researchServicesGrid);
       if (matched.length) {
-        matched.forEach(opp => researchResourcesGrid.appendChild(buildResearchOpportunityCard(opp)));
+        matched.forEach(opp => researchServicesGrid.appendChild(buildResearchOpportunityCard(opp)));
       } else {
-        researchResourcesGrid.appendChild(el("p", "empty-state", "No services found. Check back soon."));
+        researchServicesGrid.appendChild(el("p", "empty-state", "No services found for this topic."));
       }
-
-      researchSeeAllLink.textContent = `See all support for ${journey.title} \u2192`;
-      researchSeeAllLink.onclick = (e) => {
-        e.preventDefault();
-        tabServices.click();
-        applyStageFilter(journey.stage);
-      };
-
-      researchModuleDetail.hidden = false;
     }
 
     researchTabContent.applySearchTerm = () => {};
