@@ -688,17 +688,17 @@
 
     container.appendChild(el("hr", "section-divider"));
 
-    // === Popular this month ===
+    // === Featured ===
     const popular = el("section", "popular-section");
     const popularHeader = el("div", "popular-header");
-    popularHeader.appendChild(el("h2", "section-title", "Popular this month"));
-    popularHeader.appendChild(el("p", "popular-subtitle", "Real services available to you right now."));
+    popularHeader.appendChild(el("h2", "section-title", "Featured"));
+    popularHeader.appendChild(el("p", "popular-subtitle", "Tools and services to help you get started."));
     popular.appendChild(popularHeader);
 
     const FEATURED_IDS = [
-      "4th-space-public-engagement",
-      "ucs-writing-op-ed",
-      "oce-community-partnerships-workshop"
+      "learn-narrative-cv",
+      "learn-impact-planner",
+      "4th-space-public-engagement"
     ];
     const popularItems = FEATURED_IDS
       .map((id) => content.workshops.find((w) => w.id === id))
@@ -709,12 +709,17 @@
       const card = el("article", "popular-card");
       card.appendChild(formatBadge(item.format));
       card.appendChild(el("h3", "popular-card-title", item.title));
-      const learnBtn = el("button", "popular-card-cta", "Learn more \u2192");
-      learnBtn.type = "button";
-      learnBtn.addEventListener("click", () => {
-        navigateTo("explore", "opportunity-explorer", { workshop: item.id });
+      const isTool = item.sourceType === "tool";
+      const ctaBtn = el("button", "popular-card-cta", isTool ? "Start \u2192" : "Learn more \u2192");
+      ctaBtn.type = "button";
+      ctaBtn.addEventListener("click", () => {
+        if (isTool) {
+          navigateTo(item.internalRoute);
+        } else {
+          navigateTo("explore", "opportunity-explorer", { workshop: item.id });
+        }
       });
-      card.appendChild(learnBtn);
+      card.appendChild(ctaBtn);
       popularGrid.appendChild(card);
     });
 
