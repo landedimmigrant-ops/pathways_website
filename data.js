@@ -444,8 +444,8 @@ window.PATHWAYS_DATA = {
     ]
   },
   learn: {
-    title: "Learn About Impact",
-    intro: "Build impact literacy with short, practical explanations and common starting points.",
+    title: "Learn",
+    intro: "Plan your impact and build your understanding of what research impact means.",
     impact: {
       title: "What is research impact?",
       body: "Research impact is the positive change that results from research activities and outputs. It can be social, cultural, economic, environmental, or policy-related, and it often emerges through relationships and sustained engagement."

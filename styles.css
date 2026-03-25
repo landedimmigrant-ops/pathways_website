@@ -760,6 +760,47 @@ label {
   margin-top: 10px;
 }
 
+/* ── "New to impact?" collapsible ───────────────────────────── */
+
+.learn-newto-section {
+  margin-top: 8px;
+}
+
+.learn-newto-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--burgundy);
+  cursor: pointer;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  list-style: none;
+  user-select: none;
+}
+
+.learn-newto-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.learn-newto-toggle::after {
+  content: "\203A";
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.2s;
+  margin-left: auto;
+}
+
+.learn-newto-section[open] .learn-newto-toggle::after {
+  transform: rotate(90deg);
+}
+
+.learn-newto-section .learn-grid {
+  padding-top: 24px;
+}
+
 /* ── Impact Planning Module ──────────────────────────────────────── */
 
 .learn-impact-planner {

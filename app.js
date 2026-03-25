@@ -986,9 +986,10 @@
       grid.appendChild(resources);
     }
 
+    let plannerSection = null;
     if (data.learn.impactPlanning) {
       const planner = data.learn.impactPlanning;
-      const plannerSection = el("section", "learn-impact-planner");
+      plannerSection = el("section", "learn-impact-planner");
       plannerSection.appendChild(el("h2", "section-title", planner.title));
       if (planner.subtitle) {
         plannerSection.appendChild(el("p", "card-text", planner.subtitle));
@@ -1386,10 +1387,41 @@
       };
 
       renderPlanner();
-      grid.appendChild(plannerSection);
     }
 
-    container.appendChild(grid);
+    // === Learn tabs ===
+    const learnTabsBar = el("div", "explore-tabs");
+    const tabTools = el("button", "explore-tab is-active", "Tools");
+    tabTools.type = "button";
+    const tabImpact101 = el("button", "explore-tab", "Impact 101");
+    tabImpact101.type = "button";
+    learnTabsBar.appendChild(tabTools);
+    learnTabsBar.appendChild(tabImpact101);
+    container.appendChild(learnTabsBar);
+
+    const toolsContent = el("div", "explore-tab-content is-active");
+    if (plannerSection) {
+      toolsContent.appendChild(plannerSection);
+    } else {
+      toolsContent.appendChild(el("p", "empty-state", "Tools coming soon."));
+    }
+
+    const impact101Content = el("div", "explore-tab-content");
+    impact101Content.appendChild(grid);
+
+    container.appendChild(toolsContent);
+    container.appendChild(impact101Content);
+
+    const learnTabs = [tabTools, tabImpact101];
+    const learnContents = [toolsContent, impact101Content];
+    learnTabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => {
+        learnTabs.forEach((t, j) => {
+          t.classList.toggle("is-active", t === tab);
+          learnContents[j].classList.toggle("is-active", t === tab);
+        });
+      });
+    });
 
     const learnCta = el("section", "learn-cta");
     learnCta.appendChild(el("h2", "section-title", "Ready to put this into practice?"));
