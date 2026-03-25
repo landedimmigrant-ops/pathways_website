@@ -735,6 +735,17 @@ label {
   min-width: 70px;
 }
 
+.learn-orient-line {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+
+.learn-orient-line .text-link {
+  color: var(--burgundy);
+  text-decoration: underline;
+}
+
 .topic-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -742,18 +753,40 @@ label {
 }
 
 .topic-card {
-  border: 1px solid var(--border);
-  padding: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.topic-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0.2rem 0 0.4rem;
+  color: var(--text);
 }
 
 .topic-card p {
+  font-size: 0.9rem;
   color: var(--muted);
+  margin: 0;
+}
+
+.topic-card-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  margin-bottom: 0.1rem;
 }
 
 .topic-card--expandable {
   cursor: pointer;
   text-align: left;
-  background: #fff;
   font-family: inherit;
   width: 100%;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -769,23 +802,13 @@ label {
   background: #fdf7f8;
 }
 
-.topic-card--expandable h3 {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--text);
-}
-
-.topic-card--expandable p {
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
 .topic-card-hint {
   display: inline-block;
   font-size: 13px;
   font-weight: 600;
   color: var(--burgundy);
+  margin-top: auto;
+  padding-top: 0.5rem;
 }
 
 /* Expand panel below topic grid */

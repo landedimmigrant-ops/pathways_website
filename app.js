@@ -1174,13 +1174,50 @@
     const grid = el("div", "learn-grid");
 
     const impact = el("div", "learn-impact");
-    impact.appendChild(el("h2", "section-title", data.learn.impact.title));
     impact.appendChild(el("p", null, data.learn.impact.body));
+    const orientLine = el("p", "learn-orient-line");
+    orientLine.innerHTML = "Here you can find guides and learning modules to help you get oriented. If you can\u2019t find what you\u2019re looking for, <a href=\"#about\" class=\"text-link\">please contact us</a>.";
+    impact.appendChild(orientLine);
     grid.appendChild(impact);
 
-    const myths = el("div", "learn-myths");
-    myths.appendChild(el("h2", "section-title", data.learn.myths.title));
-    const mythsWrap = el("div", "myths");
+    const topics = el("div", "learn-topics");
+    topics.appendChild(el("h2", "section-title", data.learn.topics.title));
+    const topicGrid = el("div", "topic-grid");
+
+    // Regular info cards
+    data.learn.topics.cards.forEach((topic) => {
+      const card = el("div", "topic-card");
+      card.appendChild(el("h3", null, topic.title));
+      card.appendChild(el("p", null, topic.body));
+      topicGrid.appendChild(card);
+    });
+
+    // Impact Myths module card — expandable
+    const mythsModCard = el("button", "topic-card topic-card--expandable");
+    mythsModCard.type = "button";
+    mythsModCard.appendChild(el("div", "topic-card-kicker", "Module"));
+    mythsModCard.appendChild(el("h3", null, data.learn.myths.title));
+    mythsModCard.appendChild(el("p", null, "Common misconceptions about research impact and what the evidence actually shows."));
+    const mythsHint = el("span", "topic-card-hint", "Open module \u2192");
+    mythsModCard.appendChild(mythsHint);
+    topicGrid.appendChild(mythsModCard);
+
+    // Narrative CV module card — expandable
+    const ncvCard = el("button", "topic-card topic-card--expandable");
+    ncvCard.type = "button";
+    ncvCard.appendChild(el("div", "topic-card-kicker", "Module"));
+    ncvCard.appendChild(el("h3", null, "What is a Narrative CV?"));
+    ncvCard.appendChild(el("p", null, "Why narrative CVs exist, the three sections, TCV vs CV-FRQ differences, common concerns, and what reviewers look for."));
+    const ncvHint = el("span", "topic-card-hint", "Open module \u2192");
+    ncvCard.appendChild(ncvHint);
+    topicGrid.appendChild(ncvCard);
+
+    topics.appendChild(topicGrid);
+
+    // Myths expand panel
+    const mythsPanel = el("div", "topic-expand-panel");
+    mythsPanel.hidden = true;
+    const mythsWrapInner = el("div", "myths");
     data.learn.myths.items.forEach((item) => {
       const card = el("div", "myth-card");
       const mythLine = el("div", "myth-line");
@@ -1191,42 +1228,42 @@
       realityLine.appendChild(el("span", null, item.reality));
       card.appendChild(mythLine);
       card.appendChild(realityLine);
-      mythsWrap.appendChild(card);
+      mythsWrapInner.appendChild(card);
     });
-    myths.appendChild(mythsWrap);
-    grid.appendChild(myths);
+    mythsPanel.appendChild(mythsWrapInner);
+    topics.appendChild(mythsPanel);
 
-    const topics = el("div", "learn-topics");
-    topics.appendChild(el("h2", "section-title", data.learn.topics.title));
-    const topicGrid = el("div", "topic-grid");
-    data.learn.topics.cards.forEach((topic) => {
-      const card = el("div", "topic-card");
-      card.appendChild(el("h3", null, topic.title));
-      card.appendChild(el("p", null, topic.body));
-      topicGrid.appendChild(card);
-    });
-    // Narrative CV topic card — expandable
-    const ncvCard = el("button", "topic-card topic-card--expandable");
-    ncvCard.type = "button";
-    ncvCard.appendChild(el("h3", null, "What is a Narrative CV?"));
-    ncvCard.appendChild(el("p", null, "Why narrative CVs exist, the three sections, TCV vs CV-FRQ differences, common concerns, and what reviewers look for."));
-    const ncvHint = el("span", "topic-card-hint", "Open module \u2192");
-    ncvCard.appendChild(ncvHint);
-    topicGrid.appendChild(ncvCard);
-
-    topics.appendChild(topicGrid);
-
-    // Expand panel — shown below grid when card is clicked
+    // NCV expand panel
     const ncvPanel = el("div", "topic-expand-panel");
     ncvPanel.hidden = true;
     ncvPanel.appendChild(buildNarrativeCV101());
     topics.appendChild(ncvPanel);
 
+    // Module card toggle — only one open at a time
+    mythsModCard.addEventListener("click", () => {
+      const opening = !mythsModCard.classList.contains("is-active");
+      // close NCV if open
+      ncvCard.classList.remove("is-active");
+      ncvPanel.hidden = true;
+      ncvHint.textContent = "Open module \u2192";
+      // toggle myths
+      mythsModCard.classList.toggle("is-active", opening);
+      mythsPanel.hidden = !opening;
+      mythsHint.textContent = opening ? "Close \u00d7" : "Open module \u2192";
+      if (opening) mythsPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
     ncvCard.addEventListener("click", () => {
-      const open = ncvCard.classList.toggle("is-active");
-      ncvPanel.hidden = !open;
-      ncvHint.textContent = open ? "Close \u00d7" : "Open module \u2192";
-      if (open) ncvPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      const opening = !ncvCard.classList.contains("is-active");
+      // close myths if open
+      mythsModCard.classList.remove("is-active");
+      mythsPanel.hidden = true;
+      mythsHint.textContent = "Open module \u2192";
+      // toggle NCV
+      ncvCard.classList.toggle("is-active", opening);
+      ncvPanel.hidden = !opening;
+      ncvHint.textContent = opening ? "Close \u00d7" : "Open module \u2192";
+      if (opening) ncvPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
 
     grid.appendChild(topics);
