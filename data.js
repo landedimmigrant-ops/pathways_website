@@ -11,6 +11,7 @@ window.PATHWAYS_DATA = {
     { id: "home", label: "Home" },
     { id: "explore", label: "Explore" },
     { id: "learn", label: "Learn" },
+    { id: "tools", label: "Tools" },
     { id: "about", label: "About" }
   ],
   units: [
