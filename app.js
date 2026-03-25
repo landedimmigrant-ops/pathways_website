@@ -33,6 +33,25 @@
     return node;
   };
 
+  const formatBadge = (format) => {
+    const fmt = (format || "").toLowerCase();
+    let key, iconSvg;
+    if (fmt.includes("workshop")) {
+      key = "workshop";
+      iconSvg = '<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="14" height="14" rx="2"/><path d="M16 2v4M8 2v4M3 9h14"/></svg>';
+    } else if (fmt.includes("consultation")) {
+      key = "consultation";
+      iconSvg = '<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10c0 3.866-3.582 7-8 7a9 9 0 01-4-.93L2 18l1.4-3.5A7 7 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"/></svg>';
+    } else {
+      key = "resource";
+      iconSvg = '<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13l-3 3a2.12 2.12 0 01-3-3l5-5a2.12 2.12 0 013 0"/><path d="M13 10l3-3a2.12 2.12 0 00-3-3l-5 5a2.12 2.12 0 000 3"/></svg>';
+    }
+    const badge = document.createElement("span");
+    badge.className = "format-badge format-badge--" + key;
+    badge.innerHTML = iconSvg + '<span class="format-badge-text">' + (format || "Service") + "</span>";
+    return badge;
+  };
+
   const clear = (node) => {
     while (node.firstChild) {
       node.removeChild(node.firstChild);
@@ -64,6 +83,7 @@
     pendingExploreSearch: "",
     pendingSupportSearch: "",
     pendingResearchJourneyId: "",
+    pendingExploreTab: "",
     suppressNextHashChange: false
   };
   const pathwayIdToKey = {
@@ -435,74 +455,48 @@
 
     const container = el("div", "container");
     const introSection = el("section", "home-intro");
-    const introBlock = el("div", "intro-block");
-    data.home.hero.summary.forEach((line) => {
-      if (line === "Explore support through seven connected pathways:") {
-        return;
+    introSection.appendChild(el("h1", "home-intro-heading", "What would you like to do?"));
+
+    const needsGrid = el("div", "home-needs-grid");
+    const featureTiles = [
+      {
+        kicker: "7 impact areas",
+        title: "Explore the Pathways",
+        desc: "Discover seven ways to create impact \u2014 academic, community, policy, communications, and more.",
+        action: () => navigateTo("explore")
+      },
+      {
+        kicker: "By research stage",
+        title: "Find support where you are",
+        desc: "Browse services matched to whether you\u2019re developing an idea, in active research, or wrapping up.",
+        action: () => { state.pendingExploreTab = "research"; navigateTo("explore"); }
+      },
+      {
+        kicker: "Frameworks \u0026 tools",
+        title: "Learn what impact means",
+        desc: "Explore frameworks, use our interactive impact planner, and build your approach.",
+        action: () => navigateTo("learn")
+      },
+      {
+        kicker: "Not sure yet",
+        title: "Not sure where to start?",
+        desc: "Answer these questions and we\u2019ll try to match you to the best support.",
+        action: () => openQuickMatch(),
+        unsure: true
       }
-      const paragraph = el("p", "lead");
-      const segments = line.split("\n");
-      segments.forEach((segment, index) => {
-        paragraph.appendChild(document.createTextNode(segment));
-        if (index < segments.length - 1) {
-          paragraph.appendChild(document.createElement("br"));
-        }
-      });
-      introBlock.appendChild(paragraph);
+    ];
+    featureTiles.forEach((tile) => {
+      const tileEl = el("button", tile.unsure ? "home-need-tile is-unsure" : "home-need-tile");
+      tileEl.type = "button";
+      tileEl.appendChild(el("span", "home-need-tile-kicker", tile.kicker));
+      tileEl.appendChild(el("p", "home-need-tile-title", tile.title));
+      tileEl.appendChild(el("p", "home-need-tile-desc", tile.desc));
+      tileEl.appendChild(el("span", "home-need-tile-arrow", "\u2192"));
+      tileEl.addEventListener("click", tile.action);
+      needsGrid.appendChild(tileEl);
     });
-
-    introSection.appendChild(introBlock);
+    introSection.appendChild(needsGrid);
     container.appendChild(introSection);
-
-    // === Three-door entry section ===
-    const entrySection = el("section", "home-entry-section");
-    const entryGrid = el("div", "home-entry-grid");
-
-    // Door 1: New to impact → Learn
-    const entryCard1 = el("div", "home-entry-card");
-    entryCard1.setAttribute("tabindex", "0");
-    entryCard1.appendChild(el("p", "entry-card-label", "New to research impact?"));
-    entryCard1.appendChild(el("h3", "entry-card-title", "Learn what impact means"));
-    entryCard1.appendChild(el("p", "entry-card-desc", "Explore frameworks, examples, and how to think about your research\u2019s reach."));
-    entryCard1.appendChild(el("span", "entry-card-cta", "Start learning \u2192"));
-    entryCard1.addEventListener("click", () => navigateTo("learn"));
-    entryCard1.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigateTo("learn"); } });
-    entryGrid.appendChild(entryCard1);
-
-    // Door 2: Find a specific service → Explore
-    const entryCard2 = el("div", "home-entry-card");
-    entryCard2.appendChild(el("p", "entry-card-label", "Looking for something specific?"));
-    entryCard2.appendChild(el("h3", "entry-card-title", "Find support or workshops"));
-    entryCard2.appendChild(el("p", "entry-card-desc", "Search consultations, workshops, and services by topic, stage, or format."));
-    const entrySearchWrap = el("div", "entry-card-search");
-    const entrySearchInput = el("input");
-    entrySearchInput.type = "search";
-    entrySearchInput.placeholder = "Search support and services\u2026";
-    entrySearchInput.setAttribute("aria-label", "Search support and services");
-    entrySearchInput.addEventListener("click", (e) => e.stopPropagation());
-    entrySearchInput.addEventListener("keydown", (e) => {
-      if (e.key !== "Enter") return;
-      e.preventDefault();
-      navigateTo("explore", "opportunity-explorer", { searchQuery: entrySearchInput.value.trim() });
-    });
-    entrySearchWrap.appendChild(entrySearchInput);
-    entryCard2.appendChild(entrySearchWrap);
-    const entryBrowseLink = el("a", "entry-card-cta", "Browse all \u2192");
-    entryBrowseLink.href = "#explore";
-    entryBrowseLink.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); navigateTo("explore"); });
-    entryCard2.appendChild(entryBrowseLink);
-    entryGrid.appendChild(entryCard2);
-
-    entrySection.appendChild(entryGrid);
-
-    // Quick match trigger
-    const quickMatchRow = el("div", "quick-match-row");
-    quickMatchRow.appendChild(el("span", "quick-match-label", "Not sure where to start?"));
-    const quickMatchBtn = el("button", "btn-link quick-match-trigger", "Answer 2 quick questions \u2192");
-    quickMatchBtn.type = "button";
-    quickMatchBtn.addEventListener("click", () => openQuickMatch());
-    quickMatchRow.appendChild(quickMatchBtn);
-    entrySection.appendChild(quickMatchRow);
 
     // === Pathways grid (primary entry) ===
     const pathwayItems = data.explore.pathways.items;
@@ -528,43 +522,6 @@
     });
     pathwaysSection.appendChild(pathwaysLink);
     container.appendChild(pathwaysSection);
-    container.appendChild(el("hr", "section-divider"));
-
-    // === Research stage timeline (secondary entry) ===
-    const timelineSection = el("section", "journey-timeline-section");
-    timelineSection.appendChild(el("p", "pathways-section-label", "You can also explore Pathway services based on where you are in your research."));
-    const timelineInner = el("div", "journey-timeline");
-    data.home.hero.cards.forEach((card, index) => {
-      const step = el("div", "timeline-step");
-      step.dataset.journey = card.id;
-      const node = el("button", "timeline-node");
-      node.type = "button";
-      node.setAttribute("aria-label", `Go to ${card.title} support`);
-      const num = el("span", "timeline-num", String(index + 1));
-      node.appendChild(num);
-      const label = el("div", "timeline-label");
-      label.appendChild(el("strong", "timeline-title", card.title));
-      label.appendChild(el("span", "timeline-desc", card.description));
-      const supportAnchor = supportAnchorByJourneyId[card.id];
-      node.addEventListener("click", () => {
-        state.pendingResearchJourneyId = card.id;
-        navigateTo("explore");
-      });
-      step.appendChild(node);
-      step.appendChild(label);
-      if (index < data.home.hero.cards.length - 1) {
-        timelineInner.appendChild(step);
-        timelineInner.appendChild(el("div", "timeline-connector"));
-      } else {
-        timelineInner.appendChild(step);
-      }
-    });
-    timelineSection.appendChild(timelineInner);
-    container.appendChild(timelineSection);
-    container.appendChild(el("hr", "section-divider"));
-
-    // === Two-door entry (learn + find support) ===
-    container.appendChild(entrySection);
 
     let activePathwayId = "";
     let pathwayModalOverlay = null;
@@ -714,78 +671,34 @@
 
     container.appendChild(el("hr", "section-divider"));
 
-    const grantsSection = el("section", "upcoming-grants-section");
-    grantsSection.appendChild(el("h2", "section-title", data.home.upcomingGrants.title));
-    grantsSection.appendChild(el("p", "card-text", data.home.upcomingGrants.lead));
-
-    const grantsGrid = el("div", "topic-grid");
-    data.home.upcomingGrants.items.slice(0, 3).forEach((item) => {
-      const tile = el("article", "opportunity-card");
-      tile.style.aspectRatio = "1 / 1";
-      tile.style.display = "flex";
-      tile.style.flexDirection = "column";
-
-      tile.appendChild(el("h3", null, item.title));
-      tile.appendChild(el("p", "card-text", item.description));
-
-      const meta = el("div", "contact-list");
-      meta.appendChild(el("div", null, `Type: ${item.type}`));
-      meta.appendChild(el("div", null, `Amount: ${item.amount}`));
-      meta.appendChild(el("div", null, `Duration: ${item.duration}`));
-      tile.appendChild(meta);
-
-      const actions = el("div", "card-actions");
-      actions.style.marginTop = "auto";
-      const viewLink = el("a", "route-footer-link", data.home.upcomingGrants.ctaLabel);
-      viewLink.href = "#explore";
-      viewLink.addEventListener("click", (event) => {
-        event.preventDefault();
-        navigateTo("explore");
-      });
-      actions.appendChild(viewLink);
-      tile.appendChild(actions);
-      grantsGrid.appendChild(tile);
-    });
-
-    grantsSection.appendChild(grantsGrid);
-    container.appendChild(grantsSection);
-    container.appendChild(el("hr", "section-divider"));
-
+    // === Popular this month ===
     const popular = el("section", "popular-section");
-    popular.appendChild(el("h2", "section-title", "Popular support"));
+    const popularHeader = el("div", "popular-header");
+    popularHeader.appendChild(el("h2", "section-title", "Popular this month"));
+    popularHeader.appendChild(el("p", "popular-subtitle", "Real services available to you right now."));
+    popular.appendChild(popularHeader);
 
-    const popularGrid = el("div", "topic-grid");
-    const featuredWorkshops = content.workshops.filter((item) => item.featuredHome).slice(0, 3);
-    const fallbackPopular = data.home.popular && Array.isArray(data.home.popular.items)
-      ? data.home.popular.items.slice(0, 3)
-      : [];
-    const popularItems = featuredWorkshops.length ? featuredWorkshops : fallbackPopular;
+    const FEATURED_IDS = [
+      "4th-space-public-engagement",
+      "ucs-writing-op-ed",
+      "oce-community-partnerships-workshop"
+    ];
+    const popularItems = FEATURED_IDS
+      .map((id) => content.workshops.find((w) => w.id === id))
+      .filter(Boolean);
 
+    const popularGrid = el("div", "popular-grid");
     popularItems.forEach((item) => {
-      const tile = el("article", "opportunity-card");
-      tile.style.aspectRatio = "1 / 1";
-      tile.style.display = "flex";
-      tile.style.flexDirection = "column";
-
-      tile.appendChild(el("h3", null, item.title));
-      if (item.description) {
-        tile.appendChild(el("p", "card-text", item.description));
-      }
-
-      const actions = el("div", "card-actions");
-      actions.style.marginTop = "auto";
-      const viewButton = el("button", "btn primary", "View");
-      viewButton.type = "button";
-      viewButton.addEventListener("click", () => {
-        if (item.sourceType === "workshop") {
-          navigateTo("explore", "opportunity-explorer", { workshop: item.id });
-        } else {
-          navigateTo("explore");
-        }
+      const card = el("article", "popular-card");
+      card.appendChild(formatBadge(item.format));
+      card.appendChild(el("h3", "popular-card-title", item.title));
+      const learnBtn = el("button", "popular-card-cta", "Learn more \u2192");
+      learnBtn.type = "button";
+      learnBtn.addEventListener("click", () => {
+        navigateTo("explore", "opportunity-explorer", { workshop: item.id });
       });
-      actions.appendChild(viewButton);
-      tile.appendChild(actions);
-      popularGrid.appendChild(tile);
+      card.appendChild(learnBtn);
+      popularGrid.appendChild(card);
     });
 
     popular.appendChild(popularGrid);
@@ -1929,13 +1842,13 @@
       if (filtered.length) {
         filtered.forEach((opp) => {
           const card = el("div", "opportunity-card");
+          card.appendChild(formatBadge(opp.format));
           card.appendChild(el("h3", null, opp.title));
           card.appendChild(el("p", "card-text", opp.summary));
           const meta = el("div", "opportunity-meta");
           [
             { label: data.explore.labels.category, value: opp.category },
             { label: data.explore.labels.stage, value: opp.stage },
-            { label: data.explore.labels.format, value: opp.format },
             { label: data.explore.labels.time, value: opp.time }
           ].forEach((item) => {
             const displayValue = Array.isArray(item.value) ? item.value.join(", ") : item.value;
@@ -2005,13 +1918,13 @@
     // Helper: build one opportunity card for the research panel
     function buildResearchOpportunityCard(opp) {
       const card = el("div", "opportunity-card");
+      card.appendChild(formatBadge(opp.format));
       card.appendChild(el("h3", null, opp.title));
       card.appendChild(el("p", "card-text", opp.summary));
       const meta = el("div", "opportunity-meta");
       [
         { label: data.explore.labels.category, value: opp.category },
         { label: data.explore.labels.stage, value: opp.stage },
-        { label: data.explore.labels.format, value: opp.format },
         { label: data.explore.labels.time, value: opp.time }
       ].forEach((item) => {
         const displayValue = Array.isArray(item.value) ? item.value.join(", ") : item.value;
@@ -2392,6 +2305,7 @@
 
       items.forEach((opp) => {
         const card = el("div", "opportunity-card");
+        card.appendChild(formatBadge(opp.format));
         card.appendChild(el("h3", null, opp.title));
         card.appendChild(el("p", "card-text", opp.summary));
 
@@ -2399,7 +2313,6 @@
         const metaItems = [
           { label: data.explore.labels.category, value: opp.category },
           { label: data.explore.labels.stage, value: opp.stage },
-          { label: data.explore.labels.format, value: opp.format },
           { label: data.explore.labels.time, value: opp.time }
         ];
         metaItems.forEach((item) => {
@@ -2651,6 +2564,11 @@
       const journey = journeys.find(j => j.id === journeyId);
       if (journey) openResearchPanel(journey);
     };
+    section.openTab = (tabName) => {
+      if (tabName === "research") tabResearch.click();
+      else if (tabName === "services") tabServices.click();
+      else tabPathways.click();
+    };
     return section;
   };
 
@@ -2855,6 +2773,10 @@
       if (explorePage && explorePage.openResearchStage && state.pendingResearchJourneyId) {
         explorePage.openResearchStage(state.pendingResearchJourneyId);
         state.pendingResearchJourneyId = "";
+      }
+      if (explorePage && explorePage.openTab && state.pendingExploreTab) {
+        explorePage.openTab(state.pendingExploreTab);
+        state.pendingExploreTab = "";
       }
       if (explorePage && explorePage.applySearchTerm) {
         explorePage.applySearchTerm(state.pendingExploreSearch);

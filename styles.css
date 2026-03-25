@@ -251,13 +251,159 @@ label {
 }
 
 .home-intro {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
-.home-intro .lead {
-  font-size: 21px;
+.home-intro-heading {
+  font-size: 28px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text);
+  margin: 0 0 24px;
+}
+
+/* ── Format badges ──────────────────────────────────────────── */
+
+.format-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px 3px 6px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.format-badge svg {
+  flex-shrink: 0;
+}
+
+.format-badge--workshop {
+  background: #e8f4fd;
+  color: #1060a0;
+}
+
+.format-badge--consultation {
+  background: #e8f5e9;
+  color: #2a6e2a;
+}
+
+.format-badge--resource {
+  background: #f3ebfd;
+  color: #6a2a8a;
+}
+
+/* ── "Not sure" strip ───────────────────────────────────────── */
+
+.home-not-sure-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 9px 14px;
+  background: #f9f5f7;
+  border-radius: 8px;
+  border: 1px solid #ecdde5;
+}
+
+.home-not-sure-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.home-not-sure-btn {
+  font-size: 13px;
+  color: var(--burgundy);
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.home-not-sure-btn:hover {
+  text-decoration: underline;
+}
+
+/* ── "I need help with" action tiles ────────────────────────── */
+
+.home-needs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.home-need-tile {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 18px 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.home-need-tile:hover {
+  border-color: var(--burgundy);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.home-need-tile.is-unsure {
+  background: #f9f5f7;
+  border-style: dashed;
+}
+
+.home-need-tile-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.home-need-tile-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--burgundy);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.home-need-tile-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+
+.home-need-tile-arrow {
+  font-size: 16px;
+  color: var(--burgundy);
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+@media (max-width: 900px) {
+  .home-needs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .home-needs-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .home-pathways {
@@ -2557,6 +2703,88 @@ label {
 
   .recommended-grid,
   .explore-pathway-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Popular this month ─────────────────────────────────────── */
+
+.popular-section {
+  padding: 8px 0 0;
+}
+
+.popular-header {
+  margin-bottom: 20px;
+}
+
+.popular-header .section-title {
+  margin-bottom: 4px;
+}
+
+.popular-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.popular-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.popular-card {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.popular-card:hover {
+  border-color: var(--burgundy);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+}
+
+.popular-card-format {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.popular-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+  margin: 0;
+  flex: 1;
+}
+
+.popular-card-cta {
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--burgundy);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 4px;
+}
+
+.popular-card-cta:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .popular-grid {
     grid-template-columns: 1fr;
   }
 }
