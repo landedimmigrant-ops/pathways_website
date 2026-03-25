@@ -9,7 +9,7 @@ window.PATHWAYS_DATA = {
   },
   navigation: [
     { id: "home", label: "Home" },
-    { id: "explore", label: "Explore" },
+    { id: "explore", label: "Services" },
     { id: "learn", label: "Learn" },
     { id: "tools", label: "Tools" },
     { id: "about", label: "About" }
@@ -631,7 +631,7 @@ window.PATHWAYS_DATA = {
     }
   },
   explore: {
-    title: "Support",
+    title: "Services",
     intro: "",
     search: {
       label: "Search",
