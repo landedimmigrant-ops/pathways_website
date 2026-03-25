@@ -3116,24 +3116,18 @@
       return card;
     }
 
-    // --- Pill row (compact, visible when a stage is active) ---
-    const researchPillRow = el("div", "pathway-pill-row");
+    // --- Breadcrumb row (visible when a stage panel is open) ---
+    const researchPillRow = el("div", "research-breadcrumb-row");
     researchPillRow.hidden = true;
-    const researchPillButtons = new Map();
-    journeys.forEach((journey) => {
-      const pill = el("button", "pathway-pill");
-      pill.type = "button";
-      pill.textContent = journey.title;
-      pill.addEventListener("click", () => {
-        if (activeResearchJourneyId === journey.id) {
-          closeResearchPanel();
-        } else {
-          openResearchPanel(journey);
-        }
-      });
-      researchPillButtons.set(journey.id, pill);
-      researchPillRow.appendChild(pill);
-    });
+    const researchBackBtn = el("button", "research-back-btn");
+    researchBackBtn.type = "button";
+    researchBackBtn.textContent = "\u2190 Research Stages";
+    researchBackBtn.addEventListener("click", closeResearchPanel);
+    const researchBreadcrumbSep = el("span", "research-breadcrumb-sep", "/");
+    const researchBreadcrumbCurrent = el("span", "research-breadcrumb-current", "");
+    researchPillRow.appendChild(researchBackBtn);
+    researchPillRow.appendChild(researchBreadcrumbSep);
+    researchPillRow.appendChild(researchBreadcrumbCurrent);
 
     // --- Stage card grid (Level 1) ---
     const researchStageGrid = el("div", "research-stage-grid pathway-grid");
@@ -3218,7 +3212,7 @@
 
       researchStageGrid.hidden = true;
       researchPillRow.hidden = false;
-      researchPillButtons.forEach((btn, id) => btn.classList.toggle("is-active", id === journey.id));
+      researchBreadcrumbCurrent.textContent = journey.title;
 
       researchPanelTitle.textContent = journey.title;
       researchPanelDesc.textContent = journey.description;
@@ -3252,7 +3246,6 @@
       researchViewer.classList.remove("is-open");
       researchPillRow.hidden = true;
       researchStageGrid.hidden = false;
-      researchPillButtons.forEach((btn) => btn.classList.remove("is-active"));
     }
 
     function openResearchModule(journey, module, chipEl) {

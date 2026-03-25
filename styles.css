@@ -1308,6 +1308,41 @@ label {
   margin: 0 0 20px;
 }
 
+/* ── Research Stage breadcrumb row ──────────────────────────────── */
+
+.research-breadcrumb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.research-back-btn {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--burgundy);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.research-back-btn:hover {
+  color: #6b1a28;
+}
+
+.research-breadcrumb-sep {
+  color: var(--muted);
+}
+
+.research-breadcrumb-current {
+  color: var(--text);
+  font-weight: 500;
+}
+
 /* ── Research Stage interactive panel ───────────────────────────── */
 
 .research-stage-grid {
@@ -1428,10 +1463,10 @@ label {
 }
 
 .research-module-chip.is-active {
-  background: #fff;
+  background: var(--burgundy);
   border-color: var(--burgundy);
   border-bottom: 2px solid #fff;
-  color: var(--burgundy);
+  color: #fff;
   font-weight: 600;
   z-index: 3;
 }
