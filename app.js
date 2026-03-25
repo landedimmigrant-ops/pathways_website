@@ -344,7 +344,7 @@
     const navItems = data.navigation
       .map((item) => (item.id === "start" ? { id: "home", label: "Home" } : item))
       .filter((item, index, list) => list.findIndex((entry) => entry.id === item.id) === index)
-      .filter((item) => ["home", "explore", "learn", "tools", "about", "stories"].includes(item.id))
+      .filter((item) => ["home", "explore", "learn", "about", "stories"].includes(item.id))
       .filter((item) => STORIES_ENABLED || item.id !== "stories");
 
     navItems.forEach((item) => {
@@ -917,6 +917,86 @@
     container.appendChild(el("h1", null, data.learn.title));
     container.appendChild(el("p", "lead", data.learn.intro));
 
+    // ── Tab bar ──────────────────────────────────────────────────────────
+    const learnTabsBar = el("div", "explore-tabs");
+    const tabTools = el("button", "explore-tab is-active", "Tools");
+    tabTools.type = "button";
+    const tabImpact101 = el("button", "explore-tab", "Impact 101");
+    tabImpact101.type = "button";
+    learnTabsBar.appendChild(tabTools);
+    learnTabsBar.appendChild(tabImpact101);
+    container.appendChild(learnTabsBar);
+
+    // ── Tools tab content ────────────────────────────────────────────────
+    const toolsContent = el("div", "explore-tab-content is-active");
+
+    const toolsIntro = el("p", "lead", "Two interactive tools to help you plan and tell your research story.");
+    toolsContent.appendChild(toolsIntro);
+
+    const cardsWrap = el("div", "tools-step-cards");
+
+    const step1Card = el("div", "tools-step-card");
+    step1Card.appendChild(el("div", "tools-step-card-step", "Step 1"));
+    step1Card.appendChild(el("h2", null, "Plan Your Impact"));
+    step1Card.appendChild(el("p", null, "Map your research outputs to outcomes, identify your impact pathways, and build your impact plan."));
+    step1Card.appendChild(el("div", "tools-step-card-time", "\u23f1 45\u201360 min"));
+    const step1Btn = el("button", "btn btn-primary", "Start \u2192");
+    step1Btn.type = "button";
+
+    const arrowEl = el("div", "tools-step-arrow", "\u2192");
+
+    const step2Card = el("div", "tools-step-card");
+    step2Card.appendChild(el("div", "tools-step-card-step", "Step 2"));
+    step2Card.appendChild(el("h2", null, "Build Your Research Story"));
+    step2Card.appendChild(el("p", null, "Develop a draft outline of your Narrative CV using guided prompts and real examples."));
+    step2Card.appendChild(el("div", "tools-step-card-time", "\u23f1 60\u201390 min"));
+    const step2Btn = el("button", "btn btn-primary", "Start \u2192");
+    step2Btn.type = "button";
+    step2Btn.addEventListener("click", () => navigateTo("tools-narrative"));
+    step2Card.appendChild(step2Btn);
+
+    cardsWrap.appendChild(step1Card);
+    cardsWrap.appendChild(arrowEl);
+    cardsWrap.appendChild(step2Card);
+    toolsContent.appendChild(cardsWrap);
+
+    const alreadyDone = el("p", "tools-already-link");
+    const alreadyLink = el("button", "btn-link", "Already completed Step 1? Jump straight to Step 2 \u2192");
+    alreadyLink.type = "button";
+    alreadyLink.addEventListener("click", () => navigateTo("tools-narrative"));
+    alreadyDone.appendChild(alreadyLink);
+    toolsContent.appendChild(alreadyDone);
+
+    // Planner area (revealed when Step 1 clicked)
+    const plannerArea = el("div", "tools-planner-area is-hidden");
+    const backToTools = el("button", "btn btn-ghost tools-back-btn", "\u2190 Back to Tools");
+    backToTools.type = "button";
+    backToTools.addEventListener("click", () => {
+      plannerArea.classList.add("is-hidden");
+      cardsWrap.classList.remove("is-hidden");
+      alreadyDone.classList.remove("is-hidden");
+    });
+    plannerArea.appendChild(backToTools);
+
+    let plannerBuilt = false;
+    step1Btn.addEventListener("click", () => {
+      cardsWrap.classList.add("is-hidden");
+      alreadyDone.classList.add("is-hidden");
+      plannerArea.classList.remove("is-hidden");
+      if (!plannerBuilt) {
+        const plannerEl = buildImpactPlanner();
+        if (plannerEl) plannerArea.appendChild(plannerEl);
+        plannerBuilt = true;
+      }
+      plannerArea.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    step1Card.appendChild(step1Btn);
+
+    toolsContent.appendChild(plannerArea);
+
+    // ── Impact 101 tab content ───────────────────────────────────────────
+    const impact101Content = el("div", "explore-tab-content");
+
     const grid = el("div", "learn-grid");
 
     const impact = el("div", "learn-impact");
@@ -951,17 +1031,6 @@
       card.appendChild(el("p", null, topic.body));
       topicGrid.appendChild(card);
     });
-
-    // CTA card pointing to Tools
-    const toolsCta = el("div", "topic-card learn-tools-cta-card");
-    toolsCta.appendChild(el("h3", null, "Ready to apply what you\u2019ve learned?"));
-    toolsCta.appendChild(el("p", null, "Visit the Tools section to start planning your impact and drafting your Narrative CV."));
-    const toToolsBtn = el("button", "btn btn-primary", "Go to Tools \u2192");
-    toToolsBtn.type = "button";
-    toToolsBtn.addEventListener("click", () => navigateTo("tools"));
-    toolsCta.appendChild(toToolsBtn);
-    topicGrid.appendChild(toolsCta);
-
     topics.appendChild(topicGrid);
     grid.appendChild(topics);
 
@@ -997,7 +1066,23 @@
       grid.appendChild(resources);
     }
 
-    container.appendChild(grid);
+    impact101Content.appendChild(grid);
+
+    // ── Wire up tabs ─────────────────────────────────────────────────────
+    container.appendChild(toolsContent);
+    container.appendChild(impact101Content);
+
+    const learnTabs = [tabTools, tabImpact101];
+    const learnContents = [toolsContent, impact101Content];
+    learnTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        learnTabs.forEach((t, j) => {
+          t.classList.toggle("is-active", t === tab);
+          learnContents[j].classList.toggle("is-active", t === tab);
+        });
+      });
+    });
+
     section.appendChild(container);
     return section;
   };
@@ -3833,7 +3918,7 @@
 
   const setActiveNav = (pageId) => {
     const activePageId = pageId === "pathways-vision" ? "about"
-      : pageId === "tools-narrative" ? "tools"
+      : pageId === "tools-narrative" || pageId === "tools" ? "learn"
       : pageId;
     const links = siteHeader.querySelectorAll(".nav-link");
     links.forEach((link) => {
