@@ -1310,6 +1310,10 @@
       });
     });
 
+    section.resetState = () => {
+      tabImpact101.click();
+    };
+
     section.appendChild(container);
     return section;
   };
@@ -4202,6 +4206,12 @@
       const explorePage = pages.get("explore");
       if (explorePage && explorePage.resetState) {
         explorePage.resetState();
+      }
+    }
+    if (validPage !== "learn") {
+      const learnPage = pages.get("learn");
+      if (learnPage && learnPage.resetState) {
+        learnPage.resetState();
       }
     }
 
