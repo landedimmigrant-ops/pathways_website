@@ -533,7 +533,7 @@
       pathwayCards.set(pathway.id, card);
     });
     pathwaysSection.appendChild(pathwayGrid);
-    const pathwaysLink = el("a", "home-pathways-link btn btn-ghost-burgundy btn-small", "Explore Pathways →");
+    const pathwaysLink = el("a", "home-pathways-link btn btn-outline", "Explore Pathways →");
     pathwaysLink.href = "#explore";
     pathwaysLink.addEventListener("click", (event) => {
       event.preventDefault();
@@ -1298,10 +1298,13 @@
 
     const learnTabs = [tabImpact101, tabTools];
     const learnContents = [impact101Content, toolsContent];
-    learnTabs.forEach((tab) => {
+    learnTabs.forEach((tab, i) => {
+      tab.setAttribute("role", "tab");
+      tab.setAttribute("aria-selected", i === 0 ? "true" : "false");
       tab.addEventListener("click", () => {
         learnTabs.forEach((t, j) => {
           t.classList.toggle("is-active", t === tab);
+          t.setAttribute("aria-selected", t === tab ? "true" : "false");
           learnContents[j].classList.toggle("is-active", t === tab);
         });
       });
@@ -3093,29 +3096,6 @@
     const pathwayItems = data.explore.pathways.items;
     let activeExplorePathwayId = null;
 
-    // --- Pill row (compact, visible when a pathway is active) ---
-    const pillRow = el("div", "pathway-pill-row");
-    pillRow.hidden = true;
-    const pillButtons = new Map();
-    pathwayItems.forEach((pathway) => {
-      const key = pathwayIdToKey[pathway.id] || pathway.id;
-      const pill = el("button", "pathway-pill");
-      pill.type = "button";
-      pill.dataset.pathway = key;
-      pill.textContent = pathway.title;
-      const color = pathwayColors[key];
-      if (color) pill.style.background = color;
-      pill.addEventListener("click", () => {
-        if (activeExplorePathwayId === pathway.id) {
-          closeExplorePanel();
-        } else {
-          openExplorePanel(pathway);
-        }
-      });
-      pillButtons.set(pathway.id, pill);
-      pillRow.appendChild(pill);
-    });
-
     // --- Full pathway grid (default view) ---
     const explorePathwayGrid = el("div", "pathway-grid explore-pathway-grid");
     pathwayItems.forEach((pathway) => {
@@ -3129,46 +3109,66 @@
     });
     pathwaysTabContent.appendChild(explorePathwayGrid);
 
-    // --- Inline panel (slide-in, colored) ---
-    const pathwayPanel = el("div", "pathway-viewer");
-    const panelCard = el("div", "pathway-viewer-card");
+    // --- Detail view (hidden by default): back link + 2-column layout ---
+    const pathwayDetailShell = el("div", "pathway-detail-shell");
+    pathwayDetailShell.hidden = true;
 
-    const panelHeader = el("div", "pathway-viewer-header");
-    const panelTitle = el("h2", null, "");
-    const panelNav = el("div", "pathway-nav");
+    const backLink = el("button", "pathway-back-link");
+    backLink.type = "button";
+    backLink.textContent = "\u2190 Back to all pathways";
+    backLink.addEventListener("click", closeExplorePanel);
+    pathwayDetailShell.appendChild(backLink);
+
+    const detailLayout = el("div", "pathway-detail-layout");
+
+    // Left: vertical side tabs
+    const sideTabsList = el("div", "pathway-side-tabs");
+    const sideTabButtons = new Map();
+    pathwayItems.forEach((pathway) => {
+      const tab = el("button", "pathway-side-tab");
+      tab.type = "button";
+      tab.textContent = pathway.title;
+      tab.addEventListener("click", () => openExplorePanel(pathway));
+      sideTabButtons.set(pathway.id, tab);
+      sideTabsList.appendChild(tab);
+    });
+    detailLayout.appendChild(sideTabsList);
+
+    // Right: panel content
+    const panelContent = el("div", "pathway-panel-content");
+    const panelTitle = el("h2", "pathway-panel-title", "");
+    const panelSummary = el("p", "pathway-modal-summary", "");
+    const panelLabel = el("p", "pathway-label", "");
+    const panelActions = el("ul", "pathway-actions");
+    panelContent.appendChild(panelTitle);
+    panelContent.appendChild(panelSummary);
+    panelContent.appendChild(panelLabel);
+    panelContent.appendChild(panelActions);
+
+    // Nav arrows at bottom-left of panel
+    const panelNavBottom = el("div", "pathway-nav-bottom");
     const panelPrevBtn = el("button", "btn btn-icon", "\u2190");
     panelPrevBtn.type = "button";
     panelPrevBtn.setAttribute("aria-label", data.explore.pathways.buttons.previous);
     const panelNextBtn = el("button", "btn btn-icon", "\u2192");
     panelNextBtn.type = "button";
     panelNextBtn.setAttribute("aria-label", data.explore.pathways.buttons.next);
-    const panelCloseBtn = el("button", "btn btn-icon btn-icon--close", "\u00d7");
-    panelCloseBtn.type = "button";
-    panelCloseBtn.addEventListener("click", closeExplorePanel);
-    panelNav.appendChild(panelPrevBtn);
-    panelNav.appendChild(panelNextBtn);
-    panelNav.appendChild(panelCloseBtn);
-    panelHeader.appendChild(panelTitle);
-    panelHeader.appendChild(panelNav);
-    panelCard.appendChild(panelHeader);
+    panelNavBottom.appendChild(panelPrevBtn);
+    panelNavBottom.appendChild(panelNextBtn);
+    panelContent.appendChild(panelNavBottom);
 
-    const panelSummary = el("p", "pathway-modal-summary", "");
-    const panelLabel = el("p", "pathway-label", "");
-    const panelActions = el("ul", "pathway-actions");
-    panelCard.appendChild(panelSummary);
-    panelCard.appendChild(panelLabel);
-    panelCard.appendChild(panelActions);
-    pathwayPanel.appendChild(panelCard);
-    pathwaysTabContent.appendChild(pathwayPanel);
-    pathwaysTabContent.appendChild(pillRow);
+    detailLayout.appendChild(panelContent);
+    pathwayDetailShell.appendChild(detailLayout);
 
-    // --- Related services section (below panel) ---
+    // Related services below the 2-col layout
     const pathwayServicesSection = el("div", "pathway-services-section");
     pathwayServicesSection.hidden = true;
     pathwayServicesSection.appendChild(el("h3", "pathway-services-title", "Related services"));
     const pathwayServicesGrid = el("div", "opportunity-grid");
     pathwayServicesSection.appendChild(pathwayServicesGrid);
-    pathwaysTabContent.appendChild(pathwayServicesSection);
+    pathwayDetailShell.appendChild(pathwayServicesSection);
+
+    pathwaysTabContent.appendChild(pathwayDetailShell);
 
     // --- Open/close logic ---
     function openExplorePanel(pathway) {
@@ -3179,10 +3179,29 @@
       const prevIndex = (currentIndex - 1 + pathwayItems.length) % pathwayItems.length;
       const nextIndex = (currentIndex + 1) % pathwayItems.length;
 
-      // Grid → pills
-      explorePathwayGrid.hidden = true;
-      pillRow.hidden = false;
-      pillButtons.forEach((btn, id) => btn.classList.toggle("is-active", id === pathway.id));
+      // Panel content: tinted background + colored left accent + colored title/label
+      const c = color || "#912338";
+      const r = parseInt(c.slice(1,3), 16);
+      const g = parseInt(c.slice(3,5), 16);
+      const b = parseInt(c.slice(5,7), 16);
+      panelContent.style.background = `rgba(${r},${g},${b},0.07)`;
+      panelContent.style.borderLeftColor = c;
+      panelTitle.style.color = c;
+      panelLabel.style.color = c;
+
+      // Update side tabs
+      sideTabButtons.forEach((btn, id) => {
+        const k = pathwayIdToKey[id] || id;
+        const c = pathwayColors[k];
+        btn.classList.toggle("is-active", id === pathway.id);
+        if (id === pathway.id) {
+          btn.style.background = c || "#912338";
+          btn.style.color = "#fff";
+        } else {
+          btn.style.removeProperty("background");
+          btn.style.removeProperty("color");
+        }
+      });
 
       // Panel content
       panelTitle.textContent = pathway.title;
@@ -3190,10 +3209,8 @@
       panelLabel.textContent = pathway.label;
       clear(panelActions);
       (pathway.actions || []).forEach((action) => panelActions.appendChild(el("li", null, action)));
-      pathwayPanel.style.background = color || "var(--burgundy)";
-      pathwayPanel.classList.add("is-open");
 
-      // Prev/Next handlers
+      // Nav handlers
       panelPrevBtn.onclick = () => openExplorePanel(pathwayItems[prevIndex]);
       panelNextBtn.onclick = () => openExplorePanel(pathwayItems[nextIndex]);
 
@@ -3254,16 +3271,27 @@
         pathwayServicesGrid.appendChild(el("p", "empty-state", "No services found for this pathway."));
       }
       pathwayServicesSection.hidden = false;
-      pathwayPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      // Show detail view, hide grid
+      explorePathwayGrid.hidden = true;
+      pathwayDetailShell.hidden = false;
+      pathwayDetailShell.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function closeExplorePanel() {
       activeExplorePathwayId = null;
-      pathwayPanel.classList.remove("is-open");
-      pathwayServicesSection.hidden = true;
-      pillRow.hidden = true;
       explorePathwayGrid.hidden = false;
-      pillButtons.forEach((btn) => btn.classList.remove("is-active"));
+      pathwayDetailShell.hidden = true;
+      pathwayServicesSection.hidden = true;
+      panelContent.style.removeProperty("background");
+      panelContent.style.removeProperty("border-left-color");
+      panelTitle.style.removeProperty("color");
+      panelLabel.style.removeProperty("color");
+      sideTabButtons.forEach((btn) => {
+        btn.classList.remove("is-active");
+        btn.style.removeProperty("background");
+        btn.style.removeProperty("color");
+      });
     }
 
     section.openPathwayInTab = (pathwayKey) => {
@@ -3593,9 +3621,12 @@
     const allTabs = [tabPathways, tabResearch, tabServices];
     const allContents = [pathwaysTabContent, researchTabContent, servicesTabContent];
     allTabs.forEach((tab, i) => {
+      tab.setAttribute("role", "tab");
+      tab.setAttribute("aria-selected", i === 0 ? "true" : "false");
       tab.addEventListener("click", () => {
         allTabs.forEach((t, j) => {
           t.classList.toggle("is-active", t === tab);
+          t.setAttribute("aria-selected", t === tab ? "true" : "false");
           allContents[j].classList.toggle("is-active", t === tab);
         });
       });
@@ -3967,6 +3998,11 @@
       else if (tabName === "services") tabServices.click();
       else tabPathways.click();
     };
+    section.resetState = () => {
+      closeExplorePanel();
+      closeResearchPanel();
+      tabPathways.click();
+    };
     return section;
   };
 
@@ -4160,6 +4196,12 @@
       const homePage = pages.get("home");
       if (homePage && homePage.closePathwayModal) {
         homePage.closePathwayModal();
+      }
+    }
+    if (validPage !== "explore") {
+      const explorePage = pages.get("explore");
+      if (explorePage && explorePage.resetState) {
+        explorePage.resetState();
       }
     }
 
