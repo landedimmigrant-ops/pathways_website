@@ -159,7 +159,7 @@ label {
 }
 
 .nav-link:hover {
-  border-color: var(--burgundy);
+  color: var(--burgundy);
 }
 
 .nav-link.is-active {
