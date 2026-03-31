@@ -4511,14 +4511,19 @@ label {
 }
 .signal-text { font-size: 13px; font-weight: 600; color: #1a1a1a; line-height: 1.35; }
 .signal-sub { font-size: 11.5px; color: #888; font-weight: 400; }
-.s2-right { padding: 32px 60px 32px 20px; display: flex; align-items: center; justify-content: center; }
-.pull-quote {
+.s2-right { padding: 32px 60px 32px 20px; display: flex; align-items: flex-start; justify-content: center; padding-top: 56px; }
+.definition-card {
   background: #fff; border-left: 4px solid #912338;
-  padding: 28px; border-radius: 0 8px 8px 0;
+  padding: 20px 22px 18px; border-radius: 0 8px 8px 0;
   box-shadow: 0 2px 16px rgba(0,0,0,0.06);
 }
-.pull-quote p { font-size: 14.5px; color: #2d2d2d; line-height: 1.78; font-style: italic; }
-.pull-quote .source { font-style: normal; font-size: 11px; color: #912338; font-weight: 700; margin-top: 12px; letter-spacing: 0.5px; }
+.definition-title { font-size: 12px; font-weight: 800; color: #912338; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.definition-body { font-size: 12.5px; color: #2d2d2d; line-height: 1.65; margin-bottom: 10px; }
+.definition-body strong { color: #912338; font-weight: 700; }
+.definition-label { font-size: 11.5px; color: #555; font-weight: 600; margin-bottom: 4px; }
+.definition-list { list-style: none; padding: 0; margin: 0; }
+.definition-list li { font-size: 12px; color: #444; line-height: 1.55; padding-left: 14px; position: relative; }
+.definition-list li::before { content: "\2022"; position: absolute; left: 0; color: #912338; font-weight: 700; }
 
 /* ── S3 The Challenge ───────────────────────────────────────────────── */
 .s3 { background: #0d1f2d; grid-template-columns: 1fr; align-items: center; }

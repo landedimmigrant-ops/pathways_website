@@ -597,9 +597,16 @@
           </div>
         </div>
         <div class="s2-right">
-          <div class="pull-quote">
-            <p>We envision research that is grounded in community priorities, informed by evidence, and translated into meaningful societal outcomes.</p>
-            <div class="source">Pathways to Impact &middot; Concordia University</div>
+          <div class="definition-card">
+            <h3 class="definition-title">Defining Research Impact</h3>
+            <p class="definition-body">At Concordia, we define research impact as the <strong>change</strong> that research activities contribute to society and beyond &mdash; an ongoing process of engagement that can lead to academic, social, cultural, economic, environmental, or policy effects.</p>
+            <p class="definition-label">The consequences of research can:</p>
+            <ul class="definition-list">
+              <li>Be positive or negative</li>
+              <li>Be of different types or natures</li>
+              <li>Occur at different times and scales</li>
+              <li>Result from the process itself, as well as from its results</li>
+            </ul>
           </div>
         </div>
       </div>
