@@ -4497,33 +4497,19 @@ label {
 .s1-body { font-size: 15px; line-height: 1.78; color: rgba(255,255,255,0.75); max-width: 380px; }
 .s1-right { height: 100%; display: flex; align-items: center; justify-content: center; }
 
-/* ── S2 Why Now ─────────────────────────────────────────────────────── */
+/* ── S2 Defining Impact ─────────────────────────────────────────────── */
 .s2 { background: #f5f4f0; grid-template-columns: 1fr 1fr; align-items: center; }
-.s2-left { padding: 32px 32px 32px 60px; }
+.s2-left { padding: 36px 32px 36px 60px; }
 .s2 .eyebrow { color: #912338; }
-.s2-headline { font-size: 34px; font-weight: 800; color: #1a1a1a; line-height: 1.12; margin-bottom: 16px; }
-.s2-body { font-size: 14.5px; color: #555; line-height: 1.78; margin-bottom: 26px; }
-.signal-list { display: flex; flex-direction: column; gap: 9px; }
-.signal-row {
-  display: flex; align-items: center; gap: 12px;
-  background: #fff; border-radius: 8px; padding: 11px 14px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
-}
-.signal-text { font-size: 13px; font-weight: 600; color: #1a1a1a; line-height: 1.35; }
-.signal-sub { font-size: 11.5px; color: #888; font-weight: 400; }
-.s2-right { padding: 32px 60px 32px 20px; display: flex; align-items: flex-start; justify-content: center; padding-top: 56px; }
-.definition-card {
-  background: #fff; border-left: 4px solid #912338;
-  padding: 20px 22px 18px; border-radius: 0 8px 8px 0;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-}
-.definition-title { font-size: 12px; font-weight: 800; color: #912338; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-.definition-body { font-size: 12.5px; color: #2d2d2d; line-height: 1.65; margin-bottom: 10px; }
-.definition-body strong { color: #912338; font-weight: 700; }
-.definition-label { font-size: 11.5px; color: #555; font-weight: 600; margin-bottom: 4px; }
-.definition-list { list-style: none; padding: 0; margin: 0; }
-.definition-list li { font-size: 12px; color: #444; line-height: 1.55; padding-left: 14px; position: relative; }
-.definition-list li::before { content: "\2022"; position: absolute; left: 0; color: #912338; font-weight: 700; }
+.s2-headline { font-size: 36px; font-weight: 800; color: #1a1a1a; line-height: 1.12; margin-bottom: 18px; }
+.s2-headline em { font-style: normal; color: #912338; }
+.s2-body { font-size: 15px; color: #555; line-height: 1.78; max-width: 400px; }
+.s2-body strong { color: #912338; font-weight: 700; }
+.s2-right { padding: 36px 60px 36px 20px; display: flex; align-items: center; justify-content: center; }
+.s2-traits { border-left: 3px solid #912338; padding-left: 24px; }
+.s2-trait-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #912338; font-weight: 700; margin-bottom: 16px; }
+.s2-trait-item { font-size: 15px; color: #333; font-weight: 600; line-height: 1.4; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.s2-trait-item:last-child { border-bottom: none; }
 
 /* ── S3 The Challenge ───────────────────────────────────────────────── */
 .s3 { background: #0d1f2d; grid-template-columns: 1fr; align-items: center; }
@@ -4680,8 +4666,11 @@ label {
 /* ── Carousel responsive ────────────────────────────────────────────── */
 @media (max-width: 720px) {
   .s1, .s2, .s6 { grid-template-columns: 1fr; }
-  .s1-left, .s2-left, .s6-left { padding: 40px 24px 24px; }
-  .s1-right, .s2-right, .s6-right { display: none; }
+  .s1-left, .s6-left { padding: 40px 24px 24px; }
+  .s1-right, .s6-right { display: none; }
+  .s2-left { padding: 36px 24px 16px; }
+  .s2-headline { font-size: 28px; }
+  .s2-right { padding: 0 24px 36px; }
   .s1-headline { font-size: 32px; }
   .s3-inner { padding: 40px 24px; }
   .s3-headline { font-size: 26px; }

@@ -569,44 +569,20 @@
         </div>
       </div>
 
-      <!-- S2 Why Now -->
+      <!-- S2 Defining Impact -->
       <div class="slide s2">
         <div class="s2-left">
-          <div class="eyebrow">Why this, why now</div>
-          <h2 class="s2-headline">The landscape<br/>is shifting.</h2>
-          <p class="s2-body">Across academia, funders, governments, and institutions are rethinking what counts. Public trust, responsible assessment, and the real-world value of research are at the centre of that conversation.</p>
-          <div class="signal-list">
-            <div class="signal-row">
-              <div style="width:40px;height:40px;border-radius:50%;background:#f0f0f0;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="1.5" stroke-linecap="round"><rect x="3.5" y="2" width="10" height="16" rx="1.5"/><path d="M11 2 L13.5 4.5 L11 4.5 Z" stroke="none" fill="rgba(0,0,0,0.2)"/><line x1="6" y1="8" x2="11" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><line x1="6" y1="14" x2="9" y2="14"/></svg>
-              </div>
-              <div><div class="signal-text">Narrative CVs are becoming the norm</div><div class="signal-sub">How you tell the story of your work is changing</div></div>
-            </div>
-            <div class="signal-row">
-              <div style="width:40px;height:40px;border-radius:50%;background:#f0f0f0;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="10,2 12,7 18,7.5 13.5,11.5 15,17 10,14 5,17 6.5,11.5 2,7.5 8,7"/></svg>
-              </div>
-              <div><div class="signal-text">Concordia has signed DORA</div><div class="signal-sub">Declaration on Research Assessment</div></div>
-            </div>
-            <div class="signal-row">
-              <div style="width:40px;height:40px;border-radius:50%;background:#f0f0f0;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="7.5"/><ellipse cx="10" cy="10" rx="3.5" ry="7.5"/><line x1="2.5" y1="10" x2="17.5" y2="10"/><line x1="4" y1="6.5" x2="16" y2="6.5" opacity="0.5"/><line x1="4" y1="13.5" x2="16" y2="13.5" opacity="0.5"/></svg>
-              </div>
-              <div><div class="signal-text">Funders are asking for demonstrated impact</div><div class="signal-sub">Public value, not just outputs</div></div>
-            </div>
-          </div>
+          <div class="eyebrow">Defining Research Impact</div>
+          <h2 class="s2-headline">What do we mean<br/>by <em>change</em>?</h2>
+          <p class="s2-body">At Concordia, we define research impact as the <strong>change</strong> that research activities contribute to society and beyond &mdash; an ongoing process of engagement that can lead to academic, social, cultural, economic, environmental, or policy effects.</p>
         </div>
         <div class="s2-right">
-          <div class="definition-card">
-            <h3 class="definition-title">Defining Research Impact</h3>
-            <p class="definition-body">At Concordia, we define research impact as the <strong>change</strong> that research activities contribute to society and beyond &mdash; an ongoing process of engagement that can lead to academic, social, cultural, economic, environmental, or policy effects.</p>
-            <p class="definition-label">The consequences of research can:</p>
-            <ul class="definition-list">
-              <li>Be positive or negative</li>
-              <li>Be of different types or natures</li>
-              <li>Occur at different times and scales</li>
-              <li>Result from the process itself, as well as from its results</li>
-            </ul>
+          <div class="s2-traits">
+            <div class="s2-trait-label">Impact can be&hellip;</div>
+            <div class="s2-trait-item">Positive or negative</div>
+            <div class="s2-trait-item">Different types &amp; natures</div>
+            <div class="s2-trait-item">Different times &amp; scales</div>
+            <div class="s2-trait-item">From the process &amp; its results</div>
           </div>
         </div>
       </div>
