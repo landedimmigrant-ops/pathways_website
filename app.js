@@ -538,7 +538,7 @@
       <div class="slide s1">
         <div class="s1-left">
           <div class="eyebrow">Pathways to Impact &middot; Concordia University</div>
-          <h2 class="s1-headline">Your research<br/>can change<br/><em>everything.</em></h2>
+          <h2 class="s1-headline">Research is where<br/><em>transformation</em><br/>begins.</h2>
           <p class="s1-body">This site brings together resources, services, and tools from across Concordia &mdash; curated by the Office of Research to support your research impact journey, wherever you are in it.</p>
         </div>
         <div class="s1-right">
