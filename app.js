@@ -598,8 +598,8 @@
         </div>
         <div class="s2-right">
           <div class="pull-quote">
-            <p>This website is our offering to help researchers respond to the growing emphasis on research impact &mdash; with inclusive, responsible, and meaningful approaches.</p>
-            <div class="source">Office of Research &middot; Concordia University</div>
+            <p>We envision research that is grounded in community priorities, informed by evidence, and translated into meaningful societal outcomes.</p>
+            <div class="source">Pathways to Impact &middot; Concordia University</div>
           </div>
         </div>
       </div>
@@ -787,7 +787,7 @@
 
     // Carousel logic
     const carouselTotal = 7;
-    const CAROUSEL_INTERVAL = 7000;
+    const CAROUSEL_INTERVAL = 14000;
     let carouselCurrent = 0;
     let carouselTimer;
     const lightSlides = new Set([1, 3]); // S2 (idx 1) and S4 (idx 3) are light
