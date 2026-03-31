@@ -4409,7 +4409,7 @@ label {
 }
 .slide {
   min-width: 100%;
-  min-height: 540px;
+  min-height: 420px;
   display: grid;
   position: relative;
   overflow: hidden;
@@ -4486,7 +4486,7 @@ label {
 
 /* ── S1 Welcome ─────────────────────────────────────────────────────── */
 .s1 { background: #912338; grid-template-columns: 1fr 1fr; align-items: center; }
-.s1-left { padding: 56px 36px 56px 60px; z-index: 2; }
+.s1-left { padding: 36px 36px 36px 60px; z-index: 2; }
 .eyebrow {
   font-size: 10.5px; font-weight: 700; letter-spacing: 3px;
   text-transform: uppercase; margin-bottom: 18px;
@@ -4499,7 +4499,7 @@ label {
 
 /* ── S2 Why Now ─────────────────────────────────────────────────────── */
 .s2 { background: #f5f4f0; grid-template-columns: 1fr 1fr; align-items: center; }
-.s2-left { padding: 52px 32px 52px 60px; }
+.s2-left { padding: 32px 32px 32px 60px; }
 .s2 .eyebrow { color: #912338; }
 .s2-headline { font-size: 34px; font-weight: 800; color: #1a1a1a; line-height: 1.12; margin-bottom: 16px; }
 .s2-body { font-size: 14.5px; color: #555; line-height: 1.78; margin-bottom: 26px; }
@@ -4511,7 +4511,7 @@ label {
 }
 .signal-text { font-size: 13px; font-weight: 600; color: #1a1a1a; line-height: 1.35; }
 .signal-sub { font-size: 11.5px; color: #888; font-weight: 400; }
-.s2-right { padding: 52px 60px 52px 20px; display: flex; align-items: center; justify-content: center; }
+.s2-right { padding: 32px 60px 32px 20px; display: flex; align-items: center; justify-content: center; }
 .pull-quote {
   background: #fff; border-left: 4px solid #912338;
   padding: 28px; border-radius: 0 8px 8px 0;
@@ -4522,7 +4522,7 @@ label {
 
 /* ── S3 The Challenge ───────────────────────────────────────────────── */
 .s3 { background: #0d1f2d; grid-template-columns: 1fr; align-items: center; }
-.s3-inner { padding: 56px 72px; max-width: 860px; margin: 0 auto; text-align: center; }
+.s3-inner { padding: 36px 72px; max-width: 860px; margin: 0 auto; text-align: center; }
 .s3 .eyebrow { color: #F4D0D5; }
 .s3-headline { font-size: 36px; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 14px; }
 .s3-body { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.75; margin-bottom: 48px; }
@@ -4557,8 +4557,8 @@ label {
 }
 
 /* ── S4 Seven Pathways ──────────────────────────────────────────────── */
-.s4 { background: #fff; grid-template-columns: 1fr; align-items: start; min-height: 580px; }
-.s4-inner { padding: 38px 56px 40px; }
+.s4 { background: #fff; grid-template-columns: 1fr; align-items: start; min-height: 420px; }
+.s4-inner { padding: 24px 56px 28px; }
 .s4 .eyebrow { color: #912338; }
 .s4-headline { font-size: 28px; font-weight: 800; color: #1a1a1a; margin-bottom: 4px; }
 .s4-sub { font-size: 13.5px; color: #666; margin-bottom: 22px; line-height: 1.6; }
@@ -4597,7 +4597,7 @@ label {
 
 /* ── S5 Lifecycle ───────────────────────────────────────────────────── */
 .s5 { background: #006B75; grid-template-columns: 1fr; align-items: center; }
-.s5-inner { padding: 52px 60px; }
+.s5-inner { padding: 32px 60px; }
 .s5 .eyebrow { color: rgba(255,255,255,0.45); }
 .s5-headline { font-size: 38px; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.1; }
 .s5-sub { font-size: 15px; color: rgba(255,255,255,0.65); margin-bottom: 44px; }
@@ -4623,7 +4623,7 @@ label {
 
 /* ── S6 Network ─────────────────────────────────────────────────────── */
 .s6 { background: #1a1a2e; grid-template-columns: 1fr 1fr; align-items: center; }
-.s6-left { padding: 52px 36px 52px 60px; }
+.s6-left { padding: 32px 36px 32px 60px; }
 .s6 .eyebrow { color: rgba(255,255,255,0.35); }
 .s6-headline { font-size: 36px; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 12px; }
 .s6-headline span { color: #F4D0D5; }
@@ -4634,7 +4634,7 @@ label {
   color: rgba(255,255,255,0.72); font-size: 11.5px; font-weight: 600;
   padding: 6px 13px; border-radius: 20px;
 }
-.s6-right { padding: 52px 60px 52px 20px; display: flex; align-items: center; justify-content: center; }
+.s6-right { padding: 32px 60px 32px 20px; display: flex; align-items: center; justify-content: center; }
 
 /* ── S7 Closing ─────────────────────────────────────────────────────── */
 .s7 {
@@ -4642,7 +4642,7 @@ label {
   grid-template-columns: 1fr; align-items: center; text-align: center;
 }
 .s7-bg { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.035); pointer-events: none; }
-.s7-inner { padding: 56px 64px; position: relative; z-index: 2; }
+.s7-inner { padding: 36px 64px; position: relative; z-index: 2; }
 .s7 .eyebrow { color: rgba(255,255,255,0.4); }
 .s7-headline { font-size: 44px; font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 16px; }
 .s7-body { font-size: 16px; color: rgba(255,255,255,0.72); line-height: 1.78; max-width: 580px; margin: 0 auto 32px; }
