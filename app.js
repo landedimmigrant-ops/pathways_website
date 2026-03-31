@@ -531,7 +531,15 @@
     btnNext.setAttribute("aria-label", "Next slide");
     btnNext.innerHTML = "&#8594;";
     const dotNav = el("div", "dot-nav");
+    dotNav.setAttribute("role", "tablist");
+    dotNav.setAttribute("aria-label", "Carousel slides");
+    const pauseBtn = el("button", "carousel-pause");
+    pauseBtn.type = "button";
+    pauseBtn.setAttribute("aria-label", "Pause carousel");
+    pauseBtn.innerHTML = "&#10074;&#10074;";
+    let carouselPaused = false;
     const track = el("div", "carousel-track");
+    track.setAttribute("aria-live", "polite");
 
     track.innerHTML = `
       <!-- S1 Welcome -->
@@ -815,10 +823,24 @@
       dotNav.appendChild(d);
     }
 
-    btnNext.addEventListener("click", () => { carouselGoTo(carouselCurrent + 1); carouselStartTimer(); });
-    btnPrev.addEventListener("click", () => { carouselGoTo(carouselCurrent - 1); carouselStartTimer(); });
-    carouselWrap.addEventListener("mouseenter", () => { clearInterval(carouselTimer); progressBar.style.transition = "none"; });
-    carouselWrap.addEventListener("mouseleave", () => carouselStartTimer());
+    btnNext.addEventListener("click", () => { carouselGoTo(carouselCurrent + 1); if (!carouselPaused) carouselStartTimer(); });
+    btnPrev.addEventListener("click", () => { carouselGoTo(carouselCurrent - 1); if (!carouselPaused) carouselStartTimer(); });
+    pauseBtn.addEventListener("click", () => {
+      carouselPaused = !carouselPaused;
+      if (carouselPaused) {
+        clearInterval(carouselTimer);
+        progressBar.style.transition = "none";
+        progressBar.style.width = "0%";
+        pauseBtn.innerHTML = "&#9654;";
+        pauseBtn.setAttribute("aria-label", "Play carousel");
+      } else {
+        carouselStartTimer();
+        pauseBtn.innerHTML = "&#10074;&#10074;";
+        pauseBtn.setAttribute("aria-label", "Pause carousel");
+      }
+    });
+    carouselWrap.addEventListener("mouseenter", () => { if (!carouselPaused) { clearInterval(carouselTimer); progressBar.style.transition = "none"; } });
+    carouselWrap.addEventListener("mouseleave", () => { if (!carouselPaused) carouselStartTimer(); });
 
     // Touch swipe
     let touchStartX = 0;
@@ -838,6 +860,7 @@
 
     carouselWrap.appendChild(progressBar);
     carouselWrap.appendChild(counter);
+    carouselWrap.appendChild(pauseBtn);
     carouselWrap.appendChild(btnPrev);
     carouselWrap.appendChild(btnNext);
     carouselWrap.appendChild(dotNav);
@@ -1453,16 +1476,32 @@
 
     const learnTabs = [tabImpact101, tabTools];
     const learnContents = [impact101Content, toolsContent];
+    const learnPanelIds = ["learn-panel-impact101", "learn-panel-tools"];
+    learnTabsBar.setAttribute("role", "tablist");
     learnTabs.forEach((tab, i) => {
+      learnContents[i].id = learnPanelIds[i];
+      learnContents[i].setAttribute("role", "tabpanel");
       tab.setAttribute("role", "tab");
       tab.setAttribute("aria-selected", i === 0 ? "true" : "false");
+      tab.setAttribute("aria-controls", learnPanelIds[i]);
+      tab.setAttribute("tabindex", i === 0 ? "0" : "-1");
       tab.addEventListener("click", () => {
         learnTabs.forEach((t, j) => {
-          t.classList.toggle("is-active", t === tab);
-          t.setAttribute("aria-selected", t === tab ? "true" : "false");
-          learnContents[j].classList.toggle("is-active", t === tab);
+          const active = t === tab;
+          t.classList.toggle("is-active", active);
+          t.setAttribute("aria-selected", active ? "true" : "false");
+          t.setAttribute("tabindex", active ? "0" : "-1");
+          learnContents[j].classList.toggle("is-active", active);
         });
       });
+    });
+    learnTabsBar.addEventListener("keydown", (e) => {
+      const idx = learnTabs.indexOf(document.activeElement);
+      if (idx < 0) return;
+      let next = -1;
+      if (e.key === "ArrowRight") next = (idx + 1) % learnTabs.length;
+      else if (e.key === "ArrowLeft") next = (idx - 1 + learnTabs.length) % learnTabs.length;
+      if (next >= 0) { e.preventDefault(); learnTabs[next].click(); learnTabs[next].focus(); }
     });
 
     section.resetState = () => {
@@ -1769,8 +1808,12 @@
 
       const addLabeledTextarea = (labelText, key, placeholder, optional = false) => {
         const field = el("div", "impact-field");
-        field.appendChild(el("label", null, optional ? `${labelText} (${planner.labels.optional})` : labelText));
+        const taId = `impact-${key}`;
+        const lbl = el("label", null, optional ? `${labelText} (${planner.labels.optional})` : labelText);
+        lbl.setAttribute("for", taId);
+        field.appendChild(lbl);
         const textarea = el("textarea", "impact-textarea");
+        textarea.id = taId;
         textarea.value = plannerState.values[key] || "";
         textarea.placeholder = placeholder || "";
         textarea.rows = 4;
@@ -1828,8 +1871,11 @@
         body.appendChild(typeGrid);
         if (plannerState.values.outputTypes.includes("Other")) {
           const otherField = el("div", "impact-field");
-          otherField.appendChild(el("label", null, promptConfig.otherLabel));
+          const otherLbl = el("label", null, promptConfig.otherLabel);
+          otherLbl.setAttribute("for", "impact-other-output");
+          otherField.appendChild(otherLbl);
           const otherInput = el("input", "impact-input");
+          otherInput.id = "impact-other-output";
           otherInput.type = "text";
           otherInput.value = plannerState.values.otherOutputType;
           otherInput.placeholder = "Describe your output type";
@@ -2369,9 +2415,12 @@
             { key: "evidence", label: "What evidence supports this?", placeholder: "Citations, uptake, partnerships, policy references\u2026" }
           ].forEach(({ key, label, placeholder }) => {
             const field = el("div", "contribution-field");
+            const taId = `contrib-${idx}-${key}`;
             const lbl = el("label", null, label);
+            lbl.setAttribute("for", taId);
             field.appendChild(lbl);
             const ta = el("textarea", null);
+            ta.id = taId;
             ta.className = "contribution-textarea";
             ta.placeholder = placeholder;
             ta.value = c[key] || "";
@@ -2566,8 +2615,12 @@
           { key: "outcomes", label: "What were the outcomes for those people?", placeholder: "Skills, careers, awards, publications, positions\u2026" }
         ].forEach(({ key, label, placeholder }) => {
           const field = el("div", "contribution-field");
-          field.appendChild(el("label", null, label));
+          const taId = `mentor-${idx}-${key}`;
+          const mentorLbl = el("label", null, label);
+          mentorLbl.setAttribute("for", taId);
+          field.appendChild(mentorLbl);
           const ta = el("textarea", null);
+          ta.id = taId;
           ta.className = "contribution-textarea";
           ta.placeholder = placeholder;
           ta.value = m[key] || "";
@@ -2655,12 +2708,14 @@
       const row1 = el("div", "ps-sentence");
       row1.appendChild(el("span", "ps-literal", "I am a"));
       const roleInput = el("input", "ps-input");
+      roleInput.setAttribute("aria-label", "Your role or discipline");
       roleInput.placeholder = "role / discipline";
       roleInput.value = ns.ps.role || "";
       roleInput.addEventListener("input", (e) => { ns.ps.role = e.target.value; saveNarrative(); rebuildPreview(); });
       row1.appendChild(roleInput);
       row1.appendChild(el("span", "ps-literal", "at"));
       const instInput = el("input", "ps-input");
+      instInput.setAttribute("aria-label", "Your institution");
       instInput.placeholder = "institution";
       instInput.value = ns.ps.institution || "";
       instInput.addEventListener("input", (e) => { ns.ps.institution = e.target.value; saveNarrative(); rebuildPreview(); });
@@ -2672,12 +2727,14 @@
       const row2 = el("div", "ps-sentence");
       row2.appendChild(el("span", "ps-literal", "My research focuses on"));
       const focusInput = el("input", "ps-input ps-input--wide");
+      focusInput.setAttribute("aria-label", "Core research theme or question");
       focusInput.placeholder = "core theme or question";
       focusInput.value = ns.ps.focus || "";
       focusInput.addEventListener("input", (e) => { ns.ps.focus = e.target.value; saveNarrative(); rebuildPreview(); });
       row2.appendChild(focusInput);
       row2.appendChild(el("span", "ps-literal", "with particular attention to"));
       const emphInput = el("input", "ps-input ps-input--wide");
+      emphInput.setAttribute("aria-label", "Key emphasis of your research");
       emphInput.placeholder = "key emphasis";
       emphInput.value = ns.ps.emphasis || "";
       emphInput.addEventListener("input", (e) => { ns.ps.emphasis = e.target.value; saveNarrative(); rebuildPreview(); });
@@ -2689,6 +2746,7 @@
       const row3 = el("div", "ps-sentence");
       row3.appendChild(el("span", "ps-literal", "Over the course of my research journey, I have"));
       const retroInput = el("input", "ps-input ps-input--wide");
+      retroInput.setAttribute("aria-label", "Retrospective claim about your research journey");
       retroInput.placeholder = "retrospective claim";
       retroInput.value = ns.ps.retrospective || "";
       retroInput.addEventListener("input", (e) => { ns.ps.retrospective = e.target.value; saveNarrative(); rebuildPreview(); });
@@ -2700,6 +2758,7 @@
       const row4 = el("div", "ps-sentence");
       row4.appendChild(el("span", "ps-literal", "Looking ahead, I am working toward"));
       const prospInput = el("input", "ps-input ps-input--wide");
+      prospInput.setAttribute("aria-label", "Prospective claim about future research goals");
       prospInput.placeholder = "prospective claim";
       prospInput.value = ns.ps.prospective || "";
       prospInput.addEventListener("input", (e) => { ns.ps.prospective = e.target.value; saveNarrative(); rebuildPreview(); });
@@ -3775,16 +3834,32 @@
     // Tab switching logic
     const allTabs = [tabPathways, tabResearch, tabServices];
     const allContents = [pathwaysTabContent, researchTabContent, servicesTabContent];
+    tabsBar.setAttribute("role", "tablist");
     allTabs.forEach((tab, i) => {
+      const panelId = `explore-panel-${allContents[i].dataset.tabContent}`;
+      allContents[i].id = panelId;
+      allContents[i].setAttribute("role", "tabpanel");
       tab.setAttribute("role", "tab");
       tab.setAttribute("aria-selected", i === 0 ? "true" : "false");
+      tab.setAttribute("aria-controls", panelId);
+      tab.setAttribute("tabindex", i === 0 ? "0" : "-1");
       tab.addEventListener("click", () => {
         allTabs.forEach((t, j) => {
-          t.classList.toggle("is-active", t === tab);
-          t.setAttribute("aria-selected", t === tab ? "true" : "false");
-          allContents[j].classList.toggle("is-active", t === tab);
+          const active = t === tab;
+          t.classList.toggle("is-active", active);
+          t.setAttribute("aria-selected", active ? "true" : "false");
+          t.setAttribute("tabindex", active ? "0" : "-1");
+          allContents[j].classList.toggle("is-active", active);
         });
       });
+    });
+    tabsBar.addEventListener("keydown", (e) => {
+      const idx = allTabs.indexOf(document.activeElement);
+      if (idx < 0) return;
+      let next = -1;
+      if (e.key === "ArrowRight") next = (idx + 1) % allTabs.length;
+      else if (e.key === "ArrowLeft") next = (idx - 1 + allTabs.length) % allTabs.length;
+      if (next >= 0) { e.preventDefault(); allTabs[next].click(); allTabs[next].focus(); }
     });
 
     section.appendChild(container);
@@ -4338,6 +4413,10 @@
   const showPage = (pageId, anchorId) => {
     const validPage = pages.has(pageId) ? pageId : "home";
     state.page = validPage;
+
+    const baseTitle = data.meta.title || "Pathways to Impact";
+    const pageLabel = validPage === "home" ? "" : (data.navigation.find(n => n.id === validPage) || {}).label || validPage;
+    document.title = pageLabel ? `${pageLabel} — ${baseTitle}` : baseTitle;
 
     pages.forEach((page, id) => {
       page.classList.toggle("is-active", id === validPage);
