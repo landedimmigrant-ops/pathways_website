@@ -517,176 +517,351 @@
     introSection.appendChild(needsGrid);
     container.appendChild(introSection);
 
-    // === Pathways grid (primary entry) ===
-    const pathwayItems = data.explore.pathways.items;
-    const pathwaysSection = el("section", "home-pathways");
-    const pathwayGrid = el("div", "pathway-grid");
-    const pathwayCards = new Map();
-    pathwayItems.forEach((pathway) => {
-      const card = el("button", "pathway-card");
-      card.type = "button";
-      card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
-      card.appendChild(el("p", "pathway-card-label", pathway.title));
-      card.appendChild(el("p", "pathway-card-summary", pathway.summary));
-      card.addEventListener("click", () => togglePathway(pathway.id));
-      pathwayGrid.appendChild(card);
-      pathwayCards.set(pathway.id, card);
+    // === Impact Carousel ===
+    const carouselWrap = el("div", "carousel-wrap");
+    const progressBar = el("div", "progress-bar");
+    const counter = el("div", "slide-counter");
+    counter.textContent = "1 / 7";
+    const btnPrev = el("button", "nav-btn nav-prev");
+    btnPrev.type = "button";
+    btnPrev.setAttribute("aria-label", "Previous slide");
+    btnPrev.innerHTML = "&#8592;";
+    const btnNext = el("button", "nav-btn nav-next");
+    btnNext.type = "button";
+    btnNext.setAttribute("aria-label", "Next slide");
+    btnNext.innerHTML = "&#8594;";
+    const dotNav = el("div", "dot-nav");
+    const track = el("div", "carousel-track");
+
+    track.innerHTML = `
+      <!-- S1 Welcome -->
+      <div class="slide s1">
+        <div class="s1-left">
+          <div class="eyebrow">Pathways to Impact &middot; Concordia University</div>
+          <h2 class="s1-headline">Your research<br/>can change<br/><em>everything.</em></h2>
+          <p class="s1-body">This site brings together resources, services, and tools from across Concordia &mdash; curated by the Office of Research to support your research impact journey, wherever you are in it.</p>
+        </div>
+        <div class="s1-right">
+          <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="150" cy="150" r="58"  stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+            <circle cx="150" cy="150" r="98"  stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+            <circle cx="150" cy="150" r="135" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <circle cx="150" cy="150" r="40" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+            <text x="150" y="146" text-anchor="middle" fill="white" font-size="11" font-weight="800" font-family="Segoe UI,sans-serif">RESEARCH</text>
+            <text x="150" y="160" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-size="9" font-family="Segoe UI,sans-serif">DISCOVERY</text>
+            <text x="150" y="84"  text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">POLICY</text>
+            <text x="150" y="224" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">TRAINING</text>
+            <text x="242" y="154" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="12" font-weight="800" font-family="Segoe UI,sans-serif">COMMUNITY</text>
+            <text x="58"  y="154" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="12" font-weight="800" font-family="Segoe UI,sans-serif">INDUSTRY</text>
+            <circle cx="150" cy="92" r="3" fill="rgba(255,255,255,0.5)"/>
+            <circle cx="150" cy="208" r="3" fill="rgba(255,255,255,0.5)"/>
+            <circle cx="238" cy="150" r="3" fill="rgba(255,255,255,0.55)"/>
+            <circle cx="62"  cy="150" r="3" fill="rgba(255,255,255,0.55)"/>
+            <line x1="150" y1="110" x2="150" y2="95" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <line x1="190" y1="150" x2="234" y2="150" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+            <line x1="150" y1="190" x2="150" y2="205" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <line x1="110" y1="150" x2="66"  y2="150" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+            <text x="225" y="98"  text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Segoe UI,sans-serif">CULTURE</text>
+            <text x="225" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Segoe UI,sans-serif">ENVIRONMENT</text>
+            <text x="75"  y="98"  text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Segoe UI,sans-serif">HEALTH</text>
+            <text x="75"  y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Segoe UI,sans-serif">EQUITY</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- S2 Why Now -->
+      <div class="slide s2">
+        <div class="s2-left">
+          <div class="eyebrow">Why this, why now</div>
+          <h2 class="s2-headline">The landscape<br/>is shifting.</h2>
+          <p class="s2-body">Across academia, funders, governments, and institutions are rethinking what counts. Public trust, responsible assessment, and the real-world value of research are at the centre of that conversation.</p>
+          <div class="signal-list">
+            <div class="signal-row">
+              <div style="width:40px;height:40px;border-radius:50%;background:#f0f0f0;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="1.5" stroke-linecap="round"><rect x="3.5" y="2" width="10" height="16" rx="1.5"/><path d="M11 2 L13.5 4.5 L11 4.5 Z" stroke="none" fill="rgba(0,0,0,0.2)"/><line x1="6" y1="8" x2="11" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><line x1="6" y1="14" x2="9" y2="14"/></svg>
+              </div>
+              <div><div class="signal-text">Narrative CVs are becoming the norm</div><div class="signal-sub">How you tell the story of your work is changing</div></div>
+            </div>
+            <div class="signal-row">
+              <div style="width:40px;height:40px;border-radius:50%;background:#f0f0f0;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="10,2 12,7 18,7.5 13.5,11.5 15,17 10,14 5,17 6.5,11.5 2,7.5 8,7"/></svg>
+              </div>
+              <div><div class="signal-text">Concordia has signed DORA</div><div class="signal-sub">Declaration on Research Assessment</div></div>
+            </div>
+            <div class="signal-row">
+              <div style="width:40px;height:40px;border-radius:50%;background:#f0f0f0;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="7.5"/><ellipse cx="10" cy="10" rx="3.5" ry="7.5"/><line x1="2.5" y1="10" x2="17.5" y2="10"/><line x1="4" y1="6.5" x2="16" y2="6.5" opacity="0.5"/><line x1="4" y1="13.5" x2="16" y2="13.5" opacity="0.5"/></svg>
+              </div>
+              <div><div class="signal-text">Funders are asking for demonstrated impact</div><div class="signal-sub">Public value, not just outputs</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="s2-right">
+          <div class="pull-quote">
+            <p>This website is our offering to help researchers respond to the growing emphasis on research impact &mdash; with inclusive, responsible, and meaningful approaches.</p>
+            <div class="source">Office of Research &middot; Concordia University</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S3 The Challenge -->
+      <div class="slide s3">
+        <div class="s3-inner">
+          <div class="eyebrow">The Challenge</div>
+          <h2 class="s3-headline">The gap between knowledge<br/>and change is real.</h2>
+          <p class="s3-body">Research doesn&rsquo;t automatically become impact. Knowledge moves through systems &mdash; academic, social, political &mdash; and the path is rarely straight. Most researchers navigate it without a map.</p>
+          <div class="gap-diagram">
+            <div class="gap-icons-row">
+              <div class="gap-icon"><svg viewBox="0 0 28 28" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5 L10 14 L6 22 L22 22 L18 14 L18 5"/><line x1="8" y1="5" x2="20" y2="5"/><path d="M9 17 C11 15 17 15 19 17" opacity="0.4"/></svg></div>
+              <div class="gap-connector"><div class="gap-line"></div></div>
+              <div class="gap-icon"><svg viewBox="0 0 28 28" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="4" width="18" height="20" rx="2"/><line x1="5" y1="9" x2="23" y2="9"/><line x1="9" y1="13" x2="19" y2="13"/><line x1="9" y1="16.5" x2="19" y2="16.5"/><line x1="9" y1="20" x2="15" y2="20" opacity="0.5"/></svg></div>
+              <div class="gap-connector wide" style="position:relative;"><div class="gap-line broken"></div><div class="gap-question">?</div></div>
+              <div class="gap-icon"><svg viewBox="0 0 28 28" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="3" opacity="0.7"/><circle cx="19" cy="9" r="3" opacity="0.7"/><circle cx="14" cy="10" r="3.5"/><path d="M6 22 C6 18 9 16 14 16 C19 16 22 18 22 22"/></svg></div>
+              <div class="gap-connector"><div class="gap-line"></div></div>
+              <div class="gap-icon highlight"><svg viewBox="0 0 28 28" width="26" height="26" fill="none" stroke="rgba(244,208,213,0.95)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="14,4 16.5,11 24,11 18,15.5 20.5,22.5 14,18 7.5,22.5 10,15.5 4,11 11.5,11"/></svg></div>
+            </div>
+            <div class="gap-labels-row">
+              <div class="gap-node-labels"><div class="gap-label">Discovery</div></div>
+              <div class="gap-connector-spacer"></div>
+              <div class="gap-node-labels"><div class="gap-label">Publication</div></div>
+              <div class="gap-connector-spacer wide"></div>
+              <div class="gap-node-labels"><div class="gap-label">Uptake</div></div>
+              <div class="gap-connector-spacer"></div>
+              <div class="gap-node-labels"><div class="gap-label highlight">Impact</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S4 Seven Pathways -->
+      <div class="slide s4">
+        <div class="s4-inner">
+          <div class="eyebrow">The Framework</div>
+          <h2 class="s4-headline">Seven pathways to impact.</h2>
+          <p class="s4-sub">Not a checklist &mdash; a starting place. Each pathway offers a different approach to creating real-world change from your research. Most researchers find more than one applies to them.</p>
+          <div class="c-pw-grid">
+            <div class="pw featured" style="border-left-color:#912338;">
+              <div class="pw-icon" style="background:rgba(145,35,56,0.08);">
+                <svg viewBox="0 0 28 28" width="28" height="28" fill="none" stroke="#912338" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 22 V8 C14 8 10 6 5 8 V22 C10 20 14 22 14 22 Z"/><path d="M14 22 V8 C14 8 18 6 23 8 V22 C18 20 14 22 14 22 Z"/><line x1="8" y1="12" x2="12" y2="12" opacity="0.5"/><line x1="8" y1="15" x2="12" y2="15" opacity="0.5"/><line x1="16" y1="12" x2="20" y2="12" opacity="0.5"/></svg>
+              </div>
+              <div class="pw-name">Academic Scholarship</div>
+              <div class="pw-desc">Advance knowledge, methods, and scholarly contribution within and beyond your field &mdash; through publications, open access, data stewardship, and how your work is assessed and recognised.</div>
+            </div>
+            <div class="pw" style="border-left-color:#DB0272;">
+              <div class="pw-top"><div class="pw-icon" style="background:rgba(219,2,114,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#DB0272" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="6" r="3"/><circle cx="4.5" cy="8" r="2.2" opacity="0.6"/><circle cx="13.5" cy="8" r="2.2" opacity="0.6"/><path d="M5 16 C5 13 7 11.5 9 11.5 C11 11.5 13 13 13 16" opacity="0.8"/></svg></div><div class="pw-name">Community Engagement</div></div>
+              <div class="pw-desc">Co-create research with communities and sustain reciprocal partnerships.</div>
+            </div>
+            <div class="pw" style="border-left-color:#DA3A16;">
+              <div class="pw-top"><div class="pw-icon" style="background:rgba(218,58,22,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#DA3A16" stroke-width="1.5" stroke-linecap="round"><path d="M9 2 C6.2 2 4 4.2 4 7 C4 9 5.2 10.5 6 11.5 L12 11.5 C12.8 10.5 14 9 14 7 C14 4.2 11.8 2 9 2"/><line x1="6.5" y1="13.5" x2="11.5" y2="13.5"/><line x1="7.5" y1="15.5" x2="10.5" y2="15.5"/></svg></div><div class="pw-name">Innovation</div></div>
+              <div class="pw-desc">Translate research into new methods, tools, or services that improve practice.</div>
+            </div>
+            <div class="pw" style="border-left-color:#573996;">
+              <div class="pw-top"><div class="pw-icon" style="background:rgba(87,57,150,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#573996" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,14 6,9 10,11 15,4"/><polyline points="11,4 15,4 15,8"/></svg></div><div class="pw-name">Commercialization</div></div>
+              <div class="pw-desc">Move research-based ideas toward market-ready products or ventures.</div>
+            </div>
+            <div class="pw" style="border-left-color:#0072A8;">
+              <div class="pw-top"><div class="pw-icon" style="background:rgba(0,114,168,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#0072A8" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="2" width="12" height="14" rx="1.5"/><line x1="6" y1="6" x2="12" y2="6"/><line x1="6" y1="9" x2="12" y2="9"/><line x1="6" y1="12" x2="9.5" y2="12"/></svg></div><div class="pw-name">Policy</div></div>
+              <div class="pw-desc">Connect evidence to policy conversations and decision-making timelines.</div>
+            </div>
+            <div class="pw" style="border-left-color:#B07D00;">
+              <div class="pw-top"><div class="pw-icon" style="background:rgba(176,125,0,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#B07D00" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="11" r="2"/><path d="M5.5 7.5 C5.5 5.5 7.1 4 9 4 C10.9 4 12.5 5.5 12.5 7.5" opacity="0.7"/><path d="M3 5.5 C3 2.5 5.7 0.5 9 0.5 C12.3 0.5 15 2.5 15 5.5" opacity="0.4"/><line x1="9" y1="13" x2="9" y2="16"/><line x1="6.5" y1="16" x2="11.5" y2="16"/></svg></div><div class="pw-name">Communications</div></div>
+              <div class="pw-desc">Share research in accessible ways that reach public and professional audiences.</div>
+            </div>
+            <div class="pw" style="border-left-color:#508212;">
+              <div class="pw-top"><div class="pw-icon" style="background:rgba(80,130,18,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#508212" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15 L11 5.5 L13 4 L14 5 L12.5 7 L3 15 Z"/><circle cx="3.5" cy="14.5" r="1.5" fill="rgba(80,130,18,0.3)"/><path d="M13.5 2.5 C14.5 2 15.5 3 15 4" opacity="0.5"/></svg></div><div class="pw-name">Research Creation</div></div>
+              <div class="pw-desc">Create and present research through artistic and practice-based approaches.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S5 Meet You Where You Are -->
+      <div class="slide s5">
+        <div class="s5-inner">
+          <div class="eyebrow">The Research Lifecycle</div>
+          <h2 class="s5-headline">Meet you where you are.</h2>
+          <p class="s5-sub">Impact support looks different at every stage. Pathways is designed for all three moments in your research project.</p>
+          <div class="lifecycle">
+            <div class="lc-stage">
+              <div class="lc-bubble"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.82)" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="21" x2="12" y2="11"/><path d="M12 11 C12 7 8.5 5 6 6 C6 9 8 12 12 11"/><path d="M12 14 C12 11 15.5 9 18 10 C18 13 15 15.5 12 14"/></svg></div>
+              <div class="lc-title">Developing</div>
+              <div class="lc-desc">Shaping your question, building partnerships, planning impact from the start.</div>
+              <div class="lc-tags"><span class="lc-tag">Framing</span><span class="lc-tag">Co-design</span><span class="lc-tag">Grant writing</span></div>
+            </div>
+            <div class="lc-stage">
+              <div class="lc-bubble"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.82)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="13,3 7,13 12,13 11,21 17,11 12,11 13,3"/></svg></div>
+              <div class="lc-title">Active</div>
+              <div class="lc-desc">Research is running. You&rsquo;re generating knowledge and need to move it out.</div>
+              <div class="lc-tags"><span class="lc-tag">Mobilisation</span><span class="lc-tag">Engagement</span><span class="lc-tag">Translation</span></div>
+            </div>
+            <div class="lc-stage">
+              <div class="lc-bubble"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.82)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2" fill="rgba(255,255,255,0.7)" stroke="none"/></svg></div>
+              <div class="lc-title">Wrapping Up</div>
+              <div class="lc-desc">Findings are ready. Now comes dissemination, uptake, and sustained change.</div>
+              <div class="lc-tags"><span class="lc-tag">Dissemination</span><span class="lc-tag">Policy brief</span><span class="lc-tag">Legacy</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S6 The Network -->
+      <div class="slide s6">
+        <div class="s6-left">
+          <div class="eyebrow">Your Support Network</div>
+          <h2 class="s6-headline">You don&rsquo;t navigate<br/>this <span>alone.</span></h2>
+          <p class="s6-body">Led by the Office of Research, Pathways to Impact brings together units from across the university &mdash; and beyond &mdash; to create a coordinated, growing support network around researchers. This is an evolving collaboration.</p>
+          <div class="partner-chips">
+            <span class="partner-chip">Office of Research</span>
+            <span class="partner-chip">4th Space</span>
+            <span class="partner-chip">Concordia Library</span>
+            <span class="partner-chip">University Communication Services</span>
+            <span class="partner-chip">Community Engagement &amp; SHIFT Centre</span>
+            <span class="partner-chip">District 3</span>
+            <span class="partner-chip">V1 Studio</span>
+            <span class="partner-chip" style="border-style:dashed;color:rgba(255,255,255,0.4);">+ More to come</span>
+          </div>
+        </div>
+        <div class="s6-right">
+          <svg width="260" height="260" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="130" y1="100" x2="130" y2="50"  stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="156" y1="108" x2="196" y2="84"  stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="163" y1="130" x2="230" y2="156" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="152" y1="158" x2="180" y2="210" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="108" y1="158" x2="80"  y2="210" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="97"  y1="130" x2="30"  y2="156" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="104" y1="108" x2="66"  y2="84"  stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <circle cx="130" cy="130" r="30" fill="#912338"/>
+            <circle cx="130" cy="130" r="40" fill="rgba(145,35,56,0.15)"/>
+            <text x="130" y="126" text-anchor="middle" fill="white" font-size="8" font-weight="800" font-family="Segoe UI,sans-serif">PATHWAYS</text>
+            <text x="130" y="137" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7" font-family="Segoe UI,sans-serif">TO IMPACT</text>
+            <circle cx="130" cy="36" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+            <text x="130" y="14" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">OFFICE OF RESEARCH</text>
+            <circle cx="208" cy="72" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+            <text x="230" y="60" text-anchor="start" fill="rgba(255,255,255,0.65)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">4TH SPACE</text>
+            <circle cx="244" cy="156" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+            <text x="244" y="178" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7" font-weight="700" font-family="Segoe UI,sans-serif">COMMS SERVICES</text>
+            <circle cx="186" cy="224" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+            <text x="186" y="246" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">LIBRARY</text>
+            <circle cx="74" cy="224" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+            <text x="74" y="246" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7" font-weight="700" font-family="Segoe UI,sans-serif">COMM. ENG. &amp; SHIFT</text>
+            <circle cx="16" cy="156" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+            <text x="16" y="178" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">DISTRICT 3</text>
+            <circle cx="52" cy="72" r="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <text x="28" y="60" text-anchor="start" fill="rgba(255,255,255,0.45)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">V1 STUDIO</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- S7 Closing -->
+      <div class="slide s7">
+        <div class="s7-bg" style="width:500px;height:500px;top:-220px;right:-140px;"></div>
+        <div class="s7-bg" style="width:320px;height:320px;bottom:-130px;left:-80px;"></div>
+        <div class="s7-inner">
+          <div class="eyebrow">You&rsquo;re not on your own</div>
+          <h2 class="s7-headline">We&rsquo;re building this<br/>with you.</h2>
+          <p class="s7-body">New services, new tools, and stories of impact champions at Concordia &mdash; this site grows with the research community. If you need help navigating it, or just want to talk through your impact goals, we&rsquo;re here.</p>
+          <div class="promise-chips">
+            <div class="promise-chip"><div class="promise-icon"><svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.4" stroke-linecap="round"><path d="M11.5 7 A4.5 4.5 0 1 1 9.5 3.2"/><polyline points="9.5,1.5 9.5,3.5 11.5,3.5"/></svg></div><span class="promise-text">Constantly updated</span></div>
+            <div class="promise-chip"><div class="promise-icon"><svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="7,1.5 8.5,5.2 12.5,5.5 9.5,8 10.5,12 7,9.8 3.5,12 4.5,8 1.5,5.5 5.5,5.2"/></svg></div><span class="promise-text">Impact champions</span></div>
+            <div class="promise-chip"><div class="promise-icon"><svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.3" stroke-linecap="round"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><line x1="1.5" y1="5.5" x2="12.5" y2="5.5"/><line x1="4.5" y1="1.5" x2="4.5" y2="4"/><line x1="9.5" y1="1.5" x2="9.5" y2="4"/></svg></div><span class="promise-text">Events &amp; workshops</span></div>
+            <div class="promise-chip"><div class="promise-icon"><svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.3" stroke-linecap="round"><rect x="1.5" y="3.5" width="11" height="8" rx="1.5"/><polyline points="1.5,3.5 7,8.5 12.5,3.5"/></svg></div><span class="promise-text">Human support</span></div>
+          </div>
+          <div class="cta-group">
+            <button class="carousel-cta-btn carousel-cta-btn--primary" type="button">Explore the site &#8594;</button>
+            <button class="carousel-cta-btn carousel-cta-btn--ghost" type="button">Contact us</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Wire S7 CTA buttons
+    const exploreBtn = track.querySelector(".carousel-cta-btn--primary");
+    if (exploreBtn) exploreBtn.addEventListener("click", () => navigateTo("explore"));
+    const contactBtn = track.querySelector(".carousel-cta-btn--ghost");
+    if (contactBtn) contactBtn.addEventListener("click", () => navigateTo("about"));
+
+    // Wire S4 pathway cards to navigate to explore
+    track.querySelectorAll(".c-pw-grid .pw").forEach((pw) => {
+      pw.addEventListener("click", () => navigateTo("explore"));
     });
-    pathwaysSection.appendChild(pathwayGrid);
-    const pathwaysLink = el("a", "home-pathways-link btn btn-outline", "Explore Pathways →");
-    pathwaysLink.href = "#explore";
-    pathwaysLink.addEventListener("click", (event) => {
-      event.preventDefault();
-      navigateTo("explore");
-    });
-    pathwaysSection.appendChild(pathwaysLink);
-    container.appendChild(pathwaysSection);
 
-    let activePathwayId = "";
-    let pathwayModalOverlay = null;
-    let pathwayModalKeyHandler = null;
+    // Carousel logic
+    const carouselTotal = 7;
+    const CAROUSEL_INTERVAL = 7000;
+    let carouselCurrent = 0;
+    let carouselTimer;
+    const lightSlides = new Set([1, 3]); // S2 (idx 1) and S4 (idx 3) are light
 
-    const updateActiveCards = () => {
-      pathwayCards.forEach((card, id) => {
-        const isActive = id === activePathwayId;
-        card.classList.toggle("is-active", isActive);
-        card.setAttribute("aria-expanded", isActive ? "true" : "false");
-      });
-    };
-
-    const closePathwayModal = () => {
-      if (pathwayModalOverlay && pathwayModalOverlay.parentNode === modalRoot) {
-        modalRoot.removeChild(pathwayModalOverlay);
-      }
-      pathwayModalOverlay = null;
-      if (pathwayModalKeyHandler) {
-        document.removeEventListener("keydown", pathwayModalKeyHandler);
-        pathwayModalKeyHandler = null;
-      }
-      document.body.classList.remove("is-modal-open");
-      activePathwayId = "";
-      updateActiveCards();
-    };
-
-    const renderPathwayModal = (pathway) => {
-      clear(modalRoot);
-      if (pathwayModalKeyHandler) {
-        document.removeEventListener("keydown", pathwayModalKeyHandler);
-        pathwayModalKeyHandler = null;
-      }
-
-      const overlay = el("div", "pathway-modal-overlay");
-      const wrapper = el("div", "pathway-modal");
-      wrapper.setAttribute("role", "dialog");
-      wrapper.setAttribute("aria-modal", "true");
-      wrapper.setAttribute("aria-label", pathway.title);
-      wrapper.tabIndex = -1;
-
-      const header = el("div", "pathway-modal-header");
-      header.appendChild(el("p", "pathway-modal-label", pathway.title));
-      const closeControl = el("button", "pathway-modal-close", "X");
-      closeControl.type = "button";
-      closeControl.setAttribute("aria-label", "Close pathway details");
-      closeControl.addEventListener("click", closePathwayModal);
-      header.appendChild(closeControl);
-      wrapper.appendChild(header);
-
-      wrapper.appendChild(el("p", "pathway-modal-summary", pathway.summary));
-      wrapper.appendChild(el("p", "pathway-label", pathway.label));
-
-      const actionList = el("ul", "pathway-actions");
-      pathway.actions.forEach((item) => {
-        actionList.appendChild(el("li", null, item));
-      });
-      wrapper.appendChild(actionList);
-
-      wrapper.appendChild(el("h4", "pathway-support-title", data.explore.pathways.supportTitle));
-      const supportList = el("ul", "pathway-supports");
-      pathway.supports.forEach((item) => {
-        supportList.appendChild(el("li", null, item));
-      });
-      wrapper.appendChild(supportList);
-
-      const ctaRow = el("div", "pathway-cta");
-      const relatedButton = el("button", "btn", data.explore.pathways.buttons.related);
-      relatedButton.type = "button";
-      relatedButton.addEventListener("click", () => {
-        closePathwayModal();
-        navigateTo("explore", "opportunity-explorer", { pathway: pathwayIdToKey[pathway.id] || pathway.id });
-      });
-
-      const contactWrap = el("div", "pathway-contact");
-      contactWrap.appendChild(el("span", "pathway-contact-text", data.explore.pathways.buttons.contactPrompt));
-      const contactButton = el("button", "btn", data.explore.pathways.buttons.contactAction);
-      contactButton.type = "button";
-      contactButton.addEventListener("click", () => {
-        closePathwayModal();
-        navigateTo("about", "contact");
-      });
-      contactWrap.appendChild(contactButton);
-      ctaRow.appendChild(relatedButton);
-      ctaRow.appendChild(contactWrap);
-      wrapper.appendChild(ctaRow);
-
-      const navRow = el("div", "pathway-nav");
-      const currentIndex = pathwayItems.findIndex((item) => item.id === pathway.id);
-      const previousIndex = (currentIndex - 1 + pathwayItems.length) % pathwayItems.length;
-      const nextIndex = (currentIndex + 1) % pathwayItems.length;
-      const prevButton = el("button", "btn btn-icon", "\u2190");
-      prevButton.type = "button";
-      prevButton.setAttribute("aria-label", data.explore.pathways.buttons.previous);
-      prevButton.addEventListener("click", () => {
-        openPathway(pathwayItems[previousIndex].id);
-      });
-      const nextButton = el("button", "btn btn-icon", "\u2192");
-      nextButton.type = "button";
-      nextButton.setAttribute("aria-label", data.explore.pathways.buttons.next);
-      nextButton.addEventListener("click", () => {
-        openPathway(pathwayItems[nextIndex].id);
-      });
-      const closeButton = el("button", "btn btn-icon btn-icon--close", "\u00d7");
-      closeButton.type = "button";
-      closeButton.setAttribute("aria-label", data.explore.pathways.buttons.close);
-      closeButton.addEventListener("click", closePathwayModal);
-      navRow.appendChild(prevButton);
-      navRow.appendChild(nextButton);
-      navRow.appendChild(closeButton);
-      wrapper.appendChild(navRow);
-
-      overlay.appendChild(wrapper);
-      overlay.addEventListener("click", (event) => {
-        if (event.target === overlay) {
-          closePathwayModal();
-        }
-      });
-
-      pathwayModalKeyHandler = (event) => {
-        if (event.key === "Escape") {
-          closePathwayModal();
-        }
-      };
-      document.addEventListener("keydown", pathwayModalKeyHandler);
-      document.body.classList.add("is-modal-open");
-      modalRoot.appendChild(overlay);
-      pathwayModalOverlay = overlay;
-      wrapper.focus();
-    };
-
-    function openPathway(pathwayId) {
-      const pathway = pathwayItems.find((item) => item.id === pathwayId);
-      if (!pathway) {
-        return;
-      }
-      activePathwayId = pathwayId;
-      updateActiveCards();
-      renderPathwayModal(pathway);
-      setContextPathway(pathwayIdToKey[pathwayId] || pathwayId);
+    function carouselUpdateChrome(n) {
+      const isLight = lightSlides.has(n);
+      btnPrev.className = `nav-btn nav-prev${isLight ? " dark" : ""}`;
+      btnNext.className = `nav-btn nav-next${isLight ? " dark" : ""}`;
+      counter.className = `slide-counter${isLight ? " dark" : ""}`;
+      dotNav.querySelectorAll(".dot").forEach((d) => d.classList.toggle("dark-dot", isLight));
+      progressBar.style.background = isLight ? "#912338" : "rgba(255,255,255,0.7)";
     }
 
-    function togglePathway(pathwayId) {
-      const pathwayKey = pathwayIdToKey[pathwayId] || pathwayId;
-      navigateTo("explore", null, { pathway: pathwayKey });
+    function carouselGoTo(n) {
+      carouselCurrent = (n + carouselTotal) % carouselTotal;
+      track.style.transform = `translateX(-${carouselCurrent * 100}%)`;
+      dotNav.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === carouselCurrent));
+      counter.textContent = `${carouselCurrent + 1} / ${carouselTotal}`;
+      carouselUpdateChrome(carouselCurrent);
     }
+
+    function carouselResetProgress() {
+      progressBar.style.transition = "none";
+      progressBar.style.width = "0%";
+      void progressBar.offsetWidth;
+      progressBar.style.transition = `width ${CAROUSEL_INTERVAL}ms linear`;
+      progressBar.style.width = "100%";
+    }
+
+    function carouselStartTimer() {
+      clearInterval(carouselTimer);
+      carouselResetProgress();
+      carouselTimer = setInterval(() => { carouselGoTo(carouselCurrent + 1); carouselResetProgress(); }, CAROUSEL_INTERVAL);
+    }
+
+    // Dots
+    for (let i = 0; i < carouselTotal; i++) {
+      const d = el("button", "dot" + (i === 0 ? " active" : ""));
+      d.type = "button";
+      d.setAttribute("aria-label", `Slide ${i + 1}`);
+      d.addEventListener("click", () => { carouselGoTo(i); carouselStartTimer(); });
+      dotNav.appendChild(d);
+    }
+
+    btnNext.addEventListener("click", () => { carouselGoTo(carouselCurrent + 1); carouselStartTimer(); });
+    btnPrev.addEventListener("click", () => { carouselGoTo(carouselCurrent - 1); carouselStartTimer(); });
+    carouselWrap.addEventListener("mouseenter", () => { clearInterval(carouselTimer); progressBar.style.transition = "none"; });
+    carouselWrap.addEventListener("mouseleave", () => carouselStartTimer());
+
+    // Touch swipe
+    let touchStartX = 0;
+    carouselWrap.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    carouselWrap.addEventListener("touchend", (e) => {
+      const d = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(d) > 40) { carouselGoTo(carouselCurrent + (d > 0 ? 1 : -1)); carouselStartTimer(); }
+    }, { passive: true });
+
+    // Keyboard — only when home page is active
+    document.addEventListener("keydown", (e) => {
+      if (!section.classList.contains("is-active")) return;
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.key === "ArrowRight") { carouselGoTo(carouselCurrent + 1); carouselStartTimer(); }
+      if (e.key === "ArrowLeft")  { carouselGoTo(carouselCurrent - 1); carouselStartTimer(); }
+    });
+
+    carouselWrap.appendChild(progressBar);
+    carouselWrap.appendChild(counter);
+    carouselWrap.appendChild(btnPrev);
+    carouselWrap.appendChild(btnNext);
+    carouselWrap.appendChild(dotNav);
+    carouselWrap.appendChild(track);
+    container.appendChild(carouselWrap);
+    carouselGoTo(0);
+    carouselStartTimer();
 
     container.appendChild(el("hr", "section-divider"));
 
@@ -729,12 +904,9 @@
     container.appendChild(popular);
     section.appendChild(container);
     section.openPathwayByKey = (pathwayKey) => {
-      const pathwayId = pathwayKeyToId[(pathwayKey || "").toLowerCase()];
-      if (pathwayId) {
-        openPathway(pathwayId);
-      }
+      if (pathwayKey) navigateTo("explore", null, { pathway: pathwayKey });
     };
-    section.closePathwayModal = closePathwayModal;
+    section.closePathwayModal = () => {};
     return section;
   };
 
