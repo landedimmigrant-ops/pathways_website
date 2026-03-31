@@ -1274,88 +1274,8 @@ label {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* ── Pathway pill row (tab row, shown when a pathway is active) ── */
 
-.pathway-pill-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  align-items: flex-end;
-  margin-bottom: 0;
-}
-
-.pathway-pill {
-  padding: 9px 16px;
-  border: 1.5px solid var(--border);
-  border-bottom: none;
-  background: #f0f0f0;
-  border-radius: 8px 8px 0 0;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  color: #666;
-  position: relative;
-  margin-bottom: -1px;
-  z-index: 1;
-  white-space: nowrap;
-  transition: background 0.12s, color 0.12s;
-}
-
-.pathway-pill:hover {
-  background: #e4e4e4;
-  color: var(--text);
-}
-
-.pathway-pill.is-active {
-  background: #fff;
-  border-bottom: 1px solid #fff;
-  font-weight: 700;
-  z-index: 3;
-  /* border-color and color set inline by JS to pathway-specific color */
-}
-
-/* ── Pathway inline panel (slide-in, colored bg) ─────────────── */
-
-.pathway-viewer {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.4s ease;
-}
-
-.pathway-viewer.is-open {
-  max-height: 1200px;
-}
-
-.pathway-viewer-card {
-  background: #fff;
-  border: 1.5px solid var(--border);
-  border-top-width: 3px;
-  border-radius: 8px;
-  padding: 28px 32px 24px;
-  display: grid;
-  gap: 12px;
-}
-
-.pathway-viewer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.pathway-viewer h2 {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  margin: 0;
-  line-height: 1.2;
-}
-
-.pathway-viewer .pathway-modal-summary {
-  color: var(--muted);
-  font-size: 15px;
-  margin: 0;
-}
+/* ── Pathway shared utilities ─────────────────────────────────── */
 
 .pathway-label {
   color: var(--muted);
@@ -1363,50 +1283,11 @@ label {
   margin: 8px 0 0;
 }
 
-.pathway-viewer .pathway-label {
-  color: var(--muted);
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
 .pathway-actions,
 .pathway-supports {
   padding-left: 20px;
   margin: 8px 0 0;
   color: var(--muted);
-}
-
-.pathway-viewer .pathway-actions {
-  color: var(--text);
-}
-
-.pathway-viewer .pathway-actions li {
-  margin-bottom: 4px;
-}
-
-.pathway-support-title {
-  margin-top: 16px;
-  font-size: 18px;
-}
-
-.pathway-cta {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-}
-
-.pathway-contact {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.pathway-contact-text {
-  color: var(--muted);
-  font-size: 15px;
 }
 
 .pathway-nav {
@@ -1429,17 +1310,6 @@ label {
 
 .btn-icon--close {
   font-size: 28px;
-}
-
-.pathway-viewer .pathway-nav .btn {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--border);
-}
-
-.pathway-viewer .pathway-nav .btn:hover {
-  border-color: #aaa;
-  background: #f5f5f5;
 }
 
 /* ── Pathway 2-column detail view ────────────────────────────── */

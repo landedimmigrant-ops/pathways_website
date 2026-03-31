@@ -3238,7 +3238,7 @@
     tabResearch.dataset.tab = "research";
     const tabServices = el("button", "explore-tab", "Browse Services");
     tabServices.type = "button";
-    tabServices.dataset.tab = "services";
+    tabServices.dataset.tab = "browse";
     tabsBar.appendChild(tabPathways);
     tabsBar.appendChild(tabResearch);
     tabsBar.appendChild(tabServices);
@@ -3253,8 +3253,6 @@
     pathwaysTabContent.appendChild(el("p", "page-intro", data.explore.pathways.intro));
 
     const pathwayItems = data.explore.pathways.items;
-    let activeExplorePathwayId = null;
-
     // --- Full pathway grid (default view) ---
     const explorePathwayGrid = el("div", "pathway-grid explore-pathway-grid");
     pathwayItems.forEach((pathway) => {
@@ -3331,7 +3329,6 @@
 
     // --- Open/close logic ---
     function openExplorePanel(pathway) {
-      activeExplorePathwayId = pathway.id;
       const key = pathwayIdToKey[pathway.id] || pathway.id;
       const color = pathwayColors[key];
       const currentIndex = pathwayItems.indexOf(pathway);
@@ -3438,7 +3435,6 @@
     }
 
     function closeExplorePanel() {
-      activeExplorePathwayId = null;
       explorePathwayGrid.hidden = false;
       pathwayDetailShell.hidden = true;
       pathwayServicesSection.hidden = true;
@@ -3677,7 +3673,7 @@
 
     // === Browse Services tab content ===
     const servicesTabContent = el("div", "explore-tab-content");
-    servicesTabContent.dataset.tabContent = "services";
+    servicesTabContent.dataset.tabContent = "browse";
 
     // Recommended for you (shown when context stage is active)
     const recommendedSection = el("div", "recommended-section");
@@ -4154,7 +4150,7 @@
     };
     section.openTab = (tabName) => {
       if (tabName === "research") tabResearch.click();
-      else if (tabName === "services") tabServices.click();
+      else if (tabName === "browse") tabServices.click();
       else tabPathways.click();
     };
     section.resetState = () => {
