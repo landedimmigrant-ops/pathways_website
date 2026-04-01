@@ -3716,6 +3716,7 @@
         if (page === undefined) { pathwayCurrentPage = 0; page = 0; }
         currentPathwayItems = items;
         pathwayCurrentPage = page;
+        pathwayServicesGrid.style.minHeight = pathwayServicesGrid.offsetHeight + "px";
         clear(pathwayServicesGrid);
         clear(pathwayPaginationTop);
         clear(pathwayPaginationBottom);
@@ -3733,20 +3734,15 @@
           card.appendChild(formatBadge(opp.format));
           card.appendChild(el("h3", null, opp.title));
           card.appendChild(el("p", "card-text", opp.summary));
-          const meta = el("div", "opportunity-meta");
-          [
-            { label: data.explore.labels.category, value: opp.category },
-            { label: data.explore.labels.stage, value: opp.stage },
-            { label: data.explore.labels.time, value: opp.time }
-          ].forEach((item) => {
-            const displayValue = Array.isArray(item.value) ? item.value.join(", ") : item.value;
-            if (!displayValue) return;
+          if (opp.time) {
+            const meta = el("div", "opportunity-meta");
+            const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
             const line = el("div", "meta-line");
-            line.appendChild(el("span", "meta-label", item.label));
-            line.appendChild(el("span", "meta-value", displayValue));
+            line.appendChild(el("span", "meta-label", data.explore.labels.time));
+            line.appendChild(el("span", "meta-value", displayTime));
             meta.appendChild(line);
-          });
-          card.appendChild(meta);
+            card.appendChild(meta);
+          }
           const tagList = el("div", "tag-list");
           (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
           card.appendChild(tagList);
@@ -3785,6 +3781,7 @@
       } else {
         pathwayServicesGrid.appendChild(el("p", "empty-state", "No services found for this pathway."));
       }
+      requestAnimationFrame(() => { pathwayServicesGrid.style.minHeight = ""; });
       };
 
       // "All" pill
@@ -3873,20 +3870,15 @@
       card.appendChild(formatBadge(opp.format));
       card.appendChild(el("h3", null, opp.title));
       card.appendChild(el("p", "card-text", opp.summary));
-      const meta = el("div", "opportunity-meta");
-      [
-        { label: data.explore.labels.category, value: opp.category },
-        { label: data.explore.labels.stage, value: opp.stage },
-        { label: data.explore.labels.time, value: opp.time }
-      ].forEach((item) => {
-        const displayValue = Array.isArray(item.value) ? item.value.join(", ") : item.value;
-        if (!displayValue) return;
+      if (opp.time) {
+        const meta = el("div", "opportunity-meta");
+        const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
         const line = el("div", "meta-line");
-        line.appendChild(el("span", "meta-label", item.label));
-        line.appendChild(el("span", "meta-value", displayValue));
+        line.appendChild(el("span", "meta-label", data.explore.labels.time));
+        line.appendChild(el("span", "meta-value", displayTime));
         meta.appendChild(line);
-      });
-      card.appendChild(meta);
+        card.appendChild(meta);
+      }
       const cardActions = el("div", "card-actions");
       if (opp.sourceType === "tool") {
         const btn = el("button", "btn primary", "Start \u2192");
@@ -4050,6 +4042,7 @@
       if (page === undefined) { researchCurrentPage = 0; page = 0; }
       currentResearchItems = items;
       researchCurrentPage = page;
+      researchServicesGrid.style.minHeight = researchServicesGrid.offsetHeight + "px";
       clear(researchServicesGrid);
       clear(researchPaginationTop);
       clear(researchPaginationBottom);
@@ -4070,6 +4063,7 @@
       } else {
         researchServicesGrid.appendChild(el("p", "empty-state", "No services found."));
       }
+      requestAnimationFrame(() => { researchServicesGrid.style.minHeight = ""; });
     }
 
     function loadStageServices(journey) {
@@ -4307,6 +4301,7 @@
       if (page === undefined) { browseCurrentPage = 0; page = 0; }
       currentBrowseItems = items;
       browseCurrentPage = page;
+      resultsGrid.style.minHeight = resultsGrid.offsetHeight + "px";
       clear(resultsGrid);
       clear(browsePaginationTop);
       clear(browsePaginationBottom);
@@ -4333,6 +4328,7 @@
         emptyActions.appendChild(contactLink);
         empty.appendChild(emptyActions);
         resultsGrid.appendChild(empty);
+        requestAnimationFrame(() => { resultsGrid.style.minHeight = ""; });
         return;
       }
 
@@ -4350,20 +4346,15 @@
         card.appendChild(el("h3", null, opp.title));
         card.appendChild(el("p", "card-text", opp.summary));
 
-        const meta = el("div", "opportunity-meta");
-        const metaItems = [
-          { label: data.explore.labels.category, value: opp.category },
-          { label: data.explore.labels.stage, value: opp.stage },
-          { label: data.explore.labels.time, value: opp.time }
-        ];
-        metaItems.forEach((item) => {
-          const displayValue = Array.isArray(item.value) ? item.value.join(", ") : item.value;
+        if (opp.time) {
+          const meta = el("div", "opportunity-meta");
+          const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
           const line = el("div", "meta-line");
-          line.appendChild(el("span", "meta-label", item.label));
-          line.appendChild(el("span", "meta-value", displayValue || ""));
+          line.appendChild(el("span", "meta-label", data.explore.labels.time));
+          line.appendChild(el("span", "meta-value", displayTime));
           meta.appendChild(line);
-        });
-        card.appendChild(meta);
+          card.appendChild(meta);
+        }
 
         const tagList = el("div", "tag-list");
         const displayTags = [...(opp.tags || [])];
@@ -4418,6 +4409,7 @@
       if (totalPages > 1) {
         browsePaginationBottom.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
       }
+      requestAnimationFrame(() => { resultsGrid.style.minHeight = ""; });
     };
 
     const updateRecommended = () => {
