@@ -501,8 +501,8 @@
       },
       {
         kicker: "Need guidance?",
-        title: "Give us a shout for a consultation",
-        desc: "Not sure where to start? Reach out and we\u2019ll help you find the right path.",
+        title: "Not sure where to start?",
+        desc: "Get in touch with us and we\u2019ll help you find the right path.",
         action: () => navigateTo("about", "contact"),
         unsure: true
       }
