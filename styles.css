@@ -1665,14 +1665,14 @@ label {
 }
 
 .pathway-panel-content {
-  margin: 6px 6px 6px 0;
-  padding: 20px 24px 18px 18px;
+  margin: 0;
+  padding: 24px 28px 22px 24px;
   display: grid;
   gap: 10px;
   align-content: start;
-  border-left: 4px solid transparent;
-  border-radius: 8px;
   background: #fff;
+  border: 3px solid transparent;
+  border-radius: 0 9px 9px 0;
 }
 
 .pathway-panel-title {

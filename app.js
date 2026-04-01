@@ -3654,7 +3654,7 @@
       const g = parseInt(c.slice(3,5), 16);
       const b = parseInt(c.slice(5,7), 16);
       panelContent.style.background = `rgba(${r},${g},${b},0.07)`;
-      panelContent.style.borderLeftColor = c;
+      panelContent.style.borderColor = c;
       panelTitle.style.color = c;
       panelLabel.style.color = c;
 
@@ -3839,7 +3839,7 @@
       pathwayDetailShell.hidden = true;
       pathwayServicesSection.hidden = true;
       panelContent.style.removeProperty("background");
-      panelContent.style.removeProperty("border-left-color");
+      panelContent.style.removeProperty("border-color");
       panelTitle.style.removeProperty("color");
       panelLabel.style.removeProperty("color");
       sideTabButtons.forEach((btn) => {
