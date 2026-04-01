@@ -3732,17 +3732,14 @@
           pageItems.forEach((opp) => {
           const card = el("div", "opportunity-card");
           card.appendChild(formatBadge(opp.format));
-          card.appendChild(el("h3", null, opp.title));
-          card.appendChild(el("p", "card-text", opp.summary));
+          const titleRow = el("div", "card-title-row");
+          titleRow.appendChild(el("h3", null, opp.title));
           if (opp.time) {
-            const meta = el("div", "opportunity-meta");
             const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
-            const line = el("div", "meta-line");
-            line.appendChild(el("span", "meta-label", data.explore.labels.time));
-            line.appendChild(el("span", "meta-value", displayTime));
-            meta.appendChild(line);
-            card.appendChild(meta);
+            titleRow.appendChild(el("span", "card-time-pill", displayTime));
           }
+          card.appendChild(titleRow);
+          card.appendChild(el("p", "card-text", opp.summary));
           const tagList = el("div", "tag-list");
           (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
           card.appendChild(tagList);
@@ -3868,17 +3865,14 @@
     function buildResearchOpportunityCard(opp) {
       const card = el("div", "opportunity-card");
       card.appendChild(formatBadge(opp.format));
-      card.appendChild(el("h3", null, opp.title));
-      card.appendChild(el("p", "card-text", opp.summary));
+      const titleRow = el("div", "card-title-row");
+      titleRow.appendChild(el("h3", null, opp.title));
       if (opp.time) {
-        const meta = el("div", "opportunity-meta");
         const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
-        const line = el("div", "meta-line");
-        line.appendChild(el("span", "meta-label", data.explore.labels.time));
-        line.appendChild(el("span", "meta-value", displayTime));
-        meta.appendChild(line);
-        card.appendChild(meta);
+        titleRow.appendChild(el("span", "card-time-pill", displayTime));
       }
+      card.appendChild(titleRow);
+      card.appendChild(el("p", "card-text", opp.summary));
       const cardActions = el("div", "card-actions");
       if (opp.sourceType === "tool") {
         const btn = el("button", "btn primary", "Start \u2192");
@@ -4343,18 +4337,14 @@
       pageItems.forEach((opp) => {
         const card = el("div", "opportunity-card");
         card.appendChild(formatBadge(opp.format));
-        card.appendChild(el("h3", null, opp.title));
-        card.appendChild(el("p", "card-text", opp.summary));
-
+        const titleRow = el("div", "card-title-row");
+        titleRow.appendChild(el("h3", null, opp.title));
         if (opp.time) {
-          const meta = el("div", "opportunity-meta");
           const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
-          const line = el("div", "meta-line");
-          line.appendChild(el("span", "meta-label", data.explore.labels.time));
-          line.appendChild(el("span", "meta-value", displayTime));
-          meta.appendChild(line);
-          card.appendChild(meta);
+          titleRow.appendChild(el("span", "card-time-pill", displayTime));
         }
+        card.appendChild(titleRow);
+        card.appendChild(el("p", "card-text", opp.summary));
 
         const tagList = el("div", "tag-list");
         const displayTags = [...(opp.tags || [])];
