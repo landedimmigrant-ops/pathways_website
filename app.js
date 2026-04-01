@@ -3725,7 +3725,6 @@
 
           const goToPage = (p) => {
             renderPathwayCards(currentPathwayItems, p);
-            pathwayServicesSection.scrollIntoView({ behavior: "smooth", block: "start" });
           };
           pathwayPaginationTop.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
 
@@ -4060,7 +4059,6 @@
 
         const goToPage = (p) => {
           renderResearchCards(currentResearchItems, p);
-          researchServicesSection.scrollIntoView({ behavior: "smooth", block: "start" });
         };
         researchPaginationTop.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
 
@@ -4343,7 +4341,6 @@
 
       const goToPage = (p) => {
         updateResults(currentBrowseItems, p);
-        explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
       };
       browsePaginationTop.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
 
