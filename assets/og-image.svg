@@ -25,8 +25,8 @@
   <text x="80" y="180" fill="rgba(255,255,255,0.7)" font-size="16" font-weight="500" font-family="Inter,Segoe UI,sans-serif">Pathways to Impact · Concordia University</text>
 
   <!-- Headline -->
-  <text x="80" y="260" fill="white" font-size="52" font-weight="700" font-family="Inter,Segoe UI,sans-serif">Research is where</text>
-  <text x="80" y="325" fill="white" font-size="52" font-weight="700" font-style="italic" font-family="Inter,Segoe UI,sans-serif">change</text>
+  <text x="80" y="260" fill="white" font-size="52" font-weight="700" font-family="Inter,Segoe UI,sans-serif">Research is</text>
+  <text x="80" y="325" fill="white" font-size="52" font-weight="700" font-family="Inter,Segoe UI,sans-serif">where <tspan font-style="italic">change</tspan></text>
   <text x="80" y="390" fill="white" font-size="52" font-weight="700" font-family="Inter,Segoe UI,sans-serif">begins.</text>
 
   <!-- Body -->

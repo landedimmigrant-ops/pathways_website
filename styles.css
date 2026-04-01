@@ -4702,7 +4702,8 @@ label {
 }
 .s1 .eyebrow { color: rgba(255,255,255,0.45); }
 .s1-headline { font-size: 44px; font-weight: 800; line-height: 1.08; color: #fff; margin-bottom: 20px; }
-.s1-headline em { font-style: normal; color: #F4D0D5; }
+.s1-headline em { font-style: italic; color: #F4D0D5; }
+.s1-line-nowrap { white-space: nowrap; }
 .s1-body { font-size: 15px; line-height: 1.78; color: rgba(255,255,255,0.75); max-width: 380px; }
 .s1-right { height: 100%; display: flex; align-items: center; justify-content: center; }
 
