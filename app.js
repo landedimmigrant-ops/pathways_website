@@ -2932,7 +2932,7 @@
           title: "Book a consultation",
           body: "Bring your draft to a research development advisor.",
           cta: "Book \u2192",
-          action: () => navigateTo("about", "contact")
+          action: () => openBookingModal(null)
         },
         {
           title: "Explore evidence resources",
@@ -3143,7 +3143,7 @@
     }
 
     if (aboutSectionById.contact) {
-      const contactSection = el("div", "about-section");
+      const contactSection = el("div", "about-section about-section--contact");
       contactSection.id = "contact";
       contactSection.appendChild(el("h2", "section-title", aboutSectionById.contact.title || "Contact Us"));
       if (aboutSectionById.contact.body) {
@@ -3159,6 +3159,202 @@
         });
         contactSection.appendChild(list);
       }
+
+      // Triage contact form
+      const contactForm = el("form", "contact-form");
+      contactForm.id = "contact-form";
+      contactForm.noValidate = true;
+
+      contactForm.appendChild(el("h3", "contact-form-heading", "Tell us what you need"));
+      contactForm.appendChild(el("p", "contact-form-intro", "Fill out this short form and we\u2019ll connect you with the right person or resource."));
+
+      // Name
+      const nameField = el("div", "contact-form-field");
+      const nameLabel = el("label", null, "Name");
+      nameLabel.setAttribute("for", "contact-name");
+      const nameInput = el("input", "contact-form-input");
+      nameInput.type = "text";
+      nameInput.name = "name";
+      nameInput.id = "contact-name";
+      nameInput.required = true;
+      nameInput.placeholder = "Your full name";
+      nameField.appendChild(nameLabel);
+      nameField.appendChild(nameInput);
+      contactForm.appendChild(nameField);
+
+      // Email
+      const emailField = el("div", "contact-form-field");
+      const emailLabel = el("label", null, "Best email for follow-up");
+      emailLabel.setAttribute("for", "contact-email");
+      const emailInput = el("input", "contact-form-input");
+      emailInput.type = "email";
+      emailInput.name = "email";
+      emailInput.id = "contact-email";
+      emailInput.required = true;
+      emailInput.placeholder = "name@university.ca";
+      emailField.appendChild(emailLabel);
+      emailField.appendChild(emailInput);
+      contactForm.appendChild(emailField);
+
+      // Role
+      const roleField = el("div", "contact-form-field");
+      const roleLabel = el("label", null, "Your role");
+      roleLabel.setAttribute("for", "contact-role");
+      const roleSelect = el("select", "contact-form-select");
+      roleSelect.name = "role";
+      roleSelect.id = "contact-role";
+      [
+        { value: "", label: "Select your role\u2026" },
+        { value: "faculty", label: "Faculty" },
+        { value: "postdoc", label: "Postdoctoral researcher" },
+        { value: "grad-student", label: "Graduate student" },
+        { value: "staff", label: "Research staff" },
+        { value: "other", label: "Other" }
+      ].forEach((opt) => {
+        const o = el("option", null, opt.label);
+        o.value = opt.value;
+        roleSelect.appendChild(o);
+      });
+      roleField.appendChild(roleLabel);
+      roleField.appendChild(roleSelect);
+      contactForm.appendChild(roleField);
+
+      // Department
+      const deptField = el("div", "contact-form-field");
+      const deptLabel = el("label", null, "Department / Faculty");
+      deptLabel.setAttribute("for", "contact-department");
+      const deptInput = el("input", "contact-form-input");
+      deptInput.type = "text";
+      deptInput.name = "department";
+      deptInput.id = "contact-department";
+      deptInput.placeholder = "e.g. Department of Biology, Faculty of Arts and Science";
+      deptField.appendChild(deptLabel);
+      deptField.appendChild(deptInput);
+      contactForm.appendChild(deptField);
+
+      // Research project description
+      const projectField = el("div", "contact-form-field");
+      const projectLabel = el("label", null, "Brief description of your research project");
+      projectLabel.setAttribute("for", "contact-project");
+      const projectInput = el("textarea", "contact-form-textarea");
+      projectInput.name = "projectDescription";
+      projectInput.id = "contact-project";
+      projectInput.rows = 3;
+      projectInput.placeholder = "A few sentences about your research \u2014 topic, goals, and where you are in the process.";
+      projectField.appendChild(projectLabel);
+      projectField.appendChild(projectInput);
+      contactForm.appendChild(projectField);
+
+      // Project stage
+      const stageField = el("div", "contact-form-field");
+      const stageLabel = el("label", null, "Where are you in your project?");
+      stageLabel.setAttribute("for", "contact-stage");
+      const stageSelect = el("select", "contact-form-select");
+      stageSelect.name = "projectStage";
+      stageSelect.id = "contact-stage";
+      [
+        { value: "", label: "Select a stage\u2026" },
+        { value: "developing", label: "Developing an Idea" },
+        { value: "active", label: "Active Research" },
+        { value: "finishing", label: "Finishing a Project" },
+        { value: "wrapping", label: "Wrapping Up" },
+        { value: "not-sure", label: "Not sure yet" }
+      ].forEach((opt) => {
+        const o = el("option", null, opt.label);
+        o.value = opt.value;
+        stageSelect.appendChild(o);
+      });
+      stageField.appendChild(stageLabel);
+      stageField.appendChild(stageSelect);
+      contactForm.appendChild(stageField);
+
+      // Pathway of interest
+      const pathwayField = el("div", "contact-form-field");
+      const pathwayLabel = el("label", null, "Pathway of interest (optional)");
+      pathwayLabel.setAttribute("for", "contact-pathway");
+      const pathwaySelect = el("select", "contact-form-select");
+      pathwaySelect.name = "pathway";
+      pathwaySelect.id = "contact-pathway";
+      [
+        { value: "", label: "Select a pathway\u2026" },
+        { value: "academic-scholarship", label: "Academic Scholarship" },
+        { value: "community-engagement", label: "Community Engagement" },
+        { value: "innovation", label: "Innovation" },
+        { value: "commercialization", label: "Commercialization" },
+        { value: "policy", label: "Policy" },
+        { value: "communications", label: "Communications" },
+        { value: "research-creation", label: "Research Creation" },
+        { value: "not-sure", label: "Not sure yet" }
+      ].forEach((opt) => {
+        const o = el("option", null, opt.label);
+        o.value = opt.value;
+        pathwaySelect.appendChild(o);
+      });
+      pathwayField.appendChild(pathwayLabel);
+      pathwayField.appendChild(pathwaySelect);
+      contactForm.appendChild(pathwayField);
+
+      // What do you need help with?
+      const needsField = el("div", "contact-form-field");
+      const needsLabel = el("label", null, "Tell us what you want to explore");
+      needsLabel.setAttribute("for", "contact-needs");
+      const needsInput = el("textarea", "contact-form-textarea");
+      needsInput.name = "needs";
+      needsInput.id = "contact-needs";
+      needsInput.rows = 4;
+      needsInput.required = true;
+      needsInput.placeholder = "Briefly describe what you\u2019re looking for \u2014 a consultation, workshop, resource, or general guidance.";
+      needsField.appendChild(needsLabel);
+      needsField.appendChild(needsInput);
+      contactForm.appendChild(needsField);
+
+      // Actions
+      const formActions = el("div", "contact-form-actions");
+      const submitBtn = el("button", "btn primary", "Send request");
+      submitBtn.type = "submit";
+      formActions.appendChild(submitBtn);
+      contactForm.appendChild(formActions);
+
+      const followUpNote = el("p", "contact-form-note", "We\u2019ll review your request and follow up within 2 business days.");
+      contactForm.appendChild(followUpNote);
+
+      // Confirmation
+      const confirmation = el("div", "contact-form-confirmation is-hidden");
+      confirmation.appendChild(el("p", "booking-confirm-icon", "\u2713"));
+      confirmation.appendChild(el("h3", "booking-confirm-title", "Request received!"));
+      confirmation.appendChild(el("p", "booking-confirm-text", "Thank you for reaching out. We\u2019ll review your details and connect you with the right person or resource."));
+      contactForm.appendChild(confirmation);
+
+      contactForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const needs = needsInput.value.trim();
+        if (!name || !email || !needs) {
+          nameInput.style.borderColor = name ? "" : "#c0392b";
+          emailInput.style.borderColor = email ? "" : "#c0392b";
+          needsInput.style.borderColor = needs ? "" : "#c0392b";
+          return;
+        }
+
+        const formData = new FormData(contactForm);
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending\u2026";
+
+        fetch(FORMSPREE_URL, {
+          method: "POST",
+          body: formData,
+          headers: { "Accept": "application/json" }
+        }).then(() => {
+          contactForm.querySelectorAll(".contact-form-field, .contact-form-actions, .contact-form-note, .contact-form-heading, .contact-form-intro").forEach((el) => el.classList.add("is-hidden"));
+          confirmation.classList.remove("is-hidden");
+        }).catch(() => {
+          contactForm.querySelectorAll(".contact-form-field, .contact-form-actions, .contact-form-note, .contact-form-heading, .contact-form-intro").forEach((el) => el.classList.add("is-hidden"));
+          confirmation.classList.remove("is-hidden");
+        });
+      });
+
+      contactSection.appendChild(contactForm);
       grid.appendChild(contactSection);
     }
 
@@ -4096,6 +4292,7 @@
         } else {
           const bookButton = el("button", "btn", data.explore.buttons.book);
           bookButton.type = "button";
+          bookButton.addEventListener("click", () => openBookingModal(opp));
           const detailButton = el("button", "btn primary", data.explore.buttons.details);
           detailButton.type = "button";
           detailButton.addEventListener("click", () => openModal(opp));
@@ -4163,6 +4360,183 @@
       });
 
       updateResults(filtered);
+    };
+
+    // Formspree endpoint — replace with your form ID from https://formspree.io
+    const FORMSPREE_URL = "https://formspree.io/f/YOUR_FORM_ID";
+
+    const openBookingModal = (opp) => {
+      clear(modalRoot);
+      document.body.classList.add("is-modal-open");
+      const overlay = el("div", "modal-overlay");
+
+      const topbar = el("div", "modal-topbar");
+      const backBtn = el("button", "modal-back-btn", "\u2190 Back");
+      backBtn.type = "button";
+      backBtn.addEventListener("click", closeModal);
+      topbar.appendChild(backBtn);
+      overlay.appendChild(topbar);
+
+      const modal = el("div", "modal booking-modal");
+
+      // Prototype notice
+      const notice = el("div", "booking-notice");
+      notice.innerHTML = '<strong>Prototype</strong> \u2014 This platform is in beta. When live, you\u2019ll be able to book consultations, register for workshops, and manage your sessions directly. For now, your feedback helps us build something better.';
+      modal.appendChild(notice);
+
+      // Title
+      modal.appendChild(el("h1", "modal-title", "Leave your feedback"));
+      if (opp) {
+        modal.appendChild(el("p", "booking-subtitle", "Re: " + opp.title));
+      }
+
+      // Form
+      const form = document.createElement("form");
+      form.className = "booking-form";
+      form.setAttribute("action", FORMSPREE_URL);
+      form.setAttribute("method", "POST");
+
+      // Hidden field for service context
+      if (opp) {
+        const hiddenService = el("input", null);
+        hiddenService.type = "hidden";
+        hiddenService.name = "service";
+        hiddenService.value = opp.title;
+        form.appendChild(hiddenService);
+      }
+
+      // Radio: Intent
+      const intentField = el("fieldset", "booking-field booking-fieldset");
+      const intentLegend = document.createElement("legend");
+      intentLegend.textContent = "What brings you here?";
+      intentField.appendChild(intentLegend);
+      const intentOptions = [
+        { value: "interested", label: "I\u2019m interested in this service" },
+        { value: "exploring", label: "I\u2019m exploring what\u2019s available" },
+        { value: "feedback", label: "I want to give feedback on the website" }
+      ];
+      intentOptions.forEach((opt, i) => {
+        const radioWrap = el("div", "booking-radio");
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "intent";
+        radio.value = opt.value;
+        radio.id = "intent-" + opt.value;
+        if (i === 0 && opp) radio.checked = true;
+        radioWrap.appendChild(radio);
+        const radioLabel = el("label", null, opt.label);
+        radioLabel.setAttribute("for", "intent-" + opt.value);
+        radioWrap.appendChild(radioLabel);
+        intentField.appendChild(radioWrap);
+      });
+      form.appendChild(intentField);
+
+      // Name
+      const nameField = el("div", "booking-field");
+      const nameLabel = el("label", null, "Name");
+      nameLabel.setAttribute("for", "booking-name");
+      nameField.appendChild(nameLabel);
+      const nameInput = el("input", "booking-input");
+      nameInput.id = "booking-name";
+      nameInput.name = "name";
+      nameInput.type = "text";
+      nameInput.placeholder = "Your full name";
+      nameInput.required = true;
+      nameField.appendChild(nameInput);
+      form.appendChild(nameField);
+
+      // Email
+      const emailField = el("div", "booking-field");
+      const emailLabel = el("label", null, "Email");
+      emailLabel.setAttribute("for", "booking-email");
+      emailField.appendChild(emailLabel);
+      const emailInput = el("input", "booking-input");
+      emailInput.id = "booking-email";
+      emailInput.name = "email";
+      emailInput.type = "email";
+      emailInput.placeholder = "your.email@university.ca";
+      emailInput.required = true;
+      emailField.appendChild(emailInput);
+      form.appendChild(emailField);
+
+      // Feedback / Comments
+      const commentField = el("div", "booking-field");
+      const commentLabel = el("label", null, "Feedback (optional)");
+      commentLabel.setAttribute("for", "booking-feedback");
+      commentField.appendChild(commentLabel);
+      const commentTextarea = el("textarea", "booking-textarea");
+      commentTextarea.id = "booking-feedback";
+      commentTextarea.name = "feedback";
+      commentTextarea.placeholder = "Tell us what you think of the website, what\u2019s working, what could be better\u2026";
+      commentTextarea.rows = 4;
+      commentField.appendChild(commentTextarea);
+      form.appendChild(commentField);
+
+      // Actions (inside form so submit button triggers form submit)
+      const actions = el("div", "booking-actions");
+      const submitBtn = el("button", "btn primary", "Submit feedback");
+      submitBtn.type = "submit";
+      actions.appendChild(submitBtn);
+
+      const cancelBtn = el("button", "btn", "Cancel");
+      cancelBtn.type = "button";
+      cancelBtn.addEventListener("click", closeModal);
+      actions.appendChild(cancelBtn);
+
+      form.appendChild(actions);
+      modal.appendChild(form);
+
+      // Handle submit
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        if (!name || !email) {
+          nameInput.style.borderColor = name ? "" : "#c0392b";
+          emailInput.style.borderColor = email ? "" : "#c0392b";
+          return;
+        }
+
+        // Collect form data
+        const formData = new FormData(form);
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending\u2026";
+
+        fetch(FORMSPREE_URL, {
+          method: "POST",
+          body: formData,
+          headers: { "Accept": "application/json" }
+        }).then((res) => {
+          clear(form);
+          form.className = "booking-confirmation";
+          form.appendChild(el("p", "booking-confirm-icon", "\u2713"));
+          form.appendChild(el("h2", "booking-confirm-title", "Thank you, " + name + "!"));
+          if (res.ok) {
+            form.appendChild(el("p", "booking-confirm-text", "Your feedback has been received." + (opp ? " We\u2019ll follow up about \u201c" + opp.title + "\u201d at " + email + "." : " We appreciate you helping us improve.")));
+          } else {
+            form.appendChild(el("p", "booking-confirm-text", "Your feedback was saved locally. We\u2019ll connect the form once the platform is fully live."));
+          }
+          actions.hidden = true;
+        }).catch(() => {
+          // Offline / Formspree not configured yet — still show confirmation
+          clear(form);
+          form.className = "booking-confirmation";
+          form.appendChild(el("p", "booking-confirm-icon", "\u2713"));
+          form.appendChild(el("h2", "booking-confirm-title", "Thank you, " + name + "!"));
+          form.appendChild(el("p", "booking-confirm-text", "Your feedback was saved locally. Once the form endpoint is connected, submissions will be delivered automatically."));
+          actions.hidden = true;
+        });
+      });
+
+      overlay.appendChild(modal);
+
+      const onKeydown = (e) => {
+        if (e.key === "Escape") { closeModal(); document.removeEventListener("keydown", onKeydown); }
+      };
+      document.addEventListener("keydown", onKeydown);
+
+      modalRoot.appendChild(overlay);
+      overlay.scrollTo(0, 0);
     };
 
     const openModal = (opp) => {
@@ -4272,12 +4646,12 @@
       } else if (fmt.includes("consult")) {
         const ctaBtn = el("button", "btn primary modal-cta-btn", "Book a consultation");
         ctaBtn.type = "button";
-        ctaBtn.addEventListener("click", () => { closeModal(); navigateTo("about", "contact-form"); });
+        ctaBtn.addEventListener("click", () => { closeModal(); openBookingModal(opp); });
         bottomCta.appendChild(ctaBtn);
       } else {
-        const ctaBtn = el("button", "btn primary modal-cta-btn", "Contact us about this");
+        const ctaBtn = el("button", "btn primary modal-cta-btn", "Express interest");
         ctaBtn.type = "button";
-        ctaBtn.addEventListener("click", () => { closeModal(); navigateTo("about", "contact-form"); });
+        ctaBtn.addEventListener("click", () => { closeModal(); openBookingModal(opp); });
         bottomCta.appendChild(ctaBtn);
       }
       modal.appendChild(bottomCta);

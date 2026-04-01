@@ -340,6 +340,203 @@ label {
   border-radius: 2px;
 }
 
+/* ── Booking modal (prototype) ─────────────────────────────── */
+
+.booking-notice {
+  font-size: 14px;
+  color: #555;
+  padding: 14px 18px;
+  background: #fef9f0;
+  border-left: 3px solid #d4a843;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.booking-notice strong {
+  color: #7a4f00;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+.booking-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin: -8px 0 24px;
+}
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.booking-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.booking-input,
+.booking-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.booking-input:focus,
+.booking-textarea:focus {
+  outline: none;
+  border-color: var(--burgundy);
+}
+.booking-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+.booking-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+.booking-fieldset legend {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+.booking-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+.booking-radio input[type="radio"] {
+  accent-color: var(--burgundy, #6b2139);
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+.booking-radio label {
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  margin: 0;
+}
+.booking-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+.booking-confirmation {
+  text-align: center;
+  padding: 32px 16px;
+}
+.booking-confirm-icon {
+  font-size: 48px;
+  color: #27ae60;
+  margin: 0 0 12px;
+  line-height: 1;
+}
+.booking-confirm-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.booking-confirm-text {
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Contact triage form (About page) ──────────────────────── */
+
+.about-section--contact {
+  grid-column: 1 / -1;
+}
+.contact-form {
+  margin-top: 24px;
+  padding: 28px 32px;
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+}
+.contact-form-heading {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--burgundy, #6b2139);
+}
+.contact-form-intro {
+  font-size: 14px;
+  color: var(--muted, #666);
+  margin: 0 0 20px;
+}
+.contact-form-field {
+  margin-bottom: 16px;
+}
+.contact-form-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.contact-form-input,
+.contact-form-select,
+.contact-form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.contact-form-input:focus,
+.contact-form-select:focus,
+.contact-form-textarea:focus {
+  outline: none;
+  border-color: var(--burgundy, #6b2139);
+  box-shadow: 0 0 0 3px rgba(107, 33, 57, 0.1);
+}
+.contact-form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+.contact-form-select {
+  appearance: auto;
+  cursor: pointer;
+}
+.contact-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.contact-form-note {
+  font-size: 13px;
+  color: var(--muted, #666);
+  margin-top: 12px;
+  font-style: italic;
+}
+.contact-form-confirmation {
+  text-align: center;
+  padding: 32px 16px;
+}
+.contact-form-confirmation.is-hidden,
+.contact-form-field.is-hidden,
+.contact-form-actions.is-hidden,
+.contact-form-note.is-hidden,
+.contact-form-heading.is-hidden,
+.contact-form-intro.is-hidden {
+  display: none;
+}
+
 /* ── "Not sure" strip ───────────────────────────────────────── */
 
 .home-not-sure-strip {

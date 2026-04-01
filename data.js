@@ -677,7 +677,7 @@ window.PATHWAYS_DATA = {
       outcomes: "Outcomes"
     },
     buttons: {
-      book: "Book (sample)",
+      book: "Express interest",
       details: "View details",
       close: "Close"
     },
@@ -1249,8 +1249,8 @@ window.PATHWAYS_DATA = {
         title: "Contact Us",
         body: "Reach out for guidance, collaboration, or to book a consultation.",
         items: [
-          { "label": "Email:", "value": "pathways@concordia.ca" },
-          { "label": "Office:", "value": "Research Services, Concordia University" },
+          { "label": "Email:", "value": "impact@concordia.ca" },
+          { "label": "Office:", "value": "Office of Research, Concordia University" },
           { "label": "Hours:", "value": "Monday-Friday, 9:00-17:00" }
         ]
       }
