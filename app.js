@@ -500,10 +500,10 @@
         action: () => navigateTo("learn")
       },
       {
-        kicker: "Not sure yet",
-        title: "Not sure where to start?",
-        desc: "Answer these questions and we\u2019ll try to match you to the best support.",
-        action: () => openQuickMatch(),
+        kicker: "Need guidance?",
+        title: "Give us a shout for a consultation",
+        desc: "Not sure where to start? Reach out and we\u2019ll help you find the right path.",
+        action: () => navigateTo("about", "contact"),
         unsure: true
       }
     ];
