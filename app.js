@@ -3577,14 +3577,66 @@
     pathwayDetailShell.appendChild(detailLayout);
 
     // Related services below the 2-col layout
+    const CARDS_PER_PAGE = 6;
+
+    // Reusable pagination builder
+    const buildPaginationControls = (totalItems, currentPage, totalPages, onPageChange) => {
+      const pager = el("div", "pagination");
+      if (totalPages <= 1) {
+        const counter = el("span", "pagination-counter", "Showing " + totalItems + " of " + totalItems + " services");
+        pager.appendChild(counter);
+        return pager;
+      }
+
+      const start = currentPage * CARDS_PER_PAGE + 1;
+      const end = Math.min((currentPage + 1) * CARDS_PER_PAGE, totalItems);
+      const counter = el("span", "pagination-counter", "Showing " + start + "\u2013" + end + " of " + totalItems + " services");
+      pager.appendChild(counter);
+
+      const nav = el("div", "pagination-nav");
+
+      // Prev arrow
+      const prevBtn = el("button", "pagination-btn" + (currentPage === 0 ? " is-disabled" : ""), "\u2190");
+      prevBtn.type = "button";
+      prevBtn.disabled = currentPage === 0;
+      prevBtn.setAttribute("aria-label", "Previous page");
+      prevBtn.addEventListener("click", () => { if (currentPage > 0) onPageChange(currentPage - 1); });
+      nav.appendChild(prevBtn);
+
+      // Page numbers
+      for (let i = 0; i < totalPages; i++) {
+        const pageBtn = el("button", "pagination-btn" + (i === currentPage ? " is-active" : ""), String(i + 1));
+        pageBtn.type = "button";
+        pageBtn.setAttribute("aria-label", "Page " + (i + 1));
+        pageBtn.addEventListener("click", () => onPageChange(i));
+        nav.appendChild(pageBtn);
+      }
+
+      // Next arrow
+      const nextBtn = el("button", "pagination-btn" + (currentPage === totalPages - 1 ? " is-disabled" : ""), "\u2192");
+      nextBtn.type = "button";
+      nextBtn.disabled = currentPage === totalPages - 1;
+      nextBtn.setAttribute("aria-label", "Next page");
+      nextBtn.addEventListener("click", () => { if (currentPage < totalPages - 1) onPageChange(currentPage + 1); });
+      nav.appendChild(nextBtn);
+
+      pager.appendChild(nav);
+      return pager;
+    };
+
     const pathwayServicesSection = el("div", "pathway-services-section");
     pathwayServicesSection.hidden = true;
     pathwayServicesSection.appendChild(el("h3", "pathway-services-title", "Related services"));
     const pathwayFilterBar = el("div", "pathway-filter-bar");
     pathwayServicesSection.appendChild(pathwayFilterBar);
+    const pathwayPaginationTop = el("div", "pagination-wrapper");
+    pathwayServicesSection.appendChild(pathwayPaginationTop);
     const pathwayServicesGrid = el("div", "opportunity-grid");
     pathwayServicesSection.appendChild(pathwayServicesGrid);
+    const pathwayPaginationBottom = el("div", "pagination-wrapper");
+    pathwayServicesSection.appendChild(pathwayPaginationBottom);
     pathwayDetailShell.appendChild(pathwayServicesSection);
+    let pathwayCurrentPage = 0;
 
     pathwaysTabContent.appendChild(pathwayDetailShell);
 
@@ -3659,10 +3711,25 @@
       fmtArr.forEach((f) => filterTags.set(f, { type: "format", value: f }));
       if (formatSet.has("External Resource")) filterTags.set("External Resource", { type: "format", value: "External Resource" });
 
-      const renderPathwayCards = (items) => {
+      let currentPathwayItems = [];
+      const renderPathwayCards = (items, page) => {
+        if (page === undefined) { pathwayCurrentPage = 0; page = 0; }
+        currentPathwayItems = items;
+        pathwayCurrentPage = page;
         clear(pathwayServicesGrid);
+        clear(pathwayPaginationTop);
+        clear(pathwayPaginationBottom);
         if (items.length) {
-          items.forEach((opp) => {
+          const totalPages = Math.ceil(items.length / CARDS_PER_PAGE);
+          const pageItems = items.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
+
+          const goToPage = (p) => {
+            renderPathwayCards(currentPathwayItems, p);
+            pathwayServicesSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          };
+          pathwayPaginationTop.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
+
+          pageItems.forEach((opp) => {
           const card = el("div", "opportunity-card");
           card.appendChild(formatBadge(opp.format));
           card.appendChild(el("h3", null, opp.title));
@@ -3713,6 +3780,9 @@
           card.appendChild(cardActions);
           pathwayServicesGrid.appendChild(card);
         });
+        if (totalPages > 1) {
+          pathwayPaginationBottom.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
+        }
       } else {
         pathwayServicesGrid.appendChild(el("p", "empty-state", "No services found for this pathway."));
       }
@@ -3907,9 +3977,14 @@
     researchServicesSection.appendChild(el("h3", "pathway-services-title", "Related services"));
     const researchFilterBar = el("div", "pathway-filter-bar");
     researchServicesSection.appendChild(researchFilterBar);
+    const researchPaginationTop = el("div", "pagination-wrapper");
+    researchServicesSection.appendChild(researchPaginationTop);
     const researchServicesGrid = el("div", "opportunity-grid");
     researchServicesSection.appendChild(researchServicesGrid);
+    const researchPaginationBottom = el("div", "pagination-wrapper");
+    researchServicesSection.appendChild(researchPaginationBottom);
     researchViewerCard.appendChild(researchServicesSection);
+    let researchCurrentPage = 0;
 
     // Panel CTAs
     const researchPanelActions = el("div", "module-actions");
@@ -3971,10 +4046,29 @@
       }
     }
 
-    function renderResearchCards(items) {
+    let currentResearchItems = [];
+    function renderResearchCards(items, page) {
+      if (page === undefined) { researchCurrentPage = 0; page = 0; }
+      currentResearchItems = items;
+      researchCurrentPage = page;
       clear(researchServicesGrid);
+      clear(researchPaginationTop);
+      clear(researchPaginationBottom);
       if (items.length) {
-        items.forEach(opp => researchServicesGrid.appendChild(buildResearchOpportunityCard(opp)));
+        const totalPages = Math.ceil(items.length / CARDS_PER_PAGE);
+        const pageItems = items.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
+
+        const goToPage = (p) => {
+          renderResearchCards(currentResearchItems, p);
+          researchServicesSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        };
+        researchPaginationTop.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
+
+        pageItems.forEach(opp => researchServicesGrid.appendChild(buildResearchOpportunityCard(opp)));
+
+        if (totalPages > 1) {
+          researchPaginationBottom.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
+        }
       } else {
         researchServicesGrid.appendChild(el("p", "empty-state", "No services found."));
       }
@@ -4150,10 +4244,15 @@
     resultsMeta.appendChild(resultsLabel);
     resultsMeta.appendChild(resultsCount);
 
+    const browsePaginationTop = el("div", "pagination-wrapper");
     const resultsGrid = el("div", "opportunity-grid");
+    const browsePaginationBottom = el("div", "pagination-wrapper");
+    let browseCurrentPage = 0;
 
     explorerSection.appendChild(resultsMeta);
+    explorerSection.appendChild(browsePaginationTop);
     explorerSection.appendChild(resultsGrid);
+    explorerSection.appendChild(browsePaginationBottom);
     servicesTabContent.appendChild(explorerSection);
     container.appendChild(servicesTabContent);
 
@@ -4205,8 +4304,14 @@
       document.body.classList.remove("is-modal-open");
     }
 
-    const updateResults = (items) => {
+    let currentBrowseItems = [];
+    const updateResults = (items, page) => {
+      if (page === undefined) { browseCurrentPage = 0; page = 0; }
+      currentBrowseItems = items;
+      browseCurrentPage = page;
       clear(resultsGrid);
+      clear(browsePaginationTop);
+      clear(browsePaginationBottom);
       resultsCount.textContent = items.length;
 
       if (!items.length) {
@@ -4233,7 +4338,16 @@
         return;
       }
 
-      items.forEach((opp) => {
+      const totalPages = Math.ceil(items.length / CARDS_PER_PAGE);
+      const pageItems = items.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
+
+      const goToPage = (p) => {
+        updateResults(currentBrowseItems, p);
+        explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      browsePaginationTop.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
+
+      pageItems.forEach((opp) => {
         const card = el("div", "opportunity-card");
         card.appendChild(formatBadge(opp.format));
         card.appendChild(el("h3", null, opp.title));
@@ -4303,6 +4417,10 @@
 
         resultsGrid.appendChild(card);
       });
+
+      if (totalPages > 1) {
+        browsePaginationBottom.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
+      }
     };
 
     const updateRecommended = () => {

@@ -537,6 +537,58 @@ label {
   display: none;
 }
 
+/* ── Pagination ────────────────────────────────────────────── */
+
+.pagination-wrapper {
+  min-height: 0;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 0;
+}
+.pagination-counter {
+  font-size: 13px;
+  color: var(--muted, #666);
+  font-weight: 500;
+}
+.pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pagination-btn {
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pagination-btn:hover:not(.is-disabled) {
+  border-color: var(--burgundy, #6b2139);
+  color: var(--burgundy, #6b2139);
+}
+.pagination-btn.is-active {
+  background: var(--burgundy, #6b2139);
+  border-color: var(--burgundy, #6b2139);
+  color: #fff;
+}
+.pagination-btn.is-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 /* ── "Not sure" strip ───────────────────────────────────────── */
 
 .home-not-sure-strip {
