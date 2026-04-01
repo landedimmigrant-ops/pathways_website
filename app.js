@@ -45,6 +45,9 @@
     } else if (fmt.includes("tool")) {
       key = "tool";
       iconSvg = '<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l1.1-1.1a4 4 0 00-5.6-5.6L12 4.3"/><path d="M5.3 13.7a1 1 0 000-1.4L3.7 10.7a1 1 0 00-1.4 0L1.2 11.8a4 4 0 005.6 5.6L8 16.2"/><line x1="7" y1="13" x2="13" y2="7"/></svg>';
+    } else if (fmt.includes("resource")) {
+      key = "resource";
+      iconSvg = '<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4v4"/><path d="M10 10L19 3"/><path d="M17 11v6a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2h6"/></svg>';
     } else {
       key = "resource";
       iconSvg = '<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13l-3 3a2.12 2.12 0 01-3-3l5-5a2.12 2.12 0 013 0"/><path d="M13 10l3-3a2.12 2.12 0 00-3-3l-5 5a2.12 2.12 0 000 3"/></svg>';
@@ -3304,7 +3307,8 @@
     container.appendChild(tabsBar);
 
     const baseOpportunities = data.explore.opportunities.map((item) => ({ ...item, sourceType: "default" }));
-    const exploreItems = [...baseOpportunities, ...content.workshops];
+    const externalResources = (data.explore.externalResources || []).map((item) => ({ ...item, sourceType: "resource" }));
+    const exploreItems = [...baseOpportunities, ...content.workshops, ...externalResources];
 
     // === Pathways tab content ===
     const pathwaysTabContent = el("div", "explore-tab-content is-active");
@@ -3380,6 +3384,8 @@
     const pathwayServicesSection = el("div", "pathway-services-section");
     pathwayServicesSection.hidden = true;
     pathwayServicesSection.appendChild(el("h3", "pathway-services-title", "Related services"));
+    const pathwayFilterBar = el("div", "pathway-filter-bar");
+    pathwayServicesSection.appendChild(pathwayFilterBar);
     const pathwayServicesGrid = el("div", "opportunity-grid");
     pathwayServicesSection.appendChild(pathwayServicesGrid);
     pathwayDetailShell.appendChild(pathwayServicesSection);
@@ -3435,9 +3441,32 @@
         const val = opp.pathway;
         return Array.isArray(val) ? val.includes(pathwayTitle) : val === pathwayTitle;
       });
-      clear(pathwayServicesGrid);
-      if (filtered.length) {
-        filtered.forEach((opp) => {
+
+      // Build filter pills from the filtered items, grouped: stages → formats → External Resource last
+      clear(pathwayFilterBar);
+      let activePathwayFilter = null;
+      const stageSet = new Set();
+      const formatSet = new Set();
+      filtered.forEach((opp) => {
+        const stages = Array.isArray(opp.stage) ? opp.stage : (opp.stage ? [opp.stage] : []);
+        stages.forEach((s) => stageSet.add(s));
+        const fmt = (Array.isArray(opp.format) ? opp.format[0] : opp.format) || "";
+        if (fmt) formatSet.add(fmt);
+      });
+      const filterTags = new Map();
+      // Stages first in journey order
+      const stageOrder = ["Developing an Idea", "Active Research", "Finishing a Project"];
+      stageOrder.forEach((s) => { if (stageSet.has(s)) filterTags.set(s, { type: "stage", value: s }); });
+      stageSet.forEach((s) => { if (!filterTags.has(s)) filterTags.set(s, { type: "stage", value: s }); });
+      // Formats next, External Resource last
+      const fmtArr = [...formatSet].filter((f) => f !== "External Resource").sort();
+      fmtArr.forEach((f) => filterTags.set(f, { type: "format", value: f }));
+      if (formatSet.has("External Resource")) filterTags.set("External Resource", { type: "format", value: "External Resource" });
+
+      const renderPathwayCards = (items) => {
+        clear(pathwayServicesGrid);
+        if (items.length) {
+          items.forEach((opp) => {
           const card = el("div", "opportunity-card");
           card.appendChild(formatBadge(opp.format));
           card.appendChild(el("h3", null, opp.title));
@@ -3459,6 +3488,7 @@
           const tagList = el("div", "tag-list");
           (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
           card.appendChild(tagList);
+
           const cardActions = el("div", "card-actions");
           if (opp.sourceType === "tool") {
             const btn = el("button", "btn primary", "Start \u2192");
@@ -3473,6 +3503,11 @@
               else openModal(opp);
             });
             cardActions.appendChild(btn);
+          } else if (opp.sourceType === "resource") {
+            const btn = el("button", "btn primary", data.explore.buttons.details);
+            btn.type = "button";
+            btn.addEventListener("click", () => openModal(opp));
+            cardActions.appendChild(btn);
           } else {
             const detailBtn = el("button", "btn primary", data.explore.buttons.details);
             detailBtn.type = "button";
@@ -3485,6 +3520,46 @@
       } else {
         pathwayServicesGrid.appendChild(el("p", "empty-state", "No services found for this pathway."));
       }
+      };
+
+      // "All" pill
+      if (filterTags.size > 1) {
+        const allPill = el("button", "pathway-filter-pill is-active", "All");
+        allPill.type = "button";
+        allPill.addEventListener("click", () => {
+          activePathwayFilter = null;
+          pathwayFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
+          allPill.classList.add("is-active");
+          renderPathwayCards(filtered);
+        });
+        pathwayFilterBar.appendChild(allPill);
+
+        filterTags.forEach(({ type, value }) => {
+          const pill = el("button", "pathway-filter-pill", value);
+          pill.type = "button";
+          pill.addEventListener("click", () => {
+            activePathwayFilter = { type, value };
+            pathwayFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
+            pill.classList.add("is-active");
+            const subset = filtered.filter((opp) => {
+              if (type === "format") {
+                const f = Array.isArray(opp.format) ? opp.format : [opp.format];
+                return f.includes(value);
+              } else if (type === "stage") {
+                const s = Array.isArray(opp.stage) ? opp.stage : [opp.stage];
+                return s.includes(value);
+              } else if (type === "category") {
+                return opp.category === value;
+              }
+              return true;
+            });
+            renderPathwayCards(subset);
+          });
+          pathwayFilterBar.appendChild(pill);
+        });
+      }
+
+      renderPathwayCards(filtered);
       pathwayServicesSection.hidden = false;
 
       // Show detail view, hide grid
@@ -3547,6 +3622,9 @@
         meta.appendChild(line);
       });
       card.appendChild(meta);
+      if (opp.sourceType === "resource") {
+        card.appendChild(el("span", "external-indicator", "\u2197 External website"));
+      }
       const cardActions = el("div", "card-actions");
       if (opp.sourceType === "tool") {
         const btn = el("button", "btn primary", "Start \u2192");
@@ -3560,6 +3638,11 @@
           if (opp.libcalUrl) window.open(opp.libcalUrl, "_blank", "noopener");
           else openModal(opp);
         });
+        cardActions.appendChild(btn);
+      } else if (opp.sourceType === "resource") {
+        const btn = el("button", "btn primary", data.explore.buttons.details);
+        btn.type = "button";
+        btn.addEventListener("click", () => openModal(opp));
         cardActions.appendChild(btn);
       } else {
         const detailBtn = el("button", "btn primary", data.explore.buttons.details);
@@ -3940,6 +4023,7 @@
         });
         card.appendChild(tagList);
 
+
         const actions = el("div", "card-actions");
         if (opp.sourceType === "tool") {
           const primaryButton = el("button", "btn primary", "Start \u2192");
@@ -3956,6 +4040,11 @@
               openModal(opp);
             }
           });
+          actions.appendChild(primaryButton);
+        } else if (opp.sourceType === "resource") {
+          const primaryButton = el("button", "btn primary", data.explore.buttons.details);
+          primaryButton.type = "button";
+          primaryButton.addEventListener("click", () => openModal(opp));
           actions.appendChild(primaryButton);
         } else {
           const bookButton = el("button", "btn", data.explore.buttons.book);
@@ -4041,7 +4130,13 @@
       backBtn.addEventListener("click", closeModal);
       topbar.appendChild(backBtn);
       const topbarActions = el("div", "modal-topbar-actions");
-      if (opp.libcalUrl) {
+      if (opp.sourceType === "resource" && opp.externalUrl) {
+        const resourceBtn = el("a", "btn primary", "Open resource \u2197");
+        resourceBtn.href = opp.externalUrl;
+        resourceBtn.target = "_blank";
+        resourceBtn.rel = "noopener";
+        topbarActions.appendChild(resourceBtn);
+      } else if (opp.libcalUrl) {
         const registerBtn = el("a", "btn primary", "Register");
         registerBtn.href = opp.libcalUrl;
         registerBtn.target = "_blank";
@@ -4054,9 +4149,10 @@
       // Page content
       const modal = el("div", "modal");
 
-      // Kicker + title
+      // Kicker + title + author
       if (opp.category) modal.appendChild(el("p", "modal-kicker", opp.category));
       modal.appendChild(el("h1", "modal-title", opp.title));
+      if (opp.author) modal.appendChild(el("p", "modal-author", "By: " + opp.author));
 
       // Metadata bar
       const metaBar = el("div", "modal-meta-bar");
@@ -4104,10 +4200,22 @@
       }
       modal.appendChild(body);
 
+      // External resource note
+      if (opp.sourceType === "resource" && opp.externalUrl) {
+        const extNote = el("p", "modal-external-note", "This resource is hosted externally. You will leave the Pathways to Impact website.");
+        modal.appendChild(extNote);
+      }
+
       // Bottom CTA — always present, exactly one
       const bottomCta = el("div", "modal-bottom-cta");
       const fmt = (opp.format || "").toString().toLowerCase();
-      if (opp.libcalUrl) {
+      if (opp.sourceType === "resource" && opp.externalUrl) {
+        const ctaBtn = el("a", "btn primary modal-cta-btn", "Open resource \u2197");
+        ctaBtn.href = opp.externalUrl;
+        ctaBtn.target = "_blank";
+        ctaBtn.rel = "noopener";
+        bottomCta.appendChild(ctaBtn);
+      } else if (opp.libcalUrl) {
         const ctaLabel = fmt.includes("workshop") ? "Register for this workshop" : "Register";
         const ctaBtn = el("a", "btn primary modal-cta-btn", ctaLabel);
         ctaBtn.href = opp.libcalUrl;

@@ -942,6 +942,206 @@ window.PATHWAYS_DATA = {
           outcomes: "A pathway map that supports planning and communication."
         }
       }
+    ],
+    externalResources: [
+      {
+        id: "ext-impact-narrative-tool",
+        title: "Impact Narrative Tool",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Finishing a Project"],
+        format: "External Resource",
+        time: "20 min",
+        pathway: ["Communications"],
+        tags: ["narrative", "impact", "grant proposals", "strategic planning", "stakeholders"],
+        summary: "Build a compelling impact narrative for your research. This interactive tool helps you connect your project\u2019s rationale, stakeholders, activities, and expected contributions into a clear and persuasive story.",
+        externalUrl: "https://impactnarrative.nl/en/impact-narrative-tool/",
+        author: "Municipality of Delft, Erasmus Medical Center Rotterdam, Erasmus University Rotterdam & partners",
+        details: {
+          who: "Researchers preparing grant proposals, engagement plans, or institutional reporting.",
+          what: "An interactive digital tool that guides you through connecting your research goals, activities, stakeholders, and expected outcomes into a coherent impact narrative. Works at individual and team levels.",
+          outcomes: "A structured, persuasive impact narrative ready for proposals, engagement plans, and reporting."
+        }
+      },
+      {
+        id: "ext-case-study-guidelines",
+        title: "Impact & Engagement Case Study Guidelines",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Finishing a Project"],
+        format: "External Resource",
+        time: "15 min",
+        pathway: ["Community Engagement", "Communications"],
+        tags: ["case study", "impact", "engagement", "evidence", "reporting"],
+        summary: "Tell the story of your research impact with clarity and confidence. These guidelines walk you through capturing evidence, describing engagement activities, and presenting a compelling case study.",
+        externalUrl: "https://researchimpact.ca/wp-content/uploads/RIC_Impact-and-Engagement-Case-Study-Guidelines-EN.pdf",
+        author: "Research Impact Canada",
+        details: {
+          who: "Researchers documenting impact for funders, internal reviews, or institutional storytelling.",
+          what: "A structured set of guidelines for crafting clear, evidence-informed case studies that highlight pathways to impact. Walk through how to capture evidence, describe engagement, and present credible impact stories.",
+          outcomes: "A well-structured case study demonstrating real-world research outcomes and engagement."
+        }
+      },
+      {
+        id: "ext-impact-indicators",
+        title: "Impact Indicators: Overview & Menu",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Finishing a Project"],
+        format: "External Resource",
+        time: "30 min",
+        pathway: ["Academic Scholarship"],
+        tags: ["indicators", "tracking", "evaluation", "outputs", "outcomes"],
+        summary: "How do you know if your research is making a difference? This tool helps you identify and develop research output and outcome indicators linked to societal impact.",
+        externalUrl: "https://www.eur.nl/en/research/research-services/societal-impact-evaluation/impact-toolbox/impact-indicators",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Academics and research units wanting to track and communicate societal impact.",
+          what: "A practical guide explaining what impact indicators are and how to write them, plus an inspirational menu of example outputs and outcomes that can be tailored to different research contexts.",
+          outcomes: "A set of tailored impact indicators for tracking progress toward your research goals and societal ambitions."
+        }
+      },
+      {
+        id: "ext-research-impact-framework",
+        title: "Research Impact Framework",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Finishing a Project"],
+        format: "External Resource",
+        time: "40 min",
+        pathway: ["Academic Scholarship", "Communications"],
+        tags: ["framework", "impact planning", "career", "multi-domain"],
+        summary: "Explore and expand the potential range of your research impacts. Map your influence across academic, societal, environmental, cultural, and policy dimensions.",
+        externalUrl: "https://doi.org/10.25546/98474",
+        author: "Giovanna Lima and Sarah Bowman",
+        details: {
+          who: "Individual researchers looking to understand and plan impact across multiple domains.",
+          what: "A framework for mapping your influence across multiple dimensions \u2014 from scholarly contributions to societal and cultural change. Helps identify new opportunities, plan strategically, and communicate impact.",
+          outcomes: "A multi-dimensional view of your research impact with new opportunities for strategic planning and communication."
+        }
+      },
+      {
+        id: "ext-flows-of-knowledge",
+        title: "Flows of Knowledge: Impact Assessment Method",
+        category: "External Resource",
+        stage: ["Finishing a Project"],
+        format: "External Resource",
+        time: "10 min",
+        pathway: ["Academic Scholarship", "Policy"],
+        tags: ["assessment", "evaluation", "knowledge exchange", "non-academic impact"],
+        summary: "A clear and simple framework for designing your own research impact assessment plan, focused on non-academic impacts on policy, practice, and wider society.",
+        externalUrl: "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ABLT4M",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Researchers and research teams carrying out impact assessment at the end of a project.",
+          what: "An evaluation method providing a framework for assessing non-academic impacts. Covers the method\u2019s building blocks and how to assess the efficiency of knowledge exchange.",
+          outcomes: "A structured plan for assessing and communicating the non-academic impact of your research."
+        }
+      },
+      {
+        id: "ext-engaged-research-planning",
+        title: "Engaged Research Planning for Impact",
+        category: "External Resource",
+        stage: ["Developing an Idea"],
+        format: "External Resource",
+        time: "13 min",
+        pathway: ["Academic Scholarship", "Community Engagement"],
+        tags: ["planning", "engaged research", "funding", "strategy"],
+        summary: "A clear and concise framework for understanding research impact and how you can start planning for it. Informed by recent literature and international consultation.",
+        externalUrl: "https://www.iua.ie/wp-content/uploads/2023/12/Guide-IUA-Engaged-Research-Planning-for-Impact-Framework-2022-Update_V5-25.pdf",
+        author: "Campus Engage and Irish Universities Association",
+        details: {
+          who: "Researchers at the early stages of planning a project or drafting a funding application.",
+          what: "A guide informed by academic literature and consultation with researchers, policymakers, and funding agency personnel. Provides inspiration and guidance for planning engaged research and drafting funding applications.",
+          outcomes: "A clearer understanding of research impact and a starting framework for your impact plan."
+        }
+      },
+      {
+        id: "ext-kmb-modules",
+        title: "Knowledge Mobilization Modules",
+        category: "External Resource",
+        stage: ["Active Research", "Finishing a Project"],
+        format: "External Resource",
+        time: "Self-paced",
+        pathway: ["Communications", "Community Engagement"],
+        tags: ["knowledge mobilization", "storytelling", "infographics", "skills", "KMb"],
+        summary: "Free, online modules on knowledge mobilization topics including an intro to KMb, storytelling for impact, and infographic design. Stand-alone and completable in any order.",
+        externalUrl: "https://researchimpact.ca/learning/kmb-modules/",
+        author: "Research Impact Canada",
+        details: {
+          who: "Researchers looking to build practical knowledge mobilization skills during or after their research.",
+          what: "Freely accessible e-modules, each focused on a specific KMb skill. Step-by-step guidance with tools and additional resources for increased uptake. Apply the training directly to your own work.",
+          outcomes: "Practical skills in knowledge mobilization, storytelling for impact, and visual communication of research."
+        }
+      },
+      {
+        id: "ext-impact-worksheet",
+        title: "Thinking About My Impact: A Worksheet",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Active Research"],
+        format: "External Resource",
+        time: "20 min",
+        pathway: ["Community Engagement"],
+        tags: ["worksheet", "reflection", "partners", "beneficiaries", "engagement plan"],
+        summary: "A brief printable worksheet to help you consider how your project relates to society. Map current and potential partners, align your work to their needs, and plan your engagement.",
+        externalUrl: "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZMU5F1",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Individual researchers and research teams, or professional staff holding impact workshops.",
+          what: "A printable worksheet with accompanying slides designed for academics to reflect on societal impact \u2014 what it means to you, how to map partners and beneficiaries, and how to align your work to their needs.",
+          outcomes: "A completed worksheet mapping your impact goals, partners, and engagement strategy. Takes 15 minutes to fill out."
+        }
+      },
+      {
+        id: "ext-theory-of-change",
+        title: "Theory of Change (ToC) Method",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Active Research"],
+        format: "External Resource",
+        time: "15 min",
+        pathway: ["Academic Scholarship"],
+        tags: ["theory of change", "planning", "evaluation", "strategy", "grant writing"],
+        summary: "Understand when, where, and how to use the Theory of Change method for impact planning. A useful starting point for self-evaluation, grant applications, and strategy formulation.",
+        externalUrl: "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/D0GMXS",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Researchers and research teams carrying out impact assessment or planning, and stakeholders involved in assessment procedures.",
+          what: "A tool for understanding the Theory of Change method \u2014 how to describe envisioned changes in a given context, and how to specify the outcomes and outputs of your research activities.",
+          outcomes: "A foundational understanding of ToC that supports self-evaluation, grant writing, strategy formulation, and mission statement drafting."
+        }
+      },
+      {
+        id: "ext-impact-activities-catalogue",
+        title: "Impact Activities Catalogue",
+        category: "External Resource",
+        stage: ["Developing an Idea"],
+        format: "External Resource",
+        time: "16 min",
+        pathway: ["Academic Scholarship", "Community Engagement"],
+        tags: ["activities", "brainstorming", "engagement levels", "commercialization", "advising"],
+        summary: "Trying to picture what type of research impact you want to make? Anchored by three levels of community engagement, this catalogue helps you brainstorm the type of impact you want to work towards.",
+        externalUrl: "https://www.eur.nl/en/media/2025-09-impact-activities-catalogue",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Researchers, project leads, or staff involved in developing, implementing, or evaluating impact initiatives.",
+          what: "A catalogue describing key societal impact activities across different engagement levels \u2014 from academic scholarship and commercialization to academic advising and science activism.",
+          outcomes: "A clearer picture of what types of impact activities align with your research goals and engagement level."
+        }
+      },
+      {
+        id: "ext-stakeholder-analysis",
+        title: "Stakeholder Analysis Matrix Template",
+        category: "External Resource",
+        stage: ["Developing an Idea"],
+        format: "External Resource",
+        time: "3 min",
+        pathway: ["Community Engagement", "Policy", "Commercialization"],
+        tags: ["stakeholders", "partnerships", "engagement strategy", "influence", "analysis"],
+        summary: "Map the people who make research matter. Identify key partners, understand their influence and priorities, and plan how best to engage them throughout your project.",
+        externalUrl: "https://tools4dev.org/resources/stakeholder-analysis-matrix-template/",
+        author: "Tools4Dev",
+        details: {
+          who: "Researchers and project teams at the planning stage who need to identify and engage stakeholders.",
+          what: "A practical template to systematically identify stakeholders, assess their influence and interest, and plan effective engagement strategies. Supports stronger partnership-building and strategic impact planning.",
+          outcomes: "A completed stakeholder map with engagement strategies aligned to the needs of communities, policymakers, and partners."
+        }
+      }
     ]
   },
   stories: {
