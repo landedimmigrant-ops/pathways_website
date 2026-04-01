@@ -1612,45 +1612,40 @@ label {
 .research-module-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0;
-  border-bottom: 2px solid var(--border);
+  gap: 8px;
   margin: 1.25rem 0 0;
 }
 
 .research-module-chip {
-  padding: 7px 15px;
-  border: 1.5px solid var(--border);
-  border-bottom: none;
-  background: #f4f4f4;
-  border-radius: 6px 6px 0 0;
+  padding: 6px 14px;
   font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background: #fff;
+  color: #555;
   cursor: pointer;
   text-align: left;
-  margin: 0 4px -2px 0;
-  position: relative;
-  color: #666;
   line-height: 1.4;
-  z-index: 1;
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  transition: all 0.15s ease;
 }
 
 .research-module-chip:hover {
-  background: #ebebeb;
-  border-color: #aaa;
-  color: var(--text);
+  border-color: var(--burgundy);
+  color: var(--burgundy);
 }
 
 .research-module-chip.is-active {
   background: var(--burgundy);
   border-color: var(--burgundy);
-  border-bottom: 2px solid #fff;
   color: #fff;
   font-weight: 600;
-  z-index: 3;
 }
 
 .research-services-section {
-  padding-top: 1.25rem;
+  padding-top: 1.5rem;
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--border);
 }
 
 @media (max-width: 768px) {

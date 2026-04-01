@@ -3622,9 +3622,6 @@
         meta.appendChild(line);
       });
       card.appendChild(meta);
-      if (opp.sourceType === "resource") {
-        card.appendChild(el("span", "external-indicator", "\u2197 External website"));
-      }
       const cardActions = el("div", "card-actions");
       if (opp.sourceType === "tool") {
         const btn = el("button", "btn primary", "Start \u2192");
@@ -3711,6 +3708,9 @@
 
     // Services section — visible immediately on stage open, filtered by active chip
     const researchServicesSection = el("div", "research-services-section");
+    researchServicesSection.appendChild(el("h3", "pathway-services-title", "Related services"));
+    const researchFilterBar = el("div", "pathway-filter-bar");
+    researchServicesSection.appendChild(researchFilterBar);
     const researchServicesGrid = el("div", "opportunity-grid");
     researchServicesSection.appendChild(researchServicesGrid);
     researchViewerCard.appendChild(researchServicesSection);
@@ -3729,17 +3729,68 @@
     researchTabContent.appendChild(researchPillRow);
     researchTabContent.appendChild(researchViewer);
 
+    function buildResearchFilterPills(matched) {
+      clear(researchFilterBar);
+      const formatSet = new Set();
+      matched.forEach((opp) => {
+        const fmt = (Array.isArray(opp.format) ? opp.format[0] : opp.format) || "";
+        if (fmt) formatSet.add(fmt);
+      });
+      const fmtArr = [...formatSet].filter((f) => f !== "External Resource").sort();
+      if (formatSet.size > 1) {
+        const allPill = el("button", "pathway-filter-pill is-active", "All");
+        allPill.type = "button";
+        allPill.addEventListener("click", () => {
+          researchFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
+          allPill.classList.add("is-active");
+          renderResearchCards(matched);
+        });
+        researchFilterBar.appendChild(allPill);
+        fmtArr.forEach((f) => {
+          const pill = el("button", "pathway-filter-pill", f);
+          pill.type = "button";
+          pill.addEventListener("click", () => {
+            researchFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
+            pill.classList.add("is-active");
+            renderResearchCards(matched.filter((opp) => {
+              const v = Array.isArray(opp.format) ? opp.format : [opp.format];
+              return v.includes(f);
+            }));
+          });
+          researchFilterBar.appendChild(pill);
+        });
+        if (formatSet.has("External Resource")) {
+          const pill = el("button", "pathway-filter-pill", "External Resource");
+          pill.type = "button";
+          pill.addEventListener("click", () => {
+            researchFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
+            pill.classList.add("is-active");
+            renderResearchCards(matched.filter((opp) => {
+              const v = Array.isArray(opp.format) ? opp.format : [opp.format];
+              return v.includes("External Resource");
+            }));
+          });
+          researchFilterBar.appendChild(pill);
+        }
+      }
+    }
+
+    function renderResearchCards(items) {
+      clear(researchServicesGrid);
+      if (items.length) {
+        items.forEach(opp => researchServicesGrid.appendChild(buildResearchOpportunityCard(opp)));
+      } else {
+        researchServicesGrid.appendChild(el("p", "empty-state", "No services found."));
+      }
+    }
+
     function loadStageServices(journey) {
       const matched = exploreItems.filter(opp => {
         const val = opp.stage;
         return Array.isArray(val) ? val.includes(journey.stage) : val === journey.stage;
       });
-      clear(researchServicesGrid);
-      if (matched.length) {
-        matched.forEach(opp => researchServicesGrid.appendChild(buildResearchOpportunityCard(opp)));
-      } else {
-        researchServicesGrid.appendChild(el("p", "empty-state", "No services found for this stage yet."));
-      }
+      buildResearchFilterPills(matched);
+      renderResearchCards(matched);
     }
 
     function openResearchPanel(journey) {
@@ -3802,12 +3853,8 @@
         });
       }
 
-      clear(researchServicesGrid);
-      if (matched.length) {
-        matched.forEach(opp => researchServicesGrid.appendChild(buildResearchOpportunityCard(opp)));
-      } else {
-        researchServicesGrid.appendChild(el("p", "empty-state", "No services found for this topic."));
-      }
+      buildResearchFilterPills(matched);
+      renderResearchCards(matched);
     }
 
     researchTabContent.applySearchTerm = () => {};
