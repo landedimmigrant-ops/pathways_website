@@ -417,7 +417,7 @@
     container.appendChild(el("span", "footer-prompt", "Not sure where to go?"));
     const footerLinks = el("div", "footer-links");
     [
-      { label: "Start from my research stage", page: "explore" },
+      { label: "Start from my research stage", page: "explore", tab: "research" },
       { label: "Browse all opportunities", page: "explore" },
       { label: "Contact us", page: "about", anchor: "contact" }
     ].forEach((item) => {
@@ -425,6 +425,7 @@
       a.href = `#${item.page}`;
       a.addEventListener("click", (e) => {
         e.preventDefault();
+        if (item.tab) state.pendingExploreTab = item.tab;
         navigateTo(item.page, item.anchor || undefined);
       });
       footerLinks.appendChild(a);
