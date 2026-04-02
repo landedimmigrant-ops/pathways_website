@@ -1184,6 +1184,113 @@ label {
   margin-top: 10px;
 }
 
+/* ── Featured External Resources ───────────────────────────── */
+
+.learn-ext-header {
+  margin-bottom: 12px;
+}
+
+.learn-ext-intro {
+  font-size: 14px;
+  color: #777;
+  margin: 2px 0 0;
+}
+
+.learn-ext-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.learn-ext-card {
+  position: relative;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.learn-ext-card:hover {
+  border-color: var(--burgundy);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.learn-ext-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: var(--burgundy);
+}
+
+.learn-ext-card .card-time-pill {
+  margin-top: 0;
+}
+
+.learn-ext-author {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+
+.learn-ext-arrow {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 15px;
+  color: #bbb;
+  transition: color 0.15s;
+}
+
+.learn-ext-card:hover .learn-ext-arrow {
+  color: var(--burgundy);
+}
+
+.learn-ext-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.learn-ext-nav-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #333;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.learn-ext-nav-btn:hover:not(.is-disabled) {
+  border-color: var(--burgundy);
+  color: var(--burgundy);
+}
+
+.learn-ext-nav-btn.is-disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.learn-ext-counter {
+  font-size: 14px;
+  color: #888;
+}
+
+@media (max-width: 768px) {
+  .learn-ext-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── "New to impact?" collapsible ───────────────────────────── */
 
 .learn-newto-section {

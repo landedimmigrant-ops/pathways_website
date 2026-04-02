@@ -417,15 +417,14 @@
     container.appendChild(el("span", "footer-prompt", "Not sure where to go?"));
     const footerLinks = el("div", "footer-links");
     [
-      { label: "Start from my research stage", page: "explore" },
-      { label: "Browse all opportunities", page: "explore" },
+      { label: "Learn about impact", page: "learn" },
       { label: "Contact us", page: "about", anchor: "contact" }
     ].forEach((item) => {
       const a = el("a", "footer-link", item.label);
       a.href = `#${item.page}`;
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        navigateTo(item.page, item.anchor || undefined);
+        if (item.action) { item.action(); } else { navigateTo(item.page, item.anchor || undefined); }
       });
       footerLinks.appendChild(a);
     });
@@ -490,7 +489,7 @@
       {
         kicker: "By research stage",
         title: "Find support where you are",
-        desc: "Browse services matched to whether you\u2019re developing an idea, in active research, or wrapping up.",
+        desc: "Browse resources matched to whether you\u2019re developing an idea, in active research, or wrapping up.",
         action: () => { state.pendingExploreTab = "research"; navigateTo("explore"); }
       },
       {
@@ -878,7 +877,7 @@
     const popular = el("section", "popular-section");
     const popularHeader = el("div", "popular-header");
     popularHeader.appendChild(el("h2", "section-title", "Featured"));
-    popularHeader.appendChild(el("p", "popular-subtitle", "Tools and services to help you get started."));
+    popularHeader.appendChild(el("p", "popular-subtitle", "Tools and resources to help you get started."));
     popular.appendChild(popularHeader);
 
     const FEATURED_IDS = [
@@ -993,8 +992,8 @@
     container.appendChild(el("p", "lead", data.support.intro));
 
     const supportExploreBridge = el("p", "page-bridge");
-    supportExploreBridge.appendChild(document.createTextNode("Want to browse all opportunities? "));
-    const toExploreLink = el("a", "bridge-link", "Browse opportunities \u2192");
+    supportExploreBridge.appendChild(document.createTextNode("Want to browse all resources? "));
+    const toExploreLink = el("a", "bridge-link", "Browse resources \u2192");
     toExploreLink.href = "#explore";
     toExploreLink.addEventListener("click", (e) => { e.preventDefault(); navigateTo("explore"); });
     supportExploreBridge.appendChild(toExploreLink);
@@ -1005,9 +1004,9 @@
       return acc;
     }, {});
     const supportSearchConfig = data.support.search || {
-      label: "Find support and services",
-      placeholder: "Find support and services",
-      ariaLabel: "Find support and services"
+      label: "Find support and resources",
+      placeholder: "Find support and resources",
+      ariaLabel: "Find support and resources"
     };
 
     const controls = el("div", "explore-controls");
@@ -1439,36 +1438,59 @@
 
     grid.appendChild(topics);
 
-    if (data.learn.resources && Array.isArray(data.learn.resources.cards)) {
-      const resources = el("div", "learn-resources");
-      resources.appendChild(el("h2", "section-title", data.learn.resources.title));
-      const resourceGrid = el("div", "topic-grid");
-      data.learn.resources.cards.forEach((resource) => {
-        const card = el("div", "topic-card resource-card");
-        const resourceLink = el("a", "resource-link", resource.title);
-        resourceLink.href = resource.url;
-        resourceLink.target = "_blank";
-        resourceLink.rel = "noopener noreferrer";
-        const heading = el("h3", null);
-        heading.appendChild(resourceLink);
-        card.appendChild(heading);
-        if (resource.description) {
-          card.appendChild(el("p", null, resource.description));
-        }
-        const meta = el("div", "resource-meta");
-        const whyLine = el("div", "meta-line");
-        whyLine.appendChild(el("span", "meta-label", "Why use:"));
-        whyLine.appendChild(el("span", "meta-value", resource.whyUse || ""));
-        const forWhatLine = el("div", "meta-line");
-        forWhatLine.appendChild(el("span", "meta-label", "For what:"));
-        forWhatLine.appendChild(el("span", "meta-value", resource.forWhat || ""));
-        meta.appendChild(whyLine);
-        meta.appendChild(forWhatLine);
-        card.appendChild(meta);
-        resourceGrid.appendChild(card);
-      });
-      resources.appendChild(resourceGrid);
-      grid.appendChild(resources);
+    // ── Featured External Resources ────────────────────────────────────
+    if (data.explore.externalResources && data.explore.externalResources.length) {
+      const extSection = el("div", "learn-resources");
+      const extHeader = el("div", "learn-ext-header");
+      extHeader.appendChild(el("h2", "section-title", "Featured External Resources"));
+      extHeader.appendChild(el("p", "learn-ext-intro", "Highly recommended tools and frameworks from our research impact network."));
+      extSection.appendChild(extHeader);
+
+      const allRes = data.explore.externalResources;
+      const PER_SLIDE = 3;
+      let extPage = 0;
+      const totalPages = Math.ceil(allRes.length / PER_SLIDE);
+
+      const extGrid = el("div", "learn-ext-grid");
+      const extNav = el("div", "learn-ext-nav");
+
+      const renderExtPage = () => {
+        clear(extGrid);
+        const start = extPage * PER_SLIDE;
+        const slice = allRes.slice(start, start + PER_SLIDE);
+        slice.forEach((res) => {
+          const card = el("a", "learn-ext-card");
+          card.href = res.externalUrl;
+          card.target = "_blank";
+          card.rel = "noopener noreferrer";
+          card.appendChild(el("h3", null, res.title));
+          if (res.time) {
+            card.appendChild(el("span", "card-time-pill", res.time));
+          }
+          card.appendChild(el("p", "learn-ext-author", res.author));
+          card.appendChild(el("span", "learn-ext-arrow", "\u2197"));
+          extGrid.appendChild(card);
+        });
+        // Update nav
+        clear(extNav);
+        const prevBtn = el("button", "learn-ext-nav-btn" + (extPage === 0 ? " is-disabled" : ""), "\u2190");
+        prevBtn.type = "button";
+        prevBtn.disabled = extPage === 0;
+        prevBtn.addEventListener("click", () => { if (extPage > 0) { extPage--; renderExtPage(); } });
+        const counter = el("span", "learn-ext-counter", (extPage + 1) + " / " + totalPages);
+        const nextBtn = el("button", "learn-ext-nav-btn" + (extPage >= totalPages - 1 ? " is-disabled" : ""), "\u2192");
+        nextBtn.type = "button";
+        nextBtn.disabled = extPage >= totalPages - 1;
+        nextBtn.addEventListener("click", () => { if (extPage < totalPages - 1) { extPage++; renderExtPage(); } });
+        extNav.appendChild(prevBtn);
+        extNav.appendChild(counter);
+        extNav.appendChild(nextBtn);
+      };
+
+      renderExtPage();
+      extSection.appendChild(extGrid);
+      if (totalPages > 1) extSection.appendChild(extNav);
+      grid.appendChild(extSection);
     }
 
     impact101Content.appendChild(grid);
@@ -3494,7 +3516,7 @@
     const tabResearch = el("button", "explore-tab", "Research Stage");
     tabResearch.type = "button";
     tabResearch.dataset.tab = "research";
-    const tabServices = el("button", "explore-tab", "Browse Services");
+    const tabServices = el("button", "explore-tab", "All Resources");
     tabServices.type = "button";
     tabServices.dataset.tab = "browse";
     tabsBar.appendChild(tabPathways);
@@ -3583,14 +3605,14 @@
     const buildPaginationControls = (totalItems, currentPage, totalPages, onPageChange) => {
       const pager = el("div", "pagination");
       if (totalPages <= 1) {
-        const counter = el("span", "pagination-counter", "Showing " + totalItems + " of " + totalItems + " services");
+        const counter = el("span", "pagination-counter", "Showing " + totalItems + " of " + totalItems + " resources");
         pager.appendChild(counter);
         return pager;
       }
 
       const start = currentPage * CARDS_PER_PAGE + 1;
       const end = Math.min((currentPage + 1) * CARDS_PER_PAGE, totalItems);
-      const counter = el("span", "pagination-counter", "Showing " + start + "\u2013" + end + " of " + totalItems + " services");
+      const counter = el("span", "pagination-counter", "Showing " + start + "\u2013" + end + " of " + totalItems + " resources");
       pager.appendChild(counter);
 
       const nav = el("div", "pagination-nav");
@@ -3626,7 +3648,7 @@
 
     const pathwayServicesSection = el("div", "pathway-services-section");
     pathwayServicesSection.hidden = true;
-    pathwayServicesSection.appendChild(el("h3", "pathway-services-title", "Related services"));
+    pathwayServicesSection.appendChild(el("h3", "pathway-services-title", "Related resources"));
     const pathwayFilterBar = el("div", "pathway-filter-bar");
     pathwayServicesSection.appendChild(pathwayFilterBar);
     const pathwayPaginationTop = el("div", "pagination-wrapper");
@@ -3776,7 +3798,7 @@
           pathwayPaginationBottom.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
         }
       } else {
-        pathwayServicesGrid.appendChild(el("p", "empty-state", "No services found for this pathway."));
+        pathwayServicesGrid.appendChild(el("p", "empty-state", "No resources found for this pathway."));
       }
       requestAnimationFrame(() => { pathwayServicesGrid.style.minHeight = ""; });
       };
@@ -3856,7 +3878,7 @@
     const researchTabContent = el("div", "explore-tab-content");
     researchTabContent.dataset.tabContent = "research";
 
-    researchTabContent.appendChild(el("p", "lead", "Recommended support services and resources based on the stage of your research."));
+    researchTabContent.appendChild(el("p", "lead", "Recommended support and resources based on the stage of your research."));
 
     const journeys = data.start.journeys;
     let activeResearchJourneyId = null;
@@ -3959,7 +3981,7 @@
 
     // Services section — visible immediately on stage open, filtered by active chip
     const researchServicesSection = el("div", "research-services-section");
-    researchServicesSection.appendChild(el("h3", "pathway-services-title", "Related services"));
+    researchServicesSection.appendChild(el("h3", "pathway-services-title", "Related resources"));
     const researchFilterBar = el("div", "pathway-filter-bar");
     researchServicesSection.appendChild(researchFilterBar);
     const researchPaginationTop = el("div", "pagination-wrapper");
@@ -4055,7 +4077,7 @@
           researchPaginationBottom.appendChild(buildPaginationControls(items.length, page, totalPages, goToPage));
         }
       } else {
-        researchServicesGrid.appendChild(el("p", "empty-state", "No services found."));
+        researchServicesGrid.appendChild(el("p", "empty-state", "No resources found."));
       }
       requestAnimationFrame(() => { researchServicesGrid.style.minHeight = ""; });
     }
@@ -4643,7 +4665,7 @@
 
       // Sticky top bar
       const topbar = el("div", "modal-topbar");
-      const backBtn = el("button", "modal-back-btn", "\u2190 Back to Browse Services");
+      const backBtn = el("button", "modal-back-btn", "\u2190 Back to All Resources");
       backBtn.type = "button";
       backBtn.addEventListener("click", closeModal);
       topbar.appendChild(backBtn);
