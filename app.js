@@ -3,8 +3,16 @@
   if (!data) {
     return;
   }
-  // TEMP: hide Stories in navigation and page rendering without deleting feature code.
-  const STORIES_ENABLED = false;
+
+  const FORMSPREE_URL = "https://formspree.io/f/YOUR_FORM_ID";
+
+  // Google Sheets backend (prototype). When enabled, the workshops manifest is
+  // fetched from the published sheet instead of content/workshops.json.
+  const WORKSHOPS_SHEET = {
+    enabled: true,
+    sheetId: "1IQGINsUTQMWLm4IJY49dr76pMeWkIH_vj-aLnj9jD1Y",
+    tab: "workshops"
+  };
 
   const siteHeader = document.getElementById("site-header");
   const appRoot = document.getElementById("app");
@@ -275,13 +283,77 @@
     return summaryLines.join(" ");
   };
 
+  // Minimal RFC4180 CSV parser: handles quoted fields, escaped quotes, CRLF.
+  const parseCsv = (text) => {
+    const rows = [];
+    let row = [];
+    let cell = "";
+    let inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (text[i + 1] === '"') { cell += '"'; i++; } else { inQuotes = false; }
+        } else {
+          cell += ch;
+        }
+      } else if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ",") {
+        row.push(cell); cell = "";
+      } else if (ch === "\n") {
+        row.push(cell); rows.push(row); row = []; cell = "";
+      } else if (ch === "\r") {
+        // swallow
+      } else {
+        cell += ch;
+      }
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    if (!rows.length) return [];
+    const headers = rows.shift();
+    return rows
+      .filter((r) => r.some((v) => v && v.length))
+      .map((r) => headers.reduce((acc, h, idx) => { acc[h] = r[idx] || ""; return acc; }, {}));
+  };
+
+  const splitMulti = (value) => (value || "").split(/\s*;\s*/).filter(Boolean);
+
+  const fetchWorkshopsFromSheet = async () => {
+    const url = `https://docs.google.com/spreadsheets/d/${WORKSHOPS_SHEET.sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(WORKSHOPS_SHEET.tab)}`;
+    const res = await fetch(url, { cache: "no-cache" });
+    if (!res.ok) throw new Error(`Sheet request failed (${res.status})`);
+    const rows = parseCsv(await res.text());
+    return rows.map((row) => ({
+      id: row.id,
+      slug: row.slug || undefined,
+      title: row.title || row.Title,
+      format: row.format,
+      time: row.time,
+      pathways: splitMulti(row.pathways),
+      stages: splitMulti(row.stages),
+      tags: splitMulti(row.tags),
+      summary: row.summary || "",
+      featuredHome: String(row.featuredHome).toLowerCase() === "true",
+      internalRoute: row.internalRoute || undefined,
+      file: row.file || undefined,
+      libcalUrl: row.libcalUrl || "",
+      bookingUrl: row.bookingUrl || ""
+    }));
+  };
+
   const loadWorkshopContent = async () => {
     try {
-      const manifestResponse = await fetch("content/workshops.json", { cache: "no-cache" });
-      if (!manifestResponse.ok) {
-        throw new Error(`Manifest request failed (${manifestResponse.status})`);
+      let manifest;
+      if (WORKSHOPS_SHEET.enabled) {
+        manifest = await fetchWorkshopsFromSheet();
+      } else {
+        const manifestResponse = await fetch("content/workshops.json", { cache: "no-cache" });
+        if (!manifestResponse.ok) {
+          throw new Error(`Manifest request failed (${manifestResponse.status})`);
+        }
+        manifest = await manifestResponse.json();
       }
-      const manifest = await manifestResponse.json();
       if (!Array.isArray(manifest)) {
         throw new Error("Manifest must be an array");
       }
@@ -366,8 +438,7 @@
     const navItems = data.navigation
       .map((item) => (item.id === "start" ? { id: "home", label: "Home" } : item))
       .filter((item, index, list) => list.findIndex((entry) => entry.id === item.id) === index)
-      .filter((item) => ["home", "explore", "learn", "about", "stories"].includes(item.id))
-      .filter((item) => STORIES_ENABLED || item.id !== "stories");
+      .filter((item) => ["home", "explore", "learn", "about"].includes(item.id));
 
     navItems.forEach((item) => {
       const li = el("li");
@@ -424,13 +495,146 @@
       a.href = `#${item.page}`;
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        if (item.action) { item.action(); } else { navigateTo(item.page, item.anchor || undefined); }
+        navigateTo(item.page, item.anchor || undefined);
       });
       footerLinks.appendChild(a);
     });
+    const feedbackBtn = el("button", "footer-link footer-feedback-btn", "Send feedback");
+    feedbackBtn.type = "button";
+    feedbackBtn.addEventListener("click", () => openFeedbackModal());
+    footerLinks.appendChild(feedbackBtn);
     container.appendChild(footerLinks);
     routeFooter.appendChild(container);
     document.body.insertBefore(routeFooter, modalRoot);
+  };
+
+  const openFeedbackModal = () => {
+    clear(modalRoot);
+    document.body.classList.add("is-modal-open");
+
+    const overlay = el("div", "modal-overlay feedback-overlay");
+    const modal = el("div", "modal feedback-modal");
+
+    const previouslyFocused = document.activeElement;
+    const close = () => {
+      document.removeEventListener("keydown", onKeydown);
+      clear(modalRoot);
+      document.body.classList.remove("is-modal-open");
+      if (previouslyFocused && typeof previouslyFocused.focus === "function") {
+        previouslyFocused.focus();
+      }
+    };
+    const onKeydown = (e) => { if (e.key === "Escape") close(); };
+    document.addEventListener("keydown", onKeydown);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+
+    const closeBtn = el("button", "feedback-close", "\u00d7");
+    closeBtn.type = "button";
+    closeBtn.setAttribute("aria-label", "Close feedback");
+    closeBtn.addEventListener("click", close);
+    modal.appendChild(closeBtn);
+
+    modal.appendChild(el("h2", "feedback-title", "Send feedback"));
+    modal.appendChild(el("p", "feedback-intro", "What\u2019s working, what\u2019s confusing, or what\u2019s missing? Short notes are welcome."));
+
+    const form = el("form", "feedback-form");
+
+    const typeField = el("div", "feedback-field");
+    const typeLabel = el("label", null, "Type");
+    typeLabel.setAttribute("for", "feedback-type");
+    const typeSelect = el("select", "contact-form-select");
+    typeSelect.id = "feedback-type";
+    typeSelect.name = "feedbackType";
+    [
+      { value: "suggestion", label: "Suggestion" },
+      { value: "confusing", label: "Something confusing" },
+      { value: "bug", label: "Something broken" },
+      { value: "other", label: "Other" }
+    ].forEach((opt) => {
+      const o = el("option", null, opt.label);
+      o.value = opt.value;
+      typeSelect.appendChild(o);
+    });
+    typeField.appendChild(typeLabel);
+    typeField.appendChild(typeSelect);
+    form.appendChild(typeField);
+
+    const msgField = el("div", "feedback-field");
+    const msgLabel = el("label", null, "Your feedback");
+    msgLabel.setAttribute("for", "feedback-message");
+    const msgInput = el("textarea", "contact-form-textarea");
+    msgInput.id = "feedback-message";
+    msgInput.name = "message";
+    msgInput.rows = 5;
+    msgInput.required = true;
+    msgInput.placeholder = "Tell us what you noticed…";
+    msgField.appendChild(msgLabel);
+    msgField.appendChild(msgInput);
+    form.appendChild(msgField);
+
+    const emailField = el("div", "feedback-field");
+    const emailLabel = el("label", null, "Email (optional)");
+    emailLabel.setAttribute("for", "feedback-email");
+    const emailInput = el("input", "contact-form-input");
+    emailInput.type = "email";
+    emailInput.id = "feedback-email";
+    emailInput.name = "email";
+    emailInput.placeholder = "Only if you\u2019d like a reply";
+    emailField.appendChild(emailLabel);
+    emailField.appendChild(emailInput);
+    form.appendChild(emailField);
+
+    const pageField = el("input", null);
+    pageField.type = "hidden";
+    pageField.name = "page";
+    pageField.value = window.location.hash || "#home";
+    form.appendChild(pageField);
+
+    const actions = el("div", "feedback-actions");
+    const submitBtn = el("button", "btn primary", "Send feedback");
+    submitBtn.type = "submit";
+    const cancelBtn = el("button", "btn", "Cancel");
+    cancelBtn.type = "button";
+    cancelBtn.addEventListener("click", close);
+    actions.appendChild(cancelBtn);
+    actions.appendChild(submitBtn);
+    form.appendChild(actions);
+
+    const showConfirmation = () => {
+      clear(form);
+      form.className = "feedback-confirmation";
+      form.appendChild(el("p", "booking-confirm-icon", "\u2713"));
+      form.appendChild(el("h3", "booking-confirm-title", "Thanks!"));
+      form.appendChild(el("p", "booking-confirm-text", "Your feedback helps us improve Pathways."));
+      const doneBtn = el("button", "btn primary", "Close");
+      doneBtn.type = "button";
+      doneBtn.addEventListener("click", close);
+      form.appendChild(doneBtn);
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const message = msgInput.value.trim();
+      if (!message) {
+        msgInput.classList.add("is-invalid");
+        msgInput.focus();
+        return;
+      }
+      msgInput.classList.remove("is-invalid");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending\u2026";
+      const formData = new FormData(form);
+      fetch(FORMSPREE_URL, {
+        method: "POST",
+        body: formData,
+        headers: { "Accept": "application/json" }
+      }).then(showConfirmation).catch(showConfirmation);
+    });
+
+    modal.appendChild(form);
+    overlay.appendChild(modal);
+    modalRoot.appendChild(overlay);
+    msgInput.focus();
   };
 
   const buildContextBar = () => {
@@ -3020,27 +3224,6 @@
     return section;
   };
 
-  const buildStories = () => {
-    const section = el("section", "page page-stories");
-    section.dataset.page = "stories";
-
-    const container = el("div", "container");
-    container.appendChild(el("h1", null, data.stories.title));
-    container.appendChild(el("p", "lead", data.stories.intro));
-
-    const grid = el("div", "stories-grid");
-    data.stories.templates.forEach((story) => {
-      const card = el("div", "story-card");
-      card.appendChild(el("h3", null, story.title));
-      card.appendChild(el("p", "card-text", story.description));
-      grid.appendChild(card);
-    });
-
-    container.appendChild(grid);
-    section.appendChild(container);
-    return section;
-  };
-
   const buildAbout = () => {
     const section = el("section", "page page-about");
     section.dataset.page = "about";
@@ -3353,9 +3536,9 @@
         const email = emailInput.value.trim();
         const needs = needsInput.value.trim();
         if (!name || !email || !needs) {
-          nameInput.style.borderColor = name ? "" : "#c0392b";
-          emailInput.style.borderColor = email ? "" : "#c0392b";
-          needsInput.style.borderColor = needs ? "" : "#c0392b";
+          nameInput.classList.toggle("is-invalid", !name);
+          emailInput.classList.toggle("is-invalid", !email);
+          needsInput.classList.toggle("is-invalid", !needs);
           return;
         }
 
@@ -4307,10 +4490,17 @@
       explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
+    const modalCleanups = [];
     const closeModal = () => {
+      while (modalCleanups.length) modalCleanups.pop()();
       clear(modalRoot);
       document.body.classList.remove("is-modal-open");
-    }
+    };
+    const bindModalEscape = () => {
+      const onKeydown = (e) => { if (e.key === "Escape") closeModal(); };
+      document.addEventListener("keydown", onKeydown);
+      modalCleanups.push(() => document.removeEventListener("keydown", onKeydown));
+    };
 
     let currentBrowseItems = [];
     const updateResults = (items, page) => {
@@ -4481,9 +4671,6 @@
       updateResults(filtered);
     };
 
-    // Formspree endpoint — replace with your form ID from https://formspree.io
-    const FORMSPREE_URL = "https://formspree.io/f/YOUR_FORM_ID";
-
     const openBookingModal = (opp) => {
       clear(modalRoot);
       document.body.classList.add("is-modal-open");
@@ -4611,8 +4798,8 @@
         const name = nameInput.value.trim();
         const email = emailInput.value.trim();
         if (!name || !email) {
-          nameInput.style.borderColor = name ? "" : "#c0392b";
-          emailInput.style.borderColor = email ? "" : "#c0392b";
+          nameInput.classList.toggle("is-invalid", !name);
+          emailInput.classList.toggle("is-invalid", !email);
           return;
         }
 
@@ -4648,11 +4835,7 @@
       });
 
       overlay.appendChild(modal);
-
-      const onKeydown = (e) => {
-        if (e.key === "Escape") { closeModal(); document.removeEventListener("keydown", onKeydown); }
-      };
-      document.addEventListener("keydown", onKeydown);
+      bindModalEscape();
 
       modalRoot.appendChild(overlay);
       overlay.scrollTo(0, 0);
@@ -4814,12 +4997,7 @@
       }
 
       overlay.appendChild(modal);
-
-      // Keyboard close
-      const onKeydown = (e) => {
-        if (e.key === "Escape") { closeModal(); document.removeEventListener("keydown", onKeydown); }
-      };
-      document.addEventListener("keydown", onKeydown);
+      bindModalEscape();
 
       modalRoot.appendChild(overlay);
       overlay.scrollTo(0, 0);
@@ -5013,7 +5191,6 @@
     const explorePage = buildExplore();
     const toolsPage = buildTools();
     const narrativePage = buildNarrativeModule();
-    const storiesPage = STORIES_ENABLED ? buildStories() : null;
     const aboutPage = buildAbout();
 
     pages.set("home", homePage);
@@ -5024,9 +5201,6 @@
     pages.set("explore", explorePage);
     pages.set("tools", toolsPage);
     pages.set("tools-narrative", narrativePage);
-    if (STORIES_ENABLED && storiesPage) {
-      pages.set("stories", storiesPage);
-    }
     pages.set("about", aboutPage);
 
     appRoot.appendChild(homePage);
@@ -5037,9 +5211,6 @@
     appRoot.appendChild(explorePage);
     appRoot.appendChild(toolsPage);
     appRoot.appendChild(narrativePage);
-    if (STORIES_ENABLED && storiesPage) {
-      appRoot.appendChild(storiesPage);
-    }
     appRoot.appendChild(aboutPage);
   };
 
