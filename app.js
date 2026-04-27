@@ -399,16 +399,24 @@
   };
 
   const loadExploreContentFromSheets = async () => {
-    if (!SHEETS.enabled) return;
+    if (!SHEETS.enabled) {
+      console.log("[Pathways] SHEETS.enabled = false, using local data.js");
+      return;
+    }
+    // Sheet is authoritative — clear local data first so any failure is
+    // immediately visible (empty Explore page, not stale local content).
+    data.explore.opportunities = [];
+    data.explore.externalResources = [];
     try {
       const [opps, ext] = await Promise.all([
         fetchOpportunitiesFromSheet(),
         fetchExternalResourcesFromSheet()
       ]);
-      if (opps.length) data.explore.opportunities = opps;
-      if (ext.length) data.explore.externalResources = ext;
+      data.explore.opportunities = opps;
+      data.explore.externalResources = ext;
+      console.log(`[Pathways] Loaded from Google Sheet: ${opps.length} opportunities, ${ext.length} external resources`);
     } catch (err) {
-      console.error("Failed to load explore content from sheet, using local data.js", err);
+      console.error("[Pathways] FAILED to load explore content from sheet — Explore page will be empty until fixed.", err);
     }
   };
 
@@ -417,7 +425,9 @@
       let manifest;
       if (SHEETS.enabled) {
         manifest = await fetchWorkshopsFromSheet();
+        console.log(`[Pathways] Loaded from Google Sheet: ${manifest.length} workshops`);
       } else {
+        console.log("[Pathways] SHEETS.enabled = false, loading workshops from content/workshops.json");
         const manifestResponse = await fetch("content/workshops.json", { cache: "no-cache" });
         if (!manifestResponse.ok) {
           throw new Error(`Manifest request failed (${manifestResponse.status})`);
@@ -470,7 +480,7 @@
         .filter((r) => r.status === "fulfilled")
         .map((r) => r.value);
     } catch (error) {
-      console.warn("Workshop content failed to load.", error);
+      console.error("[Pathways] FAILED to load workshops — list will be empty until fixed.", error);
       content.workshops = [];
     }
   };
