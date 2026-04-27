@@ -340,6 +340,24 @@ label {
   border-radius: 2px;
 }
 
+/* ── Booking redirect modal (MS Bookings) ──────────────────── */
+
+.booking-redirect-modal {
+  max-width: 520px;
+}
+.booking-redirect-info {
+  background: #f6f7f9;
+  border-radius: 6px;
+  padding: 16px 18px;
+  margin: 16px 0 24px;
+}
+.booking-redirect-info p {
+  margin: 0;
+  color: #444;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
 /* ── Booking modal (prototype) ─────────────────────────────── */
 
 .booking-notice {

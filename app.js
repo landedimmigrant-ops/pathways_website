@@ -6,12 +6,24 @@
 
   const FORMSPREE_URL = "https://formspree.io/f/YOUR_FORM_ID";
 
-  // Google Sheets backend (prototype). When enabled, the workshops manifest is
-  // fetched from the published sheet instead of content/workshops.json.
-  const WORKSHOPS_SHEET = {
+  // Bookings integration (prototype). When enabled, opportunities with a
+  // bookingUrl show a redirect modal that opens MS Bookings in a new tab.
+  // (Iframe embed tried first — Microsoft sets X-Frame-Options: DENY on
+  // Bookings pages, so framing is impossible. New-tab is the honest UX.)
+  const BOOKINGS = {
+    enabled: true
+  };
+
+  // Google Sheets backend (prototype). When enabled, content is fetched from
+  // the published sheet at runtime instead of from local data.js / workshops.json.
+  const SHEETS = {
     enabled: true,
     sheetId: "1IQGINsUTQMWLm4IJY49dr76pMeWkIH_vj-aLnj9jD1Y",
-    tab: "workshops"
+    tabs: {
+      workshops: "workshops",
+      opportunities: "opportunities",
+      externalResources: "external-resources"
+    }
   };
 
   const siteHeader = document.getElementById("site-header");
@@ -319,11 +331,15 @@
 
   const splitMulti = (value) => (value || "").split(/\s*;\s*/).filter(Boolean);
 
-  const fetchWorkshopsFromSheet = async () => {
-    const url = `https://docs.google.com/spreadsheets/d/${WORKSHOPS_SHEET.sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(WORKSHOPS_SHEET.tab)}`;
+  const fetchSheetRows = async (tab) => {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEETS.sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;
     const res = await fetch(url, { cache: "no-cache" });
-    if (!res.ok) throw new Error(`Sheet request failed (${res.status})`);
-    const rows = parseCsv(await res.text());
+    if (!res.ok) throw new Error(`Sheet request failed for ${tab} (${res.status})`);
+    return parseCsv(await res.text());
+  };
+
+  const fetchWorkshopsFromSheet = async () => {
+    const rows = await fetchSheetRows(SHEETS.tabs.workshops);
     return rows.map((row) => ({
       id: row.id,
       slug: row.slug || undefined,
@@ -342,10 +358,64 @@
     }));
   };
 
+  const mapOpportunityRow = (row) => {
+    const stages = splitMulti(row.stage);
+    const record = {
+      id: row.id,
+      title: row.title,
+      category: row.category || "",
+      stage: stages.length > 1 ? stages : (stages[0] || ""),
+      format: row.format || "",
+      time: row.time || "",
+      pathway: splitMulti(row.pathway),
+      tags: splitMulti(row.tags),
+      summary: row.summary || "",
+      details: {
+        who: row.detailsWho || "",
+        what: row.detailsWhat || "",
+        outcomes: row.detailsOutcomes || ""
+      }
+    };
+    if (row.author) record.author = row.author;
+    if (row.externalUrl) record.externalUrl = row.externalUrl;
+    if (row.libcalUrl) record.libcalUrl = row.libcalUrl;
+    if (row.bookingUrl) record.bookingUrl = row.bookingUrl;
+    return record;
+  };
+
+  const fetchOpportunitiesFromSheet = async () => {
+    const rows = await fetchSheetRows(SHEETS.tabs.opportunities);
+    return rows.map(mapOpportunityRow);
+  };
+
+  const fetchExternalResourcesFromSheet = async () => {
+    const rows = await fetchSheetRows(SHEETS.tabs.externalResources);
+    return rows.map((row) => {
+      const rec = mapOpportunityRow(row);
+      // External resources use stage as array even for single values
+      if (!Array.isArray(rec.stage)) rec.stage = rec.stage ? [rec.stage] : [];
+      return rec;
+    });
+  };
+
+  const loadExploreContentFromSheets = async () => {
+    if (!SHEETS.enabled) return;
+    try {
+      const [opps, ext] = await Promise.all([
+        fetchOpportunitiesFromSheet(),
+        fetchExternalResourcesFromSheet()
+      ]);
+      if (opps.length) data.explore.opportunities = opps;
+      if (ext.length) data.explore.externalResources = ext;
+    } catch (err) {
+      console.error("Failed to load explore content from sheet, using local data.js", err);
+    }
+  };
+
   const loadWorkshopContent = async () => {
     try {
       let manifest;
-      if (WORKSHOPS_SHEET.enabled) {
+      if (SHEETS.enabled) {
         manifest = await fetchWorkshopsFromSheet();
       } else {
         const manifestResponse = await fetch("content/workshops.json", { cache: "no-cache" });
@@ -4671,7 +4741,52 @@
       updateResults(filtered);
     };
 
+    const openBookingRedirect = (opp) => {
+      clear(modalRoot);
+      document.body.classList.add("is-modal-open");
+      const overlay = el("div", "modal-overlay");
+
+      const topbar = el("div", "modal-topbar");
+      const backBtn = el("button", "modal-back-btn", "\u2190 Back");
+      backBtn.type = "button";
+      backBtn.addEventListener("click", closeModal);
+      topbar.appendChild(backBtn);
+      overlay.appendChild(topbar);
+
+      const modal = el("div", "modal booking-redirect-modal");
+      modal.appendChild(el("h1", "modal-title", "Book: " + opp.title));
+      if (opp.summary) modal.appendChild(el("p", "booking-subtitle", opp.summary));
+
+      const info = el("div", "booking-redirect-info");
+      info.appendChild(el("p", null, "Booking happens on Microsoft Bookings. You\u2019ll pick a time, enter your details, and get a Teams link by email."));
+      modal.appendChild(info);
+
+      const actions = el("div", "booking-actions");
+      const openBtn = el("a", "btn primary", "Open booking \u2197");
+      openBtn.href = opp.bookingUrl;
+      openBtn.target = "_blank";
+      openBtn.rel = "noopener";
+      actions.appendChild(openBtn);
+
+      const cancelBtn = el("button", "btn", "Cancel");
+      cancelBtn.type = "button";
+      cancelBtn.addEventListener("click", closeModal);
+      actions.appendChild(cancelBtn);
+
+      modal.appendChild(actions);
+
+      overlay.appendChild(modal);
+      bindModalEscape();
+      modalRoot.appendChild(overlay);
+      overlay.scrollTo(0, 0);
+    };
+
     const openBookingModal = (opp) => {
+      if (BOOKINGS.enabled && opp && opp.bookingUrl) {
+        window.open(opp.bookingUrl, "_blank", "noopener");
+        return;
+      }
+
       clear(modalRoot);
       document.body.classList.add("is-modal-open");
       const overlay = el("div", "modal-overlay");
@@ -4687,11 +4802,11 @@
 
       // Prototype notice
       const notice = el("div", "booking-notice");
-      notice.innerHTML = '<strong>Prototype</strong> \u2014 This platform is in beta. When live, you\u2019ll be able to book consultations, register for workshops, and manage your sessions directly. For now, your feedback helps us build something better.';
+      notice.innerHTML = '<strong>Prototype</strong> \u2014 This platform is in beta. When live, you\u2019ll be able to book consultations, register for workshops, and manage your sessions directly. For now, we\u2019ll follow up by email to confirm.';
       modal.appendChild(notice);
 
       // Title
-      modal.appendChild(el("h1", "modal-title", "Leave your feedback"));
+      modal.appendChild(el("h1", "modal-title", opp ? "Request this service" : "Request a consultation"));
       if (opp) {
         modal.appendChild(el("p", "booking-subtitle", "Re: " + opp.title));
       }
@@ -4719,7 +4834,7 @@
       const intentOptions = [
         { value: "interested", label: "I\u2019m interested in this service" },
         { value: "exploring", label: "I\u2019m exploring what\u2019s available" },
-        { value: "feedback", label: "I want to give feedback on the website" }
+        { value: "timing", label: "I want to check timing or availability" }
       ];
       intentOptions.forEach((opt, i) => {
         const radioWrap = el("div", "booking-radio");
@@ -4765,22 +4880,22 @@
       emailField.appendChild(emailInput);
       form.appendChild(emailField);
 
-      // Feedback / Comments
+      // Context / questions
       const commentField = el("div", "booking-field");
-      const commentLabel = el("label", null, "Feedback (optional)");
-      commentLabel.setAttribute("for", "booking-feedback");
+      const commentLabel = el("label", null, "Questions or context (optional)");
+      commentLabel.setAttribute("for", "booking-message");
       commentField.appendChild(commentLabel);
       const commentTextarea = el("textarea", "booking-textarea");
-      commentTextarea.id = "booking-feedback";
-      commentTextarea.name = "feedback";
-      commentTextarea.placeholder = "Tell us what you think of the website, what\u2019s working, what could be better\u2026";
+      commentTextarea.id = "booking-message";
+      commentTextarea.name = "message";
+      commentTextarea.placeholder = "Anything we should know about your project, timing, or what you\u2019re hoping to get out of this?";
       commentTextarea.rows = 4;
       commentField.appendChild(commentTextarea);
       form.appendChild(commentField);
 
       // Actions (inside form so submit button triggers form submit)
       const actions = el("div", "booking-actions");
-      const submitBtn = el("button", "btn primary", "Submit feedback");
+      const submitBtn = el("button", "btn primary", "Send request");
       submitBtn.type = "submit";
       actions.appendChild(submitBtn);
 
@@ -4818,9 +4933,9 @@
           form.appendChild(el("p", "booking-confirm-icon", "\u2713"));
           form.appendChild(el("h2", "booking-confirm-title", "Thank you, " + name + "!"));
           if (res.ok) {
-            form.appendChild(el("p", "booking-confirm-text", "Your feedback has been received." + (opp ? " We\u2019ll follow up about \u201c" + opp.title + "\u201d at " + email + "." : " We appreciate you helping us improve.")));
+            form.appendChild(el("p", "booking-confirm-text", "Your request has been received." + (opp ? " We\u2019ll follow up about \u201c" + opp.title + "\u201d at " + email + "." : " We\u2019ll be in touch at " + email + " shortly.")));
           } else {
-            form.appendChild(el("p", "booking-confirm-text", "Your feedback was saved locally. We\u2019ll connect the form once the platform is fully live."));
+            form.appendChild(el("p", "booking-confirm-text", "Your request was saved locally. We\u2019ll connect the form once the platform is fully live."));
           }
           actions.hidden = true;
         }).catch(() => {
@@ -4829,7 +4944,7 @@
           form.className = "booking-confirmation";
           form.appendChild(el("p", "booking-confirm-icon", "\u2713"));
           form.appendChild(el("h2", "booking-confirm-title", "Thank you, " + name + "!"));
-          form.appendChild(el("p", "booking-confirm-text", "Your feedback was saved locally. Once the form endpoint is connected, submissions will be delivered automatically."));
+          form.appendChild(el("p", "booking-confirm-text", "Your request was saved locally. Once the form endpoint is connected, submissions will be delivered automatically."));
           actions.hidden = true;
         });
       });
@@ -5381,7 +5496,10 @@
   };
 
   const init = async () => {
-    await loadWorkshopContent();
+    await Promise.all([
+      loadWorkshopContent(),
+      loadExploreContentFromSheets()
+    ]);
     await loadPathwaysVisionContent();
     buildHeader();
     buildContextBar();

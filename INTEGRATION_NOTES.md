@@ -34,12 +34,55 @@ Outcome: **blocked by tenant policy.**
 - Working Power Automate scheduled flow exists (generates `workshops.json` to OneDrive daily).
 - The file is not publicly reachable — dead end for runtime fetch.
 
+### Attempt 3 — Google Sheets + gviz CSV endpoint ✅ WORKING
+
+Plan: import `workshops.csv` into a Google Sheet tab → share "Anyone with the link" → fetch from the site via Google's gviz CSV endpoint → parse client-side.
+
+Outcome: **works.**
+- Sheet ID: `1IQGINsUTQMWLm4IJY49dr76pMeWkIH_vj-aLnj9jD1Y`, tab: `workshops`
+- Endpoint: `https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=<TAB>`
+- No third-party proxy, no auth, no licensing, no tenant blockers
+- Edits in the sheet show up on the site within ~1 min after a hard refresh
+- Note: must run the site via `http://` (e.g., `python3 -m http.server`), not `file://` — browsers block cross-origin fetch from `file://`
+
+### Implementation
+
+- `WORKSHOPS_SHEET` config block in `app.js` (enabled flag, sheet ID, tab name)
+- `parseCsv()` — minimal RFC4180 parser
+- `fetchWorkshopsFromSheet()` — returns the same manifest shape the existing loader expects
+- `loadWorkshopContent()` — branches on the flag; falls back to `content/workshops.json` if disabled
+- Markdown bodies still load from local `content/workshops/*.md` via the `file` column
+
+### Attempt 5 — Bookings via MS Bookings (Phase 2) ✅ WORKING (new-tab redirect)
+
+Plan: put a per-service Bookings URL in the sheet's `bookingUrl` column; clicking the card's Book button opens it.
+
+Outcome: **works as a new-tab redirect.** Iframe embed was the intended UX but MS Bookings sets `X-Frame-Options: DENY`, which no iframe trick gets around.
+
+- Smoke test used Prem's existing **Bookings with Me** "15 minutes meeting" page (`/bookwithme/user/...?anonymous`). Anonymous booking works — no sign-in required.
+- First cut tried iframe-with-fallback; iframe returned blank because X-Frame-Options blocks rendering but still fires the `load` event (so timeout-based detection didn't fire). Removed in favor of direct new-tab open.
+- Final UX: click **Book** on a card with `bookingUrl` → `window.open(bookingUrl, "_blank", "noopener")` → MS Bookings opens in new tab → user picks a time → Teams invite mailed.
+- Rows without `bookingUrl` keep the prototype Formspree "request" form.
+- `BOOKINGS.enabled` flag in `app.js` to kill-switch if needed.
+
+### Attempt 4 — All three content types on the same sheet ✅ WORKING
+
+Plan: add `opportunities` and `external-resources` tabs alongside `workshops`, fetch all three in parallel before first render.
+
+Outcome: **works, edits show up instantly after hard refresh.**
+- `WORKSHOPS_SHEET` config replaced by broader `SHEETS` config (same sheet ID, `tabs: { workshops, opportunities, externalResources }`)
+- `fetchSheetRows(tab)` shared helper
+- `mapOpportunityRow()` rehydrates `details.{who,what,outcomes}` from flat CSV columns, splits `;`-delimited pathway/tags/stage
+- `loadExploreContentFromSheets()` mutates `data.explore.opportunities` and `data.explore.externalResources` before `buildPages()` runs — no page-building code had to change
+- External resources keep `stage` as an array (matches existing shape); opportunities use single string unless multi-value
+- Graceful fallback to local `data.js` on fetch failure
+
 ## Remaining paths
 
-1. **Google Sheets** — publicly publishable, free JSON via `opensheet.elk.sh`. Skips tenant fight. Coordinator uses familiar spreadsheet UI.
-2. **MS Lists + manual CSV export** — coordinator exports from the list toolbar when content changes; drops the file in the repo. No automation; fine if content changes weekly.
-3. **IT ticket to Concordia** — request anonymous sharing enabled on one OneDrive folder, OR a Team SharePoint site with public access. Slow, uncertain.
-4. **Azure Static Web App / Function as proxy** — overkill for prototype.
+1. **MS Lists** — parked unless Concordia IT opens up anonymous sharing or provisions a Team SharePoint site.
+2. **In-page booking (no new tab)** — see [BOOKINGS_PLAN.md](BOOKINGS_PLAN.md) "Staying on the page" section. Three realistic options documented; pick one when ready.
+3. **Coordinator UX** — sheet is functional but raw; consider a simple form (Google Form → sheet) or column validation for non-dev editors.
+4. **Shared Bookings page** — currently using Prem's personal *Bookings with Me* URL. Long-term a shared booking mailbox (owned by the coordinator, not Prem) is cleaner.
 
 ## Current CSVs
 
