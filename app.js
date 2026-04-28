@@ -53,6 +53,18 @@
     return node;
   };
 
+  // Provider line with a small "OFFERED BY" label and the provider name as the value.
+  const providerLine = (provider) => {
+    const node = document.createElement("p");
+    node.className = "card-provider";
+    const label = document.createElement("span");
+    label.className = "card-provider-label";
+    label.textContent = "Offered by";
+    node.appendChild(label);
+    node.appendChild(document.createTextNode(provider));
+    return node;
+  };
+
   const formatBadge = (format) => {
     const fmt = (format || "").toLowerCase();
     let key, iconSvg;
@@ -4228,13 +4240,14 @@
           titleRow.appendChild(formatBadge(opp.format));
           card.appendChild(titleRow);
           if (opp.provider) {
-            card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
-          }
-          if (opp.summary) {
-            card.appendChild(el("p", "card-text", opp.summary));
+            card.appendChild(providerLine(opp.provider));
           }
           const tagList = el("div", "tag-list");
           (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
+          if (tagList.childNodes.length) card.appendChild(tagList);
+          if (opp.summary) {
+            card.appendChild(el("p", "card-text", opp.summary));
+          }
 
           const cardActions = el("div", "card-actions");
           if (opp.sourceType === "tool") {
@@ -4258,10 +4271,8 @@
             detailBtn.addEventListener("click", () => openModal(opp));
             cardActions.appendChild(detailBtn);
           }
-          // Layout order: actions float to the right just under the body,
-          // tags sit below the actions left-aligned.
+          // Layout order: tags + body up top, actions float right at the bottom.
           card.appendChild(cardActions);
-          card.appendChild(tagList);
           pathwayServicesGrid.appendChild(card);
         });
         if (totalPages > 1) {
@@ -4365,7 +4376,7 @@
       titleRow.appendChild(formatBadge(opp.format));
       card.appendChild(titleRow);
       if (opp.provider) {
-        card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
+        card.appendChild(providerLine(opp.provider));
       }
       if (opp.summary) {
         card.appendChild(el("p", "card-text", opp.summary));
@@ -4846,10 +4857,7 @@
         titleRow.appendChild(formatBadge(opp.format));
         card.appendChild(titleRow);
         if (opp.provider) {
-          card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
-        }
-        if (opp.summary) {
-          card.appendChild(el("p", "card-text", opp.summary));
+          card.appendChild(providerLine(opp.provider));
         }
 
         const tagList = el("div", "tag-list");
@@ -4862,6 +4870,11 @@
         displayTags.forEach((tag) => {
           tagList.appendChild(el("span", "tag", tag));
         });
+        if (tagList.childNodes.length) card.appendChild(tagList);
+
+        if (opp.summary) {
+          card.appendChild(el("p", "card-text", opp.summary));
+        }
 
         const actions = el("div", "card-actions");
         if (opp.sourceType === "tool") {
@@ -4889,9 +4902,8 @@
           actions.appendChild(bookButton);
           actions.appendChild(detailButton);
         }
-        // Layout order: actions float right just under the body, tags below.
+        // Layout order: tags + body up top, actions float right at the bottom.
         card.appendChild(actions);
-        card.appendChild(tagList);
 
         resultsGrid.appendChild(card);
       });
@@ -4921,7 +4933,7 @@
         const card = el("div", "opportunity-card rec-card");
         card.appendChild(el("h3", null, opp.title));
         if (opp.provider) {
-          card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
+          card.appendChild(providerLine(opp.provider));
         }
         if (opp.summary) {
           card.appendChild(el("p", "card-text", opp.summary));

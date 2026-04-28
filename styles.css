@@ -2231,11 +2231,19 @@ label {
   line-height: 1.4;
 }
 .card-provider {
-  margin: 0 0 4px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #666;
-  letter-spacing: 0.01em;
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #444;
+  line-height: 1.4;
+}
+.card-provider-label {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  margin-right: 8px;
 }
 .opportunity-card h3 {
   margin-bottom: 8px;
@@ -2275,6 +2283,15 @@ label {
   flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 12px;
+}
+
+/* When tags sit in the metadata cluster, dial them down a touch */
+.opportunity-card .tag-list {
+  margin: 0 0 12px;
+}
+.opportunity-card .tag-list .tag {
+  font-size: 12px;
+  padding: 2px 8px;
 }
 
 .pill,
