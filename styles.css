@@ -2203,21 +2203,16 @@ label {
   margin: 16px 0 12px;
 }
 
-/* Header strip: format badge on the left, time pill on the right, title below.
-   Keeps badge anchored top-left so card layout stays consistent regardless of
-   title length. */
+/* Header strip: format badge and time pill grouped together at top-left,
+   title below. Keeps card layout consistent regardless of title length. */
 .card-header-meta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   margin-bottom: 10px;
 }
 .card-header-meta .format-badge {
   margin-bottom: 0;
-}
-.card-header-meta .card-time-pill {
-  margin-left: auto; /* pushes time pill right when no badge is present */
 }
 
 /* Legacy rule kept for non-opportunity-card uses (e.g. modal). */
