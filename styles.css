@@ -2203,18 +2203,29 @@ label {
   margin: 16px 0 12px;
 }
 
+/* Header strip: format badge on the left, time pill on the right, title below.
+   Keeps badge anchored top-left so card layout stays consistent regardless of
+   title length. */
+.card-header-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.card-header-meta .format-badge {
+  margin-bottom: 0;
+}
+.card-header-meta .card-time-pill {
+  margin-left: auto; /* pushes time pill right when no badge is present */
+}
+
+/* Legacy rule kept for non-opportunity-card uses (e.g. modal). */
 .card-title-row {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-}
-
-/* Badge sits at the far right of the title row, balancing the card */
-.card-title-row .format-badge {
-  margin-left: auto;
-  flex-shrink: 0;
-  margin-bottom: 0;
 }
 .card-title-row h3 {
   margin: 0;
@@ -2246,7 +2257,12 @@ label {
   margin-right: 8px;
 }
 .opportunity-card h3 {
+  margin-top: 0;
   margin-bottom: 8px;
+}
+.opportunity-card .card-title {
+  margin: 0 0 8px;
+  line-height: 1.3;
 }
 
 .page-home .upcoming-grants-section .opportunity-card h3,

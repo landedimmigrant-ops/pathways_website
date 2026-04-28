@@ -4254,14 +4254,16 @@
 
           pageItems.forEach((opp) => {
           const card = el("div", "opportunity-card");
-          const titleRow = el("div", "card-title-row");
-          titleRow.appendChild(el("h3", null, opp.title));
+          // Header strip: format badge on the left, time pill on the right.
+          const headerMeta = el("div", "card-header-meta");
+          headerMeta.appendChild(formatBadge(opp.format));
           if (opp.time) {
             const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
-            titleRow.appendChild(el("span", "card-time-pill", displayTime));
+            headerMeta.appendChild(el("span", "card-time-pill", displayTime));
           }
-          titleRow.appendChild(formatBadge(opp.format));
-          card.appendChild(titleRow);
+          card.appendChild(headerMeta);
+          // Title gets its own row, full width, free to wrap.
+          card.appendChild(el("h3", "card-title", opp.title));
           if (opp.provider) {
             card.appendChild(providerLine(opp.provider));
           }
@@ -4390,14 +4392,16 @@
     // Helper: build one opportunity card for the research panel
     function buildResearchOpportunityCard(opp) {
       const card = el("div", "opportunity-card");
-      const titleRow = el("div", "card-title-row");
-      titleRow.appendChild(el("h3", null, opp.title));
+      // Header strip: format badge on the left, time pill on the right.
+      const headerMeta = el("div", "card-header-meta");
+      headerMeta.appendChild(formatBadge(opp.format));
       if (opp.time) {
         const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
-        titleRow.appendChild(el("span", "card-time-pill", displayTime));
+        headerMeta.appendChild(el("span", "card-time-pill", displayTime));
       }
-      titleRow.appendChild(formatBadge(opp.format));
-      card.appendChild(titleRow);
+      card.appendChild(headerMeta);
+      // Title gets its own row, full width, free to wrap.
+      card.appendChild(el("h3", "card-title", opp.title));
       if (opp.provider) {
         card.appendChild(providerLine(opp.provider));
       }
@@ -4895,14 +4899,16 @@
 
       pageItems.forEach((opp) => {
         const card = el("div", "opportunity-card");
-        const titleRow = el("div", "card-title-row");
-        titleRow.appendChild(el("h3", null, opp.title));
+        // Header strip: format badge on the left, time pill on the right.
+        const headerMeta = el("div", "card-header-meta");
+        headerMeta.appendChild(formatBadge(opp.format));
         if (opp.time) {
           const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
-          titleRow.appendChild(el("span", "card-time-pill", displayTime));
+          headerMeta.appendChild(el("span", "card-time-pill", displayTime));
         }
-        titleRow.appendChild(formatBadge(opp.format));
-        card.appendChild(titleRow);
+        card.appendChild(headerMeta);
+        // Title gets its own row, full width, free to wrap.
+        card.appendChild(el("h3", "card-title", opp.title));
         if (opp.provider) {
           card.appendChild(providerLine(opp.provider));
         }
