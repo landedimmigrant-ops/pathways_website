@@ -1,19 +1,72 @@
 # Pathways SPA — Context Summary (Restart Notes)
 
-Last updated: 2026-03-09
+Last updated: 2026-04-28
 
-## What This Repo Is
-- Static single-page app (SPA), no build step, no backend.
+## What this repo is
+
+- Static single-page app, no build step, no backend.
 - Core files: `index.html`, `styles.css`, `app.js`, `data.js`.
-- Content files: workshop manifest + markdown in `content/workshops/`, plus `pathways_to_impact.md` for the vision page.
+- Content layered on top: Google Sheet (authoritative metadata), Google Docs (workshop bodies), Microsoft Bookings (live booking).
+- Local fallback content remains in `data.js`, `content/workshops/*.md`, `content/workshops.json`, and `pathways_to_impact.md`.
 
-## Local Run (Important)
-- `fetch()` is used for markdown/json content, so opening with `file://` may fail.
-- Run from project root:
-  - `python3 -m http.server 8000`
-  - open `http://localhost:8000`
+## Branches
 
-## Current Routes
+- **`integration-prototype`** — working branch with the sheet/doc/bookings integrations live. Deployed via GitHub Pages.
+- **`static-resource-update`** — older static-only build. Reference only.
+- **`main`** — dormant.
+
+## Local run
+
+```
+python3 -m http.server 8000
+open http://localhost:8000
+```
+
+`fetch()` is used for content, so `file://` will not work. Cross-origin fetches to Google Sheets and Google Docs require an `http://` origin.
+
+## Content architecture
+
+### Google Sheet (single source of truth for metadata)
+
+- Sheet ID: `1IQGINsUTQMWLm4IJY49dr76pMeWkIH_vj-aLnj9jD1Y`
+- Three tabs: `workshops`, `opportunities`, `external-resources`
+- Endpoint: `https://docs.google.com/spreadsheets/d/<id>/gviz/tq?tqx=out:csv&sheet=<tab>` (no auth, public read, CORS-friendly)
+- Columns common to all three tabs: `id`, `title`, `summary`, `format`, `time`, `pathway`, `stage`, `tags`, `provider`, `bookingUrl`, `ownerName`, `ownerEmail`
+- Workshops tab adds: `slug`, `pathways`, `stages`, `featuredHome`, `internalRoute`, `file`, `docUrl`
+- Opportunities/external tabs add: `category`, `author`, `detailsWho`, `detailsWhat`, `detailsOutcomes`, `externalUrl`
+- Multi-value columns use `;` separator (e.g. `Communications; Policy`)
+
+### Google Docs (workshop body content)
+
+- One published Doc per workshop. URL format: `https://docs.google.com/document/d/e/<long-id>/pub`
+- Pasted into the `docUrl` column of the workshops sheet row
+- The site fetches the Doc, walks the DOM, rebuilds with allowlisted structural tags, auto-promotes plain-paragraph section labels to `<h2>`, merges soft-broken paragraphs, drops redundant Title/Tags lines
+- Loader prefers `docUrl` over local `.md` fallback — gradual migration, row-by-row
+
+### Microsoft Bookings (live booking)
+
+- Per-service URL pasted into `bookingUrl` column
+- Click "Book" / "Register" → `window.open(bookingUrl, "_blank", "noopener")` → MS Bookings opens in new tab → user picks time → Teams invite mailed
+- Iframe embed not viable (`X-Frame-Options: DENY`)
+- Currently using Prem's personal Bookings-with-Me URL; planned migration to a shared Bookings page
+
+### Feature flags (in `app.js`)
+
+- `SHEETS.enabled` — flip to `false` to fall back to local `data.js` and `content/workshops.json`
+- `BOOKINGS.enabled` — flip to `false` to suppress MS Bookings redirect (returns to the Formspree request form)
+
+### Failure modes (visible by design)
+
+- Sheet fetch fails → Explore page is empty, console logs `[Pathways] FAILED to load explore content from sheet`. No silent fallback to `data.js`.
+- Doc fetch fails for a single row → that row's body falls back to local `.md` (if any), console logs `[Pathways] Workshop body failed to load`. Other rows unaffected.
+- Doc fetch fails AND no local `.md` → row drops out of the workshop list.
+
+### Known gap: no staging environment
+
+Edits to the sheet (and to published Docs) go live within ~1–5 minutes. There is no preview, no review gate, no rollback. See `INTEGRATION_NOTES.md` "Known gaps" for the realistic paths to add a staging layer when volume warrants it. Lightest is a `status` column with `?preview=1` on the URL.
+
+## Current routes
+
 - `#home`
 - `#start`
 - `#learn`
@@ -22,69 +75,62 @@ Last updated: 2026-03-09
 - `#about`
 - `#pathways-vision` (not in main nav)
 
-## Deep Linking Behavior
-- `#home?pathway=<key>` opens pathway modal on Home.
-- `#explore?pathway=<key>` opens Explore and applies pathway filter.
-- `#explore?workshop=<id>` opens Explore and focuses that workshop via search.
+Deep linking:
+- `#home?pathway=<key>` — opens pathway modal on Home
+- `#explore?pathway=<key>` — opens Explore with pathway filter applied
+- `#explore?workshop=<id>` — opens Explore and focuses that workshop via search
 
-## Header + Footer Behavior
-- Header nav shows: Home, Learn, Explore, Stories, About.
-- Site title remains “Pathways to Impact”.
-- Footer helper link “Lost? Start with your research stage →” appears on all routes except Home.
+## Header + footer behaviour
 
-## Home Page (Current Structure)
-Order is:
+- Nav: Home · Learn · Explore · Stories · About
+- Site title: "Pathways to Impact"
+- Footer "Lost? Start with your research stage →" appears on all routes except Home
+
+## Home page structure
+
 1. Intro text block
-2. Pathway boxes grid (moved from Explore)
-   - 7 pathway color blocks
-   - Academic pathway is full-width row; remaining boxes are 3x2
-   - clicking a pathway opens modal (X/ESC/backdrop close, prev/next supported)
-   - single CTA button below grid: “Explore Pathways →”
-3. “Where are you in your research journey?” 2x2 stage grid
+2. Pathway boxes grid (Academic full-width row + 6 boxes 3×2; click → modal)
+3. "Where are you in your research journey?" 2×2 stage grid
 4. Upcoming grants (3 tiles)
-5. Popular support (3 tiles; uses featured workshops when available)
+5. Popular support (3 tiles, uses featured workshops when available)
 
-## Explore Page (Current)
-- Focused on opportunity/workshop explorer only.
-- Search + filters (stage, category, format, time, pathway).
-- Results cards with metadata, tags, and detail modal.
-- Workshop cards can show `Register` when `libcalUrl` exists; otherwise `View details`.
+## Explore page
 
-## Learn Page
-- Includes:
-  - What is research impact
-  - Myths vs realities
-  - Focus topics cards
-  - Recommended Resources section (placeholder currently includes Research Impact Canada)
+- Search + filters (stage, category, format, time, pathway)
+- Cards show format badge, title, time pill, "Offered by …" provider line, summary, tags
+- Workshop cards: click → modal with rendered Doc body + bottom CTA
+- Bottom modal CTA: "Open resource" (external links) / "Book a consultation" (consults) / "Register for this workshop" (workshops) / "Express interest" (everything else). Workshops + consultations route through `openBookingModal`, which opens MS Bookings if `bookingUrl` is set, else shows the request form.
+
+## Learn page
+
+- What is research impact
+- Myths vs realities
+- Focus topics cards
+- Recommended Resources section
 
 ## About + Vision
-- About contains:
-  - “About Pathways” with concise paragraph
-  - “Read the Pathways Vision →” link + one-line description
-  - “Partners across the university” accordion with nested partner accordions
-  - “Contact Us” section at bottom
-- `#pathways-vision` loads full text from `pathways_to_impact.md` and renders longform view with progressive expanders for very long sections.
 
-## File-Based Workshop Content
-- Manifest: `content/workshops.json`
-- Workshop files: `content/workshops/*.md`
-- Loader in `app.js` fetches manifest + markdown, parses minimal markdown, and renders workshop content.
-- Manifest regeneration script:
-  - `python3 scripts/generate_workshops_manifest.py`
+- About: short intro, Pathways Vision link, partners accordion, contact section
+- `#pathways-vision`: long-form view rendered from `pathways_to_impact.md` with progressive expanders for long sections
 
-## Data Model Notes
-- `data.js` is still the primary site content source.
-- `units[]` dictionary exists for partner metadata and short codes.
-- `workshopUnitTags` exists and is applied to workshop cards/tags.
+## Data model notes
 
-## Styling Notes
-- Concordia-aligned visual system with official palette utilities.
-- Pathway boxes are color-coded and hover to white.
-- Neutral clickable tiles use off-white default (`#F8F8F8`) and white on hover/focus.
-- Focus-visible styles are enabled.
+- `data.js` is the fallback content source; cleared at runtime by `loadExploreContentFromSheets()` so the sheet is authoritative
+- `units[]` dictionary holds partner metadata + short codes
+- `workshopUnitTags` is applied to workshop cards/tags
 
-## Git / Deployment State
-- Branch: `main`
+## Styling notes
+
+- Concordia palette utilities
+- Pathway boxes color-coded; hover to white
+- Neutral clickable tiles: off-white `#F8F8F8` default, white on hover/focus
+- Focus-visible styles enabled
+- `.card-provider` sits above `.card-text` on every card
+
+## Git / deployment
+
+- Working branch: `integration-prototype`
+- Deployed via GitHub Pages (source: same branch, root)
+- Live URL: https://landedimmigrant-ops.github.io/pathways_website/
+- Cache version: `?v=N` on `styles.css`, `data.js`, `app.js` in `index.html` — bump on every release
 - Remote: `origin -> https://github.com/landedimmigrant-ops/pathways_website.git`
-- Local history includes: `first draft`, `draft 2`, and merge of `origin/main`.
-- Can deploy via GitHub Pages (main/root) or Netlify drag-and-drop.

@@ -2,13 +2,20 @@
 
 Plan for Phase 2 of the content/backend integration. Phase 1 (Google Sheets as CMS) is done.
 
-## Status (2026-04-23)
+## Status (2026-04-28)
 
-**Working:** new-tab redirect. Click Book → Bookings opens in a new tab → user picks a time → confirmation emailed. One click, no intermediate screens.
+**Working:** new-tab redirect. Click Book → Bookings opens in a new tab → user picks a time → confirmation emailed. One click, no intermediate screens. Live for `opp-impact-framing` (Prem's personal *Bookings with Me* URL); other rows fall through to the Formspree request form.
 
-**Not working:** in-page iframe embed. MS Bookings sets `X-Frame-Options: DENY` — no way around it at the Bookings side.
+**Not working / not viable:** in-page iframe embed. MS Bookings sets `X-Frame-Options: DENY` — no way around it at the Bookings side.
 
-**Next:** decide whether the new-tab UX is good enough, or invest in a real in-page flow (see "Staying on the page" below).
+**Decisions made since the original plan:**
+- MS Bookings is the chosen booking provider (not LibCal — that subscription was never activated).
+- The new-tab redirect is the production UX for now. No appetite for a Graph API custom UI unless the redirect proves painful at volume.
+
+**Next:**
+1. Set up a shared Bookings page (e.g. `pathways-bookings@concordia` mailbox) so URLs survive staff turnover. Currently dependent on Prem's personal Bookings calendar.
+2. Add custom questions to each service for usage tracking (department, career stage, pathway).
+3. Stand up Power Automate → Google Sheet logging to the existing sheet's `bookings_log` tab.
 
 ## Goal
 
@@ -214,12 +221,12 @@ What we can't easily do without more infra:
 | Per-service URL format changes | Low | URL is stored in the sheet, coordinator updates it — no code change. |
 | Non-Concordia researcher tries to book (external collaborator) | Low | They're not the audience. If it comes up, coordinator can book on their behalf. |
 
-## Questions before we start
+## Settled questions
 
-1. Who will own the Bookings calendar(s)? One shared `pathways@concordia` mailbox, or each advisor's own calendar feeding into it?
-2. Is every service bookable, or only some (e.g. consultations yes, external resources no)? Current assumption: only rows with a non-empty `bookingUrl` are bookable.
-3. Are workshops (group/1:many) and consultations (1:1) both in scope for Phase 2, or consultations first?
-4. LibCal vs Bookings — is this the final call, or still comparing? LibCal has its own embed pattern; the same hybrid architecture would work for either.
+1. **Calendar ownership** — short-term: each advisor's own *Bookings with Me* (currently just Prem). Medium-term: one shared `pathways-bookings@concordia` mailbox with advisors as staff. Switch happens when advisor #2 joins.
+2. **Which services are bookable** — only rows with a non-empty `bookingUrl`. External resources (`external-resources` tab) never have one. Workshops and opportunities optional per row.
+3. **Workshops + consultations both in scope** — yes, both. Same `bookingUrl` mechanism; the modal CTA copy adapts (*Book a consultation* vs *Register for this workshop*).
+4. **LibCal vs Bookings** — Bookings. LibCal subscription never activated; the `libcalUrl` column has been removed from the codebase and should be deleted from the sheet.
 
 ## Staying on the page (the "no new tab" question)
 
@@ -238,26 +245,22 @@ So "stay on the page" with MS Bookings specifically has three real options:
 
 ### Option B — Switch to an embed-friendly provider (medium lift, stops using MS Bookings)
 
-Most modern booking tools embed cleanly via iframe:
+Most modern booking tools embed cleanly via iframe (Cal.com, Calendly, SimplyBook.me, YouCanBookMe, Acuity, etc.). Re-create services in the new tool, paste embed URLs into the sheet's `bookingUrl` column, tweak modal to iframe.
 
-- **Cal.com** — open source, free hosted tier for 1 user, embed snippet works.
-- **Calendly** — free tier embeds, paid for team features.
-- **LibCal** — Concordia Library already uses it. Embed supported. If Concordia has a campus-wide LibCal entitlement we may already be paid for.
-- **SimplyBook.me, YouCanBookMe, Acuity** — similar.
+**Effort:** ~1–2 days. **Cost:** depends on provider (Cal.com free for 1 user; Calendly free tier limited).
 
-**Effort:** ~1–2 days. Re-create services in the new tool, paste embed URLs into the sheet's `bookingUrl` column, tweak modal to iframe. **Cost:** depends on provider (LibCal likely free if campus license exists; Cal.com free for 1 user; Calendly free tier limited).
+> LibCal was previously the leading alternative here because Concordia Library uses it. **Removed from consideration as of 2026-04 — Concordia did not subscribe.** The dead `libcalUrl` column has been pulled from both the code and (next coordinator step) the sheet.
 
-### Option C — Accept the redirect (zero lift)
+### Option C — Accept the redirect (zero lift, current production)
 
-What we just shipped. One click → new tab → Microsoft Bookings. Honest, fast, no engineering.
+What's live today. One click → new tab → Microsoft Bookings. Honest, fast, no engineering.
 
 **Effort:** 0. **Cost:** 0. **Cost-of-UX:** user leaves the site briefly.
 
 ### Recommendation
 
-Start with **C** (already live) and, if the coordinator/users say "this is annoying, keep me on the page," move to **B** with LibCal as the first choice (likely existing campus license; widely supported by Concordia Library). **A** only makes sense if there's a strong commitment to staying on MS Bookings for calendar/mailbox reasons **and** IT is willing to approve an Entra app.
+**Stay on C** unless the coordinator or users start saying the new-tab handoff is hurting conversion. If that happens, Option B (a cleanly-embeddable provider) becomes the realistic next move; Option A is only worth the cost if there's a strong reason to keep MS Bookings specifically (calendar/mailbox integration with Outlook) **and** IT will approve an Entra app registration.
 
-Decision points to drive the choice:
-- Does Concordia have a campus LibCal license we can reuse? → If yes, B is nearly free.
-- Is the coordinator willing to manage services in LibCal instead of MS Bookings? → If yes, B. If "no, must be MS Bookings," it's A or stay with C.
-- Is IT willing to approve a Bookings Graph app registration? → If no, A is dead on arrival.
+Decision points to revisit if the move is on the table:
+- Does the coordinator find managing services in MS Bookings tolerable? If migrating to a new tool means re-doing setup work, the bar for "this is worth it" is higher.
+- Is IT willing to approve a Bookings Graph app registration? If no, A is dead on arrival, and B is the only path forward.
