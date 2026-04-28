@@ -4219,13 +4219,13 @@
 
           pageItems.forEach((opp) => {
           const card = el("div", "opportunity-card");
-          card.appendChild(formatBadge(opp.format));
           const titleRow = el("div", "card-title-row");
           titleRow.appendChild(el("h3", null, opp.title));
           if (opp.time) {
             const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
             titleRow.appendChild(el("span", "card-time-pill", displayTime));
           }
+          titleRow.appendChild(formatBadge(opp.format));
           card.appendChild(titleRow);
           if (opp.provider) {
             card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
@@ -4356,13 +4356,13 @@
     // Helper: build one opportunity card for the research panel
     function buildResearchOpportunityCard(opp) {
       const card = el("div", "opportunity-card");
-      card.appendChild(formatBadge(opp.format));
       const titleRow = el("div", "card-title-row");
       titleRow.appendChild(el("h3", null, opp.title));
       if (opp.time) {
         const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
         titleRow.appendChild(el("span", "card-time-pill", displayTime));
       }
+      titleRow.appendChild(formatBadge(opp.format));
       card.appendChild(titleRow);
       if (opp.provider) {
         card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
@@ -4837,13 +4837,13 @@
 
       pageItems.forEach((opp) => {
         const card = el("div", "opportunity-card");
-        card.appendChild(formatBadge(opp.format));
         const titleRow = el("div", "card-title-row");
         titleRow.appendChild(el("h3", null, opp.title));
         if (opp.time) {
           const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
           titleRow.appendChild(el("span", "card-time-pill", displayTime));
         }
+        titleRow.appendChild(formatBadge(opp.format));
         card.appendChild(titleRow);
         if (opp.provider) {
           card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
