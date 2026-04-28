@@ -2192,9 +2192,30 @@ label {
 }
 
 .opportunity-card {
+  position: relative; /* anchor for the corner format-badge */
   border: 1px solid #e6e6e6;
   padding: 18px;
   background: #f8f8f8;
+}
+
+/* Format badge floats in the top-right corner of opportunity cards */
+.opportunity-card .format-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  margin-bottom: 0;
+  z-index: 1;
+}
+
+/* When a card has a corner badge, reserve room so the title doesn't run into it */
+.opportunity-card:has(> .format-badge) .card-title-row {
+  padding-right: 120px;
+}
+
+/* Card actions sit right-aligned just below the body; tags sit below, left */
+.opportunity-card .card-actions {
+  justify-content: flex-end;
+  margin: 16px 0 12px;
 }
 
 .card-title-row {

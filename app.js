@@ -4235,7 +4235,6 @@
           }
           const tagList = el("div", "tag-list");
           (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
-          card.appendChild(tagList);
 
           const cardActions = el("div", "card-actions");
           if (opp.sourceType === "tool") {
@@ -4259,7 +4258,10 @@
             detailBtn.addEventListener("click", () => openModal(opp));
             cardActions.appendChild(detailBtn);
           }
+          // Layout order: actions float to the right just under the body,
+          // tags sit below the actions left-aligned.
           card.appendChild(cardActions);
+          card.appendChild(tagList);
           pathwayServicesGrid.appendChild(card);
         });
         if (totalPages > 1) {
@@ -4860,8 +4862,6 @@
         displayTags.forEach((tag) => {
           tagList.appendChild(el("span", "tag", tag));
         });
-        card.appendChild(tagList);
-
 
         const actions = el("div", "card-actions");
         if (opp.sourceType === "tool") {
@@ -4889,7 +4889,9 @@
           actions.appendChild(bookButton);
           actions.appendChild(detailButton);
         }
+        // Layout order: actions float right just under the body, tags below.
         card.appendChild(actions);
+        card.appendChild(tagList);
 
         resultsGrid.appendChild(card);
       });
@@ -4924,7 +4926,7 @@
         if (opp.summary) {
           card.appendChild(el("p", "card-text", opp.summary));
         }
-        const viewBtn = el("button", "btn primary", "View details");
+        const viewBtn = el("button", "btn primary", data.explore.buttons.details);
         viewBtn.type = "button";
         viewBtn.addEventListener("click", () => openModal(opp));
         card.appendChild(viewBtn);
@@ -5323,7 +5325,7 @@
           card.appendChild(formatBadge(item.format));
           card.appendChild(el("p", "modal-related-card-title", item.title));
           if (item.summary) card.appendChild(el("p", "modal-related-card-summary", item.summary));
-          const cardBtn = el("button", "btn", "View details");
+          const cardBtn = el("button", "btn", data.explore.buttons.details);
           cardBtn.type = "button";
           cardBtn.addEventListener("click", () => openModal(item));
           card.appendChild(cardBtn);
