@@ -2207,6 +2207,13 @@ label {
   white-space: nowrap;
   line-height: 1.4;
 }
+.card-provider {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  letter-spacing: 0.01em;
+}
 .opportunity-card h3 {
   margin-bottom: 8px;
 }

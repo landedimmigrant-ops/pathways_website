@@ -353,8 +353,9 @@
       featuredHome: String(row.featuredHome).toLowerCase() === "true",
       internalRoute: row.internalRoute || undefined,
       file: row.file || undefined,
-      libcalUrl: row.libcalUrl || "",
-      bookingUrl: row.bookingUrl || ""
+      bookingUrl: row.bookingUrl || "",
+      provider: row.provider || "",
+      docUrl: row.docUrl || ""
     }));
   };
 
@@ -377,8 +378,8 @@
       }
     };
     if (row.author) record.author = row.author;
+    if (row.provider) record.provider = row.provider;
     if (row.externalUrl) record.externalUrl = row.externalUrl;
-    if (row.libcalUrl) record.libcalUrl = row.libcalUrl;
     if (row.bookingUrl) record.bookingUrl = row.bookingUrl;
     return record;
   };
@@ -396,6 +397,161 @@
       if (!Array.isArray(rec.stage)) rec.stage = rec.stage ? [rec.stage] : [];
       return rec;
     });
+  };
+
+  // Fetch a published Google Doc and rebuild its body as sanitized HTML.
+  // Coordinator workflow: in Google Docs, File → Share → Publish to web → Embed
+  //   → copy the URL ending in `/pub` (e.g. https://docs.google.com/document/d/e/<long-id>/pub)
+  //   → paste into the `docUrl` column of the workshops sheet.
+  // We fetch the published HTML, extract `#contents`, walk the DOM, and rebuild
+  // using only structural tags. All inline styles and Google chrome get stripped.
+  const ALLOWED_DOC_TAGS = new Set(["H1", "H2", "H3", "H4", "P", "UL", "OL", "LI", "STRONG", "EM", "B", "I", "A", "BR"]);
+  // Drop these entirely (subtree included). Without this, the CSS inside
+  // <style> leaks through as escaped text content.
+  const SKIP_DOC_TAGS = new Set(["STYLE", "SCRIPT", "HEAD", "META", "LINK", "TITLE", "NOSCRIPT"]);
+
+  const escapeAttr = (value) => String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  // Google wraps external links as https://www.google.com/url?q=<real>&sa=...
+  const unwrapGoogleRedirect = (href) => {
+    if (!href) return "";
+    const match = href.match(/^https?:\/\/(?:www\.)?google\.com\/url\?(?:[^&]*&)*q=([^&]+)/i);
+    if (match) {
+      try { return decodeURIComponent(match[1]); } catch (e) { return href; }
+    }
+    return href;
+  };
+
+  const sanitizeDocNode = (node) => {
+    if (node.nodeType === 3) {
+      // Text node — escape and return
+      return escapeHtml(node.nodeValue || "");
+    }
+    if (node.nodeType !== 1) return "";
+    const tag = node.tagName;
+    if (SKIP_DOC_TAGS.has(tag)) return "";
+    const childHtml = Array.from(node.childNodes).map(sanitizeDocNode).join("");
+    if (ALLOWED_DOC_TAGS.has(tag)) {
+      const lower = tag.toLowerCase();
+      if (tag === "A") {
+        const raw = node.getAttribute("href") || "";
+        const href = unwrapGoogleRedirect(raw);
+        const safeHref = /^(https?:|mailto:|#)/.test(href) ? ` href="${escapeAttr(href)}"` : "";
+        const target = safeHref && /^https?:/.test(href) ? ' target="_blank" rel="noopener"' : "";
+        if (!childHtml.trim()) return "";
+        return `<a${safeHref}${target}>${childHtml}</a>`;
+      }
+      if ((tag === "P" || tag === "LI") && !childHtml.trim()) return "";
+      return `<${lower}>${childHtml}</${lower}>`;
+    }
+    // Container tags (DIV, SPAN, etc.) — pass children through, drop the wrapper
+    return childHtml;
+  };
+
+  const fetchWorkshopBodyFromDoc = async (docUrl) => {
+    if (!/\/pub(\?|$)/.test(docUrl)) {
+      throw new Error(`docUrl must be a Google Docs publish-to-web URL ending in /pub (got: ${docUrl})`);
+    }
+    const res = await fetch(docUrl, { cache: "no-cache" });
+    if (!res.ok) throw new Error(`Doc request failed (${res.status})`);
+    const raw = await res.text();
+    const doc = new DOMParser().parseFromString(raw, "text/html");
+    const contents = doc.getElementById("contents");
+    if (!contents) throw new Error("Published Doc has no #contents div — was it published correctly?");
+    let html = sanitizeDocNode(contents);
+    html = postProcessDocHtml(html);
+    // Summary = first non-empty body paragraph. Skip the metadata lines we drop
+    // (Title:, Tags:) and any heading-shaped intro labels.
+    const summaryText = extractDocSummary(html);
+    const plainText = (contents.textContent || "").trim();
+    return { html, summary: summaryText, markdown: plainText };
+  };
+
+  // Coordinator-friendly post-processing. The goal: let people write a Doc
+  // however feels natural (plain paragraphs for section labels, soft line
+  // breaks mid-paragraph, redundant Title:/Tags: lines) and have it render
+  // structurally on the site. Each pass is intentionally conservative so we
+  // don't mangle real body content.
+  const HEADING_LABELS = new Set([
+    "short description", "description", "overview", "summary",
+    "relevance to impact", "why it matters",
+    "who it's for", "who its for", "who it is for", "audience",
+    "what you'll learn", "what you will learn", "what you'll get", "outcomes",
+    "format", "what to bring", "how to prepare", "preparation",
+    "materials provided", "what you'll receive",
+    "pathways alignment", "pathway alignment",
+    "biography", "about", "about the host", "host", "presenter", "presenters"
+  ]);
+
+  const looksLikeHeading = (text) => {
+    const trimmed = text.replace(/\s+/g, " ").trim();
+    if (!trimmed) return false;
+    if (trimmed.length > 70) return false;
+    // Sentence-ending punctuation = body, not a heading
+    if (/[.!?]$/.test(trimmed)) return false;
+    // Trailing colon is a strong heading signal
+    if (trimmed.endsWith(":")) return true;
+    // Known label match (case-insensitive, strip trailing colons/dashes)
+    const normalized = trimmed.replace(/[:\-—–]+$/, "").toLowerCase();
+    if (HEADING_LABELS.has(normalized)) return true;
+    // Heading-cased line of ≤6 words with no terminal punctuation
+    const words = trimmed.split(/\s+/);
+    if (words.length <= 6 && /^[A-Z]/.test(trimmed) && !/[,;]/.test(trimmed)) return true;
+    return false;
+  };
+
+  const postProcessDocHtml = (html) => {
+    let out = html;
+
+    // 1. Merge adjacent same-type lists (Google emits one <ul> per <li>)
+    out = out.replace(/<\/ul>\s*<ul>/g, "").replace(/<\/ol>\s*<ol>/g, "");
+
+    // 2. Drop redundant metadata-style lines that are already in the sheet
+    out = out.replace(/<p>\s*(?:Title|Tags?#?)\s*:[^<]*<\/p>/gi, "");
+
+    // 3. Merge soft-broken paragraphs. Google splits a single Doc paragraph
+    //    into multiple <p> when there are line wraps; the continuation almost
+    //    always starts with a lowercase letter. Iterate until stable.
+    let prev;
+    do {
+      prev = out;
+      out = out.replace(/<p>([^<]*?)<\/p>\s*<p>(\s*[a-z])/g, "<p>$1 $2");
+    } while (out !== prev);
+
+    // 4. Promote heading-shaped paragraphs to <h2>
+    out = out.replace(/<p>([^<]+?)<\/p>/g, (match, inner) => {
+      if (!looksLikeHeading(inner)) return match;
+      const cleaned = inner.replace(/[:\-—–]+\s*$/, "").trim();
+      return `<h2>${cleaned}</h2>`;
+    });
+
+    // 5. Drop orphan headings (an <h2> with no body before the next heading or end).
+    //    Iterate so back-to-back orphans collapse cleanly.
+    let prevPass;
+    do {
+      prevPass = out;
+      out = out.replace(/<h2>[^<]+<\/h2>\s*(?=<h2>|$)/g, "");
+    } while (out !== prevPass);
+
+    return out;
+  };
+
+  const decodeEntities = (s) => String(s)
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ");
+
+  const extractDocSummary = (html) => {
+    // Walk the post-processed HTML for the first <p> with substantive text.
+    const matches = html.match(/<p>([^<]+)<\/p>/g) || [];
+    for (const m of matches) {
+      const text = decodeEntities(m.replace(/<\/?p>/g, "")).trim();
+      if (text.length >= 40) return text; // skip short labels even if they slipped through
+    }
+    return matches[0] ? decodeEntities(matches[0].replace(/<\/?p>/g, "")).trim() : "";
   };
 
   const loadExploreContentFromSheets = async () => {
@@ -439,8 +595,9 @@
       }
 
       const results = await Promise.allSettled(manifest.map(async (entry) => {
-        // Tool entries have no markdown file — enrich directly
-        if (!entry.file) {
+        // Internal-tool entries (e.g. impact-planner) have neither file nor docUrl —
+        // they're rendered by their own internal route, just need metadata.
+        if (!entry.file && !entry.docUrl) {
           return {
             ...entry,
             sourceType: "tool",
@@ -453,14 +610,29 @@
             pathway: (entry.pathways || []).map((pathway) => pathwayKeyToTitle[pathway] || pathway)
           };
         }
-        const markdownResponse = await fetch(entry.file, { cache: "no-cache" });
-        if (!markdownResponse.ok) {
-          throw new Error(`Workshop file request failed for ${entry.file}`);
+
+        // Body source: prefer published Google Doc, fall back to local .md.
+        // This lets us migrate workshops one at a time — coordinator pastes a
+        // docUrl into the sheet row and the next refresh picks it up.
+        let html = "";
+        let markdown = "";
+        let summary = "";
+        if (entry.docUrl) {
+          const body = await fetchWorkshopBodyFromDoc(entry.docUrl);
+          html = body.html;
+          markdown = body.markdown;
+          summary = body.summary || entry.summary || "";
+        } else {
+          const markdownResponse = await fetch(entry.file, { cache: "no-cache" });
+          if (!markdownResponse.ok) {
+            throw new Error(`Workshop file request failed for ${entry.file}`);
+          }
+          const rawMarkdown = await markdownResponse.text();
+          markdown = stripFrontMatter(rawMarkdown).trim();
+          html = markdownToHtml(markdown);
+          summary = getSummaryFromMarkdown(markdown) || entry.summary || "";
         }
-        const rawMarkdown = await markdownResponse.text();
-        const markdown = stripFrontMatter(rawMarkdown).trim();
-        const html = markdownToHtml(markdown);
-        const summary = getSummaryFromMarkdown(markdown);
+
         return {
           ...entry,
           sourceType: "workshop",
@@ -476,9 +648,13 @@
         };
       }));
 
-      content.workshops = results
-        .filter((r) => r.status === "fulfilled")
-        .map((r) => r.value);
+      const fulfilled = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
+      const rejected = results.filter((r) => r.status === "rejected");
+      if (rejected.length) {
+        rejected.forEach((r) => console.error("[Pathways] Workshop body failed to load:", r.reason));
+      }
+      content.workshops = fulfilled;
+      console.log(`[Pathways] Workshops ready: ${fulfilled.length} loaded, ${rejected.length} failed`);
     } catch (error) {
       console.error("[Pathways] FAILED to load workshops — list will be empty until fixed.", error);
       content.workshops = [];
@@ -4024,6 +4200,9 @@
             titleRow.appendChild(el("span", "card-time-pill", displayTime));
           }
           card.appendChild(titleRow);
+          if (opp.provider) {
+            card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
+          }
           card.appendChild(el("p", "card-text", opp.summary));
           const tagList = el("div", "tag-list");
           (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
@@ -4036,12 +4215,9 @@
             btn.addEventListener("click", () => navigateTo(opp.internalRoute));
             cardActions.appendChild(btn);
           } else if (opp.sourceType === "workshop") {
-            const btn = el("button", "btn primary", opp.libcalUrl ? "Register" : data.explore.buttons.details);
+            const btn = el("button", "btn primary", data.explore.buttons.details);
             btn.type = "button";
-            btn.addEventListener("click", () => {
-              if (opp.libcalUrl) window.open(opp.libcalUrl, "_blank", "noopener");
-              else openModal(opp);
-            });
+            btn.addEventListener("click", () => openModal(opp));
             cardActions.appendChild(btn);
           } else if (opp.sourceType === "resource") {
             const btn = el("button", "btn primary", data.explore.buttons.details);
@@ -4157,6 +4333,9 @@
         titleRow.appendChild(el("span", "card-time-pill", displayTime));
       }
       card.appendChild(titleRow);
+      if (opp.provider) {
+        card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
+      }
       card.appendChild(el("p", "card-text", opp.summary));
       const cardActions = el("div", "card-actions");
       if (opp.sourceType === "tool") {
@@ -4165,12 +4344,9 @@
         btn.addEventListener("click", () => navigateTo(opp.internalRoute));
         cardActions.appendChild(btn);
       } else if (opp.sourceType === "workshop") {
-        const btn = el("button", "btn primary", opp.libcalUrl ? "Register" : data.explore.buttons.details);
+        const btn = el("button", "btn primary", data.explore.buttons.details);
         btn.type = "button";
-        btn.addEventListener("click", () => {
-          if (opp.libcalUrl) window.open(opp.libcalUrl, "_blank", "noopener");
-          else openModal(opp);
-        });
+        btn.addEventListener("click", () => openModal(opp));
         cardActions.appendChild(btn);
       } else if (opp.sourceType === "resource") {
         const btn = el("button", "btn primary", data.explore.buttons.details);
@@ -4636,6 +4812,9 @@
           titleRow.appendChild(el("span", "card-time-pill", displayTime));
         }
         card.appendChild(titleRow);
+        if (opp.provider) {
+          card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
+        }
         card.appendChild(el("p", "card-text", opp.summary));
 
         const tagList = el("div", "tag-list");
@@ -4658,15 +4837,9 @@
           primaryButton.addEventListener("click", () => navigateTo(opp.internalRoute));
           actions.appendChild(primaryButton);
         } else if (opp.sourceType === "workshop") {
-          const primaryButton = el("button", "btn primary", opp.libcalUrl ? "Register" : data.explore.buttons.details);
+          const primaryButton = el("button", "btn primary", data.explore.buttons.details);
           primaryButton.type = "button";
-          primaryButton.addEventListener("click", () => {
-            if (opp.libcalUrl) {
-              window.open(opp.libcalUrl, "_blank", "noopener");
-            } else {
-              openModal(opp);
-            }
-          });
+          primaryButton.addEventListener("click", () => openModal(opp));
           actions.appendChild(primaryButton);
         } else if (opp.sourceType === "resource") {
           const primaryButton = el("button", "btn primary", data.explore.buttons.details);
@@ -4712,6 +4885,9 @@
       matches.forEach((opp) => {
         const card = el("div", "opportunity-card rec-card");
         card.appendChild(el("h3", null, opp.title));
+        if (opp.provider) {
+          card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
+        }
         card.appendChild(el("p", "card-text", opp.summary));
         const viewBtn = el("button", "btn primary", "View details");
         viewBtn.type = "button";
@@ -4984,12 +5160,6 @@
         resourceBtn.target = "_blank";
         resourceBtn.rel = "noopener";
         topbarActions.appendChild(resourceBtn);
-      } else if (opp.libcalUrl) {
-        const registerBtn = el("a", "btn primary", "Register");
-        registerBtn.href = opp.libcalUrl;
-        registerBtn.target = "_blank";
-        registerBtn.rel = "noopener";
-        topbarActions.appendChild(registerBtn);
       }
       topbar.appendChild(topbarActions);
       overlay.appendChild(topbar);
@@ -5005,6 +5175,7 @@
       // Metadata bar
       const metaBar = el("div", "modal-meta-bar");
       [
+        { label: "Offered by", value: opp.provider },
         { label: "Format", value: Array.isArray(opp.format) ? opp.format.join(", ") : opp.format },
         { label: "Time", value: Array.isArray(opp.time) ? opp.time.join(", ") : opp.time },
         { label: "Stage", value: Array.isArray(opp.stage) ? opp.stage.join(", ") : opp.stage },
@@ -5063,15 +5234,15 @@
         ctaBtn.target = "_blank";
         ctaBtn.rel = "noopener";
         bottomCta.appendChild(ctaBtn);
-      } else if (opp.libcalUrl) {
-        const ctaLabel = fmt.includes("workshop") ? "Register for this workshop" : "Register";
-        const ctaBtn = el("a", "btn primary modal-cta-btn", ctaLabel);
-        ctaBtn.href = opp.libcalUrl;
-        ctaBtn.target = "_blank";
-        ctaBtn.rel = "noopener";
-        bottomCta.appendChild(ctaBtn);
       } else if (fmt.includes("consult")) {
         const ctaBtn = el("button", "btn primary modal-cta-btn", "Book a consultation");
+        ctaBtn.type = "button";
+        ctaBtn.addEventListener("click", () => { closeModal(); openBookingModal(opp); });
+        bottomCta.appendChild(ctaBtn);
+      } else if (opp.sourceType === "workshop") {
+        // Workshops route through openBookingModal — if a bookingUrl is on the row,
+        // it short-circuits to MS Bookings; otherwise the request form opens.
+        const ctaBtn = el("button", "btn primary modal-cta-btn", "Register for this workshop");
         ctaBtn.type = "button";
         ctaBtn.addEventListener("click", () => { closeModal(); openBookingModal(opp); });
         bottomCta.appendChild(ctaBtn);

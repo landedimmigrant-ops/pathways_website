@@ -49,8 +49,8 @@ const opportunityColumns = [
   "detailsWhat",
   "detailsOutcomes",
   "externalUrl",
-  "libcalUrl",
   "bookingUrl",
+  "provider",
   "ownerName",
   "ownerEmail"
 ];
@@ -87,8 +87,9 @@ const workshopColumns = [
   "featuredHome",
   "internalRoute",
   "file",
-  "libcalUrl",
+  "docUrl",
   "bookingUrl",
+  "provider",
   "ownerName",
   "ownerEmail"
 ];

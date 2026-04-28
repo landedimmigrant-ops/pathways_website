@@ -75,7 +75,20 @@ Outcome: **works, edits show up instantly after hard refresh.**
 - `mapOpportunityRow()` rehydrates `details.{who,what,outcomes}` from flat CSV columns, splits `;`-delimited pathway/tags/stage
 - `loadExploreContentFromSheets()` mutates `data.explore.opportunities` and `data.explore.externalResources` before `buildPages()` runs — no page-building code had to change
 - External resources keep `stage` as an array (matches existing shape); opportunities use single string unless multi-value
-- Graceful fallback to local `data.js` on fetch failure
+- Sheet is authoritative — no silent fallback to local `data.js` (failure logged loudly)
+
+### Attempt 6 — Workshop bodies from published Google Docs ✅ WORKING (gradual migration)
+
+Plan: workshop body content was the last thing still living in local `content/workshops/*.md`. Coordinator can't edit those without git access. Move bodies into Google Docs (one Doc per workshop), use Docs' Publish-to-web feature, store the resulting `/pub` URL in a new `docUrl` sheet column, fetch and render at runtime.
+
+Outcome: **works, gradual migration.** Workshops with `docUrl` filled in pull from the Doc; the rest keep using their local `.md` until migrated. Nothing breaks during the transition.
+
+- New `docUrl` column on the `workshops` tab (e.g. `https://docs.google.com/document/d/e/<long-id>/pub`)
+- New `provider` column on all three tabs (e.g. "Office of Research", "Library RDM Team") — rendered as "Offered by …" line on cards and in modal meta
+- `fetchWorkshopBodyFromDoc(docUrl)` — fetches the published HTML, extracts `#contents`, walks the DOM, rebuilds with allowlisted structural tags (h1–h4, p, ul/ol/li, strong/em/b/i, a, br). Inline styles, `<span>` chrome, and Google's URL redirect wrapper all stripped.
+- `loadWorkshopContent` per-entry: prefer `docUrl` if present, fall back to `entry.file`, treat metadata-only entries (no file, no docUrl) as tools.
+- Why publish-to-web (not Drive API): no auth, no API key, no quota; standard page fetch with public CORS. Coordinator just clicks File → Share → Publish to web → Embed and pastes the URL.
+- Why we didn't shove markdown into a sheet cell: long multiline bodies make the sheet UI unreadable and break the per-row mental model.
 
 ## Remaining paths
 

@@ -72,17 +72,42 @@ Paste it into a scratchpad or email for the next step.
 1. Open the shared Google Sheet.
 2. Pick the right tab:
    - **Consultation or internal workshop?** → `opportunities` tab
-   - **Standalone workshop with a markdown description?** → `workshops` tab
+   - **Standalone workshop with a long-form body?** → `workshops` tab
    - **External resource?** → `external-resources` tab (usually won't have a booking URL — external links go in `externalUrl` instead)
 3. Find the row for your service. If it's a new service, add a new row at the bottom and fill in at least:
    - `id` — a short unique slug, e.g. `opp-impact-framing-v2`
    - `title`
    - `category`, `format`, `time`, `stage`, `pathway`, `tags`, `summary`
+   - `provider` — the team or unit running it (e.g. *Office of Research*, *Library RDM Team*, *4th Space*). Shows up as "Offered by …" on the card.
    - (Other columns can stay empty to start)
 4. In the **`bookingUrl`** column of that row, paste the URL from Part 3.
 5. Save / close. Google Sheets auto-saves.
 
 **Multi-value columns** (`pathway`, `stage`, `tags`): separate values with a semicolon, e.g. `Communications; Policy`.
+
+## Part 4b — (Workshops only) Add a long-form body via Google Doc
+
+If your service is a workshop with a longer description (what you'll get, who it's for, how to prepare, outcomes), put that body in its own Google Doc and link it from the sheet. The card preview still uses the short `summary`; the full body shows up when someone opens the workshop.
+
+1. Create a new Google Doc. Title it the same as your workshop.
+2. **Write it however feels natural.** Plain paragraphs, bullet lists, bold/italic, and links all work. You don't need to use Google's Heading styles — short standalone lines like *Short Description*, *Who it's for*, *Outcomes*, *Format*, *What to Bring* get auto-detected as section headings on the site. Avoid embedded images for now (they don't render through publish-to-web cleanly).
+3. **File → Share → Publish to web** → click **Publish** → confirm.
+4. Copy the URL it gives you. It looks like:
+   `https://docs.google.com/document/d/e/2PACX-1vS<long-id>/pub`
+   It must end in `/pub`. (If you copy from the address bar of the editor instead, you'll get an `/edit` URL — that won't work.)
+5. Paste that URL into the **`docUrl`** column of the workshop's row in the `workshops` tab.
+6. Save.
+
+**What the site does to the Doc automatically:**
+- Auto-promotes short label lines (e.g. *Format*, *Who it's for*, *Outcomes*) to section headings
+- Strips redundant lines that are already on the sheet (anything starting with *Title:* or *Tags:*)
+- Joins paragraphs that got soft-wrapped across visual lines back into single paragraphs
+- Cleans up Google's link wrappers so external links open in a new tab
+- Drops the Doc's CSS, fonts, and other styling so the body matches the rest of the site
+
+**Editing later:** just edit the Doc. Your changes flow through to the site within ~5 minutes (Google's publish-to-web cache) plus a hard refresh on the user side. No re-publishing needed.
+
+**Heads-up:** if you accidentally *unpublish* the Doc later, the workshop body will fail to load and the site will fall back to whatever was in the local `.md` file (if any). To retire a workshop properly, blank or delete the row in the sheet instead.
 
 ## Part 5 — Verify on the site
 
@@ -116,10 +141,22 @@ In Bookings, open the service → **Booking page** settings → uncheck *"Requir
 Hard refresh the page (`Cmd+Shift+R` / `Ctrl+Shift+R`). Google's endpoint caches for ~1 minute; wait a beat and try again.
 
 **"I pasted the URL but the card still goes to the old request form."**
-Check that you pasted into the `bookingUrl` column — not `externalUrl` or `libcalUrl`. Column headers are in row 1.
+Check that you pasted into the `bookingUrl` column — not `externalUrl`. Column headers are in row 1.
 
 **"A staff member isn't appearing in the staff list."**
 They need to accept the Bookings invite email first. Check their inbox (including junk).
+
+**"I pasted a `docUrl` but the workshop body still shows the old content."**
+Three things to check, in order:
+1. The URL must end in `/pub` — not `/edit`. If yours says `/edit`, go back to **File → Share → Publish to web** and copy the URL from there.
+2. The Doc must actually be published (the dialog has a green Published banner once it is).
+3. Hard refresh (`Cmd+Shift+R` / `Ctrl+Shift+R`). Google's publish endpoint caches for ~5 minutes — wait a beat and try again.
+
+**"My Doc has images / tables / fancy formatting but the site shows plain text."**
+Expected. The site's body renderer keeps headings, paragraphs, lists, bold/italic, and links. Tables, images, and complex layouts get stripped to keep the site visually consistent. If you need richer media, link out to a separate page from inside the Doc.
+
+**"A line I wanted to be regular text became a section heading."**
+The auto-detection looks at short standalone lines (under ~70 characters, no terminal punctuation) and treats them like section labels. To force a line to stay regular text, end it with a period. To force it to be a heading, just keep it short and unpunctuated.
 
 ## Who to ask
 
