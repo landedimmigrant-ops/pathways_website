@@ -4230,9 +4230,7 @@
           if (opp.provider) {
             card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
           }
-          if (opp.pullQuote) {
-            card.appendChild(el("p", "card-pullquote", opp.pullQuote));
-          } else if (opp.summary) {
+          if (opp.summary) {
             card.appendChild(el("p", "card-text", opp.summary));
           }
           const tagList = el("div", "tag-list");
@@ -4367,9 +4365,7 @@
       if (opp.provider) {
         card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
       }
-      if (opp.pullQuote) {
-        card.appendChild(el("p", "card-pullquote", opp.pullQuote));
-      } else if (opp.summary) {
+      if (opp.summary) {
         card.appendChild(el("p", "card-text", opp.summary));
       }
       const cardActions = el("div", "card-actions");
@@ -4850,9 +4846,7 @@
         if (opp.provider) {
           card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
         }
-        if (opp.pullQuote) {
-          card.appendChild(el("p", "card-pullquote", opp.pullQuote));
-        } else if (opp.summary) {
+        if (opp.summary) {
           card.appendChild(el("p", "card-text", opp.summary));
         }
 
@@ -4927,9 +4921,7 @@
         if (opp.provider) {
           card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
         }
-        if (opp.pullQuote) {
-          card.appendChild(el("p", "card-pullquote", opp.pullQuote));
-        } else if (opp.summary) {
+        if (opp.summary) {
           card.appendChild(el("p", "card-text", opp.summary));
         }
         const viewBtn = el("button", "btn primary", "View details");
