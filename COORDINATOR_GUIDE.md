@@ -42,9 +42,10 @@ A "workshop" here means anything with a long-form description (what you'll get, 
 
 1. Create a new Google Doc. Title it the same as your workshop.
 2. Write it however feels natural. Plain paragraphs, bullet lists, bold/italic, and links all work. You don't need to use Google's Heading styles — the site automatically detects short standalone lines like *Short Description*, *Who it's for*, *Outcomes*, *Format*, *What to Bring* as section headings.
-3. Avoid embedded images and tables — they get stripped on the site.
-4. **File → Share → Publish to web** → click **Publish** → confirm.
-5. Copy the URL it gives you. It looks like:
+3. **Want a tagline?** Start the Doc with a short sentence wrapped in quotation marks (e.g. *"Your data will out-live your grant."*). The site lifts that line out and shows it as a styled pull-quote on the card preview AND at the top of the modal. The same text won't repeat inside the body. Keep it under ~240 characters.
+4. Avoid embedded images and tables — they get stripped on the site.
+5. **File → Share → Publish to web** → click **Publish** → confirm.
+6. Copy the URL it gives you. It looks like:
    `https://docs.google.com/document/d/e/2PACX-1vS<long-id>/pub`
    It must end in `/pub`. (The URL in the editor address bar ends in `/edit` and won't work.)
 

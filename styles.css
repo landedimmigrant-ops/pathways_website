@@ -850,6 +850,16 @@ label {
   margin: 0;
 }
 
+.card-pullquote {
+  margin: 0;
+  font-style: italic;
+  color: #2a2a2a;
+  font-size: 14px;
+  line-height: 1.5;
+  border-left: 3px solid var(--accent, #c8102e);
+  padding: 2px 0 2px 10px;
+}
+
 .simple-list {
   padding-left: 20px;
   margin: 0 0 24px;
@@ -2729,6 +2739,18 @@ label {
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 32px;
+}
+
+.modal-pullquote {
+  margin: 0 0 32px;
+  padding: 20px 24px;
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #2a2a2a;
+  border-left: 4px solid var(--accent, #c8102e);
+  background: #f8f8f8;
+  border-radius: 0 6px 6px 0;
 }
 
 .modal-body {

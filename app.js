@@ -460,11 +460,35 @@
     if (!contents) throw new Error("Published Doc has no #contents div — was it published correctly?");
     let html = sanitizeDocNode(contents);
     html = postProcessDocHtml(html);
-    // Summary = first non-empty body paragraph. Skip the metadata lines we drop
-    // (Title:, Tags:) and any heading-shaped intro labels.
-    const summaryText = extractDocSummary(html);
+    // Pull-quote pass: if the first <p> is a short quoted "tagline", lift it
+    // out so it can be rendered as a hero element on the card and at the top
+    // of the modal — never duplicated inside the body.
+    const { html: bodyHtml, pullQuote } = extractPullQuote(html);
+    html = bodyHtml;
+    // Summary = first body paragraph after pull-quote extraction. If the body
+    // has no qualifying paragraph (e.g. body is mostly lists), fall back to
+    // the pull quote so the card still has SOMETHING to show.
+    const summaryText = extractDocSummary(html) || pullQuote;
     const plainText = (contents.textContent || "").trim();
-    return { html, summary: summaryText, markdown: plainText };
+    return { html, pullQuote, summary: summaryText, markdown: plainText };
+  };
+
+  // Detects a quoted opening paragraph and lifts it out of the body.
+  // Quote-marks (curly or straight, double or single) at both ends + length
+  // cap keeps this conservative — body sentences that happen to contain a
+  // quote internally won't trigger.
+  const PULLQUOTE_OPEN = /^["“‘']/;
+  const PULLQUOTE_CLOSE = /["”’']$/;
+  const extractPullQuote = (html) => {
+    const match = html.match(/^\s*<p>([^<]+)<\/p>/);
+    if (!match) return { html, pullQuote: "" };
+    const text = decodeEntities(match[1]).replace(/\s+/g, " ").trim();
+    if (text.length === 0 || text.length > 240) return { html, pullQuote: "" };
+    if (!PULLQUOTE_OPEN.test(text) || !PULLQUOTE_CLOSE.test(text)) return { html, pullQuote: "" };
+    return {
+      html: html.slice(match[0].length).replace(/^\s+/, ""),
+      pullQuote: text
+    };
   };
 
   // Coordinator-friendly post-processing. The goal: let people write a Doc
@@ -617,11 +641,13 @@
         let html = "";
         let markdown = "";
         let summary = "";
+        let pullQuote = "";
         if (entry.docUrl) {
           const body = await fetchWorkshopBodyFromDoc(entry.docUrl);
           html = body.html;
           markdown = body.markdown;
           summary = body.summary || entry.summary || "";
+          pullQuote = body.pullQuote || "";
         } else {
           const markdownResponse = await fetch(entry.file, { cache: "no-cache" });
           if (!markdownResponse.ok) {
@@ -640,6 +666,7 @@
           summary,
           markdown,
           html,
+          pullQuote,
           unitTags: Array.isArray(entry.unitTags) && entry.unitTags.length
             ? entry.unitTags
             : (data.workshopUnitTags && Array.isArray(data.workshopUnitTags[entry.id]) ? data.workshopUnitTags[entry.id] : []),
@@ -4203,7 +4230,11 @@
           if (opp.provider) {
             card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
           }
-          card.appendChild(el("p", "card-text", opp.summary));
+          if (opp.pullQuote) {
+            card.appendChild(el("p", "card-pullquote", opp.pullQuote));
+          } else if (opp.summary) {
+            card.appendChild(el("p", "card-text", opp.summary));
+          }
           const tagList = el("div", "tag-list");
           (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
           card.appendChild(tagList);
@@ -4336,7 +4367,11 @@
       if (opp.provider) {
         card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
       }
-      card.appendChild(el("p", "card-text", opp.summary));
+      if (opp.pullQuote) {
+        card.appendChild(el("p", "card-pullquote", opp.pullQuote));
+      } else if (opp.summary) {
+        card.appendChild(el("p", "card-text", opp.summary));
+      }
       const cardActions = el("div", "card-actions");
       if (opp.sourceType === "tool") {
         const btn = el("button", "btn primary", "Start \u2192");
@@ -4815,7 +4850,11 @@
         if (opp.provider) {
           card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
         }
-        card.appendChild(el("p", "card-text", opp.summary));
+        if (opp.pullQuote) {
+          card.appendChild(el("p", "card-pullquote", opp.pullQuote));
+        } else if (opp.summary) {
+          card.appendChild(el("p", "card-text", opp.summary));
+        }
 
         const tagList = el("div", "tag-list");
         const displayTags = [...(opp.tags || [])];
@@ -4888,7 +4927,11 @@
         if (opp.provider) {
           card.appendChild(el("p", "card-provider", "Offered by " + opp.provider));
         }
-        card.appendChild(el("p", "card-text", opp.summary));
+        if (opp.pullQuote) {
+          card.appendChild(el("p", "card-pullquote", opp.pullQuote));
+        } else if (opp.summary) {
+          card.appendChild(el("p", "card-text", opp.summary));
+        }
         const viewBtn = el("button", "btn primary", "View details");
         viewBtn.type = "button";
         viewBtn.addEventListener("click", () => openModal(opp));
@@ -5194,6 +5237,12 @@
         const tagBar = el("div", "modal-tag-bar");
         allTags.forEach(tag => tagBar.appendChild(el("span", "tag", tag)));
         modal.appendChild(tagBar);
+      }
+
+      // Pull-quote hero — only when the workshop's Doc had a quoted opening
+      // paragraph. Same text shows on the card; never duplicated in body.
+      if (opp.pullQuote) {
+        modal.appendChild(el("blockquote", "modal-pullquote", opp.pullQuote));
       }
 
       // Body content
