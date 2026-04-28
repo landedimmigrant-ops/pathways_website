@@ -4940,13 +4940,9 @@
           primaryButton.addEventListener("click", () => navigateToService(opp.id));
           actions.appendChild(primaryButton);
         } else {
-          const bookButton = el("button", "btn", data.explore.buttons.book);
-          bookButton.type = "button";
-          bookButton.addEventListener("click", () => navigateToService(opp.id, true));
           const detailButton = el("button", "btn primary", data.explore.buttons.details);
           detailButton.type = "button";
           detailButton.addEventListener("click", () => navigateToService(opp.id));
-          actions.appendChild(bookButton);
           actions.appendChild(detailButton);
         }
         // Layout order: tags + body up top, actions float right at the bottom.
@@ -5327,7 +5323,9 @@
         modal.appendChild(extNote);
       }
 
-      // Bottom CTA — always present, exactly one
+      // Bottom CTA — present only when the item has a clear action
+      // (external link, consultation booking, or workshop registration).
+      // Other formats render with no bottom CTA; the body speaks for itself.
       const bottomCta = el("div", "modal-bottom-cta");
       const fmt = (opp.format || "").toString().toLowerCase();
       if (opp.sourceType === "resource" && opp.externalUrl) {
@@ -5348,13 +5346,9 @@
         ctaBtn.type = "button";
         ctaBtn.addEventListener("click", () => navigateToService(opp.id, true));
         bottomCta.appendChild(ctaBtn);
-      } else {
-        const ctaBtn = el("button", "btn primary modal-cta-btn", "Express interest");
-        ctaBtn.type = "button";
-        ctaBtn.addEventListener("click", () => navigateToService(opp.id, true));
-        bottomCta.appendChild(ctaBtn);
       }
-      modal.appendChild(bottomCta);
+      // Only attach the CTA bar if a button was actually added.
+      if (bottomCta.childNodes.length) modal.appendChild(bottomCta);
 
       // Related services
       const oppPathways = Array.isArray(opp.pathway) ? opp.pathway : (opp.pathway ? [opp.pathway] : []);

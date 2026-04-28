@@ -677,7 +677,6 @@ window.PATHWAYS_DATA = {
       outcomes: "Outcomes"
     },
     buttons: {
-      book: "Express interest",
       details: "View details →",
       close: "Close"
     },
