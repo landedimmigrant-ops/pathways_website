@@ -58,7 +58,7 @@ A "workshop" here means anything with a long-form description (what you'll get, 
    - `title` — what shows on the card
    - `summary` — one or two sentences for the card preview (if blank, the site uses the first paragraph of the Doc)
    - `format`, `time`, `tags`, `pathways`, `stages`
-   - `provider` — the team or unit running it (e.g. *Library RDM Team*, *Office of Research*, *4th Space*). Renders as "Offered by …" on the card.
+   - `provider` — the team or unit running it. Renders as a small "OFFERED BY *Library RDM Team*" label below the title on the card, and as the first item in the modal meta-bar. See [Provider naming conventions](#provider-naming-conventions) for canonical strings.
    - `docUrl` — the `/pub` URL from Step 1
 4. Optional:
    - `bookingUrl` — if there's a Microsoft Bookings page for this workshop. If you don't have one, the modal will show a "Register for this workshop" form that emails the request.
@@ -131,7 +131,7 @@ URL format:
 2. Add a row (or update an existing one). Fill in at least:
    - `id` — e.g. `opp-impact-framing-v2`
    - `title`, `category`, `format`, `time`, `stage`, `pathway`, `tags`, `summary`
-   - `provider` — the team running the service
+   - `provider` — the team running the service (renders as "OFFERED BY *team*" on the card; see [Provider naming conventions](#provider-naming-conventions))
    - `bookingUrl` — paste the URL from Step 3
 3. Save.
 
@@ -160,7 +160,7 @@ External resources are links to things hosted off-site (Concordia Library guides
    - `title`
    - `summary`
    - `category`, `format`, `time`, `stage`, `pathway`, `tags`
-   - `provider` — the team or institution that hosts it
+   - `provider` — the team or institution that hosts it (renders as "OFFERED BY *team*" on the card; see [Provider naming conventions](#provider-naming-conventions))
    - `externalUrl` — the full URL to the external page
 3. Leave `bookingUrl` and `docUrl` blank — external resources don't use them.
 4. Save.
@@ -182,6 +182,33 @@ For changes to existing copy (typo, time change, summary tweak):
 4. Hard refresh the site (`Cmd+Shift+R` / `Ctrl+Shift+R`). Live within ~1 min.
 
 For body content changes on a workshop, edit the Google Doc directly — no need to re-publish.
+
+---
+
+## Provider naming conventions
+
+The `provider` column tells researchers *who* is offering a workshop, consultation, or resource. It renders as a small "OFFERED BY *Library RDM Team*" label on each card and as the first item in the modal meta-bar.
+
+**Use the same string for the same team every time.** "Library RDM Team", "Library RDM", and "RDM Team" are visually three different providers to the site even if they're the same team to you. Consistent strings make it easy to group, filter, or count by provider later.
+
+Suggested canonical values (extend as needed):
+
+| Provider | Use for |
+|---|---|
+| *Office of Research* | Anything run by OOR central — impact framing, narrative CV review, grant strategy |
+| *Library RDM Team* | Research data management, DMP consultations, repository deposits |
+| *Concordia Library* | Other library services (literature search, citation management, scholarly publishing) |
+| *4th Space* | 4th Space events and curation |
+| *School of Graduate Studies* | SGS-run workshops |
+| *Faculty of Arts & Science* | Faculty-specific research support (substitute the right faculty: Engineering, Fine Arts, GCS, JMSB) |
+| *External — [organization]* | Off-Concordia resources (e.g. *External — SSHRC*, *External — Tri-Agency*) |
+
+**Rules of thumb:**
+
+- Use a **team / unit / faculty name**, not a person's name. Personal attribution belongs in the body, not the card label.
+- Keep it under ~32 characters so the label doesn't wrap on the card.
+- For external (non-Concordia) resources, prefix with *External — * so researchers can tell at a glance whether it's an internal or third-party offering.
+- If the cell is left blank, the site renders no "OFFERED BY" line — fine for placeholder rows but every public-facing row should be filled in.
 
 ---
 

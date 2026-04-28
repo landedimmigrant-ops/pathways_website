@@ -111,16 +111,17 @@ Outcome: **works end-to-end.** First production workshop migrated (Library RDM "
 ## Remaining paths
 
 1. **Migrate the other 10 workshops to Docs** — coordinator-paced, row by row. Each Doc URL goes in `docUrl`; clear `file` once verified. Old `content/workshops/*.md` and `content/workshops.json` can be deleted in a single cleanup PR once every row has a `docUrl`.
-2. **Delete the dead `libcalUrl` column from all 3 sheet tabs** — code already ignores it; just dead weight in the editor.
-3. **Shared Bookings page** — currently using Prem's personal *Bookings with Me* URL. When advisor #2 joins, migrate to a shared mailbox (e.g. `pathways-bookings@concordia`) so URLs survive staff turnover.
-4. **In-page booking (no new tab)** — see [BOOKINGS_PLAN.md](BOOKINGS_PLAN.md) "Staying on the page" section. Confirmed not viable with MS Bookings (X-Frame-Options blocks iframe). Options if pain becomes real: switch provider, or build a Graph-API-backed custom UI.
-5. **Coordinator UX polish** — sheet is functional but raw. Could add column validation (data validation in Google Sheets) for `format`, `stage`, `pathway` to reduce typos, or a Google Form → sheet for new-row creation. Low priority until coordinator says it hurts.
+2. **Populate the `provider` column** — coordinator adding it now. Use canonical strings (see COORDINATOR_GUIDE "Provider naming conventions") to keep grouping/filtering consistent later.
+3. **Delete the dead `libcalUrl` column from all 3 sheet tabs** — code already ignores it; just dead weight in the editor.
+4. **Shared Bookings page** — currently using Prem's personal *Bookings with Me* URL. When advisor #2 joins, migrate to a shared mailbox (e.g. `pathways-bookings@concordia`) so URLs survive staff turnover.
+5. **In-page booking (no new tab)** — see [BOOKINGS_PLAN.md](BOOKINGS_PLAN.md) "Staying on the page" section. Confirmed not viable with MS Bookings (X-Frame-Options blocks iframe). Options if pain becomes real: switch provider, or build a Graph-API-backed custom UI.
+6. **Coordinator UX polish** — sheet is functional but raw. Could add column validation (data validation in Google Sheets) for `format`, `stage`, `pathway` to reduce typos, or a Google Form → sheet for new-row creation. Low priority until coordinator says it hurts.
 
 ## Current state
 
 - Sheet is authoritative for all 3 content types. Local `data.js` is fallback only (cleared at runtime).
 - 1 of 11 workshops migrated to Doc body. Remaining 10 still serving from local `.md` (no user-visible difference).
-- `provider` column added but not yet populated across all rows.
+- `provider` column being added to all 3 tabs; coordinator populating row by row. Site renders nothing for blank rows (no broken layout). Card shows it as a small "OFFERED BY  *value*" label below the title; modal shows it as the first item in the meta-bar.
 - MS Bookings live for one consultation (`opp-impact-framing`); other rows fall through to the Formspree request form.
 
 ## Settled questions (was: Open questions)
@@ -149,5 +150,34 @@ This was an acceptable tradeoff during the prototype but should be addressed bef
 3. **PR-based gating for content (overkill).** Treat sheet rows as code. Pull from sheet → commit to repo → review → merge → deploy. Fully audited but throws away the whole point of the no-code editor.
 
 #3 is mentioned only to be ruled out. #1 is the next move when staging becomes a real need; #2 is the fallback if #1's per-row toggle proves confusing.
+
+### Attempt 7 — Bake script (static JSON export) — BUILT, PARKED
+
+Context: In a conversation with Jesse Drukker (Concordia web team), he noted that the My CU Account site uses a pattern where content is exported to a JSON file and uploaded to AEM, removing any runtime dependency on Google. The site serves its own copy of the data.
+
+We built an equivalent for our stack:
+
+- `scripts/bake.js` — fetches all 3 sheet tabs, parses CSV (same logic as `app.js`), writes static JSON to `content/data/workshops.json`, `content/data/opportunities.json`, `content/data/external-resources.json`
+- `SHEETS.mode` flag in `app.js` (replaces the old `enabled` boolean):
+  - `"live"` — current behaviour, runtime fetch from Google (**active**)
+  - `"baked"` — reads from `content/data/*.json` instead of Google (no external dependency)
+  - `"local"` — uses only local `data.js` / `content/workshops.json` (no network at all)
+
+Coordinator workflow if activated:
+```
+1. Edit Google Sheet
+2. node scripts/bake.js
+3. git diff content/data/    ← review what changed
+4. git add content/data/ && git commit -m "content: refresh from sheet" && git push
+```
+
+Why it's parked: the terminal is a barrier for a non-technical coordinator. Every content update requires opening Terminal, running a command, and doing a git commit/push. That's a worse experience than the current sheet-to-live flow. The value (no runtime Google dependency, git-based rollback, QA gate before publish) is real, but the UX needs to be abstracted before activating.
+
+Realistic paths to making it usable without Terminal:
+- **GitHub Action on a schedule** — a cron-triggered Action runs `bake.js` and auto-commits the JSON on a schedule (e.g. every 30 min). Coordinator edits the sheet; the Action picks it up automatically. No terminal needed.
+- **GitHub Action triggered by sheet** — an Apps Script webhook in the sheet calls the GitHub API to trigger a workflow dispatch on save. Near-instant, no polling lag.
+- Either path keeps the QA gate (PR review) if desired, or skips it for a fully automatic flow.
+
+Status: code is in the repo and functional. Set `SHEETS.mode = "baked"` in `app.js` to activate. Currently set to `"live"`.
 
 A separate consideration — Doc bodies have their own staging gap. A coordinator can keep editing a published Doc and every save is live within ~5 min (Google's publish cache). Mitigation if that becomes a problem: ask coordinators to *un-publish* before substantial edits, then *re-publish* when ready. Nothing to build, just a process note.
