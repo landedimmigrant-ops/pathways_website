@@ -4371,7 +4371,7 @@
     section.openPathwayInTab = (pathwayKey) => {
       const pathway = pathwayItems.find((p) => (pathwayIdToKey[p.id] || p.id) === pathwayKey);
       if (pathway) {
-        tabPathways.click();
+        setActiveTab(tabPathways);
         openExplorePanel(pathway);
       }
     };
@@ -4774,6 +4774,36 @@
     const allTabs = [tabPathways, tabResearch, tabServices];
     const allContents = [pathwaysTabContent, researchTabContent, servicesTabContent];
     tabsBar.setAttribute("role", "tablist");
+
+    // setActiveTab toggles UI only (used by URL-driven nav and internal helpers).
+    // It does NOT push the URL — that's pushTabUrl's job, which user clicks call.
+    const setActiveTab = (targetTab) => {
+      allTabs.forEach((t, j) => {
+        const active = t === targetTab;
+        t.classList.toggle("is-active", active);
+        t.setAttribute("aria-selected", active ? "true" : "false");
+        t.setAttribute("tabindex", active ? "0" : "-1");
+        allContents[j].classList.toggle("is-active", active);
+      });
+    };
+
+    // pushTabUrl writes the tab into the URL (?tab=research|browse, omitted for
+    // pathways since that's the default). Hashchange then drives setActiveTab.
+    const pushTabUrl = (tabName) => {
+      const route = parseRouteFromHash(window.location.hash);
+      const params = new URLSearchParams(route.page === "explore" ? route.params.toString() : "");
+      if (tabName === "pathways") params.delete("tab");
+      else params.set("tab", tabName);
+      // Tab change drops modal state — switching tabs implies you're done with the modal.
+      params.delete("service");
+      params.delete("book");
+      const queryString = params.toString();
+      const nextHash = `#explore${queryString ? "?" + queryString : ""}`;
+      if (window.location.hash !== nextHash) {
+        window.location.hash = nextHash; // adds history entry, fires hashchange
+      }
+    };
+
     allTabs.forEach((tab, i) => {
       const panelId = `explore-panel-${allContents[i].dataset.tabContent}`;
       allContents[i].id = panelId;
@@ -4783,13 +4813,7 @@
       tab.setAttribute("aria-controls", panelId);
       tab.setAttribute("tabindex", i === 0 ? "0" : "-1");
       tab.addEventListener("click", () => {
-        allTabs.forEach((t, j) => {
-          const active = t === tab;
-          t.classList.toggle("is-active", active);
-          t.setAttribute("aria-selected", active ? "true" : "false");
-          t.setAttribute("tabindex", active ? "0" : "-1");
-          allContents[j].classList.toggle("is-active", active);
-        });
+        pushTabUrl(tab.dataset.tab);
       });
     });
     tabsBar.addEventListener("keydown", (e) => {
@@ -5378,7 +5402,7 @@
     };
 
     const applyStageFilter = (stage) => {
-      tabServices.click();
+      setActiveTab(tabServices);
       const control = filterControls.get("stage");
       if (control) {
         control.value = stage;
@@ -5419,19 +5443,19 @@
     section.focusWorkshopById = focusWorkshopById;
     section.applySearchTerm = applySearchTerm;
     section.openResearchStage = (journeyId) => {
-      tabResearch.click();
+      setActiveTab(tabResearch);
       const journey = journeys.find(j => j.id === journeyId);
       if (journey) openResearchPanel(journey);
     };
     section.openTab = (tabName) => {
-      if (tabName === "research") tabResearch.click();
-      else if (tabName === "browse") tabServices.click();
-      else tabPathways.click();
+      if (tabName === "research") setActiveTab(tabResearch);
+      else if (tabName === "browse") setActiveTab(tabServices);
+      else setActiveTab(tabPathways);
     };
     section.resetState = () => {
       closeExplorePanel();
       closeResearchPanel();
-      tabPathways.click();
+      setActiveTab(tabPathways);
     };
 
     // Reconcile the modal layer with what the URL says should be open.
@@ -5673,6 +5697,14 @@
 
     if (validPage === "explore") {
       const explorePage = pages.get("explore");
+      // Set the active tab FIRST from URL (?tab=research|browse), defaulting
+      // to pathways if no tab param. Later helpers (applyStageFilter,
+      // openPathwayInTab, openResearchStage) may override the tab as a side
+      // effect of their own work, which is desired.
+      if (explorePage && explorePage.openTab) {
+        explorePage.openTab(state.pendingExploreTab || "pathways");
+        state.pendingExploreTab = "";
+      }
       if (explorePage && explorePage.applyStageFilter && state.pendingStage) {
         explorePage.applyStageFilter(state.pendingStage);
         state.pendingStage = "";
@@ -5685,6 +5717,10 @@
         explorePage.focusWorkshopById(state.pendingWorkshopId);
         state.pendingWorkshopId = "";
       }
+      if (explorePage && explorePage.openResearchStage && state.pendingResearchJourneyId) {
+        explorePage.openResearchStage(state.pendingResearchJourneyId);
+        state.pendingResearchJourneyId = "";
+      }
       // Reconcile modal state from the URL (?service=<id>&book=1).
       // Runs on every explore-page activation, including hashchange-driven nav.
       if (explorePage && explorePage.reconcileServiceModal) {
@@ -5692,14 +5728,6 @@
         const urlServiceId = route.params.get("service") || "";
         const urlWithBooking = route.params.get("book") === "1";
         explorePage.reconcileServiceModal(urlServiceId, urlWithBooking);
-      }
-      if (explorePage && explorePage.openResearchStage && state.pendingResearchJourneyId) {
-        explorePage.openResearchStage(state.pendingResearchJourneyId);
-        state.pendingResearchJourneyId = "";
-      }
-      if (explorePage && explorePage.openTab && state.pendingExploreTab) {
-        explorePage.openTab(state.pendingExploreTab);
-        state.pendingExploreTab = "";
       }
       if (explorePage && explorePage.applySearchTerm) {
         explorePage.applySearchTerm(state.pendingExploreSearch);
@@ -5841,6 +5869,7 @@
     if (initialRoute.page === "explore") {
       state.pendingWorkshopId = initialRoute.params.get("workshop") || "";
       state.pendingExploreSearch = initialRoute.params.get("q") || "";
+      state.pendingExploreTab = initialRoute.params.get("tab") || "";
     }
     if (initialRoute.page === "support") {
       state.pendingSupportSearch = initialRoute.params.get("q") || "";
@@ -5861,6 +5890,9 @@
         : "";
       state.pendingExploreSearch = nextRoute.page === "explore"
         ? (nextRoute.params.get("q") || "")
+        : "";
+      state.pendingExploreTab = nextRoute.page === "explore"
+        ? (nextRoute.params.get("tab") || "")
         : "";
       state.pendingSupportSearch = nextRoute.page === "support"
         ? (nextRoute.params.get("q") || "")
