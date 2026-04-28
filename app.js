@@ -14,10 +14,12 @@
     enabled: true
   };
 
-  // Google Sheets backend (prototype). When enabled, content is fetched from
-  // the published sheet at runtime instead of from local data.js / workshops.json.
+  // Google Sheets backend. Controls where content is loaded from.
+  //   "baked"  — read from content/data/*.json (run node scripts/bake.js to refresh)
+  //   "live"   — fetch Google Sheets at runtime on every page load
+  //   "local"  — use only local data.js / content/workshops.json (no network)
   const SHEETS = {
-    enabled: true,
+    mode: "live",
     sheetId: "1IQGINsUTQMWLm4IJY49dr76pMeWkIH_vj-aLnj9jD1Y",
     tabs: {
       workshops: "workshops",
@@ -122,7 +124,10 @@
     pendingSupportSearch: "",
     pendingResearchJourneyId: "",
     pendingExploreTab: "",
-    suppressNextHashChange: false
+    suppressNextHashChange: false,
+    // Tracks which modal is currently rendered. Empty = none.
+    // Format: "service:<id>" for the detail modal, "book:<id>" for the booking modal.
+    currentModalKey: ""
   };
   const pathwayIdToKey = {
     "academic-scholarship": "academic",
@@ -591,35 +596,52 @@
   };
 
   const loadExploreContentFromSheets = async () => {
-    if (!SHEETS.enabled) {
-      console.log("[Pathways] SHEETS.enabled = false, using local data.js");
+    if (SHEETS.mode === "local") {
+      console.log("[Pathways] SHEETS.mode = local, using local data.js");
       return;
     }
-    // Sheet is authoritative — clear local data first so any failure is
-    // immediately visible (empty Explore page, not stale local content).
+    // Non-local modes are authoritative — clear local data first so any
+    // failure is immediately visible (empty Explore page, not stale content).
     data.explore.opportunities = [];
     data.explore.externalResources = [];
     try {
-      const [opps, ext] = await Promise.all([
-        fetchOpportunitiesFromSheet(),
-        fetchExternalResourcesFromSheet()
-      ]);
+      let opps, ext;
+      if (SHEETS.mode === "baked") {
+        const [oppsRes, extRes] = await Promise.all([
+          fetch("content/data/opportunities.json"),
+          fetch("content/data/external-resources.json")
+        ]);
+        if (!oppsRes.ok) throw new Error(`Failed to load baked opportunities (${oppsRes.status})`);
+        if (!extRes.ok) throw new Error(`Failed to load baked external resources (${extRes.status})`);
+        [opps, ext] = await Promise.all([oppsRes.json(), extRes.json()]);
+      } else {
+        [opps, ext] = await Promise.all([
+          fetchOpportunitiesFromSheet(),
+          fetchExternalResourcesFromSheet()
+        ]);
+      }
       data.explore.opportunities = opps;
       data.explore.externalResources = ext;
-      console.log(`[Pathways] Loaded from Google Sheet: ${opps.length} opportunities, ${ext.length} external resources`);
+      const src = SHEETS.mode === "baked" ? "baked JSON" : "Google Sheet";
+      console.log(`[Pathways] Loaded from ${src}: ${opps.length} opportunities, ${ext.length} external resources`);
     } catch (err) {
-      console.error("[Pathways] FAILED to load explore content from sheet — Explore page will be empty until fixed.", err);
+      console.error("[Pathways] FAILED to load explore content — Explore page will be empty until fixed.", err);
     }
   };
 
   const loadWorkshopContent = async () => {
     try {
       let manifest;
-      if (SHEETS.enabled) {
+      if (SHEETS.mode === "live") {
         manifest = await fetchWorkshopsFromSheet();
         console.log(`[Pathways] Loaded from Google Sheet: ${manifest.length} workshops`);
+      } else if (SHEETS.mode === "baked") {
+        const res = await fetch("content/data/workshops.json");
+        if (!res.ok) throw new Error(`Failed to load baked workshops (${res.status})`);
+        manifest = await res.json();
+        console.log(`[Pathways] Loaded from baked JSON: ${manifest.length} workshops`);
       } else {
-        console.log("[Pathways] SHEETS.enabled = false, loading workshops from content/workshops.json");
+        console.log("[Pathways] SHEETS.mode = local, loading workshops from content/workshops.json");
         const manifestResponse = await fetch("content/workshops.json", { cache: "no-cache" });
         if (!manifestResponse.ok) {
           throw new Error(`Manifest request failed (${manifestResponse.status})`);
@@ -1400,7 +1422,8 @@
         if (isTool) {
           navigateTo(item.internalRoute);
         } else {
-          navigateTo("explore", "opportunity-explorer", { workshop: item.id });
+          // Open the service modal directly (auto-routes to Explore en route).
+          navigateToService(item.id);
         }
       });
       card.appendChild(ctaBtn);
@@ -4258,17 +4281,17 @@
           } else if (opp.sourceType === "workshop") {
             const btn = el("button", "btn primary", data.explore.buttons.details);
             btn.type = "button";
-            btn.addEventListener("click", () => openModal(opp));
+            btn.addEventListener("click", () => navigateToService(opp.id));
             cardActions.appendChild(btn);
           } else if (opp.sourceType === "resource") {
             const btn = el("button", "btn primary", data.explore.buttons.details);
             btn.type = "button";
-            btn.addEventListener("click", () => openModal(opp));
+            btn.addEventListener("click", () => navigateToService(opp.id));
             cardActions.appendChild(btn);
           } else {
             const detailBtn = el("button", "btn primary", data.explore.buttons.details);
             detailBtn.type = "button";
-            detailBtn.addEventListener("click", () => openModal(opp));
+            detailBtn.addEventListener("click", () => navigateToService(opp.id));
             cardActions.appendChild(detailBtn);
           }
           // Layout order: tags + body up top, actions float right at the bottom.
@@ -4390,17 +4413,17 @@
       } else if (opp.sourceType === "workshop") {
         const btn = el("button", "btn primary", data.explore.buttons.details);
         btn.type = "button";
-        btn.addEventListener("click", () => openModal(opp));
+        btn.addEventListener("click", () => navigateToService(opp.id));
         cardActions.appendChild(btn);
       } else if (opp.sourceType === "resource") {
         const btn = el("button", "btn primary", data.explore.buttons.details);
         btn.type = "button";
-        btn.addEventListener("click", () => openModal(opp));
+        btn.addEventListener("click", () => navigateToService(opp.id));
         cardActions.appendChild(btn);
       } else {
         const detailBtn = el("button", "btn primary", data.explore.buttons.details);
         detailBtn.type = "button";
-        detailBtn.addEventListener("click", () => openModal(opp));
+        detailBtn.addEventListener("click", () => navigateToService(opp.id));
         cardActions.appendChild(detailBtn);
       }
       card.appendChild(cardActions);
@@ -4797,7 +4820,7 @@
       document.body.classList.remove("is-modal-open");
     };
     const bindModalEscape = () => {
-      const onKeydown = (e) => { if (e.key === "Escape") closeModal(); };
+      const onKeydown = (e) => { if (e.key === "Escape") requestModalClose(); };
       document.addEventListener("keydown", onKeydown);
       modalCleanups.push(() => document.removeEventListener("keydown", onKeydown));
     };
@@ -4885,20 +4908,20 @@
         } else if (opp.sourceType === "workshop") {
           const primaryButton = el("button", "btn primary", data.explore.buttons.details);
           primaryButton.type = "button";
-          primaryButton.addEventListener("click", () => openModal(opp));
+          primaryButton.addEventListener("click", () => navigateToService(opp.id));
           actions.appendChild(primaryButton);
         } else if (opp.sourceType === "resource") {
           const primaryButton = el("button", "btn primary", data.explore.buttons.details);
           primaryButton.type = "button";
-          primaryButton.addEventListener("click", () => openModal(opp));
+          primaryButton.addEventListener("click", () => navigateToService(opp.id));
           actions.appendChild(primaryButton);
         } else {
           const bookButton = el("button", "btn", data.explore.buttons.book);
           bookButton.type = "button";
-          bookButton.addEventListener("click", () => openBookingModal(opp));
+          bookButton.addEventListener("click", () => navigateToService(opp.id, true));
           const detailButton = el("button", "btn primary", data.explore.buttons.details);
           detailButton.type = "button";
-          detailButton.addEventListener("click", () => openModal(opp));
+          detailButton.addEventListener("click", () => navigateToService(opp.id));
           actions.appendChild(bookButton);
           actions.appendChild(detailButton);
         }
@@ -4940,7 +4963,7 @@
         }
         const viewBtn = el("button", "btn primary", data.explore.buttons.details);
         viewBtn.type = "button";
-        viewBtn.addEventListener("click", () => openModal(opp));
+        viewBtn.addEventListener("click", () => navigateToService(opp.id));
         card.appendChild(viewBtn);
         recommendedGrid.appendChild(card);
       });
@@ -4984,7 +5007,7 @@
       const topbar = el("div", "modal-topbar");
       const backBtn = el("button", "modal-back-btn", "\u2190 Back");
       backBtn.type = "button";
-      backBtn.addEventListener("click", closeModal);
+      backBtn.addEventListener("click", requestModalClose);
       topbar.appendChild(backBtn);
       overlay.appendChild(topbar);
 
@@ -5005,7 +5028,7 @@
 
       const cancelBtn = el("button", "btn", "Cancel");
       cancelBtn.type = "button";
-      cancelBtn.addEventListener("click", closeModal);
+      cancelBtn.addEventListener("click", requestModalClose);
       actions.appendChild(cancelBtn);
 
       modal.appendChild(actions);
@@ -5029,7 +5052,7 @@
       const topbar = el("div", "modal-topbar");
       const backBtn = el("button", "modal-back-btn", "\u2190 Back");
       backBtn.type = "button";
-      backBtn.addEventListener("click", closeModal);
+      backBtn.addEventListener("click", requestModalClose);
       topbar.appendChild(backBtn);
       overlay.appendChild(topbar);
 
@@ -5136,7 +5159,7 @@
 
       const cancelBtn = el("button", "btn", "Cancel");
       cancelBtn.type = "button";
-      cancelBtn.addEventListener("click", closeModal);
+      cancelBtn.addEventListener("click", requestModalClose);
       actions.appendChild(cancelBtn);
 
       form.appendChild(actions);
@@ -5200,7 +5223,7 @@
       const topbar = el("div", "modal-topbar");
       const backBtn = el("button", "modal-back-btn", "\u2190 Back to All Resources");
       backBtn.type = "button";
-      backBtn.addEventListener("click", closeModal);
+      backBtn.addEventListener("click", requestModalClose);
       topbar.appendChild(backBtn);
       const topbarActions = el("div", "modal-topbar-actions");
       if (opp.sourceType === "resource" && opp.externalUrl) {
@@ -5292,19 +5315,19 @@
       } else if (fmt.includes("consult")) {
         const ctaBtn = el("button", "btn primary modal-cta-btn", "Book a consultation");
         ctaBtn.type = "button";
-        ctaBtn.addEventListener("click", () => { closeModal(); openBookingModal(opp); });
+        ctaBtn.addEventListener("click", () => navigateToService(opp.id, true));
         bottomCta.appendChild(ctaBtn);
       } else if (opp.sourceType === "workshop") {
-        // Workshops route through openBookingModal — if a bookingUrl is on the row,
+        // Workshops route through booking modal — if a bookingUrl is on the row,
         // it short-circuits to MS Bookings; otherwise the request form opens.
         const ctaBtn = el("button", "btn primary modal-cta-btn", "Register for this workshop");
         ctaBtn.type = "button";
-        ctaBtn.addEventListener("click", () => { closeModal(); openBookingModal(opp); });
+        ctaBtn.addEventListener("click", () => navigateToService(opp.id, true));
         bottomCta.appendChild(ctaBtn);
       } else {
         const ctaBtn = el("button", "btn primary modal-cta-btn", "Express interest");
         ctaBtn.type = "button";
-        ctaBtn.addEventListener("click", () => { closeModal(); openBookingModal(opp); });
+        ctaBtn.addEventListener("click", () => navigateToService(opp.id, true));
         bottomCta.appendChild(ctaBtn);
       }
       modal.appendChild(bottomCta);
@@ -5339,7 +5362,7 @@
           if (item.summary) card.appendChild(el("p", "modal-related-card-summary", item.summary));
           const cardBtn = el("button", "btn", data.explore.buttons.details);
           cardBtn.type = "button";
-          cardBtn.addEventListener("click", () => openModal(item));
+          cardBtn.addEventListener("click", () => navigateToService(item.id));
           card.appendChild(cardBtn);
           relatedGrid.appendChild(card);
         });
@@ -5410,6 +5433,35 @@
       closeResearchPanel();
       tabPathways.click();
     };
+
+    // Reconcile the modal layer with what the URL says should be open.
+    // Called from showPage on every page change and on every hashchange.
+    // Idempotent: opening the same modal that's already open is a no-op.
+    section.reconcileServiceModal = (serviceId, withBooking) => {
+      const targetKey = !serviceId
+        ? ""
+        : (withBooking ? `book:${serviceId}` : `service:${serviceId}`);
+      if (targetKey === state.currentModalKey) return;
+
+      // Close whatever's currently up.
+      if (state.currentModalKey) {
+        closeModal();
+        state.currentModalKey = "";
+      }
+
+      if (!serviceId) return;
+
+      const opp = exploreItems.find((item) => item.id === serviceId);
+      if (!opp) return; // bad/stale service id — leave URL but don't crash
+
+      if (withBooking) {
+        openBookingModal(opp);
+      } else {
+        openModal(opp);
+      }
+      state.currentModalKey = targetKey;
+    };
+
     return section;
   };
 
@@ -5607,6 +5659,10 @@
       if (explorePage && explorePage.resetState) {
         explorePage.resetState();
       }
+      // Leaving explore — make sure no service modal lingers.
+      if (explorePage && explorePage.reconcileServiceModal) {
+        explorePage.reconcileServiceModal("", false);
+      }
     }
     if (validPage !== "learn") {
       const learnPage = pages.get("learn");
@@ -5628,6 +5684,14 @@
       if (explorePage && explorePage.focusWorkshopById && state.pendingWorkshopId) {
         explorePage.focusWorkshopById(state.pendingWorkshopId);
         state.pendingWorkshopId = "";
+      }
+      // Reconcile modal state from the URL (?service=<id>&book=1).
+      // Runs on every explore-page activation, including hashchange-driven nav.
+      if (explorePage && explorePage.reconcileServiceModal) {
+        const route = parseRouteFromHash(window.location.hash);
+        const urlServiceId = route.params.get("service") || "";
+        const urlWithBooking = route.params.get("book") === "1";
+        explorePage.reconcileServiceModal(urlServiceId, urlWithBooking);
       }
       if (explorePage && explorePage.openResearchStage && state.pendingResearchJourneyId) {
         explorePage.openResearchStage(state.pendingResearchJourneyId);
@@ -5671,6 +5735,34 @@
   const pageToHash = (pageId) => {
     const validPage = pages.has(pageId) ? pageId : "home";
     return validPage === "home" ? "#home" : `#${validPage}`;
+  };
+
+  // Navigate to a service modal. If we're not on Explore yet, this hops there
+  // and the modal opens once the page is built. Otherwise it just adds the
+  // ?service=<id> (and optionally &book=1) to the URL — hashchange does the rest.
+  const navigateToService = (serviceId, withBooking) => {
+    const route = parseRouteFromHash(window.location.hash);
+    const targetPage = "explore";
+    const params = new URLSearchParams(route.page === targetPage ? route.params.toString() : "");
+    if (serviceId) params.set("service", serviceId);
+    else params.delete("service");
+    if (withBooking) params.set("book", "1");
+    else params.delete("book");
+    const queryString = params.toString();
+    const nextHash = `#${targetPage}${queryString ? "?" + queryString : ""}`;
+    if (window.location.hash !== nextHash) {
+      window.location.hash = nextHash; // adds history entry, fires hashchange
+    }
+  };
+
+  // Close whatever modal is open by popping history. Browser back/forward
+  // already pops naturally; this is what the modal X / Escape / "Back" button hooks
+  // call so the URL stays in sync with what's on screen.
+  const requestModalClose = () => {
+    if (state.currentModalKey) {
+      // We pushed an entry when opening; pop it back so URL reverts.
+      history.back();
+    }
   };
 
   const navigateTo = (pageId, anchorId, options = {}) => {
