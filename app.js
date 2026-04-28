@@ -4705,6 +4705,11 @@
     const filterGrid = el("div", "filter-grid");
 
     data.explore.filters.forEach((filter) => {
+      // Pathway dropdown is intentionally hidden on the All Resources tab —
+      // pathways have their own dedicated tab. State + filter logic remain so
+      // programmatic navigation (e.g., "show me resources for pathway X") still
+      // works; users just don't see a redundant dropdown here.
+      if (filter.id === "pathway") return;
       const control = el("div", "filter-control");
       const label = el("label", null, filter.label);
       const select = el("select");
@@ -4832,12 +4837,12 @@
     section.appendChild(container);
 
     const applyPathwayFilter = (pathwayTitle) => {
+      // Sync the optional dropdown if it exists; always set state so the
+      // filter takes effect even when the dropdown is hidden.
       const control = filterControls.get("pathway");
-      if (control) {
-        control.value = pathwayTitle;
-        state.filters.pathway = pathwayTitle;
-        applyFilters();
-      }
+      if (control) control.value = pathwayTitle;
+      state.filters.pathway = pathwayTitle;
+      applyFilters();
       explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
