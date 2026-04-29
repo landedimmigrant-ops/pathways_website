@@ -23,9 +23,28 @@
     sheetId: "1IQGINsUTQMWLm4IJY49dr76pMeWkIH_vj-aLnj9jD1Y",
     tabs: {
       workshops: "workshops",
-      opportunities: "opportunities",
+      // The opportunities-shaped tab is named "place_holders" in the sheet —
+      // it doubles as a staging area. Rows display on the live site only when
+      // their `version` column reads exactly "approved".
+      opportunities: "place_holders",
       externalResources: "external-resources"
     }
+  };
+
+  // Approval gate: rows with a `version` column show only when version === "approved".
+  // Rows without a `version` column (e.g. external-resources today) display by default.
+  // Add `?preview=1` to any site URL to bypass the gate and see staging rows too.
+  const isPreviewMode = () => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("preview") === "1";
+    } catch (e) { return false; }
+  };
+  const isApprovedRow = (row) => {
+    if (isPreviewMode()) return true;
+    if (!("version" in row)) return true; // tab has no version column → no gate
+    const v = (row.version || "").toString().trim().toLowerCase();
+    return v === "approved"; // blank or anything else → hidden
   };
 
   const siteHeader = document.getElementById("site-header");
@@ -357,7 +376,7 @@
 
   const fetchWorkshopsFromSheet = async () => {
     const rows = await fetchSheetRows(SHEETS.tabs.workshops);
-    return rows.map((row) => ({
+    return rows.filter(isApprovedRow).map((row) => ({
       id: row.id,
       slug: row.slug || undefined,
       title: row.title || row.Title,
@@ -403,12 +422,12 @@
 
   const fetchOpportunitiesFromSheet = async () => {
     const rows = await fetchSheetRows(SHEETS.tabs.opportunities);
-    return rows.map(mapOpportunityRow);
+    return rows.filter(isApprovedRow).map(mapOpportunityRow);
   };
 
   const fetchExternalResourcesFromSheet = async () => {
     const rows = await fetchSheetRows(SHEETS.tabs.externalResources);
-    return rows.map((row) => {
+    return rows.filter(isApprovedRow).map((row) => {
       const rec = mapOpportunityRow(row);
       // External resources use stage as array even for single values
       if (!Array.isArray(rec.stage)) rec.stage = rec.stage ? [rec.stage] : [];

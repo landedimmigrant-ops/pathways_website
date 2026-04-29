@@ -2,15 +2,31 @@
 
 How to add and edit content on the Pathways to Impact site without writing code.
 
-## Heads-up: edits are live immediately
+## Heads-up: approval gates rows on the live site
 
-There is no staging environment yet. Every change you save in the Google Sheet is live on the site within about a minute, and every change you make to a published Google Doc is live within about five minutes. **There is no preview, no review step, no rollback button.** A few practical implications:
+Each tab in the Google Sheet has a **`version`** column. A row appears on the live site only when its `version` cell reads exactly **`approved`** (lowercase, no extra spaces). Anything else — `not approved`, `draft`, blank, or any other value — keeps the row hidden from public view.
 
-- Don't paste a half-finished row into the sheet. Draft it elsewhere first, or expect it to be visible until you finish.
-- If you want a colleague to eyeball something before it goes public, copy-paste the wording into a separate doc and ask them there.
-- For substantial Doc rewrites, *unpublish* the Doc before editing (File → Share → Stop publishing), do your edits, then *publish* again. While unpublished, the site falls back to the previous local copy (if any) so the workshop doesn't break.
+This gives you a soft staging environment in the same sheet:
 
-A "preview mode" that reads draft rows is on the engineering radar but not built yet. See `INTEGRATION_NOTES.md` "Known gaps" for the planned shape.
+- **Drafting?** Leave `version` blank or set it to `draft` / `not approved`. The row sits in the sheet but isn't on the public site.
+- **Ready?** Change `version` to `approved`. The row appears on the live site within ~1 minute (hard-refresh).
+- **Pulling something back?** Change `version` to anything other than `approved`. The row disappears from the public site within ~1 minute.
+
+**Preview mode**: append `?preview=1` to any site URL (e.g. `https://landedimmigrant-ops.github.io/pathways_website/?preview=1#explore`) and the site will display *all* rows including unapproved ones. Use this to review staging items before approving. The flag isn't shareable in any meaningful sense (anyone with the URL can use it) — treat it as a coordinator convenience, not a security boundary.
+
+### What about Google Docs?
+
+Google Doc edits to a workshop body are still live within ~5 min (no approval gate on Doc content — only on the sheet row that points to it). For substantial Doc rewrites, *unpublish* the Doc before editing (File → Share → Stop publishing), do your edits, then *publish* again. While unpublished, the site falls back to the previous local copy (if any) so the workshop doesn't break.
+
+### Tabs and the staging model
+
+| Tab | Has `version` column? | Behavior |
+|---|---|---|
+| `workshops` | Yes | `version=approved` → visible; otherwise hidden |
+| `place_holders` | Yes | Same — currently doubles as the staging area for opportunities |
+| `external-resources` | No | All rows show (no approval gate today; can be added by inserting a `version` column) |
+
+> Note on `place_holders`: this tab holds the opportunities-shaped data (consultations, services). The name reflects that it currently serves as a parking lot for in-progress entries. The schema is identical to a normal opportunities tab — you fill in `id`, `title`, `format`, `category`, `detailsWho/What/Outcomes`, etc. as documented in [Flow B](#flow-b--add-or-edit-a-bookable-consultation).
 
 ## Before you start
 
@@ -26,7 +42,7 @@ Pick the flow that matches what you're adding:
 | Task | Where the content lives | Jump to |
 |---|---|---|
 | Adding a workshop with a long-form body | Google Sheet `workshops` tab + a Google Doc | [Flow A](#flow-a--add-or-edit-a-workshop) |
-| Adding a bookable consultation | Google Sheet `opportunities` tab + Microsoft Bookings | [Flow B](#flow-b--add-or-edit-a-bookable-consultation) |
+| Adding a bookable consultation | Google Sheet `place_holders` tab + Microsoft Bookings | [Flow B](#flow-b--add-or-edit-a-bookable-consultation) |
 | Adding an external link or resource | Google Sheet `external-resources` tab | [Flow C](#flow-c--add-or-edit-an-external-resource) |
 | Just editing existing copy | Google Sheet, the relevant row | [Quick edits](#quick-edits) |
 
@@ -60,6 +76,7 @@ A "workshop" here means anything with a long-form description (what you'll get, 
    - `format`, `time`, `tags`, `pathways`, `stages`
    - `provider` — the team or unit running it. Renders as a small "OFFERED BY *Library RDM Team*" label below the title on the card, and as the first item in the modal meta-bar. See [Provider naming conventions](#provider-naming-conventions) for canonical strings.
    - `docUrl` — the `/pub` URL from Step 1
+   - `version` — set to `approved` to make the row visible on the live site. Leave blank or use `draft` while you're still preparing it (see ["approval gates rows on the live site"](#heads-up-approval-gates-rows-on-the-live-site) at the top).
 4. Optional:
    - `bookingUrl` — if there's a Microsoft Bookings page for this workshop. If you don't have one, the modal will show a "Register for this workshop" form that emails the request.
 5. Save. (Google Sheets auto-saves.)
@@ -127,12 +144,13 @@ URL format:
 
 ### Step 4 — Add the row to the sheet
 
-1. Open the shared sheet, `opportunities` tab.
+1. Open the shared sheet, `place_holders` tab.
 2. Add a row (or update an existing one). Fill in at least:
    - `id` — e.g. `opp-impact-framing-v2`
    - `title`, `category`, `format`, `time`, `stage`, `pathway`, `tags`, `summary`
    - `provider` — the team running the service (renders as "OFFERED BY *team*" on the card; see [Provider naming conventions](#provider-naming-conventions))
    - `bookingUrl` — paste the URL from Step 3
+   - `version` — leave blank or set to `draft` while you're still drafting; change to `approved` to make the row visible on the live site (see ["approval gates rows on the live site"](#heads-up-approval-gates-rows-on-the-live-site) at the top)
 3. Save.
 
 ### Step 5 — Verify
@@ -219,7 +237,7 @@ These accept multiple values, separated by `;`:
 | Tab | Multi-value columns |
 |---|---|
 | `workshops` | `pathways`, `stages`, `tags` |
-| `opportunities` | `pathway`, `tags` (and `stage` if a service spans multiple stages) |
+| `place_holders` | `pathway`, `tags` (and `stage` if a service spans multiple stages) |
 | `external-resources` | `pathway`, `tags`, `stage` |
 
 Example: `Communications; Policy` shows up as two pathway tags on the card.

@@ -130,26 +130,22 @@ Outcome: **works end-to-end.** First production workshop migrated (Library RDM "
 - ~~Is Microsoft Bookings the confirmed choice?~~ Yes. LibCal was the alternative; not happening.
 - ~~Who owns the database day-to-day?~~ Coordinator (single owner for now).
 
+## Closed gaps
+
+### Staging / preview via `version` column ✅ SHIPPED
+
+Resolves the formerly open "no staging environment" gap. Mechanism:
+
+- Each tab with public-facing rows has a **`version`** column.
+- The site filters in `fetchWorkshopsFromSheet`, `fetchOpportunitiesFromSheet`, `fetchExternalResourcesFromSheet`: a row displays only when `version === "approved"` (case-insensitive, trimmed).
+- Tabs without a `version` column (e.g. `external-resources` today) display all rows — the gate only kicks in when the column exists.
+- A `?preview=1` query parameter bypasses the filter for that visit, so the coordinator can review staging items at the live URL before approving.
+
+Coordinator workflow: edit at `draft` (or any non-approved value) → flip to `approved` when ready → row appears within ~1 min.
+
+Tab naming: the opportunities-shaped data lives in a tab named `place_holders` (the rename made the staging intent visible at a glance in the sheet). Code reads that tab via `SHEETS.tabs.opportunities = "place_holders"`.
+
 ## Known gaps
-
-### No staging / preview environment
-
-Today the chain is: coordinator saves the sheet (or publishes a Doc) → site picks it up within ~1–5 min → live for everyone. There is no preview, no review gate, no rollback path. Side effects of this:
-
-- A typo in `summary` is publicly visible until someone notices.
-- A half-edited row (deleted summary while drafting a new one) renders as an empty card to live users.
-- A botched Doc publish (e.g. accidentally unpublishing) takes a workshop body offline until either the local `.md` fallback catches it or someone re-publishes.
-- No way for the coordinator to draft a new offering and let a colleague eyeball it before it goes live.
-
-This was an acceptable tradeoff during the prototype but should be addressed before the volume of edits grows. Realistic paths, lightest to heaviest:
-
-1. **`status` column on the existing sheets (recommended).** Add a `status` column (values: `draft`, `published`, `archived`). Production reads only `published`. A `?preview=1` query parameter on the same site reads `published + draft` so the coordinator (or anyone given the preview URL) can see what's about to ship. No second sheet, no second deployment. ~1 hour of code. Coordinator workflow: edit at `draft` → preview → flip to `published` when ready.
-
-2. **Two sheets, two deployments.** A separate "staging" sheet feeds a separate staging Pages deployment (e.g. `pathways_website-staging` repo, or a `staging` branch with a different build target). Coordinator edits in staging, copies rows to production sheet on a cadence. Heavier mental model; risk of drift; closer to "real" staging.
-
-3. **PR-based gating for content (overkill).** Treat sheet rows as code. Pull from sheet → commit to repo → review → merge → deploy. Fully audited but throws away the whole point of the no-code editor.
-
-#3 is mentioned only to be ruled out. #1 is the next move when staging becomes a real need; #2 is the fallback if #1's per-row toggle proves confusing.
 
 ### Attempt 7 — Bake script (static JSON export) — BUILT, PARKED
 
