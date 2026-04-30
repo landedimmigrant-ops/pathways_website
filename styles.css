@@ -5211,3 +5211,14 @@ label {
   .s7-inner { padding: 40px 24px; }
   .s7-headline { font-size: 32px; }
 }
+
+.prototype-banner {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 14px 16px 18px;
+  border-top: 1px solid var(--border);
+  background: #fafafa;
+}
