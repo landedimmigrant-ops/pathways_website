@@ -5,6 +5,26 @@
   }
 
   const FORMSPREE_URL = "https://formspree.io/f/YOUR_FORM_ID";
+  const FORMSPREE_CONFIGURED = !FORMSPREE_URL.includes("YOUR_FORM_ID");
+  const FORMSPREE_FALLBACK_EMAIL = "impact@concordia.ca";
+
+  // Single submission path. Resolves to { ok, prototype, error }:
+  //   ok=true           → Formspree accepted the submission.
+  //   prototype=true    → FORMSPREE_URL is still a placeholder, nothing was sent.
+  //   error/!ok         → submission failed; surface a real error to the user.
+  const submitToFormspree = (formData) => {
+    if (!FORMSPREE_CONFIGURED) {
+      return Promise.resolve({ ok: false, prototype: true });
+    }
+    return fetch(FORMSPREE_URL, {
+      method: "POST",
+      body: formData,
+      headers: { "Accept": "application/json" }
+    }).then(
+      (res) => ({ ok: res.ok, prototype: false, status: res.status }),
+      (err) => ({ ok: false, prototype: false, error: err })
+    );
+  };
 
   // Bookings integration (prototype). When enabled, opportunities with a
   // bookingUrl show a redirect modal that opens MS Bookings in a new tab.
@@ -18,6 +38,12 @@
   //   "baked"  — read from content/data/*.json (run node scripts/bake.js to refresh)
   //   "live"   — fetch Google Sheets at runtime on every page load
   //   "local"  — use only local data.js / content/workshops.json (no network)
+  //
+  // PARKED — keep "live" during the beta. The "baked" path is functional but
+  // its files (scripts/bake.js, content/data/) are intentionally not in the
+  // repo yet; do not flip to "baked" without committing them first or the site
+  // will 404 on the snapshots. See INTEGRATION_NOTES.md → "Attempt 7" for
+  // context and the path to making baked mode coordinator-friendly.
   const SHEETS = {
     mode: "live",
     sheetId: "1IQGINsUTQMWLm4IJY49dr76pMeWkIH_vj-aLnj9jD1Y",
@@ -473,7 +499,7 @@
         const raw = node.getAttribute("href") || "";
         const href = unwrapGoogleRedirect(raw);
         const safeHref = /^(https?:|mailto:|#)/.test(href) ? ` href="${escapeAttr(href)}"` : "";
-        const target = safeHref && /^https?:/.test(href) ? ' target="_blank" rel="noopener"' : "";
+        const target = safeHref && /^https?:/.test(href) ? ' target="_blank" rel="noopener noreferrer"' : "";
         if (!childHtml.trim()) return "";
         return `<a${safeHref}${target}>${childHtml}</a>`;
       }
@@ -936,16 +962,33 @@
     actions.appendChild(submitBtn);
     form.appendChild(actions);
 
-    const showConfirmation = () => {
+    const showConfirmation = ({ ok, prototype }) => {
       clear(form);
       form.className = "feedback-confirmation";
       form.appendChild(el("p", "booking-confirm-icon", "\u2713"));
       form.appendChild(el("h3", "booking-confirm-title", "Thanks!"));
-      form.appendChild(el("p", "booking-confirm-text", "Your feedback helps us improve Pathways."));
+      const text = ok
+        ? "Your feedback helps us improve Pathways."
+        : prototype
+          ? "We logged your note locally \u2014 the feedback inbox is being finalized. You can also reach us at " + FORMSPREE_FALLBACK_EMAIL + "."
+          : "Saved your note locally. The form endpoint is being connected \u2014 in the meantime, email " + FORMSPREE_FALLBACK_EMAIL + " for anything urgent.";
+      form.appendChild(el("p", "booking-confirm-text", text));
       const doneBtn = el("button", "btn primary", "Close");
       doneBtn.type = "button";
       doneBtn.addEventListener("click", close);
       form.appendChild(doneBtn);
+    };
+
+    const showError = () => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send feedback";
+      let errBox = form.querySelector(".feedback-error");
+      if (!errBox) {
+        errBox = el("p", "feedback-error", "");
+        errBox.setAttribute("role", "alert");
+        form.insertBefore(errBox, actions);
+      }
+      errBox.textContent = "Couldn\u2019t send your feedback. Please try again, or email " + FORMSPREE_FALLBACK_EMAIL + ".";
     };
 
     form.addEventListener("submit", (e) => {
@@ -959,12 +1002,15 @@
       msgInput.classList.remove("is-invalid");
       submitBtn.disabled = true;
       submitBtn.textContent = "Sending\u2026";
-      const formData = new FormData(form);
-      fetch(FORMSPREE_URL, {
-        method: "POST",
-        body: formData,
-        headers: { "Accept": "application/json" }
-      }).then(showConfirmation).catch(showConfirmation);
+      submitToFormspree(new FormData(form)).then((result) => {
+        // Configured + non-ok response is a real failure \u2014 keep the form open
+        // so the user can retry or copy their text into an email.
+        if (!result.ok && !result.prototype) {
+          showError();
+          return;
+        }
+        showConfirmation(result);
+      });
     });
 
     modal.appendChild(form);
@@ -1090,6 +1136,7 @@
           <div class="eyebrow">Pathways to Impact &middot; Concordia University</div>
           <h2 class="s1-headline">Research is<br/><span class="s1-line-nowrap">where <em>change</em></span><br/>begins.</h2>
           <p class="s1-body">This site brings together resources, services, and tools from across Concordia &mdash; curated by the Office of Research to support your research impact journey, wherever you are in it.</p>
+          <a class="slide-link" href="#pathways-vision" data-slide-link="vision">Read impact vision &rarr;</a>
         </div>
         <div class="s1-right">
           <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1125,6 +1172,7 @@
           <div class="eyebrow">Defining Research Impact</div>
           <h2 class="s2-headline">What do we mean<br/>by <em>change</em>?</h2>
           <p class="s2-body">At Concordia, we define research impact as the <strong>change</strong> that research activities contribute to society and beyond &mdash; an ongoing process of engagement that can lead to academic, social, cultural, economic, environmental, or policy effects.</p>
+          <a class="slide-link" href="#learn" data-slide-link="learn">Learn more about research impact &rarr;</a>
         </div>
         <div class="s2-right">
           <div class="s2-traits">
@@ -1143,6 +1191,7 @@
           <div class="eyebrow">The Challenge</div>
           <h2 class="s3-headline">The gap between knowledge<br/>and change is real.</h2>
           <p class="s3-body">Research doesn&rsquo;t automatically become impact. Knowledge moves through systems &mdash; academic, social, political &mdash; and the path is rarely straight. Most researchers navigate it without a map.</p>
+          <a class="slide-link" href="#learn" data-slide-link="learn">Plan your impact &rarr;</a>
           <div class="gap-diagram">
             <div class="gap-icons-row">
               <div class="gap-icon"><svg viewBox="0 0 28 28" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5 L10 14 L6 22 L22 22 L18 14 L18 5"/><line x1="8" y1="5" x2="20" y2="5"/><path d="M9 17 C11 15 17 15 19 17" opacity="0.4"/></svg></div>
@@ -1173,34 +1222,34 @@
           <h2 class="s4-headline">Seven pathways to impact.</h2>
           <p class="s4-sub">Not a checklist &mdash; a starting place. Each pathway offers a different approach to creating real-world change from your research. Most researchers find more than one applies to them.</p>
           <div class="c-pw-grid">
-            <div class="pw featured" style="border-left-color:#912338;">
+            <div class="pw featured" data-pathway="academic-scholarship" role="button" tabindex="0" style="border-left-color:#912338;">
               <div class="pw-icon" style="background:rgba(145,35,56,0.08);">
                 <svg viewBox="0 0 28 28" width="28" height="28" fill="none" stroke="#912338" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 22 V8 C14 8 10 6 5 8 V22 C10 20 14 22 14 22 Z"/><path d="M14 22 V8 C14 8 18 6 23 8 V22 C18 20 14 22 14 22 Z"/><line x1="8" y1="12" x2="12" y2="12" opacity="0.5"/><line x1="8" y1="15" x2="12" y2="15" opacity="0.5"/><line x1="16" y1="12" x2="20" y2="12" opacity="0.5"/></svg>
               </div>
               <div class="pw-name">Academic Scholarship</div>
               <div class="pw-desc">Advance knowledge, methods, and scholarly contribution within and beyond your field &mdash; through publications, open access, data stewardship, and how your work is assessed and recognised.</div>
             </div>
-            <div class="pw" style="border-left-color:#DB0272;">
+            <div class="pw" data-pathway="community-engagement" role="button" tabindex="0" style="border-left-color:#DB0272;">
               <div class="pw-top"><div class="pw-icon" style="background:rgba(219,2,114,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#DB0272" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="6" r="3"/><circle cx="4.5" cy="8" r="2.2" opacity="0.6"/><circle cx="13.5" cy="8" r="2.2" opacity="0.6"/><path d="M5 16 C5 13 7 11.5 9 11.5 C11 11.5 13 13 13 16" opacity="0.8"/></svg></div><div class="pw-name">Community Engagement</div></div>
               <div class="pw-desc">Co-create research with communities and sustain reciprocal partnerships.</div>
             </div>
-            <div class="pw" style="border-left-color:#DA3A16;">
+            <div class="pw" data-pathway="innovation" role="button" tabindex="0" style="border-left-color:#DA3A16;">
               <div class="pw-top"><div class="pw-icon" style="background:rgba(218,58,22,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#DA3A16" stroke-width="1.5" stroke-linecap="round"><path d="M9 2 C6.2 2 4 4.2 4 7 C4 9 5.2 10.5 6 11.5 L12 11.5 C12.8 10.5 14 9 14 7 C14 4.2 11.8 2 9 2"/><line x1="6.5" y1="13.5" x2="11.5" y2="13.5"/><line x1="7.5" y1="15.5" x2="10.5" y2="15.5"/></svg></div><div class="pw-name">Innovation</div></div>
               <div class="pw-desc">Translate research into new methods, tools, or services that improve practice.</div>
             </div>
-            <div class="pw" style="border-left-color:#573996;">
+            <div class="pw" data-pathway="commercialization" role="button" tabindex="0" style="border-left-color:#573996;">
               <div class="pw-top"><div class="pw-icon" style="background:rgba(87,57,150,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#573996" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,14 6,9 10,11 15,4"/><polyline points="11,4 15,4 15,8"/></svg></div><div class="pw-name">Commercialization</div></div>
               <div class="pw-desc">Move research-based ideas toward market-ready products or ventures.</div>
             </div>
-            <div class="pw" style="border-left-color:#0072A8;">
+            <div class="pw" data-pathway="policy" role="button" tabindex="0" style="border-left-color:#0072A8;">
               <div class="pw-top"><div class="pw-icon" style="background:rgba(0,114,168,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#0072A8" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="2" width="12" height="14" rx="1.5"/><line x1="6" y1="6" x2="12" y2="6"/><line x1="6" y1="9" x2="12" y2="9"/><line x1="6" y1="12" x2="9.5" y2="12"/></svg></div><div class="pw-name">Policy</div></div>
               <div class="pw-desc">Connect evidence to policy conversations and decision-making timelines.</div>
             </div>
-            <div class="pw" style="border-left-color:#B07D00;">
+            <div class="pw" data-pathway="communications" role="button" tabindex="0" style="border-left-color:#B07D00;">
               <div class="pw-top"><div class="pw-icon" style="background:rgba(176,125,0,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#B07D00" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="11" r="2"/><path d="M5.5 7.5 C5.5 5.5 7.1 4 9 4 C10.9 4 12.5 5.5 12.5 7.5" opacity="0.7"/><path d="M3 5.5 C3 2.5 5.7 0.5 9 0.5 C12.3 0.5 15 2.5 15 5.5" opacity="0.4"/><line x1="9" y1="13" x2="9" y2="16"/><line x1="6.5" y1="16" x2="11.5" y2="16"/></svg></div><div class="pw-name">Communications</div></div>
               <div class="pw-desc">Share research in accessible ways that reach public and professional audiences.</div>
             </div>
-            <div class="pw" style="border-left-color:#508212;">
+            <div class="pw" data-pathway="research-creation" role="button" tabindex="0" style="border-left-color:#508212;">
               <div class="pw-top"><div class="pw-icon" style="background:rgba(80,130,18,0.07);"><svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="#508212" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15 L11 5.5 L13 4 L14 5 L12.5 7 L3 15 Z"/><circle cx="3.5" cy="14.5" r="1.5" fill="rgba(80,130,18,0.3)"/><path d="M13.5 2.5 C14.5 2 15.5 3 15 4" opacity="0.5"/></svg></div><div class="pw-name">Research Creation</div></div>
               <div class="pw-desc">Create and present research through artistic and practice-based approaches.</div>
             </div>
@@ -1215,19 +1264,19 @@
           <h2 class="s5-headline">Meet you where you are.</h2>
           <p class="s5-sub">Impact support looks different at every stage. Pathways is designed for all three moments in your research project.</p>
           <div class="lifecycle">
-            <div class="lc-stage">
+            <div class="lc-stage" data-stage="Developing an Idea" role="button" tabindex="0">
               <div class="lc-bubble"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.82)" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="21" x2="12" y2="11"/><path d="M12 11 C12 7 8.5 5 6 6 C6 9 8 12 12 11"/><path d="M12 14 C12 11 15.5 9 18 10 C18 13 15 15.5 12 14"/></svg></div>
               <div class="lc-title">Developing</div>
               <div class="lc-desc">Shaping your question, building partnerships, planning impact from the start.</div>
               <div class="lc-tags"><span class="lc-tag">Framing</span><span class="lc-tag">Co-design</span><span class="lc-tag">Grant writing</span></div>
             </div>
-            <div class="lc-stage">
+            <div class="lc-stage" data-stage="Active Research" role="button" tabindex="0">
               <div class="lc-bubble"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.82)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="13,3 7,13 12,13 11,21 17,11 12,11 13,3"/></svg></div>
               <div class="lc-title">Active</div>
               <div class="lc-desc">Research is running. You&rsquo;re generating knowledge and need to move it out.</div>
               <div class="lc-tags"><span class="lc-tag">Mobilisation</span><span class="lc-tag">Engagement</span><span class="lc-tag">Translation</span></div>
             </div>
-            <div class="lc-stage">
+            <div class="lc-stage" data-stage="Finishing a Project" role="button" tabindex="0">
               <div class="lc-bubble"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.82)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2" fill="rgba(255,255,255,0.7)" stroke="none"/></svg></div>
               <div class="lc-title">Wrapping Up</div>
               <div class="lc-desc">Findings are ready. Now comes dissemination, uptake, and sustained change.</div>
@@ -1253,6 +1302,7 @@
             <span class="partner-chip">V1 Studio</span>
             <span class="partner-chip" style="border-style:dashed;color:rgba(255,255,255,0.4);">+ More to come</span>
           </div>
+          <a class="slide-link" href="#about" data-slide-link="partners">See all partners &rarr;</a>
         </div>
         <div class="s6-right">
           <svg width="260" height="260" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1313,9 +1363,41 @@
     const contactBtn = track.querySelector(".carousel-cta-btn--ghost");
     if (contactBtn) contactBtn.addEventListener("click", () => navigateTo("about"));
 
-    // Wire S4 pathway cards to navigate to explore
+    // Wire inline slide links (S1 vision, S2/S3 learn, S6 partners)
+    track.querySelectorAll("[data-slide-link]").forEach((a) => {
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = a.dataset.slideLink;
+        if (target === "vision") navigateTo("pathways-vision");
+        else if (target === "partners") navigateTo("about", "partners");
+        else if (target === "learn") navigateTo("learn");
+      });
+    });
+
+    // Wire S4 pathway cards: deep-link to explore filtered by that pathway
     track.querySelectorAll(".c-pw-grid .pw").forEach((pw) => {
-      pw.addEventListener("click", () => navigateTo("explore"));
+      const go = () => {
+        const pathway = pw.dataset.pathway;
+        if (pathway) navigateTo("explore", null, { pathway });
+        else navigateTo("explore");
+      };
+      pw.addEventListener("click", go);
+      pw.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+      });
+    });
+
+    // Wire S5 lifecycle stages: navigate to explore + apply stage filter
+    track.querySelectorAll(".lifecycle .lc-stage").forEach((stageEl) => {
+      const go = () => {
+        const stage = stageEl.dataset.stage;
+        navigateTo("explore");
+        if (stage && typeof applyStageFilter === "function") applyStageFilter(stage);
+      };
+      stageEl.addEventListener("click", go);
+      stageEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+      });
     });
 
     // Carousel logic
@@ -3862,10 +3944,25 @@
 
       // Confirmation
       const confirmation = el("div", "contact-form-confirmation is-hidden");
-      confirmation.appendChild(el("p", "booking-confirm-icon", "\u2713"));
-      confirmation.appendChild(el("h3", "booking-confirm-title", "Request received!"));
-      confirmation.appendChild(el("p", "booking-confirm-text", "Thank you for reaching out. We\u2019ll review your details and connect you with the right person or resource."));
+      const confirmIcon = el("p", "booking-confirm-icon", "\u2713");
+      const confirmTitle = el("h3", "booking-confirm-title", "Request received!");
+      const confirmText = el("p", "booking-confirm-text", "");
+      confirmation.appendChild(confirmIcon);
+      confirmation.appendChild(confirmTitle);
+      confirmation.appendChild(confirmText);
       contactForm.appendChild(confirmation);
+
+      // Inline error (for real submission failures \u2014 kept above actions so the
+      // user can fix and retry without losing their text).
+      const errorBox = el("p", "contact-form-error is-hidden", "");
+      errorBox.setAttribute("role", "alert");
+      contactForm.insertBefore(errorBox, formActions);
+
+      const showContactConfirmation = (text) => {
+        contactForm.querySelectorAll(".contact-form-field, .contact-form-actions, .contact-form-note, .contact-form-heading, .contact-form-intro, .contact-form-error").forEach((el) => el.classList.add("is-hidden"));
+        confirmText.textContent = text;
+        confirmation.classList.remove("is-hidden");
+      };
 
       contactForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -3879,20 +3976,23 @@
           return;
         }
 
-        const formData = new FormData(contactForm);
+        errorBox.classList.add("is-hidden");
         submitBtn.disabled = true;
         submitBtn.textContent = "Sending\u2026";
 
-        fetch(FORMSPREE_URL, {
-          method: "POST",
-          body: formData,
-          headers: { "Accept": "application/json" }
-        }).then(() => {
-          contactForm.querySelectorAll(".contact-form-field, .contact-form-actions, .contact-form-note, .contact-form-heading, .contact-form-intro").forEach((el) => el.classList.add("is-hidden"));
-          confirmation.classList.remove("is-hidden");
-        }).catch(() => {
-          contactForm.querySelectorAll(".contact-form-field, .contact-form-actions, .contact-form-note, .contact-form-heading, .contact-form-intro").forEach((el) => el.classList.add("is-hidden"));
-          confirmation.classList.remove("is-hidden");
+        submitToFormspree(new FormData(contactForm)).then((result) => {
+          if (result.ok) {
+            showContactConfirmation("Thank you for reaching out. We\u2019ll review your details and connect you with the right person or resource.");
+            return;
+          }
+          if (result.prototype) {
+            showContactConfirmation("Thanks \u2014 we logged your request locally. The form endpoint is being finalized; in the meantime, you can email " + FORMSPREE_FALLBACK_EMAIL + ".");
+            return;
+          }
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Send request";
+          errorBox.textContent = "Couldn\u2019t send your request. Please try again, or email " + FORMSPREE_FALLBACK_EMAIL + " directly.";
+          errorBox.classList.remove("is-hidden");
         });
       });
 
@@ -4740,21 +4840,16 @@
       allOption.value = "";
       select.appendChild(allOption);
 
-      let values = [];
-      if (filter.id === "pathway") {
-        values = data.explore.pathways.items.map((item) => item.title);
-      } else {
-        const valueSet = new Set();
-        exploreItems.forEach((opp) => {
-          const value = opp[filter.id];
-          if (Array.isArray(value)) {
-            value.forEach((entry) => valueSet.add(entry));
-          } else if (value) {
-            valueSet.add(value);
-          }
-        });
-        values = Array.from(valueSet).sort();
-      }
+      const valueSet = new Set();
+      exploreItems.forEach((opp) => {
+        const value = opp[filter.id];
+        if (Array.isArray(value)) {
+          value.forEach((entry) => valueSet.add(entry));
+        } else if (value) {
+          valueSet.add(value);
+        }
+      });
+      const values = Array.from(valueSet).sort();
 
       values.forEach((value) => {
         const option = el("option", null, value);
@@ -4875,6 +4970,32 @@
       const onKeydown = (e) => { if (e.key === "Escape") requestModalClose(); };
       document.addEventListener("keydown", onKeydown);
       modalCleanups.push(() => document.removeEventListener("keydown", onKeydown));
+    };
+    // Capture the element that triggered the modal so we can return focus on close.
+    // Without this, keyboard users land on <body> after dismissing.
+    // Hash-routed close paths re-render the page, so the captured node may be
+    // detached by the time we restore — fall back to an ID-based lookup, then
+    // to the visible page heading, so focus always lands somewhere meaningful.
+    const bindModalFocusRestore = () => {
+      const previouslyFocused = document.activeElement;
+      const previousId = previouslyFocused && previouslyFocused.id ? previouslyFocused.id : "";
+      modalCleanups.push(() => {
+        if (previouslyFocused && typeof previouslyFocused.focus === "function" && document.contains(previouslyFocused)) {
+          previouslyFocused.focus();
+          return;
+        }
+        if (previousId) {
+          const replaced = document.getElementById(previousId);
+          if (replaced && typeof replaced.focus === "function") { replaced.focus(); return; }
+        }
+        const visiblePage = Array.from(document.querySelectorAll("main#app .page[data-page]"))
+          .find((p) => p.offsetParent !== null);
+        const heading = visiblePage ? visiblePage.querySelector("h1") : null;
+        if (heading) {
+          heading.setAttribute("tabindex", "-1");
+          heading.focus();
+        }
+      });
     };
 
     let currentBrowseItems = [];
@@ -5052,6 +5173,7 @@
     const openBookingRedirect = (opp) => {
       clear(modalRoot);
       document.body.classList.add("is-modal-open");
+      bindModalFocusRestore();
       const overlay = el("div", "modal-overlay");
 
       const topbar = el("div", "modal-topbar");
@@ -5073,7 +5195,7 @@
       const openBtn = el("a", "btn primary", "Open booking \u2197");
       openBtn.href = opp.bookingUrl;
       openBtn.target = "_blank";
-      openBtn.rel = "noopener";
+      openBtn.rel = "noopener noreferrer";
       actions.appendChild(openBtn);
 
       const cancelBtn = el("button", "btn", "Cancel");
@@ -5091,12 +5213,13 @@
 
     const openBookingModal = (opp) => {
       if (BOOKINGS.enabled && opp && opp.bookingUrl) {
-        window.open(opp.bookingUrl, "_blank", "noopener");
+        window.open(opp.bookingUrl, "_blank", "noopener,noreferrer");
         return;
       }
 
       clear(modalRoot);
       document.body.classList.add("is-modal-open");
+      bindModalFocusRestore();
       const overlay = el("div", "modal-overlay");
 
       const topbar = el("div", "modal-topbar");
@@ -5226,33 +5349,34 @@
           return;
         }
 
-        // Collect form data
-        const formData = new FormData(form);
         submitBtn.disabled = true;
         submitBtn.textContent = "Sending\u2026";
 
-        fetch(FORMSPREE_URL, {
-          method: "POST",
-          body: formData,
-          headers: { "Accept": "application/json" }
-        }).then((res) => {
-          clear(form);
-          form.className = "booking-confirmation";
-          form.appendChild(el("p", "booking-confirm-icon", "\u2713"));
-          form.appendChild(el("h2", "booking-confirm-title", "Thank you, " + name + "!"));
-          if (res.ok) {
-            form.appendChild(el("p", "booking-confirm-text", "Your request has been received." + (opp ? " We\u2019ll follow up about \u201c" + opp.title + "\u201d at " + email + "." : " We\u2019ll be in touch at " + email + " shortly.")));
-          } else {
-            form.appendChild(el("p", "booking-confirm-text", "Your request was saved locally. We\u2019ll connect the form once the platform is fully live."));
+        const showBookingError = () => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Send request";
+          let errBox = form.querySelector(".booking-error");
+          if (!errBox) {
+            errBox = el("p", "booking-error", "");
+            errBox.setAttribute("role", "alert");
+            form.insertBefore(errBox, actions);
           }
-          actions.hidden = true;
-        }).catch(() => {
-          // Offline / Formspree not configured yet — still show confirmation
+          errBox.textContent = "Couldn’t send your request. Please try again, or email " + FORMSPREE_FALLBACK_EMAIL + " directly.";
+        };
+
+        submitToFormspree(new FormData(form)).then((result) => {
+          if (!result.ok && !result.prototype) {
+            showBookingError();
+            return;
+          }
           clear(form);
           form.className = "booking-confirmation";
           form.appendChild(el("p", "booking-confirm-icon", "\u2713"));
           form.appendChild(el("h2", "booking-confirm-title", "Thank you, " + name + "!"));
-          form.appendChild(el("p", "booking-confirm-text", "Your request was saved locally. Once the form endpoint is connected, submissions will be delivered automatically."));
+          const text = result.ok
+            ? "Your request has been received." + (opp ? " We\u2019ll follow up about \u201c" + opp.title + "\u201d at " + email + "." : " We\u2019ll be in touch at " + email + " shortly.")
+            : "We logged your request locally. The form endpoint is being connected \u2014 once it\u2019s live, submissions will be delivered automatically. For anything urgent, email " + FORMSPREE_FALLBACK_EMAIL + ".";
+          form.appendChild(el("p", "booking-confirm-text", text));
           actions.hidden = true;
         });
       });
@@ -5267,6 +5391,7 @@
     const openModal = (opp) => {
       clear(modalRoot);
       document.body.classList.add("is-modal-open");
+      bindModalFocusRestore();
       const overlay = el("div", "modal-overlay");
 
       // Sticky top bar
@@ -5280,7 +5405,7 @@
         const resourceBtn = el("a", "btn primary", "Open resource \u2197");
         resourceBtn.href = opp.externalUrl;
         resourceBtn.target = "_blank";
-        resourceBtn.rel = "noopener";
+        resourceBtn.rel = "noopener noreferrer";
         topbarActions.appendChild(resourceBtn);
       }
       topbar.appendChild(topbarActions);
@@ -5305,7 +5430,9 @@
       ].forEach(({ label, value }) => {
         if (!value) return;
         const item = el("div", "modal-meta-item");
-        item.innerHTML = `<strong>${label}:</strong> ${value}`;
+        const itemLabel = el("strong", null, label + ":");
+        item.appendChild(itemLabel);
+        item.appendChild(document.createTextNode(" " + value));
         metaBar.appendChild(item);
       });
       modal.appendChild(metaBar);
@@ -5362,7 +5489,7 @@
         const ctaBtn = el("a", "btn primary modal-cta-btn", "Open resource \u2197");
         ctaBtn.href = opp.externalUrl;
         ctaBtn.target = "_blank";
-        ctaBtn.rel = "noopener";
+        ctaBtn.rel = "noopener noreferrer";
         bottomCta.appendChild(ctaBtn);
       } else if (fmt.includes("consult")) {
         const ctaBtn = el("button", "btn primary modal-cta-btn", "Book a consultation");

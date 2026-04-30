@@ -26,7 +26,7 @@
   border-radius: 0 0 4px 4px;
   font-size: 14px;
   font-weight: 600;
-  z-index: 1000;
+  z-index: 10000;
   text-decoration: none;
 }
 .skip-link:focus {
@@ -416,6 +416,18 @@ label {
 .contact-form-select.is-invalid {
   border-color: #c0392b;
 }
+.booking-error,
+.contact-form-error,
+.feedback-error {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border: 1px solid #c0392b;
+  background: #fdecea;
+  color: #7a1f15;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.contact-form-error.is-hidden { display: none; }
 .booking-textarea {
   resize: vertical;
   min-height: 80px;
@@ -2343,17 +2355,6 @@ label {
   color: var(--muted);
 }
 
-.stories-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.story-card {
-  border: 1px solid var(--border);
-  padding: 16px;
-}
-
 .about-grid {
   display: grid;
   gap: 18px;
@@ -2926,8 +2927,7 @@ label {
     grid-template-columns: 1fr;
   }
 
-  .topic-grid,
-  .stories-grid {
+  .topic-grid {
     grid-template-columns: 1fr;
   }
 
@@ -5163,6 +5163,32 @@ label {
 .carousel-cta-btn--primary:hover { background: #F4D0D5; transform: translateY(-2px); }
 .carousel-cta-btn--ghost { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.38); }
 .carousel-cta-btn--ghost:hover { border-color: #fff; transform: translateY(-2px); }
+
+/* ── Inline slide links (S1, S2, S3, S6) ────────────────────────────── */
+.slide-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 18px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.32);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+.slide-link:hover { color: #fff; border-bottom-color: #fff; transform: translateX(2px); }
+.slide-link:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 4px; border-radius: 2px; }
+/* Light-background slide variants */
+.s2 .slide-link { color: #912338; border-bottom-color: rgba(145,35,56,0.4); }
+.s2 .slide-link:hover { color: #6e1a2a; border-bottom-color: #912338; }
+.s2 .slide-link:focus-visible { outline-color: rgba(145,35,56,0.6); }
+
+/* ── Clickable stage cards (S5) ─────────────────────────────────────── */
+.lc-stage { cursor: pointer; padding: 8px 6px; border-radius: 12px; transition: background 0.2s; }
+.lc-stage:hover { background: rgba(255,255,255,0.04); }
+.lc-stage:hover .lc-bubble { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.7); transform: scale(1.06); }
+.lc-stage:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+.pw { cursor: pointer; }
+.pw:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
 
 /* ── Carousel responsive ────────────────────────────────────────────── */
 @media (max-width: 720px) {

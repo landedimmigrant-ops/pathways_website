@@ -174,6 +174,12 @@ Realistic paths to making it usable without Terminal:
 - **GitHub Action triggered by sheet** — an Apps Script webhook in the sheet calls the GitHub API to trigger a workflow dispatch on save. Near-instant, no polling lag.
 - Either path keeps the QA gate (PR review) if desired, or skips it for a fully automatic flow.
 
-Status: code is in the repo and functional. Set `SHEETS.mode = "baked"` in `app.js` to activate. Currently set to `"live"`.
+Status (2026-04): mode is `"live"` and that's what we want during testing. The bake script and its JSON snapshots exist on the working machine but are **not committed to the repo** — `scripts/bake.js` and `content/data/` show up as untracked in `git status`. Don't flip `SHEETS.mode` to `"baked"` without first committing those files (the site would 404 on the snapshots otherwise).
+
+A 2026-04 audit fixed two latent bugs in this code path before it sat any longer:
+- `bake.js` was stripping the `version` column when mapping rows, which would have bypassed the approval gate. It now filters by `isApprovedRow` before writing JSON.
+- `bake.js` tab map was out of sync with `app.js` (used `"opportunities"` instead of `"place_holders"`). Aligned.
+
+Decision deferred until we either (a) wire the GitHub Action path so coordinators don't touch Terminal, or (b) decide we don't need the safety net and remove the bake code entirely. Live mode + the approval gate is sufficient for the current beta.
 
 A separate consideration — Doc bodies have their own staging gap. A coordinator can keep editing a published Doc and every save is live within ~5 min (Google's publish cache). Mitigation if that becomes a problem: ask coordinators to *un-publish* before substantial edits, then *re-publish* when ready. Nothing to build, just a process note.

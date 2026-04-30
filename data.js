@@ -818,7 +818,7 @@ window.PATHWAYS_DATA = {
         title: "Impact framing consult",
         category: "Planning",
         stage: "Developing an Idea",
-        format: "Consult",
+        format: "Consultation",
         time: "45-60 min",
         pathway: ["Academic Scholarship", "Research Creation"],
         tags: ["impact", "framing", "early stage"],
@@ -834,7 +834,7 @@ window.PATHWAYS_DATA = {
         title: "Partner readiness check",
         category: "Engagement",
         stage: "Developing an Idea",
-        format: "Consult",
+        format: "Consultation",
         time: "45 min",
         pathway: ["Community Engagement", "Commercialization"],
         tags: ["partners", "grant", "engagement"],
@@ -882,7 +882,7 @@ window.PATHWAYS_DATA = {
         title: "Outcome tracking consult",
         category: "Evaluation",
         stage: "Active Research",
-        format: "Consult",
+        format: "Consultation",
         time: "45 min",
         pathway: ["Policy", "Academic Scholarship"],
         tags: ["evaluation", "indicators", "evidence"],
@@ -898,7 +898,7 @@ window.PATHWAYS_DATA = {
         title: "Impact documentation",
         category: "Evidence",
         stage: "Finishing a Project",
-        format: "Consult",
+        format: "Consultation",
         time: "60 min",
         pathway: ["Communications", "Policy", "Commercialization", "Research Creation"],
         tags: ["evidence", "story", "outcomes"],
@@ -1140,24 +1140,6 @@ window.PATHWAYS_DATA = {
           what: "A practical template to systematically identify stakeholders, assess their influence and interest, and plan effective engagement strategies. Supports stronger partnership-building and strategic impact planning.",
           outcomes: "A completed stakeholder map with engagement strategies aligned to the needs of communities, policymakers, and partners."
         }
-      }
-    ]
-  },
-  stories: {
-    title: "Stories",
-    intro: "Use these templates to capture impact in concise, credible ways.",
-    templates: [
-      {
-        title: "Before / After",
-        description: "Show the change over time with a clear starting point, intervention, and outcome."
-      },
-      {
-        title: "Three-minute case",
-        description: "Summarize the project, partners, and results in a short narrative format."
-      },
-      {
-        title: "Quote + artifact",
-        description: "Pair a short quote with a concrete output or data point."
       }
     ]
   },
