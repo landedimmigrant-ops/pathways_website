@@ -28,6 +28,15 @@
     <main id="app" aria-live="polite"></main>
     <div id="modal-root"></div>
     <div class="prototype-banner" role="status">Beta — development / prototype version</div>
+    <script>
+      (function () {
+        var t = Date.parse(document.lastModified);
+        if (isNaN(t)) return;
+        var iso = new Date(t).toISOString().slice(0, 10);
+        var el = document.querySelector('.prototype-banner');
+        if (el) el.textContent += ' · Updated ' + iso;
+      })();
+    </script>
     <script src="data.js?v=121"></script>
     <script src="app.js?v=121"></script>
   </body>
