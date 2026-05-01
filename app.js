@@ -158,7 +158,6 @@
     filters: {
       pathway: "",
       stage: "",
-      category: "",
       format: "",
       time: ""
     },
@@ -172,7 +171,10 @@
     suppressNextHashChange: false,
     // Tracks which modal is currently rendered. Empty = none.
     // Format: "service:<id>" for the detail modal, "book:<id>" for the booking modal.
-    currentModalKey: ""
+    currentModalKey: "",
+    // Persisted pagination on the All Resources tab so closing a modal returns
+    // the user to the page they were viewing rather than resetting to page 1.
+    browsePage: 0
   };
   const pathwayIdToKey = {
     "academic-scholarship": "academic",
@@ -201,7 +203,7 @@
   stageKeyToLabel["developing-idea"] = "Developing an Idea";
   stageKeyToLabel["preparing-grant"] = "Developing an Idea";
   stageKeyToLabel["active-project"] = "Active Research";
-  stageKeyToLabel["concluded-project"] = "Wrapping Up";
+  stageKeyToLabel["concluded-project"] = "Finishing a Project";
 
   const pathwayKeyToTitle = data.explore.pathways.items.reduce((acc, pathway) => {
     const key = pathwayIdToKey[pathway.id] || pathway.id;
@@ -1075,7 +1077,7 @@
       {
         kicker: "By research stage",
         title: "Find support where you are",
-        desc: "Browse resources matched to whether you\u2019re developing an idea, in active research, or wrapping up.",
+        desc: "Browse resources matched to whether you\u2019re developing an idea, in active research, or finishing up.",
         action: () => { state.pendingExploreTab = "research"; navigateTo("explore"); }
       },
       {
@@ -1278,7 +1280,7 @@
             </div>
             <div class="lc-stage" data-stage="Finishing a Project" role="button" tabindex="0">
               <div class="lc-bubble"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,0.82)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2" fill="rgba(255,255,255,0.7)" stroke="none"/></svg></div>
-              <div class="lc-title">Wrapping Up</div>
+              <div class="lc-title">Finishing</div>
               <div class="lc-desc">Findings are ready. Now comes dissemination, uptake, and sustained change.</div>
               <div class="lc-tags"><span class="lc-tag">Dissemination</span><span class="lc-tag">Policy brief</span><span class="lc-tag">Legacy</span></div>
             </div>
@@ -1318,19 +1320,12 @@
             <text x="130" y="126" text-anchor="middle" fill="white" font-size="8" font-weight="800" font-family="Segoe UI,sans-serif">PATHWAYS</text>
             <text x="130" y="137" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7" font-family="Segoe UI,sans-serif">TO IMPACT</text>
             <circle cx="130" cy="36" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
-            <text x="130" y="14" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">OFFICE OF RESEARCH</text>
             <circle cx="208" cy="72" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
-            <text x="230" y="60" text-anchor="start" fill="rgba(255,255,255,0.65)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">4TH SPACE</text>
             <circle cx="244" cy="156" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
-            <text x="244" y="178" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7" font-weight="700" font-family="Segoe UI,sans-serif">COMMS SERVICES</text>
             <circle cx="186" cy="224" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
-            <text x="186" y="246" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">LIBRARY</text>
             <circle cx="74" cy="224" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
-            <text x="74" y="246" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7" font-weight="700" font-family="Segoe UI,sans-serif">COMM. ENG. &amp; SHIFT</text>
             <circle cx="16" cy="156" r="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
-            <text x="16" y="178" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">DISTRICT 3</text>
             <circle cx="52" cy="72" r="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" stroke-dasharray="3 2"/>
-            <text x="28" y="60" text-anchor="start" fill="rgba(255,255,255,0.45)" font-size="7.5" font-weight="700" font-family="Segoe UI,sans-serif">V1 STUDIO</text>
           </svg>
         </div>
       </div>
@@ -3881,7 +3876,7 @@
         { value: "developing", label: "Developing an Idea" },
         { value: "active", label: "Active Research" },
         { value: "finishing", label: "Finishing a Project" },
-        { value: "wrapping", label: "Wrapping Up" },
+        { value: "wrapping", label: "Finishing a Project" },
         { value: "not-sure", label: "Not sure yet" }
       ].forEach((opt) => {
         const o = el("option", null, opt.label);
@@ -4454,8 +4449,6 @@
               } else if (type === "stage") {
                 const s = Array.isArray(opp.stage) ? opp.stage : [opp.stage];
                 return s.includes(value);
-              } else if (type === "category") {
-                return opp.category === value;
               }
               return true;
             });
@@ -4815,6 +4808,7 @@
     searchInput.setAttribute("aria-label", data.explore.search.ariaLabel);
     searchInput.addEventListener("input", (event) => {
       state.search = event.target.value.trim();
+      state.browsePage = 0;
       applyFilters();
     });
     searchWrap.appendChild(searchLabel);
@@ -4859,6 +4853,7 @@
 
       select.addEventListener("change", (event) => {
         state.filters[filter.id] = event.target.value;
+        state.browsePage = 0;
         applyFilters();
       });
 
@@ -5000,9 +4995,10 @@
 
     let currentBrowseItems = [];
     const updateResults = (items, page) => {
-      if (page === undefined) { browseCurrentPage = 0; page = 0; }
+      if (page === undefined) page = state.browsePage || 0;
       currentBrowseItems = items;
       browseCurrentPage = page;
+      state.browsePage = page;
       resultsGrid.style.minHeight = resultsGrid.offsetHeight + "px";
       clear(resultsGrid);
       clear(browsePaginationTop);
@@ -5018,7 +5014,8 @@
         clearBtn.type = "button";
         clearBtn.addEventListener("click", () => {
           state.search = "";
-          state.filters = { pathway: "", stage: "", category: "", format: "", time: "" };
+          state.filters = { pathway: "", stage: "", format: "", time: "" };
+          state.browsePage = 0;
           searchInput.value = "";
           filterControls.forEach((control) => { control.value = ""; });
           applyFilters();
@@ -5160,11 +5157,10 @@
 
         const pathwayMatch = matchesField(opp.pathway, state.filters.pathway);
         const stageMatch = matchesField(opp.stage, state.filters.stage);
-        const categoryMatch = matchesField(opp.category, state.filters.category);
         const formatMatch = matchesField(opp.format, state.filters.format);
         const timeMatch = matchesField(opp.time, state.filters.time);
 
-        return matchesSearch && pathwayMatch && stageMatch && categoryMatch && formatMatch && timeMatch;
+        return matchesSearch && pathwayMatch && stageMatch && formatMatch && timeMatch;
       });
 
       updateResults(filtered);
@@ -5415,7 +5411,6 @@
       const modal = el("div", "modal");
 
       // Kicker + title + author
-      if (opp.category) modal.appendChild(el("p", "modal-kicker", opp.category));
       modal.appendChild(el("h1", "modal-title", opp.title));
       if (opp.author) modal.appendChild(el("p", "modal-author", "By: " + opp.author));
 

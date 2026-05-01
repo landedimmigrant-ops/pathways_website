@@ -649,14 +649,9 @@ window.PATHWAYS_DATA = {
         allLabel: "All stages"
       },
       {
-        id: "category",
-        label: "Category",
-        allLabel: "All categories"
-      },
-      {
         id: "format",
-        label: "Format",
-        allLabel: "All formats"
+        label: "All types",
+        allLabel: "All types"
       },
       {
         id: "time",
@@ -666,7 +661,6 @@ window.PATHWAYS_DATA = {
     ],
     labels: {
       results: "Results:",
-      category: "Category:",
       stage: "Stage:",
       format: "Format:",
       time: "Time:",
