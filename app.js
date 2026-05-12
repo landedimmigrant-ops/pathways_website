@@ -2796,7 +2796,6 @@
     // ── State ──────────────────────────────────────────────────────────────
     const defaultState = () => ({
       funder: "",
-      timeMode: "",
       stageIndex: 0,
       round2Active: false,
       contributions: [],
@@ -2917,7 +2916,7 @@
     const updateProgress = () => {
       stageItems.forEach((li, i) => {
         li.classList.toggle("is-active", i === ns.stageIndex);
-        const done = (i === 0 && (ns.funder !== "" || ns.timeMode !== ""))
+        const done = (i === 0 && ns.funder !== "")
           || (i === 1 && ns.contributions.length > 0)
           || (i === 2 && ns.mentorship.length > 0)
           || (i === 3 && (ns.ps.role || ns.ps.focus || ns.ps.retrospective))
@@ -2991,23 +2990,25 @@
       if (!ns.funder) funderNote.classList.add("is-hidden");
       wrap.appendChild(funderNote);
 
-      // Time selector
-      const timeLabel = el("p", "narrative-toggle-label", "How long do you have today?");
-      wrap.appendChild(timeLabel);
-      const timeToggle = el("div", "narrative-time-toggle");
-      [{ val: "short", label: "30 min" }, { val: "medium", label: "1 hour" }, { val: "long", label: "More time" }].forEach(({ val, label }) => {
-        const btn = el("button", "narrative-toggle-btn", label);
-        btn.type = "button";
-        if (ns.timeMode === val) btn.classList.add("is-active");
-        btn.addEventListener("click", () => {
-          ns.timeMode = val;
-          saveNarrative();
-          timeToggle.querySelectorAll(".narrative-toggle-btn").forEach((b) => b.classList.remove("is-active"));
-          btn.classList.add("is-active");
-        });
-        timeToggle.appendChild(btn);
+      // Legend: what you'll build + time ranges + auto-save note
+      const legend = el("div", "narrative-legend");
+      legend.appendChild(el("h3", "narrative-legend-title", "What you\u2019ll build, and how long each section takes"));
+      const legendList = el("ul", "narrative-legend-list");
+      [
+        { name: "Contributions", time: "~30\u201345 min", desc: "Up to 10 bundles of your most significant work, in two rounds" },
+        { name: "Supervisory & Mentorship", time: "~10\u201320 min", desc: "Training, supervision, and inclusive practices" },
+        { name: "Personal Statement", time: "~15\u201330 min", desc: "Easier to write once your contributions are drafted" },
+        { name: "Review & Download", time: "~5\u201310 min", desc: "Self-check, then export your draft" }
+      ].forEach(({ name, time, desc }) => {
+        const li = el("li", "narrative-legend-item");
+        li.appendChild(el("span", "narrative-legend-name", name));
+        li.appendChild(el("span", "narrative-legend-time", time));
+        li.appendChild(el("span", "narrative-legend-desc", desc));
+        legendList.appendChild(li);
       });
-      wrap.appendChild(timeToggle);
+      legend.appendChild(legendList);
+      legend.appendChild(el("p", "narrative-legend-note", "A first draft usually takes a couple of focused sessions. Your work saves automatically in this browser \u2014 start anywhere, come back anytime."));
+      wrap.appendChild(legend);
 
       wrap.appendChild(makeNav(false, "Start with my contributions \u2192", () => {
         ns.stageIndex = 1;
