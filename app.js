@@ -34,6 +34,12 @@
     enabled: true
   };
 
+  // True when a CTA should send the user to an external booking page in a new
+  // tab (MS Bookings) instead of opening the in-page booking-request modal.
+  // Used by detail-modal CTAs and by reconcileServiceModal's deep-link guard.
+  const shouldExternalBooking = (opp) =>
+    BOOKINGS.enabled && opp && opp.bookingUrl;
+
   // Google Sheets backend. Controls where content is loaded from.
   //   "baked"  — read from content/data/*.json (run node scripts/bake.js to refresh)
   //   "live"   — fetch Google Sheets at runtime on every page load
@@ -4811,6 +4817,7 @@
       state.search = event.target.value.trim();
       state.browsePage = 0;
       applyFilters();
+      scheduleWriteExploreUrl();
     });
     searchWrap.appendChild(searchLabel);
     searchWrap.appendChild(searchInput);
@@ -4856,6 +4863,7 @@
         state.filters[filter.id] = event.target.value;
         state.browsePage = 0;
         applyFilters();
+        writeExploreUrl();
       });
 
       control.appendChild(label);
@@ -4923,6 +4931,47 @@
       }
     };
 
+    // writeExploreUrl mirrors search + filter state into the URL via
+    // replaceState — silent (no hashchange fired, no listener re-applies).
+    // Preserves existing tab/service/book params so back-navigation through
+    // modals still works. Defensive no-op when not on #explore.
+    const writeExploreUrl = () => {
+      const route = parseRouteFromHash(window.location.hash);
+      if (route.page !== "explore") return;
+      const params = new URLSearchParams(route.params.toString());
+      const setOrDelete = (key, value) => {
+        const v = (value == null ? "" : value.toString());
+        if (v) params.set(key, v);
+        else params.delete(key);
+      };
+      setOrDelete("q", state.search);
+      setOrDelete("stage", state.filters.stage);
+      setOrDelete("format", state.filters.format);
+      setOrDelete("time", state.filters.time);
+      // Pathway uses a key-based URL convention (?pathway=<key>) managed by
+      // state.pendingPathwayKey + applyPathwayFilterByKey; state.filters.pathway
+      // holds the title, not the key, so writing it back would mismatch. Only
+      // clear the param when state has been emptied (e.g., Clear all filters).
+      if (!state.filters.pathway) params.delete("pathway");
+      const queryString = params.toString();
+      const nextHash = `#explore${queryString ? "?" + queryString : ""}`;
+      if (window.location.hash !== nextHash) {
+        history.replaceState(null, "", nextHash);
+      }
+    };
+
+    // Debounced wrapper for keystroke-noisy events (typing in search).
+    // replaceState itself is cheap; debouncing just keeps the DevTools History
+    // panel tidy and avoids one URL update per character.
+    let writeExploreUrlTimer = null;
+    const scheduleWriteExploreUrl = () => {
+      if (writeExploreUrlTimer) clearTimeout(writeExploreUrlTimer);
+      writeExploreUrlTimer = setTimeout(() => {
+        writeExploreUrlTimer = null;
+        writeExploreUrl();
+      }, 250);
+    };
+
     allTabs.forEach((tab, i) => {
       const panelId = `explore-panel-${allContents[i].dataset.tabContent}`;
       allContents[i].id = panelId;
@@ -4953,6 +5002,7 @@
       if (control) control.value = pathwayTitle;
       state.filters.pathway = pathwayTitle;
       applyFilters();
+      writeExploreUrl();
       explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
@@ -5020,6 +5070,7 @@
           searchInput.value = "";
           filterControls.forEach((control) => { control.value = ""; });
           applyFilters();
+          writeExploreUrl();
         });
         const contactLink = el("a", "bridge-link", "Contact us for help \u2192");
         contactLink.href = "#about";
@@ -5209,10 +5260,10 @@
     };
 
     const openBookingModal = (opp) => {
-      if (BOOKINGS.enabled && opp && opp.bookingUrl) {
-        window.open(opp.bookingUrl, "_blank", "noopener,noreferrer");
-        return;
-      }
+      // External booking handoff is handled upstream — by the detail-modal CTA
+      // (no navigation pushed) and by reconcileServiceModal's deep-link guard
+      // (replaceState strips ?book=1). By the time we reach this function, the
+      // intent is unambiguously: render the in-page request form.
 
       clear(modalRoot);
       document.body.classList.add("is-modal-open");
@@ -5490,14 +5541,28 @@
       } else if (fmt.includes("consult")) {
         const ctaBtn = el("button", "btn primary modal-cta-btn", "Book a consultation");
         ctaBtn.type = "button";
-        ctaBtn.addEventListener("click", () => navigateToService(opp.id, true));
+        ctaBtn.addEventListener("click", () => {
+          // External booking handoff: open MS Bookings in a new tab without
+          // pushing ?book=1 to history (avoids the ghost-modal back-button bug).
+          if (shouldExternalBooking(opp)) {
+            window.open(opp.bookingUrl, "_blank", "noopener,noreferrer");
+            return;
+          }
+          navigateToService(opp.id, true);
+        });
         bottomCta.appendChild(ctaBtn);
       } else if (opp.sourceType === "workshop") {
-        // Workshops route through booking modal — if a bookingUrl is on the row,
-        // it short-circuits to MS Bookings; otherwise the request form opens.
+        // Workshops with a bookingUrl hand off to MS Bookings in a new tab;
+        // others open the in-page request form via the booking modal.
         const ctaBtn = el("button", "btn primary modal-cta-btn", "Register for this workshop");
         ctaBtn.type = "button";
-        ctaBtn.addEventListener("click", () => navigateToService(opp.id, true));
+        ctaBtn.addEventListener("click", () => {
+          if (shouldExternalBooking(opp)) {
+            window.open(opp.bookingUrl, "_blank", "noopener,noreferrer");
+            return;
+          }
+          navigateToService(opp.id, true);
+        });
         bottomCta.appendChild(ctaBtn);
       }
       // Only attach the CTA bar if a button was actually added.
@@ -5555,6 +5620,7 @@
         control.value = stage;
         state.filters.stage = stage;
         applyFilters();
+        writeExploreUrl();
         control.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     };
@@ -5572,6 +5638,7 @@
       state.search = workshop.title;
       searchInput.value = workshop.title;
       applyFilters();
+      writeExploreUrl();
       explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
@@ -5583,12 +5650,35 @@
       explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
+    // syncFromUrl is the inverse of writeExploreUrl: read URL params back into
+    // state + DOM controls. Called by showPage on every explore activation so
+    // back/forward and deep-loads restore search/filter context. Must NOT call
+    // writeExploreUrl — otherwise hashchange → sync → write loops.
+    const syncFromUrl = () => {
+      const route = parseRouteFromHash(window.location.hash);
+      if (route.page !== "explore") return;
+      const params = route.params;
+      state.search = (params.get("q") || "").trim();
+      state.filters.stage = params.get("stage") || "";
+      state.filters.format = params.get("format") || "";
+      state.filters.time = params.get("time") || "";
+      // pathway intentionally not read here — applyPathwayFilterByKey in
+      // showPage owns that flow (?pathway=<key>, with key→title translation).
+      searchInput.value = state.search;
+      filterControls.forEach((control, id) => {
+        if (id === "pathway") return;
+        control.value = state.filters[id] || "";
+      });
+      applyFilters();
+    };
+
     applyFilters();
 
     section.applyStageFilter = applyStageFilter;
     section.applyPathwayFilterByKey = applyPathwayFilterByKey;
     section.focusWorkshopById = focusWorkshopById;
     section.applySearchTerm = applySearchTerm;
+    section.syncFromUrl = syncFromUrl;
     section.openResearchStage = (journeyId) => {
       setActiveTab(tabResearch);
       const journey = journeys.find(j => j.id === journeyId);
@@ -5609,6 +5699,29 @@
     // Called from showPage on every page change and on every hashchange.
     // Idempotent: opening the same modal that's already open is a no-op.
     section.reconcileServiceModal = (serviceId, withBooking) => {
+      // Deep-link / browser-restored history can land here with ?book=1 on a
+      // service that hands off externally (MS Bookings). In that case open the
+      // external page and strip ?book=1 from the URL via replaceState — leaves
+      // the detail modal visible (?service=X stays) so back-navigation closes
+      // cleanly instead of replaying the external popup. Pop-up blockers may
+      // eat the new tab on non-click contexts; the URL clean-up still runs and
+      // the user gets the Open booking ↗ button in the rendered detail modal.
+      if (withBooking && serviceId) {
+        const candidate = exploreItems.find((item) => item.id === serviceId);
+        if (candidate && shouldExternalBooking(candidate)) {
+          window.open(candidate.bookingUrl, "_blank", "noopener,noreferrer");
+          const currentRoute = parseRouteFromHash(window.location.hash);
+          const params = new URLSearchParams(currentRoute.params.toString());
+          params.delete("book");
+          const queryString = params.toString();
+          const nextHash = `#explore${queryString ? "?" + queryString : ""}`;
+          if (window.location.hash !== nextHash) {
+            history.replaceState(null, "", nextHash);
+          }
+          withBooking = false;
+        }
+      }
+
       const targetKey = !serviceId
         ? ""
         : (withBooking ? `book:${serviceId}` : `service:${serviceId}`);
@@ -5852,6 +5965,18 @@
         explorePage.openTab(state.pendingExploreTab || "pathways");
         state.pendingExploreTab = "";
       }
+      // Restore search + filter state from URL (?q=, ?stage=, ?format=, ?time=)
+      // BEFORE running pending-* mutators, so subsequent writeExploreUrl calls
+      // operate on a state that matches what's in the URL. Otherwise an empty
+      // state.search would get re-written into the URL and wipe ?q=.
+      // syncFromUrl is the inverse of writeExploreUrl — together they keep the
+      // URL as the single source of truth across modal opens, tab switches,
+      // back/forward, and cold-load deep links. Pathway uses its own pending-*
+      // flow below (state.pendingPathwayKey → applyPathwayFilterByKey).
+      if (explorePage && explorePage.syncFromUrl) {
+        explorePage.syncFromUrl();
+      }
+      state.pendingExploreSearch = "";
       if (explorePage && explorePage.applyStageFilter && state.pendingStage) {
         explorePage.applyStageFilter(state.pendingStage);
         state.pendingStage = "";
@@ -5876,10 +6001,6 @@
         const urlWithBooking = route.params.get("book") === "1";
         explorePage.reconcileServiceModal(urlServiceId, urlWithBooking);
       }
-      if (explorePage && explorePage.applySearchTerm) {
-        explorePage.applySearchTerm(state.pendingExploreSearch);
-      }
-      state.pendingExploreSearch = "";
     }
 
     if (validPage === "home") {
