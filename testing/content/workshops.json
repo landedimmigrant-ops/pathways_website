@@ -1,10 +1,34 @@
 [
   {
+    "id": "learn-impact-planner",
+    "title": "Impact Planning Module",
+    "format": "Tool",
+    "time": "45–60 min",
+    "pathways": ["academic"],
+    "stages": ["Developing an Idea"],
+    "tags": ["impact planning", "grant preparation", "impact pathways", "outcomes", "impact plan"],
+    "summary": "Map your research outputs to outcomes, identify your impact pathways, and build a structured impact plan you can take into a consultation or grant application.",
+    "internalRoute": "learn",
+    "featuredHome": false
+  },
+  {
+    "id": "learn-narrative-cv",
+    "title": "Narrative CV Builder",
+    "format": "Tool",
+    "time": "60–90 min",
+    "pathways": ["academic"],
+    "stages": ["Developing an Idea"],
+    "tags": ["narrative cv", "grant writing", "academic scholarship", "tri-agency", "TCV", "personal statement"],
+    "summary": "Draft your Tri-agency Narrative CV section by section. Guided prompts walk you through your contributions, mentorship, and personal statement.",
+    "internalRoute": "tools-narrative",
+    "featuredHome": false
+  },
+  {
     "id": "4th-space-public-engagement",
     "slug": "4th-space_research-activation-public-engagement",
     "title": "4th Space Research Activation & Public Engagement Support",
     "format": "Consultation",
-    "time": "45 min",
+    "time": "On demand",
     "pathways": [
       "community",
       "communications"
@@ -19,13 +43,9 @@
       "communications",
       "community"
     ],
-    "summary": "",
     "featuredHome": false,
     "file": "content/workshops/4th-space_research-activation-public-engagement.md",
-    "bookingUrl": "",
-    "provider": "4th Space team",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vSmlrd9SXy5uCG0T5p9dT6yKHwzjm6NA-F6Vp6Im0svwQLFiEuPCVwEtWX4AJ3nXiZpTetsJvU3jMzd/pub",
-    "status": "open"
+    "libcalUrl": ""
   },
   {
     "id": "evaluating-digital-scholarship-tools-for-research",
@@ -46,13 +66,9 @@
       "tools",
       "literacy"
     ],
-    "summary": "",
     "featuredHome": false,
     "file": "content/workshops/evaluating-digital-scholarship-tools-for-research.md",
-    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/xAuHgkx7-UaO8UN-8PfKOg2",
-    "provider": "Joshua Chalifour",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vQwxrsY--EztKST22AxGKsKBH9K9hQ4Sm2XQkJzsA5UMCnrtbAPneRyJe5V5lNSZ_EfkW6899HyT6p4/pub",
-    "status": "open"
+    "libcalUrl": ""
   },
   {
     "id": "library-dmp-consultation",
@@ -72,18 +88,36 @@
       "open science",
       "research planning"
     ],
-    "summary": "",
-    "featuredHome": true,
+    "featuredHome": false,
     "file": "content/workshops/library-rdm_data-management-plan-consultations.md",
-    "bookingUrl": "",
-    "provider": "Library RDM team",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vQ1VvNtZIVtskAVQ3J-g-3ZyYS-L0ylEYqOh_U6Qobkj9X0gc3yBgFj5zjE1-rOPMqhs1wgrxloUFZr/pub",
-    "status": "open"
+    "libcalUrl": ""
+  },
+  {
+    "id": "narrative-cv",
+    "slug": "narrative-cv",
+    "title": "Narrative CV development",
+    "format": "Workshop",
+    "time": "60-90 min",
+    "pathways": [
+      "academic"
+    ],
+    "stages": [
+      "preparing-grant",
+      "active-project"
+    ],
+    "tags": [
+      "assessment",
+      "story",
+      "impact"
+    ],
+    "featuredHome": true,
+    "file": "content/workshops/narrative-cv.md",
+    "libcalUrl": ""
   },
   {
     "id": "oce-community-partnerships-workshop",
     "slug": "oce_research-partnerships-black-indigenous-communities",
-    "title": "Research Partnerships with Montréal's Black and Indigenous Communities",
+    "title": "Research Partnerships with Montr\u00e9al's Black and Indigenous Communities",
     "format": "Workshop",
     "time": "2 hrs",
     "pathways": [
@@ -101,39 +135,31 @@
       "decolonial",
       "research design"
     ],
-    "summary": "",
     "featuredHome": false,
     "file": "content/workshops/oce_research-partnerships-black-indigenous-communities.md",
-    "bookingUrl": "",
-    "provider": "Geneviève Sioui and Kristen Young",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vQpm4m_jEJsOrim3mS1GunZIMsF8KFhakXwqg2gObYo1eoTPZ590SzUg4IwKrJL45WU4hLPVhkOQjno/pub",
-    "status": "open"
+    "libcalUrl": ""
   },
   {
     "id": "open-scholarship",
     "slug": "open-scholarship",
-    "title": "Licensing & Open Scholarship: Creative Commons, Rights, and Sharing Your Research",
+    "title": "Open Science and Open Scholarship practices",
     "format": "Workshop",
     "time": "60 min",
     "pathways": [
       "academic"
     ],
     "stages": [
-      "Active Research",
-      "Finishing a Project"
+      "active-project",
+      "concluded-project"
     ],
     "tags": [
       "open",
       "sharing",
       "integrity"
     ],
-    "summary": "",
     "featuredHome": true,
     "file": "content/workshops/open-scholarship.md",
-    "bookingUrl": "",
-    "provider": "Joshua Chalifour",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vSKCAODCA3P3M17ObmXVoYsbKJTeEDlql-IGtnCRKi0qFxJcZe80Tcm253TD6RDnHWFKqP2-VyRUzU9/pub",
-    "status": "open"
+    "libcalUrl": ""
   },
   {
     "id": "pips-ip-technology-transfer",
@@ -154,13 +180,9 @@
       "commercialization",
       "patents"
     ],
-    "summary": "",
     "featuredHome": false,
     "file": "content/workshops/pips_ip-technology-transfer-consultation.md",
-    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/Yc7Mckz1GkiEnHQ8-zNK5A2",
-    "provider": "Valeria Marquet",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vQtvLg3Ma3f82wLXGEF0NrhN27Askq0gbw4zvJGPpCaRLqu4pMbxa2REQCKG5Yvi66xYZojO84hScEl/pub",
-    "status": "open"
+    "libcalUrl": ""
   },
   {
     "id": "pips-research-agreements-ip",
@@ -171,8 +193,7 @@
     "pathways": [
       "academic",
       "community",
-      "innovation",
-      "commercialization"
+      "innovation"
     ],
     "stages": [
       "Developing an Idea",
@@ -185,20 +206,16 @@
       "governance",
       "sponsored research"
     ],
-    "summary": "",
     "featuredHome": false,
     "file": "content/workshops/pips_research-agreements-ip-support-consultation.md",
-    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/LnbFHt29OEecU0yi8tWIoQ2",
-    "provider": "Vanessa Buzzelli",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vS_aLMNo7JUuxWKUASsIZItDb_csvnOy8rOrKO2XTcfZj0VBylzsHILecUI15iwPWTSDDL6s3yOLFfx/pub",
-    "status": "open"
+    "libcalUrl": ""
   },
   {
     "id": "pips-research-security-risk",
     "slug": "pips_research-security-risk-assessment-consultation",
     "title": "External Partnerships & Sensitive Research Risk Assessment",
     "format": "Consultation",
-    "time": "15–30 min",
+    "time": "15\u201330 min",
     "pathways": [
       "academic"
     ],
@@ -214,39 +231,31 @@
       "governance",
       "research integrity"
     ],
-    "summary": "",
     "featuredHome": false,
     "file": "content/workshops/pips_research-security-risk-assessment-consultation.md",
-    "bookingUrl": "",
-    "provider": "Gabriel Sales",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vQPBWVFLjoWg4-_hW_nrB0znEcyYbastVxTAdXZfpfCE4Vpw9gJ-59SYoPb8Z13aHORqHQedb0I3m7h/pub",
-    "status": "open"
+    "libcalUrl": ""
   },
   {
-    "id": "software-skills",
-    "slug": "software-skills-tool-specific-training-series",
-    "title": "Software Skills for Research Workflows: Tool-Specific Training Series",
-    "format": "Workshop",
+    "id": "rdm-guidance",
+    "slug": "rdm-guidance",
+    "title": "Research Data Management guidance",
+    "format": "Consultation",
     "time": "60 min",
     "pathways": [
       "academic"
     ],
     "stages": [
-      "Active Research"
+      "preparing-grant",
+      "active-project"
     ],
     "tags": [
-      "software",
-      "tool literacy",
-      "digital workflows",
-      "data organization"
+      "data",
+      "ethics",
+      "planning"
     ],
-    "summary": "",
-    "featuredHome": false,
+    "featuredHome": true,
     "file": "content/workshops/research-data-management.md",
-    "bookingUrl": "",
-    "provider": "Joshua Chalifour",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vRNyocLVpEHXGJJIowOzCltyK-srvG8xE8hyWayYafvQHXjK-8dVbTZ_fM15sD1goGdHVpqcFtBTtsP/pub",
-    "status": "open"
+    "libcalUrl": ""
   },
   {
     "id": "ucs-writing-op-ed",
@@ -269,12 +278,8 @@
       "public scholarship",
       "communications"
     ],
-    "summary": "",
     "featuredHome": false,
     "file": "content/workshops/ucs_writing-an-op-ed-information-session.md",
-    "bookingUrl": "",
-    "provider": "UCS Media Relations team",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vSq2o8KBpHp_L7CBFDnrIsfKJyoiMy18NjcPUGQxj3nvm1KUYU2AzLNo571s-aqfiCaDgGanUtONwVq/pub",
-    "status": "open"
+    "libcalUrl": ""
   }
 ]

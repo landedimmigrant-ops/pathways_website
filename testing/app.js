@@ -57,7 +57,7 @@
   // will 404 on the snapshots. See INTEGRATION_NOTES.md → "Attempt 7" for
   // context and the path to making baked mode coordinator-friendly.
   const SHEETS = {
-    mode: "live",
+    mode: "baked",
     sheetId: "1IQGINsUTQMWLm4IJY49dr76pMeWkIH_vj-aLnj9jD1Y",
     tabs: {
       workshops: "workshops",

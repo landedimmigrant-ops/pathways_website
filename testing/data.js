@@ -1,0 +1,1234 @@
+window.PATHWAYS_DATA = {
+  meta: {
+    title: "Pathways to Impact",
+    description: "Pathways to Impact helps researchers plan, evidence, and share the value of their work."
+  },
+  brand: {
+    name: "Pathways to Impact",
+    homeAriaLabel: "Go to Pathways to Impact home"
+  },
+  navigation: [
+    { id: "home", label: "Home" },
+    { id: "explore", label: "Explore" },
+    { id: "learn", label: "Learn" },
+    { id: "about", label: "About" }
+  ],
+  units: [
+    {
+      id: "research-development",
+      name: "Research Development",
+      shortCode: "RD",
+      url: "https://www.concordia.ca/research.html",
+      group: "office-research"
+    },
+    {
+      id: "pips",
+      name: "Partnerships, Intellectual Property and Security (PIPS)",
+      shortCode: "PIPS",
+      url: "https://www.concordia.ca/research.html",
+      group: "office-research"
+    },
+    {
+      id: "4th-space",
+      name: "4th Space",
+      shortCode: "4S",
+      url: "https://www.concordia.ca/next-gen/4th-space.html",
+      group: "campus"
+    },
+    {
+      id: "concordia-library",
+      name: "Concordia Library",
+      shortCode: "LIB",
+      url: "https://library.concordia.ca/",
+      group: "campus"
+    },
+    {
+      id: "district-3",
+      name: "District 3",
+      shortCode: "D3",
+      url: "https://district3.co/",
+      group: "campus"
+    },
+    {
+      id: "university-communications-services",
+      name: "University Communications Services",
+      shortCode: "UCS",
+      url: "https://www.concordia.ca/news/authors/university-communications-services.html",
+      group: "campus"
+    },
+    {
+      id: "shift-centre",
+      name: "SHIFT Centre for Social Transformation",
+      shortCode: "SHIFT",
+      url: "https://www.concordia.ca/about/shift.html",
+      group: "campus"
+    },
+    {
+      id: "office-community-engagement",
+      name: "Office of Community Engagement",
+      shortCode: "OCE",
+      url: "https://www.concordia.ca/about/community.html",
+      group: "campus"
+    },
+    {
+      id: "v1-studio",
+      name: "V1 Studio",
+      shortCode: "V1",
+      url: "https://www.v1.studio/",
+      group: "external"
+    }
+  ],
+  workshopUnitTags: {
+    "narrative-cv": ["RD"],
+    "open-scholarship": ["LIB"],
+    "rdm-guidance": ["LIB"]
+  },
+  home: {
+    hero: {
+      title: "Pathways to Impact",
+      summary: [
+        "Pathways to Impact is a coordinated support system for creating impact through research.",
+        "These supports are organized around seven impact pathways. Explore them and combine services to build a pathway that fits your research and where you are in your project.",
+        "If you are new to research impact, start with the Learn section."
+      ],
+      ctaLabel: "Explore the Pathways →",
+      ctaTarget: "#explore",
+      prompt: "Where are you in your research?",
+      cards: [
+        {
+          id: "developing-project",
+          title: "Developing an Idea",
+          description: "Shaping research questions, building collaborations, and preparing funding applications."
+        },
+        {
+          id: "ongoing-project",
+          title: "Active Research",
+          description: "Managing an ongoing project, building partnerships, generating outputs, and planning impact pathways."
+        },
+        {
+          id: "wrapping-up-project",
+          title: "Finishing a Project",
+          description: "Sharing results, translating research into policy or practice, and preparing future directions."
+        }
+      ]
+    },
+    what: {
+      title: "What you can do with Pathways",
+      items: [
+        "Plan impact early and align your work with real-world needs.",
+        "Strengthen proposals with credible pathways and evidence.",
+        "Connect with support for engagement, evaluation, and knowledge mobilization.",
+        "Map pathways from research outputs to practical outcomes."
+      ],
+      fallback: {
+        prompt: "Can't find what you're looking for?",
+        buttonLabel: "Contact us"
+      }
+    },
+    upcomingGrants: {
+      title: "Upcoming grants",
+      lead: "Examples of funding opportunities that support impact-oriented activities.",
+      ctaLabel: "View details →",
+      items: [
+        {
+          id: "connection-grants",
+          title: "Connection Grants",
+          description: "These grants support short-term, targeted knowledge mobilization events and activities.",
+          type: "Grant",
+          amount: "$10,000 to $50,000",
+          duration: "Over 1 year"
+        },
+        {
+          id: "indigenous-innovation-network-grants",
+          title: "Indigenous Innovation and Leadership in Research Network Grants",
+          description: "This funding opportunity affirms and seeks to build on Indigenous knowledge systems and Indigenous ontology, epistemology and methodology. Networks should be wholistic, reflecting the full range of collaboration across disciplines and subject areas pertaining to the social sciences and humanities; natural sciences and engineering; and health and wellness.",
+          type: "Grant",
+          amount: "Up to $1,750,000",
+          duration: "Over 4 years"
+        },
+        {
+          id: "partnership-engage-grants",
+          title: "Partnership Engage Grants",
+          description: "These grants support short-term partnered research activities involving a postsecondary institution and a single organization from the public, private or not-for-profit sectors.",
+          type: "Grant",
+          amount: "$10,000 to $50,000",
+          duration: "Over 1 year"
+        }
+      ]
+    },
+    popular: {
+      title: "Popular support",
+      viewLabel: "View",
+      items: [
+        {
+          id: "popular-impact-mapping",
+          title: "Impact pathway mapping workshop",
+          description: "Map outputs to near-term and long-term outcomes."
+        },
+        {
+          id: "popular-grant-narrative",
+          title: "Grant impact narrative workshop",
+          description: "Strengthen funder-facing impact language."
+        },
+        {
+          id: "popular-outcome-tracking",
+          title: "Outcome tracking consult",
+          description: "Choose practical indicators for project outcomes."
+        }
+      ]
+    }
+  },
+  start: {
+    title: "Start Your Pathway",
+    intro: "Choose the stage that best matches your project and explore short modules designed for that moment in the research journey.",
+    labels: {
+      type: "Type:",
+      time: "Time:"
+    },
+    actions: {
+      opportunities: "See related opportunities",
+      contact: "Contact",
+      modulePrompt: "What do you need help with?"
+    },
+    journeys: [
+      {
+        id: "developing-project",
+        title: "Developing an Idea",
+        description: "Shaping research questions, building collaborations, and preparing funding applications.",
+        stage: "Developing an Idea",
+        modules: [
+          {
+            title: "Framing my research impact",
+            description: "Clarify the public need and the change your research could support.",
+            type: "Consult",
+            time: "45–60 min",
+            workshopIds: ["opp-impact-framing"]
+          },
+          {
+            title: "Mapping stakeholders",
+            description: "Identify potential partners, communities, and decision-makers relevant to your research.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: []
+          },
+          {
+            title: "Refining my impact plan",
+            description: "Review objectives, outputs, and intended outcomes with a specialist.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Assessing partner readiness",
+            description: "Review engagement plans and clarify partnership roles before committing.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: ["opp-partner-readiness"]
+          },
+          {
+            title: "Writing grant content",
+            description: "Translate impact goals into persuasive, funder-ready language.",
+            type: "Workshop",
+            time: "2 hrs",
+            workshopIds: ["opp-grant-narrative"]
+          },
+          {
+            title: "Preparing a grant application",
+            description: "Pull your impact plan, partner roles, and evidence into a grant-ready package.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Planning knowledge mobilization",
+            description: "Outline how your findings will reach the right audiences at the right time.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Identifying funding sources",
+            description: "Find and evaluate relevant funding opportunities for your research goals.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: []
+          },
+          {
+            title: "Reviewing existing literature",
+            description: "Build an evidence base and understand the research landscape around your topic.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: []
+          },
+          {
+            title: "Designing my study",
+            description: "Get support on research methods, ethics, and data collection planning.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          }
+        ]
+      },
+      {
+        id: "ongoing-project",
+        title: "Active Research",
+        description: "Managing an ongoing project, building partnerships, generating outputs, and planning impact pathways.",
+        stage: "Active Research",
+        modules: [
+          {
+            title: "Engaging partners & communities",
+            description: "Design activities that keep partners involved and informed throughout your project.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: ["opp-engagement-plan"]
+          },
+          {
+            title: "Tracking outcomes & progress",
+            description: "Select indicators and simple tools to document progress toward your goals.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: ["opp-outcome-tracking"]
+          },
+          {
+            title: "Reflecting on my approach",
+            description: "Assess what is working and update your impact pathway if needed.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Collecting & analyzing data",
+            description: "Get support on data methods, tools, and sense-making for your research.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: []
+          },
+          {
+            title: "Documenting impact stories",
+            description: "Capture evidence and narratives of change as they happen in your project.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: ["opp-impact-documentation"]
+          },
+          {
+            title: "Reporting to funders",
+            description: "Structure progress reports that clearly highlight impact and outcomes.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Communicating work in progress",
+            description: "Share early findings with communities, media, or stakeholders effectively.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: []
+          },
+          {
+            title: "Managing project changes",
+            description: "Get help adapting scope, partnerships, or timelines when things shift.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: []
+          }
+        ]
+      },
+      {
+        id: "wrapping-up-project",
+        title: "Finishing a Project",
+        description: "Sharing results, translating research into policy or practice, and preparing future directions.",
+        stage: "Finishing a Project",
+        modules: [
+          {
+            title: "Documenting my impact",
+            description: "Gather evidence and narratives of change to tell your research impact story.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: ["opp-impact-documentation"]
+          },
+          {
+            title: "Sharing knowledge effectively",
+            description: "Select the best formats and channels to reach your priority audiences.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: ["opp-knowledge-sharing"]
+          },
+          {
+            title: "Planning future research",
+            description: "Identify follow-on opportunities and strategies to sustain your outcomes.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: []
+          },
+          {
+            title: "Publishing results",
+            description: "Navigate academic and non-academic publishing options for your findings.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Translating research to policy",
+            description: "Shape policy briefs, advocacy materials, or decision-maker engagement strategies.",
+            type: "Workshop",
+            time: "90 min",
+            workshopIds: []
+          },
+          {
+            title: "Engaging media & the public",
+            description: "Get support with communications, media outreach, and public-facing outputs.",
+            type: "Consult",
+            time: "45 min",
+            workshopIds: []
+          },
+          {
+            title: "Sharing data & materials",
+            description: "Plan data archiving, open access publishing, and research material sharing.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: []
+          },
+          {
+            title: "Evaluating my impact",
+            description: "Assess what changed, gather feedback, and reflect on your research outcomes.",
+            type: "Consult",
+            time: "60 min",
+            workshopIds: ["opp-impact-dashboard"]
+          }
+        ]
+      }
+    ]
+  },
+  support: {
+    title: "Research Support",
+    intro: "Support services and resources are available wherever you are in your research journey.",
+    search: {
+      label: "Find support and services",
+      placeholder: "Find support and services",
+      ariaLabel: "Find support and services"
+    },
+    sections: [
+      {
+        id: "support-developing",
+        title: "Developing an Idea",
+        description: "Shaping research questions, building collaborations, and preparing funding applications.",
+        lead: "This stage may include support such as:",
+        supports: [
+          "Grant development guidance",
+          "Partnership exploration",
+          "Impact planning"
+        ]
+      },
+      {
+        id: "support-active",
+        title: "Active Research",
+        description: "Managing an ongoing project, building partnerships, generating outputs, and planning impact pathways.",
+        lead: "This stage may include support such as:",
+        supports: [
+          "Research data management",
+          "Community engagement strategies",
+          "Knowledge mobilization planning"
+        ]
+      },
+      {
+        id: "support-wrapping",
+        title: "Finishing a Project",
+        description: "Sharing results, translating research into policy or practice, and preparing future directions.",
+        lead: "This stage may include support such as:",
+        supports: [
+          "Publication impact strategies",
+          "Policy engagement",
+          "Public communication"
+        ]
+      }
+    ]
+  },
+  learn: {
+    title: "Learn",
+    intro: "Plan your impact and build your understanding of what research impact means.",
+    impact: {
+      title: "What is research impact?",
+      body: "Research impact is the positive change that results from research activities and outputs. It can be social, cultural, economic, environmental, or policy-related, and it often emerges through relationships and sustained engagement."
+    },
+    myths: {
+      title: "Myths vs realities",
+      labels: {
+        myth: "Myth",
+        reality: "Reality"
+      },
+      items: [
+        {
+          myth: "Impact only happens after publication.",
+          reality: "Impact can start early when research informs decisions, partnerships, or public understanding."
+        },
+        {
+          myth: "Only large projects create impact.",
+          reality: "Small projects can create meaningful change when they address specific needs."
+        },
+        {
+          myth: "Impact is only about economic value.",
+          reality: "Impact includes cultural, social, educational, and environmental outcomes."
+        }
+      ]
+    },
+    topics: {
+      title: "Focus topics",
+      cards: [
+        {
+          title: "Impact across disciplines",
+          body: "Different fields generate different kinds of impact. Learn how to articulate yours in ways that fit your discipline."
+        },
+        {
+          title: "Evidence that counts",
+          body: "Discover qualitative and quantitative evidence that can demonstrate change over time."
+        },
+        {
+          title: "Why plan early",
+          body: "Early planning makes it easier to align methods, partners, and outputs with real-world outcomes."
+        }
+      ]
+    },
+    resources: {
+      title: "Recommended Resources",
+      cards: [
+        {
+          title: "Research Impact Canada",
+          url: "https://researchimpact.ca/",
+          description: "A national network and knowledge hub focused on research impact practice, tools, and examples across institutions.",
+          whyUse: "Find practical frameworks, examples, and shared language for planning and communicating impact.",
+          forWhat: "Impact planning, knowledge mobilization strategy, and training materials."
+        }
+      ]
+    },
+    impactPlanning: {
+      title: "Plan Your Impact",
+      subtitle: "An interactive module — from change statement to indicators",
+      entryQuestion: "What change do you want your research to contribute to?",
+      entryBody: [
+        "This short planning tool helps you articulate the difference your research can make and connect that vision to concrete, measurable steps.",
+        "You will move through five stages at your own pace. There are no wrong answers."
+      ],
+      stages: [
+        { id: "change", title: "Your Change Statement" },
+        { id: "outcomes", title: "Your Outcomes" },
+        { id: "outputs", title: "Your Outputs" },
+        { id: "pathways", title: "Your Pathway Connection" },
+        { id: "indicators", title: "Your Indicators" }
+      ],
+      labels: {
+        stagePrefix: "Step",
+        of: "of",
+        optional: "optional",
+        continue: "Continue",
+        back: "Back",
+        start: "Begin with your Change Statement",
+        openSummary: "See your Impact Planning Summary",
+        reset: "Reset draft",
+        download: "Download summary",
+        copy: "Copy summary text",
+        consult: "Book a consultation"
+      },
+      prompts: {
+        change: {
+          intro: [
+            "A change statement describes the difference you ultimately want your research to contribute to. It does not need to be perfectly defined.",
+            "It may go beyond the scope of your current project. The bigger picture gives your work direction."
+          ],
+          fieldLabel: "Write your change statement",
+          placeholder: "e.g., I want to contribute to a society where Indigenous youth have equitable access to mental health support in their own communities.",
+          helperTitle: "Try asking yourself",
+          helperPrompts: [
+            "If my research succeeds, what will be different — and for whom?",
+            "What problem am I ultimately trying to help solve?",
+            "Who is my research for, in the largest sense?"
+          ],
+          note: "A good change statement can be ambitious and still humble. You are situating your work within a larger vision of change."
+        },
+        outcomes: {
+          intro: "Outcomes are the real-world changes that would show your research is making a difference. They are what changes for others.",
+          fields: [
+            { id: "outcome1", label: "Outcome 1", placeholder: "Describe the first change you expect to contribute to..." },
+            { id: "outcome2", label: "Outcome 2", placeholder: "Describe a second change (optional)..." },
+            { id: "outcome3", label: "Outcome 3", placeholder: "Add another if relevant (optional)..." }
+          ],
+          check: "Check: Does this describe something that changes for someone else, beyond your control?"
+        },
+        outputs: {
+          intro: "Outputs are the things you directly produce: publications, tools, events, partnerships, datasets, policy briefs, artworks, and more.",
+          typesLabel: "Common output types (select all that apply):",
+          outputTypes: [
+            "Peer-reviewed publications",
+            "Policy briefs / reports",
+            "Workshops or events",
+            "Datasets or tools",
+            "Community partnerships",
+            "Training programs",
+            "Media or communications",
+            "Other"
+          ],
+          otherLabel: "Other output type",
+          outputsLabel: "Describe your main output(s)",
+          outputsPlaceholder: "e.g., A peer-reviewed article and an accompanying plain-language summary for partner organizations.",
+          linkLabel: "Which outcome does this output support most?",
+          outputConnectionOptions: [
+            "Outcome 1",
+            "Outcome 2",
+            "Outcome 3",
+            "Not linked yet"
+          ]
+        },
+        pathways: {
+          intro: "Based on what you have described, select any pathways that feel relevant. It is fine to choose more than one.",
+          options: [
+            "Academic Scholarship",
+            "Community Engagement",
+            "Innovation",
+            "Commercialization",
+            "Policy",
+            "Communications",
+            "Research Creation",
+            "Not sure yet",
+            "None of these fit"
+          ],
+          reflectionLabel: "Why does your research connect to these pathways? (optional)",
+          reflectionPlaceholder: "Describe the connection, or note any tensions or surprises in how your work maps to these pathways."
+        },
+        indicators: {
+          intro: "Indicators help you track whether your research is creating the changes you described. They are for reflection and planning, not compliance.",
+          smartTitle: "SMART check",
+          smartItems: [
+            "Specific — what exactly are you measuring, and why does it matter?",
+            "Measurable — how will you track it? What counts as progress?",
+            "Achievable — is data collection realistic within your scope?",
+            "Relevant — does this indicator reflect your intended change?",
+            "Time-bound — by when will you observe progress?"
+          ],
+          fields: [
+            { id: "indicator1", label: "Indicator for Outcome 1", placeholder: "Describe how you will measure progress for Outcome 1..." },
+            { id: "indicator2", label: "Indicator for Outcome 2", placeholder: "Describe how you will measure progress for Outcome 2 (if applicable)..." }
+          ],
+          examples: {
+            outcome: [
+              "Changes in behavior by your target audience",
+              "Shifts in public or stakeholder attitudes",
+              "Policy or practice changes informed by findings",
+              "New collaborations or networks formed"
+            ],
+            output: [
+              "Number of publications, briefs, or tools created",
+              "Number of events or workshops delivered",
+              "Number of partner organizations reached",
+              "Media references or citations in policy documents"
+            ]
+          }
+        }
+      },
+      summary: {
+        title: "Your Impact Planning Summary",
+        intro: "Here is your impact plan, built from your responses. Use it in grant development, team planning, or consultation sessions."
+      }
+    }
+  },
+  explore: {
+    title: "Explore",
+    intro: "",
+    search: {
+      label: "Search",
+      placeholder: "Search",
+      ariaLabel: "Search"
+    },
+    filters: [
+      {
+        id: "pathway",
+        label: "Pathway",
+        allLabel: "All pathways"
+      },
+      {
+        id: "stage",
+        label: "Research stage",
+        allLabel: "All stages"
+      },
+      {
+        id: "format",
+        label: "All types",
+        allLabel: "All types"
+      },
+      {
+        id: "time",
+        label: "Time commitment",
+        allLabel: "All time commitments"
+      }
+    ],
+    labels: {
+      results: "Results:",
+      stage: "Stage:",
+      format: "Format:",
+      time: "Time:",
+      tags: "Tags",
+      overview: "Overview",
+      who: "Who it is for",
+      what: "What you will do",
+      outcomes: "Outcomes"
+    },
+    buttons: {
+      details: "View details →",
+      close: "Close"
+    },
+    pathways: {
+      title: "Pathways Ecosystem",
+      intro: "Explore the pathways below to find the lens that best fits your goals, audiences, and outputs.",
+      supportTitle: "Featured support",
+      buttons: {
+        related: "View related opportunities",
+        contactPrompt: "Can't find what you're looking for?",
+        contactAction: "Contact",
+        previous: "Previous pathway",
+        next: "Next pathway",
+        close: "Hide details"
+      },
+      items: [
+        {
+          id: "academic-scholarship",
+          title: "Academic Scholarship",
+          summary: "Advance knowledge, methods, and scholarly contribution within and beyond your field.",
+          label: "In this pathway you can:",
+          actions: [
+            "Clarify the scholarly contribution and its significance.",
+            "Position findings within disciplinary debates and methods.",
+            "Strengthen evidence and credibility for peer review."
+          ],
+          supports: [
+            "Impact framing consult",
+            "Grant impact narrative workshop",
+            "Outcome tracking consult"
+          ]
+        },
+        {
+          id: "community-engagement",
+          title: "Community Engagement",
+          summary: "Co-create research with communities and sustain reciprocal partnerships.",
+          label: "You might explore this pathway if you want to:",
+          actions: [
+            "Identify partners and build shared goals.",
+            "Design engagement activities and feedback loops.",
+            "Document relationship-based outcomes and learning."
+          ],
+          supports: [
+            "Stakeholder mapping workshop",
+            "Engagement plan clinic",
+            "Partner readiness check",
+            "Knowledge sharing strategy"
+          ]
+        },
+        {
+          id: "innovation",
+          title: "Innovation",
+          summary: "Translate research into new methods, tools, or services that improve practice.",
+          label: "What this pathway supports",
+          actions: [
+            "Prototype solutions or methods for real-world use.",
+            "Test feasibility with partners and users.",
+            "Plan adoption and scaling with evidence."
+          ],
+          supports: [
+            "Impact pathway mapping session",
+            "Outcome tracking consult",
+            "Impact documentation"
+          ]
+        },
+        {
+          id: "commercialization",
+          title: "Commercialization",
+          summary: "Move research-based ideas toward market-ready products or ventures.",
+          label: "In this pathway you can:",
+          actions: [
+            "Assess market fit and intellectual property considerations.",
+            "Develop partnerships for commercialization pathways.",
+            "Build evidence for investment, licensing, or uptake."
+          ],
+          supports: [
+            "Partner readiness check",
+            "Grant impact narrative workshop",
+            "Impact documentation"
+          ]
+        },
+        {
+          id: "policy",
+          title: "Policy",
+          summary: "Connect evidence to policy conversations and decision-making timelines.",
+          label: "You might explore this pathway if you want to:",
+          actions: [
+            "Identify policy audiences and windows of opportunity.",
+            "Translate findings into actionable policy briefs.",
+            "Track influence and uptake over time."
+          ],
+          supports: [
+            "Outcome tracking consult",
+            "Knowledge sharing strategy",
+            "Impact documentation"
+          ]
+        },
+        {
+          id: "communications",
+          title: "Communications",
+          summary: "Share research in accessible ways that reach public and professional audiences.",
+          label: "In this pathway you can:",
+          actions: [
+            "Plan dissemination strategies and messages.",
+            "Select formats for different audiences and channels.",
+            "Document reach and engagement outcomes."
+          ],
+          supports: [
+            "Knowledge sharing strategy",
+            "Engagement plan clinic",
+            "Impact documentation"
+          ]
+        },
+        {
+          id: "research-creation",
+          title: "Research Creation",
+          summary: "Create and present research through artistic and practice-based approaches.",
+          label: "What this pathway supports",
+          actions: [
+            "Develop research-creation outputs and exhibitions.",
+            "Engage audiences through creative formats and spaces.",
+            "Reflect on impact beyond traditional metrics."
+          ],
+          supports: [
+            "Impact framing consult",
+            "Knowledge sharing strategy",
+            "Impact documentation"
+          ]
+        }
+      ]
+    },
+    empty: {
+      title: "No matching opportunities",
+      body: "Try adjusting the search or filters to see more options."
+    },
+    opportunities: [
+      {
+        id: "opp-impact-framing",
+        title: "Impact framing consult",
+        category: "Planning",
+        stage: "Developing an Idea",
+        format: "Consultation",
+        time: "45-60 min",
+        pathway: ["Academic Scholarship", "Research Creation"],
+        tags: ["impact", "framing", "early stage"],
+        summary: "Clarify the change you want to influence and who benefits.",
+        details: {
+          who: "Researchers shaping a new project or early concept.",
+          what: "Work with a facilitator to define the public need, intended outcomes, and early partners.",
+          outcomes: "A concise impact statement and a first-pass pathway map."
+        }
+      },
+      {
+        id: "opp-partner-readiness",
+        title: "Partner readiness check",
+        category: "Engagement",
+        stage: "Developing an Idea",
+        format: "Consultation",
+        time: "45 min",
+        pathway: ["Community Engagement", "Commercialization"],
+        tags: ["partners", "grant", "engagement"],
+        summary: "Assess roles, expectations, and collaboration readiness.",
+        details: {
+          who: "Teams preparing partnership-based proposals.",
+          what: "Review partner roles, decision-making, and communication plans.",
+          outcomes: "A short readiness checklist and recommended adjustments."
+        }
+      },
+      {
+        id: "opp-grant-narrative",
+        title: "Grant impact narrative workshop",
+        category: "Proposal",
+        stage: "Developing an Idea",
+        format: "Workshop",
+        time: "2 hrs",
+        pathway: ["Communications", "Policy", "Commercialization"],
+        tags: ["proposal", "narrative", "funding"],
+        summary: "Translate impact goals into funder-ready language.",
+        details: {
+          who: "Applicants preparing impact sections for grants.",
+          what: "Draft and refine impact narratives with peer feedback.",
+          outcomes: "A stronger narrative aligned to funder criteria."
+        }
+      },
+      {
+        id: "opp-engagement-plan",
+        title: "Engagement plan clinic",
+        category: "Engagement",
+        stage: "Active Research",
+        format: "Workshop",
+        time: "90 min",
+        pathway: ["Community Engagement", "Communications"],
+        tags: ["engagement", "partners", "planning"],
+        summary: "Design engagement activities that fit your timeline.",
+        details: {
+          who: "Projects with active partners or public-facing goals.",
+          what: "Build a schedule of touchpoints, events, and feedback loops.",
+          outcomes: "An engagement plan you can implement immediately."
+        }
+      },
+      {
+        id: "opp-outcome-tracking",
+        title: "Outcome tracking consult",
+        category: "Evaluation",
+        stage: "Active Research",
+        format: "Consultation",
+        time: "45 min",
+        pathway: ["Policy", "Academic Scholarship"],
+        tags: ["evaluation", "indicators", "evidence"],
+        summary: "Choose practical indicators to document change.",
+        details: {
+          who: "Teams who need light-weight evaluation support.",
+          what: "Select indicators and tools that align with your goals.",
+          outcomes: "A simple outcome tracking plan and evidence checklist."
+        }
+      },
+      {
+        id: "opp-impact-documentation",
+        title: "Impact documentation",
+        category: "Evidence",
+        stage: "Finishing a Project",
+        format: "Consultation",
+        time: "60 min",
+        pathway: ["Communications", "Policy", "Commercialization", "Research Creation"],
+        tags: ["evidence", "story", "outcomes"],
+        summary: "Collect evidence and short narratives of change.",
+        details: {
+          who: "Projects preparing reports or final outputs.",
+          what: "Gather outputs, testimonials, and outcome evidence.",
+          outcomes: "A concise impact brief ready for reporting."
+        }
+      },
+      {
+        id: "opp-knowledge-sharing",
+        title: "Knowledge sharing strategy",
+        category: "Communication",
+        stage: "Finishing a Project",
+        format: "Workshop",
+        time: "90 min",
+        pathway: ["Communications", "Community Engagement", "Research Creation"],
+        tags: ["communication", "audiences", "dissemination"],
+        summary: "Select formats that reach the right audiences.",
+        details: {
+          who: "Teams ready to disseminate findings.",
+          what: "Choose formats, channels, and timing for outreach.",
+          outcomes: "A tailored dissemination plan with priorities."
+        }
+      },
+      {
+        id: "opp-impact-dashboard",
+        title: "Impact pathway mapping session",
+        category: "Planning",
+        stage: "Developing an Idea",
+        format: "Workshop",
+        time: "90 min",
+        pathway: ["Innovation", "Academic Scholarship"],
+        tags: ["pathways", "planning", "mapping"],
+        summary: "Visualize how outputs connect to outcomes over time.",
+        details: {
+          who: "Researchers who want a clear, shared impact model.",
+          what: "Map outputs, short-term outcomes, and long-term goals.",
+          outcomes: "A pathway map that supports planning and communication."
+        }
+      }
+    ],
+    externalResources: [
+      {
+        id: "ext-impact-narrative-tool",
+        title: "Impact Narrative Tool",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Finishing a Project"],
+        format: "External Resource",
+        time: "20 min",
+        pathway: ["Communications"],
+        tags: ["narrative", "impact", "grant proposals", "strategic planning", "stakeholders"],
+        summary: "Build a compelling impact narrative for your research. This interactive tool helps you connect your project\u2019s rationale, stakeholders, activities, and expected contributions into a clear and persuasive story.",
+        externalUrl: "https://impactnarrative.nl/en/impact-narrative-tool/",
+        author: "Municipality of Delft, Erasmus Medical Center Rotterdam, Erasmus University Rotterdam & partners",
+        details: {
+          who: "Researchers preparing grant proposals, engagement plans, or institutional reporting.",
+          what: "An interactive digital tool that guides you through connecting your research goals, activities, stakeholders, and expected outcomes into a coherent impact narrative. Works at individual and team levels.",
+          outcomes: "A structured, persuasive impact narrative ready for proposals, engagement plans, and reporting."
+        }
+      },
+      {
+        id: "ext-case-study-guidelines",
+        title: "Impact & Engagement Case Study Guidelines",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Finishing a Project"],
+        format: "External Resource",
+        time: "15 min",
+        pathway: ["Community Engagement", "Communications"],
+        tags: ["case study", "impact", "engagement", "evidence", "reporting"],
+        summary: "Tell the story of your research impact with clarity and confidence. These guidelines walk you through capturing evidence, describing engagement activities, and presenting a compelling case study.",
+        externalUrl: "https://researchimpact.ca/wp-content/uploads/RIC_Impact-and-Engagement-Case-Study-Guidelines-EN.pdf",
+        author: "Research Impact Canada",
+        details: {
+          who: "Researchers documenting impact for funders, internal reviews, or institutional storytelling.",
+          what: "A structured set of guidelines for crafting clear, evidence-informed case studies that highlight pathways to impact. Walk through how to capture evidence, describe engagement, and present credible impact stories.",
+          outcomes: "A well-structured case study demonstrating real-world research outcomes and engagement."
+        }
+      },
+      {
+        id: "ext-impact-indicators",
+        title: "Impact Indicators: Overview & Menu",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Finishing a Project"],
+        format: "External Resource",
+        time: "30 min",
+        pathway: ["Academic Scholarship"],
+        tags: ["indicators", "tracking", "evaluation", "outputs", "outcomes"],
+        summary: "How do you know if your research is making a difference? This tool helps you identify and develop research output and outcome indicators linked to societal impact.",
+        externalUrl: "https://www.eur.nl/en/research/research-services/societal-impact-evaluation/impact-toolbox/impact-indicators",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Academics and research units wanting to track and communicate societal impact.",
+          what: "A practical guide explaining what impact indicators are and how to write them, plus an inspirational menu of example outputs and outcomes that can be tailored to different research contexts.",
+          outcomes: "A set of tailored impact indicators for tracking progress toward your research goals and societal ambitions."
+        }
+      },
+      {
+        id: "ext-research-impact-framework",
+        title: "Research Impact Framework",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Finishing a Project"],
+        format: "External Resource",
+        time: "40 min",
+        pathway: ["Academic Scholarship", "Communications"],
+        tags: ["framework", "impact planning", "career", "multi-domain"],
+        summary: "Explore and expand the potential range of your research impacts. Map your influence across academic, societal, environmental, cultural, and policy dimensions.",
+        externalUrl: "https://doi.org/10.25546/98474",
+        author: "Giovanna Lima and Sarah Bowman",
+        details: {
+          who: "Individual researchers looking to understand and plan impact across multiple domains.",
+          what: "A framework for mapping your influence across multiple dimensions \u2014 from scholarly contributions to societal and cultural change. Helps identify new opportunities, plan strategically, and communicate impact.",
+          outcomes: "A multi-dimensional view of your research impact with new opportunities for strategic planning and communication."
+        }
+      },
+      {
+        id: "ext-flows-of-knowledge",
+        title: "Flows of Knowledge: Impact Assessment Method",
+        category: "External Resource",
+        stage: ["Finishing a Project"],
+        format: "External Resource",
+        time: "10 min",
+        pathway: ["Academic Scholarship", "Policy"],
+        tags: ["assessment", "evaluation", "knowledge exchange", "non-academic impact"],
+        summary: "A clear and simple framework for designing your own research impact assessment plan, focused on non-academic impacts on policy, practice, and wider society.",
+        externalUrl: "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ABLT4M",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Researchers and research teams carrying out impact assessment at the end of a project.",
+          what: "An evaluation method providing a framework for assessing non-academic impacts. Covers the method\u2019s building blocks and how to assess the efficiency of knowledge exchange.",
+          outcomes: "A structured plan for assessing and communicating the non-academic impact of your research."
+        }
+      },
+      {
+        id: "ext-engaged-research-planning",
+        title: "Engaged Research Planning for Impact",
+        category: "External Resource",
+        stage: ["Developing an Idea"],
+        format: "External Resource",
+        time: "13 min",
+        pathway: ["Academic Scholarship", "Community Engagement"],
+        tags: ["planning", "engaged research", "funding", "strategy"],
+        summary: "A clear and concise framework for understanding research impact and how you can start planning for it. Informed by recent literature and international consultation.",
+        externalUrl: "https://www.iua.ie/wp-content/uploads/2023/12/Guide-IUA-Engaged-Research-Planning-for-Impact-Framework-2022-Update_V5-25.pdf",
+        author: "Campus Engage and Irish Universities Association",
+        details: {
+          who: "Researchers at the early stages of planning a project or drafting a funding application.",
+          what: "A guide informed by academic literature and consultation with researchers, policymakers, and funding agency personnel. Provides inspiration and guidance for planning engaged research and drafting funding applications.",
+          outcomes: "A clearer understanding of research impact and a starting framework for your impact plan."
+        }
+      },
+      {
+        id: "ext-kmb-modules",
+        title: "Knowledge Mobilization Modules",
+        category: "External Resource",
+        stage: ["Active Research", "Finishing a Project"],
+        format: "External Resource",
+        time: "Self-paced",
+        pathway: ["Communications", "Community Engagement"],
+        tags: ["knowledge mobilization", "storytelling", "infographics", "skills", "KMb"],
+        summary: "Free, online modules on knowledge mobilization topics including an intro to KMb, storytelling for impact, and infographic design. Stand-alone and completable in any order.",
+        externalUrl: "https://researchimpact.ca/learning/kmb-modules/",
+        author: "Research Impact Canada",
+        details: {
+          who: "Researchers looking to build practical knowledge mobilization skills during or after their research.",
+          what: "Freely accessible e-modules, each focused on a specific KMb skill. Step-by-step guidance with tools and additional resources for increased uptake. Apply the training directly to your own work.",
+          outcomes: "Practical skills in knowledge mobilization, storytelling for impact, and visual communication of research."
+        }
+      },
+      {
+        id: "ext-impact-worksheet",
+        title: "Thinking About My Impact: A Worksheet",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Active Research"],
+        format: "External Resource",
+        time: "20 min",
+        pathway: ["Community Engagement"],
+        tags: ["worksheet", "reflection", "partners", "beneficiaries", "engagement plan"],
+        summary: "A brief printable worksheet to help you consider how your project relates to society. Map current and potential partners, align your work to their needs, and plan your engagement.",
+        externalUrl: "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZMU5F1",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Individual researchers and research teams, or professional staff holding impact workshops.",
+          what: "A printable worksheet with accompanying slides designed for academics to reflect on societal impact \u2014 what it means to you, how to map partners and beneficiaries, and how to align your work to their needs.",
+          outcomes: "A completed worksheet mapping your impact goals, partners, and engagement strategy. Takes 15 minutes to fill out."
+        }
+      },
+      {
+        id: "ext-theory-of-change",
+        title: "Theory of Change (ToC) Method",
+        category: "External Resource",
+        stage: ["Developing an Idea", "Active Research"],
+        format: "External Resource",
+        time: "15 min",
+        pathway: ["Academic Scholarship"],
+        tags: ["theory of change", "planning", "evaluation", "strategy", "grant writing"],
+        summary: "Understand when, where, and how to use the Theory of Change method for impact planning. A useful starting point for self-evaluation, grant applications, and strategy formulation.",
+        externalUrl: "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/D0GMXS",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Researchers and research teams carrying out impact assessment or planning, and stakeholders involved in assessment procedures.",
+          what: "A tool for understanding the Theory of Change method \u2014 how to describe envisioned changes in a given context, and how to specify the outcomes and outputs of your research activities.",
+          outcomes: "A foundational understanding of ToC that supports self-evaluation, grant writing, strategy formulation, and mission statement drafting."
+        }
+      },
+      {
+        id: "ext-impact-activities-catalogue",
+        title: "Impact Activities Catalogue",
+        category: "External Resource",
+        stage: ["Developing an Idea"],
+        format: "External Resource",
+        time: "16 min",
+        pathway: ["Academic Scholarship", "Community Engagement"],
+        tags: ["activities", "brainstorming", "engagement levels", "commercialization", "advising"],
+        summary: "Trying to picture what type of research impact you want to make? Anchored by three levels of community engagement, this catalogue helps you brainstorm the type of impact you want to work towards.",
+        externalUrl: "https://www.eur.nl/en/media/2025-09-impact-activities-catalogue",
+        author: "Erasmus University Rotterdam",
+        details: {
+          who: "Researchers, project leads, or staff involved in developing, implementing, or evaluating impact initiatives.",
+          what: "A catalogue describing key societal impact activities across different engagement levels \u2014 from academic scholarship and commercialization to academic advising and science activism.",
+          outcomes: "A clearer picture of what types of impact activities align with your research goals and engagement level."
+        }
+      },
+      {
+        id: "ext-stakeholder-analysis",
+        title: "Stakeholder Analysis Matrix Template",
+        category: "External Resource",
+        stage: ["Developing an Idea"],
+        format: "External Resource",
+        time: "3 min",
+        pathway: ["Community Engagement", "Policy", "Commercialization"],
+        tags: ["stakeholders", "partnerships", "engagement strategy", "influence", "analysis"],
+        summary: "Map the people who make research matter. Identify key partners, understand their influence and priorities, and plan how best to engage them throughout your project.",
+        externalUrl: "https://tools4dev.org/resources/stakeholder-analysis-matrix-template/",
+        author: "Tools4Dev",
+        details: {
+          who: "Researchers and project teams at the planning stage who need to identify and engage stakeholders.",
+          what: "A practical template to systematically identify stakeholders, assess their influence and interest, and plan effective engagement strategies. Supports stronger partnership-building and strategic impact planning.",
+          outcomes: "A completed stakeholder map with engagement strategies aligned to the needs of communities, policymakers, and partners."
+        }
+      }
+    ]
+  },
+  about: {
+    title: "About Pathways",
+    intro: "Pathways to Impact is a Concordia University initiative supporting researchers who want to plan, evidence, and communicate impact. The program helps connect research to community needs and public value.",
+    sections: [
+      {
+        id: "what",
+        title: "What Pathways is",
+        body: "Pathways to Impact is a coordinated set of consultations, learning resources, and practical tools that guide researchers through the impact lifecycle."
+      },
+      {
+        id: "how",
+        title: "How it works",
+        body: "Researchers select a pathway stage, complete short modules, and connect with tailored opportunities for engagement, evaluation, and knowledge mobilization."
+      },
+      {
+        id: "partners",
+        title: "Partners across the university",
+        body: "Pathways to Impact connects researchers with expertise and support across the university. These partners contribute guidance, spaces, and opportunities that help research move into the world in meaningful ways.",
+        kind: "partners",
+        groups: [
+          {
+            id: "office-research",
+            title: "Office of Research",
+            items: [
+              {
+                unitIds: ["research-development"],
+                description: "The Research Development team supports researchers across the funding lifecycle. They provide funding identification, proposal development, strategic positioning, and institutional coordination to strengthen competitive and impact-oriented applications."
+              },
+              {
+                unitIds: ["pips"],
+                description: "The PIPS team supports industry partnerships, research agreements, and intellectual property management. They help researchers navigate contracts, protect and manage intellectual property, and develop pathways for knowledge transfer and commercialization."
+              }
+            ]
+          },
+          {
+            id: "campus",
+            title: "Campus partners",
+            items: [
+              {
+                unitIds: ["4th-space"],
+                description: "4th Space develops public programs that make research accessible and interactive. Through panels, residencies, workshops, and events, they help researchers share work with broader audiences and build relationships beyond the university."
+              },
+              {
+                unitIds: ["concordia-library"],
+                description: "The Library supports open, responsible, and visible scholarship. Services include research data management, digital scholarship, bibliometrics and impact guidance, copyright and open access support, and workshops that strengthen research dissemination."
+              },
+              {
+                unitIds: ["district-3"],
+                description: "District 3 helps researchers explore innovation and entrepreneurship pathways. Through training, mentorship, and incubation programs, they support translating research into applications, ventures, and real-world solutions."
+              },
+              {
+                unitIds: ["university-communications-services"],
+                description: "University Communications Services supports researchers in sharing work with public audiences. They offer media training, interview preparation, press support, and guidance on communicating research clearly and responsibly."
+              },
+              {
+                unitIds: ["shift-centre", "office-community-engagement"],
+                description: "SHIFT and the Office of Community Engagement support participatory and community-based research. They help build reciprocal partnerships, support co-creation processes, and provide spaces for collaboration across university and community contexts."
+              }
+            ]
+          },
+          {
+            id: "external",
+            title: "External partners",
+            items: [
+              {
+                unitIds: ["v1-studio"],
+                description: "V1 Studio provides researchers with hands-on entrepreneurial training and venture development support. Their programs help researchers explore commercialization pathways, build startup skills, and move research toward societal application."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "vision",
+        title: "Impact Vision",
+        body: "We envision research that is grounded in community priorities, informed by evidence, and translated into meaningful societal outcomes."
+      },
+      {
+        id: "about-us",
+        title: "About Us",
+        body: "Pathways is delivered by a cross-campus team specializing in research development, partnership building, and knowledge mobilization."
+      },
+      {
+        id: "contact",
+        title: "Contact Us",
+        body: "Reach out for guidance, collaboration, or to book a consultation.",
+        items: [
+          { "label": "Email:", "value": "impact@concordia.ca" },
+          { "label": "Office:", "value": "Office of Research, Concordia University" },
+          { "label": "Hours:", "value": "Monday-Friday, 9:00-17:00" }
+        ]
+      }
+    ]
+  }
+};
