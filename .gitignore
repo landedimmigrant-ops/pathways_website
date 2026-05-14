@@ -1,2 +1,8 @@
 .DS_Store
 **/.DS_Store
+
+# /triage command file contains the Apps Script webhook secret
+.claude/commands/triage.md
+
+# User-specific Claude permissions
+.claude/settings.local.json

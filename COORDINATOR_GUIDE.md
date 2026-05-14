@@ -26,6 +26,49 @@ Google Doc edits to a workshop body are still live within ~5 min (no approval ga
 | `place_holders` | Yes | Same — currently doubles as the staging area for opportunities |
 | `external-resources` | No | All rows show (no approval gate today; can be added by inserting a `version` column) |
 
+## Marking a workshop or consultation as full
+
+When a workshop or consultation fills up, you can flip its **`status`** column to take bookings off and turn the card into a waitlist sign-up.
+
+### One-time: add the `status` column
+
+If the column doesn't exist yet, add it once:
+
+1. Open the sheet, go to the **`workshops`** tab.
+2. Insert a new column at the right end of the header row. Title the cell exactly **`status`** (lowercase).
+3. Repeat on the **`place_holders`** tab so consultations can use it too.
+4. (External resources don't take bookings, so don't add it to `external-resources`.)
+
+That's it — you don't need to fill anything in immediately. Blank cells mean "open for bookings" (the current behaviour).
+
+### How to flip a session
+
+Edit the `status` cell on the row you want to change. Recognised values (case- and space-insensitive):
+
+| Cell value | What the site does |
+|---|---|
+| *(blank)* or `open` | Normal — booking button works as usual. |
+| `full` | Card shows a small **FULLY BOOKED** pill. The booking button becomes **Join the waitlist**. Anyone who clicks it lands on a short waitlist form (we'll get an email with their name + the workshop title). |
+| `waitlist` | Same as `full` — use whichever word reads better to you. |
+| `cancelled` | Card shows a **CANCELLED** pill and is dimmed. The booking button is replaced by a one-line note. No waitlist. |
+
+Changes appear on the live site within ~1 minute, plus a hard refresh (`Cmd+Shift+R` / `Ctrl+Shift+R`).
+
+### When to use which
+
+- **A workshop sells out, but you might add another session** → `full`. Researchers can self-serve onto the waitlist; you decide whether to schedule a repeat.
+- **A consultation slot is booked solid for the term** → `full`. Same waitlist path.
+- **You're cancelling outright (instructor unavailable, scope change)** → `cancelled`. Don't leave it as `full`, or people will keep signing up for a session that isn't happening.
+- **It's open again** → blank the cell or change it back to `open`.
+
+### Where waitlist signups go
+
+Waitlist submissions hit the same Formspree endpoint as the regular request form, with two extra fields so you can spot them:
+- `intent: waitlist`
+- `service_status: full`
+
+If you want a separate inbox for waitlist signups, ask Prem — that's a Formspree config change, not a sheet change.
+
 > Note on `place_holders`: this tab holds the opportunities-shaped data (consultations, services). The name reflects that it currently serves as a parking lot for in-progress entries. The schema is identical to a normal opportunities tab — you fill in `id`, `title`, `format`, `category`, `detailsWho/What/Outcomes`, etc. as documented in [Flow B](#flow-b--add-or-edit-a-bookable-consultation).
 
 ## Before you start
@@ -44,6 +87,7 @@ Pick the flow that matches what you're adding:
 | Adding a workshop with a long-form body | Google Sheet `workshops` tab + a Google Doc | [Flow A](#flow-a--add-or-edit-a-workshop) |
 | Adding a bookable consultation | Google Sheet `place_holders` tab + Microsoft Bookings | [Flow B](#flow-b--add-or-edit-a-bookable-consultation) |
 | Adding an external link or resource | Google Sheet `external-resources` tab | [Flow C](#flow-c--add-or-edit-an-external-resource) |
+| Editing prose in a Learn-section guide | A labelled `.md` file (or eventually a Google Doc) | [Flow D](#flow-d--edit-a-learn-section-guide) |
 | Just editing existing copy | Google Sheet, the relevant row | [Quick edits](#quick-edits) |
 
 Each flow is independent. You don't need to do them in any particular order.
@@ -79,6 +123,7 @@ A "workshop" here means anything with a long-form description (what you'll get, 
    - `version` — set to `approved` to make the row visible on the live site. Leave blank or use `draft` while you're still preparing it (see ["approval gates rows on the live site"](#heads-up-approval-gates-rows-on-the-live-site) at the top).
 4. Optional:
    - `bookingUrl` — if there's a Microsoft Bookings page for this workshop. If you don't have one, the modal will show a "Register for this workshop" form that emails the request.
+   - `status` — leave blank for normal bookings. Set to `full` (or `waitlist`) when the session sells out, or `cancelled` if you're pulling it. See [Marking a workshop or consultation as full](#marking-a-workshop-or-consultation-as-full).
 5. Save. (Google Sheets auto-saves.)
 
 ### Step 3 — Verify
@@ -105,6 +150,8 @@ Example: `Communications; Policy`
 A "consultation" here means a 1:1 service that a researcher can book a time for (impact framing, narrative CV review, etc.). Two parts: the bookable service in Microsoft Bookings, and the row in the sheet that points to it.
 
 ### Step 1 — Create the service in Microsoft Bookings
+
+> **Use the shared booking page, not your personal one.** As of 2026-05, the durable home for Pathways booking URLs is the shared mailbox **`PathwaysToImpact@liveconcordia.onmicrosoft.com`** (admin URL: `https://outlook.office.com/bookings/`, then pick the *Pathways to Impact* shared page). Personal *Bookings with Me* URLs are pinned to one staff member's calendar and break when they leave — the shared page survives staff turnover, so all new services should be created there.
 
 1. Go to **https://outlook.office.com/bookings/** and sign in with your Concordia account.
 2. Under **Shared booking pages**, click **Create booking page** (or open an existing one).
@@ -151,6 +198,7 @@ URL format:
    - `provider` — the team running the service (renders as "OFFERED BY *team*" on the card; see [Provider naming conventions](#provider-naming-conventions))
    - `bookingUrl` — paste the URL from Step 3
    - `version` — leave blank or set to `draft` while you're still drafting; change to `approved` to make the row visible on the live site (see ["approval gates rows on the live site"](#heads-up-approval-gates-rows-on-the-live-site) at the top)
+   - `status` — leave blank for normal bookings. Set to `full` when the consultation slate fills up (turns the button into "Join the waitlist") or `cancelled` if it's being pulled. See [Marking a workshop or consultation as full](#marking-a-workshop-or-consultation-as-full).
 3. Save.
 
 ### Step 5 — Verify
@@ -187,6 +235,86 @@ External resources are links to things hosted off-site (Concordia Library guides
 
 1. Hard refresh the site.
 2. Find the resource card. Click it. The modal opens with a preview, and the bottom CTA reads **Open resource ↗** — clicking opens the URL in a new tab.
+
+---
+
+## Flow D — Edit a Learn-section guide
+
+The Learn section's deeper "Impact 101" guides (e.g. *What is a Narrative CV?*) have a richer custom layout — numbered sections, callouts, comparison tables, expandable accordions, concern/reality boxes. Because the layout is opinionated, the **layout itself stays in code** and we (Prem) tweak it with you when you want changes. But the **prose inside that layout** is editable on its own — you don't need a code change to fix a typo, swap a sentence, add a bullet, or rewrite a callout.
+
+### Where the prose lives
+
+Each guide has a labelled file in `content/learn/` (e.g. `content/learn/narrative-cv-guide.md`). Each block of prose sits under a Heading 2 like `## s1.lead` — that label is how the site finds the right slot to fill. The label itself never appears on the live page; only the prose underneath it.
+
+A short example:
+
+```
+## s1.title
+Why narrative CVs exist
+
+## s1.summary
+A Narrative CV asks you to describe your research contributions in your own words — not just list them. …
+
+## s1.callout.strong
+The core shift —
+
+## s1.callout.body
+A traditional CV says what you did. A Narrative CV says what changed because of what you did, and why that matters.
+```
+
+If you change "Why narrative CVs exist" to "Why funders want narrative CVs", that's exactly what shows up on the site. The label `s1.title` doesn't move.
+
+### How to edit it
+
+Two options, equivalent in result:
+
+1. **Direct on GitHub (no Doc yet, recommended for now):**
+   - Open the file in the GitHub web editor: navigate to `content/learn/<guide>.md` in the repo, click the pencil icon (✏️ "Edit this file"), make your changes, scroll down, click **Commit changes**.
+   - The site updates within ~1–2 min after the commit lands on the deployed branch.
+   - You can see your edit in the file before committing — no Terminal, no git CLI.
+
+2. **Google Doc (when wired up):**
+   - When a guide has a Doc URL configured, you edit the prose in the Doc using normal Doc editing.
+   - The Doc uses the same `## label` Heading-2 convention as the .md.
+   - Save → ~5 min to live (Google's publish cache).
+   - Ask Prem to set up the Doc the first time — he'll publish it to the web and wire its URL into the site config. After that, you have a normal Doc you can edit anytime.
+
+### Rules to keep things working
+
+- **Don't rename the slot labels.** `## s1.lead` is how the site finds that paragraph. If you change it to `## section1.lead` the site can't find it and falls back to the original hardcoded text.
+- **Don't reorder slots.** The site looks them up by label, not position, so reordering is technically safe — but it makes the file harder to read for anyone else.
+- **Lists use `- ` bullets.** One per line. Empty lines between bullets break the list.
+- **Tables use pipe-separated rows.** First content line under the slot label is the header row; each line below is a data row, all `|`-separated.
+- **Two-column rows (cards, concern/reality myths) use one row per line, pipe-separated** with the columns in the documented order. The .md file shows the order at the top of each multi-column slot.
+- **Horizontal rules (`---`) between slots are fine** — they're stripped automatically and only there to make the .md easier to scan.
+
+### "What if I want to add a new section, callout, or table?"
+
+That's a layout change — ping Prem. He'll add the new slot to the layout code and create the matching `## label` in the file. Then you fill in the prose normally.
+
+### Which guides currently use this pattern
+
+- `content/learn/narrative-cv-guide.md` — *What is a Narrative CV?* (live)
+
+More to come; each one gets its own file in `content/learn/`.
+
+---
+
+## One-time cleanup: migrate existing `bookingUrl` values to the shared page
+
+Older rows in the sheet may have `bookingUrl` values pointing to a **personal** *Bookings with Me* page (e.g. URLs containing `/bookwithme/user/...`). These should be replaced with **per-service URLs from the new shared `PathwaysToImpact@liveconcordia` page** so the booking flow doesn't break if a staff member leaves.
+
+For each affected row:
+
+1. Open `https://outlook.office.com/bookings/` → pick the **Pathways to Impact** shared page.
+2. Left sidebar → **Services** → click the matching service.
+3. **Service booking page** section → **Copy link**.
+4. Paste into the row's `bookingUrl` cell, replacing the old personal-page URL.
+5. Save. Site updates within ~1 min.
+
+If the matching service doesn't exist on the shared page yet, create it there first ([Flow B](#flow-b--add-or-edit-a-bookable-consultation), Step 1) — same scheduling settings, same staff assignments.
+
+> **Why this matters:** in-page booking embed is permanently blocked by Microsoft (verified 2026-05-07; see `BOOKINGS_PLAN.md`). The new-tab redirect to MS Bookings is the production UX, so the URL in the sheet *is* the booking flow. Pinning that URL to a shared mailbox instead of a personal calendar is the durability win.
 
 ---
 
@@ -275,6 +403,53 @@ They need to accept the Bookings invite email first. Check their inbox (includin
 
 **"I made an edit and it shows up wrong / breaks the card."**
 Check the row didn't lose required values like `id`, `title`, or `summary`. The site renders blank fields as blank; it doesn't validate against a schema. The console (F12 → Console) will sometimes log specific failures.
+
+---
+
+## Bug & feedback triage
+
+Bugs, copy fixes, content suggestions, and feature ideas live in the **bug-report Google Sheet** (separate from the content sheet). Three tabs:
+
+| Tab | Use it for |
+|---|---|
+| Bugs / general | Anything that's broken or working unexpectedly across the site |
+| NCV tool feedback | Issues specific to the *Build your Narrative CV* tool |
+| Content to mirror | Ideas pulled from other sites/tools that we might want to bring in |
+
+### Adding a row
+
+Each row gets these columns:
+
+| Column | What goes in it |
+|---|---|
+| `id` | Auto-pattern: `B-NN` (bugs tab), `N-NN` (NCV tab), `C-NN` (content tab). Just increment the last number. |
+| `type` | One of `bug` · `copy` · `feature` · `content` |
+| `where?` | Specific location: the page, section, button — enough that someone else can reproduce |
+| `summary` (column "bug/issue") | One-sentence description |
+| `details` / `expected vs actual` | Optional — fill if a reader needs more to repro |
+| `severity` | `High` · `Medium` · `Low` (use sparingly; default Medium for real bugs) |
+| `idea fix` | Optional — your suggested approach. Helpful but not required. |
+| `status` | `New` · `Triaged` · `In Progress` · `Done` · `Won't fix` · `Needs info` |
+| `commit` (column "commit tested") | Populated automatically when a fix lands — 7-character commit SHA |
+
+Blank `status` is treated as `New`. Don't reuse IDs even if a row is deleted.
+
+### Triage flow (what happens when Prem runs `/triage`)
+
+1. Claude pulls the three tabs and shows a one-screen list of everything where status is `New`, `Triaged`, `In Progress`, or blank.
+2. Prem picks which item(s) to fix that session.
+3. For each fix: Claude proposes a change, Prem signs off, the fix gets committed with the row's ID in the commit message.
+4. The row's `status` is automatically flipped to `Done` and its `commit` cell is populated with the new SHA — no manual update needed.
+5. Done rows stay in the sheet as a record. Set `status=Won't fix` if a row is rejected (with a one-line reason in `idea fix`).
+
+### When to use which status
+
+- **`New`** — just filed, no one's looked yet (or you left it blank).
+- **`Triaged`** — Prem read it, agrees it's real, but it's not the next thing being worked.
+- **`In Progress`** — actively being fixed this session.
+- **`Done`** — shipped to the live site. The `commit` cell points at the change.
+- **`Won't fix`** — decided not to act on this. Add a brief reason in `idea fix`.
+- **`Needs info`** — the row is ambiguous — Claude or Prem will ask before acting.
 
 ---
 

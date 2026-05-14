@@ -34,11 +34,17 @@
     enabled: true
   };
 
-  // True when a CTA should send the user to an external booking page in a new
-  // tab (MS Bookings) instead of opening the in-page booking-request modal.
-  // Used by detail-modal CTAs and by reconcileServiceModal's deep-link guard.
-  const shouldExternalBooking = (opp) =>
-    BOOKINGS.enabled && opp && opp.bookingUrl;
+  // Per-guide content sources. Each Learn-section guide can pull its prose
+  // from a labelled Google Doc (`docUrl`) or a labelled local .md file
+  // (`localPath`). The Doc takes precedence when set. Slot labels in the Doc
+  // are H2 headings (e.g. "## s1.lead"); the build function reads slot
+  // values into the existing JS layout. See content/learn/*.md for shape.
+  const LEARN_GUIDES = {
+    narrativeCv: {
+      docUrl: "",
+      localPath: "content/learn/narrative-cv-guide.md"
+    }
+  };
 
   // Google Sheets backend. Controls where content is loaded from.
   //   "baked"  — read from content/data/*.json (run node scripts/bake.js to refresh)
@@ -77,6 +83,35 @@
     if (!("version" in row)) return true; // tab has no version column → no gate
     const v = (row.version || "").toString().trim().toLowerCase();
     return v === "approved"; // blank or anything else → hidden
+  };
+
+  // Capacity status. Coordinator sets a `status` column on workshops/opportunities
+  // rows. Recognised values (case/whitespace insensitive):
+  //   blank, "open"                                  → "open"     (default — bookings on)
+  //   "full" | "fully booked" | "booked" | "waitlist" → "full"     (bookings off, waitlist on)
+  //   "cancelled" | "canceled" | "off" | "closed"    → "cancelled" (bookings off, no action)
+  // Keep in sync with normaliseStatus in scripts/bake.js.
+  const normaliseStatus = (raw) => {
+    const v = (raw || "").toString().trim().toLowerCase();
+    if (!v) return "open";
+    if (["full", "fully booked", "booked", "waitlist", "wait list", "wait-list"].includes(v)) return "full";
+    if (["cancelled", "canceled", "off", "closed"].includes(v)) return "cancelled";
+    return "open";
+  };
+  const getStatus = (opp) => normaliseStatus(opp && opp.status);
+  // True when a CTA should send the user to an external booking page in a new
+  // tab (MS Bookings) instead of opening the in-page booking-request modal.
+  // Used by detail-modal CTAs and by reconcileServiceModal's deep-link guard.
+  const shouldExternalBooking = (opp) =>
+    BOOKINGS.enabled && opp && opp.bookingUrl;
+  const STATUS_LABELS = {
+    full: "Fully booked",
+    cancelled: "Cancelled"
+  };
+  const statusPill = (status) => {
+    const label = STATUS_LABELS[status];
+    if (!label) return null;
+    return el("span", "status-pill status-pill--" + status, label);
   };
 
   const siteHeader = document.getElementById("site-header");
@@ -155,7 +190,10 @@
   const content = {
     workshops: [],
     pathwaysVisionMarkdown: "",
-    pathwaysVisionLoadError: false
+    pathwaysVisionLoadError: false,
+    // Per-guide slot dictionaries. Populated in init() before buildPages().
+    // Each value is `{label: rawText}` — see parseSlotMarkdown / parseSlotsFromDocHtml.
+    learnSlots: {}
   };
 
   const state = {
@@ -425,7 +463,8 @@
       file: row.file || undefined,
       bookingUrl: row.bookingUrl || "",
       provider: row.provider || "",
-      docUrl: row.docUrl || ""
+      docUrl: row.docUrl || "",
+      status: normaliseStatus(row.status)
     }));
   };
 
@@ -451,6 +490,7 @@
     if (row.provider) record.provider = row.provider;
     if (row.externalUrl) record.externalUrl = row.externalUrl;
     if (row.bookingUrl) record.bookingUrl = row.bookingUrl;
+    record.status = normaliseStatus(row.status);
     return record;
   };
 
@@ -680,6 +720,141 @@
     } catch (err) {
       console.error("[Pathways] FAILED to load explore content — Explore page will be empty until fixed.", err);
     }
+  };
+
+  // ── Slot-based guide content ─────────────────────────────────────────────
+  // Guides in the Learn section have rich custom layouts (callouts, tables,
+  // expandables, etc.) that we don't want to give up. To make the prose
+  // editable without touching code, each guide's text lives in a labelled
+  // file or Doc; the JS layout reads each text block from a slot dictionary.
+  //
+  // Conventions (same in .md and Doc):
+  //   - Slot label = a Heading 2 line whose text is the label (e.g. "s1.lead")
+  //   - Slot value = everything between that H2 and the next H2 (or EOF)
+  //   - Lists in slot values use "- bullet" lines
+  //   - Tables / cards / myths use pipe-separated rows (one per line)
+  //
+  // The build function uses slot helpers (slotText, slotPara, slotList,
+  // slotRows) to interpret each slot. Missing slots fall back to the
+  // hardcoded default in the builder, so partial migrations don't crash.
+
+  // Parse a labelled markdown file into {label: rawString}. Skips any text
+  // before the first slot heading and any heading that isn't a valid label.
+  const SLOT_LABEL_RE = /^[\w][\w.\-]*$/;
+  // Markdown horizontal-rule line. Stripped from slot values so the .md can
+  // use them as visual separators between slots without leaking into the UI.
+  const HR_LINE_RE = /^\s*(?:-{3,}|\*{3,}|_{3,})\s*$/;
+  const parseSlotMarkdown = (md) => {
+    const slots = {};
+    if (!md) return slots;
+    const lines = md.replace(/\r\n/g, "\n").split("\n");
+    let label = null;
+    let buffer = [];
+    const flush = () => {
+      if (label) slots[label] = buffer.join("\n").trim();
+    };
+    for (const line of lines) {
+      const m = line.match(/^##\s+(\S.*?)\s*$/);
+      if (m && SLOT_LABEL_RE.test(m[1])) {
+        flush();
+        label = m[1];
+        buffer = [];
+      } else if (label) {
+        if (HR_LINE_RE.test(line)) continue; // skip --- / *** / ___ separators
+        buffer.push(line);
+      }
+    }
+    flush();
+    return slots;
+  };
+
+  // Parse already-sanitized published-Doc HTML into {label: rawString}.
+  // Walks the DOM in order; each <h2> whose text matches a slot label starts
+  // a new slot, and following block elements (<p>, <ul>, <ol>) become its
+  // value, with <li> children rendered as "- item" lines so list parsing is
+  // identical to the .md path.
+  const parseSlotsFromDocHtml = (html) => {
+    const slots = {};
+    if (!html) return slots;
+    const wrap = document.createElement("div");
+    wrap.innerHTML = html;
+    let label = null;
+    let buffer = [];
+    const flush = () => {
+      if (label) slots[label] = buffer.join("\n").trim();
+    };
+    for (const node of Array.from(wrap.childNodes)) {
+      if (node.nodeType !== 1) continue;
+      const tag = node.tagName;
+      if (tag === "H2") {
+        const text = (node.textContent || "").trim();
+        if (SLOT_LABEL_RE.test(text)) {
+          flush();
+          label = text;
+          buffer = [];
+        } else {
+          // Heading that isn't a slot label — ignore (shouldn't happen in a
+          // well-formed guide Doc, but don't crash if it does).
+          flush();
+          label = null;
+          buffer = [];
+        }
+      } else if (label) {
+        if (tag === "UL" || tag === "OL") {
+          for (const li of node.children) {
+            if (li.tagName === "LI") buffer.push("- " + (li.textContent || "").trim());
+          }
+        } else {
+          const t = (node.textContent || "").trim();
+          if (t) buffer.push(t);
+        }
+      }
+    }
+    flush();
+    return slots;
+  };
+
+  // Fetch a guide's slot dict from its Doc (preferred) or local .md fallback.
+  // Returns {} on any failure — the builder's hardcoded defaults take over.
+  const fetchGuideSlots = async (guideKey) => {
+    const cfg = LEARN_GUIDES[guideKey];
+    if (!cfg) return {};
+    if (cfg.docUrl) {
+      try {
+        if (!/\/pub(\?|$)/.test(cfg.docUrl)) {
+          throw new Error(`docUrl must end in /pub (got: ${cfg.docUrl})`);
+        }
+        const res = await fetch(cfg.docUrl, { cache: "no-cache" });
+        if (!res.ok) throw new Error(`Doc request failed (${res.status})`);
+        const raw = await res.text();
+        const doc = new DOMParser().parseFromString(raw, "text/html");
+        const contents = doc.getElementById("contents");
+        if (!contents) throw new Error("Published Doc has no #contents div");
+        const sanitized = sanitizeDocNode(contents);
+        return parseSlotsFromDocHtml(sanitized);
+      } catch (err) {
+        console.warn(`[Pathways] Guide "${guideKey}" Doc load failed; falling back to local .md`, err);
+        // fall through
+      }
+    }
+    if (cfg.localPath) {
+      try {
+        const res = await fetch(cfg.localPath, { cache: "no-cache" });
+        if (!res.ok) throw new Error(`local .md request failed (${res.status})`);
+        return parseSlotMarkdown(await res.text());
+      } catch (err) {
+        console.warn(`[Pathways] Guide "${guideKey}" local .md load failed; using hardcoded defaults`, err);
+      }
+    }
+    return {};
+  };
+
+  const loadLearnGuideContent = async () => {
+    const keys = Object.keys(LEARN_GUIDES);
+    const dicts = await Promise.all(keys.map(fetchGuideSlots));
+    keys.forEach((k, i) => { content.learnSlots[k] = dicts[i] || {}; });
+    const total = keys.reduce((n, k) => n + Object.keys(content.learnSlots[k] || {}).length, 0);
+    console.log(`[Pathways] Loaded ${total} learn-guide slots across ${keys.length} guide(s)`);
   };
 
   const loadWorkshopContent = async () => {
@@ -1515,7 +1690,13 @@
     const popularGrid = el("div", "popular-grid");
     popularItems.forEach((item) => {
       const card = el("article", "popular-card");
-      card.appendChild(formatBadge(item.format));
+      const itemStatus = getStatus(item);
+      if (itemStatus !== "open") card.classList.add("is-" + itemStatus);
+      const popHeader = el("div", "popular-card-header");
+      popHeader.appendChild(formatBadge(item.format));
+      const popPill = statusPill(itemStatus);
+      if (popPill) popHeader.appendChild(popPill);
+      card.appendChild(popHeader);
       card.appendChild(el("h3", "popular-card-title", item.title));
       const isTool = item.sourceType === "tool";
       const ctaBtn = el("button", "popular-card-cta", isTool ? "Start \u2192" : "Learn more \u2192");
@@ -1738,12 +1919,42 @@
   };
 
   // ── What is a Narrative CV? — Impact 101 module ──────────────────────────
+  // Layout is hardcoded; prose comes from content.learnSlots.narrativeCv (a
+  // dict populated in init() from content/learn/narrative-cv-guide.md or a
+  // labelled Google Doc). Each slot helper falls back to a hardcoded default
+  // if the slot is missing, so partial migrations and fetch failures don't
+  // break the page.
   const buildNarrativeCV101 = () => {
+    const slots = (content.learnSlots && content.learnSlots.narrativeCv) || {};
+    // slot(name, fallback) → trimmed string for short fields (titles, button text)
+    const slot = (name, fallback) => {
+      const v = slots[name];
+      return v != null && v !== "" ? v : fallback;
+    };
+    // slotPara(name, fallback) → splits on blank lines into paragraph strings
+    const slotPara = (name, fallback) => {
+      const v = slots[name];
+      const raw = v != null && v !== "" ? v : fallback;
+      return raw.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+    };
+    // slotList(name, fallback) → array of items from "- bullet" lines
+    const slotList = (name, fallback) => {
+      const v = slots[name];
+      if (v == null || v === "") return fallback;
+      return v.split("\n").map((l) => l.trim()).filter((l) => l.startsWith("- ")).map((l) => l.slice(2).trim());
+    };
+    // slotRows(name, fallback) → array of pipe-split arrays, one per non-empty line
+    const slotRows = (name, fallback) => {
+      const v = slots[name];
+      if (v == null || v === "") return fallback;
+      return v.split("\n").map((l) => l.trim()).filter(Boolean).map((l) => l.split("|").map((c) => c.trim()));
+    };
+
     const wrap = el("div", "ncv-module");
     const moduleHeader = el("div", "ncv-module-header");
-    moduleHeader.appendChild(el("span", "ncv-module-kicker", "Before you start — Step 2"));
-    moduleHeader.appendChild(el("h2", null, "What is a Narrative CV?"));
-    moduleHeader.appendChild(el("p", "ncv-module-lead", "A short orientation before you begin drafting. Read the overview, then expand any section for more detail."));
+    moduleHeader.appendChild(el("span", "ncv-module-kicker", slot("header.kicker", "Before you start — Step 2")));
+    moduleHeader.appendChild(el("h2", null, slot("header.title", "What is a Narrative CV?")));
+    moduleHeader.appendChild(el("p", "ncv-module-lead", slot("header.lead", "A short orientation before you begin drafting. Read the overview, then expand any section for more detail.")));
     wrap.appendChild(moduleHeader);
 
     // Helper: accordion block
@@ -1808,84 +2019,148 @@
       return div;
     };
 
-    // ── Section 1: Why narrative CVs exist ──────────────────────────────────
+    // ── Section 1: Why narrative CVs exist ──────────────────
     const s1card = el("div", "ncv-summary-card");
-    s1card.appendChild(el("p", null, "A Narrative CV asks you to describe your research contributions in your own words \u2014 not just list them. It was developed in response to a growing recognition that traditional CVs, with their rows of publications and metrics, miss most of what makes research valuable."));
-    const s1p = el("p", "ncv-body", "Tri-agency funders in Canada (SSHRC, NSERC, CIHR) and the Fonds de recherche du Qu\u00e9bec adopted narrative formats to address a specific problem: impact that matters most is often the hardest to count. Partnerships, mentorship, policy influence, community work, creative practice \u2014 none of these translate well into citation counts or journal rankings.");
-    const s1callout = makeCallout("The core shift \u2014 ", "A traditional CV says what you did. A Narrative CV says what changed because of what you did, and why that matters.");
+    s1card.appendChild(el("p", null, slot("s1.summary", "A Narrative CV asks you to describe your research contributions in your own words — not just list them. It was developed in response to a growing recognition that traditional CVs, with their rows of publications and metrics, miss most of what makes research valuable.")));
+    const s1p = el("p", "ncv-body", slot("s1.lead", "Tri-agency funders in Canada (SSHRC, NSERC, CIHR) and the Fonds de recherche du Québec adopted narrative formats to address a specific problem: impact that matters most is often the hardest to count. Partnerships, mentorship, policy influence, community work, creative practice — none of these translate well into citation counts or journal rankings."));
+    const s1callout = makeCallout(slot("s1.callout.strong", "The core shift —"), slot("s1.callout.body", "A traditional CV says what you did. A Narrative CV says what changed because of what you did, and why that matters."));
     const s1expBody = el("div");
-    ["The shift toward narrative formats is part of a broader global movement in research assessment \u2014 sometimes called \u201cresponsible research assessment.\u201d Key documents driving this include the San Francisco Declaration on Research Assessment (DORA), the Leiden Manifesto, and the Coalition for Advancing Research Assessment (CoARA).", "In Canada, the Tri-agency Narrative CV was introduced in 2021, piloted with select programs, and has since expanded. It replaces or supplements the traditional CV-style Common CV in specific competitions. The FRQ in Qu\u00e9bec developed its own parallel format (CV-FRQ) with similar principles.", "The practical implication: reviewers are now explicitly asked to evaluate contributions qualitatively, not just count outputs. Your job in the Narrative CV is to make that evaluation easy for them by describing what you did, what your specific role was, who was affected, and what evidence exists."].forEach((t) => s1expBody.appendChild(el("p", "ncv-body", t)));
-    s1expBody.appendChild(el("p", "ncv-body", "Which funders currently use narrative CV formats:"));
+    slotPara("s1.expand.p1", "The shift toward narrative formats is part of a broader global movement in research assessment — sometimes called “responsible research assessment.” Key documents driving this include the San Francisco Declaration on Research Assessment (DORA), the Leiden Manifesto, and the Coalition for Advancing Research Assessment (CoARA).").forEach((t) => s1expBody.appendChild(el("p", "ncv-body", t)));
+    slotPara("s1.expand.p2", "In Canada, the Tri-agency Narrative CV was introduced in 2021, piloted with select programs, and has since expanded. It replaces or supplements the traditional CV-style Common CV in specific competitions. The FRQ in Québec developed its own parallel format (CV-FRQ) with similar principles.").forEach((t) => s1expBody.appendChild(el("p", "ncv-body", t)));
+    slotPara("s1.expand.p3", "The practical implication: reviewers are now explicitly asked to evaluate contributions qualitatively, not just count outputs. Your job in the Narrative CV is to make that evaluation easy for them by describing what you did, what your specific role was, who was affected, and what evidence exists.").forEach((t) => s1expBody.appendChild(el("p", "ncv-body", t)));
+    s1expBody.appendChild(el("p", "ncv-body", slot("s1.expand.funders-intro", "Which funders currently use narrative CV formats:")));
     const tags = el("div", "ncv-tag-row");
-    ["SSHRC", "NSERC", "CIHR", "FRQ (Qu\u00e9bec)", "Wellcome Trust (UK)", "UKRI (UK)", "NWO (Netherlands)"].forEach((t) => tags.appendChild(el("span", "ncv-tag", t)));
+    slotList("s1.expand.funders", ["SSHRC", "NSERC", "CIHR", "FRQ (Québec)", "Wellcome Trust (UK)", "UKRI (UK)", "NWO (Netherlands)"]).forEach((t) => tags.appendChild(el("span", "ncv-tag", t)));
     s1expBody.appendChild(tags);
-    s1expBody.appendChild(el("p", "ncv-note", "Always check specific program guidelines \u2014 not every competition from these funders uses the narrative format yet."));
-    wrap.appendChild(makeSection(1, "Why narrative CVs exist", [s1card, s1p, s1callout, makeExpand("More context: the policy shift behind narrative CVs", s1expBody)]));
+    s1expBody.appendChild(el("p", "ncv-note", slot("s1.expand.note", "Always check specific program guidelines — not every competition from these funders uses the narrative format yet.")));
+    wrap.appendChild(makeSection(1, slot("s1.title", "Why narrative CVs exist"), [s1card, s1p, s1callout, makeExpand(slot("s1.expand.title", "More context: the policy shift behind narrative CVs"), s1expBody)]));
 
-    // ── Section 2: The three sections ───────────────────────────────────────
-    const s2p = el("p", "ncv-body", "The Tri-agency CV (TCV) and CV-FRQ are both organized around three sections. You do not have to write them in order \u2014 most researchers find it easier to start with their contributions, then mentorship, then write the personal statement last.");
+    // ── Section 2: The three sections ──────────────────────
+    const s2p = el("p", "ncv-body", slot("s2.intro", "The Tri-agency CV (TCV) and CV-FRQ are both organized around three sections. You do not have to write them in order — most researchers find it easier to start with their contributions, then mentorship, then write the personal statement last."));
     const s2cards = el("div", "ncv-section-cards");
-    [{ num: "Section 1", title: "Personal Statement", body: "Your research identity: who you are, what drives your work, and where you are headed. Written last, but appears first." }, { num: "Section 2", title: "Most Significant Contributions", body: "Up to 10 contributions that give the most complete picture of your research. Not necessarily your most recent \u2014 your most representative." }, { num: "Section 3", title: "Supervisory \u0026 Mentorship Activities", body: "How you have supported the development of other researchers, trainees, students, and collaborators." }].forEach(({ num, title, body }) => {
+    const s2cardData = slotRows("s2.cards", [
+      ["Section 1", "Personal Statement", "Your research identity: who you are, what drives your work, and where you are headed. Written last, but appears first."],
+      ["Section 2", "Most Significant Contributions", "Up to 10 contributions that give the most complete picture of your research. Not necessarily your most recent — your most representative."],
+      ["Section 3", "Supervisory & Mentorship Activities", "How you have supported the development of other researchers, trainees, students, and collaborators."]
+    ]);
+    s2cardData.forEach((row) => {
+      const [num, title, body] = row;
       const card = el("div", "ncv-section-card");
-      card.appendChild(el("div", "ncv-card-num", num));
-      card.appendChild(el("h4", null, title));
-      card.appendChild(el("p", null, body));
+      card.appendChild(el("div", "ncv-card-num", num || ""));
+      card.appendChild(el("h4", null, title || ""));
+      card.appendChild(el("p", null, body || ""));
       s2cards.appendChild(card);
     });
     const s2expABody = el("div");
-    s2expABody.appendChild(el("p", "ncv-body", "Contributions go well beyond publications. The TCV instructions explicitly invite a wide range of outputs and activities. You can include:"));
-    s2expABody.appendChild(makeUl(["Journal articles, books, book chapters, reports", "Datasets, software, open-access resources", "Policy briefs, technical reports, submissions to government consultations", "Community partnerships, co-designed research projects", "Creative works, performances, exhibitions, films", "Methods or frameworks you developed that others have adopted", "Training programs, workshops, or curricula you created", "Patents, licences, spin-off ventures", "Grants you led that enabled others\u2019 research", "Media coverage, public engagement, or science communication work"]));
-    s2expABody.appendChild(el("p", "ncv-note", "The key question is: what gives the most complete picture of your research and its effects? Not: what is the longest list of outputs I can generate."));
+    s2expABody.appendChild(el("p", "ncv-body", slot("s2.expand-a.intro", "Contributions go well beyond publications. The TCV instructions explicitly invite a wide range of outputs and activities. You can include:")));
+    s2expABody.appendChild(makeUl(slotList("s2.expand-a.list", ["Journal articles, books, book chapters, reports", "Datasets, software, open-access resources", "Policy briefs, technical reports, submissions to government consultations", "Community partnerships, co-designed research projects", "Creative works, performances, exhibitions, films", "Methods or frameworks you developed that others have adopted", "Training programs, workshops, or curricula you created", "Patents, licences, spin-off ventures", "Grants you led that enabled others’ research", "Media coverage, public engagement, or science communication work"])));
+    s2expABody.appendChild(el("p", "ncv-note", slot("s2.expand-a.note", "The key question is: what gives the most complete picture of your research and its effects? Not: what is the longest list of outputs I can generate.")));
     const s2expBBody = el("div");
-    s2expBBody.appendChild(el("p", "ncv-body", "This section is broader than formal graduate supervision. It includes any role in which you supported someone else\u2019s development as a researcher or professional:"));
-    s2expBBody.appendChild(makeUl(["Graduate supervision (MA, PhD, postdoctoral)", "Undergraduate research mentoring (honours theses, research assistants)", "Informal mentoring of early-career researchers or colleagues", "Community researcher training and capacity building", "Industry or government collaborator development", "Equity, diversity, and inclusion practices in your lab or team", "Peer mentoring, committee work, or writing retreats you organized"]));
-    s2expBBody.appendChild(el("p", "ncv-note", "If you are early in your career, or your discipline does not include graduate supervision, describe any informal support, training, or inclusive practices in your research environment. Context matters \u2014 reviewers are trained to read this section with career stage in mind."));
-    wrap.appendChild(makeSection(2, "The three sections", [s2p, s2cards, makeExpand("What counts as a \u201ccontribution\u201d?", s2expABody), makeExpand("What counts as \u201csupervisory and mentorship activity\u201d?", s2expBBody)]));
+    s2expBBody.appendChild(el("p", "ncv-body", slot("s2.expand-b.intro", "This section is broader than formal graduate supervision. It includes any role in which you supported someone else’s development as a researcher or professional:")));
+    s2expBBody.appendChild(makeUl(slotList("s2.expand-b.list", ["Graduate supervision (MA, PhD, postdoctoral)", "Undergraduate research mentoring (honours theses, research assistants)", "Informal mentoring of early-career researchers or colleagues", "Community researcher training and capacity building", "Industry or government collaborator development", "Equity, diversity, and inclusion practices in your lab or team", "Peer mentoring, committee work, or writing retreats you organized"])));
+    s2expBBody.appendChild(el("p", "ncv-note", slot("s2.expand-b.note", "If you are early in your career, or your discipline does not include graduate supervision, describe any informal support, training, or inclusive practices in your research environment. Context matters — reviewers are trained to read this section with career stage in mind.")));
+    wrap.appendChild(makeSection(2, slot("s2.title", "The three sections"), [s2p, s2cards, makeExpand(slot("s2.expand-a.title", "What counts as a “contribution”?"), s2expABody), makeExpand(slot("s2.expand-b.title", "What counts as “supervisory and mentorship activity”?"), s2expBBody)]));
 
-    // ── Section 3: TCV vs CV-FRQ ────────────────────────────────────────────
-    const s3p = el("p", "ncv-body", "If you are applying to a Tri-agency program, you will use the TCV. If you are applying to a Fonds de recherche du Qu\u00e9bec program, you will use the CV-FRQ. The structure is similar, but a few practical differences matter.");
-    const s3table = makeTable(["Feature", "Tri-agency CV (TCV)", "CV-FRQ"], [["Funders", "SSHRC, NSERC, CIHR", "FRQSC, FRQNT, FRQS"], ["Personal Statement focus", "Your expertise relative to this specific opportunity or project", "Your fit with the program\u2019s objectives and how your work complements the team"], ["Hyperlinks", "Not permitted (self-contained document). Exception: audio/visual creative works.", "Permitted for supporting materials"], ["Contributions section name", "Most Significant Contributions", "R\u00e9alisations les plus significatives"], ["Language", "English or French", "French required for most programs"], ["Page limits", "Varies by competition \u2014 always check the program guide", "Varies by competition \u2014 always check the program guide"]]);
-    wrap.appendChild(makeSection(3, "TCV vs CV-FRQ \u2014 key differences", [s3p, s3table, makeCallout("Not sure which one you need? ", "Check the specific program\u2019s application guide. If you are applying to both a Tri-agency and an FRQ competition, you will need to prepare both \u2014 but most of your content will transfer with minor adjustments.", "blue")]));
+    // ── Section 3: TCV vs CV-FRQ ────────────────────────
+    const s3p = el("p", "ncv-body", slot("s3.intro", "If you are applying to a Tri-agency program, you will use the TCV. If you are applying to a Fonds de recherche du Québec program, you will use the CV-FRQ. The structure is similar, but a few practical differences matter."));
+    const s3rows = slotRows("s3.table", [
+      ["Feature", "Tri-agency CV (TCV)", "CV-FRQ"],
+      ["Funders", "SSHRC, NSERC, CIHR", "FRQSC, FRQNT, FRQS"],
+      ["Personal Statement focus", "Your expertise relative to this specific opportunity or project", "Your fit with the program’s objectives and how your work complements the team"],
+      ["Hyperlinks", "Not permitted (self-contained document). Exception: audio/visual creative works.", "Permitted for supporting materials"],
+      ["Contributions section name", "Most Significant Contributions", "Réalisations les plus significatives"],
+      ["Language", "English or French", "French required for most programs"],
+      ["Page limits", "Varies by competition — always check the program guide", "Varies by competition — always check the program guide"]
+    ]);
+    const s3table = makeTable(s3rows[0] || [], s3rows.slice(1));
+    wrap.appendChild(makeSection(3, slot("s3.title", "TCV vs CV-FRQ — key differences"), [s3p, s3table, makeCallout(slot("s3.callout.strong", "Not sure which one you need?"), slot("s3.callout.body", "Check the specific program’s application guide. If you are applying to both a Tri-agency and an FRQ competition, you will need to prepare both — but most of your content will transfer with minor adjustments."), "blue")]));
 
-    // ── Section 4: How it differs from traditional CV ───────────────────────
-    const s4p = el("p", "ncv-body", "The biggest shift is not structural \u2014 it is rhetorical. A Narrative CV asks you to move from listing to explaining, and from passive to active voice.");
-    const s4table = makeTable(["Dimension", "Traditional CV", "Narrative CV"], [["Structure", "Chronological lists by category", "Thematic descriptions by contribution"], ["Voice", "Passive or implied (\u201cpublished,\u201d \u201cpresented\u201d)", "Active, first-person (\u201cI developed,\u201d \u201cI led\u201d)"], ["What it shows", "Volume and recency of outputs", "Quality, significance, and effect of contributions"], ["Your role", "Often unclear (team authorship, collaborative work)", "Explicitly stated for each contribution"], ["Evidence of impact", "Citation counts, journal rankings, h-index", "Qualitative and quantitative evidence of real-world effect"], ["Scope", "Exhaustive inventory", "Curated selection (3\u201310 most significant contributions)"]]);
+    // ── Section 4: How it differs from traditional CV ───────────────
+    const s4p = el("p", "ncv-body", slot("s4.intro", "The biggest shift is not structural — it is rhetorical. A Narrative CV asks you to move from listing to explaining, and from passive to active voice."));
+    const s4rows = slotRows("s4.table", [
+      ["Dimension", "Traditional CV", "Narrative CV"],
+      ["Structure", "Chronological lists by category", "Thematic descriptions by contribution"],
+      ["Voice", "Passive or implied (“published,” “presented”)", "Active, first-person (“I developed,” “I led”)"],
+      ["What it shows", "Volume and recency of outputs", "Quality, significance, and effect of contributions"],
+      ["Your role", "Often unclear (team authorship, collaborative work)", "Explicitly stated for each contribution"],
+      ["Evidence of impact", "Citation counts, journal rankings, h-index", "Qualitative and quantitative evidence of real-world effect"],
+      ["Scope", "Exhaustive inventory", "Curated selection (3–10 most significant contributions)"]
+    ]);
+    const s4table = makeTable(s4rows[0] || [], s4rows.slice(1));
     const s4expABody = el("div");
-    ["Yes \u2014 and it is not just permitted, it is the point. Funders want to understand your individual contribution to collaborative work. Using \u201cwe\u201d throughout makes it impossible for reviewers to assess your specific role.", "The guidance from the workshop is practical: replace \u201cwe\u201d with \u201cI\u201d or \u201cI led a team that\u2026\u201d You can acknowledge collaboration while still making your own contribution legible.", "Many researchers \u2014 particularly those trained in disciplines with strong norms around collective authorship, or those from cultures where self-promotion feels uncomfortable \u2014 find this the hardest shift to make. It is worth sitting with that discomfort, because reviewers will be asking \u201cwhat did this person do?\u201d for every entry."].forEach((t) => s4expABody.appendChild(el("p", "ncv-body", t)));
+    slotPara("s4.expand-a.p1", "Yes — and it is not just permitted, it is the point. Funders want to understand your individual contribution to collaborative work. Using “we” throughout makes it impossible for reviewers to assess your specific role.").forEach((t) => s4expABody.appendChild(el("p", "ncv-body", t)));
+    slotPara("s4.expand-a.p2", "The guidance from the workshop is practical: replace “we” with “I” or “I led a team that…” You can acknowledge collaboration while still making your own contribution legible.").forEach((t) => s4expABody.appendChild(el("p", "ncv-body", t)));
+    slotPara("s4.expand-a.p3", "Many researchers — particularly those trained in disciplines with strong norms around collective authorship, or those from cultures where self-promotion feels uncomfortable — find this the hardest shift to make. It is worth sitting with that discomfort, because reviewers will be asking “what did this person do?” for every entry.").forEach((t) => s4expABody.appendChild(el("p", "ncv-body", t)));
     const s4expBBody = el("div");
-    s4expBBody.appendChild(el("p", "ncv-body", "Citation counts are one form of evidence, but they systematically undervalue applied, community-engaged, and practice-based research. Alternative forms include:"));
-    s4expBBody.appendChild(makeUl(["Adoption: \u201cThis method was adopted by [organization] for\u2026\u201d", "Policy uptake: \u201cCited in [government body]\u2019s [year] guidelines as\u2026\u201d", "Media coverage: \u201cFeatured in [outlet], reaching an estimated [audience]\u201d", "Partnership outcomes: \u201cLed to [number] follow-on collaborations with [sectors]\u201d", "Teaching integration: \u201cUsed as a teaching resource in [number] institutions\u201d", "Community acknowledgement: \u201c[Organization] credited this work with\u2026\u201d", "Independent replication: \u201cReplicated by research groups in [locations]\u201d", "Career outcomes of trainees: \u201cThree former graduate students now hold [roles]\u201d"]));
-    s4expBBody.appendChild(el("p", "ncv-note", "Qualitative evidence is explicitly invited by the TCV format. A well-placed sentence describing real-world uptake is often more compelling than a citation count."));
-    wrap.appendChild(makeSection(4, "How it differs from a traditional CV", [s4p, s4table, makeExpand("Is it really okay to say \u201cI\u201d throughout?", s4expABody), makeExpand("What evidence can I use besides citation counts?", s4expBBody)]));
+    s4expBBody.appendChild(el("p", "ncv-body", slot("s4.expand-b.intro", "Citation counts are one form of evidence, but they systematically undervalue applied, community-engaged, and practice-based research. Alternative forms include:")));
+    s4expBBody.appendChild(makeUl(slotList("s4.expand-b.list", ["Adoption: “This method was adopted by [organization] for…”", "Policy uptake: “Cited in [government body]’s [year] guidelines as…”", "Media coverage: “Featured in [outlet], reaching an estimated [audience]”", "Partnership outcomes: “Led to [number] follow-on collaborations with [sectors]”", "Teaching integration: “Used as a teaching resource in [number] institutions”", "Community acknowledgement: “[Organization] credited this work with…”", "Independent replication: “Replicated by research groups in [locations]”", "Career outcomes of trainees: “Three former graduate students now hold [roles]”"])));
+    s4expBBody.appendChild(el("p", "ncv-note", slot("s4.expand-b.note", "Qualitative evidence is explicitly invited by the TCV format. A well-placed sentence describing real-world uptake is often more compelling than a citation count.")));
+    wrap.appendChild(makeSection(4, slot("s4.title", "How it differs from a traditional CV"), [s4p, s4table, makeExpand(slot("s4.expand-a.title", "Is it really okay to say “I” throughout?"), s4expABody), makeExpand(slot("s4.expand-b.title", "What evidence can I use besides citation counts?"), s4expBBody)]));
 
-    // ── Section 5: Common concerns ──────────────────────────────────────────
-    const s5p = el("p", "ncv-body", "These come up in almost every workshop. You are not alone in thinking any of them.");
+    // ── Section 5: Common concerns ────────────────────────
+    const s5p = el("p", "ncv-body", slot("s5.intro", "These come up in almost every workshop. You are not alone in thinking any of them."));
     const s5myths = el("div", "ncv-myths");
-    [{ concern: "I don\u2019t have enough impact yet \u2014 this format will make that obvious.", reality: "Reviewers evaluate contributions relative to career stage. Early-career researchers are not expected to have the same scope as senior colleagues. Describe what you have done and what you are building toward." }, { concern: "My research is fundamental \u2014 I can\u2019t point to real-world impact.", reality: "Fundamental research has impact on knowledge, methods, fields, and the people you trained. Academic impact \u2014 influencing how others think, what gets studied, how problems get framed \u2014 counts fully." }, { concern: "My best contributions were collaborative \u2014 I can\u2019t claim them individually.", reality: "You can and should describe collaborative work. The task is to clarify your specific role within it \u2014 what decisions you made, what you developed, what you were responsible for \u2014 while acknowledging the team context." }, { concern: "Describing my own work this way feels like self-promotion.", reality: "You are not inventing impact \u2014 you are making visible what already happened. Reviewers cannot fund what they cannot see. Describing your work clearly is a professional responsibility, not a personality trait." }].forEach(({ concern, reality }) => {
-      const row = el("div", "ncv-myth-row");
+    const s5mythRows = slotRows("s5.myths", [
+      ["I don’t have enough impact yet — this format will make that obvious.", "Reviewers evaluate contributions relative to career stage. Early-career researchers are not expected to have the same scope as senior colleagues. Describe what you have done and what you are building toward."],
+      ["My research is fundamental — I can’t point to real-world impact.", "Fundamental research has impact on knowledge, methods, fields, and the people you trained. Academic impact — influencing how others think, what gets studied, how problems get framed — counts fully."],
+      ["My best contributions were collaborative — I can’t claim them individually.", "You can and should describe collaborative work. The task is to clarify your specific role within it — what decisions you made, what you developed, what you were responsible for — while acknowledging the team context."],
+      ["Describing my own work this way feels like self-promotion.", "You are not inventing impact — you are making visible what already happened. Reviewers cannot fund what they cannot see. Describing your work clearly is a professional responsibility, not a personality trait."]
+    ]);
+    s5mythRows.forEach((row) => {
+      const [concern, reality] = row;
+      const r = el("div", "ncv-myth-row");
       const mythBox = el("div", "ncv-myth-box ncv-myth-box--concern");
-      mythBox.appendChild(el("div", "ncv-myth-label", "Concern")); mythBox.appendChild(el("p", null, concern));
+      mythBox.appendChild(el("div", "ncv-myth-label", "Concern")); mythBox.appendChild(el("p", null, concern || ""));
       const realBox = el("div", "ncv-myth-box ncv-myth-box--reality");
-      realBox.appendChild(el("div", "ncv-myth-label", "Reality")); realBox.appendChild(el("p", null, reality));
-      row.appendChild(mythBox); row.appendChild(realBox); s5myths.appendChild(row);
+      realBox.appendChild(el("div", "ncv-myth-label", "Reality")); realBox.appendChild(el("p", null, reality || ""));
+      r.appendChild(mythBox); r.appendChild(realBox); s5myths.appendChild(r);
     });
     const s5expBody = el("div");
-    ["This is one of the places where Narrative CVs actually work better for you than traditional ones. Rather than forcing your work into a single disciplinary metric system, you can describe what your contributions mean across the fields they touch.", "Practically: name the relevant communities, explain the significance in plain language, and let the evidence span multiple fields. You do not need to pick one home discipline and pretend the rest of your work does not exist."].forEach((t) => s5expBody.appendChild(el("p", "ncv-body", t)));
-    wrap.appendChild(makeSection(5, "Common concerns", [s5p, s5myths, makeExpand("I work across disciplines \u2014 which field\u2019s norms do I use?", s5expBody)]));
+    slotPara("s5.expand.p1", "This is one of the places where Narrative CVs actually work better for you than traditional ones. Rather than forcing your work into a single disciplinary metric system, you can describe what your contributions mean across the fields they touch.").forEach((t) => s5expBody.appendChild(el("p", "ncv-body", t)));
+    slotPara("s5.expand.p2", "Practically: name the relevant communities, explain the significance in plain language, and let the evidence span multiple fields. You do not need to pick one home discipline and pretend the rest of your work does not exist.").forEach((t) => s5expBody.appendChild(el("p", "ncv-body", t)));
+    wrap.appendChild(makeSection(5, slot("s5.title", "Common concerns"), [s5p, s5myths, makeExpand(slot("s5.expand.title", "I work across disciplines — which field’s norms do I use?"), s5expBody)]));
 
-    // ── Section 6: What reviewers look for ──────────────────────────────────
+    // ── Section 6: What reviewers look for ─────────────────────
     const s6card = el("div", "ncv-summary-card");
-    s6card.appendChild(el("p", null, "Reviewers are not scoring your productivity. They are asking: Does this researcher know what their work has contributed, and can they explain it clearly to someone outside their immediate field?"));
-    const s6p = el("p", "ncv-body", "Four things that consistently score higher in reviewed contributions:");
-    const makeS6Exp = (title, ...paras) => { const d = el("div"); paras.forEach((t) => d.appendChild(el("p", "ncv-body", t))); return makeExpand(title, d); };
-    wrap.appendChild(makeSection(6, "What reviewers actually look for", [s6card, s6p, makeS6Exp("1 \u2014 Ownership: \u201cI\u201d not \u201cwe\u201d", "Reviewers need to identify your contribution specifically. If every sentence uses \u201cwe,\u201d they cannot. Be precise: \u201cI designed the study,\u201d \u201cI developed the algorithm,\u201d \u201cI led the community consultation process.\u201d You can acknowledge the team in the same sentence \u2014 just make your role explicit."), makeS6Exp("2 \u2014 Specificity: named outcomes, not vague claims", "\u201cWidely cited\u201d means less than \u201ccited in 47 studies across clinical, policy, and engineering applications.\u201d \u201cWorked with communities\u201d means less than \u201cco-designed a food security protocol with three urban Indigenous organizations in Montr\u00e9al, subsequently adopted by the City\u2019s housing strategy.\u201d", "Specificity is not bragging \u2014 it is evidence. Vague claims read as weak because they are unverifiable. Named outcomes, organizations, and numbers give reviewers something concrete to evaluate."), makeS6Exp("3 \u2014 Significance: why this mattered to the field or world", "Describe not just what you did, but what it made possible. What existed before your work that was incomplete, incorrect, or absent? What changed? What can others now do or know that they could not before?", "This does not require hyperbole. A modest, precise claim \u2014 \u201cThis dataset is the first longitudinal record of X in the Y region, and has since been used by three government agencies and two international research groups\u201d \u2014 is far more powerful than a broad assertion about importance."), makeS6Exp("4 \u2014 Coherence: a research story, not a list", "The best Narrative CVs read as a coherent body of work, not a set of disconnected items. The personal statement frames the whole. The contributions are curated, not exhaustive. Together they answer the question: \u201cWhat is this researcher building, and why does it matter?\u201d", "You do not have to force all your work into a single theme \u2014 researchers whose work genuinely spans several areas can describe that breadth as a form of strength. But the narrative should feel intentional, not accidental.")]));
+    s6card.appendChild(el("p", null, slot("s6.summary", "Reviewers are not scoring your productivity. They are asking: Does this researcher know what their work has contributed, and can they explain it clearly to someone outside their immediate field?")));
+    const s6p = el("p", "ncv-body", slot("s6.lead", "Four things that consistently score higher in reviewed contributions:"));
+    const makeS6Exp = (titleSlot, titleFallback, ...paraSlots) => {
+      const d = el("div");
+      paraSlots.forEach(([slotKey, fallback]) => {
+        slotPara(slotKey, fallback).forEach((t) => d.appendChild(el("p", "ncv-body", t)));
+      });
+      return makeExpand(slot(titleSlot, titleFallback), d);
+    };
+    wrap.appendChild(makeSection(6, slot("s6.title", "What reviewers actually look for"), [
+      s6card,
+      s6p,
+      makeS6Exp(
+        "s6.exp1.title", "1 — Ownership: “I” not “we”",
+        ["s6.exp1.p1", "Reviewers need to identify your contribution specifically. If every sentence uses “we,” they cannot. Be precise: “I designed the study,” “I developed the algorithm,” “I led the community consultation process.” You can acknowledge the team in the same sentence — just make your role explicit."]
+      ),
+      makeS6Exp(
+        "s6.exp2.title", "2 — Specificity: named outcomes, not vague claims",
+        ["s6.exp2.p1", "“Widely cited” means less than “cited in 47 studies across clinical, policy, and engineering applications.” “Worked with communities” means less than “co-designed a food security protocol with three urban Indigenous organizations in Montréal, subsequently adopted by the City’s housing strategy.”"],
+        ["s6.exp2.p2", "Specificity is not bragging — it is evidence. Vague claims read as weak because they are unverifiable. Named outcomes, organizations, and numbers give reviewers something concrete to evaluate."]
+      ),
+      makeS6Exp(
+        "s6.exp3.title", "3 — Significance: why this mattered to the field or world",
+        ["s6.exp3.p1", "Describe not just what you did, but what it made possible. What existed before your work that was incomplete, incorrect, or absent? What changed? What can others now do or know that they could not before?"],
+        ["s6.exp3.p2", "This does not require hyperbole. A modest, precise claim — “This dataset is the first longitudinal record of X in the Y region, and has since been used by three government agencies and two international research groups” — is far more powerful than a broad assertion about importance."]
+      ),
+      makeS6Exp(
+        "s6.exp4.title", "4 — Coherence: a research story, not a list",
+        ["s6.exp4.p1", "The best Narrative CVs read as a coherent body of work, not a set of disconnected items. The personal statement frames the whole. The contributions are curated, not exhaustive. Together they answer the question: “What is this researcher building, and why does it matter?”"],
+        ["s6.exp4.p2", "You do not have to force all your work into a single theme — researchers whose work genuinely spans several areas can describe that breadth as a form of strength. But the narrative should feel intentional, not accidental."]
+      )
+    ]));
 
     // ── CTA strip ────────────────────────────────────────────────────────────
     const cta = el("div", "ncv-cta-strip");
     const ctaText = el("div", "ncv-cta-text");
-    ctaText.appendChild(el("h3", null, "Ready to start drafting?"));
-    ctaText.appendChild(el("p", null, "Use the guided module to build your Narrative CV outline, one section at a time."));
-    const ctaBtn = el("button", "btn btn-primary", "Start Step 2 \u2192");
+    ctaText.appendChild(el("h3", null, slot("cta.title", "Ready to start drafting?")));
+    ctaText.appendChild(el("p", null, slot("cta.body", "Use the guided module to build your Narrative CV outline, one section at a time.")));
+    const ctaBtn = el("button", "btn btn-primary", slot("cta.btn", "Start Step 2 \u2192"));
     ctaBtn.type = "button";
     ctaBtn.addEventListener("click", () => navigateTo("tools-narrative"));
     cta.appendChild(ctaText); cta.appendChild(ctaBtn);
@@ -4375,9 +4650,13 @@
 
           pageItems.forEach((opp) => {
           const card = el("div", "opportunity-card");
+          const oppStatus = getStatus(opp);
+          if (oppStatus !== "open") card.classList.add("is-" + oppStatus);
           // Header strip: format badge on the left, time pill on the right.
           const headerMeta = el("div", "card-header-meta");
           headerMeta.appendChild(formatBadge(opp.format));
+          const oppPill = statusPill(oppStatus);
+          if (oppPill) headerMeta.appendChild(oppPill);
           if (opp.time) {
             const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
             headerMeta.appendChild(el("span", "card-time-pill", displayTime));
@@ -4511,9 +4790,13 @@
     // Helper: build one opportunity card for the research panel
     function buildResearchOpportunityCard(opp) {
       const card = el("div", "opportunity-card");
+      const oppStatus = getStatus(opp);
+      if (oppStatus !== "open") card.classList.add("is-" + oppStatus);
       // Header strip: format badge on the left, time pill on the right.
       const headerMeta = el("div", "card-header-meta");
       headerMeta.appendChild(formatBadge(opp.format));
+      const oppPill = statusPill(oppStatus);
+      if (oppPill) headerMeta.appendChild(oppPill);
       if (opp.time) {
         const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
         headerMeta.appendChild(el("span", "card-time-pill", displayTime));
@@ -5093,9 +5376,13 @@
 
       pageItems.forEach((opp) => {
         const card = el("div", "opportunity-card");
+        const oppStatus = getStatus(opp);
+        if (oppStatus !== "open") card.classList.add("is-" + oppStatus);
         // Header strip: format badge on the left, time pill on the right.
         const headerMeta = el("div", "card-header-meta");
         headerMeta.appendChild(formatBadge(opp.format));
+        const oppPill = statusPill(oppStatus);
+        if (oppPill) headerMeta.appendChild(oppPill);
         if (opp.time) {
           const displayTime = Array.isArray(opp.time) ? opp.time.join(", ") : opp.time;
           headerMeta.appendChild(el("span", "card-time-pill", displayTime));
@@ -5264,6 +5551,8 @@
       // (no navigation pushed) and by reconcileServiceModal's deep-link guard
       // (replaceState strips ?book=1). By the time we reach this function, the
       // intent is unambiguously: render the in-page request form.
+      const oppStatus = getStatus(opp);
+      const isWaitlist = oppStatus === "full";
 
       clear(modalRoot);
       document.body.classList.add("is-modal-open");
@@ -5285,9 +5574,20 @@
       modal.appendChild(notice);
 
       // Title
-      modal.appendChild(el("h1", "modal-title", opp ? "Request this service" : "Request a consultation"));
+      const modalTitleText = isWaitlist
+        ? "Join the waitlist"
+        : (opp ? "Request this service" : "Request a consultation");
+      modal.appendChild(el("h1", "modal-title", modalTitleText));
       if (opp) {
-        modal.appendChild(el("p", "booking-subtitle", "Re: " + opp.title));
+        const subtitlePrefix = isWaitlist ? "Waitlist: " : "Re: ";
+        modal.appendChild(el("p", "booking-subtitle", subtitlePrefix + opp.title));
+      }
+
+      // Waitlist banner \u2014 explains why the booking flow short-circuited.
+      if (isWaitlist) {
+        const banner = el("div", "booking-waitlist-banner");
+        banner.innerHTML = '<strong>This session is fully booked.</strong> Add yourself to the waitlist below and we\u2019ll email you if a spot opens up or another session is added.';
+        modal.appendChild(banner);
       }
 
       // Form
@@ -5303,10 +5603,26 @@
         hiddenService.name = "service";
         hiddenService.value = opp.title;
         form.appendChild(hiddenService);
+
+        const hiddenStatus = el("input", null);
+        hiddenStatus.type = "hidden";
+        hiddenStatus.name = "service_status";
+        hiddenStatus.value = oppStatus;
+        form.appendChild(hiddenStatus);
+      }
+
+      // Hidden intent for waitlist; visible radio group for normal requests.
+      if (isWaitlist) {
+        const hiddenIntent = el("input", null);
+        hiddenIntent.type = "hidden";
+        hiddenIntent.name = "intent";
+        hiddenIntent.value = "waitlist";
+        form.appendChild(hiddenIntent);
       }
 
       // Radio: Intent
       const intentField = el("fieldset", "booking-field booking-fieldset");
+      if (isWaitlist) intentField.hidden = true;
       const intentLegend = document.createElement("legend");
       intentLegend.textContent = "What brings you here?";
       intentField.appendChild(intentLegend);
@@ -5361,20 +5677,23 @@
 
       // Context / questions
       const commentField = el("div", "booking-field");
-      const commentLabel = el("label", null, "Questions or context (optional)");
+      const commentLabel = el("label", null, isWaitlist ? "Anything else (optional)" : "Questions or context (optional)");
       commentLabel.setAttribute("for", "booking-message");
       commentField.appendChild(commentLabel);
       const commentTextarea = el("textarea", "booking-textarea");
       commentTextarea.id = "booking-message";
       commentTextarea.name = "message";
-      commentTextarea.placeholder = "Anything we should know about your project, timing, or what you\u2019re hoping to get out of this?";
+      commentTextarea.placeholder = isWaitlist
+        ? "Any preferences on dates, times, or alternative sessions?"
+        : "Anything we should know about your project, timing, or what you\u2019re hoping to get out of this?";
       commentTextarea.rows = 4;
       commentField.appendChild(commentTextarea);
       form.appendChild(commentField);
 
       // Actions (inside form so submit button triggers form submit)
       const actions = el("div", "booking-actions");
-      const submitBtn = el("button", "btn primary", "Send request");
+      const submitBtnLabel = isWaitlist ? "Join waitlist" : "Send request";
+      const submitBtn = el("button", "btn primary", submitBtnLabel);
       submitBtn.type = "submit";
       actions.appendChild(submitBtn);
 
@@ -5402,7 +5721,7 @@
 
         const showBookingError = () => {
           submitBtn.disabled = false;
-          submitBtn.textContent = "Send request";
+          submitBtn.textContent = submitBtnLabel;
           let errBox = form.querySelector(".booking-error");
           if (!errBox) {
             errBox = el("p", "booking-error", "");
@@ -5420,9 +5739,14 @@
           clear(form);
           form.className = "booking-confirmation";
           form.appendChild(el("p", "booking-confirm-icon", "\u2713"));
-          form.appendChild(el("h2", "booking-confirm-title", "Thank you, " + name + "!"));
+          const confirmTitle = isWaitlist
+            ? "You\u2019re on the waitlist, " + name + "!"
+            : "Thank you, " + name + "!";
+          form.appendChild(el("h2", "booking-confirm-title", confirmTitle));
           const text = result.ok
-            ? "Your request has been received." + (opp ? " We\u2019ll follow up about \u201c" + opp.title + "\u201d at " + email + "." : " We\u2019ll be in touch at " + email + " shortly.")
+            ? (isWaitlist
+                ? "We\u2019ve added you to the waitlist for \u201c" + (opp ? opp.title : "this session") + "\u201d. We\u2019ll email you at " + email + " if a spot opens up or another session is added."
+                : "Your request has been received." + (opp ? " We\u2019ll follow up about \u201c" + opp.title + "\u201d at " + email + "." : " We\u2019ll be in touch at " + email + " shortly."))
             : "We logged your request locally. The form endpoint is being connected \u2014 once it\u2019s live, submissions will be delivered automatically. For anything urgent, email " + FORMSPREE_FALLBACK_EMAIL + ".";
           form.appendChild(el("p", "booking-confirm-text", text));
           actions.hidden = true;
@@ -5532,14 +5856,18 @@
       // Other formats render with no bottom CTA; the body speaks for itself.
       const bottomCta = el("div", "modal-bottom-cta");
       const fmt = (opp.format || "").toString().toLowerCase();
+      const modalStatus = getStatus(opp);
       if (opp.sourceType === "resource" && opp.externalUrl) {
         const ctaBtn = el("a", "btn primary modal-cta-btn", "Open resource \u2197");
         ctaBtn.href = opp.externalUrl;
         ctaBtn.target = "_blank";
         ctaBtn.rel = "noopener noreferrer";
         bottomCta.appendChild(ctaBtn);
+      } else if (modalStatus === "cancelled") {
+        bottomCta.appendChild(el("p", "modal-status-note", "This session has been cancelled. Check back later or contact us if you have questions."));
       } else if (fmt.includes("consult")) {
-        const ctaBtn = el("button", "btn primary modal-cta-btn", "Book a consultation");
+        const isFull = modalStatus === "full";
+        const ctaBtn = el("button", "btn primary modal-cta-btn", isFull ? "Join the waitlist" : "Book a consultation");
         ctaBtn.type = "button";
         ctaBtn.addEventListener("click", () => {
           // External booking handoff: open MS Bookings in a new tab without
@@ -5551,10 +5879,14 @@
           navigateToService(opp.id, true);
         });
         bottomCta.appendChild(ctaBtn);
+        if (isFull) {
+          bottomCta.appendChild(el("p", "modal-status-note", "This consultation is fully booked. Join the waitlist and we’ll let you know when a spot opens up."));
+        }
       } else if (opp.sourceType === "workshop") {
         // Workshops with a bookingUrl hand off to MS Bookings in a new tab;
         // others open the in-page request form via the booking modal.
-        const ctaBtn = el("button", "btn primary modal-cta-btn", "Register for this workshop");
+        const isFull = modalStatus === "full";
+        const ctaBtn = el("button", "btn primary modal-cta-btn", isFull ? "Join the waitlist" : "Register for this workshop");
         ctaBtn.type = "button";
         ctaBtn.addEventListener("click", () => {
           if (shouldExternalBooking(opp)) {
@@ -5564,6 +5896,9 @@
           navigateToService(opp.id, true);
         });
         bottomCta.appendChild(ctaBtn);
+        if (isFull) {
+          bottomCta.appendChild(el("p", "modal-status-note", "This workshop is fully booked. Join the waitlist and we’ll let you know if a seat opens up or another session runs."));
+        }
       }
       // Only attach the CTA bar if a button was actually added.
       if (bottomCta.childNodes.length) modal.appendChild(bottomCta);
@@ -6122,7 +6457,8 @@
   const init = async () => {
     await Promise.all([
       loadWorkshopContent(),
-      loadExploreContentFromSheets()
+      loadExploreContentFromSheets(),
+      loadLearnGuideContent()
     ]);
     await loadPathwaysVisionContent();
     buildHeader();
@@ -6131,6 +6467,18 @@
     buildPages();
 
     const initialRoute = parseRouteFromHash(window.location.hash);
+
+    // B-05: cold-loading a modal URL (e.g. `#explore?service=X` from a bookmark
+    // or browser history) leaves no in-SPA entry behind it, so the modal's
+    // "Back to All Resources" button — which calls history.back() — exits the
+    // site instead of landing on Explore. Inject a synthetic underlying-page
+    // entry so back-navigation has somewhere to go.
+    if (initialRoute.page === "explore" && initialRoute.params.get("service")) {
+      const entryHash = window.location.hash;
+      history.replaceState(history.state, "", "#explore");
+      history.pushState(history.state, "", entryHash);
+    }
+
     if (initialRoute.page === "explore") {
       state.pendingPathwayKey = (initialRoute.params.get("pathway") || "").toLowerCase();
     }

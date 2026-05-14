@@ -2,18 +2,22 @@
 
 Plan for Phase 2 of the content/backend integration. Phase 1 (Google Sheets as CMS) is done.
 
-## Status (2026-04-28)
+## Status (2026-05-07)
 
 **Working:** new-tab redirect. Click Book → Bookings opens in a new tab → user picks a time → confirmation emailed. One click, no intermediate screens. Live for `opp-impact-framing` (Prem's personal *Bookings with Me* URL); other rows fall through to the Formspree request form.
 
-**Not working / not viable:** in-page iframe embed. MS Bookings sets `X-Frame-Options: DENY` — no way around it at the Bookings side.
+**Not working / not viable:** in-page iframe embed. MS Bookings sets `X-Frame-Options: DENY` — no way around it at the Bookings side. **Re-tested 2026-05-07** with the exact `<iframe src='https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/?ismsaljsauthenabled' width='100%' height='100%' scrolling='yes' style='border:0'></iframe>` snippet copied from the Bookings admin "Embed" tab. Result: iframe never fires `load`, browser blocks rendering. Confirmed iframe-side attributes (`scrolling`, `sandbox`, `referrerpolicy`, `loading`) cannot defeat the server-side header — Microsoft's published embed snippet only works inside Microsoft's own allowlist (Outlook, Teams), not third-party sites.
 
 **Decisions made since the original plan:**
 - MS Bookings is the chosen booking provider (not LibCal — that subscription was never activated).
 - The new-tab redirect is the production UX for now. No appetite for a Graph API custom UI unless the redirect proves painful at volume.
+- **2026-05-07 — staying with the new-tab redirect.** Embed retest confirmed blocked; switching providers (Cal.com / Calendly) and building a Graph-API custom UI both remain out of scope until conversion data justifies one of them.
+
+**Progress since 2026-04-28:**
+- Shared Bookings page created at `PathwaysToImpact@liveconcordia.onmicrosoft.com`. URLs from that mailbox now survive staff turnover (no longer pinned to Prem's personal calendar).
 
 **Next:**
-1. Set up a shared Bookings page (e.g. `pathways-bookings@concordia` mailbox) so URLs survive staff turnover. Currently dependent on Prem's personal Bookings calendar.
+1. Update sheet `bookingUrl` values to per-service URLs from the new shared `PathwaysToImpact@liveconcordia` page (sheet-only change, no code touched). Sheet edit → ~1 min to live.
 2. Add custom questions to each service for usage tracking (department, career stage, pathway).
 3. Stand up Power Automate → Google Sheet logging to the existing sheet's `bookings_log` tab.
 
@@ -230,7 +234,7 @@ What we can't easily do without more infra:
 
 ## Staying on the page (the "no new tab" question)
 
-Confirmed live: MS Bookings refuses to be iframed. `X-Frame-Options: DENY` is sent on every Bookings page, including Bookings with Me. This is a clickjacking protection set by Microsoft; no tenant setting, query param, or sandbox attribute defeats it.
+Confirmed live (re-tested 2026-05-07 against the new shared `PathwaysToImpact@liveconcordia` page): MS Bookings refuses to be iframed. `X-Frame-Options: DENY` is sent on every Bookings page — Bookings with Me, personal page, and shared booking page alike. This is a clickjacking protection set by Microsoft; no tenant setting, query param, sandbox attribute, or even Microsoft's own published embed snippet defeats it on third-party origins.
 
 So "stay on the page" with MS Bookings specifically has three real options:
 
@@ -264,3 +268,5 @@ What's live today. One click → new tab → Microsoft Bookings. Honest, fast, n
 Decision points to revisit if the move is on the table:
 - Does the coordinator find managing services in MS Bookings tolerable? If migrating to a new tool means re-doing setup work, the bar for "this is worth it" is higher.
 - Is IT willing to approve a Bookings Graph app registration? If no, A is dead on arrival, and B is the only path forward.
+
+**Decision (2026-05-07):** Confirmed staying on Option C. The shared `PathwaysToImpact@liveconcordia` page is the new home; sheet `bookingUrl` values get updated to per-service URLs from that page. UX stays the new-tab redirect. Embed retest archived in the Status section above.

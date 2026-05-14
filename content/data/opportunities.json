@@ -1,0 +1,191 @@
+[
+  {
+    "id": "opp-impact-framing",
+    "title": "Impact framing consult",
+    "category": "Planning",
+    "stage": "Developing an Idea",
+    "format": "Consultation",
+    "time": "45-60 min",
+    "pathway": [
+      "Academic Scholarship",
+      "Research Creation"
+    ],
+    "tags": [
+      "impact",
+      "framing",
+      "early stage"
+    ],
+    "summary": "Clarify the change you want to influence and who benefits.",
+    "details": {
+      "who": "Researchers shaping a new project or early concept.",
+      "what": "Work with a facilitator to define the public need, intended outcomes, and early partners.",
+      "outcomes": "A concise impact statement and a first-pass pathway map."
+    },
+    "bookingUrl": "https://outlook.office.com/bookwithme/user/a7de77fe81a44fe6bff397f707e0b063@concordia.ca/meetingtype/KlDZc3zdbU2EhFL1IrgSyQ2?anonymous&ismsaljsauthenabled&ep=mlink"
+  },
+  {
+    "id": "opp-partner-readiness",
+    "title": "Partner readiness check",
+    "category": "Engagement",
+    "stage": "Developing an Idea",
+    "format": "Consultation",
+    "time": "45 min",
+    "pathway": [
+      "Community Engagement",
+      "Commercialization"
+    ],
+    "tags": [
+      "partners",
+      "grant",
+      "engagement"
+    ],
+    "summary": "Assess roles, expectations, and collaboration readiness.",
+    "details": {
+      "who": "Teams preparing partnership-based proposals.",
+      "what": "Review partner roles, decision-making, and communication plans.",
+      "outcomes": "A short readiness checklist and recommended adjustments."
+    }
+  },
+  {
+    "id": "opp-grant-narrative",
+    "title": "Grant impact narrative workshop",
+    "category": "Proposal",
+    "stage": "Developing an Idea",
+    "format": "Workshop",
+    "time": "2 hrs",
+    "pathway": [
+      "Communications",
+      "Policy",
+      "Commercialization"
+    ],
+    "tags": [
+      "proposal",
+      "narrative",
+      "funding"
+    ],
+    "summary": "Translate impact goals into funder-ready language.",
+    "details": {
+      "who": "Applicants preparing impact sections for grants.",
+      "what": "Draft and refine impact narratives with peer feedback.",
+      "outcomes": "A stronger narrative aligned to funder criteria."
+    }
+  },
+  {
+    "id": "opp-engagement-plan",
+    "title": "Engagement plan clinic",
+    "category": "Engagement",
+    "stage": "Active Research",
+    "format": "Workshop",
+    "time": "90 min",
+    "pathway": [
+      "Community Engagement",
+      "Communications"
+    ],
+    "tags": [
+      "engagement",
+      "partners",
+      "planning"
+    ],
+    "summary": "Design engagement activities that fit your timeline.",
+    "details": {
+      "who": "Projects with active partners or public-facing goals.",
+      "what": "Build a schedule of touchpoints, events, and feedback loops.",
+      "outcomes": "An engagement plan you can implement immediately."
+    }
+  },
+  {
+    "id": "opp-outcome-tracking",
+    "title": "Outcome tracking consult",
+    "category": "Evaluation",
+    "stage": "Active Research",
+    "format": "Consultation",
+    "time": "45 min",
+    "pathway": [
+      "Policy",
+      "Academic Scholarship"
+    ],
+    "tags": [
+      "evaluation",
+      "indicators",
+      "evidence"
+    ],
+    "summary": "Choose practical indicators to document change.",
+    "details": {
+      "who": "Teams who need light-weight evaluation support.",
+      "what": "Select indicators and tools that align with your goals.",
+      "outcomes": "A simple outcome tracking plan and evidence checklist."
+    }
+  },
+  {
+    "id": "opp-impact-documentation",
+    "title": "Impact documentation",
+    "category": "Evidence",
+    "stage": "Finishing a Project",
+    "format": "Consultation",
+    "time": "60 min",
+    "pathway": [
+      "Communications",
+      "Policy",
+      "Commercialization",
+      "Research Creation"
+    ],
+    "tags": [
+      "evidence",
+      "story",
+      "outcomes"
+    ],
+    "summary": "Collect evidence and short narratives of change.",
+    "details": {
+      "who": "Projects preparing reports or final outputs.",
+      "what": "Gather outputs, testimonials, and outcome evidence.",
+      "outcomes": "A concise impact brief ready for reporting."
+    }
+  },
+  {
+    "id": "opp-knowledge-sharing",
+    "title": "Knowledge sharing strategy",
+    "category": "Communication",
+    "stage": "Finishing a Project",
+    "format": "Workshop",
+    "time": "90 min",
+    "pathway": [
+      "Communications",
+      "Community Engagement",
+      "Research Creation"
+    ],
+    "tags": [
+      "communication",
+      "audiences",
+      "dissemination"
+    ],
+    "summary": "Select formats that reach the right audiences.",
+    "details": {
+      "who": "Teams ready to disseminate findings.",
+      "what": "Choose formats, channels, and timing for outreach.",
+      "outcomes": "A tailored dissemination plan with priorities."
+    }
+  },
+  {
+    "id": "opp-impact-dashboard",
+    "title": "Impact pathway mapping session",
+    "category": "Planning",
+    "stage": "Developing an Idea",
+    "format": "Workshop",
+    "time": "90 min",
+    "pathway": [
+      "Innovation",
+      "Academic Scholarship"
+    ],
+    "tags": [
+      "pathways",
+      "planning",
+      "mapping"
+    ],
+    "summary": "Visualize how outputs connect to outcomes over time.",
+    "details": {
+      "who": "Researchers who want a clear, shared impact model.",
+      "what": "Map outputs, short-term outcomes, and long-term goals.",
+      "outcomes": "A pathway map that supports planning and communication."
+    }
+  }
+]
