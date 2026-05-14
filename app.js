@@ -1008,11 +1008,11 @@
       hamburger.appendChild(el("span", "hamburger-bar"));
     }
     hamburger.addEventListener("click", () => {
-      const isOpen = siteHeader.classList.toggle("is-nav-open");
+      const isOpen = header.classList.toggle("is-nav-open");
       hamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
     });
     navList.addEventListener("click", () => {
-      siteHeader.classList.remove("is-nav-open");
+      header.classList.remove("is-nav-open");
       hamburger.setAttribute("aria-expanded", "false");
     });
 
@@ -5768,7 +5768,7 @@
 
       // Sticky top bar
       const topbar = el("div", "modal-topbar");
-      const backBtn = el("button", "modal-back-btn", "\u2190 Back to All Resources");
+      const backBtn = el("button", "modal-back-btn", "\u2190 Back");
       backBtn.type = "button";
       backBtn.addEventListener("click", requestModalClose);
       topbar.appendChild(backBtn);
