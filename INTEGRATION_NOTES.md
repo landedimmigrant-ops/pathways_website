@@ -215,6 +215,29 @@ Outcome: **works end-to-end.** First fix delivered through the loop is **B-05** 
 - POST to `/exec` returns a 302 → `googleusercontent.com/macros/echo?...` with a single-use `user_content_key` token that wants browser cookies. `curl -L` follows the redirect but the target serves a generic "Page Not Found" — the response JSON is unreachable from a bare HTTP client. **The script ran fine; the response delivery is the only thing broken.**
 - Workaround baked into `.claude/commands/triage.md`: **don't read the response. Verify side effects by re-pulling the affected tab's CSV.** For read-only actions like `list_tabs`, substring-match tab names hard-coded against the known set instead.
 
+### Attempt 11 — User-testing snapshot at /testing/ ✅ WORKING
+
+Plan: a research user-test was about to go out. GH Pages only serves one branch per repo, so the same URL was both dev (where coordinator-facing fixes ship continuously) and test (what researchers see during their session). Need to decouple so dev iteration doesn't change the test version mid-session.
+
+Outcome: **works.** Stood up a frozen snapshot at `landedimmigrant-ops.github.io/pathways_website/testing/` (the `/testing/` subdirectory of the same Pages site). Dev URL stays unchanged at the root so the coordinator's existing bookmarks keep working. Snapshot refresh is one shell script + push.
+
+#### How it's wired
+- `scripts/snapshot-testing.sh` — five-step pipeline: (1) `node scripts/bake.js` refreshes `content/data/*.json` from the live sheet; (2) wipe and recreate `/testing/`; (3) `cp` SPA assets + `content/` + `resources/` + `pathways_to_impact.md` into `/testing/`; (4) `sed` flip `SHEETS.mode: "live"` → `"baked"` in `/testing/app.js`; (5) banner rewrite + cache-bust stamp (`v=frozen-YYYY-MM-DD`) in `/testing/index.html`.
+- `/testing/` is a sibling-folder GH Pages serves alongside the root. Relative asset paths (`href="styles.css"`, `src="app.js"`) resolve correctly because the SPA never uses absolute URLs.
+- Test version reads from `/testing/content/data/*.json` (baked) — completely isolated from coordinator sheet edits.
+- Banner reads *"User testing version (frozen snapshot) · Updated YYYY-MM-DD"* so testers know which version they're on. Dev banner unchanged.
+
+#### Refresh cadence
+- Manual, on-demand. The script wipes and rebuilds `/testing/` cleanly each run — idempotent.
+- Workflow: `./scripts/snapshot-testing.sh && git add testing/ content/data/ && git commit -m "Refresh testing snapshot (YYYY-MM-DD)" && git push`.
+- Typical cadence during a 1-3 week user-test: refresh once or twice if a tester-blocking issue surfaces. Otherwise leave alone.
+
+#### Why this shape
+- **Why subdirectory not separate repo:** zero new infrastructure (no second repo, no GH Pages reconfiguration, no second host). Coordinator's URL stays the same; testers get a path qualifier they only need once via the link share-out.
+- **Why baked content not live sheet:** "frozen" has to mean *both* code and data. A sheet edit that changes a workshop time mid-test would surface immediately on the test URL otherwise — defeating the purpose.
+- **Why a script not a one-time snapshot:** the user-test window is 1-3 weeks; a tester-blocking bug fix mid-window needs a clean re-snapshot path. Manual `cp` + `sed` is error-prone after the first run.
+- **Why distinct cache-bust (`v=frozen-DATE`):** browsers cache by full URL including query string. Same `/testing/styles.css?v=131` would serve stale post-refresh; date-stamped versioning forces a clean fetch.
+
 #### Why this shape
 - **Why pull-based not push-based:** the sheet stays the source of truth and the friendly editing surface. Push (Apps Script webhook → GitHub Issues / file) would mean two systems of record. Pull keeps it one.
 - **Why Apps Script and not Power Automate:** Apps Script is bound to the same Google account as the sheet — no licensing wall, no tenant policy (the Power Automate path is documented as blocked further up in Attempts 1–2). ~30 minutes from `Extensions → Apps Script` to deployed `/exec` URL.
