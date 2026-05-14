@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pathways to Impact — Concordia University</title>
+    <meta name="description" content="This site brings together resources, services, and tools from across Concordia — curated by the Office of Research to support your research impact journey, wherever you are in it." />
+
+    <!-- Open Graph (Facebook, LinkedIn, Slack, Teams) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Pathways to Impact — Concordia University" />
+    <meta property="og:description" content="This site brings together resources, services, and tools from across Concordia — curated by the Office of Research to support your research impact journey, wherever you are in it." />
+    <meta property="og:url" content="https://landedimmigrant-ops.github.io/pathways_website/" />
+    <meta property="og:site_name" content="Pathways to Impact" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Pathways to Impact — Concordia University" />
+    <meta name="twitter:description" content="This site brings together resources, services, and tools from across Concordia — curated by the Office of Research to support your research impact journey, wherever you are in it." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=frozen-2026-05-14" />
+  </head>
+  <body>
+    <a href="#app" class="skip-link">Skip to main content</a>
+    <header id="site-header"></header>
+    <main id="app" aria-live="polite"></main>
+    <div id="modal-root"></div>
+    <div class="prototype-banner" role="status">User testing version (frozen snapshot)</div>
+    <script>
+      (function () {
+        var t = Date.parse(document.lastModified);
+        if (isNaN(t)) return;
+        var iso = new Date(t).toISOString().slice(0, 10);
+        var el = document.querySelector('.prototype-banner');
+        if (el) el.textContent += ' · Updated ' + iso;
+      })();
+    </script>
+    <script src="data.js?v=frozen-2026-05-14"></script>
+    <script src="app.js?v=frozen-2026-05-14"></script>
+  </body>
+</html>
