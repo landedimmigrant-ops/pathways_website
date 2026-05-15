@@ -5510,6 +5510,7 @@
       document.body.classList.add("is-modal-open");
       bindModalFocusRestore();
       const overlay = el("div", "modal-overlay");
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) requestModalClose(); });
 
       const topbar = el("div", "modal-topbar");
       const backBtn = el("button", "modal-back-btn", "\u2190 Back");
@@ -5558,6 +5559,7 @@
       document.body.classList.add("is-modal-open");
       bindModalFocusRestore();
       const overlay = el("div", "modal-overlay");
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) requestModalClose(); });
 
       const topbar = el("div", "modal-topbar");
       const backBtn = el("button", "modal-back-btn", "\u2190 Back");
@@ -5765,6 +5767,7 @@
       document.body.classList.add("is-modal-open");
       bindModalFocusRestore();
       const overlay = el("div", "modal-overlay");
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) requestModalClose(); });
 
       // Sticky top bar
       const topbar = el("div", "modal-topbar");
