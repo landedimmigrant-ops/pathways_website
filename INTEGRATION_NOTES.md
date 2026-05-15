@@ -206,10 +206,10 @@ Outcome: **works end-to-end.** First fix delivered through the loop is **B-05** 
 - Loop body: pull → filter to open statuses → grouped triage report → user picks → **branch off `integration-prototype`** (`triage/<id>` for single fix, `triage/<date>` for batch) → per-row fix workflow (read code, propose, implement, preview, sign-off) → **commit on triage branch** with ID in subject → **merge to `integration-prototype` with `--no-ff` and push** (only on explicit user sign-off) → **POST writeback after push lands** → report result. Fallback to read-only if the webhook errors.
 - File is `.gitignore`d at the repo root since it embeds the shared secret.
 
-#### Feature-branch workflow (added so live site never sees half-baked fixes)
-- All fix commits land on `triage/<batch>` branches off `integration-prototype`, not directly on the deployed branch.
-- Merge uses `--no-ff` so the batch shows as a single mergeable unit in `git log` (and revert-able as a unit via `git revert -m 1 <merge-sha>`).
-- Writeback to the sheet happens **after** the push to `integration-prototype` succeeds — so a `done` row in the sheet always means "live on the public site," not "fixed in a feature branch." If a fix is reverted, the writeback never happens (or is itself reverted), and the row stays in `triage` / `In Progress`.
+#### Workflow shape (revised 2026-05-14 after Attempt 11 landed)
+- **Default: direct commits to `integration-prototype`.** Once `/testing/` exists as a frozen tester URL (Attempt 11), the dev URL became a rolling staging environment that's allowed to churn — testers see the snapshot, not the live commit stream. So the feature-branch hedge from the original Attempt 10 design is no longer load-bearing for routine fixes.
+- **Exception: branch for risky changes.** Anything touching routing/page registry/schema, refactors >100 lines or >3 files, or multi-bug batches where partial-landing would leave dev in a weird state — branch off `integration-prototype` as `triage/<batch>`, commit there, merge `--no-ff`, push on sign-off.
+- **Writeback to the sheet happens after the push lands** (regardless of direct-commit or branch-merge). A `done` row always means "live on the dev URL". Whether a `done` row is also in the `/testing/` snapshot depends on whether we re-ran `scripts/snapshot-testing.sh` after the fix — typically no, unless the bug is tester-blocking.
 
 #### Apps Script response quirk
 - POST to `/exec` returns a 302 → `googleusercontent.com/macros/echo?...` with a single-use `user_content_key` token that wants browser cookies. `curl -L` follows the redirect but the target serves a generic "Page Not Found" — the response JSON is unreachable from a bare HTTP client. **The script ran fine; the response delivery is the only thing broken.**
