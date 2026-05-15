@@ -2327,6 +2327,16 @@ label {
   color: #777;
   margin-top: 1px;
 }
+.card-provider--multi .card-provider-label {
+  display: block;
+  margin-bottom: 2px;
+}
+.card-provider-person {
+  display: block;
+}
+.card-provider-ptitle {
+  color: #777;
+}
 .opportunity-card h3 {
   margin-top: 0;
   margin-bottom: 8px;
@@ -2867,6 +2877,21 @@ label {
   font-size: 13px;
   color: var(--muted);
   margin-top: 2px;
+}
+.modal-provider-person {
+  display: block;
+}
+.modal-provider-person + .modal-provider-person {
+  margin-top: 8px;
+}
+.modal-provider-ptitle {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.modal-provider-person + .modal-provider-sub {
+  margin-top: 10px;
 }
 
 .modal-tag-bar {

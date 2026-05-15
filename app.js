@@ -141,34 +141,69 @@
     return node;
   };
 
-  // "Offered by" block for cards. When the provider has a title we show the
-  // person's name + "title · unit" so researchers can gauge credibility. When
-  // there's no title (team-delivered services) we show the unit only — the
-  // provider field is usually itself a team name, so showing both is redundant.
+  // Parse a service's provider columns into a render-ready shape. `provider`
+  // and `providerTitle` are ;-separated lists (the sheet's standard multi-value
+  // separator) zipped by index, so each person keeps their own title.
+  //   mode "unit"   → team-delivered, no individual titles: show the unit only
+  //   mode "single" → one named person with a title
+  //   mode "multi"  → two+ named people, each paired with their own title
+  //   mode "none"   → nothing to show
+  const parseProviderInfo = (opp) => {
+    if (!opp) return { mode: "none" };
+    const people = splitMulti(opp.provider);
+    const titles = splitMulti(opp.providerTitle);
+    const unit = opp.unit || "";
+    // No individual titles → team-delivered. Show the unit only (the provider
+    // field is usually itself a team name, so showing both would be redundant).
+    if (titles.length === 0) {
+      const primary = unit || (people.length ? people.join(" and ") : "");
+      return primary ? { mode: "unit", unit: primary } : { mode: "none" };
+    }
+    if (people.length <= 1) {
+      return { mode: "single", name: people[0] || titles[0], title: titles[0] || "", unit };
+    }
+    return {
+      mode: "multi",
+      people: people.map((name, i) => ({ name, title: titles[i] || "" })),
+      unit
+    };
+  };
+
+  // "Offered by" block for cards. Single titled person → name + "title · unit".
+  // Multiple people → one "Name — Title" line each, then the shared unit.
+  // Team-delivered services → unit only. See parseProviderInfo.
   const providerLine = (opp) => {
     const node = document.createElement("p");
     node.className = "card-provider";
-    if (!opp) return node;
-    const hasTitle = !!opp.providerTitle;
-    const primary = hasTitle ? opp.provider : (opp.unit || opp.provider);
-    if (!primary) return node;
-    const label = document.createElement("span");
-    label.className = "card-provider-label";
-    label.textContent = "Offered by";
-    node.appendChild(label);
-    const name = document.createElement("span");
-    name.className = "card-provider-name";
-    name.textContent = primary;
-    node.appendChild(name);
-    if (hasTitle) {
-      const sub = [opp.providerTitle, opp.unit].filter(Boolean).join(" · ");
-      if (sub) {
-        const subEl = document.createElement("span");
-        subEl.className = "card-provider-sub";
-        subEl.textContent = sub;
-        node.appendChild(subEl);
-      }
+    const info = parseProviderInfo(opp);
+    if (info.mode === "none") return node;
+    const span = (text, cls) => {
+      const s = document.createElement("span");
+      s.className = cls;
+      s.textContent = text;
+      return s;
+    };
+    node.appendChild(span("Offered by", "card-provider-label"));
+    if (info.mode === "unit") {
+      node.appendChild(span(info.unit, "card-provider-name"));
+      return node;
     }
+    if (info.mode === "single") {
+      node.appendChild(span(info.name, "card-provider-name"));
+      const sub = [info.title, info.unit].filter(Boolean).join(" · ");
+      if (sub) node.appendChild(span(sub, "card-provider-sub"));
+      return node;
+    }
+    // multi — one line per person, shared unit beneath
+    node.classList.add("card-provider--multi");
+    info.people.forEach((p) => {
+      const row = document.createElement("span");
+      row.className = "card-provider-person";
+      row.appendChild(span(p.name, "card-provider-name"));
+      if (p.title) row.appendChild(span(" — " + p.title, "card-provider-ptitle"));
+      node.appendChild(row);
+    });
+    if (info.unit) node.appendChild(span(info.unit, "card-provider-sub"));
     return node;
   };
 
@@ -5816,19 +5851,29 @@
       modal.appendChild(el("h1", "modal-title", opp.title));
       if (opp.author) modal.appendChild(el("p", "modal-author", "By: " + opp.author));
 
-      // Provider block — who delivers this service. Titled providers show
-      // name + "title · unit"; team-delivered services (no title) show the
-      // unit only. Surfaced prominently for booking context and credibility.
+      // Provider block — who delivers this service. Multiple people are each
+      // paired with their own title; a single titled person shows name +
+      // "title · unit"; team-delivered services show just the unit. Surfaced
+      // prominently for booking context and credibility. See parseProviderInfo.
       {
-        const provHasTitle = !!opp.providerTitle;
-        const provPrimary = provHasTitle ? opp.provider : (opp.unit || opp.provider);
-        if (provPrimary) {
+        const provInfo = parseProviderInfo(opp);
+        if (provInfo.mode !== "none") {
           const provBlock = el("div", "modal-provider");
           provBlock.appendChild(el("span", "modal-provider-label", "Offered by"));
-          provBlock.appendChild(el("span", "modal-provider-name", provPrimary));
-          if (provHasTitle) {
-            const provSub = [opp.providerTitle, opp.unit].filter(Boolean).join(" · ");
+          if (provInfo.mode === "unit") {
+            provBlock.appendChild(el("span", "modal-provider-name", provInfo.unit));
+          } else if (provInfo.mode === "single") {
+            provBlock.appendChild(el("span", "modal-provider-name", provInfo.name));
+            const provSub = [provInfo.title, provInfo.unit].filter(Boolean).join(" · ");
             if (provSub) provBlock.appendChild(el("span", "modal-provider-sub", provSub));
+          } else {
+            provInfo.people.forEach((p) => {
+              const person = el("div", "modal-provider-person");
+              person.appendChild(el("span", "modal-provider-name", p.name));
+              if (p.title) person.appendChild(el("span", "modal-provider-ptitle", p.title));
+              provBlock.appendChild(person);
+            });
+            if (provInfo.unit) provBlock.appendChild(el("span", "modal-provider-sub", provInfo.unit));
           }
           modal.appendChild(provBlock);
         }
