@@ -2317,6 +2317,16 @@ label {
   color: #888;
   margin-right: 8px;
 }
+.card-provider-name {
+  font-weight: 600;
+  color: #333;
+}
+.card-provider-sub {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-top: 1px;
+}
 .opportunity-card h3 {
   margin-top: 0;
   margin-bottom: 8px;
@@ -2828,6 +2838,35 @@ label {
 .modal-meta-item strong {
   color: var(--text);
   font-weight: 600;
+}
+
+.modal-provider {
+  margin: 0 0 24px;
+  padding: 14px 16px;
+  background: #f7f3f4;
+  border-left: 3px solid var(--burgundy);
+  border-radius: 6px;
+}
+.modal-provider-label {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  margin-bottom: 4px;
+}
+.modal-provider-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.modal-provider-sub {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
 }
 
 .modal-tag-bar {

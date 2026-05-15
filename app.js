@@ -141,15 +141,34 @@
     return node;
   };
 
-  // Provider line with a small "OFFERED BY" label and the provider name as the value.
-  const providerLine = (provider) => {
+  // "Offered by" block for cards. When the provider has a title we show the
+  // person's name + "title · unit" so researchers can gauge credibility. When
+  // there's no title (team-delivered services) we show the unit only — the
+  // provider field is usually itself a team name, so showing both is redundant.
+  const providerLine = (opp) => {
     const node = document.createElement("p");
     node.className = "card-provider";
+    if (!opp) return node;
+    const hasTitle = !!opp.providerTitle;
+    const primary = hasTitle ? opp.provider : (opp.unit || opp.provider);
+    if (!primary) return node;
     const label = document.createElement("span");
     label.className = "card-provider-label";
     label.textContent = "Offered by";
     node.appendChild(label);
-    node.appendChild(document.createTextNode(provider));
+    const name = document.createElement("span");
+    name.className = "card-provider-name";
+    name.textContent = primary;
+    node.appendChild(name);
+    if (hasTitle) {
+      const sub = [opp.providerTitle, opp.unit].filter(Boolean).join(" · ");
+      if (sub) {
+        const subEl = document.createElement("span");
+        subEl.className = "card-provider-sub";
+        subEl.textContent = sub;
+        node.appendChild(subEl);
+      }
+    }
     return node;
   };
 
@@ -463,6 +482,8 @@
       file: row.file || undefined,
       bookingUrl: row.bookingUrl || "",
       provider: row.provider || "",
+      providerTitle: row.providerTitle || "",
+      unit: row.unit || "",
       docUrl: row.docUrl || "",
       status: normaliseStatus(row.status)
     }));
@@ -488,6 +509,8 @@
     };
     if (row.author) record.author = row.author;
     if (row.provider) record.provider = row.provider;
+    if (row.providerTitle) record.providerTitle = row.providerTitle;
+    if (row.unit) record.unit = row.unit;
     if (row.externalUrl) record.externalUrl = row.externalUrl;
     if (row.bookingUrl) record.bookingUrl = row.bookingUrl;
     record.status = normaliseStatus(row.status);
@@ -4665,7 +4688,7 @@
           // Title gets its own row, full width, free to wrap.
           card.appendChild(el("h3", "card-title", opp.title));
           if (opp.provider) {
-            card.appendChild(providerLine(opp.provider));
+            card.appendChild(providerLine(opp));
           }
           const tagList = el("div", "tag-list");
           (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
@@ -4805,7 +4828,7 @@
       // Title gets its own row, full width, free to wrap.
       card.appendChild(el("h3", "card-title", opp.title));
       if (opp.provider) {
-        card.appendChild(providerLine(opp.provider));
+        card.appendChild(providerLine(opp));
       }
       if (opp.summary) {
         card.appendChild(el("p", "card-text", opp.summary));
@@ -5391,7 +5414,7 @@
         // Title gets its own row, full width, free to wrap.
         card.appendChild(el("h3", "card-title", opp.title));
         if (opp.provider) {
-          card.appendChild(providerLine(opp.provider));
+          card.appendChild(providerLine(opp));
         }
 
         const tagList = el("div", "tag-list");
@@ -5463,7 +5486,7 @@
         const card = el("div", "opportunity-card rec-card");
         card.appendChild(el("h3", null, opp.title));
         if (opp.provider) {
-          card.appendChild(providerLine(opp.provider));
+          card.appendChild(providerLine(opp));
         }
         if (opp.summary) {
           card.appendChild(el("p", "card-text", opp.summary));
@@ -5793,10 +5816,27 @@
       modal.appendChild(el("h1", "modal-title", opp.title));
       if (opp.author) modal.appendChild(el("p", "modal-author", "By: " + opp.author));
 
+      // Provider block — who delivers this service. Titled providers show
+      // name + "title · unit"; team-delivered services (no title) show the
+      // unit only. Surfaced prominently for booking context and credibility.
+      {
+        const provHasTitle = !!opp.providerTitle;
+        const provPrimary = provHasTitle ? opp.provider : (opp.unit || opp.provider);
+        if (provPrimary) {
+          const provBlock = el("div", "modal-provider");
+          provBlock.appendChild(el("span", "modal-provider-label", "Offered by"));
+          provBlock.appendChild(el("span", "modal-provider-name", provPrimary));
+          if (provHasTitle) {
+            const provSub = [opp.providerTitle, opp.unit].filter(Boolean).join(" · ");
+            if (provSub) provBlock.appendChild(el("span", "modal-provider-sub", provSub));
+          }
+          modal.appendChild(provBlock);
+        }
+      }
+
       // Metadata bar
       const metaBar = el("div", "modal-meta-bar");
       [
-        { label: "Offered by", value: opp.provider },
         { label: "Format", value: Array.isArray(opp.format) ? opp.format.join(", ") : opp.format },
         { label: "Time", value: Array.isArray(opp.time) ? opp.time.join(", ") : opp.time },
         { label: "Stage", value: Array.isArray(opp.stage) ? opp.stage.join(", ") : opp.stage },
