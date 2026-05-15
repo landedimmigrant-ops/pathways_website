@@ -1,0 +1,10 @@
+{
+  "_comment": "Copy this file to config.local.json (gitignored) and fill in the real values. webhook_url + secret come from the Apps Script deployment; each tab csv is the Google Sheet 'Publish to web' CSV URL for that tab's gid.",
+  "webhook_url": "https://script.google.com/macros/s/REPLACE_ME/exec",
+  "secret": "REPLACE_ME",
+  "tabs": {
+    "B": { "name": "Bugs",     "csv": "https://docs.google.com/spreadsheets/d/e/REPLACE_ME/pub?gid=0&single=true&output=csv" },
+    "N": { "name": "NCV",      "csv": "https://docs.google.com/spreadsheets/d/e/REPLACE_ME/pub?gid=REPLACE_ME&single=true&output=csv" },
+    "F": { "name": "Features", "csv": "https://docs.google.com/spreadsheets/d/e/REPLACE_ME/pub?gid=REPLACE_ME&single=true&output=csv" }
+  }
+}

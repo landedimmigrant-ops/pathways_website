@@ -1,7 +1,10 @@
 .DS_Store
 **/.DS_Store
 
-# /triage command file contains the Apps Script webhook secret
+# triage skill — config holds the Apps Script webhook secret
+.claude/skills/triage/config.local.json
+
+# legacy /triage command (superseded by the triage skill)
 .claude/commands/triage.md
 
 # User-specific Claude permissions

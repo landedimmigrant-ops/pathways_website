@@ -334,3 +334,16 @@ A 2026-04 audit fixed two latent bugs in this code path before it sat any longer
 Decision deferred until we either (a) wire the GitHub Action path so coordinators don't touch Terminal, or (b) decide we don't need the safety net and remove the bake code entirely. Live mode + the approval gate is sufficient for the current beta.
 
 A separate consideration — Doc bodies have their own staging gap. A coordinator can keep editing a published Doc and every save is live within ~5 min (Google's publish cache). Mitigation if that becomes a problem: ask coordinators to *un-publish* before substantial edits, then *re-publish* when ready. Nothing to build, just a process note.
+
+### Attempt 12 — Triage moved from slash command to a skill ✅ WORKING
+
+The `/triage` slash command (Attempt 10) was a single ~120-line gitignored
+markdown file. Converted it to a proper skill at `.claude/skills/triage/`:
+
+- `SKILL.md` — loop overview + a `description` for auto-invocation (committed, no secret).
+- `reference.md` — webhook API, the 302 response quirk, status vocabulary, rollback, fallback (committed).
+- `config.local.json` — webhook URL + secret + tab CSV URLs (**gitignored**); `config.local.example.json` is the committed template.
+- `scripts/pull.py` — fetches the 3 tabs, filters to open rows, prints a severity-ordered report. Skips blank placeholder rows.
+- `scripts/writeback.py` — POSTs `ID=status[=commit]` updates, then verifies via CSV re-pull (the POST response is unreliable — see the quirk).
+
+Why: stops every triage session from re-inventing fragile `curl`/Python glue, and only a tiny config file stays out of git (vs. the whole command file before). Both scripts shell out to `curl` — this machine's Python has no working SSL CA bundle, but `curl` resolves certs fine. The old `.claude/commands/triage.md` was deleted.
