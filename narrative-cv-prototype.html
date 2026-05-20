@@ -1,0 +1,1518 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NCV Tool — Prototype (Pathways)</title>
+  <link rel="stylesheet" href="styles.css?v=131" />
+  <style>
+    /* Prototype-only overrides. Keep this block lean — anything universal
+       belongs in styles.css when we port the prototype back. */
+    .proto-banner {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #1a1a1a;
+      color: #ffe082;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .proto-banner strong { color: #ffd54f; }
+    .proto-banner a { color: #ffe082; text-decoration: underline; }
+    .proto-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 4rem;
+    }
+    .proto-shell h1.proto-title {
+      font-size: clamp(22px, 3vw, 30px);
+      margin: 0 0 4px;
+    }
+    .proto-shell .proto-subtitle {
+      color: var(--muted, #666);
+      font-size: 14px;
+      margin: 0 0 1.5rem;
+    }
+    /* The standalone tool host: mirrors the SPA's .page-narrative .container layout. */
+    #ncv-prototype-root .container { padding: 0; }
+
+    /* Phase D — Sticky left-sidebar TOC. The progress panel already sits left
+       of the content; we just need it to follow the scroll on tall stages. */
+    #ncv-prototype-root .narrative-progress-panel {
+      position: sticky;
+      top: 56px;            /* clear the PROTOTYPE banner */
+      align-self: flex-start;
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+
+    /* Phase D — Academic-impact-counts emphasis: a small inline tag */
+    .ncv-academic-impact-tag {
+      display: inline-block;
+      background: #f9ebed;
+      color: var(--burgundy, #722f37);
+      border: 1px solid #e8b4bb;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-left: 6px;
+      vertical-align: baseline;
+    }
+  </style>
+</head>
+<body>
+  <div class="proto-banner" role="status" aria-live="polite">
+    <span><strong>PROTOTYPE</strong> &middot; Narrative CV re-architecture &middot; localStorage namespace: <code>ncv-prototype-v1</code></span>
+    <span><a href="#" id="proto-reset" title="Clear prototype draft">Reset draft</a></span>
+  </div>
+
+  <div class="proto-shell">
+    <h1 class="proto-title">Narrative CV — Tool Prototype</h1>
+    <p class="proto-subtitle">Isolated from the SPA for fast iteration. Drafts saved to <code>ncv-prototype-v1</code> (separate from the live tool's storage). Final design ports back into <code>buildNarrativeModule()</code> in <code>app.js</code>.</p>
+    <div id="ncv-prototype-root"></div>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    // ── Helpers (re-implemented locally; no app.js dependency) ──────────────
+    const el = (tag, cls, text) => {
+      const node = document.createElement(tag);
+      if (cls) node.className = cls;
+      if (text != null) node.textContent = text;
+      return node;
+    };
+    const clear = (node) => { while (node.firstChild) node.removeChild(node.firstChild); };
+
+    // Section-label helper used by stage 3 + 4 to visually flag sub-areas
+    // inside a stage (mentorship sub-clusters, personal-statement parts).
+    const psLabelGlobal = (kicker, title) => {
+      const wrapEl = el("div", "narrative-legend");
+      wrapEl.style.marginTop = "1.5rem";
+      wrapEl.style.marginBottom = "0.5rem";
+      wrapEl.style.padding = "0";
+      wrapEl.style.background = "transparent";
+      wrapEl.style.border = "none";
+      const titleEl = el("h3", "narrative-legend-title", title);
+      titleEl.style.marginBottom = "2px";
+      wrapEl.appendChild(titleEl);
+      const sub = el("p", "narrative-legend-note", kicker);
+      sub.style.margin = "0";
+      wrapEl.appendChild(sub);
+      return wrapEl;
+    };
+
+    // ── Constants (verbatim from app.js's buildNarrativeModule, baseline) ──
+    const NARRATIVE_KEY = "ncv-prototype-v1";
+
+    const BEFORE_AFTER = [
+      {
+        label: "Vague Contribution",
+        before: "I published research on housing insecurity among urban youth and presented findings at several conferences. The work was well-received and contributed to the literature on poverty.",
+        after: "As lead author, I published a mixed-methods study examining housing insecurity among # urban youth in [city/region], which identified three policy-actionable barriers to stable housing. Findings were presented to [community organization]. The study has been cited in # subsequent peer-reviewed works and adopted as a teaching resource in # institutions.",
+        changed: "Specific innovation named. Field-level significance stated. Evidence quantified."
+      },
+      {
+        label: "Unclear Role",
+        before: "We developed a machine learning pipeline for early detection of structural failures in bridges.",
+        after: "I designed and led the algorithm development phase of a 6-person interdisciplinary team, specifically building the anomaly detection model that increased failure prediction accuracy by 34% over existing benchmarks.",
+        changed: "Team context preserved. Individual contribution isolated. Specific technical task named."
+      },
+      {
+        label: "Missing Outcomes",
+        before: "I published a framework for reducing energy consumption in data centres.",
+        after: "I developed an energy optimization framework subsequently adopted by Company X to redesign cooling infrastructure across 3 facilities, reducing annual energy expenditure by an estimated 18%. Hypothesised systemic impact: if adopted at sector scale, comparable savings could cut Canadian data-centre emissions by ~5%.",
+        changed: "Named adopter. Specific application context. Measurable real-world outcome — plus a hypothesised systemic impact for scale."
+      },
+      {
+        label: "Weak Evidence",
+        before: "This work was published in a high-impact journal and has been widely cited.",
+        after: "This methodology has been independently replicated by research groups in Germany, South Korea, and Brazil, and was cited in [Government Agency]’s 2023 national water safety guidelines as a recommended detection standard.",
+        changed: "Journal prestige removed. Geographic reach, independent replication, and policy uptake substituted as evidence of influence."
+      }
+    ];
+
+    // Phase C — diagnostic aligned with the new Input→Output→Outcome→Evidence→Impact flow.
+    const DIAGNOSTIC_HELPERS = {
+      activities: {
+        label: "Activities + your role are clear",
+        prompts: [
+          "Replace every ‘we’ with ‘I’ or ‘I led a team that…’",
+          "What decisions did YOU make? What methods did YOU develop?",
+          "Complete: My work was the first to _____ which enabled _____."
+        ]
+      },
+      outputs: {
+        label: "Outputs are named (deliverables, artefacts)",
+        prompts: [
+          "Which specific papers, datasets, code, partnerships, methods, or creative works came out of this?",
+          "Name them concretely — not “various outputs.”"
+        ]
+      },
+      outcomes: {
+        label: "Outcomes are concrete (who/what already changed)",
+        prompts: [
+          "Who uses this now? (researchers / clinicians / policymakers / industry / community partners)",
+          "What changed in practice, policy, or understanding — that has already happened?",
+          "If it hasn’t happened yet, leave this blank and put your hypothesis in the Impact field."
+        ]
+      },
+      evidence: {
+        label: "Evidence is provided (qualitative + quantitative)",
+        prompts: [
+          "Article-specific citation counts are acceptable; keep field-norm consistency.",
+          "[Organisation] adopted this method for…",
+          "Led to # follow-up collaborations, grants, patents, invitations.",
+          "Hyperlinks are permitted — but content must stand alone without the link."
+        ]
+      },
+      impact: {
+        label: "Potential / systemic impact is hypothesised",
+        prompts: [
+          "If this were adopted more broadly, what could shift at the scale of a field, sector, or population?",
+          "Academic impact counts fully — influencing how others think, what gets studied, how problems get framed.",
+          "It is fine to label hypothesised impact as hypothesised — reviewers expect it."
+        ]
+      }
+    };
+
+    const SELF_CHECK_ITEMS = [
+      "I used “I” rather than “we” throughout",
+      "Each contribution states a clear, specific outcome",
+      "I included at least one form of evidence per contribution",
+      "My personal statement links past work to future direction",
+      "I have noted where my draft still needs strengthening"
+    ];
+
+    const FUNDER_NOTES = {
+      tcv: "For the TCV, your personal statement should emphasize your fit for this specific opportunity — your expertise relative to the proposed project. Must be self-contained (no hyperlinks except audio/visual creations).",
+      "cv-frq": "For the CV-FRQ, your personal statement (“Parcours et compétences”) should emphasize your fit to the program’s objectives and how your work complements the team or proposal. Hyperlinks are permitted.",
+      "": "TCV: emphasizes fit for the specific opportunity; must be self-contained (no hyperlinks). CV-FRQ: emphasizes fit to the program’s objectives and how your work complements the team; hyperlinks are permitted."
+    };
+
+    // Merged TCV/FRQ guidance for the personal statement (used in Stage 4).
+    // Single paragraph — replaces the duplicate-feeling pair on prior versions.
+    const PS_FUNDER_MERGED = "Both the TCV and CV-FRQ ask the same thing of this section, in slightly different words: explain how your research identity and trajectory fit what you're applying for. The TCV is self-contained (no hyperlinks except audio/visual works); the CV-FRQ permits hyperlinks for supporting materials. Either way: write it last, after your contributions are drafted.";
+
+    // Phase E — Sample contribution bundles per discipline. Show what a full
+    // Activities → Outputs → Outcomes → Evidence → Impact bundle looks like
+    // in each broad faculty cluster, so researchers can see their own field.
+    const BUNDLE_EXAMPLES = [
+      {
+        label: "Computational neuroscience",
+        bundle: {
+          theme: "Aging-brain signal-processing methods",
+          activities: "I led the development of three signal-processing methods for measuring neural noise during auditory tasks in adults over 60. I designed the study protocols, supervised two graduate students through implementation, and ran the validation analyses across three clinical sites.",
+          outputs: "Three published methods (Nature Neuroscience 2022, eLife 2023, J. Neurosci. 2024), an open-source MATLAB toolbox, and a validated protocol document.",
+          outcomes: "The toolbox is now used in four clinical trials of hearing-loss interventions in Canada, the UK, and the US. Two of the protocols have been adopted as standard intake measurements at the Concordia/McGill Aging Brain consortium.",
+          evidence: "Cited in 47 studies across clinical neuroscience, audiology, and rehabilitation engineering. The MATLAB toolbox has been downloaded 1,200+ times and forked 18 times on GitHub.",
+          impact: "Hypothesised systemic impact: if the methods scale to population-level screening (work in progress with the Public Health Agency of Canada), early identification of at-risk adults could shift hearing-loss interventions upstream by 5–10 years — a meaningful change to the dementia-risk trajectory."
+        }
+      },
+      {
+        label: "Community-based health",
+        bundle: {
+          theme: "Co-designed food security protocol with urban Indigenous communities",
+          activities: "I co-designed a longitudinal food security protocol with three urban Indigenous organizations in Montréal, working under their data sovereignty (OCAP) frameworks. I led the methodology development and analysis training; community partners led recruitment, instrument adaptation, and interpretation.",
+          outputs: "A bilingual community-validated survey instrument, a 3-year longitudinal dataset (community-owned), three community-authored reports, and one co-authored peer-reviewed paper.",
+          outcomes: "The protocol was subsequently adopted by the City of Montréal's housing strategy in 2024. Two of the three partner organizations now run their own annual cycles using the instrument, independent of the academic team.",
+          evidence: "Cited in the 2024 City of Montréal Urban Indigenous Housing Strategy. Featured in CBC and La Presse. Two follow-on partnership grants (SSHRC, CIHR) totaling $1.2M built directly on this protocol.",
+          impact: "Hypothesised systemic impact: if expanded to four additional Canadian cities (current SSHRC partnership in progress), the protocol could become a national reference for community-owned urban Indigenous health data — a structural shift in how municipal-level Indigenous research is conducted."
+        }
+      },
+      {
+        label: "Engineering",
+        bundle: {
+          theme: "ML pipeline for early detection of bridge failure",
+          activities: "I designed and led the algorithm development phase of a six-person interdisciplinary team building an anomaly-detection model for aging bridge infrastructure. I specifically built the model architecture and supervised the calibration phase against historical inspection data.",
+          outputs: "Patent-pending pipeline (filed 2023), open-source reference implementation, a peer-reviewed paper in J. Bridge Eng., and a deployment toolkit.",
+          outcomes: "The pipeline is in pilot deployment with two provincial transportation ministries (Québec MTQ and Ontario MTO). One pilot has caught two early-stage degradation signatures that traditional inspection missed.",
+          evidence: "34% accuracy improvement over the existing inspection benchmark. Endorsed by the Canadian Society for Civil Engineering bridge inspection committee. Two MTO inspectors trained on the toolkit.",
+          impact: "Hypothesised systemic impact: if adopted at the federal scale through a Transport Canada partnership currently in negotiation, the approach could shift Canadian bridge inspection from a periodic to a continuous-monitoring model — reducing both inspection costs and catastrophic-failure risk for an aging national inventory."
+        }
+      },
+      {
+        label: "Sociology",
+        bundle: {
+          theme: "Immigrant earnings trajectories (longitudinal)",
+          activities: "I designed and led a 15-year longitudinal analysis of immigrant earnings using the linked T1 Family File and IMDB datasets at Statistics Canada. I personally conducted the cohort modelling and led drafting of the methods, while two postdoctoral fellows ran sensitivity analyses.",
+          outputs: "Three peer-reviewed papers (Journal of Labour Economics, Canadian Public Policy), two Statistics Canada Analytical Studies reports, and a public-facing data dashboard.",
+          outcomes: "The findings were cited in three Statistics Canada reports between 2022 and 2024 and informed the 2024 Express Entry policy update by IRCC, which adjusted points allocations for Canadian work experience.",
+          evidence: "Direct citations in two IRCC briefing documents (obtained via ATIP). Coverage in The Globe and Mail and Policy Options. Replication of the methodology by research groups at the OECD and the University of Pennsylvania.",
+          impact: "Hypothesised systemic impact: if the framework is taken up across G7 immigration-research programs (project currently in development with the OECD), it could enable cross-country comparison of immigrant economic integration — currently a major gap in evidence for setting durable, equity-aware immigration policy."
+        }
+      },
+      {
+        label: "Creative practice / Humanities",
+        bundle: {
+          theme: "Archival film practice and diasporic memory",
+          activities: "I researched, directed, and edited a short film and a companion methodology guide on the use of personal archival footage to recover diasporic histories absent from national collections. I worked with three community archives in Toronto, Colombo, and London to identify and digitise the source material.",
+          outputs: "One 22-minute short film, one methodology guide (peer-reviewed and published by an academic press), and a digitised archive of 240 hours of source footage donated back to the partner archives.",
+          outcomes: "The film has screened at 14 international festivals (including Hot Docs, IDFA, and Sheffield) and is part of the curriculum at three film schools in Canada and the UK. The methodology guide has been adopted by two community-archives consortia for training.",
+          evidence: "Festival juried selection in 14 venues. Reviewed in Sight & Sound and POV Magazine. The methodology guide has been downloaded 3,400+ times and cited in nine peer-reviewed humanities papers.",
+          impact: "Hypothesised systemic impact: if the methodology is taken up more broadly through partnerships with the National Film Board and community archives in three additional cities (under development), it could shift how diasporic histories are produced and preserved — moving them from invisible to citationally accessible across academic and public film cultures."
+        }
+      }
+    ];
+
+    // Discipline-specific Personal Statement examples — show range.
+    // Each example uses the new two-question scaffold so researchers see how
+    // to fill it out across faculty types.
+    const PS_EXAMPLES = [
+      {
+        label: "Computational neuroscience",
+        text: "I am a computational neuroscientist at [University]. My research is in sensory processing in the aging brain.\n\nWhy this area matters: Hearing loss affects 1 in 5 adults over 60 and predicts cognitive decline, yet its neural basis is poorly understood.\n\nWhy my particular research matters in that context: I have developed three validated methods for measuring signal degradation that are now used in clinical trials at four institutions.\n\nLooking ahead, I am working toward a unified framework that connects cellular-level findings to population-scale hearing-loss interventions."
+      },
+      {
+        label: "Community-based health",
+        text: "I am a community-based researcher at [University]. My research is in housing and health among urban Indigenous communities.\n\nWhy this area matters: Stable housing is a structural determinant of health, and Indigenous-led research is critical to addressing health inequities in Canadian cities.\n\nWhy my particular research matters in that context: I co-designed a food security protocol with three urban Indigenous organizations in Montréal that was subsequently adopted by the City’s housing strategy.\n\nLooking ahead, I am working toward expanding the protocol to four additional cities through a SSHRC partnership grant."
+      },
+      {
+        label: "Engineering",
+        text: "I am a structural engineer at [University]. My research is in early detection of failure in aging infrastructure.\n\nWhy this area matters: Canada’s bridge inventory is aging beyond design life, and traditional inspection methods miss subtle degradation that precedes catastrophic failure.\n\nWhy my particular research matters in that context: I designed a machine learning pipeline that increased failure prediction accuracy by 34% over existing benchmarks, now in pilot deployment with two provincial transportation ministries.\n\nLooking ahead, I am working toward national adoption through a partnership with Transport Canada and the Canadian Council of Engineers."
+      },
+      {
+        label: "Sociology",
+        text: "I am a sociologist at [University]. My research is in labour markets and migration.\n\nWhy this area matters: Migration shapes labour-market outcomes for over eight million Canadians, yet most policy is built on dated assumptions about how immigrant earnings evolve over time.\n\nWhy my particular research matters in that context: My longitudinal analysis of immigrant earnings trajectories has been cited in three Statistics Canada reports and informed the 2024 Express Entry policy update.\n\nLooking ahead, I am building toward a comparative project across G7 countries."
+      },
+      {
+        label: "Creative practice / Humanities",
+        text: "I am a filmmaker and researcher at [University]. My research is in archival film practice and diasporic memory.\n\nWhy this area matters: Diasporic histories are routinely missing from national archives, and creative practice offers a method to recover them that traditional documentary forms cannot.\n\nWhy my particular research matters in that context: My short film [Title] has screened at 14 international festivals and is part of the curriculum at three film schools in Canada and the UK.\n\nLooking ahead, I am building toward a feature-length work and a methodology guide for community-archival collaboration."
+      }
+    ];
+
+    // ── State ───────────────────────────────────────────────────────────────
+    // Phase A — Personal Statement reframe — ps shape:
+    //   role, institution, field, whyArea, whyMine, prospective
+    // Phase B — Mentorship clustering — new fields:
+    //   mentorCounts: 5-year mentee totals (PhD / Masters / Undergrad / Postdoc)
+    //   mentorship[i] = { groupName, philosophy, environment, edi, awards }
+    const defaultState = () => ({
+      funder: "",
+      stageIndex: 0,
+      round2Active: false,
+      contributions: [],
+      mentorCounts: { phd: "", masters: "", undergrad: "", postdoc: "" },
+      mentorship: [],
+      ps: { role: "", institution: "", field: "", whyArea: "", whyMine: "", prospective: "" },
+      selfCheck: {},
+      downloaded: false
+    });
+
+    let ns = defaultState();
+    try {
+      const raw = localStorage.getItem(NARRATIVE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        if (saved && typeof saved === "object") {
+          ns = Object.assign(defaultState(), saved);
+        }
+      }
+    } catch (_) {}
+
+    const saveNarrative = () => {
+      try { localStorage.setItem(NARRATIVE_KEY, JSON.stringify(ns)); } catch (_) {}
+    };
+
+    // ── Build the tool shell (mirrors buildNarrativeModule in app.js) ───────
+    const root = document.getElementById("ncv-prototype-root");
+
+    const section = el("section", "page page-narrative is-active");
+    section.dataset.page = "tools-narrative";
+
+    const container = el("div", "container");
+    const shell = el("div", "narrative-module-shell");
+
+    // ── Progress panel ──────────────────────────────────────────────────────
+    const progressPanel = el("aside", "narrative-progress-panel");
+    progressPanel.appendChild(el("h2", null, "Build Your Narrative CV"));
+
+    const STAGE_LABELS = [
+      "Orientation",
+      "Contributions",
+      "Supervisory & Mentorship",
+      "Personal Statement",
+      "Review & Download"
+    ];
+
+    const stageList = el("ul", "narrative-stage-list");
+    const stageItems = STAGE_LABELS.map((label, i) => {
+      const li = el("li", "narrative-stage-item", "");
+      const dot = el("span", "narrative-stage-dot");
+      const labelEl = el("span", null, `${i + 1}. ${label}`);
+      li.appendChild(dot);
+      li.appendChild(labelEl);
+      li.addEventListener("click", () => { ns.stageIndex = i; renderStage(); });
+      stageList.appendChild(li);
+      return li;
+    });
+    progressPanel.appendChild(stageList);
+
+    const draftBtn = el("button", "narrative-draft-btn", "View my draft so far");
+    draftBtn.type = "button";
+    progressPanel.appendChild(draftBtn);
+    shell.appendChild(progressPanel);
+
+    // Main content area
+    const contentArea = el("div", "narrative-stage-content");
+    shell.appendChild(contentArea);
+
+    // Session banner
+    const sessionBanner = el("div", "narrative-session-banner", "💾 Your draft is saved in this browser. Download before closing.");
+    container.appendChild(sessionBanner);
+    container.appendChild(shell);
+    section.appendChild(container);
+
+    // Slide-out draft drawer
+    const drawer = el("div", "narrative-draft-drawer");
+    const drawerClose = el("button", "narrative-draft-drawer-close", "×");
+    drawerClose.setAttribute("aria-label", "Close draft panel");
+    drawerClose.addEventListener("click", () => drawer.classList.remove("is-open"));
+    drawer.appendChild(drawerClose);
+    drawer.appendChild(el("h3", null, "Your draft so far"));
+    const drawerContent = el("div", "narrative-draft-content");
+    drawer.appendChild(drawerContent);
+    section.appendChild(drawer);
+
+    draftBtn.addEventListener("click", () => {
+      refreshDrawer();
+      drawer.classList.add("is-open");
+    });
+
+    const refreshDrawer = () => {
+      clear(drawerContent);
+      const addSection = (heading, text) => {
+        drawerContent.appendChild(el("h4", "narrative-drawer-heading", heading));
+        drawerContent.appendChild(el("p", "narrative-drawer-text", text || "—"));
+      };
+
+      if (ns.contributions.length) {
+        drawerContent.appendChild(el("h4", "narrative-drawer-heading", "Most Significant Contributions"));
+        ns.contributions.forEach((c, i) => {
+          drawerContent.appendChild(el("p", "narrative-drawer-subheading", `Bundle ${i + 1}${c.theme ? `: ${c.theme}` : ""}`));
+          const summary = c.activities || c.outputs || c.outcomes;
+          if (summary) drawerContent.appendChild(el("p", "narrative-drawer-text", summary));
+        });
+      }
+      const mc = ns.mentorCounts || {};
+      const anyMcCount = ["phd", "masters", "undergrad", "postdoc"].some((k) => mc[k] && String(mc[k]).trim() !== "");
+      if (anyMcCount || ns.mentorship.length) {
+        drawerContent.appendChild(el("h4", "narrative-drawer-heading", "Supervisory & Mentorship"));
+      }
+      if (anyMcCount) {
+        const summary = [
+          mc.phd && `${mc.phd} PhD`,
+          mc.masters && `${mc.masters} Masters`,
+          mc.undergrad && `${mc.undergrad} undergrad / capstone`,
+          mc.postdoc && `${mc.postdoc} postdoc`
+        ].filter(Boolean).join(" · ");
+        drawerContent.appendChild(el("p", "narrative-drawer-text", `Totals (5 yr): ${summary}`));
+      }
+      if (ns.mentorship.length) {
+        ns.mentorship.forEach((m, i) => {
+          drawerContent.appendChild(el("p", "narrative-drawer-subheading", `Group ${i + 1}${m.groupName ? `: ${m.groupName}` : ""}`));
+          const subSummary = [m.philosophy, m.environment, m.edi, m.awards].filter(Boolean)[0];
+          if (subSummary) drawerContent.appendChild(el("p", "narrative-drawer-text", subSummary));
+        });
+      }
+      // Build the draft drawer's Personal Statement preview using the new Phase A shape
+      const p = ns.ps;
+      const psParts = [];
+      if (p.role || p.institution || p.field) {
+        psParts.push(`I am a ${p.role || "[role]"} at ${p.institution || "[institution]"}. My research is in ${p.field || "[area]"}.`);
+      }
+      if (p.whyArea) psParts.push(p.whyArea.trim());
+      if (p.whyMine) psParts.push(p.whyMine.trim());
+      if (p.prospective) psParts.push(`Looking ahead, I am working toward ${p.prospective.trim()}.`);
+      addSection("Personal Statement", psParts.length ? psParts.join("\n\n") : null);
+    };
+
+    // ── Progress panel update ───────────────────────────────────────────────
+    const updateProgress = () => {
+      stageItems.forEach((li, i) => {
+        li.classList.toggle("is-active", i === ns.stageIndex);
+        const done = (i === 0 && ns.funder !== "")
+          || (i === 1 && ns.contributions.length > 0)
+          || (i === 2 && ns.mentorship.length > 0)
+          || (i === 3 && (ns.ps.role || ns.ps.field || ns.ps.whyArea || ns.ps.whyMine))
+          || (i === 4 && ns.downloaded);
+        li.classList.toggle("is-done", done && i !== ns.stageIndex);
+      });
+    };
+
+    // ── Nav button helper ───────────────────────────────────────────────────
+    const makeNav = (showBack, nextLabel, onNext) => {
+      const nav = el("div", "narrative-nav");
+      if (showBack) {
+        const back = el("button", "btn", "← Back");
+        back.type = "button";
+        back.addEventListener("click", () => { ns.stageIndex = Math.max(0, ns.stageIndex - 1); renderStage(); });
+        nav.appendChild(back);
+      } else {
+        nav.appendChild(el("span"));
+      }
+      const next = el("button", "btn btn-primary", nextLabel);
+      next.type = "button";
+      next.addEventListener("click", onNext);
+      nav.appendChild(next);
+      return nav;
+    };
+
+    // ── Stage 1 — Orientation ───────────────────────────────────────────────
+    const renderStage1 = () => {
+      const wrap = el("div", "");
+      const hdr = el("div", "narrative-stage-header");
+      hdr.appendChild(el("h2", null, "1. Orientation: What You’re Building"));
+      wrap.appendChild(hdr);
+
+      const intro = el("div", "narrative-intro-text");
+      [
+        "A Narrative CV tells the story of your research — not just what you published, but what changed because of your work, and what you made possible for others.",
+        "This module walks you through the three sections of the Tri-agency CV (TCV) one at a time. You will write an imperfect first draft, then strengthen it. By the end, you will have a working outline you can take into a consultation or continue refining on your own.",
+        "There is no right order. Most researchers find it easier to start with their contributions, then mentorship, then write the personal statement last — when the story is clearer."
+      ].forEach((text) => intro.appendChild(el("p", "card-text", text)));
+      wrap.appendChild(intro);
+
+      // Phase E — distinguish NCV impact from project-level impact.
+      // Holly + Marjan flagged the two-types-of-impact confusion site-wide.
+      const scopeCallout = el("div", "narrative-funder-note");
+      scopeCallout.appendChild(el("strong", null, "This tool is about your impact as a researcher. "));
+      scopeCallout.appendChild(document.createTextNode("It is different from project-level impact planning (what one specific project will change, who it will reach, what it will produce). The Plan Your Impact tool — Step 1 — covers project-level impact. This Narrative CV tool — Step 2 — covers how you describe your record of impact across your whole research trajectory."));
+      wrap.appendChild(scopeCallout);
+
+      // Phase E — early-career callout. The notes flagged early-stage
+      // researchers asking "how do I know my impact if I've just started?"
+      const earlyCareer = el("details", "narrative-tip");
+      earlyCareer.appendChild(el("summary", null, "Early in your career? — what do you have to say?"));
+      const ecBody = el("p", "narrative-tip-body");
+      ecBody.textContent = "Reviewers evaluate contributions relative to career stage. You are not expected to have the same scope as a senior colleague. Describe what you have done, the contribution you are building toward, the methods or questions you are pursuing, and the conversations your work is already entering. A small set of well-described contributions, with your role made explicit, beats a long list every time — at every career stage.";
+      earlyCareer.appendChild(ecBody);
+      wrap.appendChild(earlyCareer);
+
+      // Funder toggle
+      wrap.appendChild(el("p", "narrative-toggle-label", "Which funder are you writing for?"));
+      const funderToggle = el("div", "narrative-funder-toggle");
+      const funderNote = el("p", "narrative-funder-note");
+      funderNote.textContent = ns.funder !== "" ? FUNDER_NOTES[ns.funder] : "";
+      if (!ns.funder) funderNote.classList.add("is-hidden");
+
+      [{ val: "tcv", label: "TCV" }, { val: "cv-frq", label: "CV-FRQ" }, { val: "", label: "Not sure yet" }].forEach(({ val, label }) => {
+        const btn = el("button", "narrative-toggle-btn", label);
+        btn.type = "button";
+        if (ns.funder === val) btn.classList.add("is-active");
+        btn.addEventListener("click", () => {
+          ns.funder = val;
+          saveNarrative();
+          funderToggle.querySelectorAll(".narrative-toggle-btn").forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+          funderNote.textContent = FUNDER_NOTES[val] || FUNDER_NOTES[""];
+          funderNote.classList.remove("is-hidden");
+        });
+        funderToggle.appendChild(btn);
+      });
+      wrap.appendChild(funderToggle);
+      wrap.appendChild(funderNote);
+
+      // Legend
+      const legend = el("div", "narrative-legend");
+      legend.appendChild(el("h3", "narrative-legend-title", "What you’ll build, and how long each section takes"));
+      const legendList = el("ul", "narrative-legend-list");
+      [
+        { name: "Contributions", time: "~30–45 min", desc: "Up to 10 bundles of your most significant work, in two rounds" },
+        { name: "Supervisory & Mentorship", time: "~10–20 min", desc: "Training, supervision, and inclusive practices" },
+        { name: "Personal Statement", time: "~15–30 min", desc: "Easier to write once your contributions are drafted" },
+        { name: "Review & Download", time: "~5–10 min", desc: "Self-check, then export your draft" }
+      ].forEach(({ name, time, desc }) => {
+        const li = el("li", "narrative-legend-item");
+        li.appendChild(el("span", "narrative-legend-name", name));
+        li.appendChild(el("span", "narrative-legend-time", time));
+        li.appendChild(el("span", "narrative-legend-desc", desc));
+        legendList.appendChild(li);
+      });
+      legend.appendChild(legendList);
+      legend.appendChild(el("p", "narrative-legend-note", "A first draft usually takes a couple of focused sessions. Your work saves automatically in this browser — start anywhere, come back anytime."));
+      wrap.appendChild(legend);
+
+      // Phase D — Common concerns moved up to the orientation stage. The
+      // notes asked us to address anxieties BEFORE researchers engage the
+      // tool, not buried inside it.
+      wrap.appendChild(psLabelGlobal(
+        "These come up in almost every workshop. You are not alone in thinking any of them — read before you start.",
+        "Common concerns about the Narrative CV"
+      ));
+      const concerns = [
+        {
+          concern: "I don’t have enough impact yet — this format will make that obvious.",
+          reality: "Reviewers evaluate contributions relative to career stage. Early-career researchers are not expected to have the same scope as senior colleagues. Describe what you have done and what you are building toward."
+        },
+        {
+          concern: "My research is fundamental — I can’t point to real-world impact.",
+          reality: "Fundamental research has impact on knowledge, methods, fields, and the people you trained. Academic impact — influencing how others think, what gets studied, how problems get framed — counts fully as societal impact."
+        },
+        {
+          concern: "My best contributions were collaborative — I can’t claim them individually.",
+          reality: "You can and should describe collaborative work. The task is to clarify your specific role within it — what decisions you made, what you developed, what you were responsible for — while acknowledging the team context."
+        },
+        {
+          concern: "Describing my own work this way feels like self-promotion.",
+          reality: "You are not inventing impact — you are making visible what already happened. Reviewers cannot fund what they cannot see. Describing your work clearly is a professional responsibility, not a personality trait."
+        }
+      ];
+      const concernsWrap = el("div");
+      concernsWrap.style.marginBottom = "1.5rem";
+      concerns.forEach(({ concern, reality }) => {
+        const block = el("details", "narrative-tip");
+        const sum = el("summary");
+        sum.appendChild(document.createTextNode(concern));
+        block.appendChild(sum);
+        const body = el("p", "narrative-tip-body");
+        body.appendChild(document.createTextNode(reality));
+        block.appendChild(body);
+        concernsWrap.appendChild(block);
+      });
+      wrap.appendChild(concernsWrap);
+
+      wrap.appendChild(makeNav(false, "Start with my contributions →", () => {
+        ns.stageIndex = 1;
+        ns.round2Active = false;
+        renderStage();
+      }));
+      return wrap;
+    };
+
+    // ── Stage 2 — Most Significant Contributions (Phase C — re-architected) ─
+    // Per-contribution shape (new):
+    //   theme       — the cluster banner: what this MSC bundle is about
+    //   activities  — what you did (with your role made explicit, "I" not "we")
+    //   outputs     — concrete deliverables produced
+    //   outcomes    — concrete who/what already changed
+    //   evidence    — citations, uptake, replication, awards
+    //   impact      — hypothesised systemic / longer-term effect
+    //   diagnostic  — { activities, outputs, outcomes, evidence, impact } per round 2
+    const migrateLegacyContribItem = (c) => {
+      // Earlier prototype state used { what, role, who, evidence }. Fold what+role
+      // into activities, who → outcomes so saved drafts aren't lost on schema bump.
+      if (c.what && !c.activities) {
+        c.activities = c.role ? `${c.what.trim()}\n\nMy role: ${c.role.trim()}` : c.what;
+        delete c.what;
+        delete c.role;
+      }
+      if (c.who && !c.outcomes) {
+        c.outcomes = c.who;
+        delete c.who;
+      }
+      return c;
+    };
+
+    const renderStage2 = () => {
+      const wrap = el("div", "");
+      const hdr = el("div", "narrative-stage-header");
+      hdr.appendChild(el("h2", null, "2. Most Significant Contributions"));
+      wrap.appendChild(hdr);
+
+      if (!ns.round2Active) {
+        // Round 1
+        wrap.appendChild(el("div", "narrative-round-badge", "Round 1: Draft Your Contribution Bundles"));
+
+        [
+          "Which research contributions give the most complete picture of your work, as it relates to this opportunity?",
+          "Aim for 3 to 5 thematic bundles — group connected outputs around a single contribution to a theme or impact. The cap is 10, but almost nobody should fill all 10."
+        ].forEach((t) => wrap.appendChild(el("p", "card-text", t)));
+
+        // Help with the new flow up front
+        const flowCallout = el("div", "narrative-funder-note");
+        flowCallout.appendChild(el("strong", null, "The shape of each contribution: "));
+        flowCallout.appendChild(document.createTextNode("Activities → Outputs → Outcomes → Evidence → Impact. Outcomes are what already changed (concrete). Impact is what could change (systemic, sometimes hypothesised) — keep them separate."));
+        wrap.appendChild(flowCallout);
+
+        // Phase D — academic-impact-counts emphasis. Eli + Holly both flagged
+        // this. Visually prominent so researchers in fundamental fields don't
+        // skip the Impact field thinking it doesn't apply.
+        const acadImpact = el("p", "card-text");
+        acadImpact.appendChild(document.createTextNode("Academic impact counts fully here"));
+        acadImpact.appendChild((() => { const t = el("span", "ncv-academic-impact-tag", "fully societal"); return t; })());
+        acadImpact.appendChild(document.createTextNode(" — influencing how others think, what gets studied, how problems get framed. Don’t skip the Impact field if your work is fundamental."));
+        wrap.appendChild(acadImpact);
+
+        // Phase E — sample contribution bundles per discipline.
+        // Researchers asked to see what a full bundle looks like in their field.
+        const sampleWrap = el("details", "narrative-tip");
+        sampleWrap.appendChild(el("summary", null, "See sample contribution bundles across disciplines →"));
+
+        const sampleTabBar = el("div", "explore-tabs narrative-ex-tabs");
+        const sampleContents = [];
+        BUNDLE_EXAMPLES.forEach((ex, i) => {
+          const tab = el("button", "explore-tab", ex.label);
+          tab.type = "button";
+          if (i === 0) tab.classList.add("is-active");
+          sampleTabBar.appendChild(tab);
+
+          const tabContent = el("div", "explore-tab-content");
+          if (i === 0) tabContent.classList.add("is-active");
+          const b = ex.bundle;
+          const renderField = (label, value) => {
+            const para = el("p", "narrative-tip-body");
+            para.style.marginBottom = "8px";
+            const strong = el("strong", null, label + ": ");
+            para.appendChild(strong);
+            para.appendChild(document.createTextNode(value));
+            return para;
+          };
+          tabContent.appendChild((() => {
+            const themeLine = el("p", "narrative-tip-body");
+            themeLine.style.marginBottom = "10px";
+            themeLine.style.fontWeight = "700";
+            themeLine.textContent = b.theme;
+            return themeLine;
+          })());
+          tabContent.appendChild(renderField("Activities", b.activities));
+          tabContent.appendChild(renderField("Outputs", b.outputs));
+          tabContent.appendChild(renderField("Outcomes", b.outcomes));
+          tabContent.appendChild(renderField("Evidence", b.evidence));
+          tabContent.appendChild(renderField("Impact", b.impact));
+          sampleContents.push(tabContent);
+        });
+
+        const sampleTabs = Array.from(sampleTabBar.querySelectorAll(".explore-tab"));
+        sampleTabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            sampleTabs.forEach((t, j) => {
+              t.classList.toggle("is-active", t === tab);
+              sampleContents[j].classList.toggle("is-active", t === tab);
+            });
+          });
+        });
+
+        const sampleInner = el("div", "narrative-examples-wrap");
+        sampleInner.appendChild(sampleTabBar);
+        sampleContents.forEach((c) => sampleInner.appendChild(c));
+        sampleWrap.appendChild(sampleInner);
+        wrap.appendChild(sampleWrap);
+
+        const CONTRIB_FIELDS = [
+          { key: "activities", label: "Activities — what you did (and your specific role)", placeholder: "Describe the work in 2–3 sentences. Use ‘I’, not ‘we’. Name your specific role inside any team work — e.g. ‘I designed the study and led the analysis phase of a six-person team.’" },
+          { key: "outputs", label: "Outputs — concrete deliverables", placeholder: "Papers, datasets, code, partnerships, methods, creative works, training programs… name them specifically." },
+          { key: "outcomes", label: "Outcomes — who/what already changed", placeholder: "Who has used this? What concrete change happened in practice, policy, or understanding? If nothing concrete yet, leave blank and use the Impact field below." },
+          { key: "evidence", label: "Evidence — citations, uptake, recognition", placeholder: "Article-specific citation counts (with field-norm consistency), policy uptake, replication, awards, partnerships, media coverage. Hyperlinks permitted, but content should stand alone without the link." },
+          { key: "impact", label: "Impact — potential or systemic effect", placeholder: "Hypothesised longer-term effect at the scale of a field, sector, or population. Academic impact counts fully (changing how others think, what gets studied, how problems get framed). Label hypothesised impact as hypothesised — that’s expected." }
+        ];
+
+        const cardsContainer = el("div", "contribution-cards-container");
+
+        const addContributionCard = (idx) => {
+          const c = migrateLegacyContribItem(ns.contributions[idx]);
+          const card = el("div", "contribution-card");
+
+          // Header: bundle name (theme) + remove
+          const header = el("div", "contribution-card-header");
+          const nameWrap = el("span");
+          nameWrap.appendChild(document.createTextNode(`Bundle ${idx + 1}: `));
+          const themeInput = el("input", "ps-input ps-input--wide");
+          themeInput.placeholder = "name this bundle (e.g. Climate adaptation research)";
+          themeInput.setAttribute("aria-label", `Contribution bundle ${idx + 1} theme`);
+          themeInput.value = c.theme || "";
+          themeInput.style.background = "#fff";
+          themeInput.addEventListener("input", (e) => { c.theme = e.target.value; saveNarrative(); });
+          nameWrap.appendChild(themeInput);
+          header.appendChild(nameWrap);
+
+          const removeBtn = el("button", "btn-icon", "×");
+          removeBtn.type = "button";
+          removeBtn.setAttribute("aria-label", `Remove bundle ${idx + 1}`);
+          removeBtn.addEventListener("click", () => {
+            ns.contributions.splice(idx, 1);
+            saveNarrative();
+            refreshCardsContainer();
+          });
+          header.appendChild(removeBtn);
+          card.appendChild(header);
+
+          CONTRIB_FIELDS.forEach(({ key, label, placeholder }) => {
+            const field = el("div", "contribution-field");
+            const taId = `contrib-${idx}-${key}`;
+            const lbl = el("label", null, label);
+            lbl.setAttribute("for", taId);
+            field.appendChild(lbl);
+            const ta = el("textarea", null);
+            ta.id = taId;
+            ta.className = "contribution-textarea";
+            ta.placeholder = placeholder;
+            ta.value = c[key] || "";
+            ta.rows = 3;
+            ta.addEventListener("input", (e) => { c[key] = e.target.value; saveNarrative(); });
+            field.appendChild(ta);
+            card.appendChild(field);
+          });
+          return card;
+        };
+
+        const refreshCardsContainer = () => {
+          clear(cardsContainer);
+          ns.contributions.forEach((_, i) => cardsContainer.appendChild(addContributionCard(i)));
+          const n = ns.contributions.length;
+          countEl.textContent = `${n} bundle${n === 1 ? "" : "s"} added · aim for 3–5`;
+        };
+
+        wrap.appendChild(cardsContainer);
+
+        const countEl = el("p", "contribution-count", `${ns.contributions.length} bundles added · aim for 3–5`);
+        wrap.appendChild(countEl);
+
+        refreshCardsContainer();
+
+        const addBtn = el("button", "add-contribution-btn", "+ Add a bundle");
+        addBtn.type = "button";
+        addBtn.addEventListener("click", () => {
+          if (ns.contributions.length >= 10) return;
+          ns.contributions.push({ theme: "", activities: "", outputs: "", outcomes: "", evidence: "", impact: "" });
+          saveNarrative();
+          refreshCardsContainer();
+        });
+        wrap.appendChild(addBtn);
+
+        const tipDetails = el("details", "narrative-tip");
+        tipDetails.appendChild(el("summary", null, "What kinds of outputs count?"));
+        tipDetails.appendChild(el("p", "narrative-tip-body", "Think beyond publications: datasets, software, policy briefs, partnerships, community collaborations, creative works, training you delivered, methods you developed, grants you led that enabled others’ research, media or public engagement. The right question is: what gives the most complete picture of your research and its effects?"));
+        wrap.appendChild(tipDetails);
+
+        wrap.appendChild(makeNav(true, "Strengthen my bundles →", () => {
+          ns.round2Active = true;
+          saveNarrative();
+          renderStage();
+        }));
+      } else {
+        // Round 2
+        wrap.appendChild(el("div", "narrative-round-badge is-round2", "Round 2: Strengthen Your Contributions"));
+
+        const exTabBar = el("div", "explore-tabs narrative-ex-tabs");
+        const exContents = [];
+        BEFORE_AFTER.forEach((ex, i) => {
+          const tab = el("button", "explore-tab", ex.label);
+          tab.type = "button";
+          if (i === 0) tab.classList.add("is-active");
+          exTabBar.appendChild(tab);
+
+          const tabContent = el("div", "explore-tab-content");
+          if (i === 0) tabContent.classList.add("is-active");
+          const grid = el("div", "before-after-grid");
+          const beforeCol = el("div", "before-after-col");
+          beforeCol.appendChild(el("div", "before-after-label", "Before"));
+          beforeCol.appendChild(el("p", "before-after-text", ex.before));
+          const afterCol = el("div", "before-after-col is-after");
+          afterCol.appendChild(el("div", "before-after-label", "After"));
+          afterCol.appendChild(el("p", "before-after-text", ex.after));
+          grid.appendChild(beforeCol);
+          grid.appendChild(afterCol);
+          tabContent.appendChild(grid);
+          tabContent.appendChild(el("p", "before-after-changed", `What changed: ${ex.changed}`));
+          exContents.push(tabContent);
+        });
+
+        const exTabs = Array.from(exTabBar.querySelectorAll(".explore-tab"));
+        exTabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            exTabs.forEach((t, j) => {
+              t.classList.toggle("is-active", t === tab);
+              exContents[j].classList.toggle("is-active", t === tab);
+            });
+          });
+        });
+
+        const exWrap = el("div", "narrative-examples-wrap");
+        exWrap.appendChild(exTabBar);
+        exContents.forEach((c) => exWrap.appendChild(c));
+        wrap.appendChild(exWrap);
+
+        if (ns.contributions.length === 0) {
+          wrap.appendChild(el("p", "empty-state", "No bundles added yet. Go back to Round 1 to add some."));
+        } else {
+          // Tiny legend so the ✓/✗/? meaning is unambiguous (Phase C clarification)
+          const diagLegend = el("p", "narrative-tip-body");
+          diagLegend.style.fontSize = "13px";
+          diagLegend.style.marginBottom = "10px";
+          diagLegend.innerHTML = "For each bundle, mark each row: <strong>✓</strong> looks strong · <strong>✗</strong> needs work (reveals prompts) · <strong>?</strong> unsure. Use the <em>Edit this bundle</em> section to revise inline.";
+          wrap.appendChild(diagLegend);
+
+          ns.contributions.forEach((c, idx) => {
+            const card = el("div", "contribution-card");
+            const summary = c.theme || c.activities || "(empty)";
+            card.appendChild(el("div", "contribution-card-header", `Bundle ${idx + 1}: ${summary.length > 70 ? summary.substring(0, 70) + "…" : summary}`));
+
+            const diag = el("div", "diagnostic-panel");
+            Object.entries(DIAGNOSTIC_HELPERS).forEach(([dKey, dInfo]) => {
+              const status = c.diagnostic && c.diagnostic[dKey] ? c.diagnostic[dKey] : "?";
+
+              const row = el("div", "diagnostic-row");
+              row.appendChild(el("span", "diagnostic-label", dInfo.label));
+
+              const toggleGroup = el("div", "diagnostic-toggle");
+              [{ val: "check", symbol: "✓" }, { val: "cross", symbol: "✗" }, { val: "?", symbol: "?" }].forEach(({ val, symbol }) => {
+                const btn = el("button", null, symbol);
+                btn.type = "button";
+                btn.title = val === "check" ? "Looks strong" : val === "cross" ? "Needs work — show prompts" : "Unsure";
+                if (status === val) btn.className = `is-active-${val === "check" ? "check" : val === "cross" ? "cross" : "q"}`;
+                btn.addEventListener("click", () => {
+                  if (!c.diagnostic) c.diagnostic = {};
+                  c.diagnostic[dKey] = val;
+                  saveNarrative();
+                  const helperEl = row.parentElement.querySelector(`.diagnostic-helper[data-key="${dKey}"]`);
+                  if (helperEl) helperEl.classList.toggle("is-hidden", val !== "cross");
+                  toggleGroup.querySelectorAll("button").forEach((b) => b.className = "");
+                  btn.className = `is-active-${val === "check" ? "check" : val === "cross" ? "cross" : "q"}`;
+                });
+                toggleGroup.appendChild(btn);
+              });
+              row.appendChild(toggleGroup);
+              diag.appendChild(row);
+
+              const helper = el("div", "diagnostic-helper");
+              helper.dataset.key = dKey;
+              helper.classList.toggle("is-hidden", status !== "cross");
+              const helperList = el("ul", null);
+              dInfo.prompts.forEach((p) => helperList.appendChild(el("li", null, p)));
+              helper.appendChild(helperList);
+              diag.appendChild(helper);
+            });
+            card.appendChild(diag);
+
+            // Inline-edit panel (Phase C: address "also can we edit here?")
+            const editDetails = el("details", "narrative-tip");
+            editDetails.style.marginTop = "10px";
+            const editSummary = el("summary", null, "Edit this bundle inline");
+            editDetails.appendChild(editSummary);
+            const editFields = [
+              { key: "theme", label: "Bundle theme", placeholder: "name this bundle", input: true },
+              { key: "activities", label: "Activities + your role", placeholder: "Use ‘I’. Name your specific role." },
+              { key: "outputs", label: "Outputs", placeholder: "Concrete deliverables." },
+              { key: "outcomes", label: "Outcomes (already changed)", placeholder: "Who used this, what concretely changed." },
+              { key: "evidence", label: "Evidence", placeholder: "Citations, uptake, recognition." },
+              { key: "impact", label: "Impact (hypothesised / systemic)", placeholder: "Longer-term effect if scaled." }
+            ];
+            editFields.forEach(({ key, label, placeholder, input }) => {
+              const field = el("div", "contribution-field");
+              const taId = `r2-edit-${idx}-${key}`;
+              const lbl = el("label", null, label);
+              lbl.setAttribute("for", taId);
+              field.appendChild(lbl);
+              const inp = input ? el("input", "ps-input ps-input--wide") : el("textarea", null);
+              inp.id = taId;
+              if (!input) {
+                inp.className = "contribution-textarea";
+                inp.rows = 2;
+              }
+              inp.placeholder = placeholder;
+              inp.value = c[key] || "";
+              inp.addEventListener("input", (e) => { c[key] = e.target.value; saveNarrative(); });
+              field.appendChild(inp);
+              editDetails.appendChild(field);
+            });
+            card.appendChild(editDetails);
+
+            wrap.appendChild(card);
+          });
+        }
+
+        wrap.appendChild(el("div", "pro-tip-banner", "Research shows reviewers score higher when they see ownership, affirmative language, and clarity. Use “I” rather than “we.” Avoid passive voice, negation, and hedging words such as “could,” “should,” or “would.”"));
+
+        wrap.appendChild(makeNav(true, "Continue to Mentorship →", () => {
+          ns.stageIndex = 2;
+          ns.round2Active = false;
+          saveNarrative();
+          renderStage();
+        }));
+      }
+
+      return wrap;
+    };
+
+    // ── Stage 3 — Supervisory & Mentorship (Phase B — clustering) ───────────
+    const renderStage3 = () => {
+      const wrap = el("div", "");
+      const hdr = el("div", "narrative-stage-header");
+      hdr.appendChild(el("h2", null, "3. Supervisory & Mentorship Activities"));
+      wrap.appendChild(hdr);
+
+      [
+        "This section is about what you made possible for others — students, trainees, early-career researchers, and collaborators.",
+        "Start with the totals (last 5 years), then describe one or more mentorship groups with their philosophy, environment, EDI practices, and outcomes."
+      ].forEach((t) => wrap.appendChild(el("p", "card-text", t)));
+
+      // ── Mentee counts (last 5 years) — mirror NSERC's structured prompt ────
+      const countsLabel = psLabelGlobal("A quick count over the last 5 years. Leave blank if not applicable.", "Total mentees (last 5 years)");
+      wrap.appendChild(countsLabel);
+
+      const countsRow = el("div", "narrative-funder-toggle");
+      countsRow.style.gap = "12px";
+      countsRow.style.flexWrap = "wrap";
+      const COUNT_FIELDS = [
+        { key: "phd", label: "PhD" },
+        { key: "masters", label: "Masters" },
+        { key: "undergrad", label: "Undergrad / Capstone" },
+        { key: "postdoc", label: "Postdoc" }
+      ];
+      if (!ns.mentorCounts) ns.mentorCounts = { phd: "", masters: "", undergrad: "", postdoc: "" };
+      COUNT_FIELDS.forEach(({ key, label }) => {
+        const group = el("div");
+        group.style.display = "flex";
+        group.style.flexDirection = "column";
+        group.style.alignItems = "flex-start";
+        group.style.gap = "4px";
+        const lbl = el("label", null, label);
+        lbl.style.fontSize = "12px";
+        lbl.style.fontWeight = "600";
+        lbl.style.color = "var(--muted, #666)";
+        const inp = el("input", "ps-input");
+        inp.type = "number";
+        inp.min = "0";
+        inp.placeholder = "0";
+        inp.style.width = "92px";
+        inp.value = ns.mentorCounts[key] || "";
+        inp.setAttribute("aria-label", `${label} mentees in the last 5 years`);
+        inp.addEventListener("input", (e) => {
+          ns.mentorCounts[key] = e.target.value;
+          saveNarrative();
+        });
+        group.appendChild(lbl);
+        group.appendChild(inp);
+        countsRow.appendChild(group);
+      });
+      wrap.appendChild(countsRow);
+
+      // ── Mentorship groups (each with 4 directed sub-fields) ────────────────
+      const groupsHeader = psLabelGlobal(
+        "Cluster your mentorship into one or more groups — e.g. Graduate supervision, Postdoctoral mentoring, Peer mentoring, Industry collaborators. For each, address the four sub-areas below.",
+        "Mentorship groups"
+      );
+      wrap.appendChild(groupsHeader);
+
+      const cardsContainer = el("div", "contribution-cards-container");
+
+      const SUB_FIELDS = [
+        { key: "philosophy", label: "Training philosophy", placeholder: "How you approach mentorship — what you prioritise, what you teach by example." },
+        { key: "environment", label: "Training environment", placeholder: "Lab culture, supervision style, meeting cadence, structures you’ve built for trainees." },
+        { key: "edi", label: "EDI practices", placeholder: "Concrete equity, diversity, and inclusion practices in your mentorship." },
+        { key: "awards", label: "Awards / career outcomes", placeholder: "Where are former trainees now? Awards, fellowships, positions, recognition." }
+      ];
+
+      const migrateLegacyMentorItem = (m) => {
+        // Earlier prototype state used { activity, outcomes }. Fold into the
+        // first sub-fields so saved drafts aren't lost on schema bump.
+        if (m.activity && !m.philosophy && !m.environment && !m.edi && !m.awards) {
+          m.philosophy = m.activity;
+          delete m.activity;
+        }
+        if (m.outcomes && !m.awards) {
+          m.awards = m.outcomes;
+          delete m.outcomes;
+        }
+        return m;
+      };
+
+      const addMentorCard = (idx) => {
+        const m = migrateLegacyMentorItem(ns.mentorship[idx]);
+        const card = el("div", "contribution-card");
+        const header = el("div", "contribution-card-header");
+        const nameWrap = el("span");
+        nameWrap.appendChild(document.createTextNode(`Group ${idx + 1}: `));
+        const groupNameInput = el("input", "ps-input ps-input--wide");
+        groupNameInput.placeholder = "name this group (e.g. Graduate supervision)";
+        groupNameInput.setAttribute("aria-label", `Mentorship group ${idx + 1} name`);
+        groupNameInput.value = m.groupName || "";
+        groupNameInput.style.background = "#fff";
+        groupNameInput.addEventListener("input", (e) => { m.groupName = e.target.value; saveNarrative(); });
+        nameWrap.appendChild(groupNameInput);
+        header.appendChild(nameWrap);
+
+        const removeBtn = el("button", "btn-icon", "×");
+        removeBtn.type = "button";
+        removeBtn.setAttribute("aria-label", `Remove mentorship group ${idx + 1}`);
+        removeBtn.addEventListener("click", () => {
+          ns.mentorship.splice(idx, 1);
+          saveNarrative();
+          refreshMentorCards();
+        });
+        header.appendChild(removeBtn);
+        card.appendChild(header);
+
+        SUB_FIELDS.forEach(({ key, label, placeholder }) => {
+          const field = el("div", "contribution-field");
+          const taId = `mentor-${idx}-${key}`;
+          const lbl = el("label", null, label);
+          lbl.setAttribute("for", taId);
+          field.appendChild(lbl);
+          const ta = el("textarea", null);
+          ta.id = taId;
+          ta.className = "contribution-textarea";
+          ta.placeholder = placeholder;
+          ta.value = m[key] || "";
+          ta.rows = 2;
+          ta.addEventListener("input", (e) => { m[key] = e.target.value; saveNarrative(); });
+          field.appendChild(ta);
+          card.appendChild(field);
+        });
+        return card;
+      };
+
+      const refreshMentorCards = () => {
+        clear(cardsContainer);
+        ns.mentorship.forEach((_, i) => cardsContainer.appendChild(addMentorCard(i)));
+      };
+
+      wrap.appendChild(cardsContainer);
+      refreshMentorCards();
+
+      const addBtn = el("button", "add-contribution-btn", "+ Add mentorship group");
+      addBtn.type = "button";
+      addBtn.addEventListener("click", () => {
+        ns.mentorship.push({ groupName: "", philosophy: "", environment: "", edi: "", awards: "" });
+        saveNarrative();
+        refreshMentorCards();
+      });
+      wrap.appendChild(addBtn);
+
+      const tipDetails = el("details", "narrative-tip");
+      tipDetails.appendChild(el("summary", null, "What evidence should I include in awards / career outcomes?"));
+      tipDetails.appendChild(el("p", "narrative-tip-body", "Include evidence where you can: Where are former trainees now? Did they receive awards or fellowships? Did they go on to independent research or careers in practice? A brief note of acknowledgement or a career outcome is enough."));
+      wrap.appendChild(tipDetails);
+
+      const earlyCareerNote = el("div", "narrative-funder-note");
+      earlyCareerNote.appendChild(el("strong", null, "Early career? "));
+      earlyCareerNote.appendChild(document.createTextNode("If you are early in your career, or your discipline does not include graduate supervision, describe any informal mentoring, peer support, training workshops you delivered, or inclusive practices in your lab or research environment. Context matters here — reviewers read this section with career stage in mind."));
+      wrap.appendChild(earlyCareerNote);
+
+      wrap.appendChild(makeNav(true, "Continue to Personal Statement →", () => {
+        ns.stageIndex = 3;
+        saveNarrative();
+        renderStage();
+      }));
+
+      return wrap;
+    };
+
+    // ── Stage 4 — Personal Statement (Phase A — reframed) ───────────────────
+    const renderStage4 = () => {
+      const wrap = el("div", "");
+      const hdr = el("div", "narrative-stage-header");
+      hdr.appendChild(el("h2", null, "4. Personal Statement"));
+      wrap.appendChild(hdr);
+
+      // Intro — tightened from prior version (ESL-friendlier; dropped jargon).
+      [
+        "The personal statement is written last, even though it appears first. It works best when your contributions are already drafted — the story is clearer once the rest is on the page.",
+        "Two questions do most of the work here: why your research area matters at all, and why your particular research matters within it. That is the whole shape."
+      ].forEach((t) => wrap.appendChild(el("p", "card-text", t)));
+
+      // Phase E reminder kept inline (the bigger distinction lives in Stage 1):
+      // hint that this is about NCV impact, not your project's planned impact.
+      const psScopeNote = el("p", "narrative-tip-body");
+      psScopeNote.style.fontStyle = "italic";
+      psScopeNote.textContent = "This is about your impact as a researcher — not the planned impact of a specific project. For project-level impact planning, use the Plan Your Impact tool first.";
+      wrap.appendChild(psScopeNote);
+
+      // Evidence-not-required callout — prominent, addresses common anxiety.
+      const evidenceCallout = el("div", "narrative-funder-note");
+      const ecStrong = el("strong", null, "You do not need to cite or provide evidence in this section. ");
+      evidenceCallout.appendChild(ecStrong);
+      evidenceCallout.appendChild(document.createTextNode("Evidence belongs in your Contributions section. Here, you are giving the reviewer the frame and the why — in your own voice."));
+      wrap.appendChild(evidenceCallout);
+
+      // What this section covers — simplified to 4 items mapped to the new scaffold.
+      wrap.appendChild(el("p", "card-text impact-helper-title", "What this section needs to cover:"));
+      const fourThings = el("ol", "simple-list");
+      [
+        "Who you are as a researcher (role, field, where you work)",
+        "Why your area of research matters at all",
+        "Why your particular research matters in that area",
+        "Where you are headed next"
+      ].forEach((t) => fourThings.appendChild(el("li", null, t)));
+      wrap.appendChild(fourThings);
+
+      // ── Scaffold (Phase A — two-question structure) ───────────────────────
+      wrap.appendChild(el("p", "narrative-toggle-label", "Build your statement, section by section:"));
+      const scaffold = el("div", "ps-scaffold");
+      const previewArea = el("p", "ps-preview-text");
+
+      const placeholderText = (s) => s || "";
+      const rebuildPreview = () => {
+        const p = ns.ps;
+        const lines = [
+          `I am a ${p.role || "[role / discipline]"} at ${p.institution || "[institution]"}. My research is in ${p.field || "[your research area]"}.`,
+          p.whyArea ? `\n\n${p.whyArea.trim()}` : "\n\n[Why this area matters — broad, big-picture]",
+          p.whyMine ? `\n\n${p.whyMine.trim()}` : "\n\n[Why your particular research matters in that area — your specific story]",
+          p.prospective ? `\n\nLooking ahead, I am working toward ${p.prospective.trim()}.` : "\n\nLooking ahead, I am working toward [what you are building next]."
+        ];
+        previewArea.textContent = lines.join("");
+      };
+
+      // ── Part 1: Identity (compact inline) ─────────────────────────────────
+      scaffold.appendChild(psLabelGlobal("Just the basics — one line each.", "Who you are"));
+
+      const row1 = el("div", "ps-sentence");
+      row1.appendChild(el("span", "ps-literal", "I am a"));
+      const roleInput = el("input", "ps-input");
+      roleInput.setAttribute("aria-label", "Your role or discipline");
+      roleInput.placeholder = "role / discipline";
+      roleInput.value = ns.ps.role || "";
+      roleInput.addEventListener("input", (e) => { ns.ps.role = e.target.value; saveNarrative(); rebuildPreview(); });
+      row1.appendChild(roleInput);
+      row1.appendChild(el("span", "ps-literal", "at"));
+      const instInput = el("input", "ps-input");
+      instInput.setAttribute("aria-label", "Your institution");
+      instInput.placeholder = "institution";
+      instInput.value = ns.ps.institution || "";
+      instInput.addEventListener("input", (e) => { ns.ps.institution = e.target.value; saveNarrative(); rebuildPreview(); });
+      row1.appendChild(instInput);
+      row1.appendChild(el("span", "ps-literal", "."));
+      scaffold.appendChild(row1);
+
+      const row2 = el("div", "ps-sentence");
+      row2.appendChild(el("span", "ps-literal", "My research is in"));
+      const fieldInput = el("input", "ps-input ps-input--wide");
+      fieldInput.setAttribute("aria-label", "Your research area or field");
+      fieldInput.placeholder = "your research area";
+      fieldInput.value = ns.ps.field || "";
+      fieldInput.addEventListener("input", (e) => { ns.ps.field = e.target.value; saveNarrative(); rebuildPreview(); });
+      row2.appendChild(fieldInput);
+      row2.appendChild(el("span", "ps-literal", "."));
+      scaffold.appendChild(row2);
+
+      // ── Part 2: Why this area matters ─────────────────────────────────────
+      scaffold.appendChild(psLabelGlobal("Big picture. Plain language. Why should anyone — including a reviewer outside your field — care about this area at all?", "Why your research area matters"));
+
+      const whyAreaField = el("div", "contribution-field");
+      whyAreaField.style.padding = "0";
+      const whyAreaTa = el("textarea", null);
+      whyAreaTa.className = "contribution-textarea";
+      whyAreaTa.setAttribute("aria-label", "Why your research area matters");
+      whyAreaTa.placeholder = "Example: Hearing loss affects 1 in 5 adults over 60 and predicts cognitive decline, yet its neural basis is poorly understood.";
+      whyAreaTa.value = ns.ps.whyArea || "";
+      whyAreaTa.rows = 3;
+      whyAreaTa.addEventListener("input", (e) => { ns.ps.whyArea = e.target.value; saveNarrative(); rebuildPreview(); });
+      whyAreaField.appendChild(whyAreaTa);
+      scaffold.appendChild(whyAreaField);
+
+      // ── Part 3: Why your particular research matters ──────────────────────
+      scaffold.appendChild(psLabelGlobal("Now the specific story. What have YOU done within that area? What is your contribution to it?", "Why your particular research matters in that area"));
+
+      const whyMineField = el("div", "contribution-field");
+      whyMineField.style.padding = "0";
+      const whyMineTa = el("textarea", null);
+      whyMineTa.className = "contribution-textarea";
+      whyMineTa.setAttribute("aria-label", "Why your particular research matters in that area");
+      whyMineTa.placeholder = "Example: I have developed three validated methods for measuring signal degradation that are now used in clinical trials at four institutions.";
+      whyMineTa.value = ns.ps.whyMine || "";
+      whyMineTa.rows = 3;
+      whyMineTa.addEventListener("input", (e) => { ns.ps.whyMine = e.target.value; saveNarrative(); rebuildPreview(); });
+      whyMineField.appendChild(whyMineTa);
+      scaffold.appendChild(whyMineField);
+
+      // ── Part 4: Looking ahead (single short line) ─────────────────────────
+      scaffold.appendChild(psLabelGlobal("One forward-looking sentence. Where is the work going?", "Looking ahead"));
+
+      const row4 = el("div", "ps-sentence");
+      row4.appendChild(el("span", "ps-literal", "Looking ahead, I am working toward"));
+      const prospInput = el("input", "ps-input ps-input--wide");
+      prospInput.setAttribute("aria-label", "What you are building toward next");
+      prospInput.placeholder = "what you are building next";
+      prospInput.value = ns.ps.prospective || "";
+      prospInput.addEventListener("input", (e) => { ns.ps.prospective = e.target.value; saveNarrative(); rebuildPreview(); });
+      row4.appendChild(prospInput);
+      row4.appendChild(el("span", "ps-literal", "."));
+      scaffold.appendChild(row4);
+
+      wrap.appendChild(scaffold);
+
+      // ── Live preview ──────────────────────────────────────────────────────
+      const previewBox = el("div", "ps-preview");
+      const previewLabelRow = el("div", "ps-preview-label");
+      previewLabelRow.style.display = "flex";
+      previewLabelRow.style.justifyContent = "space-between";
+      previewLabelRow.style.alignItems = "center";
+      previewLabelRow.appendChild(document.createTextNode("Preview of your draft so far"));
+      const previewDraftBtn = el("button", "btn", "Open full draft →");
+      previewDraftBtn.type = "button";
+      previewDraftBtn.style.fontSize = "12px";
+      previewDraftBtn.style.padding = "4px 10px";
+      previewDraftBtn.addEventListener("click", () => {
+        refreshDrawer();
+        drawer.classList.add("is-open");
+      });
+      previewLabelRow.appendChild(previewDraftBtn);
+      previewBox.appendChild(previewLabelRow);
+      previewArea.style.whiteSpace = "pre-wrap";
+      previewBox.appendChild(previewArea);
+      wrap.appendChild(previewBox);
+      rebuildPreview();
+
+      // ── Merged funder note (single paragraph) ─────────────────────────────
+      const funderNote = el("div", "narrative-funder-note");
+      funderNote.textContent = PS_FUNDER_MERGED;
+      wrap.appendChild(funderNote);
+
+      // ── Discipline-specific examples (tabbed) ─────────────────────────────
+      wrap.appendChild(el("p", "narrative-toggle-label", "See examples across disciplines:"));
+      const exTabBar = el("div", "explore-tabs narrative-ex-tabs");
+      const exContents = [];
+      PS_EXAMPLES.forEach((ex, i) => {
+        const tab = el("button", "explore-tab", ex.label);
+        tab.type = "button";
+        if (i === 0) tab.classList.add("is-active");
+        exTabBar.appendChild(tab);
+
+        const tabContent = el("div", "explore-tab-content");
+        if (i === 0) tabContent.classList.add("is-active");
+        const exBody = el("p", "narrative-tip-body");
+        exBody.style.whiteSpace = "pre-wrap";
+        exBody.textContent = ex.text;
+        tabContent.appendChild(exBody);
+        exContents.push(tabContent);
+      });
+
+      const exTabs = Array.from(exTabBar.querySelectorAll(".explore-tab"));
+      exTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          exTabs.forEach((t, j) => {
+            t.classList.toggle("is-active", t === tab);
+            exContents[j].classList.toggle("is-active", t === tab);
+          });
+        });
+      });
+
+      const exWrap = el("div", "narrative-examples-wrap");
+      exWrap.appendChild(exTabBar);
+      exContents.forEach((c) => exWrap.appendChild(c));
+      wrap.appendChild(exWrap);
+
+      wrap.appendChild(makeNav(true, "Continue to Review & Download →", () => {
+        ns.stageIndex = 4;
+        saveNarrative();
+        renderStage();
+      }));
+
+      return wrap;
+    };
+
+    // ── Stage 5 — Review & Download ─────────────────────────────────────────
+    const renderStage5 = () => {
+      const wrap = el("div", "");
+      const hdr = el("div", "narrative-stage-header");
+      hdr.appendChild(el("h2", null, "5. Review & Download"));
+      wrap.appendChild(hdr);
+
+      const completeness = el("div", "narrative-completeness");
+      const hasPS = !!(ns.ps.role || ns.ps.field || ns.ps.whyArea || ns.ps.whyMine || ns.ps.prospective);
+      [
+        { label: "Most Significant Contributions", count: ns.contributions.length, unit: "contributions drafted" },
+        { label: "Supervisory & Mentorship", count: ns.mentorship.length, unit: "groups described" },
+        { label: "Personal Statement", count: hasPS ? 1 : 0, unit: "draft complete" }
+      ].forEach(({ label, count, unit }) => {
+        const row = el("div", "completeness-row");
+        row.appendChild(el("span", "completeness-label", label));
+        const status = el("span", count > 0 ? "completeness-status is-done" : "completeness-status is-empty",
+          count > 0 ? (label === "Personal Statement" ? "✓ Draft in progress" : `✓ ${count} ${unit}`) : "○ Not started");
+        row.appendChild(status);
+        completeness.appendChild(row);
+      });
+      wrap.appendChild(completeness);
+
+      const selfCheck = el("div", "narrative-selfcheck");
+      selfCheck.appendChild(el("h3", null, "Final self-check"));
+      SELF_CHECK_ITEMS.forEach((item, i) => {
+        const lbl = el("label", null);
+        const chk = el("input");
+        chk.type = "checkbox";
+        chk.checked = !!(ns.selfCheck && ns.selfCheck[i]);
+        chk.addEventListener("change", (e) => {
+          if (!ns.selfCheck) ns.selfCheck = {};
+          ns.selfCheck[i] = e.target.checked;
+          saveNarrative();
+        });
+        lbl.appendChild(chk);
+        lbl.appendChild(el("span", null, ` ${item}`));
+        selfCheck.appendChild(lbl);
+      });
+      wrap.appendChild(selfCheck);
+
+      const buildExportText = () => {
+        const lines = ["MY NARRATIVE CV DRAFT OUTLINE", "Generated by Pathways to Impact (Prototype)", ""];
+        lines.push("=== MOST SIGNIFICANT CONTRIBUTIONS ===", "");
+        if (ns.contributions.length) {
+          ns.contributions.forEach((c, i) => {
+            lines.push(`Bundle ${i + 1}${c.theme ? `: ${c.theme}` : ""}`);
+            if (c.activities) lines.push(`Activities (with role): ${c.activities}`);
+            if (c.outputs) lines.push(`Outputs: ${c.outputs}`);
+            if (c.outcomes) lines.push(`Outcomes (already changed): ${c.outcomes}`);
+            if (c.evidence) lines.push(`Evidence: ${c.evidence}`);
+            if (c.impact) lines.push(`Impact (hypothesised / systemic): ${c.impact}`);
+            lines.push("");
+          });
+        } else {
+          lines.push("(None added)", "");
+        }
+        lines.push("=== SUPERVISORY & MENTORSHIP ===", "");
+        const mc = ns.mentorCounts || {};
+        const anyCount = ["phd", "masters", "undergrad", "postdoc"].some((k) => mc[k] && String(mc[k]).trim() !== "");
+        if (anyCount) {
+          lines.push("Total mentees (last 5 years):");
+          if (mc.phd) lines.push(`  PhD: ${mc.phd}`);
+          if (mc.masters) lines.push(`  Masters: ${mc.masters}`);
+          if (mc.undergrad) lines.push(`  Undergrad / Capstone: ${mc.undergrad}`);
+          if (mc.postdoc) lines.push(`  Postdoc: ${mc.postdoc}`);
+          lines.push("");
+        }
+        if (ns.mentorship.length) {
+          ns.mentorship.forEach((m, i) => {
+            lines.push(`Mentorship Group ${i + 1}${m.groupName ? `: ${m.groupName}` : ""}`);
+            if (m.philosophy) lines.push(`Training philosophy: ${m.philosophy}`);
+            if (m.environment) lines.push(`Training environment: ${m.environment}`);
+            if (m.edi) lines.push(`EDI practices: ${m.edi}`);
+            if (m.awards) lines.push(`Awards / career outcomes: ${m.awards}`);
+            lines.push("");
+          });
+        } else if (!anyCount) {
+          lines.push("(None added)", "");
+        }
+        lines.push("=== PERSONAL STATEMENT ===", "");
+        const p = ns.ps;
+        lines.push(`I am a ${p.role || "[role / discipline]"} at ${p.institution || "[institution]"}. My research is in ${p.field || "[your research area]"}.`);
+        lines.push("");
+        lines.push("Why this area matters:");
+        lines.push(p.whyArea || "[Why this area matters — broad, big-picture]");
+        lines.push("");
+        lines.push("Why my particular research matters in that area:");
+        lines.push(p.whyMine || "[Why your particular research matters in that area — your specific story]");
+        lines.push("");
+        lines.push(`Looking ahead, I am working toward ${p.prospective || "[what you are building next]"}.`);
+        return lines.join("\n");
+      };
+
+      const actions = el("div", "narrative-actions");
+      const dlBtn = el("button", "btn btn-primary", "Download my outline (.txt)");
+      dlBtn.type = "button";
+      dlBtn.addEventListener("click", () => {
+        const blob = new Blob([buildExportText()], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "narrative-cv-outline.txt";
+        a.click();
+        URL.revokeObjectURL(url);
+        ns.downloaded = true;
+        saveNarrative();
+      });
+      actions.appendChild(dlBtn);
+
+      const copyBtn = el("button", "btn", "Copy to clipboard");
+      copyBtn.type = "button";
+      copyBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(buildExportText());
+          copyBtn.textContent = "Copied!";
+          window.setTimeout(() => { copyBtn.textContent = "Copy to clipboard"; }, 1800);
+        } catch (_) {
+          copyBtn.textContent = "Copy unavailable";
+          window.setTimeout(() => { copyBtn.textContent = "Copy to clipboard"; }, 1800);
+        }
+      });
+      actions.appendChild(copyBtn);
+
+      const resetBtn = el("button", "btn btn-ghost", "Start over");
+      resetBtn.type = "button";
+      resetBtn.addEventListener("click", () => {
+        if (!window.confirm("This will clear all your draft content. Are you sure?")) return;
+        try { localStorage.removeItem(NARRATIVE_KEY); } catch (_) {}
+        ns = defaultState();
+        renderStage();
+      });
+      actions.appendChild(resetBtn);
+      wrap.appendChild(actions);
+
+      wrap.appendChild(el("h3", null, "Next steps"));
+      const nextSteps = el("div", "narrative-next-steps");
+      [
+        {
+          title: "Book a consultation",
+          body: "Bring your draft to a research development advisor.",
+          cta: "Book →",
+          href: "mailto:impact@concordia.ca?subject=Narrative%20CV%20consultation"
+        },
+        {
+          title: "Explore evidence resources",
+          body: "Find citation counts, altmetrics, and policy uptake to strengthen your evidence.",
+          cta: "Explore →",
+          href: "https://researchimpact.ca/resources/researcher-impact-framework/"
+        },
+        {
+          title: "Read the full TCV guide",
+          body: "University of Calgary’s comprehensive guide at tcvguide.ca.",
+          cta: "Visit →",
+          href: "https://tcvguide.ca/"
+        }
+      ].forEach(({ title, body, cta, href }) => {
+        const card = el("div", "narrative-next-card");
+        card.appendChild(el("h4", null, title));
+        card.appendChild(el("p", null, body));
+        const link = el("a", "btn btn-primary", cta);
+        link.href = href;
+        if (!href.startsWith("mailto:")) {
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+        }
+        card.appendChild(link);
+        nextSteps.appendChild(card);
+      });
+      wrap.appendChild(nextSteps);
+
+      const navEl = el("div", "narrative-nav");
+      const backBtn = el("button", "btn", "← Back");
+      backBtn.type = "button";
+      backBtn.addEventListener("click", () => { ns.stageIndex = 3; renderStage(); });
+      navEl.appendChild(backBtn);
+      wrap.appendChild(navEl);
+
+      return wrap;
+    };
+
+    // ── Main render ─────────────────────────────────────────────────────────
+    const renderStage = () => {
+      clear(contentArea);
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      let stageEl;
+      switch (ns.stageIndex) {
+        case 0: stageEl = renderStage1(); break;
+        case 1: stageEl = renderStage2(); break;
+        case 2: stageEl = renderStage3(); break;
+        case 3: stageEl = renderStage4(); break;
+        case 4: stageEl = renderStage5(); break;
+        default: stageEl = renderStage1();
+      }
+      contentArea.appendChild(stageEl);
+    };
+
+    root.appendChild(section);
+    renderStage();
+
+    // ── Prototype banner: reset button ─────────────────────────────────────
+    document.getElementById("proto-reset").addEventListener("click", (e) => {
+      e.preventDefault();
+      if (!window.confirm("Reset the prototype draft? This will clear ncv-prototype-v1 from localStorage.")) return;
+      try { localStorage.removeItem(NARRATIVE_KEY); } catch (_) {}
+      ns = defaultState();
+      renderStage();
+    });
+  })();
+  </script>
+</body>
+</html>
