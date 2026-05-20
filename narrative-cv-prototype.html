@@ -1511,7 +1511,55 @@
       try { localStorage.removeItem(NARRATIVE_KEY); } catch (_) {}
       ns = defaultState();
       renderStage();
+      removePersonaBadge();
     });
+
+    // ── Persona loader (?persona=<id>) ─────────────────────────────────────
+    // Fetches tests/ncv-personas/personas.json, applies the matching persona's
+    // state to the prototype, and re-renders. Used for visual review of
+    // simulated personas without manually typing the whole draft.
+    const removePersonaBadge = () => {
+      const existing = document.getElementById("persona-badge");
+      if (existing) existing.remove();
+    };
+    const showPersonaBadge = (p) => {
+      removePersonaBadge();
+      const badge = document.createElement("div");
+      badge.id = "persona-badge";
+      badge.style.position = "fixed";
+      badge.style.bottom = "16px";
+      badge.style.right = "16px";
+      badge.style.background = "#1a1a1a";
+      badge.style.color = "#ffe082";
+      badge.style.padding = "10px 14px";
+      badge.style.borderRadius = "8px";
+      badge.style.fontFamily = "system-ui, -apple-system, sans-serif";
+      badge.style.fontSize = "12px";
+      badge.style.lineHeight = "1.5";
+      badge.style.boxShadow = "0 4px 12px rgba(0,0,0,0.25)";
+      badge.style.zIndex = "1001";
+      badge.style.maxWidth = "320px";
+      badge.innerHTML = `<strong style="color:#ffd54f">PERSONA LOADED</strong><br>
+        <strong>${p.name}</strong><br>
+        ${p.careerStage} · ${p.primaryFunder.agency} (${p.primaryFunder.model})<br>
+        <a href="?" style="color:#ffe082;text-decoration:underline;font-size:11px;">Exit persona</a>`;
+      document.body.appendChild(badge);
+    };
+
+    const personaId = new URLSearchParams(window.location.search).get("persona");
+    if (personaId) {
+      fetch("tests/ncv-personas/personas.json", { cache: "no-cache" })
+        .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then((data) => {
+          const p = (data.personas || []).find((x) => x.id === personaId);
+          if (!p) { console.warn("Persona not found:", personaId); return; }
+          ns = Object.assign(defaultState(), p.state);
+          try { localStorage.setItem(NARRATIVE_KEY, JSON.stringify(ns)); } catch (_) {}
+          renderStage();
+          showPersonaBadge(p);
+        })
+        .catch((err) => console.warn("Persona load failed:", err));
+    }
   })();
   </script>
 </body>

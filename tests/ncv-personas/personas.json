@@ -1,0 +1,479 @@
+{
+  "$schema": "Six Concordia researcher personas covering early/mid/senior across Tri-agency + FRQ. Used by simulate.js and by the prototype's ?persona=<id> URL param.",
+  "personas": [
+    {
+      "id": "aisha",
+      "name": "Dr. Aisha Khan",
+      "careerStage": "Early career",
+      "yearsPostPhd": 2,
+      "appointment": "Postdoctoral Fellow",
+      "faculty": "Gina Cody School of Engineering and Computer Science",
+      "department": "Centre for Pattern Recognition and Machine Intelligence (with Computer Science & Software Engineering)",
+      "primaryFunder": { "agency": "NSERC", "competition": "Discovery Launch Supplement", "model": "TCV" },
+      "parallelFunder": { "agency": "FRQNT", "competition": "Établissement de la relève professorale (planned, contingent on TT offer)", "model": "CV-FRQ" },
+      "bio": "PhD McGill 2023. Joined Concordia as a postdoc with the Centre for Pattern Recognition and Machine Intelligence in late 2023, co-supervised by Prof. Sabine Bergler. South Asian heritage; her research community-builds with diasporic communities in Tiohtià:ke/Montréal. Currently applying for first independent NSERC funding while on the academic job market.",
+      "funderNotes": "For the TCV (NSERC), self-contained — no hyperlinks in the prose except for audio/visual outputs (none in this discipline). For the FRQNT Établissement parallel, emphasis would shift slightly to fit with Quebec's research ecosystem and complementarity with the Concordia team; hyperlinks to BanglaBench HuggingFace + GitHub permitted.",
+      "state": {
+        "funder": "tcv",
+        "stageIndex": 4,
+        "round2Active": false,
+        "mentorCounts": { "phd": "0", "masters": "1", "undergrad": "4", "postdoc": "0" },
+        "ps": {
+          "role": "postdoctoral fellow in machine learning",
+          "institution": "the Centre for Pattern Recognition and Machine Intelligence at Concordia University",
+          "field": "natural language processing for low-resource South Asian languages",
+          "whyArea": "Most NLP advances ride on English and a handful of other high-resource languages. The 1.7 billion speakers of South Asian languages — Bengali, Tamil, Urdu, Sinhala, and others — face a steep accuracy gap on every modern system, and the gap widens as state-of-the-art models scale on training data those languages cannot access. Closing it requires not just more data, but evaluation standards built with the language communities themselves.",
+          "whyMine": "I have built two of the first openly-released benchmark suites for Bengali and Tamil NLP, working with linguists and community translators to ensure cultural and dialect coverage. Both are in active use by 30+ research groups internationally. The work shifted from a single benchmark to a methodology for community-validated low-resource evaluation, which is what I now plan to develop into an independent program.",
+          "prospective": "an independent research program at Concordia developing privacy-preserving, community-co-designed NLP tools for diasporic South Asian communities in Tiohtià:ke/Montréal, in partnership with Concordia's Centre for Engineering in Society"
+        },
+        "contributions": [
+          {
+            "theme": "BanglaBench-1.0 — open community-validated Bengali NLP benchmark",
+            "activities": "I led the design and release of the first comprehensive open-source benchmark for Bengali natural language understanding (BanglaBench-1.0). I personally designed the task taxonomy, recruited and trained 12 community translators across two major dialects, and authored the validation framework. Lead author on the resulting paper at EMNLP 2024.",
+            "outputs": "BanglaBench-1.0 (open-source on HuggingFace, MIT licence), the EMNLP 2024 paper, a methodology guide for community-translator recruitment, and a dialect-coverage validation toolkit.",
+            "outcomes": "BanglaBench is currently used by 31 research groups across India, Bangladesh, the US, Germany, and Singapore, including two Bangladeshi government labs working on civic NLP tools. Two follow-on grants by external groups directly cite BanglaBench as their evaluation standard. It has been integrated into the curriculum of a graduate NLP course at the University of Dhaka.",
+            "evidence": "Cited in 18 peer-reviewed papers since release in late 2024, against a field baseline of roughly 6 for comparable Bengali-NLP resources at 12 months. EMNLP 2024 outstanding paper award honourable mention. Featured in the open-ML community newsletter EleutherAI Weekly. Currently the named evaluation standard in a Government of Bangladesh-funded ML hub at the University of Dhaka.",
+            "impact": "Hypothesised systemic impact: if BanglaBench is taken up as the de facto evaluation standard for Bengali NLP (active negotiation with the open ML community), it could shift the field from English-centric leaderboards toward language-specific community-validated evaluation — a structural change to who sets the standards in low-resource NLP. Academic impact is already visible: more papers on Bengali dialect handling, and a clearer separation of language vs. dialect coverage as distinct evaluation axes."
+          },
+          {
+            "theme": "TamilEval-0.5 — morphology-aware Tamil NLP benchmark",
+            "activities": "I co-designed TamilEval-0.5 with a five-person team across Concordia and IIIT-Madras. I personally led the morphology-aware evaluation track and supervised one master's student through the annotation pipeline. Second author on the published paper; primary owner of the morphology track.",
+            "outputs": "TamilEval-0.5 (Apache 2.0), a co-authored ACL 2025 Findings paper, and a Tamil morphology evaluation toolkit.",
+            "outcomes": "Already adopted by three Indian research groups and the Tamil Virtual Academy for evaluating their open-source Tamil LLM. Two further annotation contributions arrived from the open community in the first six months.",
+            "evidence": "Selected for the ACL 2025 Resource Track. Featured in two community-translation working-group meetings of the Tamil Virtual Academy.",
+            "impact": "Hypothesised: if TamilEval reaches v1.0 with full morphology coverage (under development), it could become the standard evaluation for one of the world's 20 most-spoken languages — currently underserved in open ML evaluation."
+          },
+          {
+            "theme": "Privacy-preserving on-device NLP for diasporic communities (pilot)",
+            "activities": "I designed and led a six-month pilot study with three diasporic South Asian community organisations in Tiohtià:ke/Montréal on what privacy-preserving on-device NLP tools could offer them. I personally led the consultation workshops and synthesised findings; one community partner co-authored the published methodology.",
+            "outputs": "A short white paper, a community-validated needs assessment, and a small open-source prototype demonstrating on-device summarisation for Bengali.",
+            "outcomes": "Three community partners are now collaborators on a SSHRC partnership letter of intent for a follow-on project. One organisation has piloted the prototype with their volunteer translation team and contributed feedback toward v2.",
+            "evidence": "The white paper has been downloaded 230+ times in three months. Two community partners have requested a second-phase collaboration in writing.",
+            "impact": "Hypothesised: this could be a working model for how community-owned NLP development happens in diasporic contexts — currently a major gap in both the NLP and community-research literatures. Early-stage and acknowledged as such."
+          }
+        ],
+        "mentorship": [
+          {
+            "groupName": "Undergraduate research mentorship",
+            "philosophy": "Structure first, autonomy second. I onboard undergraduate research assistants with explicit milestone scaffolding for the first 6 weeks, then progressively hand over project ownership as their confidence grows.",
+            "environment": "Weekly 30-minute one-on-one with each RA, plus an open Slack channel for technical questions. Shared writing happens in Overleaf; code happens through GitHub Classroom with mandatory pair-review.",
+            "edi": "I recruit from Concordia's WiCS (Women in Computer Science) and the Computer Science Undergraduate Society. I do not require prior research experience — only basic CS coursework and curiosity. Two of my four current RAs are first-generation university students.",
+            "awards": "Two of four undergraduate RAs have gone on to graduate programs (McGill MSc, U of T MSc). One was a 2024 NSERC USRA recipient on a project I co-designed; another won a Concordia Undergraduate Conference research prize for the BanglaBench dialect work."
+          }
+        ],
+        "selfCheck": { "0": true, "1": true, "2": true, "3": true, "4": false },
+        "downloaded": false
+      }
+    },
+    {
+      "id": "marcus",
+      "name": "Prof. Marcus Chen-Tremblay",
+      "careerStage": "Early career",
+      "yearsPostPhd": 4,
+      "appointment": "Assistant Professor (year 2 of tenure track)",
+      "faculty": "Faculty of Fine Arts",
+      "department": "Studio Arts",
+      "primaryFunder": { "agency": "SSHRC", "competition": "Insight Development Grant", "model": "TCV" },
+      "parallelFunder": { "agency": "FRQSC", "competition": "Établissement de la relève professorale", "model": "CV-FRQ" },
+      "bio": "PhD York 2022 in research-creation. Joined Concordia Studio Arts in 2023 as a tenure-track filmmaker. Mixed Chinese-Quebecois heritage; his work centres diasporic Asian narratives in Tiohtià:ke/Montréal. First major festival tour 2024 with The Quiet Quarter (22 min).",
+      "funderNotes": "For SSHRC IDG (TCV): no hyperlinks except for audio/visual creative works — so the film's festival listing page IS permitted. For FRQSC Établissement (CV-FRQ parallel): hyperlinks throughout permitted; framing shifts to emphasise complementarity with the Concordia Fine Arts research-creation community.",
+      "state": {
+        "funder": "tcv",
+        "stageIndex": 4,
+        "round2Active": false,
+        "mentorCounts": { "phd": "0", "masters": "2", "undergrad": "6", "postdoc": "0" },
+        "ps": {
+          "role": "filmmaker and assistant professor of studio arts",
+          "institution": "Concordia University in Tiohtià:ke/Montréal",
+          "field": "documentary film practice as a methodology for surfacing diasporic Asian memory in Canadian cities",
+          "whyArea": "Canadian documentary culture has historically privileged certain national narratives. The histories of Asian diasporas — Chinese, Vietnamese, Filipino, Korean — sit fragmented across community archives that the public film system does not see, fund, or circulate. The methodological gap is as serious as the representational one: there is no shared protocol for working between community archives and the documentary form.",
+          "whyMine": "My 2024 film The Quiet Quarter (22 min) traced a single block of Montréal's former Chinatown through three generations of family footage, drawing on community archives that had never been screened publicly. It is the methodological prototype for what I am building toward as a long-term research-creation program — and it has begun to circulate as a teaching example in film schools beyond the festival circuit.",
+          "prospective": "a feature-length companion film and a peer-reviewed methodology guide for community-archival co-production in research-creation, supported by the SSHRC IDG and a planned FRQSC Établissement application"
+        },
+        "contributions": [
+          {
+            "theme": "The Quiet Quarter (2024) — research-creation film",
+            "activities": "I researched, directed, edited, and produced The Quiet Quarter (22 minutes), a documentary film tracing three generations of family footage from a single block of Montréal's former Chinatown. I personally led the community archive consultations with three families, the digitisation negotiations, and the final cut. Worked with one cinematographer and one sound designer; producing credit shared with the family-1 archive holder.",
+            "outputs": "One 22-minute short film, one open-access digitisation log (under partner-family permission), and a co-authored Studio Arts seminar handout based on the production process.",
+            "outcomes": "Selected at 14 international film festivals (including Hot Docs, IDFA, Sheffield, Yamagata, and Cinéma du Réel). Now part of the curriculum at three film schools (Concordia, Ryerson/TMU, Goldsmiths). Two of the three partner families have agreed to extend the collaboration into the feature-length project.",
+            "evidence": "Juried festival selection at 14 venues. Reviewed in Sight & Sound and POV Magazine. Hot Docs Best Canadian Short jury mention 2024. The methodology section of the seminar handout has been downloaded 1,100+ times via the Studio Arts website.",
+            "impact": "Hypothesised systemic impact: if the methodology developed for this film travels — through the planned methodology guide, the National Film Board partnership currently in early conversation, and the curriculum integrations already underway — it could shift how diasporic histories are produced and preserved in Canadian documentary culture, from community-invisible to citationally accessible. Academic impact: it is already changing how research-creation students at Concordia frame their archival-research projects."
+          },
+          {
+            "theme": "Community-archival co-production methodology",
+            "activities": "I am the principal author of a methodology guide for community-archival co-production in research-creation, drafted across the production of The Quiet Quarter and refined through three workshop iterations with research-creation graduate students at Concordia and York.",
+            "outputs": "A 40-page open-access methodology guide (under final peer review with a small academic press), three workshop slide decks, and an early-stage protocol template for community archives.",
+            "outcomes": "Two community-archives consortia (Chinatown History Project Toronto, Chinese Family Society of Montréal) have requested early-access copies. One Concordia MA student has used the protocol in her own thesis.",
+            "evidence": "Three workshops delivered (Concordia x2, York x1) with 60 graduate-student participants total; written feedback strongly positive. Press: La Presse interview on diasporic archival practice (2024).",
+            "impact": "Hypothesised: if the methodology guide is adopted by community-archives training programs across Canada (in discussion with the Canadian Council of Archives), it would establish a recognised pathway for research-creation in community-archival contexts — currently absent from the methodological literature."
+          },
+          {
+            "theme": "Graduate seminar in research-creation methods",
+            "activities": "I designed and now teach FFAR 615 Methods in Research-Creation, a new graduate seminar at Concordia introduced in Fall 2024. I personally developed the syllabus, four assignment scaffolds, and the peer-review structure.",
+            "outputs": "Course syllabus (open-access), a methods reader with 24 curated open-source readings, and a public-facing seminar website.",
+            "outcomes": "First cohort of 11 graduate students from four departments (Studio Arts, Cinema, History, Anthropology). Two enrolled in the seminar specifically because of The Quiet Quarter.",
+            "evidence": "Cross-listed in Cinema and History after the first offering. Two unsolicited course-redesign consultations from other Fine Arts programs.",
+            "impact": "Hypothesised: building the research-creation methods curriculum at Concordia early may seed a longer institutional commitment to research-creation pedagogy — particularly important as the field professionalises in Canadian universities."
+          }
+        ],
+        "mentorship": [
+          {
+            "groupName": "Graduate co-supervision (MA Studio Arts)",
+            "philosophy": "I treat the supervisory relationship as a co-production: I bring methodological scaffolding, the student brings their archive, and we both make decisions that neither of us could have made alone.",
+            "environment": "Bi-weekly 60-minute studio meetings, an open shared Notion workspace, and a mandatory cohort gathering twice per term so students see each other's work in progress.",
+            "edi": "I actively recruit Studio Arts MA students from underrepresented backgrounds and from outside the dominant North American film-school pipeline. My current two co-supervisees are both first-generation graduate students from working-class families.",
+            "awards": "Both current MA co-supervisees have been awarded Concordia Graduate Fellowships; one has a film selected at the Montréal Independent Film Festival 2025."
+          }
+        ],
+        "selfCheck": { "0": true, "1": true, "2": true, "3": true, "4": false },
+        "downloaded": false
+      }
+    },
+    {
+      "id": "priya",
+      "name": "Dr. Priya Ramaswamy",
+      "careerStage": "Mid-career",
+      "yearsPostPhd": 8,
+      "appointment": "Associate Professor (tenured 2022)",
+      "faculty": "Faculty of Arts and Science",
+      "department": "Sociology and Anthropology",
+      "primaryFunder": { "agency": "SSHRC", "competition": "Insight Grant renewal", "model": "TCV" },
+      "parallelFunder": { "agency": "FRQSC", "competition": "Soutien aux équipes de recherche", "model": "CV-FRQ" },
+      "bio": "PhD U of Toronto 2017. Joined Concordia 2018, tenured 2022. Has run the Concordia Immigrant Labour Outcomes Study (CILOS) since 2019, drawing on Statistics Canada longitudinal census data. First SSHRC Insight Grant 2022 just concluding; applying for renewal.",
+      "funderNotes": "For SSHRC Insight (TCV): self-contained, no hyperlinks. For FRQSC Soutien aux équipes (CV-FRQ): hyperlinks permitted; the Personal Statement is expected to emphasise team-fit and complementarity rather than individual expertise.",
+      "state": {
+        "funder": "tcv",
+        "stageIndex": 4,
+        "round2Active": false,
+        "mentorCounts": { "phd": "4", "masters": "7", "undergrad": "12", "postdoc": "2" },
+        "ps": {
+          "role": "sociologist of labour markets and migration",
+          "institution": "Concordia University",
+          "field": "the long-run earnings trajectories of immigrants to Canada, with particular focus on credential recognition and skill transferability",
+          "whyArea": "Migration shapes labour-market outcomes for over 8 million Canadians, yet most policy is built on dated assumptions about how immigrant earnings evolve over time. The dominant 5-to-10-year integration narrative does not fit the data for post-2000 cohorts, and the policy correctives built on it have under-served exactly the people they were meant to support.",
+          "whyMine": "My longitudinal analysis of immigrant earnings trajectories has been cited in three Statistics Canada Analytical Studies reports and informed the 2024 Express Entry policy update by IRCC, which adjusted points allocations for Canadian work experience. The Concordia Immigrant Labour Outcomes Study (CILOS) — the dataset and codebase I built — has become a shared research infrastructure across three Canadian universities.",
+          "prospective": "a G7 comparative project on immigrant earnings dynamics, in partnership with the OECD Migration Division and three sister labs at LSE, Mannheim, and U Penn"
+        },
+        "contributions": [
+          {
+            "theme": "Post-2000 immigrant earnings trajectories — the IRCC policy story",
+            "activities": "I designed and led a 15-year longitudinal analysis of immigrant earnings using the linked T1 Family File and IMDB datasets at Statistics Canada. I personally conducted the cohort modelling and led the drafting of the methods sections; two postdoctoral fellows ran sensitivity analyses under my direction.",
+            "outputs": "Three peer-reviewed papers (Journal of Labour Economics 2023, Canadian Public Policy 2023, Demography 2024), two Statistics Canada Analytical Studies reports, and a public-facing R-Shiny dashboard.",
+            "outcomes": "Findings were cited in three Statistics Canada reports between 2022 and 2024 and informed the 2024 Express Entry policy update by IRCC, which adjusted points allocations for Canadian work experience. Two Canadian provinces have requested replication studies for their provincial nominee programs.",
+            "evidence": "Direct citations in two IRCC briefing documents (obtained via ATIP). Coverage in The Globe and Mail, Policy Options, and La Presse. Independent replication of the methodology by research groups at the OECD and the University of Pennsylvania. Cited in 64 peer-reviewed papers since 2023.",
+            "impact": "Hypothesised systemic impact: if the framework is taken up across G7 immigration-research programs (project in development with the OECD), it could enable systematic cross-country comparison of immigrant economic integration — currently a major gap in the evidence available to immigration policymakers."
+          },
+          {
+            "theme": "Credential recognition and skill transferability (Québec case)",
+            "activities": "I designed and led a mixed-methods Québec-focused study on credential recognition, in partnership with the Ministère de l'Immigration, de la Francisation et de l'Intégration (MIDI, now MIFI). I personally led the quantitative analysis and co-authored the qualitative interview synthesis with one postdoc.",
+            "outputs": "Two peer-reviewed papers (one bilingual), one MIDI policy brief, and a Québec-specific public dashboard.",
+            "outcomes": "The MIDI policy brief directly informed the 2023 update to Québec's PEQ (Programme de l'expérience québécoise). Two Québec professional ordres have used the dashboard to update their internal recognition guidance.",
+            "evidence": "Cited in the 2023 PEQ policy update technical document. Two Québec professional orders' published guidance updates explicitly reference the dashboard. Cited in 22 peer-reviewed papers.",
+            "impact": "Hypothesised: provincial credential-recognition programs across Canada face similar methodological gaps; if this framework is taken up by other provinces (early conversations with BC and Ontario), it could improve credential recognition outcomes for tens of thousands of immigrant workers annually."
+          },
+          {
+            "theme": "CILOS — Concordia Immigrant Labour Outcomes Study (research infrastructure)",
+            "activities": "I built, maintain, and lead the CILOS infrastructure: the codebase, documentation, and shared-access protocols that enable longitudinal immigrant labour research at Concordia. I personally led the design and documentation; two postdocs and three RAs have contributed code under my supervision.",
+            "outputs": "An open-source R + Python codebase, full documentation, a methods paper on the linkage approach, and a federated-access protocol now used by three Canadian universities (Concordia, McGill, U of T).",
+            "outcomes": "CILOS is the foundation for two ongoing PhD dissertations and one Mitacs-Accelerate industry partnership. Three universities have signed federated-access agreements.",
+            "evidence": "Federated-access agreements with McGill and U of T (2023). Documentation downloaded 800+ times. Codebase has 22 external contributors as of 2025.",
+            "impact": "Hypothesised: shared research infrastructure is undervalued in academic-incentive systems but disproportionately enables future work. If CILOS becomes the standard linkage protocol for Canadian immigrant-labour research (in discussion with Statistics Canada), it would meaningfully lower the methodological barrier to this work."
+          },
+          {
+            "theme": "Replication paper — the Borjas model fails for post-2000 Canadian cohorts",
+            "activities": "I led a single-author replication and extension paper showing that the Borjas wage-assimilation model — the foundational framework in immigrant-earnings research since 1985 — substantially mis-predicts outcomes for post-2000 Canadian cohorts. I designed and ran every analysis personally.",
+            "outputs": "One single-author peer-reviewed paper in the Journal of Labour Economics (2024), and an open-access replication package.",
+            "outcomes": "The paper has reset the methodological starting point for Canadian immigrant-earnings research. Five subsequent papers by other groups have cited it as their motivating null result.",
+            "evidence": "Cited 31 times in the first 12 months. Featured in the Journal's Editor's Highlights. Invited to give a keynote at the 2025 Canadian Economics Association annual meeting based on this paper.",
+            "impact": "Hypothesised: by setting a clearer methodological null, the paper could shift the research field toward newer, post-2000-aware models — a structural change to what gets taught and tested in immigration-economics graduate programs."
+          }
+        ],
+        "mentorship": [
+          {
+            "groupName": "Graduate supervision (PhD + MA)",
+            "philosophy": "Methodological rigour first, then voice. I expect my graduate students to be able to defend every step of their empirical pipeline, and to write about it in plain language. The two skills are inseparable.",
+            "environment": "Weekly individual meetings, fortnightly lab meetings with the full team, a shared methods archive, and quarterly external speakers (often from Statistics Canada or the OECD).",
+            "edi": "I deliberately recruit graduate students from immigrant backgrounds and from the public-sector workforce moving into academia. Three of my four current PhD students are first-generation graduate students; two are themselves first-generation immigrants. I co-mentor with two scholars at universities in Bangladesh and India to facilitate diasporic-research training.",
+            "awards": "Four PhDs completed under my supervision; all four hold tenure-track or research-policy positions (one at Statistics Canada, one at Université Laval, one at LSE postdoc, one at the OECD). Two of seven Masters supervisees published their thesis chapter; one received the SSHRC CGS-M and is now in a Princeton PhD."
+          },
+          {
+            "groupName": "Postdoctoral mentoring",
+            "philosophy": "I treat postdocs as junior collaborators with their own research agendas — not extended graduate students. I match them with a co-PI outside Concordia for breadth, and protect their first-author publication time.",
+            "environment": "Bi-weekly one-on-one meetings, structured research-design check-ins, and an explicit goal-setting document signed in months 1 and 12.",
+            "edi": "Both current postdocs are from racialised backgrounds underrepresented in Canadian economics; one is a single parent and I have built schedule flexibility around school-pickup hours.",
+            "awards": "Two postdocs completed; both placed into tenure-track positions (UQAM, U of Calgary). Both first-authored at least two papers during their postdoc."
+          }
+        ],
+        "selfCheck": { "0": true, "1": true, "2": true, "3": true, "4": true },
+        "downloaded": true
+      }
+    },
+    {
+      "id": "david",
+      "name": "Dr. David Goldberg",
+      "careerStage": "Mid-career",
+      "yearsPostPhd": 10,
+      "appointment": "Associate Professor (year 4 of tenured rank)",
+      "faculty": "Gina Cody School of Engineering and Computer Science",
+      "department": "Concordia Institute for Information Systems Engineering (CIISE)",
+      "primaryFunder": { "agency": "NSERC", "competition": "Alliance Grant (industry-partnered with the Québec Ministère des Transports)", "model": "TCV" },
+      "parallelFunder": { "agency": "NSERC", "competition": "Discovery Grant renewal (held in parallel)", "model": "TCV" },
+      "bio": "PhD Waterloo 2015 in computer engineering. Postdoc INRIA 2015-17. Joined Concordia 2017, tenured 2022. Holds NSERC Discovery; currently building Alliance partnership with Transport Canada and Québec MTQ on bridge ML.",
+      "funderNotes": "NSERC Alliance (TCV) emphasises the industry/government partnership — the Personal Statement and Contributions should foreground partnership outcomes alongside technical innovation. Self-contained, no hyperlinks except for audio/visual works (none here).",
+      "state": {
+        "funder": "tcv",
+        "stageIndex": 4,
+        "round2Active": false,
+        "mentorCounts": { "phd": "6", "masters": "8", "undergrad": "14", "postdoc": "1" },
+        "ps": {
+          "role": "applied machine learning researcher and engineer",
+          "institution": "the Concordia Institute for Information Systems Engineering",
+          "field": "machine learning pipelines for early detection of structural failure in aging civil infrastructure, particularly bridges",
+          "whyArea": "Canada's bridge inventory is aging beyond its design life, and traditional inspection methods miss the subtle degradation patterns that precede catastrophic failure. The cost is measured both in inspection budgets and, occasionally, in lives.",
+          "whyMine": "I designed an anomaly-detection pipeline that increased failure prediction accuracy by 34% over the existing inspection benchmark, now in pilot deployment with two provincial transportation ministries (Québec MTQ and Ontario MTO). The pilots have already caught two early-stage degradation signatures that traditional inspection missed.",
+          "prospective": "a federally-deployed continuous-monitoring framework in partnership with Transport Canada, plus a parallel pipeline for cooling-system failure in critical industrial infrastructure"
+        },
+        "contributions": [
+          {
+            "theme": "ML pipeline for early bridge-failure detection — MTQ/MTO partnership",
+            "activities": "I designed and led the algorithm-development phase of a six-person interdisciplinary team building the anomaly-detection model. I specifically built the model architecture, supervised the calibration phase against historical inspection data, and co-led the protocol agreement with the Québec MTQ.",
+            "outputs": "A patent-pending pipeline (filed 2023), an open-source reference implementation, a peer-reviewed paper in the Journal of Bridge Engineering, and a deployment toolkit with documentation for ministry inspectors.",
+            "outcomes": "The pipeline is in pilot deployment with two provincial transportation ministries (Québec MTQ and Ontario MTO). One pilot has caught two early-stage degradation signatures that traditional inspection missed. Two MTO inspectors have completed the training program built around the toolkit.",
+            "evidence": "34% accuracy improvement over the existing inspection benchmark, validated on the historical MTQ dataset. Endorsed by the Canadian Society for Civil Engineering bridge inspection committee. Featured in the Canadian Civil Engineer magazine 2024.",
+            "impact": "Hypothesised systemic impact: if adopted at the federal scale through the Transport Canada partnership currently in negotiation, the approach could shift Canadian bridge inspection from a periodic to a continuous-monitoring model — reducing both inspection costs and catastrophic-failure risk for an aging national bridge inventory. Academic impact: the methodology paper has been adopted as a teaching reference in two Canadian civil-engineering graduate programs."
+          },
+          {
+            "theme": "Open-source reference implementation + methodology paper",
+            "activities": "I led the design, implementation, documentation, and release of an open-source reference implementation of the bridge-anomaly pipeline, along with the peer-reviewed methodology paper. I personally authored every section of the methods paper and reviewed every pull request to the open-source release.",
+            "outputs": "The open-source reference implementation (Apache 2.0), the J. Bridge Eng. methodology paper, and a 60-page documentation site.",
+            "outcomes": "Forked by 47 research groups internationally as of 2025. Adopted as a teaching reference in two Canadian civil-engineering graduate programs (Concordia, McMaster) and one US program (Texas A&M).",
+            "evidence": "Cited in 39 peer-reviewed papers since release. GitHub stars: 1,200+. Two PhD theses outside Concordia have built their methods chapters around the reference implementation.",
+            "impact": "Hypothesised: lowering the implementation barrier for ML-on-infrastructure work could accelerate the adoption of continuous-monitoring approaches across civil engineering — a methodological infrastructure investment that pays off slowly but compounds."
+          },
+          {
+            "theme": "Patent portfolio + spin-out (early-stage)",
+            "activities": "I led the patent-application process for two pipeline components, in collaboration with Concordia's Office of Innovation & Partnerships. I am co-founder of a Concordia-affiliated spin-out (Bedrock Sensing Inc., incorporated 2024) commercialising the components for industrial customers.",
+            "outputs": "Two patent applications (one US, one PCT), a Concordia-licensed technology transfer agreement, and a spin-out company.",
+            "outcomes": "Two industrial customers signed letters of intent within 6 months of spin-out incorporation. Two former PhD students have joined the spin-out as senior engineers.",
+            "evidence": "Two LOI's totalling $1.4M in projected contract value. The spin-out closed a $750K seed round in Q1 2025.",
+            "impact": "Hypothesised: tech-transfer from publicly-funded ML research into industrial infrastructure is rare in Canada compared to US-equivalents; if this spin-out succeeds, it would be a referenceable model for similar Canadian translations."
+          },
+          {
+            "theme": "Uncertainty quantification in safety-critical ML (methods paper)",
+            "activities": "I led a single-author methods paper on calibrating uncertainty estimates for ML models deployed in safety-critical infrastructure contexts. Single author on the resulting paper at NeurIPS 2024.",
+            "outputs": "One peer-reviewed NeurIPS 2024 paper, an open-source uncertainty-calibration library, and a video lecture (45 min) shared via the Concordia engineering YouTube channel.",
+            "outcomes": "The calibration library is now used by three industrial safety-critical-ML groups (one rail, one aerospace, one bridge). It is part of the curriculum in my graduate ML-for-Engineering course.",
+            "evidence": "Cited in 27 peer-reviewed papers since publication. NeurIPS spotlight presentation. Library has 540 GitHub stars.",
+            "impact": "Hypothesised: the gap between ML benchmarks and safety-critical deployment is widely acknowledged but methodologically underserved. If this calibration approach becomes a standard part of safety-critical ML pipelines, it would meaningfully reduce the risk of catastrophic miscalibration at deployment."
+          }
+        ],
+        "mentorship": [
+          {
+            "groupName": "Graduate supervision (PhD + MASc)",
+            "philosophy": "Engineering rigor with an explicit obligation to communicate. Every graduate student in my lab is expected to be able to present their work in plain language to a non-specialist — because we work with ministries, and ministries hire people, not algorithms.",
+            "environment": "Weekly one-on-ones, bi-weekly full-lab meetings, mandatory annual ministry-visit shadowing, and a strong shared documentation culture (every project has a Notion workspace).",
+            "edi": "I actively recruit graduate students from Indigenous-serving engineering programs and from underrepresented backgrounds in Canadian engineering. Of my six current PhD students, two are Indigenous (Cree and Anishinaabe), two are women, and three are first-generation graduate students.",
+            "awards": "Six PhDs completed under my supervision; five are now in industry research roles (Hydro-Québec, Bombardier, Bedrock Sensing, Google, Microsoft), one in a tenure-track position at the University of Sherbrooke. Two recent MASc students received the NSERC CGS-M and are now in PhD programs."
+          },
+          {
+            "groupName": "Industry-partnered co-supervision (Mitacs / NSERC Alliance)",
+            "philosophy": "Industry-partnered training is not just funding — it is a different curriculum. I structure these co-supervisions around dual outcomes: an academic publishable contribution AND a deployable artefact in the partner organisation. Both are required.",
+            "environment": "Monthly four-way meetings (student, academic co-PI, industry co-PI, me), structured dual deliverables, and a shared Slack channel with each industry partner.",
+            "edi": "I require partner organisations to commit to a written EDI agreement for the student's work environment, including reasonable-accommodation provisions.",
+            "awards": "Eight Mitacs-Accelerate students through my supervision; four hired into permanent industry positions at the partner organisation upon completion. Two have published their academic work in IEEE Transactions on Industrial Informatics."
+          }
+        ],
+        "selfCheck": { "0": true, "1": true, "2": true, "3": true, "4": true },
+        "downloaded": true
+      }
+    },
+    {
+      "id": "marie_claude",
+      "name": "Pre. Marie-Claude Bélanger",
+      "careerStage": "Senior",
+      "yearsPostPhd": 22,
+      "appointment": "Full Professor (Professeure titulaire). Concordia Research Chair in Community Health Equity (Tier 1, 2018–present).",
+      "faculty": "Faculty of Arts and Science",
+      "department": "Health, Kinesiology and Applied Physiology",
+      "primaryFunder": { "agency": "CIHR", "competition": "Project Grant", "model": "TCV" },
+      "parallelFunder": { "agency": "FRQS", "competition": "Programme de carrière (Chercheur-boursier sénior)", "model": "CV-FRQ" },
+      "bio": "PhD Université de Montréal 2002 in community health. Joined Concordia 2003, full professor 2013. Holds the Concordia Research Chair in Community Health Equity (Tier 1, 2018–present). Long-standing collaborator with the Native Friendship Centre of Montréal, the Centre des femmes autochtones du Montréal, and Projets Autochtones du Québec. Bilingual (French primary); applications often filed in French.",
+      "funderNotes": "CIHR Project Grant (TCV): self-contained, hyperlinks not permitted. FRQS Programme de carrière (CV-FRQ): hyperlinks permitted; the Personal Statement is expected to emphasise contribution to Québec's research ecosystem and bilingual scholarly community. The primary draft below is in English; a French version would be filed for FRQS.",
+      "state": {
+        "funder": "tcv",
+        "stageIndex": 4,
+        "round2Active": false,
+        "mentorCounts": { "phd": "14", "masters": "22", "undergrad": "40", "postdoc": "5" },
+        "ps": {
+          "role": "community-based health researcher",
+          "institution": "Concordia University, where I hold the Concordia Research Chair in Community Health Equity",
+          "field": "structural determinants of health in urban Indigenous communities, with particular focus on housing and food security",
+          "whyArea": "Urban Indigenous health inequities in Canada are driven by structural determinants — housing precarity, food sovereignty, and the racial geographies of cities — not by individual behaviour. The research literature has historically treated this evidence in pieces, and the policy response has lagged accordingly. The work I do exists at the intersection of community sovereignty, public health, and municipal policy.",
+          "whyMine": "Across 22 years of community-based participatory research with three Indigenous-led organisations in Tiohtià:ke/Montréal, my collaborative work has produced the protocols, datasets, and partnerships that the City of Montréal's 2024 Urban Indigenous Housing Strategy is built on. My role through this work has been to translate between community knowledge sovereignty and academic-policy infrastructures, while protecting the data ownership of the communities I work with.",
+          "prospective": "a national community-owned data infrastructure for urban Indigenous health — under development with five sister sites and the First Nations Information Governance Centre — that meets OCAP standards while connecting to municipal and federal policy systems"
+        },
+        "contributions": [
+          {
+            "theme": "Co-designed food security protocol — City of Montréal Urban Indigenous Housing Strategy",
+            "activities": "I co-designed a longitudinal food security protocol with three urban Indigenous organisations in Tiohtià:ke/Montréal, working under their data sovereignty (OCAP) frameworks. I led the methodology development and analysis training; community partners led recruitment, instrument adaptation, and interpretation. Across 7 years.",
+            "outputs": "A bilingual community-validated survey instrument, a 7-year longitudinal dataset (community-owned, federated access), three community-authored reports, and five co-authored peer-reviewed papers.",
+            "outcomes": "The protocol was adopted by the City of Montréal's 2024 Urban Indigenous Housing Strategy. Two of three partner organisations now run their own annual cycles independent of the academic team. The federated-access agreement has become a referenced model for OCAP-compliant data sharing in two other Canadian cities.",
+            "evidence": "Cited as a methodological anchor in the 2024 City of Montréal Urban Indigenous Housing Strategy (public document). Featured in CBC, La Presse, and Radio-Canada. Three follow-on partnership grants (SSHRC, CIHR, CFREF) totalling $4.7M built directly on this protocol. Awarded the 2023 CIHR Knowledge Translation Award.",
+            "impact": "Hypothesised systemic impact: if expanded to four additional Canadian cities (current SSHRC partnership in progress with Toronto, Winnipeg, Vancouver, Edmonton), the protocol could become a national reference for community-owned urban Indigenous health data — a structural shift in how municipal-level Indigenous health research is conducted in Canada."
+          },
+          {
+            "theme": "Housing precarity longitudinal cohort study",
+            "activities": "I designed and led an 11-year longitudinal cohort study of housing precarity and health outcomes among urban Indigenous adults in Tiohtià:ke/Montréal, in partnership with the Native Friendship Centre of Montréal. I personally led the cohort recruitment protocol, the data-governance design, and the senior author position on every major output.",
+            "outputs": "Two peer-reviewed papers on chronic disease trajectories in precariously-housed adults, one in The Lancet Regional Health–Americas; an open-access policy brief; and a community-facing summary document distributed in three Indigenous community centres.",
+            "outcomes": "The cohort data informed Santé Québec's 2022 update to municipal-level Indigenous health-services planning. Three Indigenous health units across Québec have adopted the cohort-recruitment protocol for their own work.",
+            "evidence": "Lancet paper has been cited 87 times in 24 months. Santé Québec policy adoption documented in the 2022 public report. Featured in CIHR's 2023 Annual Report as a case study in Indigenous health research.",
+            "impact": "Hypothesised: the cohort methodology, particularly the consent and data-governance design, could be referenced by future urban Indigenous health studies across Canada — addressing a long-standing methodological gap in how this research has been done."
+          },
+          {
+            "theme": "Indigenous data sovereignty methodology — OCAP in urban research contexts",
+            "activities": "I am the primary author of a 4-year methodological project on applying OCAP (Ownership, Control, Access, Possession) principles in urban, multi-community Indigenous research — a context distinct from the First Nations community-based settings where OCAP was originally developed. I led the methodology design with community-partner advisory.",
+            "outputs": "One methodological paper (Journal of Indigenous Wellbeing 2021), a peer-reviewed methods reader, and a community-protocol toolkit shared with two Indigenous Health Authority offices.",
+            "outcomes": "The toolkit has been adopted by the First Nations Information Governance Centre as a recommended supplement to their primary OCAP training. Two Canadian Tier 1 Indigenous research chairs have cited the toolkit in their own grant infrastructures.",
+            "evidence": "Adopted by the First Nations Information Governance Centre (2023). Cited in 41 peer-reviewed papers. Featured in CIHR's Pathways to Health Equity for Aboriginal Peoples final report.",
+            "impact": "Hypothesised: urban Indigenous research is methodologically distinct and historically under-protected; this work has been part of a broader shift toward formalising urban-specific OCAP applications — a structural change to a national research-ethics conversation."
+          },
+          {
+            "theme": "Concordia Research Chair program — Community Health Equity",
+            "activities": "Since 2018, I have led the Concordia Research Chair in Community Health Equity (Tier 1). I personally designed the Chair's research program, supervised 14 PhD students and 5 postdocs through the Chair, and led the design of the Chair's annual community-knowledge-translation events.",
+            "outputs": "Seven years of annual public symposia, three community-policy briefs, an open-access training program in community-based research (220+ trainees), and the Chair's research-program documentation.",
+            "outcomes": "Chair-trained alumni now occupy positions at Statistics Canada Indigenous Health unit, two Indigenous-led research organisations, McGill's Native and Inuit Health Research program, and three Québec universities.",
+            "evidence": "Chair externally reviewed 2023 with strong outcomes. Three of the Chair-trained PhDs have themselves received Canada Research Chairs. The training program has been cited as a model in two CIHR institutional reviews.",
+            "impact": "Hypothesised: the Chair's training infrastructure is the most durable contribution of my work — researchers I have trained are now in positions where they make decisions about Canadian Indigenous health research priorities. That capacity-building effect compounds over decades."
+          },
+          {
+            "theme": "Career-spanning theme — anti-colonial research methods",
+            "activities": "Across my career I have been a vocal advocate, methodological developer, and senior reviewer for anti-colonial approaches to community-based health research. This shows up as my chairing role on national methodological review panels, my mentorship of three Indigenous emerging researchers, and a body of methodological writing that spans 22 years.",
+            "outputs": "Two book chapters in major methodological handbooks, a methodological keynote series (3 in the last 5 years), and a co-authored CIHR-commissioned guidance document on anti-colonial research methods (2022).",
+            "outcomes": "The CIHR guidance document is now referenced in CIHR's Tri-Council Policy Statement consultation processes. Two national methodological review panels I have chaired (CIHR, SSHRC) have integrated anti-colonial review criteria into their adjudication guides.",
+            "evidence": "CIHR guidance document downloaded 5,400+ times. Two-time invited keynote at the Canadian Public Health Association annual conference. CIHR Knowledge Translation Award 2023.",
+            "impact": "Hypothesised: this career-spanning theme has helped shift what counts as rigorous community-based health research in Canadian funding-review structures — a structural shift that will outlast any single project."
+          }
+        ],
+        "mentorship": [
+          {
+            "groupName": "Graduate supervision — PhDs (career total)",
+            "philosophy": "I supervise as a long-term relationship, not a transaction. Once you have been my PhD student, you remain a member of the lab community for as long as you wish — and I expect to learn from you as your own research matures past mine.",
+            "environment": "Weekly one-on-ones during the active dissertation years, bi-monthly lab gatherings, mandatory community-partner relationship-building from year 1, and an alumni network that meets twice a year.",
+            "edi": "I have actively recruited Indigenous, racialised, and first-generation graduate students throughout my career. Of 14 PhDs completed, 5 are Indigenous (3 First Nations, 2 Métis), 7 are racialised, and 11 are first-generation graduate students.",
+            "awards": "Of 14 PhDs completed: 9 hold tenure-track or senior research positions across Canadian universities, 3 are in Indigenous-led research organisations, 2 are senior researchers at Statistics Canada and the FNIGC. Three of the 14 have themselves received Canada Research Chairs."
+          },
+          {
+            "groupName": "Postdoctoral mentoring",
+            "philosophy": "Postdocs in my lab are independent collaborators with their own research agendas. My job is to be a senior co-author when useful, a network bridge always, and a protector of their first-author time.",
+            "environment": "Bi-weekly one-on-ones, explicit yearly goal-setting, and a guarantee of at least one external collaboration network introduction per year.",
+            "edi": "Of 5 postdocs trained, all 5 are women, 4 are racialised, and 2 are Indigenous.",
+            "awards": "All 5 postdocs are now in tenure-track or research-policy positions; 2 hold Canada Research Chair Tier 2 appointments."
+          },
+          {
+            "groupName": "Undergraduate and community-trainee mentorship",
+            "philosophy": "Community-based research depends on a wider pool of trained people than the academy alone can supply. I treat undergraduate and community-research trainees as essential members of the research ecosystem, not 'pre-graduate-school' material.",
+            "environment": "Open monthly community-trainee gatherings, paid research positions whenever budget allows, structured introductions to community-partner staff, and clear expectations that the work belongs partly to the community.",
+            "edi": "Of 40+ undergraduate trainees over 22 years, the majority have been Indigenous, racialised, or first-generation students. Several have entered the lab from community-partner organisations rather than from Concordia's undergraduate streams.",
+            "awards": "Multiple Concordia undergraduate research awards across the years; six community trainees have gone on to graduate programs in Indigenous health, public health, or social work."
+          }
+        ],
+        "selfCheck": { "0": true, "1": true, "2": true, "3": true, "4": true },
+        "downloaded": true
+      }
+    },
+    {
+      "id": "james",
+      "name": "Dr. James Watanabe",
+      "careerStage": "Senior",
+      "yearsPostPhd": 28,
+      "appointment": "Full Professor. Held the NSERC Industrial Research Chair (IRC) in Energy-Efficient Computing 2014–2024.",
+      "faculty": "Gina Cody School of Engineering and Computer Science",
+      "department": "Mechanical, Industrial and Aerospace Engineering",
+      "primaryFunder": { "agency": "NSERC", "competition": "Discovery Grant renewal (held alongside an Alliance partnership renewal)", "model": "TCV" },
+      "parallelFunder": { "agency": "NSERC", "competition": "Alliance partnership renewal (industry-partnered)", "model": "TCV" },
+      "bio": "PhD MIT 1995 in mechanical engineering. Joined Concordia 1996. Full professor 2008. Held the NSERC IRC in Energy-Efficient Computing 2014–2024. Co-founder of CoolStack Inc., a Concordia-affiliated spin-off acquired by an international industrial group in 2019.",
+      "funderNotes": "NSERC Discovery (TCV) emphasises trajectory of independent research; NSERC Alliance (TCV) emphasises industry-partnership outcomes. Both self-contained, no hyperlinks except audio/visual. James's two parallel applications draw on the same Personal Statement and Contributions, with the Alliance application leaning harder on industrial uptake.",
+      "state": {
+        "funder": "tcv",
+        "stageIndex": 4,
+        "round2Active": false,
+        "mentorCounts": { "phd": "22", "masters": "36", "undergrad": "70", "postdoc": "8" },
+        "ps": {
+          "role": "thermal systems engineer",
+          "institution": "Concordia University",
+          "field": "energy efficiency in data-centre and industrial cooling systems",
+          "whyArea": "Data centres now account for over 1.5% of global electricity consumption, growing fast with the AI boom. The thermal-management side of that consumption is the most tractable lever — and the most underinvested. The gap between what is published in the academic literature and what is deployable in industrial facilities is wider in cooling than in almost any other field of engineering.",
+          "whyMine": "I developed an energy-optimization framework subsequently adopted by my spin-off company and licensed to three industrial groups for redesigning cooling infrastructure across 14 facilities, reducing annual energy expenditure by an estimated 18% across the deployed sites. Across 28 years I have been the bridge between academic ML/thermal research and industrial deployment, including chairing two ASHRAE technical committees.",
+          "prospective": "a national framework for federally-mandated efficiency standards in hyperscale data centres, in partnership with NRCan and the Canadian Data Centre Association, with an academic publishing arm contributing to the ASHRAE Handbook revision underway"
+        },
+        "contributions": [
+          {
+            "theme": "Cooling optimization framework — industrial deployment and spin-off",
+            "activities": "I developed, over 12 years, an energy-optimization framework for industrial cooling systems combining thermodynamic modelling with adaptive ML control. I led the academic-side research personally, co-founded CoolStack Inc. with my postdoc (acquired by Schneider Electric in 2019), and continue as a scientific advisor.",
+            "outputs": "Seventeen peer-reviewed papers in J. of Thermal Sciences, Energy & Buildings, ASHRAE Transactions; six US patents; the CoolStack product line; and the methodology documentation now used as Schneider Electric's internal training reference.",
+            "outcomes": "The framework was deployed at 14 industrial facilities (3 of which are top-10 Canadian data centres) before the Schneider acquisition, reducing annual energy expenditure by an estimated 18% on average. Post-acquisition, Schneider has integrated the framework into their product line.",
+            "evidence": "CoolStack Inc. acquired by Schneider Electric for $32M (2019). Six US patents granted. 17 peer-reviewed papers cited 980+ times in aggregate. Featured in MIT Technology Review (2018) and IEEE Spectrum (2020). Awarded the 2021 ASHRAE Distinguished Service Award.",
+            "impact": "Hypothesised systemic impact: post-acquisition deployment through Schneider's existing customer base could expand the framework's reach by an order of magnitude. If integrated into federally-mandated efficiency standards (in conversation with NRCan), it could shift the baseline of Canadian data-centre efficiency by 5–8% over a decade."
+          },
+          {
+            "theme": "NSERC Industrial Research Chair achievements (2014–2024)",
+            "activities": "I held the NSERC Industrial Research Chair in Energy-Efficient Computing from 2014 to 2024. As Chair, I led a research program of 5–8 graduate students at any time, coordinated industrial partnerships with five major Canadian and international firms, and chaired the Chair's annual industrial-academic workshop.",
+            "outputs": "Across the 10-year Chair: 35 peer-reviewed papers, 4 patents, 22 industrial-research reports, an annual workshop series (10 workshops, 120 attendees on average), and the curriculum for the Concordia graduate course MECH 6701 Energy in Industrial Systems.",
+            "outcomes": "The Chair trained 18 graduate students (8 PhDs, 10 MASc), of whom 15 are now in industrial research or academic positions globally. Two of the five industrial partners renewed their partnership for the second Chair cycle (the Chair was renewed and ran to 2024 after the initial 5+5 structure).",
+            "evidence": "External review of the Chair 2019 and 2024 — both strongly positive. Five industrial partnerships renewed at the 5-year mark. The Chair was identified in Concordia's 2023 strategic-research review as a model partnership-based program.",
+            "impact": "Hypothesised: the Chair's largest impact is the people — 18 graduate alumni now distributed across the industrial-research and academic networks that decide where cooling-efficiency research goes. That capacity-building effect compounds with each hiring decision they make."
+          },
+          {
+            "theme": "Patent portfolio + tech-transfer outcomes",
+            "activities": "Across my career I have led 12 patent applications, 11 of which have been granted across US, Canadian, and EU jurisdictions. I am the named inventor on 9 and the co-inventor on 2. I personally led the patent disclosure process for each.",
+            "outputs": "11 granted patents (9 US, 1 CA, 1 EU); 6 licensed to industrial partners; 3 spun out through CoolStack Inc.",
+            "outcomes": "Six patents have generated direct licensing revenue to Concordia ($1.8M cumulative since 2008). Three patents spun out through CoolStack contributed to the 2019 acquisition value.",
+            "evidence": "Concordia Office of Innovation & Partnerships records (2008–present) document the licensing-revenue flow. The 2019 Schneider Electric acquisition price ($32M) is public.",
+            "impact": "Hypothesised: a patent portfolio in this field is a working-research record, not just an IP record. The fact that six patents are licensed and three commercialised is evidence the academic research mapped to actual industrial needs — which is itself a contribution to how engineering programs design industry-facing research training."
+          },
+          {
+            "theme": "ASHRAE standard-setting work",
+            "activities": "I have chaired two ASHRAE technical committees (TC 4.10 on Indoor Environmental Modelling, 2017–2020; TC 9.9 on Mission Critical Facilities, 2021–present). I have personally led the drafting of two sections of the ASHRAE Handbook on data-centre cooling efficiency.",
+            "outputs": "Two ASHRAE Handbook sections (HVAC Applications, 2020 and 2024 editions); five technical committee position papers; one ASHRAE-published design guide on liquid cooling.",
+            "outcomes": "The ASHRAE Handbook is the de facto reference for HVAC design in North America. The 2024 data-centre section is now used by Canadian engineering firms in their design practice; conversations with the Engineers Canada accreditation body are underway about integrating the section into curriculum guidance.",
+            "evidence": "ASHRAE Handbook is the most-cited HVAC reference in North American engineering practice (per ASHRAE 2023 readership survey). The 2024 section's draft was used in two recent Canadian data-centre design competitions.",
+            "impact": "Hypothesised: standard-setting is one of the most underrated contribution types in engineering research. By writing the reference, my work shapes what gets designed by every engineer reading the Handbook — a multiplier effect on practice."
+          },
+          {
+            "theme": "Career-spanning theme — bridging ML and industrial thermal systems",
+            "activities": "Across 28 years, my recurring contribution has been at the boundary between machine learning and industrial thermal physics — a boundary that most engineers do not cross because the disciplines are taught separately. I have written across the boundary (joint papers in ML and thermal venues), trained students who cross the boundary, and supervised industrial collaborations that require it.",
+            "outputs": "A track record of 12 joint publications in ML venues (NeurIPS, ICML) and thermal venues (J. Thermal Sciences, ASHRAE Transactions); a graduate seminar I have taught for 18 years on the boundary; and an alumni network spanning both fields.",
+            "outcomes": "Two of my alumni now hold tenure-track positions specifically at this boundary (one at the University of Sherbrooke, one at TU Munich). The graduate seminar is the most cross-departmentally-enrolled course at the Gina Cody School.",
+            "evidence": "Cross-disciplinary citation pattern documented in a 2022 bibliometric self-study. The graduate seminar enrolment has averaged 22 students per offering across 18 years.",
+            "impact": "Hypothesised: the integration of ML and thermal systems is now mainstream in the field, but in 1996 it was not. Career-spanning, my work has been one of several Canadian threads that helped move the boundary from novel to standard practice."
+          }
+        ],
+        "mentorship": [
+          {
+            "groupName": "Graduate supervision — PhDs (career total)",
+            "philosophy": "I treat every PhD student as a future colleague and design the supervisory relationship accordingly. Eight years from now you may be sitting on my tenure review committee. Train as if that is true, because it sometimes is.",
+            "environment": "Weekly individual meetings, monthly full-lab gatherings, mandatory annual industrial-partner site visits, and an alumni network I actively maintain (annual gathering at the ASHRAE annual meeting).",
+            "edi": "EDI in engineering supervision is a 20-year project for me — I did not start where I am now. Of my 22 PhDs completed across the career, 7 are women, 9 are racialised, and 4 are first-generation graduate students. The proportion of women in my lab has risen from 1-in-7 (1996–2005) to 5-in-8 (2018–present), through changes in recruitment, advertising, and mentoring practice. I co-chair the Faculty of Engineering's EDI committee.",
+            "awards": "Of 22 PhDs completed: 14 are in industry research positions (including 4 at Schneider Electric, 2 at Hydro-Québec, 2 at Bombardier, 1 at Google, others at Canadian engineering consultancies), 5 are in tenure-track or research positions, 3 are senior engineers at federal labs. Two of the 14 hold senior R&D leadership positions."
+          },
+          {
+            "groupName": "Postdoctoral mentoring",
+            "philosophy": "Postdocs in my lab co-design their own next career step from year 1. I am explicit that the postdoc is not an extended PhD — it is a positioning step, and we design the work to support whichever position the postdoc is aiming for (academia, industry research, policy).",
+            "environment": "Bi-weekly one-on-ones, an explicit positioning-document signed in months 1 and 12, and at least one external collaboration network introduction per year.",
+            "edi": "Of 8 postdocs trained, 4 are women, 6 are racialised, and 1 is Indigenous (Métis).",
+            "awards": "Of 8 postdocs: 4 in tenure-track positions (Concordia, U of Sherbrooke, McMaster, TU Munich), 3 in industrial research (Schneider Electric R&D, Hydro-Québec Centre de recherche), 1 in federal lab leadership."
+          },
+          {
+            "groupName": "Industry-partnered + undergraduate research training",
+            "philosophy": "Undergraduate research is where most engineering students discover whether research is for them. I have built that pipeline deliberately, particularly through the Chair years. For industry-partnered training, I require partner organisations to commit to dual deliverables (academic and industrial).",
+            "environment": "Annual undergraduate research-day with industrial-partner attendance; structured 4-month research internships through Mitacs; quarterly Chair-partnership review meetings.",
+            "edi": "70+ undergraduate research trainees over the career; explicit recruitment from women-in-engineering and Indigenous-engineering pipelines since 2012.",
+            "awards": "Multiple NSERC USRA recipients across the years (15+); two undergraduate students went on to PhDs at MIT and Stanford with my reference. Numerous Concordia and CSME (Canadian Society for Mechanical Engineering) undergraduate research awards."
+          }
+        ],
+        "selfCheck": { "0": true, "1": true, "2": true, "3": true, "4": true },
+        "downloaded": true
+      }
+    }
+  ]
+}
