@@ -3,6 +3,8 @@
 
 # triage skill — config holds the Apps Script webhook secret
 .claude/skills/triage/config.local.json
+# triage skill — internal session log (not for git history)
+.claude/skills/triage/log.local.md
 
 # legacy /triage command (superseded by the triage skill)
 .claude/commands/triage.md
