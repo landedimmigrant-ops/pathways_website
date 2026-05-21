@@ -148,8 +148,8 @@
     .r2-field-details.r2-state--unsure   > .r2-field-row { background: #fafafa; border-left-color: #95a5a6; }
     .r2-field-row {
       display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-      gap: 16px;
+      grid-template-columns: minmax(0, 2.2fr) minmax(200px, 1fr);
+      gap: 18px;
       padding: 12px 14px 14px 10px;
       border-left: 3px solid transparent;
       border-top: 1px solid #f0f0f0;
@@ -162,12 +162,47 @@
       display: block;
       margin-bottom: 4px;
     }
-    /* Bigger textarea so the field text isn't crunched */
+    /* Roomy textarea — fills the open accordion body. Auto-grow via JS on input. */
     .r2-field-left textarea.contribution-textarea {
-      min-height: 110px;
+      min-height: 240px;
       resize: vertical;
       width: 100%;
       box-sizing: border-box;
+      font-size: 14px;
+      line-height: 1.55;
+      padding: 10px 12px;
+    }
+
+    /* Slimmer sidebar — the progress panel was eating real estate. */
+    #ncv-prototype-root .narrative-module-shell {
+      display: grid;
+      grid-template-columns: 168px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+    #ncv-prototype-root .narrative-progress-panel {
+      padding: 12px 14px;
+    }
+    #ncv-prototype-root .narrative-progress-panel h2 {
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      margin: 0 0 10px;
+      color: var(--muted, #666);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    #ncv-prototype-root .narrative-stage-list { margin: 0; padding: 0; list-style: none; }
+    #ncv-prototype-root .narrative-stage-item {
+      font-size: 13px;
+      padding: 7px 4px;
+    }
+    #ncv-prototype-root .narrative-draft-btn {
+      font-size: 12px;
+      padding: 8px 10px;
+      margin-top: 12px;
+    }
+    @media (max-width: 720px) {
+      #ncv-prototype-root .narrative-module-shell { grid-template-columns: 1fr; }
     }
 
     /* Round 1 bundle accordion */
@@ -1635,9 +1670,19 @@
               ta.placeholder = placeholder;
               ta.value = c[key] || "";
               ta.rows = 5;
+              const autoGrow = () => {
+                ta.style.height = "auto";
+                const sh = ta.scrollHeight;
+                // Respect CSS min-height (240px) — only grow beyond it
+                ta.style.height = Math.max(sh, 240) + "px";
+              };
               leftCol.appendChild(ta);
               const autoChecks = el("div", "r2-auto-checks");
               leftCol.appendChild(autoChecks);
+              // Initial size after the element is in the DOM
+              setTimeout(autoGrow, 0);
+              // Also recompute when the accordion opens (scrollHeight is 0 while collapsed)
+              details.addEventListener("toggle", () => { if (details.open) setTimeout(autoGrow, 0); });
 
               // RIGHT: toggles + contextual panel
               const rightCol = el("div", "r2-field-right");
@@ -1744,6 +1789,7 @@
                 c[key] = e.target.value;
                 saveNarrative();
                 refreshAutoChecks();
+                autoGrow();
               });
 
               [{ val: "check", symbol: "✓", title: "Looks strong" },
