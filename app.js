@@ -302,6 +302,39 @@
     "wrapping-up-project": "support-wrapping"
   };
 
+  // B-16: collapse fine-grained time-commitment values (e.g. "10 min", "45 min",
+  // "1 hour", "2 hrs", "Self-paced") into a small set of canonical buckets so
+  // the filter dropdown isn't a noisy list of every duration variant.
+  const TIME_BUCKETS = ["< 15 min", "15–30 min", "30–60 min", "1–2 hours", "2+ hours", "Self-paced"];
+  const bucketTime = (raw) => {
+    if (Array.isArray(raw)) {
+      const buckets = raw.map(bucketTime).filter(Boolean);
+      return buckets.length ? buckets[0] : "";
+    }
+    const s = (raw || "").toString().trim().toLowerCase();
+    if (!s) return "";
+    if (s.includes("self") && s.includes("paced")) return "Self-paced";
+    const minMatch = s.match(/(\d+)\s*[-–]?\s*(\d+)?\s*min/);
+    if (minMatch) {
+      const lo = parseInt(minMatch[1], 10);
+      const hi = minMatch[2] ? parseInt(minMatch[2], 10) : lo;
+      const avg = (lo + hi) / 2;
+      if (avg < 15) return "< 15 min";
+      if (avg <= 30) return "15–30 min";
+      if (avg <= 60) return "30–60 min";
+      if (avg <= 120) return "1–2 hours";
+      return "2+ hours";
+    }
+    const hrMatch = s.match(/(\d+(?:\.\d+)?)\s*(?:hr|hour)/);
+    if (hrMatch) {
+      const h = parseFloat(hrMatch[1]);
+      if (h <= 1) return "30–60 min";
+      if (h <= 2) return "1–2 hours";
+      return "2+ hours";
+    }
+    return raw;
+  };
+
   const stageKeyToLabel = data.start.journeys.reduce((acc, journey) => {
     acc[journey.id] = journey.stage || journey.title;
     return acc;
@@ -4289,7 +4322,9 @@
       // Confirmation
       const confirmation = el("div", "contact-form-confirmation is-hidden");
       const confirmIcon = el("p", "booking-confirm-icon", "\u2713");
-      const confirmTitle = el("h3", "booking-confirm-title", "Request received!");
+      // B-18: unified with booking modal \u2014 "Thank you, [name]!" pattern. Title
+      // is filled in by showContactConfirmation with the submitter's name.
+      const confirmTitle = el("h3", "booking-confirm-title", "");
       const confirmText = el("p", "booking-confirm-text", "");
       confirmation.appendChild(confirmIcon);
       confirmation.appendChild(confirmTitle);
@@ -4302,8 +4337,9 @@
       errorBox.setAttribute("role", "alert");
       contactForm.insertBefore(errorBox, formActions);
 
-      const showContactConfirmation = (text) => {
+      const showContactConfirmation = (name, text) => {
         contactForm.querySelectorAll(".contact-form-field, .contact-form-actions, .contact-form-note, .contact-form-heading, .contact-form-intro, .contact-form-error").forEach((el) => el.classList.add("is-hidden"));
+        confirmTitle.textContent = "Thank you, " + name + "!";
         confirmText.textContent = text;
         confirmation.classList.remove("is-hidden");
       };
@@ -4326,11 +4362,11 @@
 
         submitToFormspree(new FormData(contactForm)).then((result) => {
           if (result.ok) {
-            showContactConfirmation("Thank you for reaching out. We\u2019ll review your details and connect you with the right person or resource.");
+            showContactConfirmation(name, "We\u2019ve received your request and will be in touch at " + email + " within 2 business days.");
             return;
           }
           if (result.prototype) {
-            showContactConfirmation("Thanks \u2014 we logged your request locally. The form endpoint is being finalized; in the meantime, you can email " + FORMSPREE_FALLBACK_EMAIL + ".");
+            showContactConfirmation(name, "We logged your request locally. The form endpoint is being finalized \u2014 once it\u2019s live, submissions will be delivered automatically. For anything urgent, email " + FORMSPREE_FALLBACK_EMAIL + ".");
             return;
           }
           submitBtn.disabled = false;
@@ -4468,6 +4504,16 @@
   const buildExplore = () => {
     const section = el("section", "page page-explore");
     section.dataset.page = "explore";
+
+    // B-17: keep aria-pressed in sync with the visual is-active class on
+    // .pathway-filter-pill so screen-reader users know which filter is on.
+    const setActivePill = (bar, activePill) => {
+      bar.querySelectorAll(".pathway-filter-pill").forEach((p) => {
+        const isActive = p === activePill;
+        p.classList.toggle("is-active", isActive);
+        p.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    };
 
     const container = el("div", "container");
     container.appendChild(el("h1", null, data.explore.title));
@@ -4780,10 +4826,10 @@
       if (filterTags.size > 1) {
         const allPill = el("button", "pathway-filter-pill is-active", "All");
         allPill.type = "button";
+        allPill.setAttribute("aria-pressed", "true");
         allPill.addEventListener("click", () => {
           activePathwayFilter = null;
-          pathwayFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-          allPill.classList.add("is-active");
+          setActivePill(pathwayFilterBar, allPill);
           renderPathwayCards(filtered);
         });
         pathwayFilterBar.appendChild(allPill);
@@ -4791,10 +4837,10 @@
         filterTags.forEach(({ type, value }) => {
           const pill = el("button", "pathway-filter-pill", value);
           pill.type = "button";
+          pill.setAttribute("aria-pressed", "false");
           pill.addEventListener("click", () => {
             activePathwayFilter = { type, value };
-            pathwayFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-            pill.classList.add("is-active");
+            setActivePill(pathwayFilterBar, pill);
             const subset = filtered.filter((opp) => {
               if (type === "format") {
                 const f = Array.isArray(opp.format) ? opp.format : [opp.format];
@@ -4997,18 +5043,18 @@
       if (formatSet.size > 1) {
         const allPill = el("button", "pathway-filter-pill is-active", "All");
         allPill.type = "button";
+        allPill.setAttribute("aria-pressed", "true");
         allPill.addEventListener("click", () => {
-          researchFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-          allPill.classList.add("is-active");
+          setActivePill(researchFilterBar, allPill);
           renderResearchCards(matched);
         });
         researchFilterBar.appendChild(allPill);
         fmtArr.forEach((f) => {
           const pill = el("button", "pathway-filter-pill", f);
           pill.type = "button";
+          pill.setAttribute("aria-pressed", "false");
           pill.addEventListener("click", () => {
-            researchFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-            pill.classList.add("is-active");
+            setActivePill(researchFilterBar, pill);
             renderResearchCards(matched.filter((opp) => {
               const v = Array.isArray(opp.format) ? opp.format : [opp.format];
               return v.includes(f);
@@ -5019,9 +5065,9 @@
         if (formatSet.has("External Resource")) {
           const pill = el("button", "pathway-filter-pill", "External Resource");
           pill.type = "button";
+          pill.setAttribute("aria-pressed", "false");
           pill.addEventListener("click", () => {
-            researchFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-            pill.classList.add("is-active");
+            setActivePill(researchFilterBar, pill);
             renderResearchCards(matched.filter((opp) => {
               const v = Array.isArray(opp.format) ? opp.format : [opp.format];
               return v.includes("External Resource");
@@ -5195,13 +5241,19 @@
       const valueSet = new Set();
       exploreItems.forEach((opp) => {
         const value = opp[filter.id];
+        // B-16: for the time filter, fold each raw duration into a canonical
+        // bucket so the dropdown surfaces only a handful of clean options.
+        const normalise = filter.id === "time" ? bucketTime : (v) => v;
         if (Array.isArray(value)) {
-          value.forEach((entry) => valueSet.add(entry));
+          value.forEach((entry) => { const n = normalise(entry); if (n) valueSet.add(n); });
         } else if (value) {
-          valueSet.add(value);
+          const n = normalise(value);
+          if (n) valueSet.add(n);
         }
       });
-      const values = Array.from(valueSet).sort();
+      const values = filter.id === "time"
+        ? TIME_BUCKETS.filter((b) => valueSet.has(b))
+        : Array.from(valueSet).sort();
 
       values.forEach((value) => {
         const option = el("option", null, value);
@@ -5564,7 +5616,8 @@
         const pathwayMatch = matchesField(opp.pathway, state.filters.pathway);
         const stageMatch = matchesField(opp.stage, state.filters.stage);
         const formatMatch = matchesField(opp.format, state.filters.format);
-        const timeMatch = matchesField(opp.time, state.filters.time);
+        // B-16: compare bucket-to-bucket so the filter matches the dropdown.
+        const timeMatch = matchesField(bucketTime(opp.time), state.filters.time);
 
         return matchesSearch && pathwayMatch && stageMatch && formatMatch && timeMatch;
       });

@@ -650,7 +650,7 @@ window.PATHWAYS_DATA = {
       },
       {
         id: "format",
-        label: "All types",
+        label: "Types",
         allLabel: "All types"
       },
       {
