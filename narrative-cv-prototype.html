@@ -99,25 +99,69 @@
       color: var(--muted, #666);
       white-space: nowrap;
     }
+    /* Phase F.2 — accordion-style field row wrappers (collapsible) */
+    .r2-field-details {
+      border-top: 1px solid #eee;
+      margin: 0;
+    }
+    .r2-field-details:first-of-type { border-top: none; }
+    .r2-field-summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px 10px 10px;
+      cursor: pointer;
+      list-style: none;
+      font-size: 13px;
+      font-weight: 600;
+      user-select: none;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, border-color 0.2s;
+    }
+    .r2-field-summary::-webkit-details-marker { display: none; }
+    .r2-field-summary::marker { content: ""; }
+    .r2-field-summary:hover { background: #fafafa; }
+    .r2-field-details > .r2-field-summary > .r2-summary-tri {
+      display: inline-block;
+      width: 12px;
+      color: var(--muted, #666);
+      transform: rotate(-90deg);
+      transition: transform 0.2s;
+      font-size: 11px;
+      line-height: 1;
+    }
+    .r2-field-details[open] > .r2-field-summary > .r2-summary-tri { transform: rotate(0deg); }
+    .r2-summary-label { flex: 1; min-width: 0; }
+    .r2-summary-badge-slot { display: inline-flex; gap: 6px; align-items: center; }
+    /* state colouring lives on the details wrapper (covers both summary and body) */
+    .r2-field-details.r2-state--approved > .r2-field-summary { border-left-color: #27ae60; }
+    .r2-field-details.r2-state--flagged  > .r2-field-summary { border-left-color: #f39c12; }
+    .r2-field-details.r2-state--unsure   > .r2-field-summary { border-left-color: #95a5a6; }
+    .r2-field-details.r2-state--approved > .r2-field-row { background: #f7fbf9; border-left-color: #27ae60; }
+    .r2-field-details.r2-state--flagged  > .r2-field-row { background: #fdf6ec; border-left-color: #f39c12; }
+    .r2-field-details.r2-state--unsure   > .r2-field-row { background: #fafafa; border-left-color: #95a5a6; }
     .r2-field-row {
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
       gap: 16px;
-      padding: 12px 0 12px 10px;
-      border-top: 1px solid #eee;
+      padding: 12px 14px 14px 10px;
       border-left: 3px solid transparent;
+      border-top: 1px solid #f0f0f0;
       transition: background 0.2s, border-color 0.2s;
     }
-    .r2-field-row:first-of-type { border-top: none; }
-    .r2-field-row--approved { border-left-color: #27ae60; background: #f7fbf9; }
-    .r2-field-row--flagged  { border-left-color: #f39c12; background: #fdf6ec; }
-    .r2-field-row--unsure   { border-left-color: #95a5a6; background: #fafafa; }
     .r2-field-left label,
     .r2-field-right > .r2-field-label {
       font-size: 13px;
       font-weight: 600;
       display: block;
       margin-bottom: 4px;
+    }
+    /* Bigger textarea so the field text isn't crunched */
+    .r2-field-left textarea.contribution-textarea {
+      min-height: 110px;
+      resize: vertical;
+      width: 100%;
+      box-sizing: border-box;
     }
     .r2-auto-checks {
       font-size: 12px;
@@ -1470,30 +1514,42 @@
             };
 
             FIELDS.forEach(({ key, label, placeholder }) => {
-              const row = el("div", "r2-field-row");
-              row.dataset.field = key;
+              // Accordion wrapper — open by default; user can collapse any field
+              const details = el("details", "r2-field-details");
+              details.open = true;
+              details.dataset.field = key;
 
-              // LEFT: label + textarea + auto-checks
+              // Summary: triangle · label · status badge (always visible)
+              const summary = el("summary", "r2-field-summary");
+              const tri = el("span", "r2-summary-tri", "▾"); // ▾
+              summary.appendChild(tri);
+              const summaryLabel = el("span", "r2-summary-label", label);
+              summary.appendChild(summaryLabel);
+              const summaryBadgeSlot = el("span", "r2-summary-badge-slot");
+              const statusBadge = el("span", "r2-status-badge");
+              summaryBadgeSlot.appendChild(statusBadge);
+              summary.appendChild(summaryBadgeSlot);
+              details.appendChild(summary);
+
+              // Body: original 2-column grid (text+auto-checks left · review right)
+              const row = el("div", "r2-field-row");
+
+              // LEFT: textarea + auto-checks (label moved to summary)
               const leftCol = el("div", "r2-field-left");
               const taId = `r2-${idx}-${key}`;
-              const lbl = el("label", null, label);
-              lbl.setAttribute("for", taId);
-              leftCol.appendChild(lbl);
               const ta = el("textarea", null);
               ta.id = taId;
               ta.className = "contribution-textarea";
               ta.placeholder = placeholder;
               ta.value = c[key] || "";
-              ta.rows = 3;
+              ta.rows = 5;
               leftCol.appendChild(ta);
               const autoChecks = el("div", "r2-auto-checks");
               leftCol.appendChild(autoChecks);
 
               // RIGHT: toggles + contextual panel
               const rightCol = el("div", "r2-field-right");
-              rightCol.appendChild((() => { const l = el("div", "r2-field-label", "Review"); return l; })());
               const toggleRow = el("div", "r2-toggle-row");
-              const statusBadge = el("span", "r2-status-badge");
               const contextualPanel = el("div", "r2-contextual");
 
               const refreshAutoChecks = () => {
@@ -1530,10 +1586,11 @@
 
               const updateRowVisual = () => {
                 const s = c.diagnostic[key];
-                row.className = "r2-field-row";
-                if (s === "check") row.classList.add("r2-field-row--approved");
-                else if (s === "cross") row.classList.add("r2-field-row--flagged");
-                else if (s === "?") row.classList.add("r2-field-row--unsure");
+                // State colouring lives on the details wrapper now
+                details.className = "r2-field-details";
+                if (s === "check") details.classList.add("r2-state--approved");
+                else if (s === "cross") details.classList.add("r2-state--flagged");
+                else if (s === "?") details.classList.add("r2-state--unsure");
                 statusBadge.className = "r2-status-badge";
                 if (s === "check") {
                   statusBadge.classList.add("r2-status-badge--check");
@@ -1621,13 +1678,14 @@
                 });
                 toggleRow.appendChild(btn);
               });
-              toggleRow.appendChild(statusBadge);
+              // statusBadge is now in the summary, not the toggle row
               rightCol.appendChild(toggleRow);
               rightCol.appendChild(contextualPanel);
 
               row.appendChild(leftCol);
               row.appendChild(rightCol);
-              card.appendChild(row);
+              details.appendChild(row);
+              card.appendChild(details);
 
               updateRowVisual();
               updateContextual();
