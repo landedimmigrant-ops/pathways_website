@@ -287,6 +287,15 @@
     acc[pathwayIdToKey[id]] = id;
     return acc;
   }, {});
+  // Accept either the short key ("academic") or the full slug ("academic-scholarship").
+  // External links built with the slug used to silently no-op (B-11).
+  const normalizePathwayParam = (raw) => {
+    const v = (raw || "").toString().trim().toLowerCase();
+    if (!v) return "";
+    if (Object.prototype.hasOwnProperty.call(pathwayKeyToId, v)) return v;
+    if (Object.prototype.hasOwnProperty.call(pathwayIdToKey, v)) return pathwayIdToKey[v];
+    return v;
+  };
   const supportAnchorByJourneyId = {
     "developing-project": "support-developing",
     "ongoing-project": "support-active",
@@ -5810,6 +5819,15 @@
             : "We logged your request locally. The form endpoint is being connected \u2014 once it\u2019s live, submissions will be delivered automatically. For anything urgent, email " + FORMSPREE_FALLBACK_EMAIL + ".";
           form.appendChild(el("p", "booking-confirm-text", text));
           actions.hidden = true;
+
+          // B-13: confirmation is just a notice \u2014 there's no service or booking
+          // state left to navigate back through. Strip ?service=&book= from the
+          // URL and clear currentModalKey so a single ESC/back/overlay-click
+          // dismisses the modal via requestModalClose's no-key fallback.
+          if (window.location.hash !== "#explore") {
+            history.replaceState(history.state, "", "#explore");
+          }
+          state.currentModalKey = "";
         });
       });
 
@@ -6169,6 +6187,11 @@
       state.currentModalKey = targetKey;
     };
 
+    // Exposed for the outer requestModalClose fallback (B-13): once the URL
+    // no longer represents an open modal, ESC/back/overlay-click should still
+    // tear the modal down — they can't go through history.back().
+    section.closeModal = closeModal;
+
     return section;
   };
 
@@ -6481,14 +6504,21 @@
     if (state.currentModalKey) {
       // We pushed an entry when opening; pop it back so URL reverts.
       history.back();
+      return;
     }
+    // No URL state to pop (B-13: confirmation screen after booking submit clears
+    // currentModalKey and replaceStates to a clean URL). Close the modal directly
+    // so a single ESC / back / overlay-click dismisses it.
+    const explorePage = pages.get("explore");
+    if (explorePage && explorePage.closeModal) explorePage.closeModal();
   };
 
   const navigateTo = (pageId, anchorId, options = {}) => {
     const validPage = pages.has(pageId) ? pageId : "home";
     const query = new URLSearchParams();
-    if (options.pathway) {
-      query.set("pathway", options.pathway);
+    const navPathwayKey = normalizePathwayParam(options.pathway);
+    if (navPathwayKey) {
+      query.set("pathway", navPathwayKey);
     }
     if (options.workshop) {
       query.set("workshop", options.workshop);
@@ -6505,9 +6535,7 @@
     const queryString = query.toString();
     const nextHash = `${pageToHash(validPage)}${queryString ? `?${queryString}` : ""}`;
     const sameHash = window.location.hash === nextHash;
-    state.pendingPathwayKey = validPage === "explore"
-      ? (options.pathway || "").toLowerCase()
-      : "";
+    state.pendingPathwayKey = validPage === "explore" ? navPathwayKey : "";
     state.pendingWorkshopId = validPage === "explore" ? (options.workshop || "") : "";
     state.pendingExploreSearch = validPage === "explore" ? (options.searchQuery || "") : "";
     state.pendingSupportSearch = validPage === "support" ? (options.supportSearch || "") : "";
@@ -6567,8 +6595,18 @@
       history.pushState(history.state, "", entryHash);
     }
 
+    // B-12: forward #home?pathway=<value> to #explore?pathway=<value> so
+    // shared deep links don't drop the pathway intent on landing. replaceState
+    // keeps history clean (the bare #home entry isn't worth a back-stop).
+    const initialPathwayKey = normalizePathwayParam(initialRoute.params.get("pathway"));
+    if (initialRoute.page === "home" && initialPathwayKey) {
+      initialRoute.page = "explore";
+      initialRoute.params.set("pathway", initialPathwayKey);
+      history.replaceState(history.state, "", `#explore?pathway=${initialPathwayKey}`);
+    }
+
     if (initialRoute.page === "explore") {
-      state.pendingPathwayKey = (initialRoute.params.get("pathway") || "").toLowerCase();
+      state.pendingPathwayKey = initialPathwayKey;
     }
     if (initialRoute.page === "explore") {
       state.pendingWorkshopId = initialRoute.params.get("workshop") || "";
@@ -6586,9 +6624,15 @@
         return;
       }
       const nextRoute = parseRouteFromHash(window.location.hash);
-      state.pendingPathwayKey = nextRoute.page === "explore"
-        ? (nextRoute.params.get("pathway") || "").toLowerCase()
-        : "";
+      const nextPathwayKey = normalizePathwayParam(nextRoute.params.get("pathway"));
+      // B-12: same home → explore forwarding on hashchange (e.g. user pastes a
+      // #home?pathway= link into the address bar of an already-loaded page).
+      // replaceState does not fire hashchange, so no suppression is needed.
+      if (nextRoute.page === "home" && nextPathwayKey) {
+        nextRoute.page = "explore";
+        history.replaceState(history.state, "", `#explore?pathway=${nextPathwayKey}`);
+      }
+      state.pendingPathwayKey = nextRoute.page === "explore" ? nextPathwayKey : "";
       state.pendingWorkshopId = nextRoute.page === "explore"
         ? (nextRoute.params.get("workshop") || "")
         : "";
