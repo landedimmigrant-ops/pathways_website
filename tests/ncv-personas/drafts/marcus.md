@@ -36,39 +36,71 @@ Looking ahead, I am working toward a feature-length companion film and a peer-re
 
 ### Bundle 1 — The Quiet Quarter (2024) — research-creation film
 
-**Activities (with my role):** I researched, directed, edited, and produced The Quiet Quarter (22 minutes), a documentary film tracing three generations of family footage from a single block of Montréal's former Chinatown. I personally led the community archive consultations with three families, the digitisation negotiations, and the final cut. Worked with one cinematographer and one sound designer; producing credit shared with the family-1 archive holder.
+**Activities** — — (not reviewed) · Rubric 4/4 · 61 words (target 40–80)
 
-**Outputs:** One 22-minute short film, one open-access digitisation log (under partner-family permission), and a co-authored Studio Arts seminar handout based on the production process.
+> I researched, directed, edited, and produced The Quiet Quarter (22 minutes), a documentary film tracing three generations of family footage from a single block of Montréal's former Chinatown. I personally led the community archive consultations with three families, the digitisation negotiations, and the final cut. Worked with one cinematographer and one sound designer; producing credit shared with the family-1 archive holder.
 
-**Outcomes (already changed):** Selected at 14 international film festivals (including Hot Docs, IDFA, Sheffield, Yamagata, and Cinéma du Réel). Now part of the curriculum at three film schools (Concordia, Ryerson/TMU, Goldsmiths). Two of the three partner families have agreed to extend the collaboration into the feature-length project.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 23 words (target 30–60)
 
-**Evidence:** Juried festival selection at 14 venues. Reviewed in Sight & Sound and POV Magazine. Hot Docs Best Canadian Short jury mention 2024. The methodology section of the seminar handout has been downloaded 1,100+ times via the Studio Arts website.
+> One 22-minute short film, one open-access digitisation log (under partner-family permission), and a co-authored Studio Arts seminar handout based on the production process.
 
-**Impact (hypothesised / systemic):** Hypothesised systemic impact: if the methodology developed for this film travels — through the planned methodology guide, the National Film Board partnership currently in early conversation, and the curriculum integrations already underway — it could shift how diasporic histories are produced and preserved in Canadian documentary culture, from community-invisible to citationally accessible. Academic impact: it is already changing how research-creation students at Concordia frame their archival-research projects.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 44 words (target 50–100)
+
+> Selected at 14 international film festivals (including Hot Docs, IDFA, Sheffield, Yamagata, and Cinéma du Réel). Now part of the curriculum at three film schools (Concordia, Ryerson/TMU, Goldsmiths). Two of the three partner families have agreed to extend the collaboration into the feature-length project.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 39 words (target 30–80)
+
+> Juried festival selection at 14 venues. Reviewed in Sight & Sound and POV Magazine. Hot Docs Best Canadian Short jury mention 2024. The methodology section of the seminar handout has been downloaded 1,100+ times via the Studio Arts website.
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 67 words (target 40–100)
+
+> Hypothesised systemic impact: if the methodology developed for this film travels — through the planned methodology guide, the National Film Board partnership currently in early conversation, and the curriculum integrations already underway — it could shift how diasporic histories are produced and preserved in Canadian documentary culture, from community-invisible to citationally accessible. Academic impact: it is already changing how research-creation students at Concordia frame their archival-research projects.
 
 ### Bundle 2 — Community-archival co-production methodology
 
-**Activities (with my role):** I am the principal author of a methodology guide for community-archival co-production in research-creation, drafted across the production of The Quiet Quarter and refined through three workshop iterations with research-creation graduate students at Concordia and York.
+**Activities** — — (not reviewed) · Rubric 2/4 · 36 words (target 40–80)
 
-**Outputs:** A 40-page open-access methodology guide (under final peer review with a small academic press), three workshop slide decks, and an early-stage protocol template for community archives.
+> I am the principal author of a methodology guide for community-archival co-production in research-creation, drafted across the production of The Quiet Quarter and refined through three workshop iterations with research-creation graduate students at Concordia and York.
 
-**Outcomes (already changed):** Two community-archives consortia (Chinatown History Project Toronto, Chinese Family Society of Montréal) have requested early-access copies. One Concordia MA student has used the protocol in her own thesis.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 26 words (target 30–60)
 
-**Evidence:** Three workshops delivered (Concordia x2, York x1) with 60 graduate-student participants total; written feedback strongly positive. Press: La Presse interview on diasporic archival practice (2024).
+> A 40-page open-access methodology guide (under final peer review with a small academic press), three workshop slide decks, and an early-stage protocol template for community archives.
 
-**Impact (hypothesised / systemic):** Hypothesised: if the methodology guide is adopted by community-archives training programs across Canada (in discussion with the Canadian Council of Archives), it would establish a recognised pathway for research-creation in community-archival contexts — currently absent from the methodological literature.
+**Outcomes** — — (not reviewed) · Rubric 2/4 · 28 words (target 50–100)
+
+> Two community-archives consortia (Chinatown History Project Toronto, Chinese Family Society of Montréal) have requested early-access copies. One Concordia MA student has used the protocol in her own thesis.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 25 words (target 30–80)
+
+> Three workshops delivered (Concordia x2, York x1) with 60 graduate-student participants total; written feedback strongly positive. Press: La Presse interview on diasporic archival practice (2024).
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 39 words (target 40–100)
+
+> Hypothesised: if the methodology guide is adopted by community-archives training programs across Canada (in discussion with the Canadian Council of Archives), it would establish a recognised pathway for research-creation in community-archival contexts — currently absent from the methodological literature.
 
 ### Bundle 3 — Graduate seminar in research-creation methods
 
-**Activities (with my role):** I designed and now teach FFAR 615 Methods in Research-Creation, a new graduate seminar at Concordia introduced in Fall 2024. I personally developed the syllabus, four assignment scaffolds, and the peer-review structure.
+**Activities** — — (not reviewed) · Rubric 4/4 · 32 words (target 40–80)
 
-**Outputs:** Course syllabus (open-access), a methods reader with 24 curated open-source readings, and a public-facing seminar website.
+> I designed and now teach FFAR 615 Methods in Research-Creation, a new graduate seminar at Concordia introduced in Fall 2024. I personally developed the syllabus, four assignment scaffolds, and the peer-review structure.
 
-**Outcomes (already changed):** First cohort of 11 graduate students from four departments (Studio Arts, Cinema, History, Anthropology). Two enrolled in the seminar specifically because of The Quiet Quarter.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 16 words (target 30–60)
 
-**Evidence:** Cross-listed in Cinema and History after the first offering. Two unsolicited course-redesign consultations from other Fine Arts programs.
+> Course syllabus (open-access), a methods reader with 24 curated open-source readings, and a public-facing seminar website.
 
-**Impact (hypothesised / systemic):** Hypothesised: building the research-creation methods curriculum at Concordia early may seed a longer institutional commitment to research-creation pedagogy — particularly important as the field professionalises in Canadian universities.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 25 words (target 50–100)
+
+> First cohort of 11 graduate students from four departments (Studio Arts, Cinema, History, Anthropology). Two enrolled in the seminar specifically because of The Quiet Quarter.
+
+**Evidence** — — (not reviewed) · Rubric 2/4 · 18 words (target 30–80)
+
+> Cross-listed in Cinema and History after the first offering. Two unsolicited course-redesign consultations from other Fine Arts programs.
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 28 words (target 40–100)
+
+> Hypothesised: building the research-creation methods curriculum at Concordia early may seed a longer institutional commitment to research-creation pedagogy — particularly important as the field professionalises in Canadian universities.
+
+*Round 2 review state:* **0** approved · **0** flagged · **15** unsure across 15 sections. Total auto-rubric: 41/60.
 
 ## Supervisory & Mentorship Activities
 

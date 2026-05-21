@@ -36,39 +36,81 @@ Looking ahead, I am working toward an independent research program at Concordia 
 
 ### Bundle 1 — BanglaBench-1.0 — open community-validated Bengali NLP benchmark
 
-**Activities (with my role):** I led the design and release of the first comprehensive open-source benchmark for Bengali natural language understanding (BanglaBench-1.0). I personally designed the task taxonomy, recruited and trained 12 community translators across two major dialects, and authored the validation framework. Lead author on the resulting paper at EMNLP 2024.
+**Activities** — ✓ Approved · Rubric 4/4 · 48 words (target 40–80)
 
-**Outputs:** BanglaBench-1.0 (open-source on HuggingFace, MIT licence), the EMNLP 2024 paper, a methodology guide for community-translator recruitment, and a dialect-coverage validation toolkit.
+> I led the design and release of the first comprehensive open-source benchmark for Bengali natural language understanding (BanglaBench-1.0). I personally designed the task taxonomy, recruited and trained 12 community translators across two major dialects, and authored the validation framework. Lead author on the resulting paper at EMNLP 2024.
 
-**Outcomes (already changed):** BanglaBench is currently used by 31 research groups across India, Bangladesh, the US, Germany, and Singapore, including two Bangladeshi government labs working on civic NLP tools. Two follow-on grants by external groups directly cite BanglaBench as their evaluation standard. It has been integrated into the curriculum of a graduate NLP course at the University of Dhaka.
+**Outputs** — ✓ Approved · Rubric 3/4 · 21 words (target 30–60)
 
-**Evidence:** Cited in 18 peer-reviewed papers since release in late 2024, against a field baseline of roughly 6 for comparable Bengali-NLP resources at 12 months. EMNLP 2024 outstanding paper award honourable mention. Featured in the open-ML community newsletter EleutherAI Weekly. Currently the named evaluation standard in a Government of Bangladesh-funded ML hub at the University of Dhaka.
+> BanglaBench-1.0 (open-source on HuggingFace, MIT licence), the EMNLP 2024 paper, a methodology guide for community-translator recruitment, and a dialect-coverage validation toolkit.
 
-**Impact (hypothesised / systemic):** Hypothesised systemic impact: if BanglaBench is taken up as the de facto evaluation standard for Bengali NLP (active negotiation with the open ML community), it could shift the field from English-centric leaderboards toward language-specific community-validated evaluation — a structural change to who sets the standards in low-resource NLP. Academic impact is already visible: more papers on Bengali dialect handling, and a clearer separation of language vs. dialect coverage as distinct evaluation axes.
+**Outcomes** — ✓ Approved · Rubric 3/4 · 56 words (target 50–100)
+
+> BanglaBench is currently used by 31 research groups across India, Bangladesh, the US, Germany, and Singapore, including two Bangladeshi government labs working on civic NLP tools. Two follow-on grants by external groups directly cite BanglaBench as their evaluation standard. It has been integrated into the curriculum of a graduate NLP course at the University of Dhaka.
+
+**Evidence** — ✓ Approved · Rubric 3/4 · 56 words (target 30–80)
+
+> Cited in 18 peer-reviewed papers since release in late 2024, against a field baseline of roughly 6 for comparable Bengali-NLP resources at 12 months. EMNLP 2024 outstanding paper award honourable mention. Featured in the open-ML community newsletter EleutherAI Weekly. Currently the named evaluation standard in a Government of Bangladesh-funded ML hub at the University of Dhaka.
+
+**Impact** — ? Unsure · Rubric 2/4 · 72 words (target 40–100)
+
+> Hypothesised systemic impact: if BanglaBench is taken up as the de facto evaluation standard for Bengali NLP (active negotiation with the open ML community), it could shift the field from English-centric leaderboards toward language-specific community-validated evaluation — a structural change to who sets the standards in low-resource NLP. Academic impact is already visible: more papers on Bengali dialect handling, and a clearer separation of language vs. dialect coverage as distinct evaluation axes.
+
+> *Revision note:* Read back later — does the academic-impact framing feel grounded enough? Maybe add one concrete example of a paper using the dialect framework.
 
 ### Bundle 2 — TamilEval-0.5 — morphology-aware Tamil NLP benchmark
 
-**Activities (with my role):** I co-designed TamilEval-0.5 with a five-person team across Concordia and IIIT-Madras. I personally led the morphology-aware evaluation track and supervised one master's student through the annotation pipeline. Second author on the published paper; primary owner of the morphology track.
+**Activities** — ✓ Approved · Rubric 4/4 · 39 words (target 40–80)
 
-**Outputs:** TamilEval-0.5 (Apache 2.0), a co-authored ACL 2025 Findings paper, and a Tamil morphology evaluation toolkit.
+> I co-designed TamilEval-0.5 with a five-person team across Concordia and IIIT-Madras. I personally led the morphology-aware evaluation track and supervised one master's student through the annotation pipeline. Second author on the published paper; primary owner of the morphology track.
 
-**Outcomes (already changed):** Already adopted by three Indian research groups and the Tamil Virtual Academy for evaluating their open-source Tamil LLM. Two further annotation contributions arrived from the open community in the first six months.
+**Outputs** — ✗ Needs work · Rubric 3/4 · 15 words (target 30–60)
 
-**Evidence:** Selected for the ACL 2025 Resource Track. Featured in two community-translation working-group meetings of the Tamil Virtual Academy.
+> TamilEval-0.5 (Apache 2.0), a co-authored ACL 2025 Findings paper, and a Tamil morphology evaluation toolkit.
 
-**Impact (hypothesised / systemic):** Hypothesised: if TamilEval reaches v1.0 with full morphology coverage (under development), it could become the standard evaluation for one of the world's 20 most-spoken languages — currently underserved in open ML evaluation.
+> *Revision note:* Name the Tamil Virtual Academy LLM specifically. Add a one-line description of the morphology toolkit (what it does, who it's for).
+
+**Outcomes** — ✓ Approved · Rubric 2/4 · 32 words (target 50–100)
+
+> Already adopted by three Indian research groups and the Tamil Virtual Academy for evaluating their open-source Tamil LLM. Two further annotation contributions arrived from the open community in the first six months.
+
+**Evidence** — ✓ Approved · Rubric 3/4 · 18 words (target 30–80)
+
+> Selected for the ACL 2025 Resource Track. Featured in two community-translation working-group meetings of the Tamil Virtual Academy.
+
+**Impact** — ? Unsure · Rubric 3/4 · 32 words (target 40–100)
+
+> Hypothesised: if TamilEval reaches v1.0 with full morphology coverage (under development), it could become the standard evaluation for one of the world's 20 most-spoken languages — currently underserved in open ML evaluation.
+
+> *Revision note:* Compare with BanglaBench impact framing — is the systemic claim parallel?
 
 ### Bundle 3 — Privacy-preserving on-device NLP for diasporic communities (pilot)
 
-**Activities (with my role):** I designed and led a six-month pilot study with three diasporic South Asian community organisations in Tiohtià:ke/Montréal on what privacy-preserving on-device NLP tools could offer them. I personally led the consultation workshops and synthesised findings; one community partner co-authored the published methodology.
+**Activities** — ✗ Needs work · Rubric 2/4 · 42 words (target 40–80)
 
-**Outputs:** A short white paper, a community-validated needs assessment, and a small open-source prototype demonstrating on-device summarisation for Bengali.
+> I designed and led a six-month pilot study with three diasporic South Asian community organisations in Tiohtià:ke/Montréal on what privacy-preserving on-device NLP tools could offer them. I personally led the consultation workshops and synthesised findings; one community partner co-authored the published methodology.
 
-**Outcomes (already changed):** Three community partners are now collaborators on a SSHRC partnership letter of intent for a follow-on project. One organisation has piloted the prototype with their volunteer translation team and contributed feedback toward v2.
+> *Revision note:* Be more explicit about what I designed vs what the community partners designed. The current phrasing makes my role sound bigger than it was — the community partners led recruitment and instrument design. Reframe as 'co-designed with' rather than 'led'.
 
-**Evidence:** The white paper has been downloaded 230+ times in three months. Two community partners have requested a second-phase collaboration in writing.
+**Outputs** — ✓ Approved · Rubric 2/4 · 18 words (target 30–60)
 
-**Impact (hypothesised / systemic):** Hypothesised: this could be a working model for how community-owned NLP development happens in diasporic contexts — currently a major gap in both the NLP and community-research literatures. Early-stage and acknowledged as such.
+> A short white paper, a community-validated needs assessment, and a small open-source prototype demonstrating on-device summarisation for Bengali.
+
+**Outcomes** — ? Unsure · Rubric 2/4 · 33 words (target 50–100)
+
+> Three community partners are now collaborators on a SSHRC partnership letter of intent for a follow-on project. One organisation has piloted the prototype with their volunteer translation team and contributed feedback toward v2.
+
+> *Revision note:* Are the SSHRC LOI and the v2 feedback really 'outcomes' — or are they still inputs to the next project? Maybe move to Impact and leave Outcomes lighter.
+
+**Evidence** — ✓ Approved · Rubric 3/4 · 21 words (target 30–80)
+
+> The white paper has been downloaded 230+ times in three months. Two community partners have requested a second-phase collaboration in writing.
+
+**Impact** — ✓ Approved · Rubric 2/4 · 33 words (target 40–100)
+
+> Hypothesised: this could be a working model for how community-owned NLP development happens in diasporic contexts — currently a major gap in both the NLP and community-research literatures. Early-stage and acknowledged as such.
+
+*Round 2 review state:* **10** approved · **2** flagged · **3** unsure across 15 sections. Total auto-rubric: 41/60.
 
 ## Supervisory & Mentorship Activities
 
@@ -80,6 +122,24 @@ Looking ahead, I am working toward an independent research program at Concordia 
 - **Training environment:** Weekly 30-minute one-on-one with each RA, plus an open Slack channel for technical questions. Shared writing happens in Overleaf; code happens through GitHub Classroom with mandatory pair-review.
 - **EDI practices:** I recruit from Concordia's WiCS (Women in Computer Science) and the Computer Science Undergraduate Society. I do not require prior research experience — only basic CS coursework and curiosity. Two of my four current RAs are first-generation university students.
 - **Awards / career outcomes:** Two of four undergraduate RAs have gone on to graduate programs (McGill MSc, U of T MSc). One was a 2024 NSERC USRA recipient on a project I co-designed; another won a Concordia Undergraduate Conference research prize for the BanglaBench dialect work.
+
+## Revision plan
+
+*Notes captured while strengthening contributions in Round 2. Take these into the next consult or working session.*
+
+### Bundle 1 — BanglaBench-1.0 — open community-validated Bengali NLP benchmark
+
+- **Impact:** Read back later — does the academic-impact framing feel grounded enough? Maybe add one concrete example of a paper using the dialect framework.
+
+### Bundle 2 — TamilEval-0.5 — morphology-aware Tamil NLP benchmark
+
+- **Outputs:** Name the Tamil Virtual Academy LLM specifically. Add a one-line description of the morphology toolkit (what it does, who it's for).
+- **Impact:** Compare with BanglaBench impact framing — is the systemic claim parallel?
+
+### Bundle 3 — Privacy-preserving on-device NLP for diasporic communities (pilot)
+
+- **Activities:** Be more explicit about what I designed vs what the community partners designed. The current phrasing makes my role sound bigger than it was — the community partners led recruitment and instrument design. Reframe as 'co-designed with' rather than 'led'.
+- **Outcomes:** Are the SSHRC LOI and the v2 feedback really 'outcomes' — or are they still inputs to the next project? Maybe move to Impact and leave Outcomes lighter.
 
 ## Final self-check
 

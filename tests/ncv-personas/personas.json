@@ -33,7 +33,9 @@
             "outputs": "BanglaBench-1.0 (open-source on HuggingFace, MIT licence), the EMNLP 2024 paper, a methodology guide for community-translator recruitment, and a dialect-coverage validation toolkit.",
             "outcomes": "BanglaBench is currently used by 31 research groups across India, Bangladesh, the US, Germany, and Singapore, including two Bangladeshi government labs working on civic NLP tools. Two follow-on grants by external groups directly cite BanglaBench as their evaluation standard. It has been integrated into the curriculum of a graduate NLP course at the University of Dhaka.",
             "evidence": "Cited in 18 peer-reviewed papers since release in late 2024, against a field baseline of roughly 6 for comparable Bengali-NLP resources at 12 months. EMNLP 2024 outstanding paper award honourable mention. Featured in the open-ML community newsletter EleutherAI Weekly. Currently the named evaluation standard in a Government of Bangladesh-funded ML hub at the University of Dhaka.",
-            "impact": "Hypothesised systemic impact: if BanglaBench is taken up as the de facto evaluation standard for Bengali NLP (active negotiation with the open ML community), it could shift the field from English-centric leaderboards toward language-specific community-validated evaluation — a structural change to who sets the standards in low-resource NLP. Academic impact is already visible: more papers on Bengali dialect handling, and a clearer separation of language vs. dialect coverage as distinct evaluation axes."
+            "impact": "Hypothesised systemic impact: if BanglaBench is taken up as the de facto evaluation standard for Bengali NLP (active negotiation with the open ML community), it could shift the field from English-centric leaderboards toward language-specific community-validated evaluation — a structural change to who sets the standards in low-resource NLP. Academic impact is already visible: more papers on Bengali dialect handling, and a clearer separation of language vs. dialect coverage as distinct evaluation axes.",
+            "diagnostic": { "activities": "check", "outputs": "check", "outcomes": "check", "evidence": "check", "impact": "?" },
+            "revisionNotes": { "activities": "", "outputs": "", "outcomes": "", "evidence": "", "impact": "Read back later — does the academic-impact framing feel grounded enough? Maybe add one concrete example of a paper using the dialect framework." }
           },
           {
             "theme": "TamilEval-0.5 — morphology-aware Tamil NLP benchmark",
@@ -41,7 +43,9 @@
             "outputs": "TamilEval-0.5 (Apache 2.0), a co-authored ACL 2025 Findings paper, and a Tamil morphology evaluation toolkit.",
             "outcomes": "Already adopted by three Indian research groups and the Tamil Virtual Academy for evaluating their open-source Tamil LLM. Two further annotation contributions arrived from the open community in the first six months.",
             "evidence": "Selected for the ACL 2025 Resource Track. Featured in two community-translation working-group meetings of the Tamil Virtual Academy.",
-            "impact": "Hypothesised: if TamilEval reaches v1.0 with full morphology coverage (under development), it could become the standard evaluation for one of the world's 20 most-spoken languages — currently underserved in open ML evaluation."
+            "impact": "Hypothesised: if TamilEval reaches v1.0 with full morphology coverage (under development), it could become the standard evaluation for one of the world's 20 most-spoken languages — currently underserved in open ML evaluation.",
+            "diagnostic": { "activities": "check", "outputs": "cross", "outcomes": "check", "evidence": "check", "impact": "?" },
+            "revisionNotes": { "activities": "", "outputs": "Name the Tamil Virtual Academy LLM specifically. Add a one-line description of the morphology toolkit (what it does, who it's for).", "outcomes": "", "evidence": "", "impact": "Compare with BanglaBench impact framing — is the systemic claim parallel?" }
           },
           {
             "theme": "Privacy-preserving on-device NLP for diasporic communities (pilot)",
@@ -49,7 +53,9 @@
             "outputs": "A short white paper, a community-validated needs assessment, and a small open-source prototype demonstrating on-device summarisation for Bengali.",
             "outcomes": "Three community partners are now collaborators on a SSHRC partnership letter of intent for a follow-on project. One organisation has piloted the prototype with their volunteer translation team and contributed feedback toward v2.",
             "evidence": "The white paper has been downloaded 230+ times in three months. Two community partners have requested a second-phase collaboration in writing.",
-            "impact": "Hypothesised: this could be a working model for how community-owned NLP development happens in diasporic contexts — currently a major gap in both the NLP and community-research literatures. Early-stage and acknowledged as such."
+            "impact": "Hypothesised: this could be a working model for how community-owned NLP development happens in diasporic contexts — currently a major gap in both the NLP and community-research literatures. Early-stage and acknowledged as such.",
+            "diagnostic": { "activities": "cross", "outputs": "check", "outcomes": "?", "evidence": "check", "impact": "check" },
+            "revisionNotes": { "activities": "Be more explicit about what I designed vs what the community partners designed. The current phrasing makes my role sound bigger than it was — the community partners led recruitment and instrument design. Reframe as 'co-designed with' rather than 'led'.", "outputs": "", "outcomes": "Are the SSHRC LOI and the v2 feedback really 'outcomes' — or are they still inputs to the next project? Maybe move to Impact and leave Outcomes lighter.", "evidence": "", "impact": "" }
           }
         ],
         "mentorship": [
@@ -161,7 +167,9 @@
             "outputs": "Three peer-reviewed papers (Journal of Labour Economics 2023, Canadian Public Policy 2023, Demography 2024), two Statistics Canada Analytical Studies reports, and a public-facing R-Shiny dashboard.",
             "outcomes": "Findings were cited in three Statistics Canada reports between 2022 and 2024 and informed the 2024 Express Entry policy update by IRCC, which adjusted points allocations for Canadian work experience. Two Canadian provinces have requested replication studies for their provincial nominee programs.",
             "evidence": "Direct citations in two IRCC briefing documents (obtained via ATIP). Coverage in The Globe and Mail, Policy Options, and La Presse. Independent replication of the methodology by research groups at the OECD and the University of Pennsylvania. Cited in 64 peer-reviewed papers since 2023.",
-            "impact": "Hypothesised systemic impact: if the framework is taken up across G7 immigration-research programs (project in development with the OECD), it could enable systematic cross-country comparison of immigrant economic integration — currently a major gap in the evidence available to immigration policymakers."
+            "impact": "Hypothesised systemic impact: if the framework is taken up across G7 immigration-research programs (project in development with the OECD), it could enable systematic cross-country comparison of immigrant economic integration — currently a major gap in the evidence available to immigration policymakers.",
+            "diagnostic": { "activities": "check", "outputs": "check", "outcomes": "check", "evidence": "check", "impact": "check" },
+            "revisionNotes": { "activities": "", "outputs": "", "outcomes": "", "evidence": "", "impact": "" }
           },
           {
             "theme": "Credential recognition and skill transferability (Québec case)",
@@ -169,7 +177,9 @@
             "outputs": "Two peer-reviewed papers (one bilingual), one MIDI policy brief, and a Québec-specific public dashboard.",
             "outcomes": "The MIDI policy brief directly informed the 2023 update to Québec's PEQ (Programme de l'expérience québécoise). Two Québec professional ordres have used the dashboard to update their internal recognition guidance.",
             "evidence": "Cited in the 2023 PEQ policy update technical document. Two Québec professional orders' published guidance updates explicitly reference the dashboard. Cited in 22 peer-reviewed papers.",
-            "impact": "Hypothesised: provincial credential-recognition programs across Canada face similar methodological gaps; if this framework is taken up by other provinces (early conversations with BC and Ontario), it could improve credential recognition outcomes for tens of thousands of immigrant workers annually."
+            "impact": "Hypothesised: provincial credential-recognition programs across Canada face similar methodological gaps; if this framework is taken up by other provinces (early conversations with BC and Ontario), it could improve credential recognition outcomes for tens of thousands of immigrant workers annually.",
+            "diagnostic": { "activities": "check", "outputs": "check", "outcomes": "check", "evidence": "check", "impact": "check" },
+            "revisionNotes": { "activities": "", "outputs": "", "outcomes": "", "evidence": "", "impact": "" }
           },
           {
             "theme": "CILOS — Concordia Immigrant Labour Outcomes Study (research infrastructure)",
@@ -177,7 +187,9 @@
             "outputs": "An open-source R + Python codebase, full documentation, a methods paper on the linkage approach, and a federated-access protocol now used by three Canadian universities (Concordia, McGill, U of T).",
             "outcomes": "CILOS is the foundation for two ongoing PhD dissertations and one Mitacs-Accelerate industry partnership. Three universities have signed federated-access agreements.",
             "evidence": "Federated-access agreements with McGill and U of T (2023). Documentation downloaded 800+ times. Codebase has 22 external contributors as of 2025.",
-            "impact": "Hypothesised: shared research infrastructure is undervalued in academic-incentive systems but disproportionately enables future work. If CILOS becomes the standard linkage protocol for Canadian immigrant-labour research (in discussion with Statistics Canada), it would meaningfully lower the methodological barrier to this work."
+            "impact": "Hypothesised: shared research infrastructure is undervalued in academic-incentive systems but disproportionately enables future work. If CILOS becomes the standard linkage protocol for Canadian immigrant-labour research (in discussion with Statistics Canada), it would meaningfully lower the methodological barrier to this work.",
+            "diagnostic": { "activities": "check", "outputs": "check", "outcomes": "check", "evidence": "check", "impact": "check" },
+            "revisionNotes": { "activities": "", "outputs": "", "outcomes": "", "evidence": "", "impact": "" }
           },
           {
             "theme": "Replication paper — the Borjas model fails for post-2000 Canadian cohorts",
@@ -185,7 +197,9 @@
             "outputs": "One single-author peer-reviewed paper in the Journal of Labour Economics (2024), and an open-access replication package.",
             "outcomes": "The paper has reset the methodological starting point for Canadian immigrant-earnings research. Five subsequent papers by other groups have cited it as their motivating null result.",
             "evidence": "Cited 31 times in the first 12 months. Featured in the Journal's Editor's Highlights. Invited to give a keynote at the 2025 Canadian Economics Association annual meeting based on this paper.",
-            "impact": "Hypothesised: by setting a clearer methodological null, the paper could shift the research field toward newer, post-2000-aware models — a structural change to what gets taught and tested in immigration-economics graduate programs."
+            "impact": "Hypothesised: by setting a clearer methodological null, the paper could shift the research field toward newer, post-2000-aware models — a structural change to what gets taught and tested in immigration-economics graduate programs.",
+            "diagnostic": { "activities": "check", "outputs": "check", "outcomes": "check", "evidence": "check", "impact": "check" },
+            "revisionNotes": { "activities": "", "outputs": "", "outcomes": "", "evidence": "", "impact": "" }
           }
         ],
         "mentorship": [

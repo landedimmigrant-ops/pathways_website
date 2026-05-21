@@ -36,51 +36,93 @@ Looking ahead, I am working toward a federally-deployed continuous-monitoring fr
 
 ### Bundle 1 — ML pipeline for early bridge-failure detection — MTQ/MTO partnership
 
-**Activities (with my role):** I designed and led the algorithm-development phase of a six-person interdisciplinary team building the anomaly-detection model. I specifically built the model architecture, supervised the calibration phase against historical inspection data, and co-led the protocol agreement with the Québec MTQ.
+**Activities** — — (not reviewed) · Rubric 3/4 · 39 words (target 40–80)
 
-**Outputs:** A patent-pending pipeline (filed 2023), an open-source reference implementation, a peer-reviewed paper in the Journal of Bridge Engineering, and a deployment toolkit with documentation for ministry inspectors.
+> I designed and led the algorithm-development phase of a six-person interdisciplinary team building the anomaly-detection model. I specifically built the model architecture, supervised the calibration phase against historical inspection data, and co-led the protocol agreement with the Québec MTQ.
 
-**Outcomes (already changed):** The pipeline is in pilot deployment with two provincial transportation ministries (Québec MTQ and Ontario MTO). One pilot has caught two early-stage degradation signatures that traditional inspection missed. Two MTO inspectors have completed the training program built around the toolkit.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 27 words (target 30–60)
 
-**Evidence:** 34% accuracy improvement over the existing inspection benchmark, validated on the historical MTQ dataset. Endorsed by the Canadian Society for Civil Engineering bridge inspection committee. Featured in the Canadian Civil Engineer magazine 2024.
+> A patent-pending pipeline (filed 2023), an open-source reference implementation, a peer-reviewed paper in the Journal of Bridge Engineering, and a deployment toolkit with documentation for ministry inspectors.
 
-**Impact (hypothesised / systemic):** Hypothesised systemic impact: if adopted at the federal scale through the Transport Canada partnership currently in negotiation, the approach could shift Canadian bridge inspection from a periodic to a continuous-monitoring model — reducing both inspection costs and catastrophic-failure risk for an aging national bridge inventory. Academic impact: the methodology paper has been adopted as a teaching reference in two Canadian civil-engineering graduate programs.
+**Outcomes** — — (not reviewed) · Rubric 2/4 · 40 words (target 50–100)
+
+> The pipeline is in pilot deployment with two provincial transportation ministries (Québec MTQ and Ontario MTO). One pilot has caught two early-stage degradation signatures that traditional inspection missed. Two MTO inspectors have completed the training program built around the toolkit.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 33 words (target 30–80)
+
+> 34% accuracy improvement over the existing inspection benchmark, validated on the historical MTQ dataset. Endorsed by the Canadian Society for Civil Engineering bridge inspection committee. Featured in the Canadian Civil Engineer magazine 2024.
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 63 words (target 40–100)
+
+> Hypothesised systemic impact: if adopted at the federal scale through the Transport Canada partnership currently in negotiation, the approach could shift Canadian bridge inspection from a periodic to a continuous-monitoring model — reducing both inspection costs and catastrophic-failure risk for an aging national bridge inventory. Academic impact: the methodology paper has been adopted as a teaching reference in two Canadian civil-engineering graduate programs.
 
 ### Bundle 2 — Open-source reference implementation + methodology paper
 
-**Activities (with my role):** I led the design, implementation, documentation, and release of an open-source reference implementation of the bridge-anomaly pipeline, along with the peer-reviewed methodology paper. I personally authored every section of the methods paper and reviewed every pull request to the open-source release.
+**Activities** — — (not reviewed) · Rubric 3/4 · 41 words (target 40–80)
 
-**Outputs:** The open-source reference implementation (Apache 2.0), the J. Bridge Eng. methodology paper, and a 60-page documentation site.
+> I led the design, implementation, documentation, and release of an open-source reference implementation of the bridge-anomaly pipeline, along with the peer-reviewed methodology paper. I personally authored every section of the methods paper and reviewed every pull request to the open-source release.
 
-**Outcomes (already changed):** Forked by 47 research groups internationally as of 2025. Adopted as a teaching reference in two Canadian civil-engineering graduate programs (Concordia, McMaster) and one US program (Texas A&M).
+**Outputs** — — (not reviewed) · Rubric 3/4 · 17 words (target 30–60)
 
-**Evidence:** Cited in 39 peer-reviewed papers since release. GitHub stars: 1,200+. Two PhD theses outside Concordia have built their methods chapters around the reference implementation.
+> The open-source reference implementation (Apache 2.0), the J. Bridge Eng. methodology paper, and a 60-page documentation site.
 
-**Impact (hypothesised / systemic):** Hypothesised: lowering the implementation barrier for ML-on-infrastructure work could accelerate the adoption of continuous-monitoring approaches across civil engineering — a methodological infrastructure investment that pays off slowly but compounds.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 28 words (target 50–100)
+
+> Forked by 47 research groups internationally as of 2025. Adopted as a teaching reference in two Canadian civil-engineering graduate programs (Concordia, McMaster) and one US program (Texas A&M).
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 24 words (target 30–80)
+
+> Cited in 39 peer-reviewed papers since release. GitHub stars: 1,200+. Two PhD theses outside Concordia have built their methods chapters around the reference implementation.
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 29 words (target 40–100)
+
+> Hypothesised: lowering the implementation barrier for ML-on-infrastructure work could accelerate the adoption of continuous-monitoring approaches across civil engineering — a methodological infrastructure investment that pays off slowly but compounds.
 
 ### Bundle 3 — Patent portfolio + spin-out (early-stage)
 
-**Activities (with my role):** I led the patent-application process for two pipeline components, in collaboration with Concordia's Office of Innovation & Partnerships. I am co-founder of a Concordia-affiliated spin-out (Bedrock Sensing Inc., incorporated 2024) commercialising the components for industrial customers.
+**Activities** — — (not reviewed) · Rubric 4/4 · 36 words (target 40–80)
 
-**Outputs:** Two patent applications (one US, one PCT), a Concordia-licensed technology transfer agreement, and a spin-out company.
+> I led the patent-application process for two pipeline components, in collaboration with Concordia's Office of Innovation & Partnerships. I am co-founder of a Concordia-affiliated spin-out (Bedrock Sensing Inc., incorporated 2024) commercialising the components for industrial customers.
 
-**Outcomes (already changed):** Two industrial customers signed letters of intent within 6 months of spin-out incorporation. Two former PhD students have joined the spin-out as senior engineers.
+**Outputs** — — (not reviewed) · Rubric 2/4 · 16 words (target 30–60)
 
-**Evidence:** Two LOI's totalling $1.4M in projected contract value. The spin-out closed a $750K seed round in Q1 2025.
+> Two patent applications (one US, one PCT), a Concordia-licensed technology transfer agreement, and a spin-out company.
 
-**Impact (hypothesised / systemic):** Hypothesised: tech-transfer from publicly-funded ML research into industrial infrastructure is rare in Canada compared to US-equivalents; if this spin-out succeeds, it would be a referenceable model for similar Canadian translations.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 24 words (target 50–100)
+
+> Two industrial customers signed letters of intent within 6 months of spin-out incorporation. Two former PhD students have joined the spin-out as senior engineers.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 18 words (target 30–80)
+
+> Two LOI's totalling $1.4M in projected contract value. The spin-out closed a $750K seed round in Q1 2025.
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 30 words (target 40–100)
+
+> Hypothesised: tech-transfer from publicly-funded ML research into industrial infrastructure is rare in Canada compared to US-equivalents; if this spin-out succeeds, it would be a referenceable model for similar Canadian translations.
 
 ### Bundle 4 — Uncertainty quantification in safety-critical ML (methods paper)
 
-**Activities (with my role):** I led a single-author methods paper on calibrating uncertainty estimates for ML models deployed in safety-critical infrastructure contexts. Single author on the resulting paper at NeurIPS 2024.
+**Activities** — — (not reviewed) · Rubric 4/4 · 27 words (target 40–80)
 
-**Outputs:** One peer-reviewed NeurIPS 2024 paper, an open-source uncertainty-calibration library, and a video lecture (45 min) shared via the Concordia engineering YouTube channel.
+> I led a single-author methods paper on calibrating uncertainty estimates for ML models deployed in safety-critical infrastructure contexts. Single author on the resulting paper at NeurIPS 2024.
 
-**Outcomes (already changed):** The calibration library is now used by three industrial safety-critical-ML groups (one rail, one aerospace, one bridge). It is part of the curriculum in my graduate ML-for-Engineering course.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 22 words (target 30–60)
 
-**Evidence:** Cited in 27 peer-reviewed papers since publication. NeurIPS spotlight presentation. Library has 540 GitHub stars.
+> One peer-reviewed NeurIPS 2024 paper, an open-source uncertainty-calibration library, and a video lecture (45 min) shared via the Concordia engineering YouTube channel.
 
-**Impact (hypothesised / systemic):** Hypothesised: the gap between ML benchmarks and safety-critical deployment is widely acknowledged but methodologically underserved. If this calibration approach becomes a standard part of safety-critical ML pipelines, it would meaningfully reduce the risk of catastrophic miscalibration at deployment.
+**Outcomes** — — (not reviewed) · Rubric 2/4 · 28 words (target 50–100)
+
+> The calibration library is now used by three industrial safety-critical-ML groups (one rail, one aerospace, one bridge). It is part of the curriculum in my graduate ML-for-Engineering course.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 15 words (target 30–80)
+
+> Cited in 27 peer-reviewed papers since publication. NeurIPS spotlight presentation. Library has 540 GitHub stars.
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 38 words (target 40–100)
+
+> Hypothesised: the gap between ML benchmarks and safety-critical deployment is widely acknowledged but methodologically underserved. If this calibration approach becomes a standard part of safety-critical ML pipelines, it would meaningfully reduce the risk of catastrophic miscalibration at deployment.
+
+*Round 2 review state:* **0** approved · **0** flagged · **20** unsure across 20 sections. Total auto-rubric: 55/80.
 
 ## Supervisory & Mentorship Activities
 

@@ -36,51 +36,93 @@ Looking ahead, I am working toward a G7 comparative project on immigrant earning
 
 ### Bundle 1 — Post-2000 immigrant earnings trajectories — the IRCC policy story
 
-**Activities (with my role):** I designed and led a 15-year longitudinal analysis of immigrant earnings using the linked T1 Family File and IMDB datasets at Statistics Canada. I personally conducted the cohort modelling and led the drafting of the methods sections; two postdoctoral fellows ran sensitivity analyses under my direction.
+**Activities** — ✓ Approved · Rubric 4/4 · 46 words (target 40–80)
 
-**Outputs:** Three peer-reviewed papers (Journal of Labour Economics 2023, Canadian Public Policy 2023, Demography 2024), two Statistics Canada Analytical Studies reports, and a public-facing R-Shiny dashboard.
+> I designed and led a 15-year longitudinal analysis of immigrant earnings using the linked T1 Family File and IMDB datasets at Statistics Canada. I personally conducted the cohort modelling and led the drafting of the methods sections; two postdoctoral fellows ran sensitivity analyses under my direction.
 
-**Outcomes (already changed):** Findings were cited in three Statistics Canada reports between 2022 and 2024 and informed the 2024 Express Entry policy update by IRCC, which adjusted points allocations for Canadian work experience. Two Canadian provinces have requested replication studies for their provincial nominee programs.
+**Outputs** — ✓ Approved · Rubric 3/4 · 25 words (target 30–60)
 
-**Evidence:** Direct citations in two IRCC briefing documents (obtained via ATIP). Coverage in The Globe and Mail, Policy Options, and La Presse. Independent replication of the methodology by research groups at the OECD and the University of Pennsylvania. Cited in 64 peer-reviewed papers since 2023.
+> Three peer-reviewed papers (Journal of Labour Economics 2023, Canadian Public Policy 2023, Demography 2024), two Statistics Canada Analytical Studies reports, and a public-facing R-Shiny dashboard.
 
-**Impact (hypothesised / systemic):** Hypothesised systemic impact: if the framework is taken up across G7 immigration-research programs (project in development with the OECD), it could enable systematic cross-country comparison of immigrant economic integration — currently a major gap in the evidence available to immigration policymakers.
+**Outcomes** — ✓ Approved · Rubric 3/4 · 42 words (target 50–100)
+
+> Findings were cited in three Statistics Canada reports between 2022 and 2024 and informed the 2024 Express Entry policy update by IRCC, which adjusted points allocations for Canadian work experience. Two Canadian provinces have requested replication studies for their provincial nominee programs.
+
+**Evidence** — ✓ Approved · Rubric 3/4 · 44 words (target 30–80)
+
+> Direct citations in two IRCC briefing documents (obtained via ATIP). Coverage in The Globe and Mail, Policy Options, and La Presse. Independent replication of the methodology by research groups at the OECD and the University of Pennsylvania. Cited in 64 peer-reviewed papers since 2023.
+
+**Impact** — ✓ Approved · Rubric 2/4 · 41 words (target 40–100)
+
+> Hypothesised systemic impact: if the framework is taken up across G7 immigration-research programs (project in development with the OECD), it could enable systematic cross-country comparison of immigrant economic integration — currently a major gap in the evidence available to immigration policymakers.
 
 ### Bundle 2 — Credential recognition and skill transferability (Québec case)
 
-**Activities (with my role):** I designed and led a mixed-methods Québec-focused study on credential recognition, in partnership with the Ministère de l'Immigration, de la Francisation et de l'Intégration (MIDI, now MIFI). I personally led the quantitative analysis and co-authored the qualitative interview synthesis with one postdoc.
+**Activities** — ✓ Approved · Rubric 3/4 · 42 words (target 40–80)
 
-**Outputs:** Two peer-reviewed papers (one bilingual), one MIDI policy brief, and a Québec-specific public dashboard.
+> I designed and led a mixed-methods Québec-focused study on credential recognition, in partnership with the Ministère de l'Immigration, de la Francisation et de l'Intégration (MIDI, now MIFI). I personally led the quantitative analysis and co-authored the qualitative interview synthesis with one postdoc.
 
-**Outcomes (already changed):** The MIDI policy brief directly informed the 2023 update to Québec's PEQ (Programme de l'expérience québécoise). Two Québec professional ordres have used the dashboard to update their internal recognition guidance.
+**Outputs** — ✓ Approved · Rubric 2/4 · 14 words (target 30–60)
 
-**Evidence:** Cited in the 2023 PEQ policy update technical document. Two Québec professional orders' published guidance updates explicitly reference the dashboard. Cited in 22 peer-reviewed papers.
+> Two peer-reviewed papers (one bilingual), one MIDI policy brief, and a Québec-specific public dashboard.
 
-**Impact (hypothesised / systemic):** Hypothesised: provincial credential-recognition programs across Canada face similar methodological gaps; if this framework is taken up by other provinces (early conversations with BC and Ontario), it could improve credential recognition outcomes for tens of thousands of immigrant workers annually.
+**Outcomes** — ✓ Approved · Rubric 3/4 · 30 words (target 50–100)
+
+> The MIDI policy brief directly informed the 2023 update to Québec's PEQ (Programme de l'expérience québécoise). Two Québec professional ordres have used the dashboard to update their internal recognition guidance.
+
+**Evidence** — ✓ Approved · Rubric 3/4 · 25 words (target 30–80)
+
+> Cited in the 2023 PEQ policy update technical document. Two Québec professional orders' published guidance updates explicitly reference the dashboard. Cited in 22 peer-reviewed papers.
+
+**Impact** — ✓ Approved · Rubric 2/4 · 39 words (target 40–100)
+
+> Hypothesised: provincial credential-recognition programs across Canada face similar methodological gaps; if this framework is taken up by other provinces (early conversations with BC and Ontario), it could improve credential recognition outcomes for tens of thousands of immigrant workers annually.
 
 ### Bundle 3 — CILOS — Concordia Immigrant Labour Outcomes Study (research infrastructure)
 
-**Activities (with my role):** I built, maintain, and lead the CILOS infrastructure: the codebase, documentation, and shared-access protocols that enable longitudinal immigrant labour research at Concordia. I personally led the design and documentation; two postdocs and three RAs have contributed code under my supervision.
+**Activities** — ✓ Approved · Rubric 3/4 · 40 words (target 40–80)
 
-**Outputs:** An open-source R + Python codebase, full documentation, a methods paper on the linkage approach, and a federated-access protocol now used by three Canadian universities (Concordia, McGill, U of T).
+> I built, maintain, and lead the CILOS infrastructure: the codebase, documentation, and shared-access protocols that enable longitudinal immigrant labour research at Concordia. I personally led the design and documentation; two postdocs and three RAs have contributed code under my supervision.
 
-**Outcomes (already changed):** CILOS is the foundation for two ongoing PhD dissertations and one Mitacs-Accelerate industry partnership. Three universities have signed federated-access agreements.
+**Outputs** — ✓ Approved · Rubric 2/4 · 30 words (target 30–60)
 
-**Evidence:** Federated-access agreements with McGill and U of T (2023). Documentation downloaded 800+ times. Codebase has 22 external contributors as of 2025.
+> An open-source R + Python codebase, full documentation, a methods paper on the linkage approach, and a federated-access protocol now used by three Canadian universities (Concordia, McGill, U of T).
 
-**Impact (hypothesised / systemic):** Hypothesised: shared research infrastructure is undervalued in academic-incentive systems but disproportionately enables future work. If CILOS becomes the standard linkage protocol for Canadian immigrant-labour research (in discussion with Statistics Canada), it would meaningfully lower the methodological barrier to this work.
+**Outcomes** — ✓ Approved · Rubric 2/4 · 20 words (target 50–100)
+
+> CILOS is the foundation for two ongoing PhD dissertations and one Mitacs-Accelerate industry partnership. Three universities have signed federated-access agreements.
+
+**Evidence** — ✓ Approved · Rubric 3/4 · 21 words (target 30–80)
+
+> Federated-access agreements with McGill and U of T (2023). Documentation downloaded 800+ times. Codebase has 22 external contributors as of 2025.
+
+**Impact** — ✓ Approved · Rubric 2/4 · 40 words (target 40–100)
+
+> Hypothesised: shared research infrastructure is undervalued in academic-incentive systems but disproportionately enables future work. If CILOS becomes the standard linkage protocol for Canadian immigrant-labour research (in discussion with Statistics Canada), it would meaningfully lower the methodological barrier to this work.
 
 ### Bundle 4 — Replication paper — the Borjas model fails for post-2000 Canadian cohorts
 
-**Activities (with my role):** I led a single-author replication and extension paper showing that the Borjas wage-assimilation model — the foundational framework in immigrant-earnings research since 1985 — substantially mis-predicts outcomes for post-2000 Canadian cohorts. I designed and ran every analysis personally.
+**Activities** — ✓ Approved · Rubric 4/4 · 38 words (target 40–80)
 
-**Outputs:** One single-author peer-reviewed paper in the Journal of Labour Economics (2024), and an open-access replication package.
+> I led a single-author replication and extension paper showing that the Borjas wage-assimilation model — the foundational framework in immigrant-earnings research since 1985 — substantially mis-predicts outcomes for post-2000 Canadian cohorts. I designed and ran every analysis personally.
 
-**Outcomes (already changed):** The paper has reset the methodological starting point for Canadian immigrant-earnings research. Five subsequent papers by other groups have cited it as their motivating null result.
+**Outputs** — ✓ Approved · Rubric 3/4 · 16 words (target 30–60)
 
-**Evidence:** Cited 31 times in the first 12 months. Featured in the Journal's Editor's Highlights. Invited to give a keynote at the 2025 Canadian Economics Association annual meeting based on this paper.
+> One single-author peer-reviewed paper in the Journal of Labour Economics (2024), and an open-access replication package.
 
-**Impact (hypothesised / systemic):** Hypothesised: by setting a clearer methodological null, the paper could shift the research field toward newer, post-2000-aware models — a structural change to what gets taught and tested in immigration-economics graduate programs.
+**Outcomes** — ✓ Approved · Rubric 2/4 · 26 words (target 50–100)
+
+> The paper has reset the methodological starting point for Canadian immigrant-earnings research. Five subsequent papers by other groups have cited it as their motivating null result.
+
+**Evidence** — ✓ Approved · Rubric 3/4 · 31 words (target 30–80)
+
+> Cited 31 times in the first 12 months. Featured in the Journal's Editor's Highlights. Invited to give a keynote at the 2025 Canadian Economics Association annual meeting based on this paper.
+
+**Impact** — ✓ Approved · Rubric 3/4 · 32 words (target 40–100)
+
+> Hypothesised: by setting a clearer methodological null, the paper could shift the research field toward newer, post-2000-aware models — a structural change to what gets taught and tested in immigration-economics graduate programs.
+
+*Round 2 review state:* **20** approved · **0** flagged · **0** unsure across 20 sections. Total auto-rubric: 55/80.
 
 ## Supervisory & Mentorship Activities
 

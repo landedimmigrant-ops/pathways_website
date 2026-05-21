@@ -36,63 +36,115 @@ Looking ahead, I am working toward a national community-owned data infrastructur
 
 ### Bundle 1 — Co-designed food security protocol — City of Montréal Urban Indigenous Housing Strategy
 
-**Activities (with my role):** I co-designed a longitudinal food security protocol with three urban Indigenous organisations in Tiohtià:ke/Montréal, working under their data sovereignty (OCAP) frameworks. I led the methodology development and analysis training; community partners led recruitment, instrument adaptation, and interpretation. Across 7 years.
+**Activities** — — (not reviewed) · Rubric 4/4 · 40 words (target 40–80)
 
-**Outputs:** A bilingual community-validated survey instrument, a 7-year longitudinal dataset (community-owned, federated access), three community-authored reports, and five co-authored peer-reviewed papers.
+> I co-designed a longitudinal food security protocol with three urban Indigenous organisations in Tiohtià:ke/Montréal, working under their data sovereignty (OCAP) frameworks. I led the methodology development and analysis training; community partners led recruitment, instrument adaptation, and interpretation. Across 7 years.
 
-**Outcomes (already changed):** The protocol was adopted by the City of Montréal's 2024 Urban Indigenous Housing Strategy. Two of three partner organisations now run their own annual cycles independent of the academic team. The federated-access agreement has become a referenced model for OCAP-compliant data sharing in two other Canadian cities.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 20 words (target 30–60)
 
-**Evidence:** Cited as a methodological anchor in the 2024 City of Montréal Urban Indigenous Housing Strategy (public document). Featured in CBC, La Presse, and Radio-Canada. Three follow-on partnership grants (SSHRC, CIHR, CFREF) totalling $4.7M built directly on this protocol. Awarded the 2023 CIHR Knowledge Translation Award.
+> A bilingual community-validated survey instrument, a 7-year longitudinal dataset (community-owned, federated access), three community-authored reports, and five co-authored peer-reviewed papers.
 
-**Impact (hypothesised / systemic):** Hypothesised systemic impact: if expanded to four additional Canadian cities (current SSHRC partnership in progress with Toronto, Winnipeg, Vancouver, Edmonton), the protocol could become a national reference for community-owned urban Indigenous health data — a structural shift in how municipal-level Indigenous health research is conducted in Canada.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 47 words (target 50–100)
+
+> The protocol was adopted by the City of Montréal's 2024 Urban Indigenous Housing Strategy. Two of three partner organisations now run their own annual cycles independent of the academic team. The federated-access agreement has become a referenced model for OCAP-compliant data sharing in two other Canadian cities.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 45 words (target 30–80)
+
+> Cited as a methodological anchor in the 2024 City of Montréal Urban Indigenous Housing Strategy (public document). Featured in CBC, La Presse, and Radio-Canada. Three follow-on partnership grants (SSHRC, CIHR, CFREF) totalling $4.7M built directly on this protocol. Awarded the 2023 CIHR Knowledge Translation Award.
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 47 words (target 40–100)
+
+> Hypothesised systemic impact: if expanded to four additional Canadian cities (current SSHRC partnership in progress with Toronto, Winnipeg, Vancouver, Edmonton), the protocol could become a national reference for community-owned urban Indigenous health data — a structural shift in how municipal-level Indigenous health research is conducted in Canada.
 
 ### Bundle 2 — Housing precarity longitudinal cohort study
 
-**Activities (with my role):** I designed and led an 11-year longitudinal cohort study of housing precarity and health outcomes among urban Indigenous adults in Tiohtià:ke/Montréal, in partnership with the Native Friendship Centre of Montréal. I personally led the cohort recruitment protocol, the data-governance design, and the senior author position on every major output.
+**Activities** — — (not reviewed) · Rubric 4/4 · 49 words (target 40–80)
 
-**Outputs:** Two peer-reviewed papers on chronic disease trajectories in precariously-housed adults, one in The Lancet Regional Health–Americas; an open-access policy brief; and a community-facing summary document distributed in three Indigenous community centres.
+> I designed and led an 11-year longitudinal cohort study of housing precarity and health outcomes among urban Indigenous adults in Tiohtià:ke/Montréal, in partnership with the Native Friendship Centre of Montréal. I personally led the cohort recruitment protocol, the data-governance design, and the senior author position on every major output.
 
-**Outcomes (already changed):** The cohort data informed Santé Québec's 2022 update to municipal-level Indigenous health-services planning. Three Indigenous health units across Québec have adopted the cohort-recruitment protocol for their own work.
+**Outputs** — — (not reviewed) · Rubric 2/4 · 31 words (target 30–60)
 
-**Evidence:** Lancet paper has been cited 87 times in 24 months. Santé Québec policy adoption documented in the 2022 public report. Featured in CIHR's 2023 Annual Report as a case study in Indigenous health research.
+> Two peer-reviewed papers on chronic disease trajectories in precariously-housed adults, one in The Lancet Regional Health–Americas; an open-access policy brief; and a community-facing summary document distributed in three Indigenous community centres.
 
-**Impact (hypothesised / systemic):** Hypothesised: the cohort methodology, particularly the consent and data-governance design, could be referenced by future urban Indigenous health studies across Canada — addressing a long-standing methodological gap in how this research has been done.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 28 words (target 50–100)
+
+> The cohort data informed Santé Québec's 2022 update to municipal-level Indigenous health-services planning. Three Indigenous health units across Québec have adopted the cohort-recruitment protocol for their own work.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 34 words (target 30–80)
+
+> Lancet paper has been cited 87 times in 24 months. Santé Québec policy adoption documented in the 2022 public report. Featured in CIHR's 2023 Annual Report as a case study in Indigenous health research.
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 34 words (target 40–100)
+
+> Hypothesised: the cohort methodology, particularly the consent and data-governance design, could be referenced by future urban Indigenous health studies across Canada — addressing a long-standing methodological gap in how this research has been done.
 
 ### Bundle 3 — Indigenous data sovereignty methodology — OCAP in urban research contexts
 
-**Activities (with my role):** I am the primary author of a 4-year methodological project on applying OCAP (Ownership, Control, Access, Possession) principles in urban, multi-community Indigenous research — a context distinct from the First Nations community-based settings where OCAP was originally developed. I led the methodology design with community-partner advisory.
+**Activities** — — (not reviewed) · Rubric 4/4 · 46 words (target 40–80)
 
-**Outputs:** One methodological paper (Journal of Indigenous Wellbeing 2021), a peer-reviewed methods reader, and a community-protocol toolkit shared with two Indigenous Health Authority offices.
+> I am the primary author of a 4-year methodological project on applying OCAP (Ownership, Control, Access, Possession) principles in urban, multi-community Indigenous research — a context distinct from the First Nations community-based settings where OCAP was originally developed. I led the methodology design with community-partner advisory.
 
-**Outcomes (already changed):** The toolkit has been adopted by the First Nations Information Governance Centre as a recommended supplement to their primary OCAP training. Two Canadian Tier 1 Indigenous research chairs have cited the toolkit in their own grant infrastructures.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 23 words (target 30–60)
 
-**Evidence:** Adopted by the First Nations Information Governance Centre (2023). Cited in 41 peer-reviewed papers. Featured in CIHR's Pathways to Health Equity for Aboriginal Peoples final report.
+> One methodological paper (Journal of Indigenous Wellbeing 2021), a peer-reviewed methods reader, and a community-protocol toolkit shared with two Indigenous Health Authority offices.
 
-**Impact (hypothesised / systemic):** Hypothesised: urban Indigenous research is methodologically distinct and historically under-protected; this work has been part of a broader shift toward formalising urban-specific OCAP applications — a structural change to a national research-ethics conversation.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 37 words (target 50–100)
+
+> The toolkit has been adopted by the First Nations Information Governance Centre as a recommended supplement to their primary OCAP training. Two Canadian Tier 1 Indigenous research chairs have cited the toolkit in their own grant infrastructures.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 26 words (target 30–80)
+
+> Adopted by the First Nations Information Governance Centre (2023). Cited in 41 peer-reviewed papers. Featured in CIHR's Pathways to Health Equity for Aboriginal Peoples final report.
+
+**Impact** — — (not reviewed) · Rubric 1/4 · 33 words (target 40–100)
+
+> Hypothesised: urban Indigenous research is methodologically distinct and historically under-protected; this work has been part of a broader shift toward formalising urban-specific OCAP applications — a structural change to a national research-ethics conversation.
 
 ### Bundle 4 — Concordia Research Chair program — Community Health Equity
 
-**Activities (with my role):** Since 2018, I have led the Concordia Research Chair in Community Health Equity (Tier 1). I personally designed the Chair's research program, supervised 14 PhD students and 5 postdocs through the Chair, and led the design of the Chair's annual community-knowledge-translation events.
+**Activities** — — (not reviewed) · Rubric 4/4 · 42 words (target 40–80)
 
-**Outputs:** Seven years of annual public symposia, three community-policy briefs, an open-access training program in community-based research (220+ trainees), and the Chair's research-program documentation.
+> Since 2018, I have led the Concordia Research Chair in Community Health Equity (Tier 1). I personally designed the Chair's research program, supervised 14 PhD students and 5 postdocs through the Chair, and led the design of the Chair's annual community-knowledge-translation events.
 
-**Outcomes (already changed):** Chair-trained alumni now occupy positions at Statistics Canada Indigenous Health unit, two Indigenous-led research organisations, McGill's Native and Inuit Health Research program, and three Québec universities.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 23 words (target 30–60)
 
-**Evidence:** Chair externally reviewed 2023 with strong outcomes. Three of the Chair-trained PhDs have themselves received Canada Research Chairs. The training program has been cited as a model in two CIHR institutional reviews.
+> Seven years of annual public symposia, three community-policy briefs, an open-access training program in community-based research (220+ trainees), and the Chair's research-program documentation.
 
-**Impact (hypothesised / systemic):** Hypothesised: the Chair's training infrastructure is the most durable contribution of my work — researchers I have trained are now in positions where they make decisions about Canadian Indigenous health research priorities. That capacity-building effect compounds over decades.
+**Outcomes** — — (not reviewed) · Rubric 2/4 · 26 words (target 50–100)
+
+> Chair-trained alumni now occupy positions at Statistics Canada Indigenous Health unit, two Indigenous-led research organisations, McGill's Native and Inuit Health Research program, and three Québec universities.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 32 words (target 30–80)
+
+> Chair externally reviewed 2023 with strong outcomes. Three of the Chair-trained PhDs have themselves received Canada Research Chairs. The training program has been cited as a model in two CIHR institutional reviews.
+
+**Impact** — — (not reviewed) · Rubric 1/4 · 38 words (target 40–100)
+
+> Hypothesised: the Chair's training infrastructure is the most durable contribution of my work — researchers I have trained are now in positions where they make decisions about Canadian Indigenous health research priorities. That capacity-building effect compounds over decades.
 
 ### Bundle 5 — Career-spanning theme — anti-colonial research methods
 
-**Activities (with my role):** Across my career I have been a vocal advocate, methodological developer, and senior reviewer for anti-colonial approaches to community-based health research. This shows up as my chairing role on national methodological review panels, my mentorship of three Indigenous emerging researchers, and a body of methodological writing that spans 22 years.
+**Activities** — — (not reviewed) · Rubric 3/4 · 50 words (target 40–80)
 
-**Outputs:** Two book chapters in major methodological handbooks, a methodological keynote series (3 in the last 5 years), and a co-authored CIHR-commissioned guidance document on anti-colonial research methods (2022).
+> Across my career I have been a vocal advocate, methodological developer, and senior reviewer for anti-colonial approaches to community-based health research. This shows up as my chairing role on national methodological review panels, my mentorship of three Indigenous emerging researchers, and a body of methodological writing that spans 22 years.
 
-**Outcomes (already changed):** The CIHR guidance document is now referenced in CIHR's Tri-Council Policy Statement consultation processes. Two national methodological review panels I have chaired (CIHR, SSHRC) have integrated anti-colonial review criteria into their adjudication guides.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 28 words (target 30–60)
 
-**Evidence:** CIHR guidance document downloaded 5,400+ times. Two-time invited keynote at the Canadian Public Health Association annual conference. CIHR Knowledge Translation Award 2023.
+> Two book chapters in major methodological handbooks, a methodological keynote series (3 in the last 5 years), and a co-authored CIHR-commissioned guidance document on anti-colonial research methods (2022).
 
-**Impact (hypothesised / systemic):** Hypothesised: this career-spanning theme has helped shift what counts as rigorous community-based health research in Canadian funding-review structures — a structural shift that will outlast any single project.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 33 words (target 50–100)
+
+> The CIHR guidance document is now referenced in CIHR's Tri-Council Policy Statement consultation processes. Two national methodological review panels I have chaired (CIHR, SSHRC) have integrated anti-colonial review criteria into their adjudication guides.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 22 words (target 30–80)
+
+> CIHR guidance document downloaded 5,400+ times. Two-time invited keynote at the Canadian Public Health Association annual conference. CIHR Knowledge Translation Award 2023.
+
+**Impact** — — (not reviewed) · Rubric 1/4 · 28 words (target 40–100)
+
+> Hypothesised: this career-spanning theme has helped shift what counts as rigorous community-based health research in Canadian funding-review structures — a structural shift that will outlast any single project.
+
+*Round 2 review state:* **0** approved · **0** flagged · **25** unsure across 25 sections. Total auto-rubric: 69/100.
 
 ## Supervisory & Mentorship Activities
 

@@ -36,63 +36,115 @@ Looking ahead, I am working toward a national framework for federally-mandated e
 
 ### Bundle 1 — Cooling optimization framework — industrial deployment and spin-off
 
-**Activities (with my role):** I developed, over 12 years, an energy-optimization framework for industrial cooling systems combining thermodynamic modelling with adaptive ML control. I led the academic-side research personally, co-founded CoolStack Inc. with my postdoc (acquired by Schneider Electric in 2019), and continue as a scientific advisor.
+**Activities** — — (not reviewed) · Rubric 4/4 · 43 words (target 40–80)
 
-**Outputs:** Seventeen peer-reviewed papers in J. of Thermal Sciences, Energy & Buildings, ASHRAE Transactions; six US patents; the CoolStack product line; and the methodology documentation now used as Schneider Electric's internal training reference.
+> I developed, over 12 years, an energy-optimization framework for industrial cooling systems combining thermodynamic modelling with adaptive ML control. I led the academic-side research personally, co-founded CoolStack Inc. with my postdoc (acquired by Schneider Electric in 2019), and continue as a scientific advisor.
 
-**Outcomes (already changed):** The framework was deployed at 14 industrial facilities (3 of which are top-10 Canadian data centres) before the Schneider acquisition, reducing annual energy expenditure by an estimated 18% on average. Post-acquisition, Schneider has integrated the framework into their product line.
+**Outputs** — — (not reviewed) · Rubric 2/4 · 32 words (target 30–60)
 
-**Evidence:** CoolStack Inc. acquired by Schneider Electric for $32M (2019). Six US patents granted. 17 peer-reviewed papers cited 980+ times in aggregate. Featured in MIT Technology Review (2018) and IEEE Spectrum (2020). Awarded the 2021 ASHRAE Distinguished Service Award.
+> Seventeen peer-reviewed papers in J. of Thermal Sciences, Energy & Buildings, ASHRAE Transactions; six US patents; the CoolStack product line; and the methodology documentation now used as Schneider Electric's internal training reference.
 
-**Impact (hypothesised / systemic):** Hypothesised systemic impact: post-acquisition deployment through Schneider's existing customer base could expand the framework's reach by an order of magnitude. If integrated into federally-mandated efficiency standards (in conversation with NRCan), it could shift the baseline of Canadian data-centre efficiency by 5–8% over a decade.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 40 words (target 50–100)
+
+> The framework was deployed at 14 industrial facilities (3 of which are top-10 Canadian data centres) before the Schneider acquisition, reducing annual energy expenditure by an estimated 18% on average. Post-acquisition, Schneider has integrated the framework into their product line.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 38 words (target 30–80)
+
+> CoolStack Inc. acquired by Schneider Electric for $32M (2019). Six US patents granted. 17 peer-reviewed papers cited 980+ times in aggregate. Featured in MIT Technology Review (2018) and IEEE Spectrum (2020). Awarded the 2021 ASHRAE Distinguished Service Award.
+
+**Impact** — — (not reviewed) · Rubric 3/4 · 44 words (target 40–100)
+
+> Hypothesised systemic impact: post-acquisition deployment through Schneider's existing customer base could expand the framework's reach by an order of magnitude. If integrated into federally-mandated efficiency standards (in conversation with NRCan), it could shift the baseline of Canadian data-centre efficiency by 5–8% over a decade.
 
 ### Bundle 2 — NSERC Industrial Research Chair achievements (2014–2024)
 
-**Activities (with my role):** I held the NSERC Industrial Research Chair in Energy-Efficient Computing from 2014 to 2024. As Chair, I led a research program of 5–8 graduate students at any time, coordinated industrial partnerships with five major Canadian and international firms, and chaired the Chair's annual industrial-academic workshop.
+**Activities** — — (not reviewed) · Rubric 4/4 · 45 words (target 40–80)
 
-**Outputs:** Across the 10-year Chair: 35 peer-reviewed papers, 4 patents, 22 industrial-research reports, an annual workshop series (10 workshops, 120 attendees on average), and the curriculum for the Concordia graduate course MECH 6701 Energy in Industrial Systems.
+> I held the NSERC Industrial Research Chair in Energy-Efficient Computing from 2014 to 2024. As Chair, I led a research program of 5–8 graduate students at any time, coordinated industrial partnerships with five major Canadian and international firms, and chaired the Chair's annual industrial-academic workshop.
 
-**Outcomes (already changed):** The Chair trained 18 graduate students (8 PhDs, 10 MASc), of whom 15 are now in industrial research or academic positions globally. Two of the five industrial partners renewed their partnership for the second Chair cycle (the Chair was renewed and ran to 2024 after the initial 5+5 structure).
+**Outputs** — — (not reviewed) · Rubric 3/4 · 36 words (target 30–60)
 
-**Evidence:** External review of the Chair 2019 and 2024 — both strongly positive. Five industrial partnerships renewed at the 5-year mark. The Chair was identified in Concordia's 2023 strategic-research review as a model partnership-based program.
+> Across the 10-year Chair: 35 peer-reviewed papers, 4 patents, 22 industrial-research reports, an annual workshop series (10 workshops, 120 attendees on average), and the curriculum for the Concordia graduate course MECH 6701 Energy in Industrial Systems.
 
-**Impact (hypothesised / systemic):** Hypothesised: the Chair's largest impact is the people — 18 graduate alumni now distributed across the industrial-research and academic networks that decide where cooling-efficiency research goes. That capacity-building effect compounds with each hiring decision they make.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 49 words (target 50–100)
+
+> The Chair trained 18 graduate students (8 PhDs, 10 MASc), of whom 15 are now in industrial research or academic positions globally. Two of the five industrial partners renewed their partnership for the second Chair cycle (the Chair was renewed and ran to 2024 after the initial 5+5 structure).
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 34 words (target 30–80)
+
+> External review of the Chair 2019 and 2024 — both strongly positive. Five industrial partnerships renewed at the 5-year mark. The Chair was identified in Concordia's 2023 strategic-research review as a model partnership-based program.
+
+**Impact** — — (not reviewed) · Rubric 2/4 · 36 words (target 40–100)
+
+> Hypothesised: the Chair's largest impact is the people — 18 graduate alumni now distributed across the industrial-research and academic networks that decide where cooling-efficiency research goes. That capacity-building effect compounds with each hiring decision they make.
 
 ### Bundle 3 — Patent portfolio + tech-transfer outcomes
 
-**Activities (with my role):** Across my career I have led 12 patent applications, 11 of which have been granted across US, Canadian, and EU jurisdictions. I am the named inventor on 9 and the co-inventor on 2. I personally led the patent disclosure process for each.
+**Activities** — — (not reviewed) · Rubric 3/4 · 42 words (target 40–80)
 
-**Outputs:** 11 granted patents (9 US, 1 CA, 1 EU); 6 licensed to industrial partners; 3 spun out through CoolStack Inc.
+> Across my career I have led 12 patent applications, 11 of which have been granted across US, Canadian, and EU jurisdictions. I am the named inventor on 9 and the co-inventor on 2. I personally led the patent disclosure process for each.
 
-**Outcomes (already changed):** Six patents have generated direct licensing revenue to Concordia ($1.8M cumulative since 2008). Three patents spun out through CoolStack contributed to the 2019 acquisition value.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 20 words (target 30–60)
 
-**Evidence:** Concordia Office of Innovation & Partnerships records (2008–present) document the licensing-revenue flow. The 2019 Schneider Electric acquisition price ($32M) is public.
+> 11 granted patents (9 US, 1 CA, 1 EU); 6 licensed to industrial partners; 3 spun out through CoolStack Inc.
 
-**Impact (hypothesised / systemic):** Hypothesised: a patent portfolio in this field is a working-research record, not just an IP record. The fact that six patents are licensed and three commercialised is evidence the academic research mapped to actual industrial needs — which is itself a contribution to how engineering programs design industry-facing research training.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 25 words (target 50–100)
+
+> Six patents have generated direct licensing revenue to Concordia ($1.8M cumulative since 2008). Three patents spun out through CoolStack contributed to the 2019 acquisition value.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 21 words (target 30–80)
+
+> Concordia Office of Innovation & Partnerships records (2008–present) document the licensing-revenue flow. The 2019 Schneider Electric acquisition price ($32M) is public.
+
+**Impact** — — (not reviewed) · Rubric 1/4 · 50 words (target 40–100)
+
+> Hypothesised: a patent portfolio in this field is a working-research record, not just an IP record. The fact that six patents are licensed and three commercialised is evidence the academic research mapped to actual industrial needs — which is itself a contribution to how engineering programs design industry-facing research training.
 
 ### Bundle 4 — ASHRAE standard-setting work
 
-**Activities (with my role):** I have chaired two ASHRAE technical committees (TC 4.10 on Indoor Environmental Modelling, 2017–2020; TC 9.9 on Mission Critical Facilities, 2021–present). I have personally led the drafting of two sections of the ASHRAE Handbook on data-centre cooling efficiency.
+**Activities** — — (not reviewed) · Rubric 4/4 · 38 words (target 40–80)
 
-**Outputs:** Two ASHRAE Handbook sections (HVAC Applications, 2020 and 2024 editions); five technical committee position papers; one ASHRAE-published design guide on liquid cooling.
+> I have chaired two ASHRAE technical committees (TC 4.10 on Indoor Environmental Modelling, 2017–2020; TC 9.9 on Mission Critical Facilities, 2021–present). I have personally led the drafting of two sections of the ASHRAE Handbook on data-centre cooling efficiency.
 
-**Outcomes (already changed):** The ASHRAE Handbook is the de facto reference for HVAC design in North America. The 2024 data-centre section is now used by Canadian engineering firms in their design practice; conversations with the Engineers Canada accreditation body are underway about integrating the section into curriculum guidance.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 22 words (target 30–60)
 
-**Evidence:** ASHRAE Handbook is the most-cited HVAC reference in North American engineering practice (per ASHRAE 2023 readership survey). The 2024 section's draft was used in two recent Canadian data-centre design competitions.
+> Two ASHRAE Handbook sections (HVAC Applications, 2020 and 2024 editions); five technical committee position papers; one ASHRAE-published design guide on liquid cooling.
 
-**Impact (hypothesised / systemic):** Hypothesised: standard-setting is one of the most underrated contribution types in engineering research. By writing the reference, my work shapes what gets designed by every engineer reading the Handbook — a multiplier effect on practice.
+**Outcomes** — — (not reviewed) · Rubric 3/4 · 45 words (target 50–100)
+
+> The ASHRAE Handbook is the de facto reference for HVAC design in North America. The 2024 data-centre section is now used by Canadian engineering firms in their design practice; conversations with the Engineers Canada accreditation body are underway about integrating the section into curriculum guidance.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 30 words (target 30–80)
+
+> ASHRAE Handbook is the most-cited HVAC reference in North American engineering practice (per ASHRAE 2023 readership survey). The 2024 section's draft was used in two recent Canadian data-centre design competitions.
+
+**Impact** — — (not reviewed) · Rubric 1/4 · 35 words (target 40–100)
+
+> Hypothesised: standard-setting is one of the most underrated contribution types in engineering research. By writing the reference, my work shapes what gets designed by every engineer reading the Handbook — a multiplier effect on practice.
 
 ### Bundle 5 — Career-spanning theme — bridging ML and industrial thermal systems
 
-**Activities (with my role):** Across 28 years, my recurring contribution has been at the boundary between machine learning and industrial thermal physics — a boundary that most engineers do not cross because the disciplines are taught separately. I have written across the boundary (joint papers in ML and thermal venues), trained students who cross the boundary, and supervised industrial collaborations that require it.
+**Activities** — — (not reviewed) · Rubric 3/4 · 59 words (target 40–80)
 
-**Outputs:** A track record of 12 joint publications in ML venues (NeurIPS, ICML) and thermal venues (J. Thermal Sciences, ASHRAE Transactions); a graduate seminar I have taught for 18 years on the boundary; and an alumni network spanning both fields.
+> Across 28 years, my recurring contribution has been at the boundary between machine learning and industrial thermal physics — a boundary that most engineers do not cross because the disciplines are taught separately. I have written across the boundary (joint papers in ML and thermal venues), trained students who cross the boundary, and supervised industrial collaborations that require it.
 
-**Outcomes (already changed):** Two of my alumni now hold tenure-track positions specifically at this boundary (one at the University of Sherbrooke, one at TU Munich). The graduate seminar is the most cross-departmentally-enrolled course at the Gina Cody School.
+**Outputs** — — (not reviewed) · Rubric 3/4 · 39 words (target 30–60)
 
-**Evidence:** Cross-disciplinary citation pattern documented in a 2022 bibliometric self-study. The graduate seminar enrolment has averaged 22 students per offering across 18 years.
+> A track record of 12 joint publications in ML venues (NeurIPS, ICML) and thermal venues (J. Thermal Sciences, ASHRAE Transactions); a graduate seminar I have taught for 18 years on the boundary; and an alumni network spanning both fields.
 
-**Impact (hypothesised / systemic):** Hypothesised: the integration of ML and thermal systems is now mainstream in the field, but in 1996 it was not. Career-spanning, my work has been one of several Canadian threads that helped move the boundary from novel to standard practice.
+**Outcomes** — — (not reviewed) · Rubric 2/4 · 35 words (target 50–100)
+
+> Two of my alumni now hold tenure-track positions specifically at this boundary (one at the University of Sherbrooke, one at TU Munich). The graduate seminar is the most cross-departmentally-enrolled course at the Gina Cody School.
+
+**Evidence** — — (not reviewed) · Rubric 3/4 · 22 words (target 30–80)
+
+> Cross-disciplinary citation pattern documented in a 2022 bibliometric self-study. The graduate seminar enrolment has averaged 22 students per offering across 18 years.
+
+**Impact** — — (not reviewed) · Rubric 1/4 · 40 words (target 40–100)
+
+> Hypothesised: the integration of ML and thermal systems is now mainstream in the field, but in 1996 it was not. Career-spanning, my work has been one of several Canadian threads that helped move the boundary from novel to standard practice.
+
+*Round 2 review state:* **0** approved · **0** flagged · **25** unsure across 25 sections. Total auto-rubric: 69/100.
 
 ## Supervisory & Mentorship Activities
 
