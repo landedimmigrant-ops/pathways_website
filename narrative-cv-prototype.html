@@ -121,16 +121,22 @@
     .r2-field-summary::-webkit-details-marker { display: none; }
     .r2-field-summary::marker { content: ""; }
     .r2-field-summary:hover { background: #fafafa; }
-    .r2-field-details > .r2-field-summary > .r2-summary-tri {
+    /* Shared accordion triangle (used by Round 2 field rows + Round 1 bundle cards) */
+    .ncv-acc-tri {
       display: inline-block;
-      width: 12px;
-      color: var(--muted, #666);
+      width: 18px;
+      color: var(--burgundy, #722f37);
       transform: rotate(-90deg);
       transition: transform 0.2s;
-      font-size: 11px;
+      font-size: 16px;
       line-height: 1;
+      text-align: center;
+      flex-shrink: 0;
     }
-    .r2-field-details[open] > .r2-field-summary > .r2-summary-tri { transform: rotate(0deg); }
+    details[open] > summary > .ncv-acc-tri,
+    details[open] > .ncv-acc-summary > .ncv-acc-tri,
+    .r2-field-details[open] > .r2-field-summary > .ncv-acc-tri,
+    .r1-bundle-details[open] > .r1-bundle-summary > .ncv-acc-tri { transform: rotate(0deg); }
     .r2-summary-label { flex: 1; min-width: 0; }
     .r2-summary-badge-slot { display: inline-flex; gap: 6px; align-items: center; }
     /* state colouring lives on the details wrapper (covers both summary and body) */
@@ -162,6 +168,43 @@
       resize: vertical;
       width: 100%;
       box-sizing: border-box;
+    }
+
+    /* Round 1 bundle accordion */
+    .r1-bundle-details {
+      margin: 0 0 12px;
+      padding: 0;
+    }
+    .r1-bundle-details > .r1-bundle-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      list-style: none;
+      font-size: 14px;
+      font-weight: 600;
+      user-select: none;
+      background: #fafafa;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s;
+    }
+    .r1-bundle-details > .r1-bundle-summary::-webkit-details-marker { display: none; }
+    .r1-bundle-details > .r1-bundle-summary::marker { content: ""; }
+    .r1-bundle-details > .r1-bundle-summary:hover { background: #f1f1f1; }
+    .r1-bundle-details[open] > .r1-bundle-summary {
+      background: #f9ebed;
+      border-bottom-color: #e8b4bb;
+    }
+    .r1-bundle-summary-label { flex: 1; min-width: 0; }
+    .r1-bundle-summary-meta {
+      font-size: 12px;
+      color: var(--muted, #666);
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    .r1-bundle-body {
+      padding: 14px 16px 16px;
     }
     .r2-auto-checks {
       font-size: 12px;
@@ -1279,33 +1322,66 @@
 
         const cardsContainer = el("div", "contribution-cards-container");
 
+        // Tracks which bundle accordion is currently open (-1 means none / last on load)
+        // On "+ Add a bundle" we set this to the new bundle's idx so it opens and others close.
+        let openBundleIdx = ns.contributions.length > 0 ? 0 : -1;
+
         const addContributionCard = (idx) => {
           const c = migrateLegacyContribItem(ns.contributions[idx]);
-          const card = el("div", "contribution-card");
+          const details = el("details", "contribution-card r1-bundle-details");
+          details.open = idx === openBundleIdx;
 
-          // Header: bundle name (theme) + remove
-          const header = el("div", "contribution-card-header");
-          const nameWrap = el("span");
-          nameWrap.appendChild(document.createTextNode(`Bundle ${idx + 1}: `));
-          const themeInput = el("input", "ps-input ps-input--wide");
-          themeInput.placeholder = "name this bundle (e.g. Climate adaptation research)";
-          themeInput.setAttribute("aria-label", `Contribution bundle ${idx + 1} theme`);
-          themeInput.value = c.theme || "";
-          themeInput.style.background = "#fff";
-          themeInput.addEventListener("input", (e) => { c.theme = e.target.value; saveNarrative(); });
-          nameWrap.appendChild(themeInput);
-          header.appendChild(nameWrap);
-
+          // Summary: triangle + "Bundle N" + theme preview + filled-count meta
+          const summary = el("summary", "r1-bundle-summary");
+          const tri = el("span", "ncv-acc-tri", "▼");
+          summary.appendChild(tri);
+          const labelWrap = el("span", "r1-bundle-summary-label");
+          labelWrap.appendChild(el("strong", null, `Bundle ${idx + 1}`));
+          if (c.theme) labelWrap.appendChild(document.createTextNode(` — ${c.theme}`));
+          else labelWrap.appendChild(el("span", "r1-bundle-summary-meta", " — untitled"));
+          summary.appendChild(labelWrap);
+          const filled = ["activities", "outputs", "outcomes", "evidence", "impact"]
+            .filter((k) => (c[k] || "").trim().length > 0).length;
+          summary.appendChild(el("span", "r1-bundle-summary-meta", `${filled}/5 fields drafted`));
           const removeBtn = el("button", "btn-icon", "×");
           removeBtn.type = "button";
           removeBtn.setAttribute("aria-label", `Remove bundle ${idx + 1}`);
-          removeBtn.addEventListener("click", () => {
+          removeBtn.style.marginLeft = "8px";
+          removeBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             ns.contributions.splice(idx, 1);
+            // Adjust openBundleIdx to a sensible position after removal
+            if (openBundleIdx === idx) openBundleIdx = Math.min(idx, ns.contributions.length - 1);
+            else if (openBundleIdx > idx) openBundleIdx--;
             saveNarrative();
             refreshCardsContainer();
           });
-          header.appendChild(removeBtn);
-          card.appendChild(header);
+          summary.appendChild(removeBtn);
+          details.appendChild(summary);
+
+          // Body: theme input + 5 field textareas
+          const body = el("div", "r1-bundle-body");
+          const themeField = el("div", "contribution-field");
+          const themeLbl = el("label", null, "Bundle theme — what this group is about");
+          const themeInputId = `contrib-${idx}-theme`;
+          themeLbl.setAttribute("for", themeInputId);
+          themeField.appendChild(themeLbl);
+          const themeInput = el("input", "ps-input ps-input--wide");
+          themeInput.id = themeInputId;
+          themeInput.placeholder = "e.g. Climate adaptation research";
+          themeInput.value = c.theme || "";
+          themeInput.style.background = "#fff";
+          themeInput.addEventListener("input", (e) => {
+            c.theme = e.target.value;
+            saveNarrative();
+            // Live-update the summary label
+            const lab = labelWrap.lastChild;
+            if (lab && lab.nodeType === Node.TEXT_NODE) lab.nodeValue = ` — ${e.target.value || "untitled"}`;
+            else labelWrap.appendChild(document.createTextNode(` — ${e.target.value || "untitled"}`));
+          });
+          themeField.appendChild(themeInput);
+          body.appendChild(themeField);
 
           CONTRIB_FIELDS.forEach(({ key, label, placeholder }) => {
             const field = el("div", "contribution-field");
@@ -1318,12 +1394,20 @@
             ta.className = "contribution-textarea";
             ta.placeholder = placeholder;
             ta.value = c[key] || "";
-            ta.rows = 3;
+            ta.rows = 4;
             ta.addEventListener("input", (e) => { c[key] = e.target.value; saveNarrative(); });
             field.appendChild(ta);
-            card.appendChild(field);
+            body.appendChild(field);
           });
-          return card;
+          details.appendChild(body);
+
+          // Clicking the summary toggles. Sync openBundleIdx so add-then-refresh works right.
+          details.addEventListener("toggle", () => {
+            if (details.open) openBundleIdx = idx;
+            else if (openBundleIdx === idx) openBundleIdx = -1;
+          });
+
+          return details;
         };
 
         const refreshCardsContainer = () => {
@@ -1348,8 +1432,16 @@
             theme: "", activities: "", outputs: "", outcomes: "", evidence: "", impact: "",
             diagnostic: {}, revisionNotes: { activities: "", outputs: "", outcomes: "", evidence: "", impact: "" }
           });
+          // Open the new bundle (the one we just pushed); previous ones collapse
+          openBundleIdx = ns.contributions.length - 1;
           saveNarrative();
           refreshCardsContainer();
+          // Scroll the new bundle into view
+          setTimeout(() => {
+            const cards = cardsContainer.querySelectorAll(".r1-bundle-details");
+            const newCard = cards[cards.length - 1];
+            if (newCard) newCard.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 50);
         });
         wrap.appendChild(addBtn);
 
@@ -1513,15 +1605,15 @@
               card.classList.toggle("is-bundle-approved", allApproved);
             };
 
-            FIELDS.forEach(({ key, label, placeholder }) => {
-              // Accordion wrapper — open by default; user can collapse any field
+            FIELDS.forEach(({ key, label, placeholder }, fieldIdx) => {
+              // Accordion wrapper — only the first field (Activities) open by default
               const details = el("details", "r2-field-details");
-              details.open = true;
+              details.open = fieldIdx === 0;
               details.dataset.field = key;
 
               // Summary: triangle · label · status badge (always visible)
               const summary = el("summary", "r2-field-summary");
-              const tri = el("span", "r2-summary-tri", "▾"); // ▾
+              const tri = el("span", "ncv-acc-tri", "▼");
               summary.appendChild(tri);
               const summaryLabel = el("span", "r2-summary-label", label);
               summary.appendChild(summaryLabel);
