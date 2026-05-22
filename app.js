@@ -2373,6 +2373,10 @@
     // Helper — build + register a full module page
     const makeModulePage = (id, title, contentEl) => {
       const pg = el("div", "page learn-module-page");
+      // B-23: matches href="#learn-module-ncv" (and siblings) so screen
+      // readers / a11y scanners see a valid in-page anchor target instead
+      // of an orphan link. Click handlers preventDefault so no auto-scroll.
+      pg.id = id;
       const backBtn = el("button", "learn-module-back");
       backBtn.type = "button";
       backBtn.innerHTML = "\u2190 Back to Learn";
@@ -4388,6 +4392,10 @@
   const buildPathwaysVision = () => {
     const section = el("section", "page page-pathways-vision");
     section.dataset.page = "pathways-vision";
+    // B-23: match the href="#pathways-vision" semantics so a11y tooling and
+    // screen readers see a valid in-page anchor target. Click handlers still
+    // preventDefault, so the browser never tries to scroll to this id.
+    section.id = "pathways-vision";
 
     const container = el("div", "container");
     const reading = el("div", "vision-reading");
