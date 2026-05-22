@@ -6,11 +6,6 @@
   --muted: #5a5a5a;
   --border: #e6e6e6;
   --link: #912338;
-  /* B-21: backdrop tint behind the service/booking modal so the centered
-     800px content column reads as a distinct card. Without this, the overlay
-     was solid white and users mistook clickable backdrop strips for modal
-     content, then clicked them and triggered close-on-overlay. */
-  --modal-backdrop: #f1f1f3;
 }
 
 * {
@@ -2772,10 +2767,21 @@ label {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: var(--modal-backdrop);
+  background: var(--bg);
   overflow-y: auto;
   z-index: 100;
   display: block;
+}
+
+/* Quick-match is a real popup (560px card), not a full-page route modal.
+   Give its overlay the dimmed-backdrop pattern so the card reads as a popup
+   on top of the page, instead of a white card on a white sheet. */
+.modal-overlay.quick-match-overlay {
+  background: rgba(26, 26, 26, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
 
 .modal-topbar {
