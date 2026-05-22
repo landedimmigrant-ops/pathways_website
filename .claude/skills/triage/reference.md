@@ -121,3 +121,10 @@ writeback automation.
 - **Old-schema rows** (missing `id`): refer to them by summary text and ask
   the user to assign an ID before writeback.
 - **Never push without explicit user sign-off** — even a triage-branch merge.
+- **Never rewrite a row's description.** See the "Sheet hygiene" section in
+  `SKILL.md`. The webhook only updates `status`/`commit`, so any clobbered
+  description has to be restored by hand. If a row needs a clarification,
+  append to `idea fix`, file a follow-up row, or ask the user.
+- **ID collisions** (two rows with the same `B-XX`): surface to the user, do
+  not silently merge. The `pull.py` report will list both — note this and
+  propose a renumber rather than picking one.

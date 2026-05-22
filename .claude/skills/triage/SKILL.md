@@ -51,6 +51,27 @@ Default to **direct commits** on `integration-prototype`. Branch
 refactors >100 lines or >3 files, or risky multi-bug batches where a partial
 landing would leave the dev URL broken.
 
+## Sheet hygiene — never rewrite a bug row
+
+**Bug-row descriptions are append-only.** Never edit a row's `bug/ issue`,
+`where?`, `description?`, or `expected vs actual` cell unless the user
+**expressly** asks. The report is an audit trail; once overwritten it's
+gone (the writeback script only touches `status` and `commit`).
+
+If a row needs more context, do one of:
+- Add to the `idea fix` cell — it's the working-notes column. Summary stays intact.
+- Append a follow-up row with a new ID, referencing the original ("see B-21").
+- Ask the user to add the note themselves and paste in the text.
+
+**If you spot two rows with the same ID**, treat it as a sheet defect: surface
+both to the user, propose a renumber, and leave both rows in place until the
+user picks which to keep. Don't silently overwrite either.
+
+This rule exists because **B-21** got clobbered once already — its original
+back-button-on-empty-space text was overwritten with an unrelated
+"orphan in-app anchor links" report, leaving `status=done` + commit pointing
+at the wrong description. The orphan-anchors bug was re-filed as **B-23**.
+
 ## More detail
 
 `reference.md` covers the webhook API (update / append / list_tabs), the
