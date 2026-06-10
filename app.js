@@ -2118,8 +2118,10 @@
 
     const wrap = el("div", "ncv-module");
     const moduleHeader = el("div", "ncv-module-header");
-    moduleHeader.appendChild(el("span", "ncv-module-kicker", slot("header.kicker", "Before you start — Step 2")));
-    moduleHeader.appendChild(el("h2", null, slot("header.title", "What is a Narrative CV?")));
+    // makeModulePage already renders an <h1> with this module's title, so the
+    // kicker + duplicate <h2> are dropped: they doubled the heading, and the
+    // "Step 2" sequence is meaningless when arriving from the Learn topic grid.
+    // Keep the orientation lead as the intro under the page heading.
     moduleHeader.appendChild(el("p", "ncv-module-lead", slot("header.lead", "A short orientation before you begin drafting. Read the overview, then expand any section for more detail.")));
     wrap.appendChild(moduleHeader);
 
@@ -4726,7 +4728,7 @@
     pathwayDetailShell.appendChild(detailLayout);
 
     // Related services below the 2-col layout
-    const CARDS_PER_PAGE = 6;
+    const CARDS_PER_PAGE = 12;
 
     // Reusable pagination builder
     const buildPaginationControls = (totalItems, currentPage, totalPages, onPageChange) => {
