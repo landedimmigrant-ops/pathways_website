@@ -5012,6 +5012,15 @@
     const researchModuleChips = el("div", "research-module-chips");
     researchViewerCard.appendChild(researchModuleChips);
 
+    // Context strip for the active chip — module description + filter status
+    const researchModuleContext = el("div", "research-module-context");
+    researchModuleContext.hidden = true;
+    const researchModuleContextDesc = el("p", "research-module-context-desc", "");
+    const researchModuleContextNote = el("p", "research-module-context-note", "");
+    researchModuleContext.appendChild(researchModuleContextDesc);
+    researchModuleContext.appendChild(researchModuleContextNote);
+    researchViewerCard.appendChild(researchModuleContext);
+
     // Services section — visible immediately on stage open, filtered by active chip
     const researchServicesSection = el("div", "research-services-section");
     researchServicesSection.appendChild(el("h3", "pathway-services-title", "Related resources"));
@@ -5138,13 +5147,14 @@
       researchPanelDesc.textContent = journey.description;
 
       clear(researchModuleChips);
+      researchModuleContext.hidden = true;
       journey.modules.forEach((module) => {
         const chip = el("button", "research-module-chip", module.title);
         chip.type = "button";
+        chip.setAttribute("aria-pressed", "false");
         chip.addEventListener("click", () => {
           if (chip.classList.contains("is-active")) {
-            chip.classList.remove("is-active");
-            loadStageServices(journey);
+            clearResearchModule(journey);
           } else {
             openResearchModule(journey, module, chip);
           }
@@ -5166,23 +5176,52 @@
       researchViewer.classList.remove("is-open");
       researchPillRow.hidden = true;
       researchStageGrid.hidden = false;
+      researchModuleContext.hidden = true;
       researchPillButtons.forEach((btn) => btn.classList.remove("is-active"));
     }
 
+    function resetResearchModuleChips() {
+      researchModuleChips.querySelectorAll(".research-module-chip").forEach((c) => {
+        c.classList.remove("is-active");
+        c.setAttribute("aria-pressed", "false");
+      });
+    }
+
+    function clearResearchModule(journey) {
+      resetResearchModuleChips();
+      researchModuleContext.hidden = true;
+      loadStageServices(journey);
+    }
+
     function openResearchModule(journey, module, chipEl) {
-      researchModuleChips.querySelectorAll(".research-module-chip").forEach(c => c.classList.remove("is-active"));
+      resetResearchModuleChips();
       chipEl.classList.add("is-active");
+      chipEl.setAttribute("aria-pressed", "true");
 
       const workshopIds = Array.isArray(module.workshopIds) ? module.workshopIds : [];
-      let matched;
-      if (workshopIds.length > 0) {
-        matched = exploreItems.filter(opp => workshopIds.includes(opp.id));
+      let matched = workshopIds.length > 0
+        ? exploreItems.filter(opp => workshopIds.includes(opp.id))
+        : [];
+
+      researchModuleContextDesc.textContent = module.description || "";
+      clear(researchModuleContextNote);
+      if (matched.length > 0) {
+        researchModuleContextNote.appendChild(document.createTextNode(
+          `Showing ${matched.length} resource${matched.length === 1 ? "" : "s"} linked to this topic. `
+        ));
+        const clearBtn = el("button", "research-module-clear", `Show all ${journey.title} resources`);
+        clearBtn.type = "button";
+        clearBtn.addEventListener("click", () => clearResearchModule(journey));
+        researchModuleContextNote.appendChild(clearBtn);
       } else {
         matched = exploreItems.filter(opp => {
           const val = opp.stage;
           return Array.isArray(val) ? val.includes(journey.stage) : val === journey.stage;
         });
+        researchModuleContextNote.textContent =
+          `Showing all ${journey.title} resources — none are linked specifically to this topic yet.`;
       }
+      researchModuleContext.hidden = false;
 
       buildResearchFilterPills(matched);
       renderResearchCards(matched);
