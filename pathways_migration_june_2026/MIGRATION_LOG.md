@@ -1,4 +1,4 @@
-# Pathways to Impact — Migration Handoff (standalone section exports)
+# Pathways to Impact — Migration Handoff (standalone exports)
 
 **For:** Concordia University web team (AEM / concordia.ca migration)
 **Prepared:** 2026-06-10 · **Source branch:** `integration-prototype`
@@ -8,15 +8,28 @@
 
 ## What this folder is
 
-Each `.html` file here is a **static, self-contained snapshot of one section** of the Pathways to Impact single-page app, produced so you can evaluate whether our layout + content survive the move into AEM — open one in any browser (from disk, email, or an AEM authoring preview) and it renders identically, with **no build step and no dependency** on `app.js` / `data.js` / the live `styles.css`.
+Every `.html` file here is a **static, self-contained snapshot** — of either a **page/section** (the layouts) or a single **content item** (one workshop or one resource). Open any of them in any browser (from disk, email, or an AEM authoring preview) and it renders identically, with **no build step and no dependency** on `app.js` / `data.js` / the live `styles.css`.
 
-Each file contains, in order: a yellow "migration export" banner, a minimal Concordia header (brand + Office of Research + section name), the **section's real rendered markup**, a minimal footer, the **entire `styles.css` inlined** in one `<style>` block, and a tiny accordion-toggle `<script>`. The only external reference is the **Inter** web font (system-font fallback if it can't load).
+Each file contains, in order: a yellow "migration export" banner, a minimal Concordia header, the **real rendered markup**, a minimal footer, the **entire `styles.css` inlined** in one `<style>` block, and a tiny accordion-toggle `<script>`. The only external reference is the **Inter** web font (system-font fallback if it can't load).
 
-> Why snapshots rather than generated files? The live site builds every section at runtime from `app.js` + `data.js` + a Google Sheet, so the faithful capture is the *rendered DOM*. (The one exception is the Narrative CV guide — file 11 — which is generated from markdown; see below.)
+> Why snapshots rather than generated files? The live site builds everything at runtime from `app.js` + `data.js` + a Google Sheet, so the faithful capture is the *rendered DOM*. (The one exception is the Narrative CV guide — page 11 — which is generated from markdown; see below.)
+
+### Folder structure
+
+```
+pathways_migration_june_2026/
+├── 01-…13-*.html         13 page / section layouts        (index below)
+├── workshops/            11 active workshops & services   (one .html per item)
+├── resources/            10 external resources            (one .html per item)
+├── MIGRATION_LOG.md      this file
+└── _regenerate.js        browser snippet that reproduces all of the above
+```
+
+The catalogue's **2 interactive tools** (Impact Planning Module, Narrative CV Builder) are not under `workshops/` — they have no detail page (their card "Start"s the tool); see pages 09–11. So the All Resources count of **23 = 11 workshops + 10 resources + 2 tools**.
 
 ---
 
-## File index
+## Page / section index (layouts)
 
 | # | File | Live route | Section | Notes for migration |
 |---|------|-----------|---------|---------------------|
@@ -33,6 +46,45 @@ Each file contains, in order: a yellow "migration export" banner, a minimal Conc
 | 11 | `11-learn-module-narrative-cv.html` | `learn-module-ncv` | **Learn module: "What is a Narrative CV?"** | **Generated from markdown**, not snapshotted — the reference implementation of the standalone standard (identical to `../narrative-cv-guide-standalone.html`; regen via `node scripts/build-ncv-standalone.js`). The model to copy for other Learn guides. |
 | 12 | `12-about.html` | `#about` | **About** | Mission, "Partners across the university" accordion (**shown expanded**), and the contact form. |
 | 13 | `13-pathways-vision.html` | `#pathways-vision` | **Pathways Vision** | The long-form impact-vision page. |
+
+---
+
+## Content index — workshops (`workshops/`)
+
+One file per **active workshop / service** in the live catalogue (the full detail page: relevance, who it's for, outcomes, format, materials, offering unit, booking CTA). Filename = the item's id. Live route = `#explore?service=<id>`.
+
+| File (`workshops/…`) | Title | Offered by |
+|---|---|---|
+| `4th-space-public-engagement.html` | 4th Space Research Activation & Public Engagement Support | 4th Space |
+| `evaluating-digital-scholarship-tools-for-research.html` | Evaluating Digital Scholarship Tools for Research | Concordia Library |
+| `library-dmp-consultation.html` | Data Management Plan (DMP) Consultations | Concordia Library |
+| `library-informed-author-rights.html` | Informed Author-Rights: Workshop | Concordia Library |
+| `open-scholarship.html` | Licensing & Open Scholarship: Creative Commons, Rights, and Sharing Your Research | Concordia Library |
+| `software-skills.html` | Software Skills for Research Workflows: Tool-Specific Training Series | Concordia Library |
+| `oce-community-partnerships-workshop.html` | Research Partnerships with Montréal's Black and Indigenous Communities | Office of Community Engagement |
+| `pips-ip-technology-transfer.html` | IP & Technology Transfer Consultation | Office of Research (PIPS) |
+| `pips-research-agreements-ip.html` | Research Agreements & IP Support Consultation | Office of Research (PIPS) |
+| `pips-research-security-risk.html` | External Partnerships & Sensitive Research Risk Assessment | Office of Research (PIPS) |
+| `v1-studio-lab2market.html` | Lab2Market Program Exploration: Consultation | V1 Studio |
+
+## Content index — resources (`resources/`)
+
+One file per **external resource** (detail page: summary, who it's for, what you'll do, tags, plus an "Open resource ↗" link to the external source). Filename = the item's id. Live route = `#explore?service=<id>`.
+
+| File (`resources/…`) | Title |
+|---|---|
+| `ext-impact-assessment-template.html` | Impact Assessment Template |
+| `ext-impact-indicators.html` | Impact Indicators: Overview & Menu |
+| `ext-flows-of-knowledge.html` | Flows of Knowledge: Impact Assessment Method |
+| `ext-engaged-research-planning.html` | Engaged Research Planning for Impact |
+| `ext-kmb-modules.html` | Knowledge Mobilization Modules |
+| `ext-methods-inclusive-research.html` | Methods for Inclusive Research |
+| `ext-impact-activities-catalogue.html` | Impact Activities Catalogue |
+| `ext-stakeholder-analysis.html` | Stakeholder Analysis Matrix Template |
+| `ext-community-based-participatory-action-research.html` | What is Community-Based Participatory Action Research? |
+| `ext-research-tools-for-organizers.html` | Power Research and Research Tools for Organizers |
+
+> These 21 items + the 2 tools = the 23-item All Resources catalogue. Re-export after any Sheet content change (see below). The offering unit shown above is each workshop's `unit` field.
 
 ---
 

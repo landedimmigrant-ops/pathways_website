@@ -37,16 +37,17 @@ body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-app
 .carousel-track{flex-direction:column!important;transform:none!important;}
 .carousel-track .slide{min-height:0;}
 .nav-btn,.dot-nav,.carousel-pause,.slide-counter,.progress-bar{display:none!important;}
+.modal-overlay{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important;inset:auto!important;}
 `;
   const toggle = '<scr' + 'ipt>document.addEventListener("click",function(e){var b=e.target.closest("[aria-expanded]");if(!b)return;var x=b.getAttribute("aria-expanded")==="true";b.setAttribute("aria-expanded",String(!x));var y=b.nextElementSibling;if(y)y.classList.toggle("is-open",!x);});</scr' + 'ipt>';
 
-  const save = async (name, label, route, node) => {
-    const banner = `<div class="mh-banner">Migration export — a static, self-contained snapshot of one Pathways&nbsp;SPA section for AEM evaluation. Source route: <code>${route}</code>. Not the live app.</div>`;
+  const save = async (name, label, route, node, dir) => {
+    const banner = `<div class="mh-banner">Migration export — a static, self-contained snapshot for AEM evaluation. Source route: <code>${route}</code>. Not the live app.</div>`;
     const header = `<header class="mh-header"><span class="mh-brand">Pathways to Impact</span><span class="mh-tag">Concordia University · Office of Research</span><span class="mh-section">${label}</span></header>`;
     const footer = `<footer class="mh-footer">Pathways to Impact · Office of Research, Concordia University · <a href="mailto:impact@concordia.ca">impact@concordia.ca</a><br>Static migration snapshot — interactive behaviour (carousel autoplay, hash routing, live data) is not reproduced.</footer>`;
     const doc = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>${label} · Pathways to Impact (migration export)</title>\n${fontLink}\n<style>\n${css}\n${chromeCss}</style>\n</head>\n<body>\n${banner}\n${header}\n<main class="mh-main">\n${node.outerHTML}\n</main>\n${footer}\n${toggle}\n</body>\n</html>\n`;
-    await fetch(SAVE + encodeURIComponent(name), { method: "POST", headers: { "Content-Type": "text/plain" }, body: doc });
-    console.log("saved", name);
+    await fetch(SAVE + encodeURIComponent(name) + (dir ? "&dir=" + encodeURIComponent(dir) : ""), { method: "POST", headers: { "Content-Type": "text/plain" }, body: doc });
+    console.log("saved", (dir ? dir + "/" : "") + name);
   };
   const exploreActiveTab = () => { const c = document.querySelector(".page-explore").cloneNode(true); c.querySelectorAll(".explore-tab-content:not(.is-active)").forEach((e) => e.remove()); return c; };
 
@@ -73,6 +74,30 @@ body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-app
   { const acc = [...document.querySelectorAll(".page-about [aria-expanded], .page-about summary, .page-about button")].find((e) => /Partners across/.test(e.innerText)); if (acc) { if (acc.getAttribute("aria-expanded") === "false") acc.click(); else if (acc.tagName === "SUMMARY") { const d = acc.closest("details"); if (d) d.open = true; } } await sleep(300); await save("12-about.html", "About", "#about", document.querySelector(".page-about").cloneNode(true)); }
   // 13 Pathways Vision
   await go("#pathways-vision"); await save("13-pathways-vision.html", "Pathways Vision", "#pathways-vision", document.querySelector(".page-pathways-vision").cloneNode(true));
+
+  // ---- Content items: one file per workshop / resource ----
+  // Walk the All Resources catalogue; open each item's detail, derive its id
+  // from the hash, classify workshop vs resource (resources have an "Open
+  // resource" link), and save into workshops/ or resources/. Tools ("Start"
+  // cards, no detail) are skipped — they're pages 09–11.
+  const seen = new Set();
+  const processBrowsePage = async () => {
+    while (true) {
+      const cards = [...document.querySelectorAll(".page-explore .opportunity-card")];
+      let btn = null, title = null;
+      for (const c of cards) { const t = (c.querySelector("h3") || {}).innerText; const b = [...c.querySelectorAll("button,a")].find((e) => /View details/.test(e.innerText)); if (b && t && !seen.has(t.trim())) { btn = b; title = t.trim(); break; } }
+      if (!btn) break;
+      seen.add(title);
+      btn.click(); await sleep(550);
+      const id = (location.hash.split("service=")[1] || "").split("&")[0];
+      const ov = [...document.querySelectorAll(".modal-overlay")].find((e) => e.offsetHeight > 0);
+      if (ov && id) { const isRes = !![...ov.querySelectorAll("a")].find((a) => /Open resource/i.test(a.innerText)); const dir = isRes ? "resources" : "workshops"; await save(id + ".html", (isRes ? "Resource: " : "Workshop: ") + title, "#explore?service=" + id, ov.cloneNode(true), dir); }
+      location.hash = "#explore?tab=browse"; await sleep(450);
+    }
+  };
+  await go("#explore?tab=browse");
+  await processBrowsePage();
+  { const next = [...document.querySelectorAll(".page-explore .pagination-wrapper button")].find((b) => b.innerText.trim() === "2" || /→/.test(b.innerText)); if (next) { next.click(); await sleep(700); await processBrowsePage(); } }
 
   console.log("DONE. (11-learn-module-narrative-cv.html is generated separately from markdown — see MIGRATION_LOG.md.)");
 })();

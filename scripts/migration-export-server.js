@@ -41,6 +41,8 @@ http.createServer((req, res) => {
   if (req.method === "POST" && url.pathname === "/save") {
     const raw = (url.searchParams.get("name") || "").trim();
     const name = raw.replace(/[^a-z0-9._-]/gi, "");
+    // Optional single-level subfolder (e.g. "workshops", "resources").
+    const dir = (url.searchParams.get("dir") || "").replace(/[^a-z0-9_-]/gi, "");
     if (!name || !/\.html$/.test(name)) {
       res.writeHead(400, cors);
       return res.end("bad name");
@@ -48,8 +50,10 @@ http.createServer((req, res) => {
     let body = "";
     req.on("data", (c) => (body += c));
     req.on("end", () => {
-      fs.writeFileSync(path.join(OUT_DIR, name), body);
-      console.log(`[export] wrote ${name} (${body.length} bytes)`);
+      const targetDir = dir ? path.join(OUT_DIR, dir) : OUT_DIR;
+      fs.mkdirSync(targetDir, { recursive: true });
+      fs.writeFileSync(path.join(targetDir, name), body);
+      console.log(`[export] wrote ${dir ? dir + "/" : ""}${name} (${body.length} bytes)`);
       res.writeHead(200, cors);
       res.end("ok");
     });
