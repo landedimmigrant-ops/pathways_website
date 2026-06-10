@@ -4326,7 +4326,6 @@
         { value: "developing", label: "Developing an Idea" },
         { value: "active", label: "Active Research" },
         { value: "finishing", label: "Finishing a Project" },
-        { value: "wrapping", label: "Finishing a Project" },
         { value: "not-sure", label: "Not sure yet" }
       ].forEach((opt) => {
         const o = el("option", null, opt.label);
