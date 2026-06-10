@@ -803,7 +803,7 @@ window.PATHWAYS_DATA = {
       ]
     },
     empty: {
-      title: "No matching opportunities",
+      title: "No matching resources",
       body: "Try adjusting the search or filters to see more options."
     },
     opportunities: [

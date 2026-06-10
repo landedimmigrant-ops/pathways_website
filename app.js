@@ -266,6 +266,8 @@
     pendingSupportSearch: "",
     pendingResearchJourneyId: "",
     pendingExploreTab: "",
+    pendingLearnTab: "",
+    pendingLearnTool: "",
     suppressNextHashChange: false,
     // Tracks which modal is currently rendered. Empty = none.
     // Format: "service:<id>" for the detail modal, "book:<id>" for the booking modal.
@@ -1692,12 +1694,21 @@
       progressBar.style.background = isLight ? "#912338" : "rgba(255,255,255,0.7)";
     }
 
+    // Size the viewport to the active slide so shorter slides don't inherit the
+    // tallest slide's height (which left a dead zone with arrows floating in it,
+    // most visible on narrow screens). Pairs with .carousel-track flex-start.
+    function carouselSyncHeight() {
+      const active = track.children[carouselCurrent];
+      if (active) carouselWrap.style.height = `${active.offsetHeight}px`;
+    }
+
     function carouselGoTo(n) {
       carouselCurrent = (n + carouselTotal) % carouselTotal;
       track.style.transform = `translateX(-${carouselCurrent * 100}%)`;
       dotNav.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === carouselCurrent));
       counter.textContent = `${carouselCurrent + 1} / ${carouselTotal}`;
       carouselUpdateChrome(carouselCurrent);
+      carouselSyncHeight();
     }
 
     function carouselResetProgress() {
@@ -1768,6 +1779,10 @@
     container.appendChild(carouselWrap);
     carouselGoTo(0);
     carouselStartTimer();
+    // Re-measure on resize (breakpoint changes flip slides between 1- and
+    // 2-column layouts, changing their height) and once after first paint.
+    window.addEventListener("resize", carouselSyncHeight);
+    requestAnimationFrame(carouselSyncHeight);
 
     container.appendChild(el("hr", "section-divider"));
 
@@ -1820,6 +1835,10 @@
       if (pathwayKey) navigateTo("explore", null, { pathway: pathwayKey });
     };
     section.closePathwayModal = () => {};
+    // Re-measure the carousel when home becomes visible. The build-time sync
+    // reads 0 when the cold-load landed on another page (home was display:none),
+    // so showPage calls this on every home activation.
+    section.syncCarouselHeight = carouselSyncHeight;
     return section;
   };
 
@@ -2281,8 +2300,10 @@
     const learnTabsBar = el("div", "explore-tabs");
     const tabImpact101 = el("button", "explore-tab is-active", "Impact 101");
     tabImpact101.type = "button";
+    tabImpact101.dataset.tab = "impact101";
     const tabTools = el("button", "explore-tab", "Tools");
     tabTools.type = "button";
+    tabTools.dataset.tab = "tools";
     learnTabsBar.appendChild(tabImpact101);
     learnTabsBar.appendChild(tabTools);
     container.appendChild(learnTabsBar);
@@ -2329,17 +2350,22 @@
 
     // Planner area (revealed when Step 1 clicked)
     const plannerArea = el("div", "tools-planner-area is-hidden");
-    const backToTools = el("button", "btn btn-ghost tools-back-btn", "\u2190 Back to Tools");
-    backToTools.type = "button";
-    backToTools.addEventListener("click", () => {
-      plannerArea.classList.add("is-hidden");
-      cardsWrap.classList.remove("is-hidden");
-      alreadyDone.classList.remove("is-hidden");
-    });
-    plannerArea.appendChild(backToTools);
+
+    // pushLearnUrl writes the tab/tool into the URL so Learn views are
+    // shareable: #learn (Impact 101), #learn?tab=tools, and the planner at
+    // #learn?tab=tools&tool=planner. Hashchange then drives openTab \u2014 clicks
+    // only push the URL, mirroring the Explore tab pattern.
+    const pushLearnUrl = (tabName, tool) => {
+      const params = new URLSearchParams();
+      if (tabName === "tools") params.set("tab", "tools");
+      if (tool) params.set("tool", tool);
+      const qs = params.toString();
+      const nextHash = `#learn${qs ? "?" + qs : ""}`;
+      if (window.location.hash !== nextHash) window.location.hash = nextHash;
+    };
 
     let plannerBuilt = false;
-    step1Btn.addEventListener("click", () => {
+    const showPlanner = () => {
       cardsWrap.classList.add("is-hidden");
       alreadyDone.classList.add("is-hidden");
       plannerArea.classList.remove("is-hidden");
@@ -2348,8 +2374,19 @@
         if (plannerEl) plannerArea.appendChild(plannerEl);
         plannerBuilt = true;
       }
-      plannerArea.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+    };
+    const hidePlanner = () => {
+      plannerArea.classList.add("is-hidden");
+      cardsWrap.classList.remove("is-hidden");
+      alreadyDone.classList.remove("is-hidden");
+    };
+
+    const backToTools = el("button", "btn btn-ghost tools-back-btn", "\u2190 Back to Tools");
+    backToTools.type = "button";
+    backToTools.addEventListener("click", () => { pushLearnUrl("tools", null); });
+    plannerArea.appendChild(backToTools);
+
+    step1Btn.addEventListener("click", () => { pushLearnUrl("tools", "planner"); });
     step1Card.appendChild(step1Btn);
 
     toolsContent.appendChild(plannerArea);
@@ -2506,6 +2543,19 @@
     const learnContents = [impact101Content, toolsContent];
     const learnPanelIds = ["learn-panel-impact101", "learn-panel-tools"];
     learnTabsBar.setAttribute("role", "tablist");
+
+    // setActiveLearnTab toggles UI only (used by URL-driven nav + resetState).
+    // It does NOT push the URL — that's pushLearnUrl's job, called by clicks.
+    const setActiveLearnTab = (targetTab) => {
+      learnTabs.forEach((t, j) => {
+        const active = t === targetTab;
+        t.classList.toggle("is-active", active);
+        t.setAttribute("aria-selected", active ? "true" : "false");
+        t.setAttribute("tabindex", active ? "0" : "-1");
+        learnContents[j].classList.toggle("is-active", active);
+      });
+    };
+
     learnTabs.forEach((tab, i) => {
       learnContents[i].id = learnPanelIds[i];
       learnContents[i].setAttribute("role", "tabpanel");
@@ -2513,15 +2563,7 @@
       tab.setAttribute("aria-selected", i === 0 ? "true" : "false");
       tab.setAttribute("aria-controls", learnPanelIds[i]);
       tab.setAttribute("tabindex", i === 0 ? "0" : "-1");
-      tab.addEventListener("click", () => {
-        learnTabs.forEach((t, j) => {
-          const active = t === tab;
-          t.classList.toggle("is-active", active);
-          t.setAttribute("aria-selected", active ? "true" : "false");
-          t.setAttribute("tabindex", active ? "0" : "-1");
-          learnContents[j].classList.toggle("is-active", active);
-        });
-      });
+      tab.addEventListener("click", () => { pushLearnUrl(tab.dataset.tab, null); });
     });
     learnTabsBar.addEventListener("keydown", (e) => {
       const idx = learnTabs.indexOf(document.activeElement);
@@ -2532,8 +2574,29 @@
       if (next >= 0) { e.preventDefault(); learnTabs[next].click(); learnTabs[next].focus(); }
     });
 
+    // openTab applies tab + planner state from the URL. Returns the resolved
+    // tab so showPage can canonicalize the address (drops junk ?tab= tokens).
+    section.openTab = (tabName, tool) => {
+      const wantTools = tabName === "tools";
+      setActiveLearnTab(wantTools ? tabTools : tabImpact101);
+      if (wantTools && tool === "planner") showPlanner();
+      else hidePlanner();
+      return wantTools ? "tools" : "impact101";
+    };
+    section.normalizeTabUrl = (resolvedTab, tool) => {
+      const route = parseRouteFromHash(window.location.hash);
+      if (route.page !== "learn") return;
+      const params = new URLSearchParams();
+      if (resolvedTab === "tools") params.set("tab", "tools");
+      if (resolvedTab === "tools" && tool === "planner") params.set("tool", "planner");
+      const qs = params.toString();
+      const nextHash = `#learn${qs ? "?" + qs : ""}`;
+      if (window.location.hash !== nextHash) history.replaceState(null, "", nextHash);
+    };
+
     section.resetState = () => {
-      tabImpact101.click();
+      setActiveLearnTab(tabImpact101);
+      hidePlanner();
     };
 
     section.appendChild(container);
@@ -5652,12 +5715,19 @@
         return value === selected;
       };
 
+      // Flatten a field that may be a string or an array into searchable text,
+      // so a query in the site's own vocabulary (pathway / stage names) matches.
+      const fieldText = (value) =>
+        (Array.isArray(value) ? value.join(" ") : (value || "")).toLowerCase();
+
       const filtered = exploreItems.filter((opp) => {
         const tags = Array.isArray(opp.tags) ? opp.tags : [];
         const matchesSearch = !searchTerm ||
           opp.title.toLowerCase().includes(searchTerm) ||
           (opp.summary || "").toLowerCase().includes(searchTerm) ||
           (opp.markdown || "").toLowerCase().includes(searchTerm) ||
+          fieldText(opp.pathway).includes(searchTerm) ||
+          fieldText(opp.stage).includes(searchTerm) ||
           tags.some((tag) => tag.toLowerCase().includes(searchTerm));
 
         const pathwayMatch = matchesField(opp.pathway, state.filters.pathway);
@@ -6223,9 +6293,26 @@
       if (journey) openResearchPanel(journey);
     };
     section.openTab = (tabName) => {
-      if (tabName === "research") setActiveTab(tabResearch);
-      else if (tabName === "browse") setActiveTab(tabServices);
-      else setActiveTab(tabPathways);
+      if (tabName === "research") { setActiveTab(tabResearch); return "research"; }
+      if (tabName === "browse") { setActiveTab(tabServices); return "browse"; }
+      setActiveTab(tabPathways);
+      return "pathways";
+    };
+    // Strip a non-canonical ?tab= token (e.g. ?tab=all, or a redundant
+    // ?tab=pathways) so the URL matches the rendered tab. replaceState — silent.
+    section.normalizeTabUrl = (resolvedTab) => {
+      const route = parseRouteFromHash(window.location.hash);
+      if (route.page !== "explore") return;
+      const params = new URLSearchParams(route.params.toString());
+      const currentTab = params.get("tab");
+      const canonical = resolvedTab === "pathways" ? null : resolvedTab;
+      const needsFix = canonical === null ? currentTab !== null : currentTab !== canonical;
+      if (!needsFix) return;
+      if (canonical) params.set("tab", canonical);
+      else params.delete("tab");
+      const queryString = params.toString();
+      const nextHash = `#explore${queryString ? "?" + queryString : ""}`;
+      if (window.location.hash !== nextHash) history.replaceState(null, "", nextHash);
     };
     section.resetState = () => {
       closeExplorePanel();
@@ -6505,7 +6592,8 @@
       // openPathwayInTab, openResearchStage) may override the tab as a side
       // effect of their own work, which is desired.
       if (explorePage && explorePage.openTab) {
-        explorePage.openTab(state.pendingExploreTab || "pathways");
+        const resolvedTab = explorePage.openTab(state.pendingExploreTab || "pathways");
+        if (explorePage.normalizeTabUrl) explorePage.normalizeTabUrl(resolvedTab);
         state.pendingExploreTab = "";
       }
       // Restore search + filter state from URL (?q=, ?stage=, ?format=, ?time=)
@@ -6546,8 +6634,20 @@
       }
     }
 
+    if (validPage === "learn") {
+      const learnPage = pages.get("learn");
+      if (learnPage && learnPage.openTab) {
+        const resolvedTab = learnPage.openTab(state.pendingLearnTab || "impact101", state.pendingLearnTool);
+        if (learnPage.normalizeTabUrl) learnPage.normalizeTabUrl(resolvedTab, state.pendingLearnTool);
+        state.pendingLearnTab = "";
+        state.pendingLearnTool = "";
+      }
+    }
+
     if (validPage === "home") {
       state.pendingPathwayKey = "";
+      const homePage = pages.get("home");
+      if (homePage && homePage.syncCarouselHeight) homePage.syncCarouselHeight();
     }
 
     if (validPage === "support") {
@@ -6710,6 +6810,10 @@
       state.pendingExploreSearch = initialRoute.params.get("q") || "";
       state.pendingExploreTab = initialRoute.params.get("tab") || "";
     }
+    if (initialRoute.page === "learn") {
+      state.pendingLearnTab = initialRoute.params.get("tab") || "";
+      state.pendingLearnTool = initialRoute.params.get("tool") || "";
+    }
     if (initialRoute.page === "support") {
       state.pendingSupportSearch = initialRoute.params.get("q") || "";
     }
@@ -6738,6 +6842,12 @@
         : "";
       state.pendingExploreTab = nextRoute.page === "explore"
         ? (nextRoute.params.get("tab") || "")
+        : "";
+      state.pendingLearnTab = nextRoute.page === "learn"
+        ? (nextRoute.params.get("tab") || "")
+        : "";
+      state.pendingLearnTool = nextRoute.page === "learn"
+        ? (nextRoute.params.get("tool") || "")
         : "";
       state.pendingSupportSearch = nextRoute.page === "support"
         ? (nextRoute.params.get("q") || "")

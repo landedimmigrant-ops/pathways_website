@@ -3076,6 +3076,13 @@ label {
   font-size: 0.875rem;
   color: var(--muted);
   flex: 1;
+  /* Clamp long summaries so cards stay even height; "View details" is the
+     path to the full text (same idiom as .opportunity-card .card-text). */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .modal-related-card .btn {
@@ -5134,9 +5141,16 @@ label {
   box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   position: relative;
   margin: 32px 0;
+  /* Height snaps to the active slide (set by carouselSyncHeight) so shorter
+     slides don't inherit the tallest slide's dead space. Intentionally NOT
+     transitioned: animating height left taller incoming slides clipped until
+     the wrap caught up. Snapping at slide-change keeps content fully visible. */
 }
 .carousel-track {
   display: flex;
+  /* flex-start (not the default stretch) so each slide keeps its own content
+     height instead of being padded out to match the tallest slide. */
+  align-items: flex-start;
   transition: transform 0.65s cubic-bezier(0.77, 0, 0.175, 1);
   will-change: transform;
 }
