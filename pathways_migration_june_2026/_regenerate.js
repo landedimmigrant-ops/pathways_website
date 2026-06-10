@@ -13,7 +13,7 @@
  * Each section is rendered, cloned, wrapped in a self-contained document
  * (inlined styles.css + Inter font + a minimal Concordia header/footer +
  * an accordion-toggle script), and POSTed to the save-server, which writes
- * it to migration-handoff/<NN-name>.html. See MIGRATION_LOG.md.
+ * it to pathways_migration_june_2026/<NN-name>.html. See MIGRATION_LOG.md.
  * ------------------------------------------------------------------ */
 (async () => {
   const SAVE = "http://127.0.0.1:8791/save?name=";

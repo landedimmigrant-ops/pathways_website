@@ -3,7 +3,7 @@
  * migration-export-server.js
  * ------------------------------------------------------------------
  * Tiny LOCAL-ONLY helper for producing the standalone section exports in
- * `migration-handoff/`. It exists because the Pathways site renders every
+ * `pathways_migration_june_2026/`. It exists because the Pathways site renders every
  * section at runtime from app.js + data.js (+ the live Sheet), so the most
  * faithful way to capture a section's layout is to snapshot the *rendered*
  * DOM from a browser. This server is the bridge: the browser assembles a
@@ -12,18 +12,18 @@
  * to disk — no copy-paste, no fidelity loss.
  *
  * It is a dev tool, not part of the site. It binds to localhost, only writes
- * sanitized *.html into migration-handoff/, and should be stopped when done.
+ * sanitized *.html into pathways_migration_june_2026/, and should be stopped when done.
  *
  *   node scripts/migration-export-server.js   # then run the browser export
  *
- * See migration-handoff/MIGRATION_LOG.md for the full export procedure.
+ * See pathways_migration_june_2026/MIGRATION_LOG.md for the full export procedure.
  */
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
 const PORT = 8791;
-const OUT_DIR = path.resolve(__dirname, "..", "migration-handoff");
+const OUT_DIR = path.resolve(__dirname, "..", "pathways_migration_june_2026");
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
 const cors = {
