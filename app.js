@@ -960,6 +960,52 @@
     console.log(`[Pathways] Loaded ${total} learn-guide slots across ${keys.length} guide(s)`);
   };
 
+  // The two interactive tools are app features, not sheet content. The live
+  // Sheet omits them, which silently emptied the Featured rail (FEATURED_IDS
+  // references them) and dropped them from Explore search. Define them in code
+  // and always merge them into the catalogue so they're present in every mode.
+  // Shape matches the loader's sourceType:"tool" enrichment; pathway/stage use
+  // final labels. internalRoute: a page id ("tools-narrative") or a hash
+  // sub-route ("#learn?tab=tools&tool=planner") — see navigateToToolRoute.
+  const INTERNAL_TOOLS = [
+    {
+      id: "learn-impact-planner",
+      title: "Impact Planning Module",
+      format: "Tool",
+      time: "45–60 min",
+      tags: ["impact planning", "grant preparation", "impact pathways", "outcomes", "impact plan"],
+      summary: "Map your research outputs to outcomes, identify your impact pathways, and build a structured impact plan you can take into a consultation or grant application.",
+      pathway: ["Academic Scholarship"],
+      stage: ["Developing an Idea"],
+      sourceType: "tool",
+      category: "Interactive Tools",
+      markdown: "",
+      unit: "",
+      internalRoute: "#learn?tab=tools&tool=planner"
+    },
+    {
+      id: "learn-narrative-cv",
+      title: "Narrative CV Builder",
+      format: "Tool",
+      time: "60–90 min",
+      tags: ["narrative cv", "grant writing", "academic scholarship", "tri-agency", "TCV", "personal statement"],
+      summary: "Draft your Tri-agency Narrative CV section by section. Guided prompts walk you through your contributions, mentorship, and personal statement.",
+      pathway: ["Academic Scholarship"],
+      stage: ["Developing an Idea"],
+      sourceType: "tool",
+      category: "Interactive Tools",
+      markdown: "",
+      unit: "",
+      internalRoute: "tools-narrative"
+    }
+  ];
+  // Guarantee the internal tools are present and authoritative (code wins over
+  // any sheet/manifest row with the same id, so routing stays correct).
+  const withInternalTools = (list) => {
+    const ids = new Set(INTERNAL_TOOLS.map((t) => t.id));
+    return [...list.filter((w) => !ids.has(w.id)), ...INTERNAL_TOOLS];
+  };
+
   const loadWorkshopContent = async () => {
     try {
       let manifest;
@@ -1045,11 +1091,11 @@
       if (rejected.length) {
         rejected.forEach((r) => console.error("[Pathways] Workshop body failed to load:", r.reason));
       }
-      content.workshops = fulfilled;
+      content.workshops = withInternalTools(fulfilled);
       console.log(`[Pathways] Workshops ready: ${fulfilled.length} loaded, ${rejected.length} failed`);
     } catch (error) {
       console.error("[Pathways] FAILED to load workshops — list will be empty until fixed.", error);
-      content.workshops = [];
+      content.workshops = withInternalTools([]);
     }
   };
 
@@ -1819,7 +1865,7 @@
       ctaBtn.type = "button";
       ctaBtn.addEventListener("click", () => {
         if (isTool) {
-          navigateTo(item.internalRoute);
+          navigateToToolRoute(item.internalRoute);
         } else {
           // Open the service modal directly (auto-routes to Explore en route).
           navigateToService(item.id);
@@ -4862,7 +4908,7 @@
           if (opp.sourceType === "tool") {
             const btn = el("button", "btn primary", "Start \u2192");
             btn.type = "button";
-            btn.addEventListener("click", () => navigateTo(opp.internalRoute));
+            btn.addEventListener("click", () => navigateToToolRoute(opp.internalRoute));
             cardActions.appendChild(btn);
           } else if (opp.sourceType === "workshop") {
             const btn = el("button", "btn primary", data.explore.buttons.details);
@@ -4998,7 +5044,7 @@
       if (opp.sourceType === "tool") {
         const btn = el("button", "btn primary", "Start \u2192");
         btn.type = "button";
-        btn.addEventListener("click", () => navigateTo(opp.internalRoute));
+        btn.addEventListener("click", () => navigateToToolRoute(opp.internalRoute));
         cardActions.appendChild(btn);
       } else if (opp.sourceType === "workshop") {
         const btn = el("button", "btn primary", data.explore.buttons.details);
@@ -5644,7 +5690,7 @@
         if (opp.sourceType === "tool") {
           const primaryButton = el("button", "btn primary", "Start \u2192");
           primaryButton.type = "button";
-          primaryButton.addEventListener("click", () => navigateTo(opp.internalRoute));
+          primaryButton.addEventListener("click", () => navigateToToolRoute(opp.internalRoute));
           actions.appendChild(primaryButton);
         } else if (opp.sourceType === "workshop") {
           const primaryButton = el("button", "btn primary", data.explore.buttons.details);
@@ -6746,6 +6792,16 @@
       state.suppressNextHashChange = true;
       window.location.hash = nextHash;
     }
+  };
+
+  // Tool "Start" buttons target either a full page id (e.g. "tools-narrative")
+  // or a hash sub-route that opens an inline tool (the planner lives at
+  // "#learn?tab=tools&tool=planner", not its own page). Page ids go through
+  // navigateTo; hash routes are applied directly so the router opens them.
+  const navigateToToolRoute = (route) => {
+    if (!route) return;
+    if (route.charAt(0) === "#") { window.location.hash = route; return; }
+    navigateTo(route);
   };
 
   const applyStageFilter = (stage) => {
