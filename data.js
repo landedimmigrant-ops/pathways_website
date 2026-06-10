@@ -657,6 +657,11 @@ window.PATHWAYS_DATA = {
         id: "time",
         label: "Time commitment",
         allLabel: "All time commitments"
+      },
+      {
+        id: "unit",
+        label: "Service provider",
+        allLabel: "All providers"
       }
     ],
     labels: {

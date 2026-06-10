@@ -257,7 +257,8 @@
       pathway: "",
       stage: "",
       format: "",
-      time: ""
+      time: "",
+      unit: ""
     },
     pendingStage: "",
     pendingPathwayKey: "",
@@ -5460,6 +5461,7 @@
       setOrDelete("stage", state.filters.stage);
       setOrDelete("format", state.filters.format);
       setOrDelete("time", state.filters.time);
+      setOrDelete("unit", state.filters.unit);
       // Pathway uses a key-based URL convention (?pathway=<key>) managed by
       // state.pendingPathwayKey + applyPathwayFilterByKey; state.filters.pathway
       // holds the title, not the key, so writing it back would mismatch. Only
@@ -5577,7 +5579,7 @@
         clearBtn.type = "button";
         clearBtn.addEventListener("click", () => {
           state.search = "";
-          state.filters = { pathway: "", stage: "", format: "", time: "" };
+          state.filters = { pathway: "", stage: "", format: "", time: "", unit: "" };
           state.browsePage = 0;
           searchInput.value = "";
           filterControls.forEach((control) => { control.value = ""; });
@@ -5735,8 +5737,9 @@
         const formatMatch = matchesField(opp.format, state.filters.format);
         // B-16: compare bucket-to-bucket so the filter matches the dropdown.
         const timeMatch = matchesField(bucketTime(opp.time), state.filters.time);
+        const unitMatch = matchesField(opp.unit, state.filters.unit);
 
-        return matchesSearch && pathwayMatch && stageMatch && formatMatch && timeMatch;
+        return matchesSearch && pathwayMatch && stageMatch && formatMatch && timeMatch && unitMatch;
       });
 
       updateResults(filtered);
@@ -6270,6 +6273,7 @@
       state.filters.stage = params.get("stage") || "";
       state.filters.format = params.get("format") || "";
       state.filters.time = params.get("time") || "";
+      state.filters.unit = params.get("unit") || "";
       // pathway intentionally not read here — applyPathwayFilterByKey in
       // showPage owns that flow (?pathway=<key>, with key→title translation).
       searchInput.value = state.search;
