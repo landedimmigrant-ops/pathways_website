@@ -5441,7 +5441,11 @@
         : Array.from(valueSet).sort();
 
       values.forEach((value) => {
-        const option = el("option", null, value);
+        // Display the format category in the plural in the filter dropdown
+        // (a group of services) while keeping the value singular to match the
+        // per-item `format` data and the singular card badge.
+        const optionLabel = value === "External Resource" ? "External Resources" : value;
+        const option = el("option", null, optionLabel);
         option.value = value;
         select.appendChild(option);
       });
