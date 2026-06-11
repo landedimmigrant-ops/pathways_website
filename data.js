@@ -7,12 +7,6 @@ window.PATHWAYS_DATA = {
     name: "Pathways to Impact",
     homeAriaLabel: "Go to Pathways to Impact home"
   },
-  navigation: [
-    { id: "home", label: "Home" },
-    { id: "explore", label: "Explore" },
-    { id: "learn", label: "Learn" },
-    { id: "about", label: "About" }
-  ],
   units: [
     {
       id: "research-development",
@@ -683,6 +677,10 @@ window.PATHWAYS_DATA = {
       title: "Pathways Ecosystem",
       intro: "Explore the pathways below to find the lens that best fits your goals, audiences, and outputs.",
       supportTitle: "Featured support",
+      developmentNotice: {
+        eyebrow: "In development",
+        body: "We're working with our partners across the university to develop services for this pathway."
+      },
       buttons: {
         related: "View related opportunities",
         contactPrompt: "Can't find what you're looking for?",
@@ -794,6 +792,7 @@ window.PATHWAYS_DATA = {
           title: "Research Creation",
           summary: "Create and present research through artistic and practice-based approaches.",
           label: "What this pathway supports",
+          inDevelopment: true,
           actions: [
             "Develop research-creation outputs and exhibitions.",
             "Engage audiences through creative formats and spaces.",

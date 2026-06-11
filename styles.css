@@ -112,8 +112,31 @@ label {
 .brand {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   color: var(--burgundy);
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.brand-home-glyph {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.brand:hover {
+  opacity: 0.78;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--burgundy);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 .bg-burgundy {
@@ -150,40 +173,6 @@ label {
 
 .text-dark {
   color: #1a1a1a;
-}
-
-.brand-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.nav-list {
-  list-style: none;
-  display: flex;
-  gap: 22px;
-  flex-wrap: wrap;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-link {
-  font-size: 16px;
-  color: var(--text);
-  padding: 6px 0;
-  border-bottom: 2px solid transparent;
-}
-
-.nav-link:hover {
-  color: var(--burgundy);
-}
-
-.nav-link.is-active {
-  color: var(--burgundy);
-  font-weight: 700;
-  border-bottom-color: transparent;
-  text-decoration: none;
 }
 
 .page {
@@ -1855,6 +1844,34 @@ label {
   margin: 0 0 12px;
 }
 
+/* ── "In development" notice (pathways without services yet) ──── */
+
+.pathway-dev-notice {
+  margin-top: 36px;
+  padding: 26px 30px;
+  background: #faf9f6;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--dev-notice-accent, var(--burgundy));
+  border-radius: 10px;
+}
+
+.pathway-dev-notice-eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dev-notice-accent, var(--burgundy));
+}
+
+.pathway-dev-notice-body {
+  margin: 0;
+  max-width: 60ch;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
 .pathway-filter-bar {
   display: flex;
   flex-wrap: wrap;
@@ -2850,6 +2867,13 @@ label {
   gap: 10px;
 }
 
+/* Persistent logo/home control inside full-page modal overlays. Sits at the far
+   right of the sticky top bar (Back stays left). Inherits .brand styling. */
+.modal-home-link {
+  font-size: 18px;
+  margin-left: auto;
+}
+
 .modal {
   max-width: 800px;
   margin: 0 auto;
@@ -3158,11 +3182,6 @@ label {
     align-items: flex-start;
   }
 
-  .nav-list {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
   .hero-title {
     font-size: 36px;
   }
@@ -3314,75 +3333,6 @@ label {
   letter-spacing: 0.06em;
   color: var(--muted);
   margin: 0 0 16px;
-}
-
-/* ── Header row + hamburger ──────────────────────────────────── */
-
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.nav-hamburger {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  flex-direction: column;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.hamburger-bar {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--text);
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-@media (max-width: 640px) {
-  .nav-hamburger {
-    display: flex;
-  }
-
-  .main-nav {
-    display: none;
-    width: 100%;
-  }
-
-  .site-header.is-nav-open .main-nav {
-    display: block;
-  }
-
-  .site-header.is-nav-open .nav-list {
-    flex-direction: column;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
-    margin-top: 8px;
-  }
-
-  .site-header.is-nav-open .nav-link {
-    display: block;
-    padding: 12px 0;
-    font-size: 18px;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
-    opacity: 0;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
 }
 
 /* ── Persistent context bar ─────────────────────────────────── */

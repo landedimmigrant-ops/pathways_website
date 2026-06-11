@@ -1159,60 +1159,19 @@
     const header = el("div", "site-header");
     const container = el("div", "container header-inner");
 
-    const brandBlock = el("div", "brand-block");
     const brandLink = el("a", "brand", data.brand.name);
     brandLink.href = "#home";
     brandLink.setAttribute("aria-label", data.brand.homeAriaLabel);
+    brandLink.title = "Return home";
+    const homeGlyph = el("span", "brand-home-glyph", "⌂");
+    homeGlyph.setAttribute("aria-hidden", "true");
+    brandLink.insertBefore(homeGlyph, brandLink.firstChild);
     brandLink.addEventListener("click", (event) => {
       event.preventDefault();
       navigateTo("home");
     });
 
-    const nav = el("nav", "main-nav");
-    const navList = el("ul", "nav-list");
-    const navItems = data.navigation
-      .map((item) => (item.id === "start" ? { id: "home", label: "Home" } : item))
-      .filter((item, index, list) => list.findIndex((entry) => entry.id === item.id) === index)
-      .filter((item) => ["home", "explore", "learn", "about"].includes(item.id));
-
-    navItems.forEach((item) => {
-      const li = el("li");
-      const link = el("a", "nav-link", item.label);
-      link.href = `#${item.id}`;
-      link.dataset.page = item.id;
-      link.addEventListener("click", (event) => {
-        event.preventDefault();
-        navigateTo(item.id);
-      });
-      li.appendChild(link);
-      navList.appendChild(li);
-    });
-
-    nav.appendChild(navList);
-
-    const hamburger = el("button", "nav-hamburger");
-    hamburger.type = "button";
-    hamburger.setAttribute("aria-label", "Toggle navigation");
-    hamburger.setAttribute("aria-expanded", "false");
-    for (let i = 0; i < 3; i++) {
-      hamburger.appendChild(el("span", "hamburger-bar"));
-    }
-    hamburger.addEventListener("click", () => {
-      const isOpen = header.classList.toggle("is-nav-open");
-      hamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
-    });
-    navList.addEventListener("click", () => {
-      header.classList.remove("is-nav-open");
-      hamburger.setAttribute("aria-expanded", "false");
-    });
-
-    const headerRow = el("div", "header-row");
-    headerRow.appendChild(brandLink);
-    headerRow.appendChild(hamburger);
-
-    brandBlock.appendChild(headerRow);
-    brandBlock.appendChild(nav);
-    container.appendChild(brandBlock);
+    container.appendChild(brandLink);
     header.appendChild(container);
     siteHeader.appendChild(header);
   };
@@ -2526,38 +2485,18 @@
       appRoot.appendChild(pg);
     };
 
-    // Build myths content element
-    const mythsContentEl = el("div", "myths");
-    data.learn.myths.items.forEach((item) => {
-      const card = el("div", "myth-card");
-      const mythLine = el("div", "myth-line");
-      mythLine.appendChild(el("span", "line-label", data.learn.myths.labels.myth));
-      mythLine.appendChild(el("span", null, item.myth));
-      const realityLine = el("div", "myth-line");
-      realityLine.appendChild(el("span", "line-label", data.learn.myths.labels.reality));
-      realityLine.appendChild(el("span", null, item.reality));
-      card.appendChild(mythLine);
-      card.appendChild(realityLine);
-      mythsContentEl.appendChild(card);
-    });
-
     // Register module pages (placeholder or real content)
+    // NOTE: "Myths vs realities", "Impact across disciplines", "Evidence that
+    // counts", and "Why plan early" are temporarily removed until we develop
+    // their guides. The myths content still lives in data.learn.myths.
     const topicModules = [
-      { id: "learn-module-disciplines", title: "Impact across disciplines", content: null },
-      { id: "learn-module-evidence",    title: "Evidence that counts",       content: null },
-      { id: "learn-module-plan-early",  title: "Why plan early",             content: null },
-      { id: "learn-module-myths",       title: data.learn.myths.title,       content: mythsContentEl },
       { id: "learn-module-ncv",         title: "What is a Narrative CV?",    content: buildNarrativeCV101() }
     ];
     topicModules.forEach(({ id, title, content }) => makeModulePage(id, title, content));
 
     // All topic cards — each opens its module page
     const allModuleCards = [
-      { id: "learn-module-ncv",         title: "What is a Narrative CV?",     body: "Why narrative CVs exist, the three sections, TCV vs CV-FRQ differences, common concerns, and what reviewers look for." },
-      { id: "learn-module-myths",       title: data.learn.myths.title,        body: "Common misconceptions about research impact and what the evidence actually shows." },
-      { id: "learn-module-disciplines", title: "Impact across disciplines",   body: "Different fields generate different kinds of impact. Learn how to articulate yours in ways that fit your discipline." },
-      { id: "learn-module-evidence",    title: "Evidence that counts",        body: "Discover qualitative and quantitative evidence that can demonstrate change over time." },
-      { id: "learn-module-plan-early",  title: "Why plan early",              body: "Early planning makes it easier to align methods, partners, and outputs with real-world outcomes." }
+      { id: "learn-module-ncv",         title: "What is a Narrative CV?",     body: "Why narrative CVs exist, the three sections, TCV vs CV-FRQ differences, common concerns, and what reviewers look for." }
     ];
     allModuleCards.forEach(({ id, title, body }) => {
       const card = el("button", "topic-card topic-card--expandable");
@@ -4182,6 +4121,52 @@
     return section;
   };
 
+  // ── Narrative CV tool — V4 prototype embed (#tools-narrative) ─────────────
+  // For testing: the live "Build Your Narrative CV" page now surfaces the V4
+  // convergence prototype (narrative-cv-prototype-v4.html) inside the SPA,
+  // bracketed by prototype-only notices. The native builder above
+  // (buildNarrativeModule) is kept intact so this is a one-line revert at the
+  // pages.set("tools-narrative", ...) call.
+  const buildNarrativeV4Embed = () => {
+    const section = el("section", "page page-narrative");
+    section.dataset.page = "tools-narrative";
+
+    const wrap = el("div");
+    wrap.style.cssText = "max-width:1180px;margin:0 auto;padding:0 16px;";
+
+    const makeProtoNote = () => {
+      const note = el(
+        "div",
+        "ncv-v4-proto-note",
+        "⚠ Prototype — for testing only. This is a working draft of the Narrative CV tool, not the final version."
+      );
+      note.setAttribute("role", "note");
+      note.style.cssText =
+        "margin:16px 0;padding:11px 18px;border:1px solid #f4d0d5;background:#f9ebed;" +
+        "color:#912338;border-radius:8px;font-size:13px;font-weight:600;text-align:center;" +
+        "letter-spacing:0.02em;line-height:1.45;";
+      return note;
+    };
+
+    wrap.appendChild(makeProtoNote());
+
+    const frame = el("iframe", "ncv-v4-frame");
+    frame.src = "narrative-cv-prototype-v4.html";
+    frame.title = "Narrative CV tool (V4 prototype)";
+    frame.setAttribute("frameborder", "0");
+    frame.setAttribute("allowfullscreen", "");
+    frame.loading = "lazy";
+    frame.style.cssText =
+      "width:100%;height:85vh;min-height:600px;border:1px solid var(--border);" +
+      "border-radius:8px;background:#fff;display:block;";
+    wrap.appendChild(frame);
+
+    wrap.appendChild(makeProtoNote());
+
+    section.appendChild(wrap);
+    return section;
+  };
+
   const buildAbout = () => {
     const section = el("section", "page page-about");
     section.dataset.page = "about";
@@ -4814,6 +4799,15 @@
     pathwayDetailShell.appendChild(pathwayServicesSection);
     let pathwayCurrentPage = 0;
 
+    // "In development" notice — shown in place of related services for pathways
+    // still being built out (flagged with inDevelopment in data.js).
+    const devNoticeCopy = data.explore.pathways.developmentNotice || {};
+    const pathwayDevNotice = el("div", "pathway-dev-notice");
+    pathwayDevNotice.hidden = true;
+    if (devNoticeCopy.eyebrow) pathwayDevNotice.appendChild(el("p", "pathway-dev-notice-eyebrow", devNoticeCopy.eyebrow));
+    if (devNoticeCopy.body) pathwayDevNotice.appendChild(el("p", "pathway-dev-notice-body", devNoticeCopy.body));
+    pathwayDetailShell.appendChild(pathwayDevNotice);
+
     pathwaysTabContent.appendChild(pathwayDetailShell);
 
     // --- Open/close logic ---
@@ -4858,6 +4852,18 @@
       // Nav handlers
       panelPrevBtn.onclick = () => openExplorePanel(pathwayItems[prevIndex]);
       panelNextBtn.onclick = () => openExplorePanel(pathwayItems[nextIndex]);
+
+      // Pathways still in development show a notice instead of related services.
+      if (pathway.inDevelopment) {
+        pathwayDevNotice.style.setProperty("--dev-notice-accent", c);
+        pathwayDevNotice.hidden = false;
+        pathwayServicesSection.hidden = true;
+        explorePathwayGrid.hidden = true;
+        pathwayDetailShell.hidden = false;
+        pathwayDetailShell.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      pathwayDevNotice.hidden = true;
 
       // Filtered services
       const pathwayTitle = pathway.title;
@@ -5014,6 +5020,7 @@
       explorePathwayGrid.hidden = false;
       pathwayDetailShell.hidden = true;
       pathwayServicesSection.hidden = true;
+      pathwayDevNotice.hidden = true;
       panelContent.style.removeProperty("background");
       panelContent.style.removeProperty("border-color");
       panelTitle.style.removeProperty("color");
@@ -5823,6 +5830,25 @@
       updateResults(filtered);
     };
 
+    // Persistent home control inside full-page modal overlays (workshops,
+    // guides, booking) \u2014 the site header is covered by the .modal-overlay sheet,
+    // so the logo lives in the modal top bar too. Click returns home and the
+    // route change clears the lingering service modal.
+    const addModalHomeLink = (topbar) => {
+      const home = el("a", "brand modal-home-link", data.brand.name);
+      home.href = "#home";
+      home.setAttribute("aria-label", data.brand.homeAriaLabel);
+      home.title = "Return home";
+      const glyph = el("span", "brand-home-glyph", "\u2302");
+      glyph.setAttribute("aria-hidden", "true");
+      home.insertBefore(glyph, home.firstChild);
+      home.addEventListener("click", (event) => {
+        event.preventDefault();
+        navigateTo("home");
+      });
+      topbar.appendChild(home);
+    };
+
     const openBookingRedirect = (opp) => {
       clear(modalRoot);
       document.body.classList.add("is-modal-open");
@@ -5834,6 +5860,7 @@
       backBtn.type = "button";
       backBtn.addEventListener("click", requestModalClose);
       topbar.appendChild(backBtn);
+      addModalHomeLink(topbar);
       overlay.appendChild(topbar);
 
       const modal = el("div", "modal booking-redirect-modal");
@@ -5882,6 +5909,7 @@
       backBtn.type = "button";
       backBtn.addEventListener("click", requestModalClose);
       topbar.appendChild(backBtn);
+      addModalHomeLink(topbar);
       overlay.appendChild(topbar);
 
       const modal = el("div", "modal booking-modal");
@@ -6108,6 +6136,7 @@
         topbarActions.appendChild(resourceBtn);
       }
       topbar.appendChild(topbarActions);
+      addModalHomeLink(topbar);
       overlay.appendChild(topbar);
 
       // Page content
@@ -6589,7 +6618,9 @@
     const pathwaysVisionPage = buildPathwaysVision();
     const explorePage = buildExplore();
     const toolsPage = buildTools();
-    const narrativePage = buildNarrativeModule();
+    // Testing: surface the V4 prototype here instead of the native builder.
+    // Revert by swapping back to buildNarrativeModule().
+    const narrativePage = buildNarrativeV4Embed();
     const aboutPage = buildAbout();
 
     pages.set("home", homePage);
@@ -6613,34 +6644,19 @@
     appRoot.appendChild(aboutPage);
   };
 
-  const setActiveNav = (pageId) => {
-    const activePageId = pageId === "pathways-vision" ? "about"
-      : pageId === "tools-narrative" || pageId === "tools" ? "learn"
-      : pageId.startsWith("learn-module") ? "learn"
-      : pageId;
-    const links = siteHeader.querySelectorAll(".nav-link");
-    links.forEach((link) => {
-      if (link.dataset.page === activePageId) {
-        link.classList.add("is-active");
-      } else {
-        link.classList.remove("is-active");
-      }
-    });
-  };
-
   const showPage = (pageId, anchorId) => {
     const validPage = pages.has(pageId) ? pageId : "home";
     state.page = validPage;
 
     const baseTitle = data.meta.title || "Pathways to Impact";
-    const pageLabel = validPage === "home" ? "" : (data.navigation.find(n => n.id === validPage) || {}).label || validPage;
+    const PAGE_TITLES = { explore: "Explore", learn: "Learn", about: "About" };
+    const pageLabel = validPage === "home" ? "" : (PAGE_TITLES[validPage] || validPage);
     document.title = pageLabel ? `${pageLabel} — ${baseTitle}` : baseTitle;
 
     pages.forEach((page, id) => {
       page.classList.toggle("is-active", id === validPage);
     });
 
-    setActiveNav(validPage);
     if (routeFooter) {
       routeFooter.classList.toggle("is-visible", validPage !== "home");
     }
