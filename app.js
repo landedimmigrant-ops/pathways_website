@@ -4533,8 +4533,11 @@
 
       // ── Helpers ──────────────────────────────────────────────────────────
 
-      const makeAccordion = (label, children) => {
+      const makeAccordion = (label, children, pathwayKey) => {
         const wrap = el("div", "ncv-expand-block");
+        // Colour-key the block so each pathway gets its signature accent (left
+        // border + label), reusing the same palette as the Explore pathway cards.
+        if (pathwayKey) wrap.dataset.pathway = pathwayKey;
         const btn = el("button", "ncv-expand-btn");
         btn.type = "button";
         btn.setAttribute("aria-expanded", "false");
@@ -4550,6 +4553,21 @@
         wrap.appendChild(btn);
         wrap.appendChild(body);
         return wrap;
+      };
+
+      // Map a numbered pathway heading → its colour key (matches pathwayColors /
+      // .pathway-card[data-pathway] used on the Explore page). Keyword match so it
+      // survives reordering; order avoids overlap (entrepreneurship before innovation).
+      const pathwayKeyFromTitle = (title) => {
+        const t = title.toLowerCase();
+        if (/academic scholarship/.test(t)) return "academic";
+        if (/research creation/.test(t)) return "research-creation";
+        if (/community/.test(t)) return "community";
+        if (/entrepreneur|commercial/.test(t)) return "commercialization";
+        if (/innovation/.test(t)) return "innovation";
+        if (/policy/.test(t)) return "policy";
+        if (/communications/.test(t)) return "communications";
+        return null;
       };
 
       const renderPara = (text) => {
@@ -4668,7 +4686,7 @@
 
           // Numbered pathway subs (e.g. "1. Academic Scholarship...") → accordion
           if (/^\d+\./.test(subTitle)) {
-            sec.appendChild(makeAccordion(subTitle, renderBlocks(sub.blocks)));
+            sec.appendChild(makeAccordion(subTitle, renderBlocks(sub.blocks), pathwayKeyFromTitle(subTitle)));
             return;
           }
 

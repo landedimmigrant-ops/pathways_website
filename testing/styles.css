@@ -4345,6 +4345,26 @@ label {
   display: block;
 }
 
+/* Pathway-coloured accordions (Vision page) — each of the 7 pathways carries its
+   signature colour as a left border + label, reusing the Explore pathway palette.
+   Communications uses the darker #b07d00 for border/text (the gold #e5a712 is too
+   low-contrast as a line/label), matching the .pw / .pathway-card treatment. */
+.ncv-expand-block[data-pathway] { border-left-width: 4px; border-left-style: solid; }
+.ncv-expand-block[data-pathway="academic"]          { border-left-color: #912338; }
+.ncv-expand-block[data-pathway="academic"] .ncv-expand-btn          { color: #912338; }
+.ncv-expand-block[data-pathway="research-creation"] { border-left-color: #508212; }
+.ncv-expand-block[data-pathway="research-creation"] .ncv-expand-btn { color: #508212; }
+.ncv-expand-block[data-pathway="community"]         { border-left-color: #db0272; }
+.ncv-expand-block[data-pathway="community"] .ncv-expand-btn         { color: #db0272; }
+.ncv-expand-block[data-pathway="innovation"]        { border-left-color: #da3a16; }
+.ncv-expand-block[data-pathway="innovation"] .ncv-expand-btn        { color: #da3a16; }
+.ncv-expand-block[data-pathway="commercialization"] { border-left-color: #573996; }
+.ncv-expand-block[data-pathway="commercialization"] .ncv-expand-btn { color: #573996; }
+.ncv-expand-block[data-pathway="policy"]            { border-left-color: #0072a8; }
+.ncv-expand-block[data-pathway="policy"] .ncv-expand-btn            { color: #0072a8; }
+.ncv-expand-block[data-pathway="communications"]    { border-left-color: #b07d00; }
+.ncv-expand-block[data-pathway="communications"] .ncv-expand-btn    { color: #b07d00; }
+
 .ncv-expand-body .ncv-body {
   font-size: 14px;
   margin-bottom: 10px;
