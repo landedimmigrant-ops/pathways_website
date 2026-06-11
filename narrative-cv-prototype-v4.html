@@ -1,0 +1,1307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NCV Tool — V4 (convergence prototype)</title>
+  <link rel="stylesheet" href="styles.css?v=131" />
+  <!--
+    Narrative CV tool — V4. The declared convergence target.
+    See narrative-cv-process-review.md for the rationale behind every decision here.
+
+    Merges: V3's context-tailored prompt library + the V1/V2 prototype's T1 lint
+    engine (with the recalibrated ownership rule) + the insights from studying real
+    developed CVs. New in V4: a draft-first "X-ray" entry mode, reordered flow
+    (PS written last), genre skeleton exemplars, weave with connective suggestions,
+    advisor consult packet, print-fidelity view, session re-entry.
+
+    Hard constraints (unchanged): no LLM, no API, no network — deterministic and
+    on-device (localStorage `ncv-v4`). Every example is invented; nothing comes from
+    any real researcher's CV. Styling rides the shared Pathways design system.
+  -->
+  <style>
+    .proto-banner {
+      position: sticky; top: 0; z-index: 1000;
+      background: #1a1a1a; color: #e5a712;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+      padding: 8px 16px; display: flex; align-items: center;
+      justify-content: space-between; gap: 16px;
+    }
+    .proto-banner strong { color: #f9ca24; }
+    .proto-banner a { color: #e5a712; text-decoration: underline; }
+    .proto-shell { max-width: 1120px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+    .proto-shell h1.proto-title { font-size: clamp(22px, 3vw, 30px); margin: 0 0 4px; color: var(--burgundy); }
+    .proto-shell .proto-subtitle { color: var(--muted); font-size: 14px; margin: 0 0 1.25rem; }
+    #ncv-v4-root .narrative-progress-panel { top: 3rem; max-height: calc(100vh - 4rem); overflow-y: auto; }
+
+    /* ── V4-only additions, all on design tokens ─────────────────────────── */
+    .v4-kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+    .v4-help { font-size: 0.85rem; color: var(--muted); margin: 0 0 0.5rem; line-height: 1.55; max-width: 74ch; }
+    .v4-q { display: block; font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 0 0 0.25rem; }
+    .v4-text-input {
+      width: 100%; box-sizing: border-box; border: 1px solid #ddd; border-radius: 6px;
+      padding: 0.6rem; font: inherit; font-size: 0.9rem; background: #fff; color: var(--text);
+    }
+    .v4-text-input:focus { outline: none; border-color: var(--burgundy); }
+    .v4-tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--burgundy); background: #f9ebed; border: 1px solid #f4d0d5; border-radius: 4px; padding: 1px 6px; margin-left: 8px; vertical-align: middle; }
+    .v4-lens-note { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .v4-lens-pill { display: inline-block; background: #f9ebed; color: var(--burgundy); border-radius: 12px; padding: 2px 10px; font-size: 0.8rem; }
+    .v4-lens-edit { margin-left: auto; margin-top: 0 !important; }
+
+    /* Mode cards (setup) */
+    .v4-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0 0 1.5rem; }
+    @media (max-width: 720px) { .v4-mode-grid { grid-template-columns: 1fr; } }
+    .v4-mode-card { border: 2px solid #e0e0e0; border-radius: 10px; padding: 1.25rem; background: #fff; cursor: pointer; text-align: left; font: inherit; transition: border-color 0.15s, background 0.15s; }
+    .v4-mode-card:hover { border-color: var(--burgundy); }
+    .v4-mode-card.is-on { border-color: var(--burgundy); background: #f9f3f4; }
+    .v4-mode-card h4 { font-size: 0.98rem; font-weight: 700; margin: 0 0 0.4rem; color: var(--text); }
+    .v4-mode-card.is-on h4 { color: var(--burgundy); }
+    .v4-mode-card p { font-size: 0.85rem; color: var(--muted); margin: 0; line-height: 1.5; }
+
+    /* Auto-checks (lint) */
+    .v4-checks { font-size: 0.78rem; margin-top: 4px; line-height: 1.5; }
+    .v4-checks .v4-flag { color: #da3a16; display: block; }
+    .v4-checks .v4-strength { color: #2a6e2a; display: block; }
+    .v4-checks .v4-meta { color: var(--muted); display: block; }
+    /* Field flag toggle */
+    .v4-flag-row { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
+    .v4-flag-btn { width: 30px; height: 30px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; font-weight: 700; color: var(--muted); font-family: inherit; }
+    .v4-flag-btn:hover { background: #f5f5f5; }
+    .v4-flag-btn.is-ok { background: #2a6e2a; color: #fff; border-color: #2a6e2a; }
+    .v4-flag-btn.is-work { background: #da3a16; color: #fff; border-color: #da3a16; }
+    .v4-flag-btn.is-unsure { background: #777; color: #fff; border-color: #777; }
+    .v4-flag-label { font-size: 0.75rem; color: var(--muted); }
+    .v4-note-input { margin-top: 6px; }
+
+    /* Evidence + trajectory rows */
+    .v4-ev-row, .v4-traj-row { display: grid; gap: 8px; align-items: center; margin: 0 0 8px; }
+    .v4-ev-row { grid-template-columns: 22px minmax(0, 1fr) 180px 30px; }
+    .v4-traj-row { grid-template-columns: minmax(0, 1.2fr) 108px minmax(0, 1.3fr) 30px; }
+    @media (max-width: 720px) { .v4-ev-row, .v4-traj-row { grid-template-columns: 1fr; } }
+    .v4-key-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--burgundy); color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .v4-super { vertical-align: super; font-size: 0.72em; color: var(--burgundy); font-weight: 700; margin-left: 1px; }
+
+    /* Weave */
+    .v4-weave-body { font-size: 0.92rem; line-height: 1.7; color: var(--text); margin: 0; }
+    .v4-weave-role { font-size: 0.85rem; color: var(--muted); font-style: italic; margin: 0 0 8px; }
+    .v4-connective { display: inline-block; background: #fff8e1; color: #555; border: 1px solid #f9ca24; border-radius: 10px; padding: 0 8px; font-size: 0.72rem; font-style: italic; margin: 0 4px; vertical-align: middle; white-space: nowrap; }
+    .v4-gap { display: block; color: #da3a16; font-size: 0.8rem; margin: 6px 0 0; }
+    .v4-weave-refs { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #e6e0d8; font-size: 0.82rem; color: #555; }
+    .v4-weave-refs ol { list-style: none; margin: 4px 0 0; padding: 0; }
+    .v4-weave-refs li { margin: 0 0 3px; }
+    .v4-weave-refs .v4-rk { font-weight: 700; color: var(--burgundy); margin-right: 6px; }
+    .v4-weave-refs .v4-rt { color: #999; font-size: 0.78rem; }
+
+    /* Genre skeleton exemplar */
+    .v4-exemplar { font-size: 0.92rem; line-height: 1.75; color: var(--text); }
+    .v4-exemplar .seg { border-radius: 4px; padding: 1px 2px; transition: background 0.2s; }
+    /* Skeleton highlights — tints of the Concordia accent family used in styles.css:
+       gold #e5a712, burgundy #912338, blue #0072a8, green #508212, orange #da3a16, purple #573996 */
+    .v4-skeleton-on .seg-stakes     { background: #fdf4dc; box-shadow: 0 0 0 1px #ecd08e; }
+    .v4-skeleton-on .seg-role       { background: #f9ebed; box-shadow: 0 0 0 1px #f4d0d5; }
+    .v4-skeleton-on .seg-activities { background: #e8f4fd; box-shadow: 0 0 0 1px #bcdcf0; }
+    .v4-skeleton-on .seg-outputs    { background: #e8f5e9; box-shadow: 0 0 0 1px #c5e0c6; }
+    .v4-skeleton-on .seg-outcomes   { background: #fbeae4; box-shadow: 0 0 0 1px #f3c7b6; }
+    .v4-skeleton-on .seg-impact     { background: #f3ebfd; box-shadow: 0 0 0 1px #d9c7ef; }
+    .v4-skel-legend { display: none; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
+    .v4-skeleton-on .v4-skel-legend { display: flex; }
+    .v4-skel-chip { font-size: 0.72rem; font-weight: 600; border-radius: 10px; padding: 2px 9px; color: #444; }
+
+    /* X-ray */
+    .v4-xray-ta { min-height: 220px; }
+    .v4-para-card { border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; margin: 0 0 10px; background: #fff; }
+    .v4-para-text { font-size: 0.85rem; color: #444; line-height: 1.55; margin: 0 0 6px; }
+    .v4-para-num { font-size: 0.72rem; font-weight: 700; color: var(--burgundy); text-transform: uppercase; letter-spacing: 0.04em; }
+
+    .v4-totals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+    .v4-totals-grid label { font-size: 0.8rem; color: var(--muted); display: block; margin: 0 0 3px; }
+    .v4-export-area { width: 100%; box-sizing: border-box; min-height: 260px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.55; padding: 12px; border: 1px solid var(--border); border-radius: 8px; white-space: pre; overflow: auto; color: var(--text); }
+    .v4-inline-link { display: inline-block; margin-top: 0.25rem; }
+    .v4-anchor-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.95rem; color: var(--text); }
+    .v4-anchor-line .v4-text-input { flex: 1 1 160px; width: auto; }
+  </style>
+</head>
+<body>
+  <div class="proto-banner" role="status" aria-live="polite">
+    <span><strong>PROTOTYPE · V4</strong> &middot; convergence build &middot; no LLM &middot; storage: <code>ncv-v4</code></span>
+    <span><a href="#" id="v4-reset" title="Clear V4 draft">Reset draft</a></span>
+  </div>
+
+  <div class="proto-shell">
+    <h1 class="proto-title">Narrative CV — V4</h1>
+    <p class="proto-subtitle">The convergence prototype: start fresh or X-ray an existing draft. Hard-coded prompts, live auto-checks, and an advisor-consult export. Everything stays on your device (<code>ncv-v4</code>).</p>
+    <div id="ncv-v4-root"></div>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    // ── Helpers ─────────────────────────────────────────────────────────────
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    };
+    const clear = (n) => { while (n.firstChild) n.removeChild(n.firstChild); };
+    const root = document.getElementById("ncv-v4-root");
+
+    // ── Vocabularies ────────────────────────────────────────────────────────
+    const AGENCIES = [
+      { v: "nserc", l: "NSERC", fmt: "tcv" }, { v: "sshrc", l: "SSHRC", fmt: "tcv" },
+      { v: "cihr",  l: "CIHR",  fmt: "tcv" }, { v: "frqnt", l: "FRQNT", fmt: "cv-frq" },
+      { v: "frqsc", l: "FRQSC", fmt: "cv-frq" }, { v: "frqs", l: "FRQS", fmt: "cv-frq" },
+      { v: "other", l: "Other / not sure", fmt: "tcv" }
+    ];
+    const DISCIPLINES = [
+      { v: "stem", l: "STEM / engineering" }, { v: "health", l: "Health / clinical" },
+      { v: "social", l: "Social sciences" }, { v: "humanities", l: "Humanities" },
+      { v: "creative", l: "Creative / fine arts" }
+    ];
+    const CAREER_STAGES = [
+      { v: "early", l: "Early career" }, { v: "mid", l: "Mid career" }, { v: "senior", l: "Senior" }
+    ];
+    const WORK_MODES = [
+      { v: "team", l: "Team-based" }, { v: "community", l: "Community-engaged" },
+      { v: "solo", l: "Largely solo" }, { v: "industry", l: "Industry-partnered" }
+    ];
+    const EVIDENCE_TYPES = [
+      "Peer-reviewed", "Media / public", "Policy / practice uptake",
+      "Dataset / tool", "Award / recognition", "Funding", "Replication / citation"
+    ];
+    const labelOf = (list, v) => { const m = list.find(x => x.v === v); return m ? m.l : ""; };
+
+    const SHAPE_HINTS = {
+      stem:       "Problem → Approach / method → Result / validation → Uptake / translation",
+      health:     "Need → Co-developed response → Who already changed → Equity & reach",
+      social:     "Agenda / concept → How you developed it → Scholarly + policy uptake → Leadership / institutional dimension",
+      humanities: "Question → Body of work → Field & public reception → Influence on how the field thinks",
+      creative:   "Inquiry → Body of work → Circulation / reception → Influence on practice"
+    };
+
+    // ── Genre skeleton exemplars (all invented) ────────────────────────────
+    // Each sentence is tagged with the role it plays. The "show the skeleton"
+    // toggle reveals the invisible scaffold inside finished prose.
+    const SEG_META = [
+      ["stakes", "The stakes", "#fdf4dc"], ["role", "Your role", "#f9ebed"],
+      ["activities", "What you did", "#e8f4fd"], ["outputs", "What resulted", "#e8f5e9"],
+      ["outcomes", "What already changed", "#fbeae4"], ["impact", "What could change", "#f3ebfd"]
+    ];
+    const EXEMPLARS = {
+      stem: [
+        { r: "stakes", t: "Aging bridges can fail with little warning, and manual inspection is costly, slow, and intermittent." },
+        { r: "role", t: "I led the development of a low-cost acoustic method for detecting fatigue before it is visible, co-designing the field trials with two municipal engineering teams." },
+        { r: "activities", t: "My group built the sensing pipeline, trained the detection models on three years of field recordings, and ran blind validation against inspector reports." },
+        { r: "outputs", t: "This work produced an open-source monitoring toolkit, a public benchmark dataset, and two methods papers.", keys: ["a", "b"] },
+        { r: "outcomes", t: "To date, two transit agencies have adopted the toolkit for pilot monitoring, and the benchmark has been used by four independent groups.", keys: ["c"] },
+        { r: "impact", t: "If validated at scale, continuous low-cost monitoring could shift bridge inspection from periodic to preventive across the aging infrastructure stock — a hypothesis the pilot data now lets us test." }
+      ],
+      health: [
+        { r: "stakes", t: "Clinics rarely ask about food access, so a treatable driver of poor health stays invisible in primary care." },
+        { r: "role", t: "I co-led, with a community health centre, the design of a two-question food-security screen that fits inside routine intake." },
+        { r: "activities", t: "My team ran co-design workshops with patients and intake staff, piloted the screen across four clinics, and measured uptake over 18 months." },
+        { r: "outputs", t: "The work produced a validated screening protocol, a training module for intake staff, and a peer-reviewed validation study.", keys: ["a"] },
+        { r: "outcomes", t: "Three regional clinics have embedded the screen in routine intake, and referrals to food-support programs rose measurably at the pilot sites.", keys: ["b"] },
+        { r: "impact", t: "Embedded screening could make food insecurity as routine to check as blood pressure — a system-level change we are now studying." }
+      ],
+      social: [
+        { r: "stakes", t: "Policy debates about immigrant economic integration ran on snapshots; nobody followed the same people long enough to see the real trajectory." },
+        { r: "role", t: "I built and lead a longitudinal program tracking earnings for a single cohort across a decade." },
+        { r: "activities", t: "I negotiated access to linked administrative data, designed the cohort methodology, and led the analysis across three waves." },
+        { r: "outputs", t: "The program produced a public-use dataset, a methods framework now used by two statistical agencies, and a book-length study.", keys: ["a", "b"] },
+        { r: "outcomes", t: "Two provincial ministries cited the trajectory findings in settlement-program reviews, and the dataset underpins a growing body of secondary studies.", keys: ["c"] },
+        { r: "impact", t: "Trajectory-based evidence could reshape how integration policy is evaluated — from point-in-time outcomes to decade-scale mobility." }
+      ],
+      humanities: [
+        { r: "stakes", t: "Home-movie archives of migrant communities were decaying, uncatalogued, and absent from the historical record." },
+        { r: "role", t: "I direct a recovery project that treats these archives as primary sources for diasporic memory." },
+        { r: "activities", t: "I led digitisation partnerships with three community organisations and developed the interpretive framework for reading domestic footage as historical evidence." },
+        { r: "outputs", t: "The project produced a digitised open collection, a monograph, and a touring exhibition programme.", keys: ["a", "b"] },
+        { r: "outcomes", t: "The collection is now taught in four university curricula, and the exhibition reached audiences in six cities.", keys: ["c"] },
+        { r: "impact", t: "Treating domestic footage as evidence could widen whose history gets kept — a methodological shift the field is beginning to take up." }
+      ],
+      creative: [
+        { r: "stakes", t: "Conventional theatre kept stories of displacement inside the building, away from the places where they happened." },
+        { r: "role", t: "I created and direct a site-specific performance cycle staged in transit stations and border landscapes." },
+        { r: "activities", t: "I composed the cycle across three commissions, working with displaced performers as co-creators rather than subjects." },
+        { r: "outputs", t: "The cycle comprises four staged works, an audio walk, and a documentary record of the process.", keys: ["a"] },
+        { r: "outcomes", t: "The works toured to three international festivals, and two companies have licensed the participatory staging method.", keys: ["b"] },
+        { r: "impact", t: "Site-based co-creation could change who performance about displacement is for — moving the audience to the site of the story." }
+      ]
+    };
+
+    // ── T1 lint engine (restored from the V1/V2 prototype; ownership rule ──
+    //    recalibrated per narrative-cv-process-review.md §4) ────────────────
+    const ACTION_VERBS = ["led","designed","built","developed","co-led","co-designed","founded","supervised","secured","established","negotiated","authored","ran","validated","launched","deployed","chaired","created","initiated","directed","convened","curated","staged","organized","composed","piloted","co-created","direct","lead"];
+    const WEAK_PHRASES = ["worked on","participated in","assisted with","was involved in","helped with"];
+    const VAGUE_LIST = ["various","several","many","a number of","a few","multiple","well-received","widely cited","highly regarded","well-known","high-impact journal","top-tier journal","leading journal"];
+    const HEDGES = ["could","would","should","might","may","perhaps","somewhat","relatively","fairly","slightly","tried to","attempted to"];
+    const LENGTH_RANGES = { activities: [40, 80], outputs: [30, 60], outcomes: [50, 100], impact: [40, 100], stakes: [15, 60] };
+
+    function lintField(text, kind) {
+      const out = { flags: [], strengths: [], score: 0, words: 0 };
+      const t = (text || "").trim();
+      out.words = t ? t.split(/\s+/).length : 0;
+      if (!t) return out;
+
+      // Ownership — recalibrated: "we" is fine when an individual marker coexists.
+      const weCount = (t.match(/\b(we|us|our)\b/gi) || []).length;
+      const iVerb = new RegExp("\\bI\\b(?:\\s+\\S+){0,3}?\\s*\\b(" + ACTION_VERBS.join("|") + ")\\b", "i").test(t);
+      const myGroup = /\bmy (group|lab|team|students?|collaborators?)\b/i.test(t);
+      const ownership = iVerb || myGroup;
+      const weak = WEAK_PHRASES.filter(p => t.toLowerCase().includes(p));
+      if (ownership && weCount) out.strengths.push("Team voice + individual ownership — the balance reviewers want");
+      else if (ownership) out.strengths.push("Ownership marker present");
+      if (weCount && !ownership) out.flags.push(weCount + "× “we/us/our” with no “I …” or “my group …” nearby — your individual role is invisible");
+      weak.forEach(p => out.flags.push("Weak collaboration verb: “" + p + "” — say what you specifically did"));
+      if (ownership && !weak.length) out.score++;
+
+      // Specificity
+      const nums = (t.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length;
+      if (nums) { out.strengths.push(nums + " specific number" + (nums > 1 ? "s" : "")); out.score++; }
+      else out.flags.push("No numbers, dates, or quantities — give reviewers something to verify");
+
+      // Vague language (closed list)
+      const vague = VAGUE_LIST.filter(p => new RegExp("\\b" + p.replace(/ /g, "\\s+") + "\\b", "i").test(t));
+      const bare = t.match(/\b(significant|important|major)\b(?=\s*(?:[.,;]|and\b|$))/i);
+      if (bare) vague.push(bare[1]);
+      if (vague.length) vague.forEach(p => out.flags.push("Vague: “" + p + "” — replace with concrete evidence"));
+      else out.score++;
+
+      // Hedging — field-aware
+      const hedges = HEDGES.filter(h => new RegExp("\\b" + h.replace(/ /g, "\\s+") + "\\b", "i").test(t));
+      if (kind === "impact") {
+        if (hedges.length) { out.strengths.push("Hedging used appropriately for Impact (" + hedges.join(", ") + ")"); out.score++; }
+      } else if (kind === "generic") {
+        if (hedges.length) out.flags.push("Hedges (" + hedges.join(", ") + ") — right for impact claims, wrong when stating what happened");
+        else out.score++;
+      } else {
+        if (hedges.length) out.flags.push("Hedging (" + hedges.join(", ") + ") — state what happened definitively; move hypotheses to Impact");
+        else out.score++;
+      }
+      return out;
+    }
+
+    // ── State ───────────────────────────────────────────────────────────────
+    const NCV_KEY = "ncv-v4";
+    const blankContribution = () => ({
+      title: "", stakes: "", roleMode: "", roleLine: "",
+      activities: "", outputs: "", outcomes: "", impact: "", translational: "",
+      evidence: [{ text: "", type: "Peer-reviewed" }],
+      flags: {}, notes: {}, showWeave: false
+    });
+    const blankMentee = () => ({ who: "", stage: "", destination: "", why: "" });
+    const defaultState = () => ({
+      mode: "", stageKey: "setup",
+      lens: { agency: "", format: "", program: "", discipline: "", careerStage: "", workMode: [] },
+      xray: { text: "" },
+      contributions: [blankContribution()],
+      mentorCounts: { phd: "", masters: "", undergrad: "", postdoc: "" },
+      mentees: [blankMentee()],
+      mentorPhilosophy: "", mentorEDI: "", mentorCrossStage: "",
+      ps: { role: "", institution: "", field: "", challenge: "", streams: "", pivot: "", standing: "", programFit: "", horizon: "" },
+      consultQuestions: "", selfCheck: {}, lastSavedAt: 0
+    });
+
+    let ns = defaultState();
+    const loadState = () => {
+      try {
+        const raw = localStorage.getItem(NCV_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw);
+          ns = Object.assign(defaultState(), saved);
+          ns.lens = Object.assign(defaultState().lens, saved.lens || {});
+          ns.ps = Object.assign(defaultState().ps, saved.ps || {});
+          ns.xray = Object.assign(defaultState().xray, saved.xray || {});
+          ns.mentorCounts = Object.assign(defaultState().mentorCounts, saved.mentorCounts || {});
+          if (!Array.isArray(ns.contributions) || !ns.contributions.length) ns.contributions = [blankContribution()];
+          ns.contributions.forEach(c => { c.flags = c.flags || {}; c.notes = c.notes || {}; c.evidence = c.evidence && c.evidence.length ? c.evidence : [{ text: "", type: "Peer-reviewed" }]; });
+          if (!Array.isArray(ns.mentees) || !ns.mentees.length) ns.mentees = [blankMentee()];
+        }
+      } catch (_) { ns = defaultState(); }
+    };
+    const saveState = () => { ns.lastSavedAt = Date.now(); try { localStorage.setItem(NCV_KEY, JSON.stringify(ns)); } catch (_) {} };
+
+    // ── Lens resolver (lighter than V3: agency/discipline/stage/workMode) ──
+    const activeTokens = () => {
+      const L = ns.lens, t = [];
+      if (L.discipline) t.push(L.discipline);
+      if (L.careerStage) t.push(L.careerStage);
+      (L.workMode || []).forEach(w => t.push(w));
+      if (L.agency) t.push(L.agency);
+      if (L.format) t.push(L.format);
+      return t;
+    };
+    const interpolate = (s) => s
+      .replace(/\{program\}/g, ns.lens.program || "this competition")
+      .replace(/\{agency\}/g, labelOf(AGENCIES, ns.lens.agency) || "your agency");
+    const resolveQ = (def) => {
+      if (def.variants) {
+        for (const tok of activeTokens()) if (def.variants[tok]) return interpolate(def.variants[tok]);
+      }
+      return interpolate(def.q);
+    };
+    const resolveHelp = (def) => def.help ? interpolate(def.help) : "";
+
+    // ── Prompt library (carried from V3, trimmed to the lighter lens) ──────
+    const PROMPTS = {
+      ps: {
+        challenge: {
+          q: "What is the one big problem your whole research program returns to?",
+          help: "One or two sentences — a throughline, not a single project.",
+          variants: {
+            humanities: "What is the central question your work keeps asking?",
+            creative: "What inquiry drives your body of work?",
+            social: "What problem in the world does your research keep returning to?"
+          }
+        },
+        streams: { q: "Name 2–4 strands of your work. What single thread connects them?", help: "Reviewers should see one coherent program, not a scatter of projects." },
+        pivot: { q: "How did you get here?", help: "Many strong statements name a turning point — a field you came from, a pivot, a defining collaboration. It explains why your work looks the way it does.", isNew: true },
+        standing: {
+          q: "List your strongest signals of standing.",
+          help: "Funding, scale of output, recognition, reach. List them — then gather them into one confident paragraph rather than scattering them.",
+          isNew: true,
+          variants: { early: "List your strongest signals so far — key papers, fellowships, awards, the scale of a dataset or collaboration. Early-career records still carry signal; name what you have." }
+        },
+        programFit: { q: "You're aiming at {program} ({agency}). Why is this the right competition for where you are?", help: "What does it reward that you already do? A narrative CV is aimed, not generic — name the match.", isNew: true },
+        horizon: { q: "Where is this heading next?", help: "Name the direction, not a to-do list. The statement should end pointed forward." }
+      },
+      contrib: {
+        title: { q: "Give this contribution a headline.", help: "Short, memorable, plain-language — a reviewer should be able to repeat it. Think payoff, not paper title.", variants: { creative: "Name this body of work in a line a curator could use." } },
+        stakes: { q: "Start with the problem. What was at stake, and for whom?", help: "Set up the why before the what. Developed CVs open each contribution with the challenge it answered.", isNew: true },
+        roleLine: { q: "In one line: what was your move — the thing that wouldn't exist without you?", help: "Use “we” for genuine team science, then make your own role unmistakable. Don't erase the team — be visible inside it." },
+        activities: { q: "What did you actually do?", help: "Your specific work and role in it.", variants: { creative: "What was the work and your role in making it?" } },
+        outputs: {
+          q: "What concrete things resulted?", help: "Name them — papers, datasets, tools, methods, partnerships, programs.",
+          variants: { creative: "What works resulted — exhibitions, films, performances, published creative works?", humanities: "What resulted — books, editions, public works, exhibitions, monographs?" }
+        },
+        outcomes: {
+          q: "What already changed because of this?", help: "Who used it, what shifted — concretely. If nothing concrete yet, leave this blank and put your hypothesis in Impact.",
+          variants: {
+            community: "Who in the community or sector has used this, and what concretely changed for them?",
+            health: "What changed in practice, care, or policy — and for whom?",
+            social: "Who took this up — scholars, policymakers, practitioners — and what shifted?"
+          }
+        },
+        impact: { q: "What could change at the scale of a field, sector, or population?", help: "Hedging is expected here — say what's hypothesised. Academic impact counts fully: changing how others think, what gets studied, how problems get framed.", academicTag: true },
+        translational: { q: "Did this work reach a real person, clinic, policy, or community?", help: "If so, tell that moment in one or two sentences. (Optional.)", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
+        evidence: { q: "Add your proof points — one at a time.", help: "Pick a type for each. The tool keys them a, b, c… into your draft, the way a developed CV keys its reference box." }
+      },
+      mentor: {
+        philosophy: { q: "Your mentoring approach — shown through one concrete thing you do.", help: "Not a slogan. A practice: how you run a first meeting, how you hand off authorship, how you push independence." },
+        edi: {
+          q: "What real context shapes who you mentor and how?", help: "Ground equity in your actual environment — your institution's makeup, a program you built, a barrier you work against. Structural beats abstract.",
+          variants: { community: "What in your community partnerships and environment shapes who you bring into research, and how?" }
+        },
+        crossStage: { q: "Beyond your own students — who else do you mentor?", help: "Junior faculty, postdocs, visiting scholars, peers." }
+      }
+    };
+
+    // ── Stages (dynamic: X-ray stage only in draft mode; PS comes LAST) ────
+    const stages = () => {
+      const s = [{ key: "setup", short: "Setup" }];
+      if (ns.mode === "xray") s.push({ key: "xray", short: "Draft X-ray" });
+      s.push({ key: "contrib", short: "Contributions" });
+      s.push({ key: "mentor", short: "Mentorship" });
+      s.push({ key: "ps", short: "Personal stmt" });
+      s.push({ key: "review", short: "Review" });
+      return s;
+    };
+    const RENDERERS = {
+      setup: (c) => renderSetup(c), xray: (c) => renderXray(c),
+      contrib: (c) => renderContributions(c), mentor: (c) => renderMentorship(c),
+      ps: (c) => renderPersonal(c), review: (c) => renderReview(c)
+    };
+    const stageDone = (key) => {
+      if (key === "setup") return !!(ns.mode && ns.lens.agency && ns.lens.discipline);
+      if (key === "xray") return !!ns.xray.text.trim();
+      if (key === "contrib") return ns.contributions.some(c => c.title && c.activities);
+      if (key === "mentor") return !!(ns.mentorPhilosophy || ns.mentees.some(m => m.who));
+      if (key === "ps") return !!(ns.ps.challenge && ns.ps.standing);
+      return false;
+    };
+    const openFlagCount = () =>
+      ns.contributions.reduce((n, c) => n + Object.values(c.flags || {}).filter(v => v === "work" || v === "unsure").length, 0);
+
+    // Session re-entry banner (shown once per visit when returning to content)
+    let reentryPending = false;
+
+    // ── Shell ───────────────────────────────────────────────────────────────
+    const renderShell = () => {
+      clear(root);
+      const shell = el("div", "narrative-module-shell");
+      const panel = el("aside", "narrative-progress-panel");
+      panel.appendChild(el("h2", null, "Steps"));
+      const list = el("ol", "narrative-stage-list");
+      stages().forEach((st) => {
+        const li = el("li", "narrative-stage-item" + (st.key === ns.stageKey ? " is-active" : "") + (stageDone(st.key) ? " is-done" : ""));
+        li.appendChild(el("span", "narrative-stage-dot"));
+        li.appendChild(el("span", null, st.short));
+        li.addEventListener("click", () => { ns.stageKey = st.key; renderStage(); });
+        list.appendChild(li);
+      });
+      panel.appendChild(list);
+      const content = el("div", "narrative-stage-content");
+      content.id = "v4-stage-content";
+      shell.appendChild(panel);
+      shell.appendChild(content);
+      root.appendChild(shell);
+    };
+
+    const renderStage = () => {
+      if (!stages().some(s => s.key === ns.stageKey)) ns.stageKey = "setup";
+      renderShell();
+      const c = document.getElementById("v4-stage-content");
+      clear(c);
+      if (reentryPending && ns.stageKey !== "setup") {
+        const flags = openFlagCount();
+        const banner = el("div", "narrative-session-banner",
+          "Welcome back — you were on “" + (stages().find(s => s.key === ns.stageKey) || {}).short + "”." +
+          (flags ? " " + flags + " field" + (flags > 1 ? "s are" : " is") + " still flagged ✗/?." : ""));
+        c.appendChild(banner);
+        reentryPending = false;
+      }
+      RENDERERS[ns.stageKey](c);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      saveState();
+    };
+
+    const stageHead = (parent, kicker, title, lede) => {
+      const h = el("header", "narrative-stage-header");
+      if (kicker) h.appendChild(el("p", "v4-kicker", kicker));
+      h.appendChild(el("h2", null, title));
+      parent.appendChild(h);
+      if (lede) parent.appendChild(el("p", "narrative-intro-text", lede));
+    };
+
+    const lensBar = (parent) => {
+      const L = ns.lens;
+      const bar = el("div", "narrative-funder-note");
+      const note = el("div", "v4-lens-note");
+      note.appendChild(el("strong", null, "Tailored for:"));
+      const pills = [];
+      if (L.agency) pills.push(labelOf(AGENCIES, L.agency) + (L.format ? " · " + (L.format === "cv-frq" ? "CV-FRQ" : "TCV") : ""));
+      if (L.program) pills.push(L.program);
+      if (L.careerStage) pills.push(labelOf(CAREER_STAGES, L.careerStage));
+      if (L.discipline) pills.push(labelOf(DISCIPLINES, L.discipline));
+      (L.workMode || []).forEach(w => pills.push(labelOf(WORK_MODES, w)));
+      if (!pills.length) pills.push("no context set yet");
+      pills.forEach(p => note.appendChild(el("span", "v4-lens-pill", p)));
+      const edit = el("button", "narrative-draft-btn v4-lens-edit", "Edit context");
+      edit.addEventListener("click", () => { ns.stageKey = "setup"; renderStage(); });
+      note.appendChild(edit);
+      bar.appendChild(note);
+      parent.appendChild(bar);
+    };
+
+    // Render live auto-checks for a field
+    const renderChecks = (host, text, kind, fieldLabel) => {
+      clear(host);
+      const t = (text || "").trim();
+      if (!t) return;
+      const res = lintField(t, kind);
+      const range = LENGTH_RANGES[kind];
+      res.strengths.forEach(s => host.appendChild(el("span", "v4-strength", "✓ " + s)));
+      res.flags.forEach(f => host.appendChild(el("span", "v4-flag", "⚠ " + f)));
+      let meta = res.words + " words";
+      if (range) meta += " (aim " + range[0] + "–" + range[1] + ", uncalibrated)";
+      meta += " · rubric " + res.score + "/4 — a hint, not a gate";
+      host.appendChild(el("span", "v4-meta", meta));
+    };
+
+    // A prompt block: question + help + textarea + live lint + ✓/✗/? flag
+    const promptBlock = (parent, def, getVal, setVal, opts) => {
+      opts = opts || {};
+      const wrap = el("div", "contribution-field");
+      const q = el("label", "v4-q");
+      q.appendChild(document.createTextNode(resolveQ(def)));
+      if (def.isNew) q.appendChild(el("span", "v4-tag", "new"));
+      if (def.academicTag) q.appendChild(el("span", "v4-tag", "academic impact counts"));
+      wrap.appendChild(q);
+      const help = resolveHelp(def);
+      if (help) wrap.appendChild(el("p", "v4-help", help));
+      const ta = el("textarea", "contribution-textarea");
+      if (opts.minHeight) ta.style.minHeight = opts.minHeight;
+      if (opts.placeholder) ta.placeholder = opts.placeholder;
+      ta.value = getVal() || "";
+      const checks = el("div", "v4-checks");
+      ta.addEventListener("input", (e) => {
+        setVal(e.target.value); saveState();
+        if (opts.lintKind) renderChecks(checks, e.target.value, opts.lintKind);
+      });
+      wrap.appendChild(ta);
+      if (opts.lintKind) {
+        wrap.appendChild(checks);
+        renderChecks(checks, ta.value, opts.lintKind);
+      }
+      // Per-field flag toggle (the Round-2 essence, inline)
+      if (opts.flagObj && opts.flagKey) {
+        const row = el("div", "v4-flag-row");
+        row.appendChild(el("span", "v4-flag-label", "Your call:"));
+        const states = [["ok", "✓", "is-ok", "Looks right"], ["work", "✗", "is-work", "Needs work"], ["unsure", "?", "is-unsure", "Unsure — ask my advisor"]];
+        const noteWrap = el("div", "v4-note-input");
+        const renderNote = () => {
+          clear(noteWrap);
+          const f = opts.flagObj.flags[opts.flagKey];
+          if (f === "work" || f === "unsure") {
+            const ni = el("input", "v4-text-input");
+            ni.type = "text";
+            ni.placeholder = f === "work" ? "Note to self: what needs fixing here?" : "Note: what would you ask your advisor about this?";
+            ni.value = opts.flagObj.notes[opts.flagKey] || "";
+            ni.addEventListener("input", e => { opts.flagObj.notes[opts.flagKey] = e.target.value; saveState(); });
+            noteWrap.appendChild(ni);
+          }
+        };
+        states.forEach(([v, sym, cls, title]) => {
+          const b = el("button", "v4-flag-btn" + (opts.flagObj.flags[opts.flagKey] === v ? " " + cls : ""), sym);
+          b.title = title;
+          b.addEventListener("click", () => {
+            opts.flagObj.flags[opts.flagKey] = opts.flagObj.flags[opts.flagKey] === v ? "" : v;
+            saveState();
+            row.querySelectorAll(".v4-flag-btn").forEach((btn, i) => {
+              btn.className = "v4-flag-btn" + (opts.flagObj.flags[opts.flagKey] === states[i][0] ? " " + states[i][2] : "");
+            });
+            renderNote();
+          });
+          row.appendChild(b);
+        });
+        wrap.appendChild(row);
+        wrap.appendChild(noteWrap);
+        renderNote();
+      }
+      parent.appendChild(wrap);
+      return ta;
+    };
+
+    const navRow = (parent, opts) => {
+      opts = opts || {};
+      const list = stages();
+      const idx = list.findIndex(s => s.key === ns.stageKey);
+      const nav = el("div", "narrative-nav");
+      const back = el("button", "btn btn-outline", "← Back");
+      if (idx <= 0) back.style.visibility = "hidden";
+      back.addEventListener("click", () => { ns.stageKey = list[Math.max(0, idx - 1)].key; renderStage(); });
+      nav.appendChild(back);
+      if (idx < list.length - 1) {
+        const next = el("button", "btn btn-primary", opts.nextLabel || "Continue →");
+        next.addEventListener("click", () => { ns.stageKey = list[idx + 1].key; renderStage(); });
+        nav.appendChild(next);
+      } else nav.appendChild(el("span"));
+      parent.appendChild(nav);
+    };
+
+    const chipRow = (parent, labelText, sub, list, getVal, setVal, multi) => {
+      parent.appendChild(el("p", "narrative-toggle-label", labelText));
+      if (sub) parent.appendChild(el("p", "v4-help", sub));
+      const row = el("div", "narrative-funder-toggle");
+      list.forEach(item => {
+        const on = multi ? (getVal() || []).includes(item.v) : getVal() === item.v;
+        const chip = el("button", "narrative-toggle-btn" + (on ? " is-active" : ""), item.l);
+        chip.addEventListener("click", () => {
+          if (multi) {
+            const cur = getVal() || [];
+            setVal(cur.includes(item.v) ? cur.filter(x => x !== item.v) : cur.concat(item.v));
+          } else setVal(getVal() === item.v ? "" : item.v);
+          saveState(); renderStage();
+        });
+        row.appendChild(chip);
+      });
+      parent.appendChild(row);
+    };
+
+    // ── Stage: Setup ────────────────────────────────────────────────────────
+    function renderSetup(c) {
+      stageHead(c, "Setup", "How are you arriving?",
+        "Two ways in. If you already have a draft — most people do, eventually — start with the X-ray and let it show you where the genre's load-bearing moves are missing.");
+
+      const grid = el("div", "v4-mode-grid");
+      [["compose", "Start fresh", "Build contribution by contribution with guided prompts, live checks, and worked examples. The personal statement comes last — it's clearest once the rest exists."],
+       ["xray", "I already have a draft", "Paste it in. The tool segments it, runs the same checks paragraph by paragraph, and maps it against the structural moves developed CVs make. Then revise here or with your advisor."]
+      ].forEach(([v, h, p]) => {
+        const card = el("button", "v4-mode-card" + (ns.mode === v ? " is-on" : ""));
+        card.appendChild(el("h4", null, h));
+        card.appendChild(el("p", null, p));
+        card.addEventListener("click", () => { ns.mode = v; saveState(); renderStage(); });
+        grid.appendChild(card);
+      });
+      c.appendChild(grid);
+
+      chipRow(c, "Which funding agency?", "Sets the format (TCV vs CV-FRQ).", AGENCIES,
+        () => ns.lens.agency,
+        (v) => { ns.lens.agency = v; const a = AGENCIES.find(x => x.v === v); ns.lens.format = a ? a.fmt : ""; });
+      chipRow(c, "Closest disciplinary home", "Switches the worked examples and structural templates.", DISCIPLINES,
+        () => ns.lens.discipline, (v) => { ns.lens.discipline = v; });
+      chipRow(c, "Career stage", "Calibrates expectations — demonstrated vs emerging impact.", CAREER_STAGES,
+        () => ns.lens.careerStage, (v) => { ns.lens.careerStage = v; });
+
+      const progWrap = el("div", "contribution-field");
+      progWrap.appendChild(el("label", "v4-q", "Competition you're aiming at (optional)"));
+      progWrap.appendChild(el("p", "v4-help", "A narrative CV is aimed, not generic. Naming the competition sharpens the “why this program” prompt later."));
+      const progInput = el("input", "v4-text-input");
+      progInput.type = "text"; progInput.placeholder = "e.g. the specific chair, grant, or award";
+      progInput.value = ns.lens.program || "";
+      progInput.addEventListener("input", (e) => { ns.lens.program = e.target.value; saveState(); });
+      progWrap.appendChild(progInput);
+      c.appendChild(progWrap);
+
+      navRow(c, { nextLabel: ns.mode === "xray" ? "To the X-ray →" : "Start drafting →" });
+    }
+
+    // ── Stage: Draft X-ray ──────────────────────────────────────────────────
+    const XRAY_SAMPLE = [
+      "I am a researcher working on urban water systems. We have worked on various projects related to stormwater over the years and our work has been well-received by the community.",
+      "1. Stormwater modelling. We developed a model for predicting overflow events. It was published in a leading journal and has been widely cited. We participated in several collaborations with municipalities.",
+      "2. Training. I have supervised students at all levels. They have gone on to good positions. My approach to training is collaborative and supportive.",
+      "In the future we hope to continue this work and expand it to other cities."
+    ].join("\n\n");
+
+    function analyzeDraft(text) {
+      const paras = text.split(/\n\s*\n+/).map(p => p.trim()).filter(Boolean);
+      const whole = text;
+      const coverage = [
+        ["Opens with “I am a …” anchor", /\bI am an?\b/i.test(whole)],
+        ["Names a problem / stakes (challenge, gap, need, risk…)", /\b(challenge|problem|gap|need|risk|barrier|question|fail|crisis)\b/i.test(whole)],
+        ["Numbered or titled contributions detected", /^\s*\d+[\.\)]\s/m.test(whole)],
+        ["Specific numbers, dates, or quantities present", /\b\d+(?:[.,]\d+)?%?\b/.test(whole)],
+        ["Evidence references detected (years, “et al.”, journals…)", /(\(\s*(19|20)\d{2}\s*\)|\bet al\.|\bjournal\b|\bproceedings\b|\bpress\b)/i.test(whole)],
+        ["Mentorship / supervision named", /\b(mentor|supervis|student|trainee|postdoc|PhD)/i.test(whole)],
+        ["Mentee destinations named (where they went)", /\b(now (at|a|an)|went on to|gone on to|moved to|joined|placed at|faculty (at|position)|professor at)\b/i.test(whole)],
+        ["Future direction stated", /\b(future|next|looking ahead|will|propose|aim to|working toward)\b/i.test(whole)]
+      ];
+      const paraReports = paras.map((p, i) => {
+        const isHeading = /^\s*\d+[\.\)]\s/.test(p) && p.split(/\s+/).length < 12;
+        return { i, text: p, isHeading, lint: lintField(p, "generic") };
+      });
+      return { paras: paraReports, coverage };
+    }
+
+    function renderXray(c) {
+      lensBar(c);
+      stageHead(c, "Draft X-ray", "Read your draft the way the genre does",
+        "Paste your existing draft. The tool segments it and runs the same deterministic checks paragraph by paragraph, then maps it against the structural moves developed narrative CVs make. It's a heuristic reading, not a judgment — and nothing leaves your device.");
+
+      const taWrap = el("div", "contribution-field");
+      taWrap.appendChild(el("label", "v4-q", "Your draft"));
+      const ta = el("textarea", "contribution-textarea v4-xray-ta");
+      ta.placeholder = "Paste your narrative CV draft here…";
+      ta.value = ns.xray.text || "";
+      ta.addEventListener("input", e => { ns.xray.text = e.target.value; saveState(); });
+      taWrap.appendChild(ta);
+      c.appendChild(taWrap);
+
+      const btnRow = el("div", "narrative-funder-toggle");
+      const runBtn = el("button", "btn btn-primary", "Run the X-ray");
+      runBtn.addEventListener("click", () => { saveState(); renderStage(); window.setTimeout(() => { const r = document.getElementById("v4-xray-results"); if (r) r.scrollIntoView({ behavior: "smooth", block: "start" }); }, 80); });
+      const sampleBtn = el("button", "btn btn-outline", "Try with a sample draft");
+      sampleBtn.addEventListener("click", () => { ns.xray.text = XRAY_SAMPLE; saveState(); renderStage(); });
+      btnRow.appendChild(runBtn); btnRow.appendChild(sampleBtn);
+      c.appendChild(btnRow);
+
+      if (ns.xray.text.trim()) {
+        const results = el("div");
+        results.id = "v4-xray-results";
+        const a = analyzeDraft(ns.xray.text);
+
+        const cov = el("div", "narrative-completeness");
+        cov.appendChild(el("h3", "narrative-legend-title", "Structural moves — what the X-ray can see"));
+        a.coverage.forEach(([label, on]) => {
+          const row = el("div", "completeness-row");
+          row.appendChild(el("span", "completeness-label", label));
+          row.appendChild(el("span", "completeness-status " + (on ? "is-done" : "is-empty"), on ? "✓ detected" : "not detected"));
+          cov.appendChild(row);
+        });
+        results.appendChild(cov);
+
+        results.appendChild(el("p", "v4-help", "Paragraph by paragraph (hedge notes are informational here — hedging is right for impact claims, wrong for outcomes):"));
+        a.paras.forEach(pr => {
+          const card = el("div", "v4-para-card");
+          card.appendChild(el("p", "v4-para-num", pr.isHeading ? "Heading" : "Paragraph " + (pr.i + 1)));
+          card.appendChild(el("p", "v4-para-text", pr.text.length > 280 ? pr.text.slice(0, 280) + "…" : pr.text));
+          if (!pr.isHeading) {
+            const checks = el("div", "v4-checks");
+            pr.lint.strengths.forEach(s => checks.appendChild(el("span", "v4-strength", "✓ " + s)));
+            pr.lint.flags.forEach(f => checks.appendChild(el("span", "v4-flag", "⚠ " + f)));
+            if (!pr.lint.strengths.length && !pr.lint.flags.length) checks.appendChild(el("span", "v4-meta", "No checks triggered."));
+            card.appendChild(checks);
+          }
+          results.appendChild(card);
+        });
+
+        const nextNote = el("div", "narrative-funder-note");
+        nextNote.appendChild(el("strong", null, "Next: "));
+        nextNote.appendChild(document.createTextNode("rebuild the weakest contribution in the Contributions step — the prompts there target exactly the moves the X-ray found missing. Or export this analysis from the Review step and bring it to your advisor."));
+        results.appendChild(nextNote);
+        c.appendChild(results);
+      }
+      navRow(c);
+    }
+
+    // ── Stage: Contributions ────────────────────────────────────────────────
+    function renderContributions(c) {
+      lensBar(c);
+      stageHead(c, "Step · Most significant contributions", "Your 3–5 strongest contributions",
+        "Group connected work into thematic contributions. The fields are a thinking scaffold — in the final CV they disappear into one flowing paragraph. Read the example below first: that's the destination.");
+
+      // Just-in-time context: work mode (asked here, where it matters)
+      if (!(ns.lens.workMode || []).length) {
+        chipRow(c, "Quick question first — how does your work happen? (choose any)",
+          "This surfaces role-clarity and outcome prompts that fit how you work.", WORK_MODES,
+          () => ns.lens.workMode, (v) => { ns.lens.workMode = v; }, true);
+      }
+
+      // Genre skeleton exemplar
+      const disc = ns.lens.discipline || "stem";
+      const exemplar = EXEMPLARS[disc] || EXEMPLARS.stem;
+      const exBox = el("div", "narrative-legend");
+      exBox.id = "v4-exemplar-box";
+      exBox.appendChild(el("p", "narrative-legend-title", "What a finished contribution reads like (" + (labelOf(DISCIPLINES, disc) || "STEM") + ", invented)"));
+      const para = el("p", "v4-exemplar");
+      exemplar.forEach(seg => {
+        const span = el("span", "seg seg-" + seg.r, seg.t + " ");
+        if (seg.keys) seg.keys.forEach(k => span.appendChild(el("span", "v4-super", k)));
+        para.appendChild(span);
+      });
+      exBox.appendChild(para);
+      const legend = el("div", "v4-skel-legend");
+      SEG_META.forEach(([key, label, color]) => {
+        const chip = el("span", "v4-skel-chip", label);
+        chip.style.background = color;
+        legend.appendChild(chip);
+      });
+      exBox.appendChild(legend);
+      const skelBtn = el("button", "narrative-draft-btn v4-inline-link", "Show the skeleton");
+      skelBtn.addEventListener("click", () => {
+        exBox.classList.toggle("v4-skeleton-on");
+        skelBtn.textContent = exBox.classList.contains("v4-skeleton-on") ? "Hide the skeleton" : "Show the skeleton";
+      });
+      exBox.appendChild(skelBtn);
+      exBox.appendChild(el("p", "narrative-legend-note", "The scaffold is invisible in the finished text — every sentence is doing a job. The fields below help you produce each job; the writing stays yours."));
+      c.appendChild(exBox);
+
+      if (SHAPE_HINTS[disc]) {
+        const hint = el("div", "narrative-funder-note");
+        hint.appendChild(el("strong", null, "A " + (labelOf(DISCIPLINES, disc) || "") + " contribution often runs: "));
+        hint.appendChild(document.createTextNode(SHAPE_HINTS[disc]));
+        c.appendChild(hint);
+      }
+
+      ns.contributions.forEach((contrib, i) => c.appendChild(renderContribCard(contrib, i)));
+
+      const addBtn = el("button", "add-contribution-btn", "+ Add another contribution");
+      addBtn.addEventListener("click", () => {
+        if (ns.contributions.length >= 10) return;
+        ns.contributions.push(blankContribution());
+        saveState(); renderStage();
+      });
+      c.appendChild(addBtn);
+      navRow(c);
+    }
+
+    function renderContribCard(contrib, i) {
+      const card = el("div", "contribution-card");
+      const head = el("div", "contribution-card-header");
+      head.appendChild(el("span", null, (i + 1) + ". " + (contrib.title || "Contribution " + (i + 1))));
+      if (ns.contributions.length > 1) {
+        const rm = el("button", "btn-icon", "×");
+        rm.title = "Remove contribution";
+        rm.addEventListener("click", () => { ns.contributions.splice(i, 1); saveState(); renderStage(); });
+        head.appendChild(rm);
+      }
+      card.appendChild(head);
+
+      const titleDef = PROMPTS.contrib.title;
+      const tWrap = el("div", "contribution-field");
+      tWrap.appendChild(el("label", "v4-q", resolveQ(titleDef)));
+      tWrap.appendChild(el("p", "v4-help", titleDef.help));
+      const tInput = el("input", "v4-text-input");
+      tInput.type = "text"; tInput.placeholder = "A headline a reviewer could repeat";
+      tInput.value = contrib.title || "";
+      tInput.addEventListener("input", e => {
+        contrib.title = e.target.value; saveState();
+        const tt = card.querySelector(".contribution-card-header span");
+        if (tt) tt.textContent = (i + 1) + ". " + (e.target.value || ("Contribution " + (i + 1)));
+      });
+      tWrap.appendChild(tInput);
+      card.appendChild(tWrap);
+
+      promptBlock(card, PROMPTS.contrib.stakes, () => contrib.stakes, v => contrib.stakes = v,
+        { minHeight: "60px", lintKind: "stakes", flagObj: contrib, flagKey: "stakes" });
+
+      // Role
+      const roleDef = PROMPTS.contrib.roleLine;
+      const rWrap = el("div", "contribution-field");
+      rWrap.appendChild(el("label", "v4-q", "Your role in this work"));
+      const roleRow = el("div", "narrative-funder-toggle");
+      [["led", "I led it"], ["coled", "I co-led it"], ["part", "I contributed a specific part"]].forEach(([v, lab]) => {
+        const b = el("button", "narrative-toggle-btn" + (contrib.roleMode === v ? " is-active" : ""), lab);
+        b.addEventListener("click", () => { contrib.roleMode = contrib.roleMode === v ? "" : v; saveState(); renderStage(); });
+        roleRow.appendChild(b);
+      });
+      rWrap.appendChild(roleRow);
+      rWrap.appendChild(el("p", "v4-help", roleDef.help));
+      const rTa = el("textarea", "contribution-textarea");
+      rTa.style.minHeight = "52px";
+      rTa.placeholder = resolveQ(roleDef);
+      rTa.value = contrib.roleLine || "";
+      const rChecks = el("div", "v4-checks");
+      rTa.addEventListener("input", e => { contrib.roleLine = e.target.value; saveState(); renderChecks(rChecks, e.target.value, "roleLine"); });
+      rWrap.appendChild(rTa); rWrap.appendChild(rChecks);
+      renderChecks(rChecks, rTa.value, "roleLine");
+      card.appendChild(rWrap);
+
+      promptBlock(card, PROMPTS.contrib.activities, () => contrib.activities, v => contrib.activities = v,
+        { minHeight: "70px", lintKind: "activities", flagObj: contrib, flagKey: "activities" });
+      promptBlock(card, PROMPTS.contrib.outputs, () => contrib.outputs, v => contrib.outputs = v,
+        { minHeight: "60px", lintKind: "outputs", flagObj: contrib, flagKey: "outputs" });
+      promptBlock(card, PROMPTS.contrib.outcomes, () => contrib.outcomes, v => contrib.outcomes = v,
+        { minHeight: "70px", lintKind: "outcomes", flagObj: contrib, flagKey: "outcomes" });
+      promptBlock(card, PROMPTS.contrib.impact, () => contrib.impact, v => contrib.impact = v,
+        { minHeight: "70px", lintKind: "impact", flagObj: contrib, flagKey: "impact" });
+
+      const tDef = PROMPTS.contrib.translational;
+      const modeHit = (ns.lens.workMode || []).some(w => (tDef.gateModes || []).includes(w));
+      const discHit = (tDef.gateDiscipline || []).includes(ns.lens.discipline);
+      if (modeHit || discHit) {
+        promptBlock(card, tDef, () => contrib.translational, v => contrib.translational = v, { minHeight: "60px" });
+      }
+
+      card.appendChild(renderEvidence(contrib));
+
+      const weaveBtn = el("button", "narrative-draft-btn v4-inline-link", contrib.showWeave ? "Hide assembled material" : "▸ Assemble — see your material as one paragraph");
+      weaveBtn.addEventListener("click", () => { contrib.showWeave = !contrib.showWeave; saveState(); renderStage(); });
+      card.appendChild(weaveBtn);
+      if (contrib.showWeave) card.appendChild(renderWeave(contrib));
+      return card;
+    }
+
+    function renderEvidence(contrib) {
+      const def = PROMPTS.contrib.evidence;
+      const wrap = el("div", "contribution-field");
+      wrap.appendChild(el("label", "v4-q", def.q));
+      wrap.appendChild(el("p", "v4-help", def.help));
+      contrib.evidence.forEach((ev, j) => {
+        const row = el("div", "v4-ev-row");
+        row.appendChild(el("span", "v4-key-badge", String.fromCharCode(97 + j)));
+        const txt = el("input", "v4-text-input");
+        txt.type = "text"; txt.placeholder = "Citation, link, uptake, award…";
+        txt.value = ev.text || "";
+        txt.addEventListener("input", e => { ev.text = e.target.value; saveState(); });
+        const sel = el("select", "impact-select");
+        sel.style.fontSize = "0.85rem"; sel.style.padding = "0.5rem";
+        EVIDENCE_TYPES.forEach(t => { const o = el("option", null, t); o.value = t; if (ev.type === t) o.selected = true; sel.appendChild(o); });
+        sel.addEventListener("change", e => { ev.type = e.target.value; saveState(); });
+        const x = el("button", "btn-icon", "×");
+        x.title = "Remove";
+        x.addEventListener("click", () => {
+          contrib.evidence.splice(j, 1);
+          if (!contrib.evidence.length) contrib.evidence.push({ text: "", type: "Peer-reviewed" });
+          saveState(); renderStage();
+        });
+        row.appendChild(txt); row.appendChild(sel); row.appendChild(x);
+        wrap.appendChild(row);
+      });
+      const add = el("button", "narrative-draft-btn v4-inline-link", "+ Add proof point");
+      add.addEventListener("click", () => { contrib.evidence.push({ text: "", type: "Peer-reviewed" }); saveState(); renderStage(); });
+      wrap.appendChild(add);
+      return wrap;
+    }
+
+    // ── Weave: honest assembly with connective suggestions + gap warnings ──
+    const CONNECTIVES = { activities: "to address this →", outputs: "this produced →", outcomes: "to date →", impact: "looking ahead →" };
+    function buildWeave(contrib) {
+      const refs = (contrib.evidence || []).filter(e => e.text && e.text.trim())
+        .map((e, i) => ({ key: String.fromCharCode(97 + i), text: e.text.trim(), type: e.type || "" }));
+      const order = ["stakes", "activities", "outputs", "outcomes", "translational", "impact"];
+      const parts = order.map(k => ({ k, t: (contrib[k] || "").trim() })).filter(p => p.t);
+      const gaps = [];
+      if (!contrib.stakes) gaps.push("No stakes opener — what problem was this answering?");
+      if (!contrib.outcomes) gaps.push("No outcomes — reviewers look for what has already changed.");
+      if (!contrib.impact) gaps.push("No impact — what could this change at field scale? (Hedged is fine.)");
+      if (!refs.length) gaps.push("No evidence keyed — a contribution without proof points reads as a claim.");
+      return { title: contrib.title, roleLine: contrib.roleLine, parts, refs, gaps };
+    }
+
+    function renderWeave(contrib) {
+      const w = buildWeave(contrib);
+      const box = el("div", "narrative-legend");
+      box.style.marginTop = "0.75rem";
+      box.appendChild(el("p", "narrative-legend-note", "Your material, assembled — with suggested transitions. The paragraph is yours to write; this just puts everything on one surface."));
+      if (w.title) box.appendChild(el("p", "narrative-legend-title", w.title));
+      if (w.roleLine) box.appendChild(el("p", "v4-weave-role", w.roleLine));
+      const body = el("p", "v4-weave-body");
+      w.parts.forEach((p, idx) => {
+        if (idx > 0 && CONNECTIVES[p.k]) body.appendChild(el("span", "v4-connective", CONNECTIVES[p.k]));
+        body.appendChild(document.createTextNode(p.t + " "));
+      });
+      if (!w.parts.length) body.appendChild(document.createTextNode("Fill in the fields above to see them assembled."));
+      if (w.refs.length) w.refs.forEach(r => body.appendChild(el("span", "v4-super", r.key)));
+      box.appendChild(body);
+      w.gaps.forEach(g => box.appendChild(el("span", "v4-gap", "⚠ " + g)));
+      if (w.refs.length) {
+        const refsWrap = el("div", "v4-weave-refs");
+        refsWrap.appendChild(document.createTextNode("Evidence"));
+        const ol = el("ol");
+        w.refs.forEach(r => {
+          const li = el("li");
+          li.appendChild(el("span", "v4-rk", r.key + "."));
+          li.appendChild(document.createTextNode(r.text + " "));
+          if (r.type) li.appendChild(el("span", "v4-rt", "(" + r.type + ")"));
+          ol.appendChild(li);
+        });
+        refsWrap.appendChild(ol);
+        box.appendChild(refsWrap);
+      }
+      return box;
+    }
+
+    // ── Stage: Mentorship ───────────────────────────────────────────────────
+    function renderMentorship(c) {
+      lensBar(c);
+      stageHead(c, "Step · Supervisory & mentorship", "What you made possible for others",
+        "Start with the totals, then make it concrete. The most persuasive thing in this section is a real trajectory — a person you trained and where they went.");
+
+      const totals = el("div", "contribution-field");
+      totals.appendChild(el("label", "v4-q", "Totals — people you've trained (last 5 years)"));
+      const grid = el("div", "v4-totals-grid");
+      [["phd", "PhD"], ["masters", "Master's"], ["undergrad", "Undergrad / capstone"], ["postdoc", "Postdoc"]].forEach(([k, lab]) => {
+        const cell = el("div");
+        cell.appendChild(el("label", null, lab));
+        const inp = el("input", "v4-text-input");
+        inp.type = "text"; inp.inputMode = "numeric"; inp.placeholder = "0";
+        inp.value = ns.mentorCounts[k] || "";
+        inp.addEventListener("input", e => { ns.mentorCounts[k] = e.target.value; saveState(); });
+        cell.appendChild(inp);
+        grid.appendChild(cell);
+      });
+      totals.appendChild(grid);
+      c.appendChild(totals);
+
+      const trajWrap = el("div", "contribution-field");
+      const tq = el("label", "v4-q", "Name a few people you've trained — where are they now?");
+      tq.appendChild(el("span", "v4-tag", "new"));
+      trajWrap.appendChild(tq);
+      trajWrap.appendChild(el("p", "v4-help", "Who → stage → where they went → why it matters. Use initials or “a PhD student” if you prefer to keep it anonymous."));
+      ns.mentees.forEach((m, j) => {
+        const row = el("div", "v4-traj-row");
+        const who = el("input", "v4-text-input"); who.type = "text"; who.placeholder = "Name / initials"; who.value = m.who || "";
+        who.addEventListener("input", e => { m.who = e.target.value; saveState(); });
+        const stage = el("input", "v4-text-input"); stage.type = "text"; stage.placeholder = "Stage (PhD…)"; stage.value = m.stage || "";
+        stage.addEventListener("input", e => { m.stage = e.target.value; saveState(); });
+        const dest = el("input", "v4-text-input"); dest.type = "text"; dest.placeholder = "Where they are now"; dest.value = m.destination || "";
+        dest.addEventListener("input", e => { m.destination = e.target.value; saveState(); });
+        const x = el("button", "btn-icon", "×");
+        x.addEventListener("click", () => { ns.mentees.splice(j, 1); if (!ns.mentees.length) ns.mentees.push(blankMentee()); saveState(); renderStage(); });
+        row.appendChild(who); row.appendChild(stage); row.appendChild(dest); row.appendChild(x);
+        trajWrap.appendChild(row);
+        const why = el("input", "v4-text-input");
+        why.type = "text"; why.placeholder = "One line — why this trajectory matters (optional)"; why.value = m.why || "";
+        why.style.margin = "0 0 12px";
+        why.addEventListener("input", e => { m.why = e.target.value; saveState(); });
+        trajWrap.appendChild(why);
+      });
+      const addM = el("button", "narrative-draft-btn v4-inline-link", "+ Add a person");
+      addM.addEventListener("click", () => { ns.mentees.push(blankMentee()); saveState(); renderStage(); });
+      trajWrap.appendChild(addM);
+      c.appendChild(trajWrap);
+
+      promptBlock(c, PROMPTS.mentor.philosophy, () => ns.mentorPhilosophy, v => ns.mentorPhilosophy = v, { minHeight: "70px" });
+      promptBlock(c, PROMPTS.mentor.edi, () => ns.mentorEDI, v => ns.mentorEDI = v, { minHeight: "70px" });
+      promptBlock(c, PROMPTS.mentor.crossStage, () => ns.mentorCrossStage, v => ns.mentorCrossStage = v, { minHeight: "60px" });
+      navRow(c, { nextLabel: "Now the personal statement →" });
+    }
+
+    // ── Stage: Personal statement (written LAST, appears first in export) ──
+    function renderPersonal(c) {
+      lensBar(c);
+      stageHead(c, "Step · Personal statement (written last)", "Who you are & why your work matters",
+        "It appears first in the CV but is written last — and now that your contributions exist, the throughline should be easier to see. Two questions do most of the work: why your area matters at all, and why your particular work matters within it.");
+
+      const note = el("div", "narrative-funder-note");
+      note.appendChild(el("strong", null, "Why last? "));
+      note.appendChild(document.createTextNode("The statement is a synthesis of what you just wrote. If a prompt below feels hard, the answer is usually already sitting in one of your contributions."));
+      c.appendChild(note);
+
+      const anchor = el("div", "contribution-field");
+      anchor.appendChild(el("label", "v4-q", "Finish this line:"));
+      anchor.appendChild(el("p", "v4-help", "Plain and direct. This is your first sentence."));
+      const line = el("div", "v4-anchor-line");
+      line.appendChild(document.createTextNode("I am a"));
+      const roleI = el("input", "v4-text-input"); roleI.type = "text"; roleI.placeholder = "role"; roleI.value = ns.ps.role || "";
+      roleI.addEventListener("input", e => { ns.ps.role = e.target.value; saveState(); });
+      line.appendChild(roleI);
+      line.appendChild(document.createTextNode("at"));
+      const instI = el("input", "v4-text-input"); instI.type = "text"; instI.placeholder = "institution"; instI.value = ns.ps.institution || "";
+      instI.addEventListener("input", e => { ns.ps.institution = e.target.value; saveState(); });
+      line.appendChild(instI);
+      line.appendChild(document.createTextNode(". My work is in"));
+      const fieldI = el("input", "v4-text-input"); fieldI.type = "text"; fieldI.placeholder = "field"; fieldI.value = ns.ps.field || "";
+      fieldI.addEventListener("input", e => { ns.ps.field = e.target.value; saveState(); });
+      line.appendChild(fieldI);
+      line.appendChild(document.createTextNode("."));
+      anchor.appendChild(line);
+      c.appendChild(anchor);
+
+      promptBlock(c, PROMPTS.ps.challenge, () => ns.ps.challenge, v => ns.ps.challenge = v, { minHeight: "84px" });
+      promptBlock(c, PROMPTS.ps.streams, () => ns.ps.streams, v => ns.ps.streams = v, { minHeight: "84px" });
+      promptBlock(c, PROMPTS.ps.pivot, () => ns.ps.pivot, v => ns.ps.pivot = v, { minHeight: "84px" });
+      promptBlock(c, PROMPTS.ps.standing, () => ns.ps.standing, v => ns.ps.standing = v,
+        { minHeight: "110px", placeholder: "Grants, scale of output, recognition, reach — list them; gather them into one confident paragraph." });
+      promptBlock(c, PROMPTS.ps.programFit, () => ns.ps.programFit, v => ns.ps.programFit = v, { minHeight: "84px" });
+      promptBlock(c, PROMPTS.ps.horizon, () => ns.ps.horizon, v => ns.ps.horizon = v, { minHeight: "60px" });
+      navRow(c);
+    }
+
+    // ── Stage: Review & export ──────────────────────────────────────────────
+    function renderReview(c) {
+      lensBar(c);
+      stageHead(c, "Step · Review & export", "Pull it together",
+        "Coverage check, self-check, then export. Three outputs: a working draft, a print view in the genre's visual form, and an advisor packet built from your own flags and questions — designed to make a consult dramatically more productive.");
+
+      const cov = el("div", "narrative-completeness");
+      cov.appendChild(el("h3", "narrative-legend-title", "Coverage — what you've engaged"));
+      [
+        ["Context set", !!(ns.mode && ns.lens.agency && ns.lens.discipline)],
+        ["At least one full contribution (title + activities + outcomes)", ns.contributions.some(c2 => c2.title && c2.activities && c2.outcomes)],
+        ["Each contribution has a role line", ns.contributions.every(c2 => !c2.title || c2.roleLine)],
+        ["Evidence attached to a contribution", ns.contributions.some(c2 => (c2.evidence || []).some(e => e.text))],
+        ["A mentee trajectory named", ns.mentees.some(m => m.who && m.destination)],
+        ["Mentoring approach drafted", !!ns.mentorPhilosophy],
+        ["Central challenge named (PS)", !!ns.ps.challenge],
+        ["Origin / pivot story (PS)", !!ns.ps.pivot],
+        ["Standing paragraph drafted (PS)", !!ns.ps.standing],
+        ["Program-fit articulated (PS)", !!ns.ps.programFit]
+      ].forEach(([label, on]) => {
+        const row = el("div", "completeness-row");
+        row.appendChild(el("span", "completeness-label", label));
+        row.appendChild(el("span", "completeness-status " + (on ? "is-done" : "is-empty"), on ? "✓ done" : "—"));
+        cov.appendChild(row);
+      });
+      c.appendChild(cov);
+
+      // Flags summary
+      const flagged = [];
+      ns.contributions.forEach((c2, i) => {
+        Object.entries(c2.flags || {}).forEach(([k, v]) => {
+          if (v === "work" || v === "unsure") flagged.push({ where: "Contribution " + (i + 1) + (c2.title ? " (" + c2.title + ")" : "") + " · " + k, state: v, note: (c2.notes || {})[k] || "" });
+        });
+      });
+      if (flagged.length) {
+        const fl = el("div", "narrative-legend");
+        fl.appendChild(el("p", "narrative-legend-title", "Your open flags (" + flagged.length + ") — these go into the advisor packet"));
+        flagged.forEach(f => {
+          fl.appendChild(el("p", "narrative-legend-note", (f.state === "work" ? "✗ " : "? ") + f.where + (f.note ? " — “" + f.note + "”" : "")));
+        });
+        c.appendChild(fl);
+      }
+
+      const sc = el("div", "narrative-selfcheck");
+      sc.appendChild(el("h3", null, "Self-check before you export"));
+      [
+        "Each contribution makes my individual role unmistakable, even where the work was a team effort.",
+        "Each contribution states a concrete outcome (what already changed) separate from impact (what could change).",
+        "My personal statement names one throughline and ends pointed forward.",
+        "My evidence is specific — numbers, names, dated references — not “widely cited.”",
+        "My mentorship section shows at least one real trajectory."
+      ].forEach((t, idx) => {
+        const label = el("label");
+        const cb = el("input"); cb.type = "checkbox"; cb.checked = !!ns.selfCheck[idx];
+        cb.addEventListener("change", e => { ns.selfCheck[idx] = e.target.checked; saveState(); });
+        label.appendChild(cb); label.appendChild(document.createTextNode(t));
+        sc.appendChild(label);
+      });
+      c.appendChild(sc);
+
+      // Consult questions
+      const cq = el("div", "contribution-field");
+      const cqq = el("label", "v4-q", "Questions for your advisor");
+      cqq.appendChild(el("span", "v4-tag", "new"));
+      cq.appendChild(cqq);
+      cq.appendChild(el("p", "v4-help", "What do you want a human expert's eye on? These go to the top of the advisor packet, together with everything you flagged ✗ or ?."));
+      const cqTa = el("textarea", "contribution-textarea");
+      cqTa.style.minHeight = "70px";
+      cqTa.placeholder = "e.g. Is contribution 2 strong enough to lead with? Does my impact claim overreach?";
+      cqTa.value = ns.consultQuestions || "";
+      cqTa.addEventListener("input", e => { ns.consultQuestions = e.target.value; saveState(); });
+      cq.appendChild(cqTa);
+      c.appendChild(cq);
+
+      // Draft preview + export buttons
+      const exWrap = el("div", "contribution-field");
+      exWrap.appendChild(el("label", "v4-q", "Your working draft"));
+      const ta = el("textarea", "v4-export-area");
+      ta.readOnly = true;
+      ta.value = buildExportText();
+      exWrap.appendChild(ta);
+      c.appendChild(exWrap);
+
+      const actions = el("div", "narrative-actions");
+      const mkDl = (label, textFn, fname, primary) => {
+        const b = el("button", "btn " + (primary ? "btn-primary" : "btn-outline"), label);
+        b.addEventListener("click", () => {
+          const blob = new Blob([textFn()], { type: "text/plain;charset=utf-8" });
+          const a = el("a"); a.href = URL.createObjectURL(blob); a.download = fname;
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        });
+        return b;
+      };
+      actions.appendChild(mkDl("Download draft (.txt)", buildExportText, "narrative-cv-draft.txt", true));
+      actions.appendChild(mkDl("Download advisor packet (.txt)", buildAdvisorPacket, "narrative-cv-advisor-packet.txt", false));
+      const printBtn = el("button", "btn btn-outline", "Open print view");
+      printBtn.addEventListener("click", openPrintView);
+      actions.appendChild(printBtn);
+      const copy = el("button", "btn btn-outline", "Copy draft");
+      copy.addEventListener("click", async () => {
+        try { await navigator.clipboard.writeText(buildExportText()); copy.textContent = "Copied ✓"; setTimeout(() => copy.textContent = "Copy draft", 1500); } catch (_) {}
+      });
+      actions.appendChild(copy);
+      c.appendChild(actions);
+      navRow(c);
+    }
+
+    // ── Exports ─────────────────────────────────────────────────────────────
+    function buildExportText() {
+      const L = ns.lens, lines = [];
+      const rule = "=".repeat(60);
+      lines.push("NARRATIVE CV — WORKING DRAFT (V4)");
+      const ctx = [labelOf(AGENCIES, L.agency), L.format ? (L.format === "cv-frq" ? "CV-FRQ" : "TCV") : "", L.program, labelOf(CAREER_STAGES, L.careerStage), labelOf(DISCIPLINES, L.discipline)].filter(Boolean);
+      if (ctx.length) lines.push("Context (for tailoring only — not for submission): " + ctx.join(" · "));
+      lines.push("");
+      lines.push(rule); lines.push("PERSONAL STATEMENT  (appears first; you wrote it last)"); lines.push(rule);
+      const anchor = (ns.ps.role || ns.ps.institution || ns.ps.field)
+        ? "I am a " + (ns.ps.role || "___") + " at " + (ns.ps.institution || "___") + ". My work is in " + (ns.ps.field || "___") + "." : "";
+      [anchor, ns.ps.challenge, ns.ps.streams, ns.ps.pivot, ns.ps.standing, ns.ps.programFit, ns.ps.horizon]
+        .filter(s => s && s.trim()).forEach(s => { lines.push(s.trim()); lines.push(""); });
+      lines.push(rule); lines.push("MOST SIGNIFICANT CONTRIBUTIONS"); lines.push(rule);
+      ns.contributions.forEach((contrib, i) => {
+        if (!contrib.title && !contrib.activities) return;
+        const w = buildWeave(contrib);
+        lines.push((i + 1) + ". " + (contrib.title || "Untitled contribution"));
+        if (contrib.roleLine) lines.push("   [role] " + contrib.roleLine.trim());
+        if (w.parts.length) {
+          const keys = w.refs.map(r => r.key).join(",");
+          lines.push("   " + w.parts.map(p => p.t).join(" ") + (keys ? " [" + keys + "]" : ""));
+        }
+        if (w.refs.length) {
+          lines.push("   Evidence:");
+          w.refs.forEach(r => lines.push("     " + r.key + ". " + r.text + (r.type ? "  (" + r.type + ")" : "")));
+        }
+        if (w.gaps.length) w.gaps.forEach(g => lines.push("   [gap] " + g));
+        lines.push("");
+      });
+      lines.push(rule); lines.push("SUPERVISORY & MENTORSHIP"); lines.push(rule);
+      const mc = ns.mentorCounts;
+      const totals = [["PhD", mc.phd], ["Master's", mc.masters], ["Undergrad", mc.undergrad], ["Postdoc", mc.postdoc]].filter(([, v]) => v).map(([k, v]) => v + " " + k);
+      if (totals.length) lines.push("Totals (last 5 yrs): " + totals.join(", "));
+      const traj = ns.mentees.filter(m => m.who || m.destination);
+      if (traj.length) {
+        lines.push("Trajectories:");
+        traj.forEach(m => lines.push("   - " + [m.who, m.stage].filter(Boolean).join(", ") + (m.destination ? " → " + m.destination : "") + (m.why ? ". " + m.why : "")));
+      }
+      [["Approach", ns.mentorPhilosophy], ["Equity / context", ns.mentorEDI], ["Across stages", ns.mentorCrossStage]]
+        .filter(([, v]) => v && v.trim()).forEach(([k, v]) => lines.push(k + ": " + v.trim()));
+      lines.push("");
+      return lines.join("\n");
+    }
+
+    function buildAdvisorPacket() {
+      const lines = [];
+      const rule = "=".repeat(60);
+      lines.push("NARRATIVE CV — ADVISOR CONSULT PACKET");
+      lines.push("Prepared by the researcher, from their own flags and questions.");
+      lines.push("");
+      lines.push(rule); lines.push("MY QUESTIONS FOR THIS CONSULT"); lines.push(rule);
+      lines.push(ns.consultQuestions && ns.consultQuestions.trim() ? ns.consultQuestions.trim() : "(none written yet)");
+      lines.push("");
+      lines.push(rule); lines.push("WHERE I FLAGGED MY OWN DRAFT"); lines.push(rule);
+      let any = false;
+      ns.contributions.forEach((c2, i) => {
+        Object.entries(c2.flags || {}).forEach(([k, v]) => {
+          if (v === "work" || v === "unsure") {
+            any = true;
+            lines.push((v === "work" ? "[needs work] " : "[unsure]     ") + "Contribution " + (i + 1) + (c2.title ? " (" + c2.title + ")" : "") + " · " + k);
+            const note = (c2.notes || {})[k];
+            if (note) lines.push("             note: " + note);
+          }
+        });
+      });
+      if (!any) lines.push("(no fields flagged)");
+      lines.push("");
+      lines.push(rule); lines.push("AUTO-CHECK SUMMARY (deterministic lint — hints, not judgments)"); lines.push(rule);
+      ns.contributions.forEach((c2, i) => {
+        if (!c2.title && !c2.activities) return;
+        const fields = ["stakes", "activities", "outputs", "outcomes", "impact"];
+        const flagTotal = fields.reduce((n, k) => n + lintField(c2[k], k).flags.length, 0);
+        lines.push("Contribution " + (i + 1) + (c2.title ? " (" + c2.title + ")" : "") + ": " + flagTotal + " open auto-flag" + (flagTotal === 1 ? "" : "s"));
+        fields.forEach(k => {
+          lintField(c2[k], k).flags.forEach(f => lines.push("   - " + k + ": " + f));
+        });
+      });
+      lines.push("");
+      lines.push(rule); lines.push("FULL WORKING DRAFT"); lines.push(rule);
+      lines.push("");
+      lines.push(buildExportText());
+      return lines.join("\n");
+    }
+
+    // Print-fidelity view: the draft in the genre's visual form (keyed evidence boxes).
+    function openPrintView() {
+      const esc = (s) => String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      let html = "<!doctype html><html><head><meta charset='utf-8'><title>Narrative CV — print view</title><style>" +
+        "body{font-family:Georgia,'Times New Roman',serif;font-size:11.5px;line-height:1.5;color:#1a1a1a;max-width:760px;margin:2rem auto;padding:0 1.5rem;}" +
+        "h1{font-size:16px;border-bottom:2px solid #912338;padding-bottom:4px;}h2{font-size:13px;color:#912338;margin:1.4em 0 0.4em;}" +
+        "sup{color:#912338;font-weight:bold;} .contrib{margin:0 0 1em;} .ctitle{font-weight:bold;}" +
+        ".evbox{background:#e8f4fd;border:1px solid #bcdcf0;padding:6px 10px;margin:6px 0 0;font-size:10px;line-height:1.45;}" +
+        ".evbox b{color:#912338;} .note{color:#777;font-style:italic;font-size:10px;}" +
+        "@media print{body{margin:0.5in auto;}}</style></head><body>";
+      html += "<h1>Narrative CV — working draft</h1><p class='note'>Generated by the Pathways NCV tool (V4). Visual form only — check current funder formatting rules before submission.</p>";
+      html += "<h2>Personal statement</h2>";
+      const anchor = (ns.ps.role || ns.ps.institution || ns.ps.field)
+        ? "I am a " + esc(ns.ps.role || "___") + " at " + esc(ns.ps.institution || "___") + ". My work is in " + esc(ns.ps.field || "___") + "." : "";
+      [anchor, ns.ps.challenge, ns.ps.streams, ns.ps.pivot, ns.ps.standing, ns.ps.programFit, ns.ps.horizon]
+        .filter(s => s && s.trim()).forEach(s => { html += "<p>" + esc(s.trim()) + "</p>"; });
+      html += "<h2>Most significant contributions</h2>";
+      ns.contributions.forEach((contrib, i) => {
+        if (!contrib.title && !contrib.activities) return;
+        const w = buildWeave(contrib);
+        html += "<div class='contrib'><p><span class='ctitle'>" + (i + 1) + ". " + esc(contrib.title || "Untitled contribution") + ".</span> ";
+        if (contrib.roleLine) html += "<em>" + esc(contrib.roleLine.trim()) + "</em> ";
+        html += w.parts.map(p => esc(p.t)).join(" ");
+        html += w.refs.map(r => "<sup>" + r.key + "</sup>").join("");
+        html += "</p>";
+        if (w.refs.length) {
+          html += "<div class='evbox'>";
+          w.refs.forEach(r => { html += "<div><b>" + r.key + ".</b> " + esc(r.text) + (r.type ? " <span class='note'>(" + esc(r.type) + ")</span>" : "") + "</div>"; });
+          html += "</div>";
+        }
+        html += "</div>";
+      });
+      html += "<h2>Supervisory & mentorship activities</h2>";
+      const mc = ns.mentorCounts;
+      const totals = [["PhD", mc.phd], ["Master's", mc.masters], ["Undergrad", mc.undergrad], ["Postdoc", mc.postdoc]].filter(([, v]) => v).map(([k, v]) => esc(v) + " " + k);
+      if (totals.length) html += "<p><b>Totals (last 5 years):</b> " + totals.join(", ") + "</p>";
+      const traj = ns.mentees.filter(m => m.who || m.destination);
+      traj.forEach(m => { html += "<p>" + esc([m.who, m.stage].filter(Boolean).join(", ")) + (m.destination ? " → " + esc(m.destination) : "") + (m.why ? ". " + esc(m.why) : "") + "</p>"; });
+      [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(s => s && s.trim()).forEach(s => { html += "<p>" + esc(s.trim()) + "</p>"; });
+      html += "</body></html>";
+      const win = window.open("", "_blank");
+      if (win) { win.document.write(html); win.document.close(); }
+    }
+
+    // ── Reset & boot ────────────────────────────────────────────────────────
+    document.getElementById("v4-reset").addEventListener("click", (e) => {
+      e.preventDefault();
+      if (!confirm("Clear your V4 draft? This cannot be undone.")) return;
+      try { localStorage.removeItem(NCV_KEY); } catch (_) {}
+      ns = defaultState();
+      renderStage();
+    });
+
+    loadState();
+    if (ns.mode && ns.stageKey !== "setup") reentryPending = true;
+    renderStage();
+  })();
+  </script>
+</body>
+</html>
