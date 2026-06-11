@@ -771,17 +771,33 @@
       return `<h2>${cleaned}</h2>`;
     });
 
-    // 4.5. Rescue section labels whose body line got over-promoted (B-24).
-    //    A known label (e.g. "Who it's for") sitting directly above another
-    //    heading usually means step 4 promoted the label's lead-in line — a
-    //    short phrase like "Researchers who are:" feeding a bullet list — into
-    //    its own <h2>. That orphans the label, which step 5 would then delete,
-    //    leaving the page with the lead-in but no "Who it's For" heading.
-    //    Demote that following heading back to a paragraph so the label keeps a
-    //    body and survives. Apostrophe-normalised so curly quotes still match.
+    // 4.5. Rescue section labels whose lead-in line got over-promoted (B-24 +
+    //    the "What you'll learn / Outcomes" / "Workshop Options" variants).
+    //    When two headings end up stacked (A then B), B is usually A's lead-in
+    //    line that step 4 over-promoted — e.g. "Who it's for" above
+    //    "Researchers who are:", or "What you'll learn / Outcomes" above
+    //    "Participants will leave with:" — almost always feeding a bullet list.
+    //    Demote B back to a paragraph so the label (A) keeps a body and isn't
+    //    deleted as an orphan in step 5. Fire when A is a recognised section
+    //    label OR B leads straight into a list; never demote B when B is itself
+    //    a known label (that's a genuinely empty A, left for step 5).
+    //    Apostrophe-normalised so curly quotes match; "/"-combined labels
+    //    (e.g. "What you'll learn / Outcomes") count as labels when every
+    //    segment is known.
     const normLabel = (s) => s.replace(/[’‘]/g, "'").replace(/[:\-—–]+\s*$/, "").trim().toLowerCase();
-    out = out.replace(/(<h2>([^<]+)<\/h2>)\s*<h2>([^<]+)<\/h2>/g, (match, firstH2, firstText, secondText) => {
-      if (HEADING_LABELS.has(normLabel(firstText)) && !HEADING_LABELS.has(normLabel(secondText))) {
+    const isSectionLabel = (s) => {
+      const n = normLabel(s);
+      if (HEADING_LABELS.has(n)) return true;
+      if (n.includes("/")) {
+        const parts = n.split("/").map((p) => p.trim()).filter(Boolean);
+        return parts.length > 1 && parts.every((p) => HEADING_LABELS.has(p));
+      }
+      return false;
+    };
+    out = out.replace(/(<h2>([^<]+)<\/h2>)\s*<h2>([^<]+)<\/h2>/g, (match, firstH2, firstText, secondText, offset, whole) => {
+      if (isSectionLabel(secondText)) return match;
+      const leadsIntoList = /^\s*<(?:ul|ol)\b/.test(whole.slice(offset + match.length));
+      if (isSectionLabel(firstText) || leadsIntoList) {
         return `${firstH2}<p>${secondText}</p>`;
       }
       return match;
