@@ -1148,18 +1148,25 @@ window.PATHWAYS_DATA = {
     background: {
       title: "Background",
       intro: "Pathways to Impact traces its roots to a 2021 proposal from Concordia’s Research Sustainability Stream (Sustainability Action Plan), which initially envisioned an incubator for sustainability research. Over time, through three comprehensive university-wide consultations, this idea evolved into a united commitment to amplify Concordia’s impact.",
+      introLinks: [
+        { phrase: "Research Sustainability Stream", href: "https://www.concordia.ca/sustainability/about/action-plan/2020-2025/research.html" },
+        { phrase: "Sustainability Action Plan", href: "https://www.concordia.ca/sustainability/about/action-plan.html" }
+      ],
       listIntro: "These pivotal consultations included:",
       items: [
         {
           lead: "The Voluntary University Review",
+          href: "https://www.concordia.ca/sustainability/about/sdg/voluntary-university-review.html",
           rest: ", reinforced by a collaborative “17-rooms” exercise aligned with Concordia’s commitment to the UN Sustainable Development Goals (SDGs)."
         },
         {
           lead: "Future Concordia",
+          href: "https://www.concordia.ca/content/dam/concordia/offices/provost/docs/FutureConcordiaReports2022/2022FutureConcordiaWork,WorkplaceandWorkforceFinalReport.pdf",
           rest: ", whose recommendations called for “a radical restructuring of the research ecosystem”, urging a fundamental rethink of research, its support structures, and a more inclusive approach to people, projects, and methods."
         },
         {
           lead: "The Strategic Research Plan 2023-2028",
+          href: "https://www.concordia.ca/research/about/strategic-research-plan.html",
           rest: ", which formalizes the university’s commitment to advancing impact and engagement (Objective 4), as reflected in the renamed Office of the Vice-President, Research, Innovation, and Impact (OVPRII) and in the creation of the Concordia University Research Impact Award (RIA) program."
         }
       ]
