@@ -141,15 +141,69 @@
     return node;
   };
 
-  // Provider line with a small "OFFERED BY" label and the provider name as the value.
-  const providerLine = (provider) => {
+  // Parse a service's provider columns into a render-ready shape. `provider`
+  // and `providerTitle` are ;-separated lists (the sheet's standard multi-value
+  // separator) zipped by index, so each person keeps their own title.
+  //   mode "unit"   → team-delivered, no individual titles: show the unit only
+  //   mode "single" → one named person with a title
+  //   mode "multi"  → two+ named people, each paired with their own title
+  //   mode "none"   → nothing to show
+  const parseProviderInfo = (opp) => {
+    if (!opp) return { mode: "none" };
+    const people = splitMulti(opp.provider);
+    const titles = splitMulti(opp.providerTitle);
+    const unit = opp.unit || "";
+    // No individual titles → team-delivered. Show the unit only (the provider
+    // field is usually itself a team name, so showing both would be redundant).
+    if (titles.length === 0) {
+      const primary = unit || (people.length ? people.join(" and ") : "");
+      return primary ? { mode: "unit", unit: primary } : { mode: "none" };
+    }
+    if (people.length <= 1) {
+      return { mode: "single", name: people[0] || titles[0], title: titles[0] || "", unit };
+    }
+    return {
+      mode: "multi",
+      people: people.map((name, i) => ({ name, title: titles[i] || "" })),
+      unit
+    };
+  };
+
+  // "Offered by" block for cards. Single titled person → name + "title · unit".
+  // Multiple people → one "Name — Title" line each, then the shared unit.
+  // Team-delivered services → unit only. See parseProviderInfo.
+  const providerLine = (opp) => {
     const node = document.createElement("p");
     node.className = "card-provider";
-    const label = document.createElement("span");
-    label.className = "card-provider-label";
-    label.textContent = "Offered by";
-    node.appendChild(label);
-    node.appendChild(document.createTextNode(provider));
+    const info = parseProviderInfo(opp);
+    if (info.mode === "none") return node;
+    const span = (text, cls) => {
+      const s = document.createElement("span");
+      s.className = cls;
+      s.textContent = text;
+      return s;
+    };
+    node.appendChild(span("Offered by", "card-provider-label"));
+    if (info.mode === "unit") {
+      node.appendChild(span(info.unit, "card-provider-name"));
+      return node;
+    }
+    if (info.mode === "single") {
+      node.appendChild(span(info.name, "card-provider-name"));
+      const sub = [info.title, info.unit].filter(Boolean).join(" · ");
+      if (sub) node.appendChild(span(sub, "card-provider-sub"));
+      return node;
+    }
+    // multi — one line per person, shared unit beneath
+    node.classList.add("card-provider--multi");
+    info.people.forEach((p) => {
+      const row = document.createElement("span");
+      row.className = "card-provider-person";
+      row.appendChild(span(p.name, "card-provider-name"));
+      if (p.title) row.appendChild(span(" — " + p.title, "card-provider-ptitle"));
+      node.appendChild(row);
+    });
+    if (info.unit) node.appendChild(span(info.unit, "card-provider-sub"));
     return node;
   };
 
@@ -203,7 +257,8 @@
       pathway: "",
       stage: "",
       format: "",
-      time: ""
+      time: "",
+      unit: ""
     },
     pendingStage: "",
     pendingPathwayKey: "",
@@ -212,6 +267,8 @@
     pendingSupportSearch: "",
     pendingResearchJourneyId: "",
     pendingExploreTab: "",
+    pendingLearnTab: "",
+    pendingLearnTool: "",
     suppressNextHashChange: false,
     // Tracks which modal is currently rendered. Empty = none.
     // Format: "service:<id>" for the detail modal, "book:<id>" for the booking modal.
@@ -233,10 +290,52 @@
     acc[pathwayIdToKey[id]] = id;
     return acc;
   }, {});
+  // Accept either the short key ("academic") or the full slug ("academic-scholarship").
+  // External links built with the slug used to silently no-op (B-11).
+  const normalizePathwayParam = (raw) => {
+    const v = (raw || "").toString().trim().toLowerCase();
+    if (!v) return "";
+    if (Object.prototype.hasOwnProperty.call(pathwayKeyToId, v)) return v;
+    if (Object.prototype.hasOwnProperty.call(pathwayIdToKey, v)) return pathwayIdToKey[v];
+    return v;
+  };
   const supportAnchorByJourneyId = {
     "developing-project": "support-developing",
     "ongoing-project": "support-active",
     "wrapping-up-project": "support-wrapping"
+  };
+
+  // B-16: collapse fine-grained time-commitment values (e.g. "10 min", "45 min",
+  // "1 hour", "2 hrs", "Self-paced") into a small set of canonical buckets so
+  // the filter dropdown isn't a noisy list of every duration variant.
+  const TIME_BUCKETS = ["< 15 min", "15–30 min", "30–60 min", "1–2 hours", "2+ hours", "Self-paced"];
+  const bucketTime = (raw) => {
+    if (Array.isArray(raw)) {
+      const buckets = raw.map(bucketTime).filter(Boolean);
+      return buckets.length ? buckets[0] : "";
+    }
+    const s = (raw || "").toString().trim().toLowerCase();
+    if (!s) return "";
+    if (s.includes("self") && s.includes("paced")) return "Self-paced";
+    const minMatch = s.match(/(\d+)\s*[-–]?\s*(\d+)?\s*min/);
+    if (minMatch) {
+      const lo = parseInt(minMatch[1], 10);
+      const hi = minMatch[2] ? parseInt(minMatch[2], 10) : lo;
+      const avg = (lo + hi) / 2;
+      if (avg < 15) return "< 15 min";
+      if (avg <= 30) return "15–30 min";
+      if (avg <= 60) return "30–60 min";
+      if (avg <= 120) return "1–2 hours";
+      return "2+ hours";
+    }
+    const hrMatch = s.match(/(\d+(?:\.\d+)?)\s*(?:hr|hour)/);
+    if (hrMatch) {
+      const h = parseFloat(hrMatch[1]);
+      if (h <= 1) return "30–60 min";
+      if (h <= 2) return "1–2 hours";
+      return "2+ hours";
+    }
+    return raw;
   };
 
   const stageKeyToLabel = data.start.journeys.reduce((acc, journey) => {
@@ -463,6 +562,8 @@
       file: row.file || undefined,
       bookingUrl: row.bookingUrl || "",
       provider: row.provider || "",
+      providerTitle: row.providerTitle || "",
+      unit: row.unit || "",
       docUrl: row.docUrl || "",
       status: normaliseStatus(row.status)
     }));
@@ -488,6 +589,8 @@
     };
     if (row.author) record.author = row.author;
     if (row.provider) record.provider = row.provider;
+    if (row.providerTitle) record.providerTitle = row.providerTitle;
+    if (row.unit) record.unit = row.unit;
     if (row.externalUrl) record.externalUrl = row.externalUrl;
     if (row.bookingUrl) record.bookingUrl = row.bookingUrl;
     record.status = normaliseStatus(row.status);
@@ -857,6 +960,52 @@
     console.log(`[Pathways] Loaded ${total} learn-guide slots across ${keys.length} guide(s)`);
   };
 
+  // The two interactive tools are app features, not sheet content. The live
+  // Sheet omits them, which silently emptied the Featured rail (FEATURED_IDS
+  // references them) and dropped them from Explore search. Define them in code
+  // and always merge them into the catalogue so they're present in every mode.
+  // Shape matches the loader's sourceType:"tool" enrichment; pathway/stage use
+  // final labels. internalRoute: a page id ("tools-narrative") or a hash
+  // sub-route ("#learn?tab=tools&tool=planner") — see navigateToToolRoute.
+  const INTERNAL_TOOLS = [
+    {
+      id: "learn-impact-planner",
+      title: "Impact Planning Module",
+      format: "Tool",
+      time: "45–60 min",
+      tags: ["impact planning", "grant preparation", "impact pathways", "outcomes", "impact plan"],
+      summary: "Map your research outputs to outcomes, identify your impact pathways, and build a structured impact plan you can take into a consultation or grant application.",
+      pathway: ["Academic Scholarship"],
+      stage: ["Developing an Idea"],
+      sourceType: "tool",
+      category: "Interactive Tools",
+      markdown: "",
+      unit: "",
+      internalRoute: "#learn?tab=tools&tool=planner"
+    },
+    {
+      id: "learn-narrative-cv",
+      title: "Narrative CV Builder",
+      format: "Tool",
+      time: "60–90 min",
+      tags: ["narrative cv", "grant writing", "academic scholarship", "tri-agency", "TCV", "personal statement"],
+      summary: "Draft your Tri-agency Narrative CV section by section. Guided prompts walk you through your contributions, mentorship, and personal statement.",
+      pathway: ["Academic Scholarship"],
+      stage: ["Developing an Idea"],
+      sourceType: "tool",
+      category: "Interactive Tools",
+      markdown: "",
+      unit: "",
+      internalRoute: "tools-narrative"
+    }
+  ];
+  // Guarantee the internal tools are present and authoritative (code wins over
+  // any sheet/manifest row with the same id, so routing stays correct).
+  const withInternalTools = (list) => {
+    const ids = new Set(INTERNAL_TOOLS.map((t) => t.id));
+    return [...list.filter((w) => !ids.has(w.id)), ...INTERNAL_TOOLS];
+  };
+
   const loadWorkshopContent = async () => {
     try {
       let manifest;
@@ -942,11 +1091,11 @@
       if (rejected.length) {
         rejected.forEach((r) => console.error("[Pathways] Workshop body failed to load:", r.reason));
       }
-      content.workshops = fulfilled;
+      content.workshops = withInternalTools(fulfilled);
       console.log(`[Pathways] Workshops ready: ${fulfilled.length} loaded, ${rejected.length} failed`);
     } catch (error) {
       console.error("[Pathways] FAILED to load workshops — list will be empty until fixed.", error);
-      content.workshops = [];
+      content.workshops = withInternalTools([]);
     }
   };
 
@@ -1592,12 +1741,21 @@
       progressBar.style.background = isLight ? "#912338" : "rgba(255,255,255,0.7)";
     }
 
+    // Size the viewport to the active slide so shorter slides don't inherit the
+    // tallest slide's height (which left a dead zone with arrows floating in it,
+    // most visible on narrow screens). Pairs with .carousel-track flex-start.
+    function carouselSyncHeight() {
+      const active = track.children[carouselCurrent];
+      if (active) carouselWrap.style.height = `${active.offsetHeight}px`;
+    }
+
     function carouselGoTo(n) {
       carouselCurrent = (n + carouselTotal) % carouselTotal;
       track.style.transform = `translateX(-${carouselCurrent * 100}%)`;
       dotNav.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === carouselCurrent));
       counter.textContent = `${carouselCurrent + 1} / ${carouselTotal}`;
       carouselUpdateChrome(carouselCurrent);
+      carouselSyncHeight();
     }
 
     function carouselResetProgress() {
@@ -1668,6 +1826,10 @@
     container.appendChild(carouselWrap);
     carouselGoTo(0);
     carouselStartTimer();
+    // Re-measure on resize (breakpoint changes flip slides between 1- and
+    // 2-column layouts, changing their height) and once after first paint.
+    window.addEventListener("resize", carouselSyncHeight);
+    requestAnimationFrame(carouselSyncHeight);
 
     container.appendChild(el("hr", "section-divider"));
 
@@ -1703,7 +1865,7 @@
       ctaBtn.type = "button";
       ctaBtn.addEventListener("click", () => {
         if (isTool) {
-          navigateTo(item.internalRoute);
+          navigateToToolRoute(item.internalRoute);
         } else {
           // Open the service modal directly (auto-routes to Explore en route).
           navigateToService(item.id);
@@ -1720,6 +1882,10 @@
       if (pathwayKey) navigateTo("explore", null, { pathway: pathwayKey });
     };
     section.closePathwayModal = () => {};
+    // Re-measure the carousel when home becomes visible. The build-time sync
+    // reads 0 when the cold-load landed on another page (home was display:none),
+    // so showPage calls this on every home activation.
+    section.syncCarouselHeight = carouselSyncHeight;
     return section;
   };
 
@@ -1952,8 +2118,10 @@
 
     const wrap = el("div", "ncv-module");
     const moduleHeader = el("div", "ncv-module-header");
-    moduleHeader.appendChild(el("span", "ncv-module-kicker", slot("header.kicker", "Before you start — Step 2")));
-    moduleHeader.appendChild(el("h2", null, slot("header.title", "What is a Narrative CV?")));
+    // makeModulePage already renders an <h1> with this module's title, so the
+    // kicker + duplicate <h2> are dropped: they doubled the heading, and the
+    // "Step 2" sequence is meaningless when arriving from the Learn topic grid.
+    // Keep the orientation lead as the intro under the page heading.
     moduleHeader.appendChild(el("p", "ncv-module-lead", slot("header.lead", "A short orientation before you begin drafting. Read the overview, then expand any section for more detail.")));
     wrap.appendChild(moduleHeader);
 
@@ -2181,8 +2349,10 @@
     const learnTabsBar = el("div", "explore-tabs");
     const tabImpact101 = el("button", "explore-tab is-active", "Impact 101");
     tabImpact101.type = "button";
+    tabImpact101.dataset.tab = "impact101";
     const tabTools = el("button", "explore-tab", "Tools");
     tabTools.type = "button";
+    tabTools.dataset.tab = "tools";
     learnTabsBar.appendChild(tabImpact101);
     learnTabsBar.appendChild(tabTools);
     container.appendChild(learnTabsBar);
@@ -2229,17 +2399,22 @@
 
     // Planner area (revealed when Step 1 clicked)
     const plannerArea = el("div", "tools-planner-area is-hidden");
-    const backToTools = el("button", "btn btn-ghost tools-back-btn", "\u2190 Back to Tools");
-    backToTools.type = "button";
-    backToTools.addEventListener("click", () => {
-      plannerArea.classList.add("is-hidden");
-      cardsWrap.classList.remove("is-hidden");
-      alreadyDone.classList.remove("is-hidden");
-    });
-    plannerArea.appendChild(backToTools);
+
+    // pushLearnUrl writes the tab/tool into the URL so Learn views are
+    // shareable: #learn (Impact 101), #learn?tab=tools, and the planner at
+    // #learn?tab=tools&tool=planner. Hashchange then drives openTab \u2014 clicks
+    // only push the URL, mirroring the Explore tab pattern.
+    const pushLearnUrl = (tabName, tool) => {
+      const params = new URLSearchParams();
+      if (tabName === "tools") params.set("tab", "tools");
+      if (tool) params.set("tool", tool);
+      const qs = params.toString();
+      const nextHash = `#learn${qs ? "?" + qs : ""}`;
+      if (window.location.hash !== nextHash) window.location.hash = nextHash;
+    };
 
     let plannerBuilt = false;
-    step1Btn.addEventListener("click", () => {
+    const showPlanner = () => {
       cardsWrap.classList.add("is-hidden");
       alreadyDone.classList.add("is-hidden");
       plannerArea.classList.remove("is-hidden");
@@ -2248,8 +2423,19 @@
         if (plannerEl) plannerArea.appendChild(plannerEl);
         plannerBuilt = true;
       }
-      plannerArea.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+    };
+    const hidePlanner = () => {
+      plannerArea.classList.add("is-hidden");
+      cardsWrap.classList.remove("is-hidden");
+      alreadyDone.classList.remove("is-hidden");
+    };
+
+    const backToTools = el("button", "btn btn-ghost tools-back-btn", "\u2190 Back to Tools");
+    backToTools.type = "button";
+    backToTools.addEventListener("click", () => { pushLearnUrl("tools", null); });
+    plannerArea.appendChild(backToTools);
+
+    step1Btn.addEventListener("click", () => { pushLearnUrl("tools", "planner"); });
     step1Card.appendChild(step1Btn);
 
     toolsContent.appendChild(plannerArea);
@@ -2273,6 +2459,10 @@
     // Helper — build + register a full module page
     const makeModulePage = (id, title, contentEl) => {
       const pg = el("div", "page learn-module-page");
+      // B-23: matches href="#learn-module-ncv" (and siblings) so screen
+      // readers / a11y scanners see a valid in-page anchor target instead
+      // of an orphan link. Click handlers preventDefault so no auto-scroll.
+      pg.id = id;
       const backBtn = el("button", "learn-module-back");
       backBtn.type = "button";
       backBtn.innerHTML = "\u2190 Back to Learn";
@@ -2402,6 +2592,19 @@
     const learnContents = [impact101Content, toolsContent];
     const learnPanelIds = ["learn-panel-impact101", "learn-panel-tools"];
     learnTabsBar.setAttribute("role", "tablist");
+
+    // setActiveLearnTab toggles UI only (used by URL-driven nav + resetState).
+    // It does NOT push the URL — that's pushLearnUrl's job, called by clicks.
+    const setActiveLearnTab = (targetTab) => {
+      learnTabs.forEach((t, j) => {
+        const active = t === targetTab;
+        t.classList.toggle("is-active", active);
+        t.setAttribute("aria-selected", active ? "true" : "false");
+        t.setAttribute("tabindex", active ? "0" : "-1");
+        learnContents[j].classList.toggle("is-active", active);
+      });
+    };
+
     learnTabs.forEach((tab, i) => {
       learnContents[i].id = learnPanelIds[i];
       learnContents[i].setAttribute("role", "tabpanel");
@@ -2409,15 +2612,7 @@
       tab.setAttribute("aria-selected", i === 0 ? "true" : "false");
       tab.setAttribute("aria-controls", learnPanelIds[i]);
       tab.setAttribute("tabindex", i === 0 ? "0" : "-1");
-      tab.addEventListener("click", () => {
-        learnTabs.forEach((t, j) => {
-          const active = t === tab;
-          t.classList.toggle("is-active", active);
-          t.setAttribute("aria-selected", active ? "true" : "false");
-          t.setAttribute("tabindex", active ? "0" : "-1");
-          learnContents[j].classList.toggle("is-active", active);
-        });
-      });
+      tab.addEventListener("click", () => { pushLearnUrl(tab.dataset.tab, null); });
     });
     learnTabsBar.addEventListener("keydown", (e) => {
       const idx = learnTabs.indexOf(document.activeElement);
@@ -2428,8 +2623,29 @@
       if (next >= 0) { e.preventDefault(); learnTabs[next].click(); learnTabs[next].focus(); }
     });
 
+    // openTab applies tab + planner state from the URL. Returns the resolved
+    // tab so showPage can canonicalize the address (drops junk ?tab= tokens).
+    section.openTab = (tabName, tool) => {
+      const wantTools = tabName === "tools";
+      setActiveLearnTab(wantTools ? tabTools : tabImpact101);
+      if (wantTools && tool === "planner") showPlanner();
+      else hidePlanner();
+      return wantTools ? "tools" : "impact101";
+    };
+    section.normalizeTabUrl = (resolvedTab, tool) => {
+      const route = parseRouteFromHash(window.location.hash);
+      if (route.page !== "learn") return;
+      const params = new URLSearchParams();
+      if (resolvedTab === "tools") params.set("tab", "tools");
+      if (resolvedTab === "tools" && tool === "planner") params.set("tool", "planner");
+      const qs = params.toString();
+      const nextHash = `#learn${qs ? "?" + qs : ""}`;
+      if (window.location.hash !== nextHash) history.replaceState(null, "", nextHash);
+    };
+
     section.resetState = () => {
-      tabImpact101.click();
+      setActiveLearnTab(tabImpact101);
+      hidePlanner();
     };
 
     section.appendChild(container);
@@ -4158,7 +4374,6 @@
         { value: "developing", label: "Developing an Idea" },
         { value: "active", label: "Active Research" },
         { value: "finishing", label: "Finishing a Project" },
-        { value: "wrapping", label: "Finishing a Project" },
         { value: "not-sure", label: "Not sure yet" }
       ].forEach((opt) => {
         const o = el("option", null, opt.label);
@@ -4222,7 +4437,9 @@
       // Confirmation
       const confirmation = el("div", "contact-form-confirmation is-hidden");
       const confirmIcon = el("p", "booking-confirm-icon", "\u2713");
-      const confirmTitle = el("h3", "booking-confirm-title", "Request received!");
+      // B-18: unified with booking modal \u2014 "Thank you, [name]!" pattern. Title
+      // is filled in by showContactConfirmation with the submitter's name.
+      const confirmTitle = el("h3", "booking-confirm-title", "");
       const confirmText = el("p", "booking-confirm-text", "");
       confirmation.appendChild(confirmIcon);
       confirmation.appendChild(confirmTitle);
@@ -4235,8 +4452,9 @@
       errorBox.setAttribute("role", "alert");
       contactForm.insertBefore(errorBox, formActions);
 
-      const showContactConfirmation = (text) => {
+      const showContactConfirmation = (name, text) => {
         contactForm.querySelectorAll(".contact-form-field, .contact-form-actions, .contact-form-note, .contact-form-heading, .contact-form-intro, .contact-form-error").forEach((el) => el.classList.add("is-hidden"));
+        confirmTitle.textContent = "Thank you, " + name + "!";
         confirmText.textContent = text;
         confirmation.classList.remove("is-hidden");
       };
@@ -4259,11 +4477,11 @@
 
         submitToFormspree(new FormData(contactForm)).then((result) => {
           if (result.ok) {
-            showContactConfirmation("Thank you for reaching out. We\u2019ll review your details and connect you with the right person or resource.");
+            showContactConfirmation(name, "We\u2019ve received your request and will be in touch at " + email + " within 2 business days.");
             return;
           }
           if (result.prototype) {
-            showContactConfirmation("Thanks \u2014 we logged your request locally. The form endpoint is being finalized; in the meantime, you can email " + FORMSPREE_FALLBACK_EMAIL + ".");
+            showContactConfirmation(name, "We logged your request locally. The form endpoint is being finalized \u2014 once it\u2019s live, submissions will be delivered automatically. For anything urgent, email " + FORMSPREE_FALLBACK_EMAIL + ".");
             return;
           }
           submitBtn.disabled = false;
@@ -4285,6 +4503,10 @@
   const buildPathwaysVision = () => {
     const section = el("section", "page page-pathways-vision");
     section.dataset.page = "pathways-vision";
+    // B-23: match the href="#pathways-vision" semantics so a11y tooling and
+    // screen readers see a valid in-page anchor target. Click handlers still
+    // preventDefault, so the browser never tries to scroll to this id.
+    section.id = "pathways-vision";
 
     const container = el("div", "container");
     const reading = el("div", "vision-reading");
@@ -4402,6 +4624,16 @@
     const section = el("section", "page page-explore");
     section.dataset.page = "explore";
 
+    // B-17: keep aria-pressed in sync with the visual is-active class on
+    // .pathway-filter-pill so screen-reader users know which filter is on.
+    const setActivePill = (bar, activePill) => {
+      bar.querySelectorAll(".pathway-filter-pill").forEach((p) => {
+        const isActive = p === activePill;
+        p.classList.toggle("is-active", isActive);
+        p.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    };
+
     const container = el("div", "container");
     container.appendChild(el("h1", null, data.explore.title));
 
@@ -4496,7 +4728,7 @@
     pathwayDetailShell.appendChild(detailLayout);
 
     // Related services below the 2-col layout
-    const CARDS_PER_PAGE = 6;
+    const CARDS_PER_PAGE = 12;
 
     // Reusable pagination builder
     const buildPaginationControls = (totalItems, currentPage, totalPages, onPageChange) => {
@@ -4665,7 +4897,7 @@
           // Title gets its own row, full width, free to wrap.
           card.appendChild(el("h3", "card-title", opp.title));
           if (opp.provider) {
-            card.appendChild(providerLine(opp.provider));
+            card.appendChild(providerLine(opp));
           }
           const tagList = el("div", "tag-list");
           (opp.tags || []).forEach((tag) => tagList.appendChild(el("span", "tag", tag)));
@@ -4678,7 +4910,7 @@
           if (opp.sourceType === "tool") {
             const btn = el("button", "btn primary", "Start \u2192");
             btn.type = "button";
-            btn.addEventListener("click", () => navigateTo(opp.internalRoute));
+            btn.addEventListener("click", () => navigateToToolRoute(opp.internalRoute));
             cardActions.appendChild(btn);
           } else if (opp.sourceType === "workshop") {
             const btn = el("button", "btn primary", data.explore.buttons.details);
@@ -4713,10 +4945,10 @@
       if (filterTags.size > 1) {
         const allPill = el("button", "pathway-filter-pill is-active", "All");
         allPill.type = "button";
+        allPill.setAttribute("aria-pressed", "true");
         allPill.addEventListener("click", () => {
           activePathwayFilter = null;
-          pathwayFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-          allPill.classList.add("is-active");
+          setActivePill(pathwayFilterBar, allPill);
           renderPathwayCards(filtered);
         });
         pathwayFilterBar.appendChild(allPill);
@@ -4724,10 +4956,10 @@
         filterTags.forEach(({ type, value }) => {
           const pill = el("button", "pathway-filter-pill", value);
           pill.type = "button";
+          pill.setAttribute("aria-pressed", "false");
           pill.addEventListener("click", () => {
             activePathwayFilter = { type, value };
-            pathwayFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-            pill.classList.add("is-active");
+            setActivePill(pathwayFilterBar, pill);
             const subset = filtered.filter((opp) => {
               if (type === "format") {
                 const f = Array.isArray(opp.format) ? opp.format : [opp.format];
@@ -4805,7 +5037,7 @@
       // Title gets its own row, full width, free to wrap.
       card.appendChild(el("h3", "card-title", opp.title));
       if (opp.provider) {
-        card.appendChild(providerLine(opp.provider));
+        card.appendChild(providerLine(opp));
       }
       if (opp.summary) {
         card.appendChild(el("p", "card-text", opp.summary));
@@ -4814,7 +5046,7 @@
       if (opp.sourceType === "tool") {
         const btn = el("button", "btn primary", "Start \u2192");
         btn.type = "button";
-        btn.addEventListener("click", () => navigateTo(opp.internalRoute));
+        btn.addEventListener("click", () => navigateToToolRoute(opp.internalRoute));
         cardActions.appendChild(btn);
       } else if (opp.sourceType === "workshop") {
         const btn = el("button", "btn primary", data.explore.buttons.details);
@@ -4891,6 +5123,15 @@
     const researchModuleChips = el("div", "research-module-chips");
     researchViewerCard.appendChild(researchModuleChips);
 
+    // Context strip for the active chip — module description + filter status
+    const researchModuleContext = el("div", "research-module-context");
+    researchModuleContext.hidden = true;
+    const researchModuleContextDesc = el("p", "research-module-context-desc", "");
+    const researchModuleContextNote = el("p", "research-module-context-note", "");
+    researchModuleContext.appendChild(researchModuleContextDesc);
+    researchModuleContext.appendChild(researchModuleContextNote);
+    researchViewerCard.appendChild(researchModuleContext);
+
     // Services section — visible immediately on stage open, filtered by active chip
     const researchServicesSection = el("div", "research-services-section");
     researchServicesSection.appendChild(el("h3", "pathway-services-title", "Related resources"));
@@ -4930,18 +5171,18 @@
       if (formatSet.size > 1) {
         const allPill = el("button", "pathway-filter-pill is-active", "All");
         allPill.type = "button";
+        allPill.setAttribute("aria-pressed", "true");
         allPill.addEventListener("click", () => {
-          researchFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-          allPill.classList.add("is-active");
+          setActivePill(researchFilterBar, allPill);
           renderResearchCards(matched);
         });
         researchFilterBar.appendChild(allPill);
         fmtArr.forEach((f) => {
           const pill = el("button", "pathway-filter-pill", f);
           pill.type = "button";
+          pill.setAttribute("aria-pressed", "false");
           pill.addEventListener("click", () => {
-            researchFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-            pill.classList.add("is-active");
+            setActivePill(researchFilterBar, pill);
             renderResearchCards(matched.filter((opp) => {
               const v = Array.isArray(opp.format) ? opp.format : [opp.format];
               return v.includes(f);
@@ -4952,9 +5193,9 @@
         if (formatSet.has("External Resource")) {
           const pill = el("button", "pathway-filter-pill", "External Resource");
           pill.type = "button";
+          pill.setAttribute("aria-pressed", "false");
           pill.addEventListener("click", () => {
-            researchFilterBar.querySelectorAll(".pathway-filter-pill").forEach((p) => p.classList.remove("is-active"));
-            pill.classList.add("is-active");
+            setActivePill(researchFilterBar, pill);
             renderResearchCards(matched.filter((opp) => {
               const v = Array.isArray(opp.format) ? opp.format : [opp.format];
               return v.includes("External Resource");
@@ -5017,13 +5258,14 @@
       researchPanelDesc.textContent = journey.description;
 
       clear(researchModuleChips);
+      researchModuleContext.hidden = true;
       journey.modules.forEach((module) => {
         const chip = el("button", "research-module-chip", module.title);
         chip.type = "button";
+        chip.setAttribute("aria-pressed", "false");
         chip.addEventListener("click", () => {
           if (chip.classList.contains("is-active")) {
-            chip.classList.remove("is-active");
-            loadStageServices(journey);
+            clearResearchModule(journey);
           } else {
             openResearchModule(journey, module, chip);
           }
@@ -5045,23 +5287,52 @@
       researchViewer.classList.remove("is-open");
       researchPillRow.hidden = true;
       researchStageGrid.hidden = false;
+      researchModuleContext.hidden = true;
       researchPillButtons.forEach((btn) => btn.classList.remove("is-active"));
     }
 
+    function resetResearchModuleChips() {
+      researchModuleChips.querySelectorAll(".research-module-chip").forEach((c) => {
+        c.classList.remove("is-active");
+        c.setAttribute("aria-pressed", "false");
+      });
+    }
+
+    function clearResearchModule(journey) {
+      resetResearchModuleChips();
+      researchModuleContext.hidden = true;
+      loadStageServices(journey);
+    }
+
     function openResearchModule(journey, module, chipEl) {
-      researchModuleChips.querySelectorAll(".research-module-chip").forEach(c => c.classList.remove("is-active"));
+      resetResearchModuleChips();
       chipEl.classList.add("is-active");
+      chipEl.setAttribute("aria-pressed", "true");
 
       const workshopIds = Array.isArray(module.workshopIds) ? module.workshopIds : [];
-      let matched;
-      if (workshopIds.length > 0) {
-        matched = exploreItems.filter(opp => workshopIds.includes(opp.id));
+      let matched = workshopIds.length > 0
+        ? exploreItems.filter(opp => workshopIds.includes(opp.id))
+        : [];
+
+      researchModuleContextDesc.textContent = module.description || "";
+      clear(researchModuleContextNote);
+      if (matched.length > 0) {
+        researchModuleContextNote.appendChild(document.createTextNode(
+          `Showing ${matched.length} resource${matched.length === 1 ? "" : "s"} linked to this topic. `
+        ));
+        const clearBtn = el("button", "research-module-clear", `Show all ${journey.title} resources`);
+        clearBtn.type = "button";
+        clearBtn.addEventListener("click", () => clearResearchModule(journey));
+        researchModuleContextNote.appendChild(clearBtn);
       } else {
         matched = exploreItems.filter(opp => {
           const val = opp.stage;
           return Array.isArray(val) ? val.includes(journey.stage) : val === journey.stage;
         });
+        researchModuleContextNote.textContent =
+          `Showing all ${journey.title} resources — none are linked specifically to this topic yet.`;
       }
+      researchModuleContext.hidden = false;
 
       buildResearchFilterPills(matched);
       renderResearchCards(matched);
@@ -5128,13 +5399,19 @@
       const valueSet = new Set();
       exploreItems.forEach((opp) => {
         const value = opp[filter.id];
+        // B-16: for the time filter, fold each raw duration into a canonical
+        // bucket so the dropdown surfaces only a handful of clean options.
+        const normalise = filter.id === "time" ? bucketTime : (v) => v;
         if (Array.isArray(value)) {
-          value.forEach((entry) => valueSet.add(entry));
+          value.forEach((entry) => { const n = normalise(entry); if (n) valueSet.add(n); });
         } else if (value) {
-          valueSet.add(value);
+          const n = normalise(value);
+          if (n) valueSet.add(n);
         }
       });
-      const values = Array.from(valueSet).sort();
+      const values = filter.id === "time"
+        ? TIME_BUCKETS.filter((b) => valueSet.has(b))
+        : Array.from(valueSet).sort();
 
       values.forEach((value) => {
         const option = el("option", null, value);
@@ -5231,6 +5508,7 @@
       setOrDelete("stage", state.filters.stage);
       setOrDelete("format", state.filters.format);
       setOrDelete("time", state.filters.time);
+      setOrDelete("unit", state.filters.unit);
       // Pathway uses a key-based URL convention (?pathway=<key>) managed by
       // state.pendingPathwayKey + applyPathwayFilterByKey; state.filters.pathway
       // holds the title, not the key, so writing it back would mismatch. Only
@@ -5348,7 +5626,7 @@
         clearBtn.type = "button";
         clearBtn.addEventListener("click", () => {
           state.search = "";
-          state.filters = { pathway: "", stage: "", format: "", time: "" };
+          state.filters = { pathway: "", stage: "", format: "", time: "", unit: "" };
           state.browsePage = 0;
           searchInput.value = "";
           filterControls.forEach((control) => { control.value = ""; });
@@ -5391,7 +5669,7 @@
         // Title gets its own row, full width, free to wrap.
         card.appendChild(el("h3", "card-title", opp.title));
         if (opp.provider) {
-          card.appendChild(providerLine(opp.provider));
+          card.appendChild(providerLine(opp));
         }
 
         const tagList = el("div", "tag-list");
@@ -5414,7 +5692,7 @@
         if (opp.sourceType === "tool") {
           const primaryButton = el("button", "btn primary", "Start \u2192");
           primaryButton.type = "button";
-          primaryButton.addEventListener("click", () => navigateTo(opp.internalRoute));
+          primaryButton.addEventListener("click", () => navigateToToolRoute(opp.internalRoute));
           actions.appendChild(primaryButton);
         } else if (opp.sourceType === "workshop") {
           const primaryButton = el("button", "btn primary", data.explore.buttons.details);
@@ -5463,7 +5741,7 @@
         const card = el("div", "opportunity-card rec-card");
         card.appendChild(el("h3", null, opp.title));
         if (opp.provider) {
-          card.appendChild(providerLine(opp.provider));
+          card.appendChild(providerLine(opp));
         }
         if (opp.summary) {
           card.appendChild(el("p", "card-text", opp.summary));
@@ -5486,20 +5764,29 @@
         return value === selected;
       };
 
+      // Flatten a field that may be a string or an array into searchable text,
+      // so a query in the site's own vocabulary (pathway / stage names) matches.
+      const fieldText = (value) =>
+        (Array.isArray(value) ? value.join(" ") : (value || "")).toLowerCase();
+
       const filtered = exploreItems.filter((opp) => {
         const tags = Array.isArray(opp.tags) ? opp.tags : [];
         const matchesSearch = !searchTerm ||
           opp.title.toLowerCase().includes(searchTerm) ||
           (opp.summary || "").toLowerCase().includes(searchTerm) ||
           (opp.markdown || "").toLowerCase().includes(searchTerm) ||
+          fieldText(opp.pathway).includes(searchTerm) ||
+          fieldText(opp.stage).includes(searchTerm) ||
           tags.some((tag) => tag.toLowerCase().includes(searchTerm));
 
         const pathwayMatch = matchesField(opp.pathway, state.filters.pathway);
         const stageMatch = matchesField(opp.stage, state.filters.stage);
         const formatMatch = matchesField(opp.format, state.filters.format);
-        const timeMatch = matchesField(opp.time, state.filters.time);
+        // B-16: compare bucket-to-bucket so the filter matches the dropdown.
+        const timeMatch = matchesField(bucketTime(opp.time), state.filters.time);
+        const unitMatch = matchesField(opp.unit, state.filters.unit);
 
-        return matchesSearch && pathwayMatch && stageMatch && formatMatch && timeMatch;
+        return matchesSearch && pathwayMatch && stageMatch && formatMatch && timeMatch && unitMatch;
       });
 
       updateResults(filtered);
@@ -5750,6 +6037,15 @@
             : "We logged your request locally. The form endpoint is being connected \u2014 once it\u2019s live, submissions will be delivered automatically. For anything urgent, email " + FORMSPREE_FALLBACK_EMAIL + ".";
           form.appendChild(el("p", "booking-confirm-text", text));
           actions.hidden = true;
+
+          // B-13: confirmation is just a notice \u2014 there's no service or booking
+          // state left to navigate back through. Strip ?service=&book= from the
+          // URL and clear currentModalKey so a single ESC/back/overlay-click
+          // dismisses the modal via requestModalClose's no-key fallback.
+          if (window.location.hash !== "#explore") {
+            history.replaceState(history.state, "", "#explore");
+          }
+          state.currentModalKey = "";
         });
       });
 
@@ -5790,10 +6086,37 @@
       modal.appendChild(el("h1", "modal-title", opp.title));
       if (opp.author) modal.appendChild(el("p", "modal-author", "By: " + opp.author));
 
+      // Provider block — who delivers this service. Multiple people are each
+      // paired with their own title; a single titled person shows name +
+      // "title · unit"; team-delivered services show just the unit. Surfaced
+      // prominently for booking context and credibility. See parseProviderInfo.
+      {
+        const provInfo = parseProviderInfo(opp);
+        if (provInfo.mode !== "none") {
+          const provBlock = el("div", "modal-provider");
+          provBlock.appendChild(el("span", "modal-provider-label", "Offered by"));
+          if (provInfo.mode === "unit") {
+            provBlock.appendChild(el("span", "modal-provider-name", provInfo.unit));
+          } else if (provInfo.mode === "single") {
+            provBlock.appendChild(el("span", "modal-provider-name", provInfo.name));
+            const provSub = [provInfo.title, provInfo.unit].filter(Boolean).join(" · ");
+            if (provSub) provBlock.appendChild(el("span", "modal-provider-sub", provSub));
+          } else {
+            provInfo.people.forEach((p) => {
+              const person = el("div", "modal-provider-person");
+              person.appendChild(el("span", "modal-provider-name", p.name));
+              if (p.title) person.appendChild(el("span", "modal-provider-ptitle", p.title));
+              provBlock.appendChild(person);
+            });
+            if (provInfo.unit) provBlock.appendChild(el("span", "modal-provider-sub", provInfo.unit));
+          }
+          modal.appendChild(provBlock);
+        }
+      }
+
       // Metadata bar
       const metaBar = el("div", "modal-meta-bar");
       [
-        { label: "Offered by", value: opp.provider },
         { label: "Format", value: Array.isArray(opp.format) ? opp.format.join(", ") : opp.format },
         { label: "Time", value: Array.isArray(opp.time) ? opp.time.join(", ") : opp.time },
         { label: "Stage", value: Array.isArray(opp.stage) ? opp.stage.join(", ") : opp.stage },
@@ -5997,6 +6320,7 @@
       state.filters.stage = params.get("stage") || "";
       state.filters.format = params.get("format") || "";
       state.filters.time = params.get("time") || "";
+      state.filters.unit = params.get("unit") || "";
       // pathway intentionally not read here — applyPathwayFilterByKey in
       // showPage owns that flow (?pathway=<key>, with key→title translation).
       searchInput.value = state.search;
@@ -6020,9 +6344,26 @@
       if (journey) openResearchPanel(journey);
     };
     section.openTab = (tabName) => {
-      if (tabName === "research") setActiveTab(tabResearch);
-      else if (tabName === "browse") setActiveTab(tabServices);
-      else setActiveTab(tabPathways);
+      if (tabName === "research") { setActiveTab(tabResearch); return "research"; }
+      if (tabName === "browse") { setActiveTab(tabServices); return "browse"; }
+      setActiveTab(tabPathways);
+      return "pathways";
+    };
+    // Strip a non-canonical ?tab= token (e.g. ?tab=all, or a redundant
+    // ?tab=pathways) so the URL matches the rendered tab. replaceState — silent.
+    section.normalizeTabUrl = (resolvedTab) => {
+      const route = parseRouteFromHash(window.location.hash);
+      if (route.page !== "explore") return;
+      const params = new URLSearchParams(route.params.toString());
+      const currentTab = params.get("tab");
+      const canonical = resolvedTab === "pathways" ? null : resolvedTab;
+      const needsFix = canonical === null ? currentTab !== null : currentTab !== canonical;
+      if (!needsFix) return;
+      if (canonical) params.set("tab", canonical);
+      else params.delete("tab");
+      const queryString = params.toString();
+      const nextHash = `#explore${queryString ? "?" + queryString : ""}`;
+      if (window.location.hash !== nextHash) history.replaceState(null, "", nextHash);
     };
     section.resetState = () => {
       closeExplorePanel();
@@ -6080,6 +6421,11 @@
       }
       state.currentModalKey = targetKey;
     };
+
+    // Exposed for the outer requestModalClose fallback (B-13): once the URL
+    // no longer represents an open modal, ESC/back/overlay-click should still
+    // tear the modal down — they can't go through history.back().
+    section.closeModal = closeModal;
 
     return section;
   };
@@ -6297,7 +6643,8 @@
       // openPathwayInTab, openResearchStage) may override the tab as a side
       // effect of their own work, which is desired.
       if (explorePage && explorePage.openTab) {
-        explorePage.openTab(state.pendingExploreTab || "pathways");
+        const resolvedTab = explorePage.openTab(state.pendingExploreTab || "pathways");
+        if (explorePage.normalizeTabUrl) explorePage.normalizeTabUrl(resolvedTab);
         state.pendingExploreTab = "";
       }
       // Restore search + filter state from URL (?q=, ?stage=, ?format=, ?time=)
@@ -6338,8 +6685,20 @@
       }
     }
 
+    if (validPage === "learn") {
+      const learnPage = pages.get("learn");
+      if (learnPage && learnPage.openTab) {
+        const resolvedTab = learnPage.openTab(state.pendingLearnTab || "impact101", state.pendingLearnTool);
+        if (learnPage.normalizeTabUrl) learnPage.normalizeTabUrl(resolvedTab, state.pendingLearnTool);
+        state.pendingLearnTab = "";
+        state.pendingLearnTool = "";
+      }
+    }
+
     if (validPage === "home") {
       state.pendingPathwayKey = "";
+      const homePage = pages.get("home");
+      if (homePage && homePage.syncCarouselHeight) homePage.syncCarouselHeight();
     }
 
     if (validPage === "support") {
@@ -6393,14 +6752,21 @@
     if (state.currentModalKey) {
       // We pushed an entry when opening; pop it back so URL reverts.
       history.back();
+      return;
     }
+    // No URL state to pop (B-13: confirmation screen after booking submit clears
+    // currentModalKey and replaceStates to a clean URL). Close the modal directly
+    // so a single ESC / back / overlay-click dismisses it.
+    const explorePage = pages.get("explore");
+    if (explorePage && explorePage.closeModal) explorePage.closeModal();
   };
 
   const navigateTo = (pageId, anchorId, options = {}) => {
     const validPage = pages.has(pageId) ? pageId : "home";
     const query = new URLSearchParams();
-    if (options.pathway) {
-      query.set("pathway", options.pathway);
+    const navPathwayKey = normalizePathwayParam(options.pathway);
+    if (navPathwayKey) {
+      query.set("pathway", navPathwayKey);
     }
     if (options.workshop) {
       query.set("workshop", options.workshop);
@@ -6417,9 +6783,7 @@
     const queryString = query.toString();
     const nextHash = `${pageToHash(validPage)}${queryString ? `?${queryString}` : ""}`;
     const sameHash = window.location.hash === nextHash;
-    state.pendingPathwayKey = validPage === "explore"
-      ? (options.pathway || "").toLowerCase()
-      : "";
+    state.pendingPathwayKey = validPage === "explore" ? navPathwayKey : "";
     state.pendingWorkshopId = validPage === "explore" ? (options.workshop || "") : "";
     state.pendingExploreSearch = validPage === "explore" ? (options.searchQuery || "") : "";
     state.pendingSupportSearch = validPage === "support" ? (options.supportSearch || "") : "";
@@ -6430,6 +6794,16 @@
       state.suppressNextHashChange = true;
       window.location.hash = nextHash;
     }
+  };
+
+  // Tool "Start" buttons target either a full page id (e.g. "tools-narrative")
+  // or a hash sub-route that opens an inline tool (the planner lives at
+  // "#learn?tab=tools&tool=planner", not its own page). Page ids go through
+  // navigateTo; hash routes are applied directly so the router opens them.
+  const navigateToToolRoute = (route) => {
+    if (!route) return;
+    if (route.charAt(0) === "#") { window.location.hash = route; return; }
+    navigateTo(route);
   };
 
   const applyStageFilter = (stage) => {
@@ -6479,13 +6853,27 @@
       history.pushState(history.state, "", entryHash);
     }
 
+    // B-12: forward #home?pathway=<value> to #explore?pathway=<value> so
+    // shared deep links don't drop the pathway intent on landing. replaceState
+    // keeps history clean (the bare #home entry isn't worth a back-stop).
+    const initialPathwayKey = normalizePathwayParam(initialRoute.params.get("pathway"));
+    if (initialRoute.page === "home" && initialPathwayKey) {
+      initialRoute.page = "explore";
+      initialRoute.params.set("pathway", initialPathwayKey);
+      history.replaceState(history.state, "", `#explore?pathway=${initialPathwayKey}`);
+    }
+
     if (initialRoute.page === "explore") {
-      state.pendingPathwayKey = (initialRoute.params.get("pathway") || "").toLowerCase();
+      state.pendingPathwayKey = initialPathwayKey;
     }
     if (initialRoute.page === "explore") {
       state.pendingWorkshopId = initialRoute.params.get("workshop") || "";
       state.pendingExploreSearch = initialRoute.params.get("q") || "";
       state.pendingExploreTab = initialRoute.params.get("tab") || "";
+    }
+    if (initialRoute.page === "learn") {
+      state.pendingLearnTab = initialRoute.params.get("tab") || "";
+      state.pendingLearnTool = initialRoute.params.get("tool") || "";
     }
     if (initialRoute.page === "support") {
       state.pendingSupportSearch = initialRoute.params.get("q") || "";
@@ -6498,9 +6886,15 @@
         return;
       }
       const nextRoute = parseRouteFromHash(window.location.hash);
-      state.pendingPathwayKey = nextRoute.page === "explore"
-        ? (nextRoute.params.get("pathway") || "").toLowerCase()
-        : "";
+      const nextPathwayKey = normalizePathwayParam(nextRoute.params.get("pathway"));
+      // B-12: same home → explore forwarding on hashchange (e.g. user pastes a
+      // #home?pathway= link into the address bar of an already-loaded page).
+      // replaceState does not fire hashchange, so no suppression is needed.
+      if (nextRoute.page === "home" && nextPathwayKey) {
+        nextRoute.page = "explore";
+        history.replaceState(history.state, "", `#explore?pathway=${nextPathwayKey}`);
+      }
+      state.pendingPathwayKey = nextRoute.page === "explore" ? nextPathwayKey : "";
       state.pendingWorkshopId = nextRoute.page === "explore"
         ? (nextRoute.params.get("workshop") || "")
         : "";
@@ -6509,6 +6903,12 @@
         : "";
       state.pendingExploreTab = nextRoute.page === "explore"
         ? (nextRoute.params.get("tab") || "")
+        : "";
+      state.pendingLearnTab = nextRoute.page === "learn"
+        ? (nextRoute.params.get("tab") || "")
+        : "";
+      state.pendingLearnTool = nextRoute.page === "learn"
+        ? (nextRoute.params.get("tool") || "")
         : "";
       state.pendingSupportSearch = nextRoute.page === "support"
         ? (nextRoute.params.get("q") || "")

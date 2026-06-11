@@ -6,8 +6,8 @@
     "format": "Consultation",
     "time": "45 min",
     "pathways": [
-      "community",
-      "communications"
+      "Community Engagement",
+      "Communications"
     ],
     "stages": [
       "Active Research",
@@ -22,7 +22,7 @@
     "summary": "",
     "featuredHome": false,
     "file": "content/workshops/4th-space_research-activation-public-engagement.md",
-    "bookingUrl": "",
+    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/7O6CbEKE7EW9CiDEJrklow2?ismsaljsauthenabled",
     "provider": "4th Space team",
     "docUrl": "https://docs.google.com/document/d/e/2PACX-1vSmlrd9SXy5uCG0T5p9dT6yKHwzjm6NA-F6Vp6Im0svwQLFiEuPCVwEtWX4AJ3nXiZpTetsJvU3jMzd/pub",
     "status": "open"
@@ -34,12 +34,13 @@
     "format": "Workshop",
     "time": "90 min",
     "pathways": [
-      "academic",
-      "communications"
+      "Academic Scholarship",
+      "Communications"
     ],
     "stages": [
+      "Developing an Idea",
       "preparing-grant",
-      "active-project"
+      "Active Research"
     ],
     "tags": [
       "digital",
@@ -61,7 +62,7 @@
     "format": "Consultation",
     "time": "60 min",
     "pathways": [
-      "academic"
+      "Academic Scholarship"
     ],
     "stages": [
       "Developing an Idea"
@@ -75,8 +76,8 @@
     "summary": "",
     "featuredHome": true,
     "file": "content/workshops/library-rdm_data-management-plan-consultations.md",
-    "bookingUrl": "",
-    "provider": "Library RDM team",
+    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/Gt7xtptDq0yKy_GHcWnefA2?ismsaljsauthenabled",
+    "provider": "Library Research Data Management team",
     "docUrl": "https://docs.google.com/document/d/e/2PACX-1vQ1VvNtZIVtskAVQ3J-g-3ZyYS-L0ylEYqOh_U6Qobkj9X0gc3yBgFj5zjE1-rOPMqhs1wgrxloUFZr/pub",
     "status": "open"
   },
@@ -87,7 +88,7 @@
     "format": "Workshop",
     "time": "2 hrs",
     "pathways": [
-      "community"
+      "Community Engagement"
     ],
     "stages": [
       "Developing an Idea",
@@ -104,8 +105,8 @@
     "summary": "",
     "featuredHome": false,
     "file": "content/workshops/oce_research-partnerships-black-indigenous-communities.md",
-    "bookingUrl": "",
-    "provider": "Geneviève Sioui and Kristen Young",
+    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/FP6Oo2AP_EW9_fxAunsKFA2?ismsaljsauthenabled",
+    "provider": "Geneviève Sioui; Kristen Young",
     "docUrl": "https://docs.google.com/document/d/e/2PACX-1vQpm4m_jEJsOrim3mS1GunZIMsF8KFhakXwqg2gObYo1eoTPZ590SzUg4IwKrJL45WU4hLPVhkOQjno/pub",
     "status": "open"
   },
@@ -116,7 +117,7 @@
     "format": "Workshop",
     "time": "60 min",
     "pathways": [
-      "academic"
+      "Academic Scholarship"
     ],
     "stages": [
       "Active Research",
@@ -130,7 +131,7 @@
     "summary": "",
     "featuredHome": true,
     "file": "content/workshops/open-scholarship.md",
-    "bookingUrl": "",
+    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/yHV1LVBpekqU2hcOW6MwIw2?ismsaljsauthenabled",
     "provider": "Joshua Chalifour",
     "docUrl": "https://docs.google.com/document/d/e/2PACX-1vSKCAODCA3P3M17ObmXVoYsbKJTeEDlql-IGtnCRKi0qFxJcZe80Tcm253TD6RDnHWFKqP2-VyRUzU9/pub",
     "status": "open"
@@ -142,7 +143,7 @@
     "format": "Consultation",
     "time": "15 min",
     "pathways": [
-      "innovation"
+      "Innovation"
     ],
     "stages": [
       "Finishing a Project"
@@ -169,10 +170,10 @@
     "format": "Consultation",
     "time": "30 min",
     "pathways": [
-      "academic",
-      "community",
-      "innovation",
-      "commercialization"
+      "Academic Scholarship",
+      "Community Engagement",
+      "Innovation",
+      "Commercialization"
     ],
     "stages": [
       "Developing an Idea",
@@ -200,7 +201,7 @@
     "format": "Consultation",
     "time": "15–30 min",
     "pathways": [
-      "academic"
+      "Academic Scholarship"
     ],
     "stages": [
       "Developing an Idea",
@@ -217,7 +218,7 @@
     "summary": "",
     "featuredHome": false,
     "file": "content/workshops/pips_research-security-risk-assessment-consultation.md",
-    "bookingUrl": "",
+    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/X9qgy3MUTUGaR-mD9OV5QA2?ismsaljsauthenabled",
     "provider": "Gabriel Sales",
     "docUrl": "https://docs.google.com/document/d/e/2PACX-1vQPBWVFLjoWg4-_hW_nrB0znEcyYbastVxTAdXZfpfCE4Vpw9gJ-59SYoPb8Z13aHORqHQedb0I3m7h/pub",
     "status": "open"
@@ -229,7 +230,7 @@
     "format": "Workshop",
     "time": "60 min",
     "pathways": [
-      "academic"
+      "Academic Scholarship"
     ],
     "stages": [
       "Active Research"
@@ -243,38 +244,66 @@
     "summary": "",
     "featuredHome": false,
     "file": "content/workshops/research-data-management.md",
-    "bookingUrl": "",
+    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/txkQ5tP0y0Gx_4lyJsyerw2?ismsaljsauthenabled",
     "provider": "Joshua Chalifour",
     "docUrl": "https://docs.google.com/document/d/e/2PACX-1vRNyocLVpEHXGJJIowOzCltyK-srvG8xE8hyWayYafvQHXjK-8dVbTZ_fM15sD1goGdHVpqcFtBTtsP/pub",
     "status": "open"
   },
   {
-    "id": "ucs-writing-op-ed",
-    "slug": "ucs_writing-an-op-ed-information-session",
-    "title": "Writing an Op-Ed: Information Session",
+    "id": "v1-studio-lab2market",
+    "slug": "v1_studio_lab2market-consultations",
+    "title": "Lab2Market Program Exploration: Consultation",
+    "format": "Consultation",
+    "time": "30 min",
+    "pathways": [
+      "Innovation",
+      "Commercialization"
+    ],
+    "stages": [
+      "Developing an Idea",
+      "Active Research",
+      "Finishing a Project"
+    ],
+    "tags": [
+      "innovation",
+      "entrepreneurship",
+      "skill development",
+      "strategy & planning support",
+      "partnership & engagement support",
+      "knowledge sharing"
+    ],
+    "summary": "",
+    "featuredHome": false,
+    "file": "content/workshop/v1-studio_lab2market-program-exploration:-consultation.md",
+    "bookingUrl": "https://calendly.com/info-47016/30-minute-exploratory-chat",
+    "provider": "V1 Studio team",
+    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vRylIbDkNfv-sPFrWkqoZUvlT1VxsXEWiGqxPcu3qsTXr6dJkW6g02pJQD3QMmmDIRWTonyB93BBvby/pub",
+    "status": "open"
+  },
+  {
+    "id": "library-informed-author-rights",
+    "slug": "library_informed-author-rights-workshop",
+    "title": "Informed Author-Rights: Workshop",
     "format": "Workshop",
     "time": "60 min",
     "pathways": [
-      "communications",
-      "policy"
+      "Academic Scholarship"
     ],
     "stages": [
       "Finishing a Project"
     ],
     "tags": [
-      "writing",
-      "media",
-      "op-ed",
+      "open science",
       "knowledge mobilization",
-      "public scholarship",
-      "communications"
+      "responsible research assessment (DORA)",
+      "academic scholarship pathway "
     ],
     "summary": "",
     "featuredHome": false,
-    "file": "content/workshops/ucs_writing-an-op-ed-information-session.md",
-    "bookingUrl": "",
-    "provider": "UCS Media Relations team",
-    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vSq2o8KBpHp_L7CBFDnrIsfKJyoiMy18NjcPUGQxj3nvm1KUYU2AzLNo571s-aqfiCaDgGanUtONwVq/pub",
+    "file": "content/workshop/library-informed-author-rights:-workshop",
+    "bookingUrl": "https://outlook.office.com/book/PathwaystoImpact@liveconcordia.onmicrosoft.com/s/AmQBVAOHq0-GZE6PmBE0MA2?ismsaljsauthenabled",
+    "provider": "Rachel Harris",
+    "docUrl": "https://docs.google.com/document/d/e/2PACX-1vRDJL86YsDghz0W2QXFxx-GcF50C53vFf4Yv71Xw2wavOPW12gHt1SP4ka8OSHD3ikvqdbzEtOMhyJh/pub",
     "status": "open"
   }
 ]

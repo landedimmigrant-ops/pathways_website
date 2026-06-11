@@ -2045,6 +2045,37 @@ label {
   font-weight: 600;
 }
 
+.research-module-context {
+  margin: 0.75rem 0 0;
+  padding: 10px 14px;
+  background: #faf6f7;
+  border-left: 3px solid var(--burgundy);
+  border-radius: 0 6px 6px 0;
+}
+
+.research-module-context-desc {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.research-module-context-note {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.research-module-clear {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 13px;
+  color: var(--link);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .research-services-section {
   padding-top: 1.5rem;
   margin-top: 1.25rem;
@@ -2316,6 +2347,26 @@ label {
   font-weight: 700;
   color: #888;
   margin-right: 8px;
+}
+.card-provider-name {
+  font-weight: 600;
+  color: #333;
+}
+.card-provider-sub {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-top: 1px;
+}
+.card-provider--multi .card-provider-label {
+  display: block;
+  margin-bottom: 2px;
+}
+.card-provider-person {
+  display: block;
+}
+.card-provider-ptitle {
+  color: #777;
 }
 .opportunity-card h3 {
   margin-top: 0;
@@ -2747,10 +2798,21 @@ label {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: #fff;
+  background: var(--bg);
   overflow-y: auto;
   z-index: 100;
   display: block;
+}
+
+/* Quick-match is a real popup (560px card), not a full-page route modal.
+   Give its overlay the dimmed-backdrop pattern so the card reads as a popup
+   on top of the page, instead of a white card on a white sheet. */
+.modal-overlay.quick-match-overlay {
+  background: rgba(26, 26, 26, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
 
 .modal-topbar {
@@ -2792,6 +2854,7 @@ label {
   max-width: 800px;
   margin: 0 auto;
   padding: 48px 32px 80px;
+  background: #fff;
 }
 
 .modal-kicker {
@@ -2828,6 +2891,50 @@ label {
 .modal-meta-item strong {
   color: var(--text);
   font-weight: 600;
+}
+
+.modal-provider {
+  margin: 0 0 24px;
+  padding: 14px 16px;
+  background: #f7f3f4;
+  border-left: 3px solid var(--burgundy);
+  border-radius: 6px;
+}
+.modal-provider-label {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  margin-bottom: 4px;
+}
+.modal-provider-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.modal-provider-sub {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.modal-provider-person {
+  display: block;
+}
+.modal-provider-person + .modal-provider-person {
+  margin-top: 8px;
+}
+.modal-provider-ptitle {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.modal-provider-person + .modal-provider-sub {
+  margin-top: 10px;
 }
 
 .modal-tag-bar {
@@ -2969,6 +3076,13 @@ label {
   font-size: 0.875rem;
   color: var(--muted);
   flex: 1;
+  /* Clamp long summaries so cards stay even height; "View details" is the
+     path to the full text (same idiom as .opportunity-card .card-text). */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .modal-related-card .btn {
@@ -5027,9 +5141,16 @@ label {
   box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   position: relative;
   margin: 32px 0;
+  /* Height snaps to the active slide (set by carouselSyncHeight) so shorter
+     slides don't inherit the tallest slide's dead space. Intentionally NOT
+     transitioned: animating height left taller incoming slides clipped until
+     the wrap caught up. Snapping at slide-change keeps content fully visible. */
 }
 .carousel-track {
   display: flex;
+  /* flex-start (not the default stretch) so each slide keeps its own content
+     height instead of being padded out to match the tallest slide. */
+  align-items: flex-start;
   transition: transform 0.65s cubic-bezier(0.77, 0, 0.175, 1);
   will-change: transform;
 }

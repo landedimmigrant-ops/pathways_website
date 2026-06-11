@@ -650,13 +650,18 @@ window.PATHWAYS_DATA = {
       },
       {
         id: "format",
-        label: "All types",
+        label: "Types",
         allLabel: "All types"
       },
       {
         id: "time",
         label: "Time commitment",
         allLabel: "All time commitments"
+      },
+      {
+        id: "unit",
+        label: "Service provider",
+        allLabel: "All providers"
       }
     ],
     labels: {
@@ -803,7 +808,7 @@ window.PATHWAYS_DATA = {
       ]
     },
     empty: {
-      title: "No matching opportunities",
+      title: "No matching resources",
       body: "Try adjusting the search or filters to see more options."
     },
     opportunities: [
