@@ -1234,10 +1234,11 @@
       });
       footerLinks.appendChild(a);
     });
-    const feedbackBtn = el("button", "footer-link footer-feedback-btn", "Send feedback");
-    feedbackBtn.type = "button";
-    feedbackBtn.addEventListener("click", () => openFeedbackModal());
-    footerLinks.appendChild(feedbackBtn);
+    const feedbackLink = el("a", "footer-link footer-feedback-btn", "Send feedback");
+    feedbackLink.href = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=hfFpVS_SE06YUM5bGrzS6PfZycU56VhFhWbM6yJ0d1lUNkdMNjQ5TDY5QlZOWTNVWFpBRVJJUVBNSiQlQCN0PWcu";
+    feedbackLink.target = "_blank";
+    feedbackLink.rel = "noopener noreferrer";
+    footerLinks.appendChild(feedbackLink);
     container.appendChild(footerLinks);
     routeFooter.appendChild(container);
     document.body.insertBefore(routeFooter, modalRoot);
