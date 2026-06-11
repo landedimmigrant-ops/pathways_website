@@ -4274,7 +4274,34 @@
       backgroundSection.appendChild(backgroundSummary);
       const backgroundBody = el("div", "section-accordion__body");
       const backgroundContent = el("div", "section-accordion__body-content");
-      backgroundContent.appendChild(el("p", null, aboutBackground.intro));
+
+      // External reference link, opens in a new tab.
+      const extLink = (text, href) => {
+        const a = el("a", null, text);
+        a.href = href;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        return a;
+      };
+      // Append `text` to `parent`, wrapping any { phrase, href } occurrences in links.
+      const appendLinkedText = (parent, text, links) => {
+        const positioned = (links || [])
+          .map((l) => ({ ...l, idx: text.indexOf(l.phrase) }))
+          .filter((l) => l.idx >= 0)
+          .sort((a, b) => a.idx - b.idx);
+        let cursor = 0;
+        positioned.forEach((l) => {
+          if (l.idx < cursor) return;
+          if (l.idx > cursor) parent.appendChild(document.createTextNode(text.slice(cursor, l.idx)));
+          parent.appendChild(extLink(l.phrase, l.href));
+          cursor = l.idx + l.phrase.length;
+        });
+        if (cursor < text.length) parent.appendChild(document.createTextNode(text.slice(cursor)));
+      };
+
+      const backgroundIntroP = el("p");
+      appendLinkedText(backgroundIntroP, aboutBackground.intro, aboutBackground.introLinks);
+      backgroundContent.appendChild(backgroundIntroP);
       if (aboutBackground.listIntro) {
         backgroundContent.appendChild(el("p", null, aboutBackground.listIntro));
       }
@@ -4282,7 +4309,11 @@
         const backgroundList = el("ul", "simple-list");
         aboutBackground.items.forEach((item) => {
           const li = el("li");
-          if (item.lead) li.appendChild(el("strong", null, item.lead));
+          if (item.lead) {
+            const strong = el("strong");
+            strong.appendChild(item.href ? extLink(item.lead, item.href) : document.createTextNode(item.lead));
+            li.appendChild(strong);
+          }
           li.appendChild(document.createTextNode(item.rest || ""));
           backgroundList.appendChild(li);
         });
@@ -4302,7 +4333,6 @@
     });
     visionCallout.appendChild(visionLink);
     visionCallout.appendChild(el("p", "card-text", "A deeper look at how Concordia understands and supports research impact across disciplines and contexts."));
-    aboutPathwaysSection.appendChild(visionCallout);
     grid.appendChild(aboutPathwaysSection);
 
     if (aboutSectionById.partners) {
@@ -4316,6 +4346,8 @@
       partnersSection.appendChild(partnersBody);
       grid.appendChild(partnersSection);
     }
+
+    grid.appendChild(visionCallout);
 
     if (aboutSectionById.contact) {
       const contactSection = el("div", "about-section about-section--contact");
