@@ -4679,14 +4679,24 @@
 
       // ── Render each H2 section ───────────────────────────────────────────
 
-      h2Sections.forEach((sectionData, idx) => {
-        const num = String(idx + 1).padStart(2, "0");
+      h2Sections.forEach((sectionData) => {
         const sec = el("div", "ncv-section");
 
         const hdr = el("div", "ncv-section-header");
-        hdr.appendChild(el("span", "ncv-section-num", num));
         hdr.appendChild(el("h2", null, sectionData.heading.text));
         sec.appendChild(hdr);
+
+        // "The future we anticipate" → boxed vision list (the section header is the only heading)
+        if (/the future we anticipate/i.test(sectionData.heading.text)) {
+          const card = el("div", "ncv-summary-card");
+          sectionData.blocks.forEach((b) => {
+            if (b.type === "list") card.appendChild(renderListItems(b.items));
+            else if (b.type === "paragraph") card.appendChild(renderPara(b.text));
+          });
+          sec.appendChild(card);
+          article.appendChild(sec);
+          return;
+        }
 
         const subs = groupH3(sectionData.blocks);
 
@@ -4754,18 +4764,6 @@
                 sec.appendChild(renderPara(b.text));
               }
             });
-            return;
-          }
-
-          // "The future we anticipate" → summary card
-          if (/the future we anticipate/i.test(subTitle)) {
-            const card = el("div", "ncv-summary-card");
-            card.appendChild(el("h4", "vision-future-heading", subTitle));
-            sub.blocks.forEach((b) => {
-              if (b.type === "list") card.appendChild(renderListItems(b.items));
-              else card.appendChild(renderPara(b.text));
-            });
-            sec.appendChild(card);
             return;
           }
 

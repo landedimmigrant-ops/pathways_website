@@ -164,9 +164,7 @@ Together, the 7 Pathways form a living support system that will evolve through f
 - V1 Studio (external unit)
 - More to come...
 
-## Concordia’s Pathways to Impact Vision
-
-### The future we anticipate:
+## The future we anticipate
 
 - Researchers are supported to maximize the diverse impacts of their work.
 - Multiple pathways to impact are recognized and strengthened.
