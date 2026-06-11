@@ -4171,6 +4171,12 @@ label {
   line-height: 1.65;
 }
 
+/* Inline links in body / cards read as links in running text */
+.ncv-body a,
+.ncv-summary-card a {
+  text-decoration: underline;
+}
+
 /* Summary card */
 .ncv-summary-card {
   background: #fff;

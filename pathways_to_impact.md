@@ -16,10 +16,10 @@ In this context, researchers are increasingly asked to think about impact as par
 
 At Concordia, we define research impact as the change that research activities contribute to society and beyond. We understand this change as an ongoing process of engagement that can lead to academic, social, cultural, economic, environmental, or policy effects. The consequences of research, or impacts, can:
 
-- be positive or negative
-- be of different types or natures
-- occur at different times and scales
-- result from the research process itself, as well as from its results
+- **be positive or negative**
+- **be of different types or natures**
+- **occur at different times and scales**
+- **result from the research process itself, as well as from its results**
 
 ### Framing Research Impact
 
@@ -33,9 +33,9 @@ We consider the impact areas below as a way of framing the different forms resea
 - **Policy Impact:** Informing, influencing and improving decision-making by government and public bodies, NGOs and in the private sector.
 - **Social Impact:** Informing public debate, stimulating public interest, improving welfare, equality and inclusion, quality of life and opportunities.
 
-Impact definitions were taken from Erasmus Impact Indicators tool, slightly modifying some.
+Impact definitions were taken from [Erasmus Impact Indicators tool](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/CRHOFA), slightly modifying some.
 
-This understanding of impact underpins the need for flexible approaches that can respond to different research contexts, goals, and moments in the research process.
+This understanding of impact underpins the need for flexible support that can respond to different research contexts, goals, and moments in the research process.
 
 ### Concordia’s Support for Researchers
 
@@ -153,7 +153,7 @@ You might engage here if you want to:
 
 Together, the 7 Pathways form a living support system that will evolve through feedback, learning, and the addition of new services as researcher needs and opportunities emerge. You may engage with one pathway or several, at different moments of a research project depending on the nature of your work, goals, and where you are in your research journey.
 
-### Units currently involved:
+### Units currently involved in the integrated support service:
 
 - 4th Space
 - University Communication Services

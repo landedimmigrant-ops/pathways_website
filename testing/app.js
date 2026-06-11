@@ -309,6 +309,15 @@
   // "1 hour", "2 hrs", "Self-paced") into a small set of canonical buckets so
   // the filter dropdown isn't a noisy list of every duration variant.
   const TIME_BUCKETS = ["< 15 min", "15–30 min", "30–60 min", "1–2 hours", "2+ hours", "Self-paced"];
+  // Canonical research-lifecycle order — single source of truth for the stage
+  // filter dropdown (B-26) and the home-slide stage links (B-25). Mirrors the
+  // journey order in data.js.
+  const STAGE_ORDER = ["Developing an Idea", "Active Research", "Finishing a Project"];
+  const STAGE_TO_JOURNEY = {
+    "Developing an Idea": "developing-project",
+    "Active Research": "ongoing-project",
+    "Finishing a Project": "wrapping-up-project",
+  };
   const bucketTime = (raw) => {
     if (Array.isArray(raw)) {
       const buckets = raw.map(bucketTime).filter(Boolean);
@@ -760,6 +769,22 @@
       if (!looksLikeHeading(inner)) return match;
       const cleaned = inner.replace(/[:\-—–]+\s*$/, "").trim();
       return `<h2>${cleaned}</h2>`;
+    });
+
+    // 4.5. Rescue section labels whose body line got over-promoted (B-24).
+    //    A known label (e.g. "Who it's for") sitting directly above another
+    //    heading usually means step 4 promoted the label's lead-in line — a
+    //    short phrase like "Researchers who are:" feeding a bullet list — into
+    //    its own <h2>. That orphans the label, which step 5 would then delete,
+    //    leaving the page with the lead-in but no "Who it's For" heading.
+    //    Demote that following heading back to a paragraph so the label keeps a
+    //    body and survives. Apostrophe-normalised so curly quotes still match.
+    const normLabel = (s) => s.replace(/[’‘]/g, "'").replace(/[:\-—–]+\s*$/, "").trim().toLowerCase();
+    out = out.replace(/(<h2>([^<]+)<\/h2>)\s*<h2>([^<]+)<\/h2>/g, (match, firstH2, firstText, secondText) => {
+      if (HEADING_LABELS.has(normLabel(firstText)) && !HEADING_LABELS.has(normLabel(secondText))) {
+        return `${firstH2}<p>${secondText}</p>`;
+      }
+      return match;
     });
 
     // 5. Drop orphan headings (an <h2> with no body before the next heading or end).
@@ -1712,12 +1737,16 @@
       });
     });
 
-    // Wire S5 lifecycle stages: navigate to explore + apply stage filter
+    // Wire S5 lifecycle stages: open the Research Stage tab on the matching
+    // stage panel (B-25). state.pendingResearchJourneyId is consumed by showPage
+    // after the default tab is set, so it correctly lands on the Research Stage
+    // tab rather than the All Resources tab.
     track.querySelectorAll(".lifecycle .lc-stage").forEach((stageEl) => {
       const go = () => {
         const stage = stageEl.dataset.stage;
+        const journeyId = STAGE_TO_JOURNEY[stage];
+        if (journeyId) state.pendingResearchJourneyId = journeyId;
         navigateTo("explore");
-        if (stage && typeof applyStageFilter === "function") applyStageFilter(stage);
       };
       stageEl.addEventListener("click", go);
       stageEl.addEventListener("keydown", (e) => {
@@ -4231,12 +4260,32 @@
     const aboutPathwaysSection = el("div", "about-section");
     aboutPathwaysSection.id = "about-pathways";
     const mergedAboutParagraph = [
-      "Pathways to Impact is a Concordia University initiative and coordinated set of consultations, learning resources, and practical tools that support researchers who want to plan, evidence, and communicate impact.",
-      "The program guides researchers through the impact lifecycle by helping them select a pathway stage, complete short modules, and connect with tailored opportunities for engagement, evaluation, and knowledge mobilization through a cross-campus team specializing in research development, partnership building, and knowledge mobilization."
+      "Pathways to Impact is a Concordia University initiative offering a coordinated set of consultations, workshops, learning resources, and practical tools to support researchers who want to plan, strengthen, evidence, and communicate impact.",
+      "The initiative prompts researchers to think through different methods for creating impact, and then connects them with tailored opportunities for learning and support via a cross-campus network of units."
     ].join(" ");
     aboutPathwaysSection.appendChild(el("p", null, mergedAboutParagraph));
+
+    const aboutBackground = data.about.background;
+    if (aboutBackground) {
+      aboutPathwaysSection.appendChild(el("h2", "section-title", aboutBackground.title));
+      aboutPathwaysSection.appendChild(el("p", null, aboutBackground.intro));
+      if (aboutBackground.listIntro) {
+        aboutPathwaysSection.appendChild(el("p", null, aboutBackground.listIntro));
+      }
+      if (aboutBackground.items && aboutBackground.items.length) {
+        const backgroundList = el("ul", "simple-list");
+        aboutBackground.items.forEach((item) => {
+          const li = el("li");
+          if (item.lead) li.appendChild(el("strong", null, item.lead));
+          li.appendChild(document.createTextNode(item.rest || ""));
+          backgroundList.appendChild(li);
+        });
+        aboutPathwaysSection.appendChild(backgroundList);
+      }
+    }
+
     const visionCallout = el("div", "about-vision-link-block");
-    const visionLink = el("a", "about-vision-link", "Read the Pathways Vision →");
+    const visionLink = el("a", "about-vision-link", "Read the full Concordia Impact Pathways vision →");
     visionLink.href = "#pathways-vision";
     visionLink.addEventListener("click", (event) => {
       event.preventDefault();
@@ -4570,9 +4619,14 @@
         return null;
       };
 
+      // Inline markdown → HTML: links first (so bold can't eat the "](") then bold.
+      const inline = (s) => s
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
       const renderPara = (text) => {
         const p = el("p", "ncv-body");
-        p.innerHTML = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        p.innerHTML = inline(text);
         return p;
       };
 
@@ -4580,7 +4634,7 @@
         const ul = el("ul", "ncv-list");
         items.forEach((item) => {
           const li = document.createElement("li");
-          li.innerHTML = item.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+          li.innerHTML = inline(item);
           ul.appendChild(li);
         });
         return ul;
@@ -4645,23 +4699,21 @@
 
           const subTitle = sub.heading.text;
 
-          // "Defining Research Impact" → summary card with definition highlighted
+          // "Defining Research Impact" → heading + summary card (definition + bullets)
           if (/defining research impact/i.test(subTitle)) {
-            const defBlock = sub.blocks.find((b) => b.type === "paragraph" && /we define research impact/i.test(b.text));
-            const otherBlocks = sub.blocks.filter((b) => b !== defBlock);
-            if (defBlock) {
-              const card = el("div", "ncv-summary-card");
-              const p = document.createElement("p");
-              p.innerHTML = defBlock.text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-              card.appendChild(p);
-              sec.appendChild(card);
-            }
-            renderBlocks(otherBlocks).forEach((n) => sec.appendChild(n));
+            sec.appendChild(el("h3", "vision-sub-heading", subTitle));
+            const card = el("div", "ncv-summary-card");
+            sub.blocks.forEach((b) => {
+              if (b.type === "list") card.appendChild(renderListItems(b.items));
+              else card.appendChild(renderPara(b.text));
+            });
+            sec.appendChild(card);
             return;
           }
 
-          // "Framing Research Impact" → impact-type section cards grid
+          // "Framing Research Impact" → heading + impact-type section cards grid
           if (/framing research impact/i.test(subTitle)) {
+            sec.appendChild(el("h3", "vision-sub-heading", subTitle));
             sub.blocks.forEach((b) => {
               if (b.type === "list") {
                 const cards = el("div", "ncv-section-cards vision-impact-cards");
@@ -4690,8 +4742,9 @@
             return;
           }
 
-          // "Units currently involved" → tag row
+          // "Units currently involved" → heading + tag row
           if (/units currently involved/i.test(subTitle)) {
+            sec.appendChild(el("h3", "vision-sub-heading", subTitle));
             sub.blocks.forEach((b) => {
               if (b.type === "list") {
                 const tagRow = el("div", "ncv-tag-row");
@@ -5526,6 +5579,8 @@
       });
       const values = filter.id === "time"
         ? TIME_BUCKETS.filter((b) => valueSet.has(b))
+        : filter.id === "stage"
+        ? STAGE_ORDER.filter((s) => valueSet.has(s))
         : Array.from(valueSet).sort();
 
       values.forEach((value) => {
