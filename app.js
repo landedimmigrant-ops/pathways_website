@@ -4267,10 +4267,16 @@
 
     const aboutBackground = data.about.background;
     if (aboutBackground) {
-      aboutPathwaysSection.appendChild(el("h2", "section-title", aboutBackground.title));
-      aboutPathwaysSection.appendChild(el("p", null, aboutBackground.intro));
+      const backgroundSection = el("details", "about-section section-accordion");
+      backgroundSection.id = "background";
+      const backgroundSummary = el("summary", "section-accordion__summary");
+      backgroundSummary.appendChild(el("span", "section-accordion__title", aboutBackground.title));
+      backgroundSection.appendChild(backgroundSummary);
+      const backgroundBody = el("div", "section-accordion__body");
+      const backgroundContent = el("div", "section-accordion__body-content");
+      backgroundContent.appendChild(el("p", null, aboutBackground.intro));
       if (aboutBackground.listIntro) {
-        aboutPathwaysSection.appendChild(el("p", null, aboutBackground.listIntro));
+        backgroundContent.appendChild(el("p", null, aboutBackground.listIntro));
       }
       if (aboutBackground.items && aboutBackground.items.length) {
         const backgroundList = el("ul", "simple-list");
@@ -4280,8 +4286,11 @@
           li.appendChild(document.createTextNode(item.rest || ""));
           backgroundList.appendChild(li);
         });
-        aboutPathwaysSection.appendChild(backgroundList);
+        backgroundContent.appendChild(backgroundList);
       }
+      backgroundBody.appendChild(backgroundContent);
+      backgroundSection.appendChild(backgroundBody);
+      aboutPathwaysSection.appendChild(backgroundSection);
     }
 
     const visionCallout = el("div", "about-vision-link-block");
@@ -4300,7 +4309,7 @@
       const partnersSection = el("details", "about-section section-accordion");
       partnersSection.id = "partners";
       const partnersSummary = el("summary", "section-accordion__summary");
-      partnersSummary.appendChild(el("span", "section-accordion__title", "Partners across the university"));
+      partnersSummary.appendChild(el("span", "section-accordion__title", "Cross-campus network of units"));
       partnersSection.appendChild(partnersSummary);
       const partnersBody = el("div", "section-accordion__body");
       partnersBody.appendChild(buildPartnersContent(aboutSectionById.partners));

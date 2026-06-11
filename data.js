@@ -1177,7 +1177,7 @@ window.PATHWAYS_DATA = {
       },
       {
         id: "partners",
-        title: "Partners across the university",
+        title: "Cross-campus network of units",
         body: "Pathways to Impact connects researchers with expertise and support across the university. These partners contribute guidance, spaces, and opportunities that help research move into the world in meaningful ways.",
         kind: "partners",
         groups: [
