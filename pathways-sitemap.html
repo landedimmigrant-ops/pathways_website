@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pathways to Impact — Site Map</title>
+<meta name="description" content="Static site-map diagram of the Pathways to Impact website — page structure, tabs, modules, and tools. Office of Research, Concordia University." />
+<!--
+  STATIC SITE-MAP DIAGRAM
+  Point-in-time snapshot of the Pathways to Impact SPA (branch: integration-prototype).
+  Self-contained: all CSS inlined, no external dependency except the Inter web font.
+  Routes shown as URL hashes (e.g. #explore). To update, edit this file by hand —
+  the structure is derived from app.js (routing/builders) + data.js (content).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --burgundy:#912338; --text:#1a1a1a; --muted:#5a5a5a; --border:#e6e6e6;
+  --line:#c9b3b8; --tint:#f9ebed; --tint-blue:#eaf1f8; --blue:#1a5276;
+  --bg:#fbfafa;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:32px 24px 64px;}
+
+/* Header */
+.page-head{border-bottom:2px solid var(--burgundy); padding-bottom:18px; margin-bottom:8px;}
+.page-head .kicker{font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--burgundy); margin:0 0 6px;}
+.page-head h1{font-size:28px; font-weight:700; color:var(--burgundy); margin:0 0 6px;}
+.page-head p{font-size:14px; color:var(--muted); margin:0; max-width:760px;}
+
+/* Legend */
+.legend{display:flex; flex-wrap:wrap; gap:14px 20px; align-items:center; margin:18px 0 30px; font-size:12px; color:var(--muted);}
+.legend .li{display:flex; align-items:center; gap:7px;}
+.swatch{width:22px; height:14px; border-radius:3px; flex-shrink:0;}
+.swatch--section{background:var(--burgundy);}
+.swatch--sub{background:#fff; border:1px solid var(--border); border-left:3px solid var(--burgundy);}
+.swatch--item{background:#fff; border:1px solid var(--border);}
+.swatch--ph{background:#fff; border:1px dashed #bbb;}
+.swatch--tool{background:var(--tint-blue); border:1px solid #cfe0ee; border-left:3px solid var(--blue);}
+.route-eg{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace; font-size:11px; background:#f0eef0; color:var(--burgundy); padding:1px 6px; border-radius:4px;}
+
+/* Root + branch bus */
+.root-wrap{display:flex; flex-direction:column; align-items:center;}
+.root{
+  background:var(--burgundy); color:#fff; border-radius:10px;
+  padding:14px 26px; text-align:center; box-shadow:0 2px 8px rgba(145,35,56,.25);
+}
+.root .t{font-size:18px; font-weight:700;}
+.root .s{font-size:12px; opacity:.85; margin-top:2px;}
+.root::after{content:""; width:2px; height:26px; background:var(--line);}
+
+.branches{
+  width:100%; display:grid; grid-template-columns:repeat(4,1fr); gap:18px;
+  position:relative; padding-top:26px;
+}
+.branches::before{content:""; position:absolute; top:0; left:12.5%; right:12.5%; border-top:2px solid var(--line);}
+.branch{position:relative;}
+.branch::before{content:""; position:absolute; top:-26px; left:50%; width:2px; height:26px; background:var(--line); transform:translateX(-1px);}
+
+/* Nodes */
+.node{background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.node .nt{font-weight:600; font-size:13.5px; display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
+.node .nd{font-size:12px; color:var(--muted); margin-top:3px;}
+
+.node--section{background:var(--burgundy); color:#fff; border:none; text-align:center; padding:12px; box-shadow:0 2px 6px rgba(145,35,56,.2);}
+.node--section .nt{justify-content:center; font-size:15px; font-weight:700;}
+.node--section .route{background:rgba(255,255,255,.18); color:#fff;}
+
+.children{border-left:2px solid #ece6e7; margin-left:7px; padding-left:12px; padding-top:4px;}
+
+.node--sub{border-left:3px solid var(--burgundy);}
+.node--item{padding:8px 11px;}
+.node--item .nt{font-weight:500; font-size:13px;}
+.node--ph{border:1px dashed #bbb; background:#fcfcfc;}
+.node--ph .nt{color:var(--muted); font-weight:500;}
+.node--tool{background:var(--tint-blue); border:1px solid #cfe0ee; border-left:3px solid var(--blue);}
+
+.route{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace; font-size:10.5px; background:#f0eef0; color:var(--burgundy); padding:1px 6px; border-radius:4px; font-weight:600;}
+.tag{font-size:9.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:1px 6px; border-radius:10px;}
+.tag--ph{background:#eee; color:#777;}
+.tag--tool{background:#dbe8f3; color:var(--blue);}
+.tag--live{background:var(--tint); color:var(--burgundy);}
+
+/* Chips (pathways / stages) */
+.chips{display:flex; flex-wrap:wrap; gap:5px; margin-top:7px;}
+.chip{font-size:11px; font-weight:500; background:var(--tint); color:var(--burgundy); border:1px solid #e8c9cf; border-radius:20px; padding:2px 9px;}
+.chip--stage{background:var(--tint-blue); color:var(--blue); border-color:#cfe0ee;}
+.flow{font-size:11px; color:var(--muted); margin-top:6px; font-style:italic;}
+
+/* Secondary + global rows */
+.section-label{font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--burgundy); margin:38px 0 14px; padding-bottom:6px; border-bottom:1px solid var(--border);}
+.row{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+.card{background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px; box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.card > .ch{font-size:14px; font-weight:700; color:var(--burgundy); margin:0 0 10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.mini{font-size:13px; padding:7px 10px; border:1px solid var(--border); border-radius:7px; margin-bottom:7px; background:#fff;}
+.mini.dot{border-style:dotted;}
+.mini .md{font-size:11.5px; color:var(--muted); margin-top:2px;}
+
+.foot{margin-top:40px; padding-top:16px; border-top:1px solid var(--border); font-size:12px; color:var(--muted);}
+.foot strong{color:var(--text);}
+
+@media screen and (max-width:880px){
+  .branches{grid-template-columns:1fr; gap:10px;}
+  .branches::before, .branch::before{display:none;}
+  .root::after{display:none;}
+  .row{grid-template-columns:1fr;}
+}
+@media print{
+  html,body{background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  .node, .card, .root{box-shadow:none;}
+  /* Pin the on-screen width so the 4-column layout holds in print. */
+  .wrap{width:1180px; max-width:none; margin:0 auto;}
+  /* Single page sized 1:1 to the on-screen layout (≈1180×1810 CSS px). */
+  @page{ size:320mm 486mm; margin:0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page-head">
+    <p class="kicker">Office of Research · Concordia University</p>
+    <h1>Pathways to Impact — Site Map</h1>
+    <p>Page structure of the Pathways to Impact website (current prototype). Routes are shown as URL hashes, e.g. <span class="route-eg">#explore</span>. Single-page app — every route renders within one shell.</p>
+  </header>
+
+  <div class="legend">
+    <div class="li"><span class="swatch swatch--section"></span> Primary section</div>
+    <div class="li"><span class="swatch swatch--sub"></span> Tab / sub-page</div>
+    <div class="li"><span class="swatch swatch--item"></span> Content module / item</div>
+    <div class="li"><span class="swatch swatch--tool"></span> Interactive tool</div>
+    <div class="li"><span class="swatch swatch--ph"></span> Placeholder (not yet built)</div>
+  </div>
+
+  <div class="root-wrap">
+    <div class="root">
+      <div class="t">Pathways to Impact</div>
+      <div class="s">Single-page application · destined for concordia.ca (AEM)</div>
+    </div>
+
+    <div class="branches">
+
+      <!-- ───────── HOME ───────── -->
+      <div class="branch">
+        <div class="node node--section"><div class="nt">Home <span class="route">#home</span></div></div>
+        <div class="children">
+          <div class="node node--sub"><div class="nt">Hero</div><div class="nd">Intro &amp; framing</div></div>
+          <div class="node node--sub"><div class="nt">Defining Research Impact</div></div>
+          <div class="node node--sub"><div class="nt">The Challenge</div></div>
+          <div class="node node--sub">
+            <div class="nt">Seven Pathways</div>
+            <div class="nd">The framework</div>
+            <div class="chips">
+              <span class="chip">Academic Scholarship</span>
+              <span class="chip">Community Engagement</span>
+              <span class="chip">Innovation</span>
+              <span class="chip">Commercialization</span>
+              <span class="chip">Policy</span>
+              <span class="chip">Communications</span>
+              <span class="chip">Research Creation</span>
+            </div>
+          </div>
+          <div class="node node--sub">
+            <div class="nt">Research Lifecycle</div>
+            <div class="chips">
+              <span class="chip chip--stage">Developing an Idea</span>
+              <span class="chip chip--stage">Active Research</span>
+              <span class="chip chip--stage">Finishing a Project</span>
+            </div>
+            <div class="flow">→ Explore (stage-filtered)</div>
+          </div>
+          <div class="node node--sub"><div class="nt">Support Network</div><div class="flow">→ About / Partners</div></div>
+          <div class="node node--item"><div class="nt">Featured support</div></div>
+        </div>
+      </div>
+
+      <!-- ───────── EXPLORE ───────── -->
+      <div class="branch">
+        <div class="node node--section"><div class="nt">Explore <span class="route">#explore</span></div></div>
+        <div class="children">
+          <div class="node node--sub">
+            <div class="nt">Tab · Pathways</div>
+            <div class="nd">7 pathway cards → filtered opportunities</div>
+          </div>
+          <div class="node node--sub">
+            <div class="nt">Tab · Research Stage</div>
+            <div class="nd">3 stage chips → filtered opportunities</div>
+          </div>
+          <div class="node node--sub">
+            <div class="nt">Tab · All Resources</div>
+            <div class="nd">Search + filters across everything</div>
+          </div>
+          <div class="node node--item">
+            <div class="nt">Resource types</div>
+            <div class="chips">
+              <span class="chip">Consultations</span>
+              <span class="chip">Workshops</span>
+              <span class="chip">Tools</span>
+              <span class="chip">External (11)</span>
+            </div>
+          </div>
+          <div class="node node--item">
+            <div class="nt">Deep links</div>
+            <div class="nd"><span class="route">?pathway=</span> <span class="route">?service=</span> <span class="route">?workshop=</span></div>
+          </div>
+          <div class="node node--item"><div class="nt">Modals</div><div class="nd">Opportunity detail · Feedback / interest</div></div>
+        </div>
+      </div>
+
+      <!-- ───────── LEARN ───────── -->
+      <div class="branch">
+        <div class="node node--section"><div class="nt">Learn <span class="route">#learn</span></div></div>
+        <div class="children">
+          <div class="node node--sub"><div class="nt">Tab · Impact 101</div></div>
+          <div class="children">
+            <div class="node node--item"><div class="nt">What is a Narrative CV? <span class="tag tag--live">Live</span></div><div class="nd"><span class="route">#learn-module-ncv</span></div></div>
+            <div class="node node--item"><div class="nt">Myths about impact <span class="tag tag--live">Live</span></div><div class="nd"><span class="route">#learn-module-myths</span></div></div>
+            <div class="node node--ph"><div class="nt">Impact across disciplines <span class="tag tag--ph">Placeholder</span></div></div>
+            <div class="node node--ph"><div class="nt">Evidence that counts <span class="tag tag--ph">Placeholder</span></div></div>
+            <div class="node node--ph"><div class="nt">Why plan early <span class="tag tag--ph">Placeholder</span></div></div>
+          </div>
+          <div class="node node--sub"><div class="nt">Tab · Tools</div></div>
+          <div class="children">
+            <div class="node node--tool">
+              <div class="nt">Step 1 · Plan Your Impact <span class="tag tag--tool">Tool</span></div>
+              <div class="nd">Change → Outcomes → Outputs → Pathway → Indicators</div>
+            </div>
+            <div class="node node--tool">
+              <div class="nt">Step 2 · Build Your Narrative CV <span class="tag tag--tool">Tool</span></div>
+              <div class="nd"><span class="route">#tools-narrative</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ───────── ABOUT ───────── -->
+      <div class="branch">
+        <div class="node node--section"><div class="nt">About <span class="route">#about</span></div></div>
+        <div class="children">
+          <div class="node node--sub"><div class="nt">What Pathways is</div></div>
+          <div class="node node--sub"><div class="nt">How it works</div></div>
+          <div class="node node--sub">
+            <div class="nt">Partners</div>
+            <div class="chips">
+              <span class="chip">Office of Research</span>
+              <span class="chip">Campus partners</span>
+              <span class="chip">External partners</span>
+            </div>
+          </div>
+          <div class="node node--sub"><div class="nt">Impact Vision</div><div class="nd"><span class="route">#pathways-vision</span></div></div>
+          <div class="node node--sub"><div class="nt">About Us</div></div>
+          <div class="node node--sub"><div class="nt">Contact Us</div><div class="nd">Triage form → email</div></div>
+        </div>
+      </div>
+
+    </div><!-- /branches -->
+  </div><!-- /root-wrap -->
+
+  <!-- ───────── SECONDARY / SUPPORTING PAGES ───────── -->
+  <div class="section-label">Supporting pages (reached from within sections)</div>
+  <div class="row">
+    <div class="card">
+      <div class="ch">Start Your Pathway <span class="route">#start</span></div>
+      <div class="mini">Developing an Idea<div class="md">Stage journey → opportunities + contact</div></div>
+      <div class="mini">Active Research<div class="md">Stage journey → opportunities + contact</div></div>
+      <div class="mini">Finishing a Project<div class="md">Stage journey → opportunities + contact</div></div>
+    </div>
+    <div class="card">
+      <div class="ch">Impact Vision <span class="route">#pathways-vision</span></div>
+      <div class="mini">The vision behind the seven pathways<div class="md">Linked from Home &amp; About</div></div>
+    </div>
+    <div class="card">
+      <div class="ch">Guided tools <span class="route">#tools</span></div>
+      <div class="mini">Plan Your Impact <span class="tag tag--tool">Tool</span><div class="md">5-step impact planner</div></div>
+      <div class="mini">Build Your Narrative CV <span class="tag tag--tool">Tool</span><div class="md"><span class="route">#tools-narrative</span></div></div>
+    </div>
+  </div>
+
+  <!-- ───────── GLOBAL ELEMENTS ───────── -->
+  <div class="section-label">Global &amp; shared elements</div>
+  <div class="row">
+    <div class="card">
+      <div class="ch">Header</div>
+      <div class="mini">Brand → Home<div class="md">Nav: Home · Explore · Learn · About</div></div>
+    </div>
+    <div class="card">
+      <div class="ch">Footer</div>
+      <div class="mini">Navigation + Office of Research<div class="md">Contact: impact@concordia.ca</div></div>
+    </div>
+    <div class="card">
+      <div class="ch">Overlays</div>
+      <div class="mini dot">Opportunity / service modal</div>
+      <div class="mini dot">Feedback &amp; interest modal</div>
+      <div class="mini dot">Prototype / beta banner</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <strong>Snapshot:</strong> reflects the <code>integration-prototype</code> branch · generated 2026-06-04.
+    Routes are in-app hashes on a single-page app. Placeholders are registered routes whose content is not yet built.
+    This is a hand-maintained reference — update it when pages are added or renamed.
+  </div>
+
+</div>
+</body>
+</html>
