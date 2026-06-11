@@ -2708,7 +2708,7 @@ label {
 }
 
 .vision-article {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.65;
   color: var(--text);
 }
@@ -4139,10 +4139,29 @@ label {
   flex-shrink: 0;
 }
 
-.ncv-section-header h3 {
+.ncv-section-header h3,
+.ncv-section-header h2 {
   font-size: 18px;
   font-weight: 700;
   margin: 0;
+}
+
+.vision-sub-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--burgundy);
+  margin: 20px 0 8px;
+}
+
+.vision-future-heading {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--burgundy);
+}
+
+.vision-impact-cards {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
 .ncv-body {

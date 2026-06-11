@@ -4530,87 +4530,184 @@
     } else {
       const sourceMarkdown = stripFrontMatter(content.pathwaysVisionMarkdown);
       const blocks = parseMarkdownBlocks(sourceMarkdown);
-      const sections = [];
-      let currentSection = { heading: null, blocks: [] };
 
-      blocks.forEach((block) => {
-        if (block.type === "heading" && block.level <= 2) {
-          if (currentSection.heading || currentSection.blocks.length) {
-            sections.push(currentSection);
-          }
-          currentSection = { heading: block, blocks: [] };
-          return;
-        }
-        currentSection.blocks.push(block);
-      });
-      if (currentSection.heading || currentSection.blocks.length) {
-        sections.push(currentSection);
-      }
+      // ── Helpers ──────────────────────────────────────────────────────────
 
-      let definitionHighlighted = false;
-      const renderBlock = (block) => {
-        if (block.type === "heading") {
-          return el(block.level === 1 ? "h2" : "h3", null, block.text);
-        }
-        if (block.type === "list") {
-          const list = el("ul", "vision-list");
-          block.items.forEach((item) => list.appendChild(el("li", null, item)));
-          return list;
-        }
-        const paragraph = el("p", null, block.text);
-        const looksLikeDefinition = !definitionHighlighted
-          && /research impact/i.test(block.text)
-          && /(positive change|change that results)/i.test(block.text);
-        if (looksLikeDefinition) {
-          paragraph.classList.add("vision-definition");
-          definitionHighlighted = true;
-        }
-        return paragraph;
+      const makeAccordion = (label, children) => {
+        const wrap = el("div", "ncv-expand-block");
+        const btn = el("button", "ncv-expand-btn");
+        btn.type = "button";
+        btn.setAttribute("aria-expanded", "false");
+        btn.appendChild(el("span", null, label));
+        btn.appendChild(el("span", "ncv-chevron", "▾"));
+        const body = el("div", "ncv-expand-body");
+        children.forEach((c) => body.appendChild(c));
+        btn.addEventListener("click", () => {
+          const open = btn.getAttribute("aria-expanded") === "true";
+          btn.setAttribute("aria-expanded", String(!open));
+          body.classList.toggle("is-open", !open);
+        });
+        wrap.appendChild(btn);
+        wrap.appendChild(body);
+        return wrap;
       };
 
-      sections.forEach((sectionData) => {
-        const sectionNode = el("section", "vision-section");
-        if (sectionData.heading) {
-          sectionNode.appendChild(renderBlock(sectionData.heading));
-        }
+      const renderPara = (text) => {
+        const p = el("p", "ncv-body");
+        p.innerHTML = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        return p;
+      };
 
-        const wordCount = sectionData.blocks.reduce((sum, block) => {
-          if (block.type === "paragraph") return sum + block.text.split(/\s+/).filter(Boolean).length;
-          if (block.type === "list") return sum + block.items.join(" ").split(/\s+/).filter(Boolean).length;
-          return sum;
-        }, 0);
+      const renderListItems = (items) => {
+        const ul = el("ul", "ncv-list");
+        items.forEach((item) => {
+          const li = document.createElement("li");
+          li.innerHTML = item.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+          ul.appendChild(li);
+        });
+        return ul;
+      };
 
-        const paragraphBlocks = sectionData.blocks.filter((block) => block.type === "paragraph");
-        const longSection = wordCount > 450 && paragraphBlocks.length > 2;
+      const renderBlocks = (blks) => blks.map((b) => {
+        if (b.type === "paragraph") return renderPara(b.text);
+        if (b.type === "list") return renderListItems(b.items);
+        if (b.type === "heading") return el(`h${Math.min(b.level + 1, 6)}`, "vision-sub-heading", b.text);
+        return renderPara(b.text || "");
+      });
 
-        if (!longSection) {
-          sectionData.blocks.forEach((block) => sectionNode.appendChild(renderBlock(block)));
-          article.appendChild(sectionNode);
+      // Group blocks by H2 (skip H1 doc title)
+      const h2Sections = [];
+      let curH2 = null;
+      blocks.forEach((block) => {
+        if (block.type === "heading" && block.level === 1) return;
+        if (block.type === "heading" && block.level === 2) {
+          if (curH2) h2Sections.push(curH2);
+          curH2 = { heading: block, blocks: [] };
           return;
         }
+        if (curH2) curH2.blocks.push(block);
+      });
+      if (curH2) h2Sections.push(curH2);
 
-        let visibleParagraphs = 0;
-        let splitIndex = sectionData.blocks.length;
-        for (let i = 0; i < sectionData.blocks.length; i += 1) {
-          if (sectionData.blocks[i].type === "paragraph") {
-            visibleParagraphs += 1;
+      // Within a section, group H3 sub-sections
+      const groupH3 = (blks) => {
+        const subs = [];
+        let cur = { heading: null, blocks: [] };
+        blks.forEach((b) => {
+          if (b.type === "heading" && b.level === 3) {
+            if (cur.heading || cur.blocks.length) subs.push(cur);
+            cur = { heading: b, blocks: [] };
+            return;
           }
-          if (visibleParagraphs >= 2) {
-            splitIndex = i + 1;
-            break;
+          cur.blocks.push(b);
+        });
+        if (cur.heading || cur.blocks.length) subs.push(cur);
+        return subs;
+      };
+
+      // ── Render each H2 section ───────────────────────────────────────────
+
+      h2Sections.forEach((sectionData, idx) => {
+        const num = String(idx + 1).padStart(2, "0");
+        const sec = el("div", "ncv-section");
+
+        const hdr = el("div", "ncv-section-header");
+        hdr.appendChild(el("span", "ncv-section-num", num));
+        hdr.appendChild(el("h2", null, sectionData.heading.text));
+        sec.appendChild(hdr);
+
+        const subs = groupH3(sectionData.blocks);
+
+        subs.forEach((sub) => {
+          // Preamble blocks before first H3
+          if (!sub.heading) {
+            renderBlocks(sub.blocks).forEach((n) => sec.appendChild(n));
+            return;
           }
-        }
 
-        sectionData.blocks.slice(0, splitIndex).forEach((block) => sectionNode.appendChild(renderBlock(block)));
+          const subTitle = sub.heading.text;
 
-        const expander = el("details", "vision-expander");
-        const expanderSummary = el("summary", "vision-expander-summary", "Read more");
-        expander.appendChild(expanderSummary);
-        const expanderBody = el("div", "vision-expander-body");
-        sectionData.blocks.slice(splitIndex).forEach((block) => expanderBody.appendChild(renderBlock(block)));
-        expander.appendChild(expanderBody);
-        sectionNode.appendChild(expander);
-        article.appendChild(sectionNode);
+          // "Defining Research Impact" → summary card with definition highlighted
+          if (/defining research impact/i.test(subTitle)) {
+            const defBlock = sub.blocks.find((b) => b.type === "paragraph" && /we define research impact/i.test(b.text));
+            const otherBlocks = sub.blocks.filter((b) => b !== defBlock);
+            if (defBlock) {
+              const card = el("div", "ncv-summary-card");
+              const p = document.createElement("p");
+              p.innerHTML = defBlock.text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+              card.appendChild(p);
+              sec.appendChild(card);
+            }
+            renderBlocks(otherBlocks).forEach((n) => sec.appendChild(n));
+            return;
+          }
+
+          // "Framing Research Impact" → impact-type section cards grid
+          if (/framing research impact/i.test(subTitle)) {
+            sub.blocks.forEach((b) => {
+              if (b.type === "list") {
+                const cards = el("div", "ncv-section-cards vision-impact-cards");
+                b.items.forEach((item) => {
+                  const card = el("div", "ncv-section-card");
+                  const match = item.match(/^\*\*(.*?)\*\*[:\s]+(.*)/s);
+                  if (match) {
+                    card.appendChild(el("h4", null, match[1]));
+                    card.appendChild(el("p", null, match[2].trim()));
+                  } else {
+                    card.appendChild(el("p", null, item));
+                  }
+                  cards.appendChild(card);
+                });
+                sec.appendChild(cards);
+              } else {
+                sec.appendChild(renderPara(b.text));
+              }
+            });
+            return;
+          }
+
+          // Numbered pathway subs (e.g. "1. Academic Scholarship...") → accordion
+          if (/^\d+\./.test(subTitle)) {
+            sec.appendChild(makeAccordion(subTitle, renderBlocks(sub.blocks)));
+            return;
+          }
+
+          // "Units currently involved" → tag row
+          if (/units currently involved/i.test(subTitle)) {
+            sub.blocks.forEach((b) => {
+              if (b.type === "list") {
+                const tagRow = el("div", "ncv-tag-row");
+                b.items.forEach((item) => tagRow.appendChild(el("span", "ncv-tag", item)));
+                sec.appendChild(tagRow);
+              } else {
+                sec.appendChild(renderPara(b.text));
+              }
+            });
+            return;
+          }
+
+          // "The future we anticipate" → summary card
+          if (/the future we anticipate/i.test(subTitle)) {
+            const card = el("div", "ncv-summary-card");
+            card.appendChild(el("h4", "vision-future-heading", subTitle));
+            sub.blocks.forEach((b) => {
+              if (b.type === "list") card.appendChild(renderListItems(b.items));
+              else card.appendChild(renderPara(b.text));
+            });
+            sec.appendChild(card);
+            return;
+          }
+
+          // Default: accordion if more than 2 content blocks, otherwise plain
+          if (sub.blocks.length > 2) {
+            sec.appendChild(makeAccordion(subTitle, renderBlocks(sub.blocks)));
+          } else {
+            sec.appendChild(el("h3", "vision-sub-heading", subTitle));
+            renderBlocks(sub.blocks).forEach((n) => sec.appendChild(n));
+          }
+        });
+
+        article.appendChild(sec);
       });
     }
 
