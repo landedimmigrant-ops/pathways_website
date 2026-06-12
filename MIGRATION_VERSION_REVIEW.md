@@ -145,3 +145,9 @@ Full first pass complete; fixes applied and verified in iterations 3–4 (asset 
 - **#9** unchanged (still plain-text `impact@concordia.ca`, no form on About) — confirmed, as accepted.
 - *Minor observation for the AEM a11y pass (not a regression):* primary/outline buttons are ~35px tall, under the 44px touch-target guideline — a site-wide convention, worth a look during Concordia's SGQRI 008 / WCAG review.
 **Result: no new issues; the migration build is stable.**
+
+**Iteration 7 (2026-06-12, session continuation).** Loop re-check after context compaction. Two fixes landed this iteration (asset version → `?v=153`):
+- **#19 — Research stage resources cut off after 6** (sheet bug **B-27**, `Medium / Bug`). The Research Stage viewer (`#explore?tab=research` → any stage) clipped its resource list after ~6 cards. Root cause: `.research-viewer.is-open { max-height: 2400px }` in `styles.css`, while Active Research renders ~4200px (12 cards single-column + filter/pagination), so cards 7–12 were hidden behind `overflow: hidden`. **Fix:** raised the cap to `8000px`. Verified: `offsetHeight === scrollHeight === 4200`, "Showing 12 of 12 resources," no clipping. (commit `c29794f` on `integration-prototype`; also `bfc7d1b` on `migration-component-export`.)
+- **#20 — Route-footer prompt copy** (`Low / Copy`). The "Not sure where to go?" footer prompt now reads **"Reach out if you can't find the support you need"** — a clearer support-seeking CTA alongside the existing Contact us button. **Fix:** `app.js` footer builder. Verified: prompt renders, Contact us button still routes to About → contact section, no console errors.
+
+**#9** and **#12** remain open as accepted. Component export branch `migration-component-export` (commit `4cceb73`) is not yet merged. Site is stable and ready for the handover email to the Concordia web team.

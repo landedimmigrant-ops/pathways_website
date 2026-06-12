@@ -1235,7 +1235,7 @@
   const buildFooter = () => {
     routeFooter = el("footer", "route-footer");
     const container = el("div", "container footer-inner");
-    container.appendChild(el("span", "footer-prompt", "Not sure where to go?"));
+    container.appendChild(el("span", "footer-prompt", "Reach out if you can't find the support you need"));
     const footerLinks = el("div", "footer-links");
     [
       { label: "Learn about impact", page: "learn" },
