@@ -2,7 +2,7 @@
 
 **Branch:** `migration-version` (the current site, treated as the version heading to concordia.ca)
 **Method:** Clicking through the site in a browser as a user (desktop + mobile viewports), checking console/network as I go.
-**Last updated:** 2026-06-12 (iteration 3 — fixes applied & verified)
+**Last updated:** 2026-06-12 (iteration 4 — post-fix user pass; two new issues found & fixed, one new open note)
 
 Working list, updated each loop iteration. Each issue states what a user hits and the change made (or proposed). **Iteration 3: everything below is FIXED and browser-verified except #9 and #12, which were deliberately left open** (per Prem). Asset version bumped to `?v=148`.
 
@@ -82,6 +82,18 @@ Learn → Tools → *Build Your Narrative CV* → **Start** lands on a page bann
 The "Not sure where to go?" footer (Learn about impact / Contact us / Send feedback) appears on Explore, Learn, and About — but not on Home. May be intentional with the intent-card design; confirm.
 **Change I would make:** If unintentional, render the route footer on Home too.
 
+### 15. ✅ FIXED — Pages whose id matches their hash hijack the scroll position — `Medium / UX` *(found iteration 4)*
+Opening the NCV guide (`#learn-module-ncv`) or Pathways Vision (`#pathways-vision`) landed ~130px down with the header cut off: `navigateTo` set the hash *after* activating the page, so the browser's native scroll-to-fragment jumped to the page element (whose id equals the hash), asynchronously overriding the app's scroll-to-top. This was also the residual source of the "dies at ~130px" mystery in #4.
+**Fix:** `navigateTo` now sets the hash *before* `showPage` — while the target page is still `display:none`, the browser skips the native fragment scroll entirely. Verified: both routes land at the top.
+
+### 16. ✅ FIXED — Footer "Contact us" never reaches the contact section — `Medium / UX` *(found iteration 4)*
+Clicking **Contact us** in the footer from another page switched to About but never scrolled to the contact block — the smooth `scrollIntoView` started in the same frame as the page swap and was cancelled by the reflow (same root as #4).
+**Fix:** anchor scrolls are instant now. Verified: the contact section lands in view.
+
+### 17. 🆕 OPEN — Quick Match modal is dead code — `Low / Code health` *(found iteration 4)*
+`openQuickMatch` (~130 lines: the two-step "Where are you in your research? / What kind of impact matters?" matcher) is defined in `app.js` but never called from anywhere — the feature is unreachable by users.
+**Change I would make:** Either wire it up (e.g. the "Not sure where to start?" home tile feels like its natural trigger) or delete it before migration so the AEM team doesn't port dead UI. Needs a product decision — not acting on it unilaterally.
+
 ---
 
 ## What checked out fine
@@ -115,5 +127,6 @@ The "Not sure where to go?" footer (Learn about impact / Contact us / Send feedb
 | Footer links + external-link sweep | ✅ iteration 2 — found #14 |
 
 | Fix round (12 of 14 issues) + browser re-verification of every fix | ✅ iteration 3 |
+| Post-fix user pass: booking CTA flow, modal Esc/focus, intent cards, pathway/tab/journey routing, NCV guide, Vision, footer anchors | ✅ iteration 4 — found #15, #16 (fixed), #17 (open) |
 
-Full first pass complete; fixes applied and verified in iteration 3. Open: **#9** (mailto + verify address) and **#12** (NCV builder prototype exposure) — both deliberately deferred. Subsequent iterations: periodic re-checks (other sessions edit this repo; `data.js`/Sheet content can change counts).
+Full first pass complete; fixes applied and verified in iterations 3–4 (asset version now `?v=151`). Open: **#9** (mailto + verify address), **#12** (NCV builder prototype exposure) — both deliberately deferred — and **#17** (dead Quick Match code, needs a product call). Also noted in iteration 4: the booking CTA uses `window.open` inside the click gesture (popup-blocker-safe) and the detail/booking dialogs behave correctly end-to-end. Subsequent iterations: periodic re-checks (other sessions edit this repo; `data.js`/Sheet content can change counts).

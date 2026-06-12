@@ -6978,7 +6978,10 @@
         if (target.tagName === "DETAILS") {
           target.open = true;
         }
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Instant, like the page-top reset below: a smooth scroll started in
+        // the same frame as the page swap gets cancelled by the reflow and
+        // the anchor is never reached.
+        target.scrollIntoView({ block: "start" });
       }
     } else if (pageChanged) {
       // Instant, and only on a real page change. Smooth scrolling here gets
@@ -7055,12 +7058,18 @@
     state.pendingExploreSearch = validPage === "explore" ? (options.searchQuery || "") : "";
     state.pendingSupportSearch = validPage === "support" ? (options.supportSearch || "") : "";
 
-    showPage(validPage, anchorId);
-
+    // Set the hash BEFORE showPage activates the target page: while the page
+    // element is still display:none, the browser skips its native scroll-to-
+    // fragment, so a page whose id matches its hash (#learn-module-ncv,
+    // #pathways-vision) can't hijack the scroll position (it landed ~130px
+    // down with the header cut off). The native jump is async, so a post-hoc
+    // scrollTo after setting the hash loses the race — this ordering doesn't.
     if (!sameHash) {
       state.suppressNextHashChange = true;
       window.location.hash = nextHash;
     }
+
+    showPage(validPage, anchorId);
   };
 
   // Tool "Start" buttons target either a full page id (e.g. "tools-narrative")
