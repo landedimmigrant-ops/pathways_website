@@ -2,7 +2,7 @@
 
 **Branch:** `migration-version` (the current site, treated as the version heading to concordia.ca)
 **Method:** Clicking through the site in a browser as a user (desktop + mobile viewports), checking console/network as I go.
-**Last updated:** 2026-06-12 (iteration 5 — freeze gate: #17 removed, #18 user-reported provider-filter bug fixed)
+**Last updated:** 2026-06-12 (iteration 6 — post-freeze live regression pass: all fixes hold, no new issues)
 
 Working list, updated each loop iteration. Each issue states what a user hits and the change made (or proposed). **Iteration 3: everything below is FIXED and browser-verified except #9 and #12, which were deliberately left open** (per Prem). Asset version bumped to `?v=148`.
 
@@ -133,5 +133,15 @@ The All Resources **Service provider** dropdown is built only from each item's C
 | Fix round (12 of 14 issues) + browser re-verification of every fix | ✅ iteration 3 |
 | Post-fix user pass: booking CTA flow, modal Esc/focus, intent cards, pathway/tab/journey routing, NCV guide, Vision, footer anchors | ✅ iteration 4 — found #15, #16 (fixed), #17 (open) |
 | Freeze gate: removed #17 dead code; fixed #18 (provider-filter bug, user-reported) | ✅ iteration 5 |
+| Post-freeze live regression: #18 on mobile, #13/#14 on mobile, #7 focus-trap Tab-cycle, booking CTA, #9 status | ✅ iteration 6 — no new issues |
 
 Full first pass complete; fixes applied and verified in iterations 3–4 (asset version now `?v=151`). Open: **#9** (mailto + verify address), **#12** (NCV builder prototype exposure) — both deliberately deferred — and **#17** (dead Quick Match code, needs a product call). Also noted in iteration 4: the booking CTA uses `window.open` inside the click gesture (popup-blocker-safe) and the detail/booking dialogs behave correctly end-to-end. Subsequent iterations: periodic re-checks (other sessions edit this repo; `data.js`/Sheet content can change counts).
+
+**Iteration 6 (post-freeze, asset `?v=152`, code merged to `integration-prototype`).** Live regression pass after the 2026-06-12 freeze — all shipped fixes confirmed on the running app:
+- **#18** provider filter works on **mobile** (option present, isolates 10/10 external resources, no horizontal overflow, 16px select = no iOS focus-zoom).
+- **#13** in-development notice + **#14** route footer render cleanly on mobile (buttons stack via `flex-wrap`; footer present on the view).
+- **#7** service-detail dialog focus trap verified end-to-end: `role=dialog` + `aria-modal`, **Tab** from the last control wraps to the first and **Shift+Tab** from the first wraps to the last.
+- Booking CTA correctly opens the **shared** MS Bookings page (`outlook.office.com/book/PathwaystoImpact@liveconcordia…`) via `window.open` — not Prem's personal URL, and not broken.
+- **#9** unchanged (still plain-text `impact@concordia.ca`, no form on About) — confirmed, as accepted.
+- *Minor observation for the AEM a11y pass (not a regression):* primary/outline buttons are ~35px tall, under the 44px touch-target guideline — a site-wide convention, worth a look during Concordia's SGQRI 008 / WCAG review.
+**Result: no new issues; the migration build is stable.**
