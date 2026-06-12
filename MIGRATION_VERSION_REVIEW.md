@@ -2,7 +2,7 @@
 
 **Branch:** `migration-version` (the current site, treated as the version heading to concordia.ca)
 **Method:** Clicking through the site in a browser as a user (desktop + mobile viewports), checking console/network as I go.
-**Last updated:** 2026-06-12 (iteration 1)
+**Last updated:** 2026-06-12 (iteration 2 — full coverage pass complete)
 
 Working list, updated each loop iteration. Each issue states what a user hits and the change I would make. Nothing here has been applied to the code — list only.
 
@@ -27,7 +27,7 @@ Switching views or tabs (Learn → About, tools tab, closing the service view) k
 **Change I would make:** `window.scrollTo(0, 0)` on every route/view change; keep browser-native restoration only for back/forward.
 
 ### 5. Pathway / research-stage selection doesn't update the URL — `Medium / Shareability`
-Inbound deep links work (`#explore?pathway=community` restores the detail after reload), but clicking a pathway leaves the hash at `#explore` — so refresh loses the view and users can't share/bookmark it. Inconsistent with the service detail, which *does* write `service=` to the URL.
+Inbound deep links work (`#explore?pathway=community` restores the detail after reload), but clicking a pathway leaves the hash at `#explore` — so refresh loses the view and users can't share/bookmark it. Same for the research-stage detail (clicking *Active Research* leaves the hash at `#explore?tab=research`). Inconsistent with the service detail, which *does* write `service=` to the URL.
 **Change I would make:** Write `pathway=` / research-stage params to the hash on selection, mirroring the service-detail behaviour.
 
 ### 6. Home carousel exposes hidden slides to keyboard & screen readers — `Medium / A11y`
@@ -54,15 +54,31 @@ Singular/plural isn't handled in the results count (search for "narrative" → "
 `#garbage-route-xyz` renders Home but the bad hash stays in the URL (and would be copied/shared).
 **Change I would make:** Normalize unknown hashes to `#home` (history.replaceState), or show a small "page not found" state.
 
+### 12. NCV Builder ships visibly unfinished — `High / Migration readiness`
+Learn → Tools → *Build Your Narrative CV* → **Start** lands on a page bannered "⚠ Prototype — for testing only. This is a working draft of the Narrative CV tool, not the final version." with developer chrome on show (black "PROTOTYPE · V4 · convergence build · no LLM · storage: ncv-v4" bar, "Reset draft"). The Tools tab presents it as a finished Step 2 ("60–90 min") with no warning before the click.
+**Change I would make:** Before migration: finish the V4 port and strip the prototype chrome, or hide/disable the Step 2 card (mark "coming soon"). Don't let the public card route to a self-declared draft. *(Known internally — V4 is the converged prototype pending tone cleanup + port to app.js; this flags that the public site currently exposes it.)*
+
+### 13. Research Creation pathway is a dead end — `Medium / Content`
+`#explore?pathway=research-creation` shows the lens panel and then… nothing. Zero related resources, and the "Related resources" section is simply absent — no empty state, no pointer anywhere. A user whose work fits this pathway has nowhere to go. (Policy is also thin at 2 resources; the others have 4–12.)
+**Change I would make:** Show an explicit empty state ("No catalogued resources yet for this pathway — browse all resources or contact us"), and/or map the generic consultations (e.g. 4th Space) to it until real content exists.
+
+### 14. Footer missing on Home — `Low / Design question`
+The "Not sure where to go?" footer (Learn about impact / Contact us / Send feedback) appears on Explore, Learn, and About — but not on Home. May be intentional with the intent-card design; confirm.
+**Change I would make:** If unintentional, render the route footer on Home too.
+
 ---
 
 ## What checked out fine
 
-- No console errors or warnings, no failed network requests across every page visited.
+- No console errors or warnings, no failed network requests across every page visited (both iterations).
 - All Resources (clean state): 23 items, search, all 4 filter dropdowns, and pagination (12/page) work; deep link `#explore?tab=browse` works.
-- Learn: NCV guide module opens with working accordions and "← Back to Learn"; planner steps advance correctly once found.
+- Zero-result filter state is well done: "No matching resources" + **Clear all filters** + **Contact us for help →**.
+- Research Stage tab and Active Research detail work (activity chips + related resources); all 7 pathway deep links resolve with full lens content.
+- Learn: NCV guide module opens with working accordions and "← Back to Learn"; planner steps advance correctly once found; "please contact us" link routes to About.
 - About: native `<details>` accordions (keyboard-accessible by default); Pathways Vision page loads.
-- Mobile (375px): correct viewport meta, no horizontal overflow, hamburger toggles with proper `aria-expanded`.
+- Keyboard: skip link present and targets `#app`; comprehensive `:focus-visible` styling across nav, cards, accordions, carousel controls.
+- External links: every `target="_blank"` carries `rel="noopener"`; footer "Send feedback" goes to a Microsoft Forms survey.
+- Mobile (375px): correct viewport meta, no horizontal overflow on Home/browse/service detail, inputs at 16px (no iOS focus-zoom), hamburger toggles with proper `aria-expanded`. (Giant-text screenshots during testing were a preview pinch-zoom artifact, not a site bug.)
 
 ## Coverage tracker
 
@@ -74,10 +90,12 @@ Singular/plural isn't handled in the results count (search for "narrative" → "
 | Learn · Impact 101 + NCV guide + Tools + planner | ✅ iteration 1 |
 | About + Pathways Vision | ✅ iteration 1 |
 | Mobile spot-check (home, nav) | ✅ iteration 1 |
-| Explore · Research Stage tab + stage detail | ⏳ next |
-| Remaining 6 pathway details (content + related resources) | ⏳ next |
-| Filter combinations + zero-result states | ⏳ next |
-| NCV Builder tool (`#tools-narrative`) — flagged as "being reworked" | ⏳ next |
-| Keyboard-only walkthrough (skip link, tab order, focus visibility) | ⏳ next |
-| Mobile pass on Explore + service detail | ⏳ next |
-| Footer links + external-link sweep | ⏳ next |
+| Explore · Research Stage tab + stage detail | ✅ iteration 2 |
+| All 7 pathway details (content + related resources) | ✅ iteration 2 — found #13 |
+| Filter combinations + zero-result states | ✅ iteration 2 |
+| NCV Builder tool (`#tools-narrative`) | ✅ iteration 2 — found #12 |
+| Keyboard-only walkthrough (skip link, focus visibility) | ✅ iteration 2 |
+| Mobile pass on Explore + service detail | ✅ iteration 2 |
+| Footer links + external-link sweep | ✅ iteration 2 — found #14 |
+
+Full first pass complete. Subsequent iterations: re-verify after fixes land, and periodic re-checks (other sessions edit this repo; `data.js`/Sheet content can change counts).
