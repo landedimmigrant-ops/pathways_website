@@ -4742,6 +4742,13 @@
     const externalResources = (data.explore.externalResources || []).map((item) => ({ ...item, sourceType: "resource" }));
     const exploreItems = [...baseOpportunities, ...content.workshops, ...externalResources];
 
+    // Sentinel value for the Service-provider (unit) filter. External resources
+    // carry no Concordia `unit`, so they're absent from the unit-derived dropdown
+    // and dropped by any real-provider selection. This synthetic option lets users
+    // isolate them by provider too; the match special-cases it to sourceType.
+    // URL-friendly token — cannot collide with any real unit name.
+    const EXTERNAL_UNIT_VALUE = "external-resources";
+
     // === Pathways tab content ===
     const pathwaysTabContent = el("div", "explore-tab-content is-active");
     pathwaysTabContent.dataset.tabContent = "pathways";
@@ -5577,6 +5584,15 @@
         select.appendChild(option);
       });
 
+      // Service-provider filter: append a synthetic "External resources" bucket
+      // (last, after the real Concordia units) so externally-sourced items —
+      // which have no `unit` — are filterable by provider instead of vanishing.
+      if (filter.id === "unit" && exploreItems.some((o) => o.sourceType === "resource")) {
+        const extOption = el("option", null, "External resources");
+        extOption.value = EXTERNAL_UNIT_VALUE;
+        select.appendChild(extOption);
+      }
+
       select.addEventListener("change", (event) => {
         state.filters[filter.id] = event.target.value;
         state.browsePage = 0;
@@ -5970,7 +5986,11 @@
         const formatMatch = matchesField(opp.format, state.filters.format);
         // B-16: compare bucket-to-bucket so the filter matches the dropdown.
         const timeMatch = matchesField(bucketTime(opp.time), state.filters.time);
-        const unitMatch = matchesField(opp.unit, state.filters.unit);
+        // The synthetic "External resources" provider bucket matches by source,
+        // not by unit (external items have none). Otherwise compare units normally.
+        const unitMatch = state.filters.unit === EXTERNAL_UNIT_VALUE
+          ? opp.sourceType === "resource"
+          : matchesField(opp.unit, state.filters.unit);
 
         return matchesSearch && pathwayMatch && stageMatch && formatMatch && timeMatch && unitMatch;
       });
@@ -6668,126 +6688,6 @@
     section.closeModal = closeModal;
 
     return section;
-  };
-
-  const openQuickMatch = () => {
-    clear(modalRoot);
-    document.body.classList.add("is-modal-open");
-
-    const impactOptions = data.explore.pathways.items.map((p) => ({
-      label: p.summary.replace(/\.$/, ""),
-      pathwayId: p.id,
-      pathwayTitle: p.title,
-      pathwayKey: pathwayIdToKey[p.id] || p.id
-    }));
-
-    let selectedStage = null;
-    let selectedPathwayId = null;
-
-    const overlay = el("div", "modal-overlay quick-match-overlay");
-    const modal = el("div", "modal quick-match-modal");
-
-    const closeQM = () => {
-      clear(modalRoot);
-      document.body.classList.remove("is-modal-open");
-    };
-
-    overlay.addEventListener("click", (e) => { if (e.target === overlay) closeQM(); });
-
-    const renderStep1 = () => {
-      clear(modal);
-      modal.appendChild(el("p", "qm-step-label", "Step 1 of 2"));
-      modal.appendChild(el("h3", "qm-question", "Where are you in your research?"));
-      const options = el("div", "qm-options");
-      data.home.hero.cards.forEach((card) => {
-        const btn = el("button", "qm-option" + (selectedStage === card.id ? " is-selected" : ""), card.title);
-        btn.type = "button";
-        const desc = el("span", "qm-option-desc", card.description);
-        btn.appendChild(desc);
-        btn.addEventListener("click", () => {
-          selectedStage = card.id;
-          renderStep2();
-        });
-        options.appendChild(btn);
-      });
-      modal.appendChild(options);
-      const closeBtn = el("button", "qm-close", "\u00d7");
-      closeBtn.type = "button";
-      closeBtn.setAttribute("aria-label", "Close");
-      closeBtn.addEventListener("click", closeQM);
-      modal.appendChild(closeBtn);
-    };
-
-    const renderStep2 = () => {
-      clear(modal);
-      modal.appendChild(el("p", "qm-step-label", "Step 2 of 2"));
-      modal.appendChild(el("h3", "qm-question", "What kind of impact matters most to you?"));
-      const options = el("div", "qm-options qm-options--grid");
-      impactOptions.forEach((opt) => {
-        const btn = el("button", "qm-option qm-option--compact" + (selectedPathwayId === opt.pathwayId ? " is-selected" : ""));
-        btn.type = "button";
-        btn.appendChild(el("span", "qm-option-pathway-label", opt.pathwayTitle));
-        btn.appendChild(el("span", "qm-option-desc", opt.label));
-        btn.addEventListener("click", () => {
-          selectedPathwayId = opt.pathwayId;
-          renderResult(opt);
-        });
-        options.appendChild(btn);
-      });
-      modal.appendChild(options);
-      const backBtn = el("button", "btn-link qm-back", "\u2190 Back");
-      backBtn.type = "button";
-      backBtn.addEventListener("click", renderStep1);
-      modal.appendChild(backBtn);
-      const closeBtn = el("button", "qm-close", "\u00d7");
-      closeBtn.type = "button";
-      closeBtn.setAttribute("aria-label", "Close");
-      closeBtn.addEventListener("click", closeQM);
-      modal.appendChild(closeBtn);
-    };
-
-    const renderResult = (opt) => {
-      clear(modal);
-      const stageCard = data.home.hero.cards.find((c) => c.id === selectedStage);
-      modal.appendChild(el("p", "qm-step-label", "Your recommendation"));
-      modal.appendChild(el("h3", "qm-result-pathway", opt.pathwayTitle));
-      modal.appendChild(el("p", "qm-result-desc", opt.label + "."));
-      if (stageCard) {
-        modal.appendChild(el("p", "qm-result-stage", `For your stage: ${stageCard.title}`));
-      }
-      const actions = el("div", "qm-result-actions");
-      const exploreBtn = el("button", "btn btn-primary", "Explore this pathway \u2192");
-      exploreBtn.type = "button";
-      exploreBtn.addEventListener("click", () => {
-        closeQM();
-        if (stageCard) setContextStage(stageCard.title);
-        navigateTo("explore", "opportunity-explorer", { pathway: opt.pathwayKey });
-      });
-      const supportBtn = el("button", "btn", "Find support for my stage \u2192");
-      supportBtn.type = "button";
-      supportBtn.addEventListener("click", () => {
-        closeQM();
-        const supportAnchor = supportAnchorByJourneyId[selectedStage];
-        if (stageCard) setContextStage(stageCard.title);
-        navigateTo("support", supportAnchor || undefined);
-      });
-      actions.appendChild(exploreBtn);
-      actions.appendChild(supportBtn);
-      modal.appendChild(actions);
-      const restartBtn = el("button", "btn-link qm-back", "Start over");
-      restartBtn.type = "button";
-      restartBtn.addEventListener("click", () => { selectedStage = null; selectedPathwayId = null; renderStep1(); });
-      modal.appendChild(restartBtn);
-      const closeBtn = el("button", "qm-close", "\u00d7");
-      closeBtn.type = "button";
-      closeBtn.setAttribute("aria-label", "Close");
-      closeBtn.addEventListener("click", closeQM);
-      modal.appendChild(closeBtn);
-    };
-
-    renderStep1();
-    overlay.appendChild(modal);
-    modalRoot.appendChild(overlay);
   };
 
   const buildPages = () => {

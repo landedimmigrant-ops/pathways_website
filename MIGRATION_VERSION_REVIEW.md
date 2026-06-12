@@ -2,7 +2,7 @@
 
 **Branch:** `migration-version` (the current site, treated as the version heading to concordia.ca)
 **Method:** Clicking through the site in a browser as a user (desktop + mobile viewports), checking console/network as I go.
-**Last updated:** 2026-06-12 (iteration 4 — post-fix user pass; two new issues found & fixed, one new open note)
+**Last updated:** 2026-06-12 (iteration 5 — freeze gate: #17 removed, #18 user-reported provider-filter bug fixed)
 
 Working list, updated each loop iteration. Each issue states what a user hits and the change made (or proposed). **Iteration 3: everything below is FIXED and browser-verified except #9 and #12, which were deliberately left open** (per Prem). Asset version bumped to `?v=148`.
 
@@ -90,9 +90,13 @@ Opening the NCV guide (`#learn-module-ncv`) or Pathways Vision (`#pathways-visio
 Clicking **Contact us** in the footer from another page switched to About but never scrolled to the contact block — the smooth `scrollIntoView` started in the same frame as the page swap and was cancelled by the reflow (same root as #4).
 **Fix:** anchor scrolls are instant now. Verified: the contact section lands in view.
 
-### 17. 🆕 OPEN — Quick Match modal is dead code — `Low / Code health` *(found iteration 4)*
-`openQuickMatch` (~130 lines: the two-step "Where are you in your research? / What kind of impact matters?" matcher) is defined in `app.js` but never called from anywhere — the feature is unreachable by users.
-**Change I would make:** Either wire it up (e.g. the "Not sure where to start?" home tile feels like its natural trigger) or delete it before migration so the AEM team doesn't port dead UI. Needs a product decision — not acting on it unilaterally.
+### 17. ✅ FIXED — Quick Match modal is dead code — `Low / Code health` *(found iteration 4)*
+`openQuickMatch` (~120 lines: the two-step "Where are you in your research? / What kind of impact matters?" matcher) was defined in `app.js` but never called — unreachable.
+**Fix:** Deleted the `openQuickMatch` function (its internal `renderStep1/2`/`renderResult` went with it); `setContextStage` and `supportAnchorByJourneyId` are used elsewhere and were kept. Verified: no references remain, app builds and renders. Removed at the freeze gate so the AEM team doesn't inherit dead UI.
+
+### 18. ✅ FIXED — External resources missing from the "Service provider" filter — `Medium / Bug` *(reported by a user, iteration 5)*
+The All Resources **Service provider** dropdown is built only from each item's Concordia `unit`. All external resources have no `unit` (they carry an external `author`), so they never appeared as an option and were dropped whenever any provider was selected — reachable only via the Types filter. **Not a regression** from the migration fixes (the filter code was untouched).
+**Fix:** Added a synthetic **"External resources"** option (value `external-resources`, placed last after the Concordia units) to the provider dropdown; the match special-cases it to `sourceType === "resource"`. Verified in-browser: the option isolates exactly the 10 external resources (no leakage), real units still filter correctly, and `?unit=external-resources` round-trips on reload. *(`app.js` — `EXTERNAL_UNIT_VALUE` sentinel, dropdown build, and `applyFilters` unit match.)*
 
 ---
 
@@ -128,5 +132,6 @@ Clicking **Contact us** in the footer from another page switched to About but ne
 
 | Fix round (12 of 14 issues) + browser re-verification of every fix | ✅ iteration 3 |
 | Post-fix user pass: booking CTA flow, modal Esc/focus, intent cards, pathway/tab/journey routing, NCV guide, Vision, footer anchors | ✅ iteration 4 — found #15, #16 (fixed), #17 (open) |
+| Freeze gate: removed #17 dead code; fixed #18 (provider-filter bug, user-reported) | ✅ iteration 5 |
 
 Full first pass complete; fixes applied and verified in iterations 3–4 (asset version now `?v=151`). Open: **#9** (mailto + verify address), **#12** (NCV builder prototype exposure) — both deliberately deferred — and **#17** (dead Quick Match code, needs a product call). Also noted in iteration 4: the booking CTA uses `window.open` inside the click gesture (popup-blocker-safe) and the detail/booking dialogs behave correctly end-to-end. Subsequent iterations: periodic re-checks (other sessions edit this repo; `data.js`/Sheet content can change counts).

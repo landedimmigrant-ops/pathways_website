@@ -11,3 +11,6 @@
 
 # User-specific Claude permissions
 .claude/settings.local.json
+
+# temporary pre-regeneration backup of the migration export (Step 0 rollback insurance; deleted after verify)
+pathways_migration_june_2026.pre-regen.bak/
