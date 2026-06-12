@@ -1810,6 +1810,18 @@
       if (active) carouselWrap.style.height = `${active.offsetHeight}px`;
     }
 
+    // Off-screen slides stay rendered (the track just translates), so without
+    // this, screen readers announce all 7 slides and keyboard users tab into
+    // links inside invisible ones.
+    function carouselSyncA11y() {
+      Array.from(track.children).forEach((slide, i) => {
+        const active = i === carouselCurrent;
+        slide.setAttribute("aria-hidden", active ? "false" : "true");
+        if (active) slide.removeAttribute("inert");
+        else slide.setAttribute("inert", "");
+      });
+    }
+
     function carouselGoTo(n) {
       carouselCurrent = (n + carouselTotal) % carouselTotal;
       track.style.transform = `translateX(-${carouselCurrent * 100}%)`;
@@ -1817,6 +1829,7 @@
       counter.textContent = `${carouselCurrent + 1} / ${carouselTotal}`;
       carouselUpdateChrome(carouselCurrent);
       carouselSyncHeight();
+      carouselSyncA11y();
     }
 
     function carouselResetProgress() {
@@ -1841,6 +1854,10 @@
       d.addEventListener("click", () => { carouselGoTo(i); carouselStartTimer(); });
       dotNav.appendChild(d);
     }
+    carouselSyncA11y(); // initial state: only slide 1 exposed
+    // W3C carousel pattern: announce slide changes only while auto-rotation
+    // is off, so an idle page doesn't chatter at screen-reader users every 14s.
+    track.setAttribute("aria-live", "off");
 
     btnNext.addEventListener("click", () => { carouselGoTo(carouselCurrent + 1); if (!carouselPaused) carouselStartTimer(); });
     btnPrev.addEventListener("click", () => { carouselGoTo(carouselCurrent - 1); if (!carouselPaused) carouselStartTimer(); });
@@ -1852,10 +1869,12 @@
         progressBar.style.width = "0%";
         pauseBtn.innerHTML = "&#9654;";
         pauseBtn.setAttribute("aria-label", "Play carousel");
+        track.setAttribute("aria-live", "polite");
       } else {
         carouselStartTimer();
         pauseBtn.innerHTML = "&#10074;&#10074;";
         pauseBtn.setAttribute("aria-label", "Pause carousel");
+        track.setAttribute("aria-live", "off");
       }
     });
     carouselWrap.addEventListener("mouseenter", () => { if (!carouselPaused) { clearInterval(carouselTimer); progressBar.style.transition = "none"; } });
@@ -4729,6 +4748,17 @@
     pathwaysTabContent.appendChild(el("p", "page-intro", data.explore.pathways.intro));
 
     const pathwayItems = data.explore.pathways.items;
+    // Open a pathway through the URL (#explore?pathway=<key>) so the detail
+    // view is shareable/bookmarkable and survives refresh — hashchange then
+    // drives openPathwayInTab. Falls back to opening the panel directly when
+    // the hash already matches (no hashchange would fire).
+    const pushPathwayUrl = (pathway) => {
+      const key = pathwayIdToKey[pathway.id] || pathway.id;
+      const nextHash = `#explore?pathway=${key}`;
+      if (window.location.hash !== nextHash) window.location.hash = nextHash;
+      else openExplorePanel(pathway);
+    };
+
     // --- Full pathway grid (default view) ---
     const explorePathwayGrid = el("div", "pathway-grid explore-pathway-grid");
     pathwayItems.forEach((pathway) => {
@@ -4737,7 +4767,7 @@
       card.dataset.pathway = pathwayIdToKey[pathway.id] || pathway.id;
       card.appendChild(el("p", "pathway-card-label", pathway.title));
       card.appendChild(el("p", "pathway-card-summary", pathway.summary));
-      card.addEventListener("click", () => openExplorePanel(pathway));
+      card.addEventListener("click", () => pushPathwayUrl(pathway));
       explorePathwayGrid.appendChild(card);
     });
     pathwaysTabContent.appendChild(explorePathwayGrid);
@@ -4749,7 +4779,12 @@
     const backLink = el("button", "pathway-back-link");
     backLink.type = "button";
     backLink.textContent = "\u2190 Back to all pathways";
-    backLink.addEventListener("click", closeExplorePanel);
+    backLink.addEventListener("click", () => {
+      // Clear ?pathway= via the URL so address and view stay in sync;
+      // hashchange \u2192 syncFromUrl closes the panel.
+      if (window.location.hash !== "#explore") window.location.hash = "#explore";
+      else closeExplorePanel();
+    });
     pathwayDetailShell.appendChild(backLink);
 
     const detailLayout = el("div", "pathway-detail-layout");
@@ -4761,7 +4796,7 @@
       const tab = el("button", "pathway-side-tab");
       tab.type = "button";
       tab.textContent = pathway.title;
-      tab.addEventListener("click", () => openExplorePanel(pathway));
+      tab.addEventListener("click", () => pushPathwayUrl(pathway));
       sideTabButtons.set(pathway.id, tab);
       sideTabsList.appendChild(tab);
     });
@@ -4800,7 +4835,8 @@
     const buildPaginationControls = (totalItems, currentPage, totalPages, onPageChange) => {
       const pager = el("div", "pagination");
       if (totalPages <= 1) {
-        const counter = el("span", "pagination-counter", "Showing " + totalItems + " of " + totalItems + " resources");
+        const noun = totalItems === 1 ? "resource" : "resources";
+        const counter = el("span", "pagination-counter", "Showing " + totalItems + " of " + totalItems + " " + noun);
         pager.appendChild(counter);
         return pager;
       }
@@ -4862,6 +4898,19 @@
     pathwayDevNotice.hidden = true;
     if (devNoticeCopy.eyebrow) pathwayDevNotice.appendChild(el("p", "pathway-dev-notice-eyebrow", devNoticeCopy.eyebrow));
     if (devNoticeCopy.body) pathwayDevNotice.appendChild(el("p", "pathway-dev-notice-body", devNoticeCopy.body));
+    // The notice shouldn't be a dead end — give the user somewhere to go.
+    {
+      const devActions = el("div", "pathway-dev-notice-actions");
+      const browseBtn = el("button", "btn primary", "Browse all resources →");
+      browseBtn.type = "button";
+      browseBtn.addEventListener("click", () => pushTabUrl("browse"));
+      devActions.appendChild(browseBtn);
+      const contactBtn = el("button", "btn", "Contact us");
+      contactBtn.type = "button";
+      contactBtn.addEventListener("click", () => navigateTo("about", "contact"));
+      devActions.appendChild(contactBtn);
+      pathwayDevNotice.appendChild(devActions);
+    }
     pathwayDetailShell.appendChild(pathwayDevNotice);
 
     pathwaysTabContent.appendChild(pathwayDetailShell);
@@ -4906,8 +4955,8 @@
       (pathway.actions || []).forEach((action) => panelActions.appendChild(el("li", null, action)));
 
       // Nav handlers
-      panelPrevBtn.onclick = () => openExplorePanel(pathwayItems[prevIndex]);
-      panelNextBtn.onclick = () => openExplorePanel(pathwayItems[nextIndex]);
+      panelPrevBtn.onclick = () => pushPathwayUrl(pathwayItems[prevIndex]);
+      panelNextBtn.onclick = () => pushPathwayUrl(pathwayItems[nextIndex]);
 
       // Pathways still in development show a notice instead of related services.
       if (pathway.inDevelopment) {
@@ -5156,6 +5205,15 @@
       return card;
     }
 
+    // Open a research stage through the URL (#explore?tab=research&journey=<id>)
+    // so the stage detail is shareable and survives refresh — mirrors
+    // pushPathwayUrl. hashchange → pendingResearchJourneyId → openResearchStage.
+    const pushJourneyUrl = (journey) => {
+      const nextHash = `#explore?tab=research&journey=${journey.id}`;
+      if (window.location.hash !== nextHash) window.location.hash = nextHash;
+      else openResearchPanel(journey);
+    };
+
     // --- Stage tab row (shown when a stage panel is open, all three tabs visible) ---
     const researchPillRow = el("div", "research-stage-tabs");
     researchPillRow.hidden = true;
@@ -5164,7 +5222,7 @@
       const tab = el("button", "research-stage-tab");
       tab.type = "button";
       tab.textContent = journey.title;
-      tab.addEventListener("click", () => openResearchPanel(journey));
+      tab.addEventListener("click", () => pushJourneyUrl(journey));
       researchPillButtons.set(journey.id, tab);
       researchPillRow.appendChild(tab);
     });
@@ -5177,7 +5235,7 @@
       card.appendChild(el("p", "research-stage-num", `Stage ${idx + 1}`));
       card.appendChild(el("p", "research-stage-title", journey.title));
       card.appendChild(el("p", "research-stage-desc", journey.description));
-      card.addEventListener("click", () => openResearchPanel(journey));
+      card.addEventListener("click", () => pushJourneyUrl(journey));
       researchStageGrid.appendChild(card);
     });
 
@@ -5196,7 +5254,13 @@
     researchNextBtn.setAttribute("aria-label", "Next stage");
     const researchCloseBtn = el("button", "btn btn-icon btn-icon--close", "\u00d7");
     researchCloseBtn.type = "button";
-    researchCloseBtn.addEventListener("click", closeResearchPanel);
+    researchCloseBtn.addEventListener("click", () => {
+      // Clear ?journey= via the URL so address and view stay in sync;
+      // hashchange \u2192 syncFromUrl closes the panel.
+      const nextHash = "#explore?tab=research";
+      if (window.location.hash !== nextHash) window.location.hash = nextHash;
+      else closeResearchPanel();
+    });
     researchPanelNav.appendChild(researchPrevBtn);
     researchPanelNav.appendChild(researchNextBtn);
     researchPanelNav.appendChild(researchCloseBtn);
@@ -5363,8 +5427,8 @@
 
       loadStageServices(journey);
 
-      researchPrevBtn.onclick = () => openResearchPanel(journeys[prevIndex]);
-      researchNextBtn.onclick = () => openResearchPanel(journeys[nextIndex]);
+      researchPrevBtn.onclick = () => pushJourneyUrl(journeys[prevIndex]);
+      researchNextBtn.onclick = () => pushJourneyUrl(journeys[nextIndex]);
 
       researchViewer.classList.add("is-open");
       researchViewer.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -5578,6 +5642,11 @@
       // Tab change drops modal state — switching tabs implies you're done with the modal.
       params.delete("service");
       params.delete("book");
+      // It also drops detail-view context: a lingering ?pathway= would silently
+      // filter the catalogue and yank the view back to the Pathways tab, and a
+      // lingering ?journey= would re-open the stage panel.
+      params.delete("pathway");
+      params.delete("journey");
       const queryString = params.toString();
       const nextHash = `#explore${queryString ? "?" + queryString : ""}`;
       if (window.location.hash !== nextHash) {
@@ -5672,6 +5741,26 @@
       document.addEventListener("keydown", onKeydown);
       modalCleanups.push(() => document.removeEventListener("keydown", onKeydown));
     };
+    // Keep Tab cycling inside the open takeover — the page behind it is
+    // scroll-locked but its links would otherwise still be reachable.
+    const bindModalFocusTrap = (overlay) => {
+      const onKeydown = (e) => {
+        if (e.key !== "Tab") return;
+        const focusables = Array.from(overlay.querySelectorAll(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter((node) => node.offsetParent !== null);
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && (document.activeElement === last || !overlay.contains(document.activeElement))) {
+          e.preventDefault(); first.focus();
+        }
+      };
+      document.addEventListener("keydown", onKeydown);
+      modalCleanups.push(() => document.removeEventListener("keydown", onKeydown));
+    };
     // Capture the element that triggered the modal so we can return focus on close.
     // Without this, keyboard users land on <body> after dismissing.
     // Hash-routed close paths re-render the page, so the captured node may be
@@ -5681,7 +5770,10 @@
       const previouslyFocused = document.activeElement;
       const previousId = previouslyFocused && previouslyFocused.id ? previouslyFocused.id : "";
       modalCleanups.push(() => {
-        if (previouslyFocused && typeof previouslyFocused.focus === "function" && document.contains(previouslyFocused)) {
+        // A <body> capture means focus was already lost before the modal
+        // opened (the hashchange re-render detaches the clicked card) —
+        // "restoring" to body would strand keyboard users; use the fallbacks.
+        if (previouslyFocused && previouslyFocused !== document.body && typeof previouslyFocused.focus === "function" && document.contains(previouslyFocused)) {
           previouslyFocused.focus();
           return;
         }
@@ -5903,6 +5995,9 @@
       document.body.classList.add("is-modal-open");
       bindModalFocusRestore();
       const overlay = el("div", "modal-overlay");
+      overlay.setAttribute("role", "dialog");
+      overlay.setAttribute("aria-modal", "true");
+      overlay.setAttribute("aria-label", "Book: " + opp.title);
 
       const topbar = el("div", "modal-topbar");
       const backBtn = el("button", "modal-back-btn", "\u2190 Back");
@@ -5913,7 +6008,9 @@
       overlay.appendChild(topbar);
 
       const modal = el("div", "modal booking-redirect-modal");
-      modal.appendChild(el("h1", "modal-title", "Book: " + opp.title));
+      const redirectTitle = el("h1", "modal-title", "Book: " + opp.title);
+      redirectTitle.setAttribute("tabindex", "-1");
+      modal.appendChild(redirectTitle);
       if (opp.summary) modal.appendChild(el("p", "booking-subtitle", opp.summary));
 
       const info = el("div", "booking-redirect-info");
@@ -5936,8 +6033,10 @@
 
       overlay.appendChild(modal);
       bindModalEscape();
+      bindModalFocusTrap(overlay);
       modalRoot.appendChild(overlay);
       overlay.scrollTo(0, 0);
+      redirectTitle.focus();
     };
 
     const openBookingModal = (opp) => {
@@ -5952,6 +6051,9 @@
       document.body.classList.add("is-modal-open");
       bindModalFocusRestore();
       const overlay = el("div", "modal-overlay");
+      overlay.setAttribute("role", "dialog");
+      overlay.setAttribute("aria-modal", "true");
+      overlay.setAttribute("aria-label", opp.title);
 
       const topbar = el("div", "modal-topbar");
       const backBtn = el("button", "modal-back-btn", "\u2190 Back");
@@ -5972,7 +6074,9 @@
       const modalTitleText = isWaitlist
         ? "Join the waitlist"
         : (opp ? "Request this service" : "Request a consultation");
-      modal.appendChild(el("h1", "modal-title", modalTitleText));
+      const bookingTitle = el("h1", "modal-title", modalTitleText);
+      bookingTitle.setAttribute("tabindex", "-1");
+      modal.appendChild(bookingTitle);
       if (opp) {
         const subtitlePrefix = isWaitlist ? "Waitlist: " : "Re: ";
         modal.appendChild(el("p", "booking-subtitle", subtitlePrefix + opp.title));
@@ -6159,9 +6263,11 @@
 
       overlay.appendChild(modal);
       bindModalEscape();
+      bindModalFocusTrap(overlay);
 
       modalRoot.appendChild(overlay);
       overlay.scrollTo(0, 0);
+      bookingTitle.focus();
     };
 
     const openModal = (opp) => {
@@ -6169,6 +6275,9 @@
       document.body.classList.add("is-modal-open");
       bindModalFocusRestore();
       const overlay = el("div", "modal-overlay");
+      overlay.setAttribute("role", "dialog");
+      overlay.setAttribute("aria-modal", "true");
+      overlay.setAttribute("aria-label", opp.title);
 
       // Sticky top bar
       const topbar = el("div", "modal-topbar");
@@ -6192,7 +6301,9 @@
       const modal = el("div", "modal");
 
       // Kicker + title + author
-      modal.appendChild(el("h1", "modal-title", opp.title));
+      const modalTitle = el("h1", "modal-title", opp.title);
+      modalTitle.setAttribute("tabindex", "-1");
+      modal.appendChild(modalTitle);
       if (opp.author) modal.appendChild(el("p", "modal-author", "By: " + opp.author));
 
       // Provider block — who delivers this service. Multiple people are each
@@ -6375,9 +6486,13 @@
 
       overlay.appendChild(modal);
       bindModalEscape();
+      bindModalFocusTrap(overlay);
 
       modalRoot.appendChild(overlay);
       overlay.scrollTo(0, 0);
+      // Move focus into the dialog — keyboard/SR users otherwise stay on the
+      // (now scroll-locked) list behind it.
+      modalTitle.focus();
     };
 
     const applyStageFilter = (stage) => {
@@ -6432,6 +6547,22 @@
       state.filters.unit = params.get("unit") || "";
       // pathway intentionally not read here — applyPathwayFilterByKey in
       // showPage owns that flow (?pathway=<key>, with key→title translation).
+      // The inverse direction IS handled here: no ?pathway= in the URL means
+      // any lingering pathway context is stale (e.g. the user switched tabs) —
+      // clear the silent catalogue filter and close the detail panel so the
+      // rendered view matches the address. Same for ?journey= and the
+      // research-stage panel (re-opened from the URL by openResearchStage).
+      if (!params.get("pathway")) {
+        if (state.filters.pathway) {
+          state.filters.pathway = "";
+          const pathwayControl = filterControls.get("pathway");
+          if (pathwayControl) pathwayControl.value = "";
+        }
+        closeExplorePanel();
+      }
+      if (!params.get("journey")) {
+        closeResearchPanel();
+      }
       searchInput.value = state.search;
       filterControls.forEach((control, id) => {
         if (id === "pathway") return;
@@ -6707,6 +6838,7 @@
 
   const showPage = (pageId, anchorId) => {
     const validPage = pages.has(pageId) ? pageId : "home";
+    const pageChanged = state.page !== validPage;
     state.page = validPage;
 
     const baseTitle = data.meta.title || "Pathways to Impact";
@@ -6720,7 +6852,7 @@
 
     setActiveNav(validPage);
     if (routeFooter) {
-      routeFooter.classList.toggle("is-visible", validPage !== "home");
+      routeFooter.classList.add("is-visible");
     }
     if (validPage !== "home") {
       const homePage = pages.get("home");
@@ -6747,6 +6879,21 @@
 
     if (validPage === "explore") {
       const explorePage = pages.get("explore");
+      // An explicit ?tab=browse|research wins over a lingering ?pathway= —
+      // honour the tab the user asked for and drop the pathway (otherwise the
+      // pathway would silently filter the catalogue and yank the view back to
+      // the Pathways tab). Only reachable via hand-crafted/stale deep links;
+      // user tab clicks already strip ?pathway= in pushTabUrl.
+      const requestedExploreTab = state.pendingExploreTab || "";
+      if (state.pendingPathwayKey && (requestedExploreTab === "browse" || requestedExploreTab === "research")) {
+        state.pendingPathwayKey = "";
+        const conflictRoute = parseRouteFromHash(window.location.hash);
+        if (conflictRoute.page === "explore" && conflictRoute.params.get("pathway")) {
+          conflictRoute.params.delete("pathway");
+          const qs = conflictRoute.params.toString();
+          history.replaceState(null, "", `#explore${qs ? "?" + qs : ""}`);
+        }
+      }
       // Set the active tab FIRST from URL (?tab=research|browse), defaulting
       // to pathways if no tab param. Later helpers (applyStageFilter,
       // openPathwayInTab, openResearchStage) may override the tab as a side
@@ -6782,6 +6929,13 @@
       }
       if (explorePage && explorePage.openResearchStage && state.pendingResearchJourneyId) {
         explorePage.openResearchStage(state.pendingResearchJourneyId);
+        // Canonicalize the address so the open stage panel is always
+        // shareable, including the home-lifecycle flow that sets the pending
+        // id directly without a ?journey= URL. replaceState — silent.
+        const journeyHash = `#explore?tab=research&journey=${state.pendingResearchJourneyId}`;
+        if (window.location.hash !== journeyHash) {
+          history.replaceState(null, "", journeyHash);
+        }
         state.pendingResearchJourneyId = "";
       }
       // Reconcile modal state from the URL (?service=<id>&book=1).
@@ -6826,8 +6980,12 @@
         }
         target.scrollIntoView({ behavior: "smooth", block: "start" });
       }
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (pageChanged) {
+      // Instant, and only on a real page change. Smooth scrolling here gets
+      // cancelled mid-animation when the page swap reflows the document
+      // (users land mid-page with the header off-screen), and same-page
+      // updates (tab clicks, modal open/close) must keep the user's place.
+      window.scrollTo(0, 0);
     }
   };
 
@@ -6924,6 +7082,16 @@
     }
   };
 
+  // An unrecognized hash renders Home; normalize the address too so a
+  // nonsense URL isn't what users copy/share. replaceState — no hashchange.
+  const normalizeUnknownHash = () => {
+    const raw = (window.location.hash || "").replace("#", "");
+    if (!raw) return;
+    if (supportAnchorIds.has(raw)) return;
+    const pagePart = raw.split("?")[0];
+    if (!pages.has(pagePart)) history.replaceState(null, "", "#home");
+  };
+
   const parseRouteFromHash = (hashValue) => {
     const raw = (hashValue || "").replace("#", "");
     if (!raw) {
@@ -6949,6 +7117,7 @@
     buildFooter();
     buildPages();
 
+    normalizeUnknownHash();
     const initialRoute = parseRouteFromHash(window.location.hash);
 
     // B-05: cold-loading a modal URL (e.g. `#explore?service=X` from a bookmark
@@ -6979,6 +7148,7 @@
       state.pendingWorkshopId = initialRoute.params.get("workshop") || "";
       state.pendingExploreSearch = initialRoute.params.get("q") || "";
       state.pendingExploreTab = initialRoute.params.get("tab") || "";
+      state.pendingResearchJourneyId = initialRoute.params.get("journey") || "";
     }
     if (initialRoute.page === "learn") {
       state.pendingLearnTab = initialRoute.params.get("tab") || "";
@@ -6994,6 +7164,7 @@
         state.suppressNextHashChange = false;
         return;
       }
+      normalizeUnknownHash();
       const nextRoute = parseRouteFromHash(window.location.hash);
       const nextPathwayKey = normalizePathwayParam(nextRoute.params.get("pathway"));
       // B-12: same home → explore forwarding on hashchange (e.g. user pastes a
@@ -7012,6 +7183,9 @@
         : "";
       state.pendingExploreTab = nextRoute.page === "explore"
         ? (nextRoute.params.get("tab") || "")
+        : "";
+      state.pendingResearchJourneyId = nextRoute.page === "explore"
+        ? (nextRoute.params.get("journey") || "")
         : "";
       state.pendingLearnTab = nextRoute.page === "learn"
         ? (nextRoute.params.get("tab") || "")

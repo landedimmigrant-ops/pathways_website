@@ -447,7 +447,7 @@ window.PATHWAYS_DATA = {
     intro: "Plan your impact and build your understanding of what research impact means.",
     impact: {
       title: "What is research impact?",
-      body: "Research impact is the positive change that results from research activities and outputs. It can be social, cultural, economic, environmental, or policy-related, and it often emerges through relationships and sustained engagement."
+      body: "Research impact is the change that results from research activities and outputs. It can be social, cultural, economic, environmental, or policy-related, and it often emerges through relationships and sustained engagement."
     },
     myths: {
       title: "Myths vs realities",
@@ -684,7 +684,7 @@ window.PATHWAYS_DATA = {
       supportTitle: "Featured support",
       developmentNotice: {
         eyebrow: "In development",
-        body: "We're working with our partners across the university to develop services for this pathway."
+        body: "We're working with our partners across the university to develop this pathway — services and resources are coming soon. In the meantime, browse the full catalogue or get in touch and we'll point you in the right direction."
       },
       buttons: {
         related: "View related opportunities",
