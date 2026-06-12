@@ -1,6 +1,17 @@
 # Pathways SPA — Context Summary (Restart Notes)
 
-Last updated: 2026-04-28
+Last updated: 2026-04-28 · **Reviewed at the 2026-06-12 migration freeze.**
+
+> ⚠️ **Partially historical.** These restart-notes predate the 2026-06-12 Concordia handover freeze and
+> some sections have drifted (the nav is now **Explore · Learn · About** with a logo-only home — no
+> "Stories"/`#start`; the home page is intent-cards + a hero carousel; the route footer now shows on
+> **every** page including Home). For the **current authoritative state**, see:
+> - [`pathways_migration_june_2026/MIGRATION_LOG.md`](pathways_migration_june_2026/MIGRATION_LOG.md) — the frozen handover package (24-item catalogue, regenerated 2026-06-12).
+> - [`MIGRATION_VERSION_REVIEW.md`](MIGRATION_VERSION_REVIEW.md) — the QA review pass (issues #1–18) and what was fixed.
+> - [`DOCUMENTS_INDEX.md`](DOCUMENTS_INDEX.md) — the file map.
+>
+> The architecture below (Sheet/Docs/Bookings integration, failure modes, data model) is still accurate;
+> the UI/route/nav specifics are not — treat them as historical.
 
 ## What this repo is
 
@@ -61,9 +72,9 @@ open http://localhost:8000
 - Doc fetch fails for a single row → that row's body falls back to local `.md` (if any), console logs `[Pathways] Workshop body failed to load`. Other rows unaffected.
 - Doc fetch fails AND no local `.md` → row drops out of the workshop list.
 
-### Known gap: no staging environment
+### Staging / preview (update)
 
-Edits to the sheet (and to published Docs) go live within ~1–5 minutes. There is no preview, no review gate, no rollback. See `INTEGRATION_NOTES.md` "Known gaps" for the realistic paths to add a staging layer when volume warrants it. Lightest is a `status` column with `?preview=1` on the URL.
+Edits to the sheet (and to published Docs) go live within ~1–5 minutes. A frozen **user-testing snapshot** now exists under `testing/` (see `INTEGRATION_NOTES.md`), and content is gated by an `version = approved` column (see `COORDINATOR_GUIDE.md`). There is still no full preview/rollback gate for arbitrary edits; `INTEGRATION_NOTES.md` "Known gaps" lists the realistic paths if volume warrants more.
 
 ## Current routes
 

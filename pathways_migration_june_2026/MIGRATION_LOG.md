@@ -1,8 +1,15 @@
 # Pathways to Impact — Migration Handoff (standalone exports)
 
 **For:** Concordia University web team (AEM / concordia.ca migration)
-**Prepared:** 2026-06-10 · **Source branch:** `integration-prototype`
+**Prepared:** 2026-06-12 · **Source branch:** `integration-prototype`
 **Companion doc:** [`../CONTENT_MIGRATION.md`](../CONTENT_MIGRATION.md) — the general standalone-export standard this follows.
+
+> **Regenerated 2026-06-12** from `integration-prototype` after a full QA review pass — see
+> [`../MIGRATION_VERSION_REVIEW.md`](../MIGRATION_VERSION_REVIEW.md). This snapshot reflects the fixed
+> code (routing/state, accessibility, content/copy, and the External-resources provider-filter fix).
+> The live catalogue has also grown since the prior 2026-06-10 export: **24 items now** (was 23) — V1
+> Studio added a second workshop. Two review items are knowingly left open for the AEM team; see
+> **Caveats** below.
 
 ---
 
@@ -19,13 +26,13 @@ Each file contains, in order: a yellow "migration export" banner, a minimal Conc
 ```
 pathways_migration_june_2026/
 ├── 01-…13-*.html         13 page / section layouts        (index below)
-├── workshops/            11 active workshops & services   (one .html per item)
+├── workshops/            12 active workshops & services   (one .html per item)
 ├── resources/            10 external resources            (one .html per item)
 ├── MIGRATION_LOG.md      this file
 └── _regenerate.js        browser snippet that reproduces all of the above
 ```
 
-The catalogue's **2 interactive tools** (Impact Planning Module, Narrative CV Builder) are not under `workshops/` — they have no detail page (their card "Start"s the tool); see pages 09–11. So the All Resources count of **23 = 11 workshops + 10 resources + 2 tools**.
+The catalogue's **2 interactive tools** (Impact Planning Module, Narrative CV Builder) are not under `workshops/` — they have no detail page (their card "Start"s the tool); see pages 09–11. So the All Resources count of **24 = 12 workshops + 10 resources + 2 tools**.
 
 ---
 
@@ -66,6 +73,7 @@ One file per **active workshop / service** in the live catalogue (the full detai
 | `pips-research-agreements-ip.html` | Research Agreements & IP Support Consultation | Office of Research (PIPS) |
 | `pips-research-security-risk.html` | External Partnerships & Sensitive Research Risk Assessment | Office of Research (PIPS) |
 | `v1-studio-lab2market.html` | Lab2Market Program Exploration: Consultation | V1 Studio |
+| `v1-studio-innovation-impact.html` | Innovation Impact Workshops | V1 Studio |
 
 ## Content index — resources (`resources/`)
 
@@ -84,7 +92,7 @@ One file per **external resource** (detail page: summary, who it's for, what you
 | `ext-community-based-participatory-action-research.html` | What is Community-Based Participatory Action Research? |
 | `ext-research-tools-for-organizers.html` | Power Research and Research Tools for Organizers |
 
-> These 21 items + the 2 tools = the 23-item All Resources catalogue. Re-export after any Sheet content change (see below). The offering unit shown above is each workshop's `unit` field.
+> These 22 items + the 2 tools = the 24-item All Resources catalogue. Re-export after any Sheet content change (see below). The offering unit shown above is each workshop's `unit` field.
 
 ---
 
@@ -92,9 +100,12 @@ One file per **external resource** (detail page: summary, who it's for, what you
 
 1. **Bilingual.** These snapshots are **English only**. concordia.ca is fully bilingual, so each section will need a French counterpart (the initiative's FR name is *Vecteurs de rayonnement*). The prototype's UI strings live in JS; **translation is being handled as part of the AEM migration**, not in the prototype.
 2. **Interactivity is not reproduced.** Hash routing, carousel autoplay, live search/filtering, and modal open/close do **not** work in these static files — they're for **layout + content review**. The accordions **do** work (small inline script). The carousel is shown stacked (all slides visible) on purpose.
-3. **Content is a point-in-time snapshot (2026-06-10)** pulled from the live Google Sheet — e.g. "23 resources". Re-export after content changes (see below).
+3. **Content is a point-in-time snapshot (2026-06-12)** pulled from the live Google Sheet — currently "24 resources". Re-export after content changes (see below).
+7. **Two known-open review items (accepted).** From the 2026-06-12 QA pass ([`../MIGRATION_VERSION_REVIEW.md`](../MIGRATION_VERSION_REVIEW.md)), two issues are deliberately left for the AEM team rather than fixed in the prototype:
+   - **Contact email** — `impact@concordia.ca` appears as **plain text** (not a `mailto:` link) in the About page and in every workshop/resource footer. Wire it as a real `mailto:` and **verify the inbox exists** before go-live.
+   - **Narrative CV builder** — the live tool still shows a "prototype/draft" banner. It is **not part of this package** (see "Not included" below); flagged only so the live prototype isn't mistaken for final.
 4. **The export adds chrome.** The banner, the `.mh-header`/`.mh-footer`, and the `.mh-*` classes are added by the export tooling for context — they are **not** part of the site markup; strip them when authoring.
-5. **CSS is the whole file.** Each snapshot inlines the complete `styles.css` (~108 KB). It's class-based and self-contained (no local image/url assets — icons are inline SVG or CSS). Use it to read the exact rules behind any element.
+5. **CSS is the whole file.** Each snapshot inlines the complete `styles.css` (~112 KB). It's class-based and self-contained (no local image/url assets — icons are inline SVG or CSS). Use it to read the exact rules behind any element.
 6. **Service detail (07)** is normally a full-screen modal; its `position:fixed` was neutralized so it lays out inline.
 
 ## Not included (deliberately)

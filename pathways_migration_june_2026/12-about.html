@@ -120,8 +120,134 @@ label {
 .brand {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   color: var(--burgundy);
-  font-size: 24px;
+  font-size: 28px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.brand-home-glyph {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.brand:hover {
+  opacity: 0.78;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--burgundy);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-link {
+  font-size: 16px;
+  color: var(--text);
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--burgundy);
+}
+
+.nav-link.is-active {
+  color: var(--burgundy);
   font-weight: 700;
+  border-bottom-color: transparent;
+  text-decoration: none;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  .nav-hamburger {
+    display: flex;
+  }
+
+  /* Scope to the header so the in-modal nav (also .main-nav) stays visible. */
+  .site-header .main-nav {
+    display: none;
+    width: 100%;
+  }
+
+  .site-header.is-nav-open .main-nav {
+    display: block;
+  }
+
+  .site-header.is-nav-open .nav-list {
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  .site-header.is-nav-open .nav-link {
+    display: block;
+    padding: 12px 0;
+    font-size: 18px;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
 }
 
 .bg-burgundy {
@@ -158,40 +284,6 @@ label {
 
 .text-dark {
   color: #1a1a1a;
-}
-
-.brand-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.nav-list {
-  list-style: none;
-  display: flex;
-  gap: 22px;
-  flex-wrap: wrap;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-link {
-  font-size: 16px;
-  color: var(--text);
-  padding: 6px 0;
-  border-bottom: 2px solid transparent;
-}
-
-.nav-link:hover {
-  color: var(--burgundy);
-}
-
-.nav-link.is-active {
-  color: var(--burgundy);
-  font-weight: 700;
-  border-bottom-color: transparent;
-  text-decoration: none;
 }
 
 .page {
@@ -1402,7 +1494,10 @@ label {
 .impact-planner-entry.is-hidden,
 .impact-planner-workflow.is-hidden,
 .impact-planner-summary.is-hidden,
-.tools-planner-area.is-hidden {
+.tools-planner-area.is-hidden,
+.tools-step-cards.is-hidden,
+.tools-already-link.is-hidden,
+.narrative-funder-note.is-hidden {
   display: none;
 }
 
@@ -1861,6 +1956,41 @@ label {
   font-size: 19px;
   font-weight: 700;
   margin: 0 0 12px;
+}
+
+/* ── "In development" notice (pathways without services yet) ──── */
+
+.pathway-dev-notice {
+  margin-top: 36px;
+  padding: 26px 30px;
+  background: #faf9f6;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--dev-notice-accent, var(--burgundy));
+  border-radius: 10px;
+}
+
+.pathway-dev-notice-eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dev-notice-accent, var(--burgundy));
+}
+
+.pathway-dev-notice-body {
+  margin: 0;
+  max-width: 60ch;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.pathway-dev-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .pathway-filter-bar {
@@ -2716,7 +2846,7 @@ label {
 }
 
 .vision-article {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.65;
   color: var(--text);
 }
@@ -2856,6 +2986,23 @@ label {
 .modal-topbar-actions {
   display: flex;
   gap: 10px;
+}
+
+/* Persistent nav inside full-page modal overlays — logo + Explore/Learn/About
+   sit at the far right of the sticky top bar (Back stays left). */
+.modal-topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.modal-topbar-nav .nav-list {
+  gap: 18px;
+}
+
+.modal-home-link {
+  font-size: 18px;
 }
 
 .modal {
@@ -3107,6 +3254,22 @@ label {
 @media (max-width: 768px) {
   .modal-topbar {
     padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Tight modal bar: drop the wordmark (keep the ⌂ home glyph) and shrink the
+     nav gap so Back + ⌂ + Explore/Learn/About fit on a phone. */
+  .modal-home-link .brand-label {
+    display: none;
+  }
+
+  .modal-topbar-nav {
+    gap: 14px;
+  }
+
+  .modal-topbar-nav .nav-list {
+    gap: 14px;
   }
 
   .modal {
@@ -3164,11 +3327,6 @@ label {
   .header-inner {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .nav-list {
-    flex-wrap: wrap;
-    gap: 12px;
   }
 
   .hero-title {
@@ -3322,75 +3480,6 @@ label {
   letter-spacing: 0.06em;
   color: var(--muted);
   margin: 0 0 16px;
-}
-
-/* ── Header row + hamburger ──────────────────────────────────── */
-
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.nav-hamburger {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  flex-direction: column;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.hamburger-bar {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--text);
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-@media (max-width: 640px) {
-  .nav-hamburger {
-    display: flex;
-  }
-
-  .main-nav {
-    display: none;
-    width: 100%;
-  }
-
-  .site-header.is-nav-open .main-nav {
-    display: block;
-  }
-
-  .site-header.is-nav-open .nav-list {
-    flex-direction: column;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
-    margin-top: 8px;
-  }
-
-  .site-header.is-nav-open .nav-link {
-    display: block;
-    padding: 12px 0;
-    font-size: 18px;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
-    opacity: 0;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
 }
 
 /* ── Persistent context bar ─────────────────────────────────── */
@@ -4147,10 +4236,29 @@ label {
   flex-shrink: 0;
 }
 
-.ncv-section-header h3 {
+.ncv-section-header h3,
+.ncv-section-header h2 {
   font-size: 18px;
   font-weight: 700;
   margin: 0;
+}
+
+.vision-sub-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--burgundy);
+  margin: 20px 0 8px;
+}
+
+.vision-future-heading {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--burgundy);
+}
+
+.vision-impact-cards {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
 .ncv-body {
@@ -4158,6 +4266,12 @@ label {
   color: var(--text);
   margin-bottom: 12px;
   line-height: 1.65;
+}
+
+/* Inline links in body / cards read as links in running text */
+.ncv-body a,
+.ncv-summary-card a {
+  text-decoration: underline;
 }
 
 /* Summary card */
@@ -4333,6 +4447,26 @@ label {
 .ncv-expand-body.is-open {
   display: block;
 }
+
+/* Pathway-coloured accordions (Vision page) — each of the 7 pathways carries its
+   signature colour as a left border + label, reusing the Explore pathway palette.
+   Communications uses the darker #b07d00 for border/text (the gold #e5a712 is too
+   low-contrast as a line/label), matching the .pw / .pathway-card treatment. */
+.ncv-expand-block[data-pathway] { border-left-width: 4px; border-left-style: solid; }
+.ncv-expand-block[data-pathway="academic"]          { border-left-color: #912338; }
+.ncv-expand-block[data-pathway="academic"] .ncv-expand-btn          { color: #912338; }
+.ncv-expand-block[data-pathway="research-creation"] { border-left-color: #508212; }
+.ncv-expand-block[data-pathway="research-creation"] .ncv-expand-btn { color: #508212; }
+.ncv-expand-block[data-pathway="community"]         { border-left-color: #db0272; }
+.ncv-expand-block[data-pathway="community"] .ncv-expand-btn         { color: #db0272; }
+.ncv-expand-block[data-pathway="innovation"]        { border-left-color: #da3a16; }
+.ncv-expand-block[data-pathway="innovation"] .ncv-expand-btn        { color: #da3a16; }
+.ncv-expand-block[data-pathway="commercialization"] { border-left-color: #573996; }
+.ncv-expand-block[data-pathway="commercialization"] .ncv-expand-btn { color: #573996; }
+.ncv-expand-block[data-pathway="policy"]            { border-left-color: #0072a8; }
+.ncv-expand-block[data-pathway="policy"] .ncv-expand-btn            { color: #0072a8; }
+.ncv-expand-block[data-pathway="communications"]    { border-left-color: #b07d00; }
+.ncv-expand-block[data-pathway="communications"] .ncv-expand-btn    { color: #b07d00; }
 
 .ncv-expand-body .ncv-body {
   font-size: 14px;
@@ -5491,7 +5625,6 @@ label {
 }
 
 
-/* ===== migration-export chrome (added by export tooling, not part of the app) ===== */
 body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
 .mh-banner{background:#fff8e6;border-bottom:1px solid #f0e0a8;color:#6b5300;font-size:12px;letter-spacing:.04em;padding:8px 24px;text-align:center;}
 .mh-banner code{background:#fff;border:1px solid #eadfb0;border-radius:4px;padding:1px 5px;}
@@ -5502,19 +5635,20 @@ body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-app
 .mh-main{padding:8px 0 0;}
 .mh-footer{margin-top:40px;border-top:1px solid var(--border);background:#fafafa;padding:18px 24px;color:var(--muted);font-size:13px;text-align:center;}
 .mh-footer a{color:var(--link);}
-/* Reveal every carousel slide stacked (the live carousel shows one at a time via JS) */
 .carousel-wrap{height:auto!important;box-shadow:none;}
 .carousel-track{flex-direction:column!important;transform:none!important;}
 .carousel-track .slide{min-height:0;}
 .nav-btn,.dot-nav,.carousel-pause,.slide-counter,.progress-bar{display:none!important;}
+.modal-overlay{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important;inset:auto!important;}
 </style>
 </head>
 <body>
-<div class="mh-banner">Migration export — a static, self-contained snapshot of one Pathways&nbsp;SPA section for AEM evaluation. Source route: <code>#about</code>. Not the live app.</div><header class="mh-header"><span class="mh-brand">Pathways to Impact</span><span class="mh-tag">Concordia University · Office of Research</span><span class="mh-section">About</span></header>
+<div class="mh-banner">Migration export — a static, self-contained snapshot for AEM evaluation. Source route: <code>#about</code>. Not the live app.</div>
+<header class="mh-header"><span class="mh-brand">Pathways to Impact</span><span class="mh-tag">Concordia University · Office of Research</span><span class="mh-section">About</span></header>
 <main class="mh-main">
-<section class="page page-about is-active" data-page="about"><div class="container"><h1>About Pathways</h1><div class="about-grid"><div class="about-section" id="about-pathways"><p>Pathways to Impact is a Concordia University initiative and coordinated set of consultations, learning resources, and practical tools that support researchers who want to plan, evidence, and communicate impact. The program guides researchers through the impact lifecycle by helping them select a pathway stage, complete short modules, and connect with tailored opportunities for engagement, evaluation, and knowledge mobilization through a cross-campus team specializing in research development, partnership building, and knowledge mobilization.</p><div class="about-vision-link-block"><a class="about-vision-link" href="#pathways-vision">Read the Pathways Vision →</a><p class="card-text">A deeper look at how Concordia understands and supports research impact across disciplines and contexts.</p></div></div><details class="about-section section-accordion" id="partners" open=""><summary class="section-accordion__summary"><span class="section-accordion__title">Partners across the university</span></summary><div class="section-accordion__body"><div class="section-accordion__body-content"><p>Pathways to Impact connects researchers with expertise and support across the university. These partners contribute guidance, spaces, and opportunities that help research move into the world in meaningful ways.</p><div class="about-partner-groups"><section class="about-partner-group"><h3>Office of Research</h3><div class="about-partner-list"><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">Research Development</span><div class="about-partner-tags"><span class="tag unit-short-code">RD</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">The Research Development team supports researchers across the funding lifecycle. They provide funding identification, proposal development, strategic positioning, and institutional coordination to strengthen competitive and impact-oriented applications.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/research.html" target="_blank" rel="noopener noreferrer">Research Development</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">Partnerships, Intellectual Property and Security (PIPS)</span><div class="about-partner-tags"><span class="tag unit-short-code">PIPS</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">The PIPS team supports industry partnerships, research agreements, and intellectual property management. They help researchers navigate contracts, protect and manage intellectual property, and develop pathways for knowledge transfer and commercialization.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/research.html" target="_blank" rel="noopener noreferrer">Partnerships, Intellectual Property and Security (PIPS)</a></div></div></details></div></section><section class="about-partner-group"><h3>Campus partners</h3><div class="about-partner-list"><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">4th Space</span><div class="about-partner-tags"><span class="tag unit-short-code">4S</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">4th Space develops public programs that make research accessible and interactive. Through panels, residencies, workshops, and events, they help researchers share work with broader audiences and build relationships beyond the university.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/next-gen/4th-space.html" target="_blank" rel="noopener noreferrer">4th Space</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">Concordia Library</span><div class="about-partner-tags"><span class="tag unit-short-code">LIB</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">The Library supports open, responsible, and visible scholarship. Services include research data management, digital scholarship, bibliometrics and impact guidance, copyright and open access support, and workshops that strengthen research dissemination.</p><div class="about-partner-links"><a class="about-partner-link" href="https://library.concordia.ca/" target="_blank" rel="noopener noreferrer">Concordia Library</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">District 3</span><div class="about-partner-tags"><span class="tag unit-short-code">D3</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">District 3 helps researchers explore innovation and entrepreneurship pathways. Through training, mentorship, and incubation programs, they support translating research into applications, ventures, and real-world solutions.</p><div class="about-partner-links"><a class="about-partner-link" href="https://district3.co/" target="_blank" rel="noopener noreferrer">District 3</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">University Communications Services</span><div class="about-partner-tags"><span class="tag unit-short-code">UCS</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">University Communications Services supports researchers in sharing work with public audiences. They offer media training, interview preparation, press support, and guidance on communicating research clearly and responsibly.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/news/authors/university-communications-services.html" target="_blank" rel="noopener noreferrer">University Communications Services</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">SHIFT Centre for Social Transformation &amp; Office of Community Engagement</span><div class="about-partner-tags"><span class="tag unit-short-code">SHIFT</span><span class="tag unit-short-code">OCE</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">SHIFT and the Office of Community Engagement support participatory and community-based research. They help build reciprocal partnerships, support co-creation processes, and provide spaces for collaboration across university and community contexts.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/about/shift.html" target="_blank" rel="noopener noreferrer">SHIFT Centre for Social Transformation</a> · <a class="about-partner-link" href="https://www.concordia.ca/about/community.html" target="_blank" rel="noopener noreferrer">Office of Community Engagement</a></div></div></details></div></section><section class="about-partner-group"><h3>External partners</h3><div class="about-partner-list"><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">V1 Studio</span><div class="about-partner-tags"><span class="tag unit-short-code">V1</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">V1 Studio provides researchers with hands-on entrepreneurial training and venture development support. Their programs help researchers explore commercialization pathways, build startup skills, and move research toward societal application.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.v1.studio/" target="_blank" rel="noopener noreferrer">V1 Studio</a></div></div></details></div></section></div></div></div></details><div class="about-section about-section--contact" id="contact"><h2 class="section-title">Contact Us</h2><p>Reach out for guidance, collaboration, or to book a consultation.</p><div class="contact-list"><div class="meta-line"><span class="meta-label">Email:</span><span class="meta-value">impact@concordia.ca</span></div><div class="meta-line"><span class="meta-label">Office:</span><span class="meta-value">Office of Research, Concordia University</span></div><div class="meta-line"><span class="meta-label">Hours:</span><span class="meta-value">Monday-Friday, 9:00-17:00</span></div></div><form class="contact-form" id="contact-form" novalidate=""><h3 class="contact-form-heading">Tell us what you need</h3><p class="contact-form-intro">Fill out this short form and we’ll connect you with the right person or resource.</p><div class="contact-form-field"><label for="contact-name">Name</label><input class="contact-form-input" type="text" name="name" id="contact-name" required="" placeholder="Your full name"></div><div class="contact-form-field"><label for="contact-email">Best email for follow-up</label><input class="contact-form-input" type="email" name="email" id="contact-email" required="" placeholder="name@university.ca"></div><div class="contact-form-field"><label for="contact-role">Your role</label><select class="contact-form-select" name="role" id="contact-role"><option value="">Select your role…</option><option value="faculty">Faculty</option><option value="postdoc">Postdoctoral researcher</option><option value="grad-student">Graduate student</option><option value="staff">Research staff</option><option value="other">Other</option></select></div><div class="contact-form-field"><label for="contact-department">Department / Faculty</label><input class="contact-form-input" type="text" name="department" id="contact-department" placeholder="e.g. Department of Biology, Faculty of Arts and Science"></div><div class="contact-form-field"><label for="contact-project">Brief description of your research project</label><textarea class="contact-form-textarea" name="projectDescription" id="contact-project" rows="3" placeholder="A few sentences about your research — topic, goals, and where you are in the process."></textarea></div><div class="contact-form-field"><label for="contact-stage">Where are you in your project?</label><select class="contact-form-select" name="projectStage" id="contact-stage"><option value="">Select a stage…</option><option value="developing">Developing an Idea</option><option value="active">Active Research</option><option value="finishing">Finishing a Project</option><option value="not-sure">Not sure yet</option></select></div><div class="contact-form-field"><label for="contact-pathway">Pathway of interest (optional)</label><select class="contact-form-select" name="pathway" id="contact-pathway"><option value="">Select a pathway…</option><option value="academic-scholarship">Academic Scholarship</option><option value="community-engagement">Community Engagement</option><option value="innovation">Innovation</option><option value="commercialization">Commercialization</option><option value="policy">Policy</option><option value="communications">Communications</option><option value="research-creation">Research Creation</option><option value="not-sure">Not sure yet</option></select></div><div class="contact-form-field"><label for="contact-needs">Tell us what you want to explore</label><textarea class="contact-form-textarea" name="needs" id="contact-needs" rows="4" required="" placeholder="Briefly describe what you’re looking for — a consultation, workshop, resource, or general guidance."></textarea></div><p class="contact-form-error is-hidden" role="alert"></p><div class="contact-form-actions"><button class="btn primary" type="submit">Send request</button></div><p class="contact-form-note">We’ll review your request and follow up within 2 business days.</p><div class="contact-form-confirmation is-hidden"><p class="booking-confirm-icon">✓</p><h3 class="booking-confirm-title"></h3><p class="booking-confirm-text"></p></div></form></div></div></div></section>
+<section class="page page-about is-active" data-page="about"><div class="container"><h1>About Pathways</h1><div class="about-grid"><div class="about-section" id="about-pathways"><p>Pathways to Impact is a Concordia University initiative offering a coordinated set of consultations, workshops, learning resources, and practical tools to support researchers who want to plan, strengthen, evidence, and communicate impact. The initiative prompts researchers to think through different methods for creating impact, and then connects them with tailored opportunities for learning and support via a cross-campus network of units.</p><details class="about-section section-accordion" id="background"><summary class="section-accordion__summary"><span class="section-accordion__title">Background</span></summary><div class="section-accordion__body"><div class="section-accordion__body-content"><p>Pathways to Impact traces its roots to a 2021 proposal from Concordia’s <a href="https://www.concordia.ca/sustainability/about/action-plan/2020-2025/research.html" target="_blank" rel="noopener noreferrer">Research Sustainability Stream</a> (<a href="https://www.concordia.ca/sustainability/about/action-plan.html" target="_blank" rel="noopener noreferrer">Sustainability Action Plan</a>), which initially envisioned an incubator for sustainability research. Over time, through three comprehensive university-wide consultations, this idea evolved into a united commitment to amplify Concordia’s impact.</p><p>These pivotal consultations included:</p><ul class="simple-list"><li><strong><a href="https://www.concordia.ca/sustainability/about/sdg/voluntary-university-review.html" target="_blank" rel="noopener noreferrer">The Voluntary University Review</a></strong>, reinforced by a collaborative “17-rooms” exercise aligned with Concordia’s commitment to the UN Sustainable Development Goals (SDGs).</li><li><strong><a href="https://www.concordia.ca/content/dam/concordia/offices/provost/docs/FutureConcordiaReports2022/2022FutureConcordiaWork,WorkplaceandWorkforceFinalReport.pdf" target="_blank" rel="noopener noreferrer">Future Concordia</a></strong>, whose recommendations called for “a radical restructuring of the research ecosystem”, urging a fundamental rethink of research, its support structures, and a more inclusive approach to people, projects, and methods.</li><li><strong><a href="https://www.concordia.ca/research/about/strategic-research-plan.html" target="_blank" rel="noopener noreferrer">The Strategic Research Plan 2023-2028</a></strong>, which formalizes the university’s commitment to advancing impact and engagement (Objective 4), as reflected in the renamed Office of the Vice-President, Research, Innovation, and Impact (OVPRII) and in the creation of the Concordia University Research Impact Award (RIA) program.</li></ul></div></div></details></div><details class="about-section section-accordion" id="partners"><summary class="section-accordion__summary"><span class="section-accordion__title">Cross-campus network of units</span></summary><div class="section-accordion__body"><div class="section-accordion__body-content"><p>Pathways to Impact connects researchers with expertise and support across the university. These partners contribute guidance, spaces, and opportunities that help research move into the world in meaningful ways.</p><div class="about-partner-groups"><section class="about-partner-group"><h3>Office of Research</h3><div class="about-partner-list"><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">Research Development</span><div class="about-partner-tags"><span class="tag unit-short-code">RD</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">The Research Development team supports researchers across the funding lifecycle. They provide funding identification, proposal development, strategic positioning, and institutional coordination to strengthen competitive and impact-oriented applications.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/research.html" target="_blank" rel="noopener noreferrer">Research Development</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">Partnerships, Intellectual Property and Security (PIPS)</span><div class="about-partner-tags"><span class="tag unit-short-code">PIPS</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">The PIPS team supports industry partnerships, research agreements, and intellectual property management. They help researchers navigate contracts, protect and manage intellectual property, and develop pathways for knowledge transfer and commercialization.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/research.html" target="_blank" rel="noopener noreferrer">Partnerships, Intellectual Property and Security (PIPS)</a></div></div></details></div></section><section class="about-partner-group"><h3>Campus partners</h3><div class="about-partner-list"><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">4th Space</span><div class="about-partner-tags"><span class="tag unit-short-code">4S</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">4th Space develops public programs that make research accessible and interactive. Through panels, residencies, workshops, and events, they help researchers share work with broader audiences and build relationships beyond the university.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/next-gen/4th-space.html" target="_blank" rel="noopener noreferrer">4th Space</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">Concordia Library</span><div class="about-partner-tags"><span class="tag unit-short-code">LIB</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">The Library supports open, responsible, and visible scholarship. Services include research data management, digital scholarship, bibliometrics and impact guidance, copyright and open access support, and workshops that strengthen research dissemination.</p><div class="about-partner-links"><a class="about-partner-link" href="https://library.concordia.ca/" target="_blank" rel="noopener noreferrer">Concordia Library</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">District 3</span><div class="about-partner-tags"><span class="tag unit-short-code">D3</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">District 3 helps researchers explore innovation and entrepreneurship pathways. Through training, mentorship, and incubation programs, they support translating research into applications, ventures, and real-world solutions.</p><div class="about-partner-links"><a class="about-partner-link" href="https://district3.co/" target="_blank" rel="noopener noreferrer">District 3</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">University Communications Services</span><div class="about-partner-tags"><span class="tag unit-short-code">UCS</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">University Communications Services supports researchers in sharing work with public audiences. They offer media training, interview preparation, press support, and guidance on communicating research clearly and responsibly.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/news/authors/university-communications-services.html" target="_blank" rel="noopener noreferrer">University Communications Services</a></div></div></details><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">SHIFT Centre for Social Transformation &amp; Office of Community Engagement</span><div class="about-partner-tags"><span class="tag unit-short-code">SHIFT</span><span class="tag unit-short-code">OCE</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">SHIFT and the Office of Community Engagement support participatory and community-based research. They help build reciprocal partnerships, support co-creation processes, and provide spaces for collaboration across university and community contexts.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.concordia.ca/about/shift.html" target="_blank" rel="noopener noreferrer">SHIFT Centre for Social Transformation</a> · <a class="about-partner-link" href="https://www.concordia.ca/about/community.html" target="_blank" rel="noopener noreferrer">Office of Community Engagement</a></div></div></details></div></section><section class="about-partner-group"><h3>External partners</h3><div class="about-partner-list"><details class="about-partner-item accordion-item"><summary class="about-partner-summary accordion-summary"><span class="about-partner-name accordion-summary-text">V1 Studio</span><div class="about-partner-tags"><span class="tag unit-short-code">V1</span></div></summary><div class="about-partner-body accordion-body"><p class="card-text">V1 Studio provides researchers with hands-on entrepreneurial training and venture development support. Their programs help researchers explore commercialization pathways, build startup skills, and move research toward societal application.</p><div class="about-partner-links"><a class="about-partner-link" href="https://www.v1.studio/" target="_blank" rel="noopener noreferrer">V1 Studio</a></div></div></details></div></section></div></div></div></details><div class="about-vision-link-block"><a class="about-vision-link" href="#pathways-vision">Read the full Concordia Impact Pathways vision →</a><p class="card-text">A deeper look at how Concordia understands and supports research impact across disciplines and contexts.</p></div><div class="about-section about-section--contact" id="contact"><h2 class="section-title">Contact Us</h2><p>Reach out for guidance, collaboration, or to book a consultation.</p><div class="contact-list"><div class="meta-line"><span class="meta-label">Email:</span><span class="meta-value">impact@concordia.ca</span></div><div class="meta-line"><span class="meta-label">Office:</span><span class="meta-value">Office of Research, Concordia University</span></div><div class="meta-line"><span class="meta-label">Hours:</span><span class="meta-value">Monday-Friday, 9:00-17:00</span></div></div><div class="contact-msform-wrap" id="contact-form"><iframe class="contact-msform" src="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=hfFpVS_SE06YUM5bGrzS6PfZycU56VhFhWbM6yJ0d1lUMDJJUkM0V1BGTzRMU0M4TEg4VDNGM1c1TiQlQCN0PWcu&amp;embed=true" title="Pathways to Impact contact form" frameborder="0" allowfullscreen="" loading="lazy" style="width: 100%; height: 720px; border: 1px solid var(--border);"></iframe></div></div></div></div></section>
 </main>
 <footer class="mh-footer">Pathways to Impact · Office of Research, Concordia University · <a href="mailto:impact@concordia.ca">impact@concordia.ca</a><br>Static migration snapshot — interactive behaviour (carousel autoplay, hash routing, live data) is not reproduced.</footer>
-<script>document.addEventListener("click",function(e){var b=e.target.closest("[aria-expanded]");if(!b)return;var x=b.getAttribute("aria-expanded")==="true";b.setAttribute("aria-expanded",String(!x));var body=b.nextElementSibling;if(body)body.classList.toggle("is-open",!x);});</script>
+<script>document.addEventListener("click",function(e){var b=e.target.closest("[aria-expanded]");if(!b)return;var x=b.getAttribute("aria-expanded")==="true";b.setAttribute("aria-expanded",String(!x));var y=b.nextElementSibling;if(y)y.classList.toggle("is-open",!x);});</script>
 </body>
 </html>

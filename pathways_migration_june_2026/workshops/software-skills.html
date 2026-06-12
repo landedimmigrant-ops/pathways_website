@@ -120,8 +120,134 @@ label {
 .brand {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   color: var(--burgundy);
-  font-size: 24px;
+  font-size: 28px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.brand-home-glyph {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.brand:hover {
+  opacity: 0.78;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--burgundy);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-link {
+  font-size: 16px;
+  color: var(--text);
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--burgundy);
+}
+
+.nav-link.is-active {
+  color: var(--burgundy);
   font-weight: 700;
+  border-bottom-color: transparent;
+  text-decoration: none;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  .nav-hamburger {
+    display: flex;
+  }
+
+  /* Scope to the header so the in-modal nav (also .main-nav) stays visible. */
+  .site-header .main-nav {
+    display: none;
+    width: 100%;
+  }
+
+  .site-header.is-nav-open .main-nav {
+    display: block;
+  }
+
+  .site-header.is-nav-open .nav-list {
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  .site-header.is-nav-open .nav-link {
+    display: block;
+    padding: 12px 0;
+    font-size: 18px;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
 }
 
 .bg-burgundy {
@@ -158,40 +284,6 @@ label {
 
 .text-dark {
   color: #1a1a1a;
-}
-
-.brand-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.nav-list {
-  list-style: none;
-  display: flex;
-  gap: 22px;
-  flex-wrap: wrap;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-link {
-  font-size: 16px;
-  color: var(--text);
-  padding: 6px 0;
-  border-bottom: 2px solid transparent;
-}
-
-.nav-link:hover {
-  color: var(--burgundy);
-}
-
-.nav-link.is-active {
-  color: var(--burgundy);
-  font-weight: 700;
-  border-bottom-color: transparent;
-  text-decoration: none;
 }
 
 .page {
@@ -1402,7 +1494,10 @@ label {
 .impact-planner-entry.is-hidden,
 .impact-planner-workflow.is-hidden,
 .impact-planner-summary.is-hidden,
-.tools-planner-area.is-hidden {
+.tools-planner-area.is-hidden,
+.tools-step-cards.is-hidden,
+.tools-already-link.is-hidden,
+.narrative-funder-note.is-hidden {
   display: none;
 }
 
@@ -1861,6 +1956,41 @@ label {
   font-size: 19px;
   font-weight: 700;
   margin: 0 0 12px;
+}
+
+/* ── "In development" notice (pathways without services yet) ──── */
+
+.pathway-dev-notice {
+  margin-top: 36px;
+  padding: 26px 30px;
+  background: #faf9f6;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--dev-notice-accent, var(--burgundy));
+  border-radius: 10px;
+}
+
+.pathway-dev-notice-eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dev-notice-accent, var(--burgundy));
+}
+
+.pathway-dev-notice-body {
+  margin: 0;
+  max-width: 60ch;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.pathway-dev-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .pathway-filter-bar {
@@ -2716,7 +2846,7 @@ label {
 }
 
 .vision-article {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.65;
   color: var(--text);
 }
@@ -2856,6 +2986,23 @@ label {
 .modal-topbar-actions {
   display: flex;
   gap: 10px;
+}
+
+/* Persistent nav inside full-page modal overlays — logo + Explore/Learn/About
+   sit at the far right of the sticky top bar (Back stays left). */
+.modal-topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.modal-topbar-nav .nav-list {
+  gap: 18px;
+}
+
+.modal-home-link {
+  font-size: 18px;
 }
 
 .modal {
@@ -3107,6 +3254,22 @@ label {
 @media (max-width: 768px) {
   .modal-topbar {
     padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Tight modal bar: drop the wordmark (keep the ⌂ home glyph) and shrink the
+     nav gap so Back + ⌂ + Explore/Learn/About fit on a phone. */
+  .modal-home-link .brand-label {
+    display: none;
+  }
+
+  .modal-topbar-nav {
+    gap: 14px;
+  }
+
+  .modal-topbar-nav .nav-list {
+    gap: 14px;
   }
 
   .modal {
@@ -3164,11 +3327,6 @@ label {
   .header-inner {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .nav-list {
-    flex-wrap: wrap;
-    gap: 12px;
   }
 
   .hero-title {
@@ -3322,75 +3480,6 @@ label {
   letter-spacing: 0.06em;
   color: var(--muted);
   margin: 0 0 16px;
-}
-
-/* ── Header row + hamburger ──────────────────────────────────── */
-
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.nav-hamburger {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  flex-direction: column;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.hamburger-bar {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--text);
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-@media (max-width: 640px) {
-  .nav-hamburger {
-    display: flex;
-  }
-
-  .main-nav {
-    display: none;
-    width: 100%;
-  }
-
-  .site-header.is-nav-open .main-nav {
-    display: block;
-  }
-
-  .site-header.is-nav-open .nav-list {
-    flex-direction: column;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
-    margin-top: 8px;
-  }
-
-  .site-header.is-nav-open .nav-link {
-    display: block;
-    padding: 12px 0;
-    font-size: 18px;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
-    opacity: 0;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
 }
 
 /* ── Persistent context bar ─────────────────────────────────── */
@@ -4147,10 +4236,29 @@ label {
   flex-shrink: 0;
 }
 
-.ncv-section-header h3 {
+.ncv-section-header h3,
+.ncv-section-header h2 {
   font-size: 18px;
   font-weight: 700;
   margin: 0;
+}
+
+.vision-sub-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--burgundy);
+  margin: 20px 0 8px;
+}
+
+.vision-future-heading {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--burgundy);
+}
+
+.vision-impact-cards {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
 .ncv-body {
@@ -4158,6 +4266,12 @@ label {
   color: var(--text);
   margin-bottom: 12px;
   line-height: 1.65;
+}
+
+/* Inline links in body / cards read as links in running text */
+.ncv-body a,
+.ncv-summary-card a {
+  text-decoration: underline;
 }
 
 /* Summary card */
@@ -4333,6 +4447,26 @@ label {
 .ncv-expand-body.is-open {
   display: block;
 }
+
+/* Pathway-coloured accordions (Vision page) — each of the 7 pathways carries its
+   signature colour as a left border + label, reusing the Explore pathway palette.
+   Communications uses the darker #b07d00 for border/text (the gold #e5a712 is too
+   low-contrast as a line/label), matching the .pw / .pathway-card treatment. */
+.ncv-expand-block[data-pathway] { border-left-width: 4px; border-left-style: solid; }
+.ncv-expand-block[data-pathway="academic"]          { border-left-color: #912338; }
+.ncv-expand-block[data-pathway="academic"] .ncv-expand-btn          { color: #912338; }
+.ncv-expand-block[data-pathway="research-creation"] { border-left-color: #508212; }
+.ncv-expand-block[data-pathway="research-creation"] .ncv-expand-btn { color: #508212; }
+.ncv-expand-block[data-pathway="community"]         { border-left-color: #db0272; }
+.ncv-expand-block[data-pathway="community"] .ncv-expand-btn         { color: #db0272; }
+.ncv-expand-block[data-pathway="innovation"]        { border-left-color: #da3a16; }
+.ncv-expand-block[data-pathway="innovation"] .ncv-expand-btn        { color: #da3a16; }
+.ncv-expand-block[data-pathway="commercialization"] { border-left-color: #573996; }
+.ncv-expand-block[data-pathway="commercialization"] .ncv-expand-btn { color: #573996; }
+.ncv-expand-block[data-pathway="policy"]            { border-left-color: #0072a8; }
+.ncv-expand-block[data-pathway="policy"] .ncv-expand-btn            { color: #0072a8; }
+.ncv-expand-block[data-pathway="communications"]    { border-left-color: #b07d00; }
+.ncv-expand-block[data-pathway="communications"] .ncv-expand-btn    { color: #b07d00; }
 
 .ncv-expand-body .ncv-body {
   font-size: 14px;
@@ -5501,16 +5635,20 @@ body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-app
 .mh-main{padding:8px 0 0;}
 .mh-footer{margin-top:40px;border-top:1px solid var(--border);background:#fafafa;padding:18px 24px;color:var(--muted);font-size:13px;text-align:center;}
 .mh-footer a{color:var(--link);}
-.carousel-wrap{height:auto!important;box-shadow:none;}.carousel-track{flex-direction:column!important;transform:none!important;}.carousel-track .slide{min-height:0;}.nav-btn,.dot-nav,.carousel-pause,.slide-counter,.progress-bar{display:none!important;}
-.modal-overlay{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important;inset:auto!important;}</style>
+.carousel-wrap{height:auto!important;box-shadow:none;}
+.carousel-track{flex-direction:column!important;transform:none!important;}
+.carousel-track .slide{min-height:0;}
+.nav-btn,.dot-nav,.carousel-pause,.slide-counter,.progress-bar{display:none!important;}
+.modal-overlay{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important;inset:auto!important;}
+</style>
 </head>
 <body>
-<div class="mh-banner">Migration export — static, self-contained snapshot for AEM evaluation. Source route: <code>#explore?service=software-skills</code>. Not the live app.</div>
+<div class="mh-banner">Migration export — a static, self-contained snapshot for AEM evaluation. Source route: <code>#explore?service=software-skills</code>. Not the live app.</div>
 <header class="mh-header"><span class="mh-brand">Pathways to Impact</span><span class="mh-tag">Concordia University · Office of Research</span><span class="mh-section">Workshop: Software Skills for Research Workflows: Tool-Specific Training Series</span></header>
 <main class="mh-main">
-<div class="modal-overlay"><div class="modal-topbar"><button class="modal-back-btn" type="button">← Back</button><div class="modal-topbar-actions"></div></div><div class="modal"><h1 class="modal-title">Software Skills for Research Workflows: Tool-Specific Training Series</h1><div class="modal-provider"><span class="modal-provider-label">Offered by</span><span class="modal-provider-name">Joshua Chalifour</span><span class="modal-provider-sub">Digital Scholarship Librarian · Concordia Library</span></div><div class="modal-meta-bar"><div class="modal-meta-item"><strong>Format:</strong> Workshop</div><div class="modal-meta-item"><strong>Time:</strong> 60 min</div><div class="modal-meta-item"><strong>Stage:</strong> Active Research</div><div class="modal-meta-item"><strong>Pathway:</strong> Academic Scholarship</div></div><div class="modal-tag-bar"><span class="tag">software</span><span class="tag">tool literacy</span><span class="tag">digital workflows</span><span class="tag">data organization</span></div><blockquote class="modal-pullquote">“Research workflows are shaped by the tools we rely on every day. Building confidence with the right software can make research more organized, efficient, and easier to share over time.”</blockquote><div class="modal-body"><h2>Short Description</h2><p>Build practical skills in the digital tools that support your research workflow. This series of hands-on workshops introduces key research software — from qualitative data analysis to personal knowledge management — helping you break through the learning curve and adopt tools that make your research more organized, efficient, and shareable.&nbsp;</p><h2>Relevance to Impact</h2><p>This training series supports research impact by strengthening the infrastructure of everyday research practice. By improving digital workflows, data organization, and tool literacy, it enables research outputs to be more reusable, shareable, and ready for collaboration, open dissemination, and long-term impact.&nbsp;</p><h2>Who It’s For</h2><p>Researchers at any stage who want to strengthen their digital research workflows using practical, accessible software tools.&nbsp;</p><h2>Each session focuses on a specific tool</h2><ul><li>Obsidian / AnyType&nbsp;— personal knowledge management, writing, note-taking</li><li>QualCoder&nbsp;— qualitative data analysis for text, image, audio, and video</li><li>Tropy&nbsp;— image and archival research collection management</li><li>Zotero&nbsp;— reference management, research organization, and note-taking</li><li>Additional tools can be requested&nbsp;</li></ul><h2>What You’ll Learn / Outcomes</h2><ul><li>Understand the tool’s interface and break the initial learning curve</li><li>Gain comfort using essential functions that immediately support research workflows&nbsp;</li><li>Learn advanced possibilities that support collaboration, archiving, and impact-oriented outputs</li><li>Discover how the tool integrates into broader research data and knowledge management practices</li></ul><h2>Format</h2><ul><li>Interactive workshop&nbsp;(60–120 minutes depending on the tool you select)</li><li>In-person at the Library</li><li>Group size: 3–25 participants</li><li>On-demand scheduling&nbsp;</li></ul><h2>What to Bring</h2><ul><li>The tool installed on your computer</li><li>In some cases, the Library can provide a computer with software pre-installed&nbsp;</li></ul><h2>Materials Provided</h2><ul><li>Slides, guides, workflow templates, and curated links for mastering each tool.&nbsp;</li></ul><h2>Service Provider</h2><p>As a Digital Scholarship Librarian with Concordia University, Joshua Chalifour identifies and assesses new possibilities that emerging technologies open for academic work. This involves collaborating in cross-disciplinary research processes, as well as engaging in teaching and learning through digital scholarship initiatives and services. Additionally, Chalifour is the subject librarian for Communication Studies and Journalism.</p></div><div class="modal-bottom-cta"><button class="btn primary modal-cta-btn" type="button">Register for this workshop</button></div><div class="modal-related"><h2 class="modal-related-title">Researchers who used this also found…</h2><div class="modal-related-grid"><div class="modal-related-card"><span class="format-badge format-badge--workshop"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="14" height="14" rx="2"></rect><path d="M16 2v4M8 2v4M3 9h14"></path></svg><span class="format-badge-text">Workshop</span></span><p class="modal-related-card-title">Evaluating Digital Scholarship Tools for Research</p><p class="modal-related-card-summary">Digital tools shape how research is created, analyzed, and shared. This workshop helps researchers critically evaluate digital scholarship (digital humanities) techniques and technologies. For example, would you like to present data on a website with an interactive way to explore it? Can your work support a group of people collaboratively annotating it online? Do you need to tie geographic locations to portions of text in a novel? Gain awareness of where to find the tools or platforms, and how to select approaches that align with your research goals, ethics, and impact ambitions.</p><button class="btn" type="button">View details →</button></div><div class="modal-related-card"><span class="format-badge format-badge--consultation"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10c0 3.866-3.582 7-8 7a9 9 0 01-4-.93L2 18l1.4-3.5A7 7 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"></path></svg><span class="format-badge-text">Consultation</span></span><p class="modal-related-card-title">Data Management Plan (DMP) Consultations</p><p class="modal-related-card-summary">Preparing a Data Management Plan for a grant or award. This one-on-one consultation with a librarian helps you answer your specific DMP questions, understand the DMP Assistant tool, and choose templates aligned with your research data. The service supports you in your creation and writing of a strong, funder-ready DMP.</p><button class="btn" type="button">View details →</button></div><div class="modal-related-card"><span class="format-badge format-badge--workshop"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="14" height="14" rx="2"></rect><path d="M16 2v4M8 2v4M3 9h14"></path></svg><span class="format-badge-text">Workshop</span></span><p class="modal-related-card-title">Licensing &amp; Open Scholarship: Creative Commons, Rights, and Sharing Your Research</p><p class="modal-related-card-summary">“Research agreements and licensing choices often determine how far your work can travel and who can build on it. This activity supports researchers in navigating the implications of author agreements, open access, and sharing decisions so their research remains usable, visible, and impactful over time.”</p><button class="btn" type="button">View details →</button></div></div></div></div></div>
+<div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Software Skills for Research Workflows: Tool-Specific Training Series"><div class="modal-topbar"><button class="modal-back-btn" type="button">← Back</button><div class="modal-topbar-actions"></div><div class="modal-topbar-nav"><a class="brand modal-home-link" href="#home" aria-label="Go to Pathways to Impact home" title="Return home"><span class="brand-home-glyph" aria-hidden="true">⌂</span><span class="brand-label">Pathways to Impact</span></a><nav class="main-nav modal-main-nav"><ul class="nav-list"><li><a class="nav-link" href="#explore" data-page="explore">Explore</a></li><li><a class="nav-link" href="#learn" data-page="learn">Learn</a></li><li><a class="nav-link" href="#about" data-page="about">About</a></li></ul></nav></div></div><div class="modal"><h1 class="modal-title" tabindex="-1">Software Skills for Research Workflows: Tool-Specific Training Series</h1><div class="modal-provider"><span class="modal-provider-label">Offered by</span><span class="modal-provider-name">Joshua Chalifour</span><span class="modal-provider-sub">Digital Scholarship Librarian · Concordia Library</span></div><div class="modal-meta-bar"><div class="modal-meta-item"><strong>Format:</strong> Workshop</div><div class="modal-meta-item"><strong>Time:</strong> 60 min</div><div class="modal-meta-item"><strong>Stage:</strong> Active Research</div><div class="modal-meta-item"><strong>Pathway:</strong> Academic Scholarship</div></div><div class="modal-tag-bar"><span class="tag">software</span><span class="tag">tool literacy</span><span class="tag">digital workflows</span><span class="tag">data organization</span></div><blockquote class="modal-pullquote">“Research workflows are shaped by the tools we rely on every day. Building confidence with the right software can make research more organized, efficient, and easier to share over time.”</blockquote><div class="modal-body"><h2>Short Description</h2><p>Build practical skills in the digital tools that support your research workflow. This series of hands-on workshops introduces key research software — from qualitative data analysis to personal knowledge management — helping you break through the learning curve and adopt tools that make your research more organized, efficient, and shareable.&nbsp;</p><h2>Relevance to Impact</h2><p>This training series supports research impact by strengthening the infrastructure of everyday research practice. By improving digital workflows, data organization, and tool literacy, it enables research outputs to be more reusable, shareable, and ready for collaboration, open dissemination, and long-term impact.&nbsp;</p><h2>Who It’s For</h2><p>Researchers at any stage who want to strengthen their digital research workflows using practical, accessible software tools.&nbsp;</p><h2>Workshop Options</h2><p>Each session focuses on a specific tool</p><ul><li>Obsidian / AnyType&nbsp;— personal knowledge management, writing, note-taking</li><li>QualCoder&nbsp;— qualitative data analysis for text, image, audio, and video</li><li>Tropy&nbsp;— image and archival research collection management</li><li>Zotero&nbsp;— reference management, research organization, and note-taking</li><li>Additional tools can be requested&nbsp;</li></ul><h2>What You’ll Learn / Outcomes</h2><ul><li>Understand the tool’s interface and break the initial learning curve</li><li>Gain comfort using essential functions that immediately support research workflows&nbsp;</li><li>Learn advanced possibilities that support collaboration, archiving, and impact-oriented outputs</li><li>Discover how the tool integrates into broader research data and knowledge management practices</li></ul><h2>Format</h2><ul><li>Interactive workshop&nbsp;(60–120 minutes depending on the tool you select)</li><li>In-person at the Library</li><li>Group size: 3–25 participants</li><li>On-demand scheduling&nbsp;</li></ul><h2>What to Bring</h2><ul><li>The tool installed on your computer</li><li>In some cases, the Library can provide a computer with software pre-installed&nbsp;</li></ul><h2>Materials Provided</h2><ul><li>Slides, guides, workflow templates, and curated links for mastering each tool.&nbsp;</li></ul><h2>Service Provider</h2><p>As a Digital Scholarship Librarian with Concordia University, Joshua Chalifour identifies and assesses new possibilities that emerging technologies open for academic work. This involves collaborating in cross-disciplinary research processes, as well as engaging in teaching and learning through digital scholarship initiatives and services. Additionally, Chalifour is the subject librarian for Communication Studies and Journalism.</p></div><div class="modal-bottom-cta"><button class="btn primary modal-cta-btn" type="button">Register for this workshop</button></div><div class="modal-related"><h2 class="modal-related-title">Researchers who used this also found…</h2><div class="modal-related-grid"><div class="modal-related-card"><span class="format-badge format-badge--workshop"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="14" height="14" rx="2"></rect><path d="M16 2v4M8 2v4M3 9h14"></path></svg><span class="format-badge-text">Workshop</span></span><p class="modal-related-card-title">Evaluating Digital Scholarship Tools for Research</p><p class="modal-related-card-summary">Digital tools shape how research is created, analyzed, and shared. This workshop helps researchers critically evaluate digital scholarship (digital humanities) techniques and technologies. For example, would you like to present data on a website with an interactive way to explore it? Can your work support a group of people collaboratively annotating it online? Do you need to tie geographic locations to portions of text in a novel? Gain awareness of where to find the tools or platforms, and how to select approaches that align with your research goals, ethics, and impact ambitions.</p><button class="btn" type="button">View details →</button></div><div class="modal-related-card"><span class="format-badge format-badge--consultation"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10c0 3.866-3.582 7-8 7a9 9 0 01-4-.93L2 18l1.4-3.5A7 7 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"></path></svg><span class="format-badge-text">Consultation</span></span><p class="modal-related-card-title">Data Management Plan (DMP) Consultations</p><p class="modal-related-card-summary">Preparing a Data Management Plan for a grant or award. This one-on-one consultation with a librarian helps you answer your specific DMP questions, understand the DMP Assistant tool, and choose templates aligned with your research data. The service supports you in your creation and writing of a strong, funder-ready DMP.</p><button class="btn" type="button">View details →</button></div><div class="modal-related-card"><span class="format-badge format-badge--workshop"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="14" height="14" rx="2"></rect><path d="M16 2v4M8 2v4M3 9h14"></path></svg><span class="format-badge-text">Workshop</span></span><p class="modal-related-card-title">Licensing &amp; Open Scholarship: Creative Commons, Rights, and Sharing Your Research</p><p class="modal-related-card-summary">“Research agreements and licensing choices often determine how far your work can travel and who can build on it. This activity supports researchers in navigating the implications of author agreements, open access, and sharing decisions so their research remains usable, visible, and impactful over time.”</p><button class="btn" type="button">View details →</button></div></div></div></div></div>
 </main>
-<footer class="mh-footer">Pathways to Impact · Office of Research, Concordia University · <a href="mailto:impact@concordia.ca">impact@concordia.ca</a><br>Static migration snapshot — interactive behaviour and live data are not reproduced.</footer>
+<footer class="mh-footer">Pathways to Impact · Office of Research, Concordia University · <a href="mailto:impact@concordia.ca">impact@concordia.ca</a><br>Static migration snapshot — interactive behaviour (carousel autoplay, hash routing, live data) is not reproduced.</footer>
 <script>document.addEventListener("click",function(e){var b=e.target.closest("[aria-expanded]");if(!b)return;var x=b.getAttribute("aria-expanded")==="true";b.setAttribute("aria-expanded",String(!x));var y=b.nextElementSibling;if(y)y.classList.toggle("is-open",!x);});</script>
 </body>
 </html>

@@ -5,7 +5,7 @@ for. Skim here before hunting through the tree. Grouped by purpose; paths are
 relative to the repo root.
 
 > Living document — update it when you add a doc, prototype, or script.
-> Last updated: 2026-06-11.
+> Last updated: 2026-06-12.
 
 ---
 
@@ -87,9 +87,10 @@ Material prepared for the Concordia web team (Adobe Experience Manager / AEM).
 | Path | What it's for |
 |------|---------------|
 | `CONTENT_MIGRATION.md` | The repeatable pattern for exporting a Learn page as one self-contained HTML file the web team can evaluate. |
-| `pathways_migration_june_2026/` | Standalone section exports for the web team — `01-home.html` … `12-about.html`, plus `resources/` and `workshops/`. |
-| `pathways_migration_june_2026/MIGRATION_LOG.md` | Log of what was exported and how. |
+| `pathways_migration_june_2026/` | Standalone section exports for the web team — `01-home.html` … `13-pathways-vision.html`, plus `resources/` and `workshops/`. **Frozen + regenerated 2026-06-12** (24-item catalogue). |
+| `pathways_migration_june_2026/MIGRATION_LOG.md` | Log of what was exported and how; carries the accepted-open caveats for the AEM team. |
 | `pathways_migration_june_2026/_regenerate.js` | Script to regenerate the export set. |
+| `MIGRATION_VERSION_REVIEW.md` | The 2026-06-12 QA review pass before freeze — issues #1–18, what was fixed/verified, and what's knowingly left open (#9 contact mailto, #12 NCV builder). |
 | `pathways-sitemap.html`, `pathways-sitemap.pdf` | Full site map of the SPA (HTML + PDF). |
 
 ---

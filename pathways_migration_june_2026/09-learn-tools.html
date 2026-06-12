@@ -120,8 +120,134 @@ label {
 .brand {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   color: var(--burgundy);
-  font-size: 24px;
+  font-size: 28px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.brand-home-glyph {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.brand:hover {
+  opacity: 0.78;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--burgundy);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-link {
+  font-size: 16px;
+  color: var(--text);
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--burgundy);
+}
+
+.nav-link.is-active {
+  color: var(--burgundy);
   font-weight: 700;
+  border-bottom-color: transparent;
+  text-decoration: none;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  .nav-hamburger {
+    display: flex;
+  }
+
+  /* Scope to the header so the in-modal nav (also .main-nav) stays visible. */
+  .site-header .main-nav {
+    display: none;
+    width: 100%;
+  }
+
+  .site-header.is-nav-open .main-nav {
+    display: block;
+  }
+
+  .site-header.is-nav-open .nav-list {
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  .site-header.is-nav-open .nav-link {
+    display: block;
+    padding: 12px 0;
+    font-size: 18px;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
 }
 
 .bg-burgundy {
@@ -158,40 +284,6 @@ label {
 
 .text-dark {
   color: #1a1a1a;
-}
-
-.brand-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.nav-list {
-  list-style: none;
-  display: flex;
-  gap: 22px;
-  flex-wrap: wrap;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-link {
-  font-size: 16px;
-  color: var(--text);
-  padding: 6px 0;
-  border-bottom: 2px solid transparent;
-}
-
-.nav-link:hover {
-  color: var(--burgundy);
-}
-
-.nav-link.is-active {
-  color: var(--burgundy);
-  font-weight: 700;
-  border-bottom-color: transparent;
-  text-decoration: none;
 }
 
 .page {
@@ -1402,7 +1494,10 @@ label {
 .impact-planner-entry.is-hidden,
 .impact-planner-workflow.is-hidden,
 .impact-planner-summary.is-hidden,
-.tools-planner-area.is-hidden {
+.tools-planner-area.is-hidden,
+.tools-step-cards.is-hidden,
+.tools-already-link.is-hidden,
+.narrative-funder-note.is-hidden {
   display: none;
 }
 
@@ -1861,6 +1956,41 @@ label {
   font-size: 19px;
   font-weight: 700;
   margin: 0 0 12px;
+}
+
+/* ── "In development" notice (pathways without services yet) ──── */
+
+.pathway-dev-notice {
+  margin-top: 36px;
+  padding: 26px 30px;
+  background: #faf9f6;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--dev-notice-accent, var(--burgundy));
+  border-radius: 10px;
+}
+
+.pathway-dev-notice-eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dev-notice-accent, var(--burgundy));
+}
+
+.pathway-dev-notice-body {
+  margin: 0;
+  max-width: 60ch;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.pathway-dev-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .pathway-filter-bar {
@@ -2716,7 +2846,7 @@ label {
 }
 
 .vision-article {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.65;
   color: var(--text);
 }
@@ -2856,6 +2986,23 @@ label {
 .modal-topbar-actions {
   display: flex;
   gap: 10px;
+}
+
+/* Persistent nav inside full-page modal overlays — logo + Explore/Learn/About
+   sit at the far right of the sticky top bar (Back stays left). */
+.modal-topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.modal-topbar-nav .nav-list {
+  gap: 18px;
+}
+
+.modal-home-link {
+  font-size: 18px;
 }
 
 .modal {
@@ -3107,6 +3254,22 @@ label {
 @media (max-width: 768px) {
   .modal-topbar {
     padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Tight modal bar: drop the wordmark (keep the ⌂ home glyph) and shrink the
+     nav gap so Back + ⌂ + Explore/Learn/About fit on a phone. */
+  .modal-home-link .brand-label {
+    display: none;
+  }
+
+  .modal-topbar-nav {
+    gap: 14px;
+  }
+
+  .modal-topbar-nav .nav-list {
+    gap: 14px;
   }
 
   .modal {
@@ -3164,11 +3327,6 @@ label {
   .header-inner {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .nav-list {
-    flex-wrap: wrap;
-    gap: 12px;
   }
 
   .hero-title {
@@ -3322,75 +3480,6 @@ label {
   letter-spacing: 0.06em;
   color: var(--muted);
   margin: 0 0 16px;
-}
-
-/* ── Header row + hamburger ──────────────────────────────────── */
-
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.nav-hamburger {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  flex-direction: column;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.hamburger-bar {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--text);
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-@media (max-width: 640px) {
-  .nav-hamburger {
-    display: flex;
-  }
-
-  .main-nav {
-    display: none;
-    width: 100%;
-  }
-
-  .site-header.is-nav-open .main-nav {
-    display: block;
-  }
-
-  .site-header.is-nav-open .nav-list {
-    flex-direction: column;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
-    margin-top: 8px;
-  }
-
-  .site-header.is-nav-open .nav-link {
-    display: block;
-    padding: 12px 0;
-    font-size: 18px;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
-    opacity: 0;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
 }
 
 /* ── Persistent context bar ─────────────────────────────────── */
@@ -4147,10 +4236,29 @@ label {
   flex-shrink: 0;
 }
 
-.ncv-section-header h3 {
+.ncv-section-header h3,
+.ncv-section-header h2 {
   font-size: 18px;
   font-weight: 700;
   margin: 0;
+}
+
+.vision-sub-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--burgundy);
+  margin: 20px 0 8px;
+}
+
+.vision-future-heading {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--burgundy);
+}
+
+.vision-impact-cards {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
 .ncv-body {
@@ -4158,6 +4266,12 @@ label {
   color: var(--text);
   margin-bottom: 12px;
   line-height: 1.65;
+}
+
+/* Inline links in body / cards read as links in running text */
+.ncv-body a,
+.ncv-summary-card a {
+  text-decoration: underline;
 }
 
 /* Summary card */
@@ -4333,6 +4447,26 @@ label {
 .ncv-expand-body.is-open {
   display: block;
 }
+
+/* Pathway-coloured accordions (Vision page) — each of the 7 pathways carries its
+   signature colour as a left border + label, reusing the Explore pathway palette.
+   Communications uses the darker #b07d00 for border/text (the gold #e5a712 is too
+   low-contrast as a line/label), matching the .pw / .pathway-card treatment. */
+.ncv-expand-block[data-pathway] { border-left-width: 4px; border-left-style: solid; }
+.ncv-expand-block[data-pathway="academic"]          { border-left-color: #912338; }
+.ncv-expand-block[data-pathway="academic"] .ncv-expand-btn          { color: #912338; }
+.ncv-expand-block[data-pathway="research-creation"] { border-left-color: #508212; }
+.ncv-expand-block[data-pathway="research-creation"] .ncv-expand-btn { color: #508212; }
+.ncv-expand-block[data-pathway="community"]         { border-left-color: #db0272; }
+.ncv-expand-block[data-pathway="community"] .ncv-expand-btn         { color: #db0272; }
+.ncv-expand-block[data-pathway="innovation"]        { border-left-color: #da3a16; }
+.ncv-expand-block[data-pathway="innovation"] .ncv-expand-btn        { color: #da3a16; }
+.ncv-expand-block[data-pathway="commercialization"] { border-left-color: #573996; }
+.ncv-expand-block[data-pathway="commercialization"] .ncv-expand-btn { color: #573996; }
+.ncv-expand-block[data-pathway="policy"]            { border-left-color: #0072a8; }
+.ncv-expand-block[data-pathway="policy"] .ncv-expand-btn            { color: #0072a8; }
+.ncv-expand-block[data-pathway="communications"]    { border-left-color: #b07d00; }
+.ncv-expand-block[data-pathway="communications"] .ncv-expand-btn    { color: #b07d00; }
 
 .ncv-expand-body .ncv-body {
   font-size: 14px;
@@ -5491,7 +5625,6 @@ label {
 }
 
 
-/* ===== migration-export chrome (added by export tooling, not part of the app) ===== */
 body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
 .mh-banner{background:#fff8e6;border-bottom:1px solid #f0e0a8;color:#6b5300;font-size:12px;letter-spacing:.04em;padding:8px 24px;text-align:center;}
 .mh-banner code{background:#fff;border:1px solid #eadfb0;border-radius:4px;padding:1px 5px;}
@@ -5502,19 +5635,20 @@ body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-app
 .mh-main{padding:8px 0 0;}
 .mh-footer{margin-top:40px;border-top:1px solid var(--border);background:#fafafa;padding:18px 24px;color:var(--muted);font-size:13px;text-align:center;}
 .mh-footer a{color:var(--link);}
-/* Reveal every carousel slide stacked (the live carousel shows one at a time via JS) */
 .carousel-wrap{height:auto!important;box-shadow:none;}
 .carousel-track{flex-direction:column!important;transform:none!important;}
 .carousel-track .slide{min-height:0;}
 .nav-btn,.dot-nav,.carousel-pause,.slide-counter,.progress-bar{display:none!important;}
+.modal-overlay{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important;inset:auto!important;}
 </style>
 </head>
 <body>
-<div class="mh-banner">Migration export — a static, self-contained snapshot of one Pathways&nbsp;SPA section for AEM evaluation. Source route: <code>#learn?tab=tools</code>. Not the live app.</div><header class="mh-header"><span class="mh-brand">Pathways to Impact</span><span class="mh-tag">Concordia University · Office of Research</span><span class="mh-section">Learn — Tools</span></header>
+<div class="mh-banner">Migration export — a static, self-contained snapshot for AEM evaluation. Source route: <code>#learn?tab=tools</code>. Not the live app.</div>
+<header class="mh-header"><span class="mh-brand">Pathways to Impact</span><span class="mh-tag">Concordia University · Office of Research</span><span class="mh-section">Learn — Tools</span></header>
 <main class="mh-main">
-<section class="page page-learn is-active" data-page="learn"><div class="container"><h1>Learn</h1><p class="lead">Plan your impact and build your understanding of what research impact means.</p><div class="explore-tabs" role="tablist"><button class="explore-tab" type="button" data-tab="impact101" role="tab" aria-selected="false" aria-controls="learn-panel-impact101" tabindex="-1">Impact 101</button><button class="explore-tab is-active" type="button" data-tab="tools" role="tab" aria-selected="true" aria-controls="learn-panel-tools" tabindex="0">Tools</button></div><div class="explore-tab-content is-active" id="learn-panel-tools" role="tabpanel"><p class="lead">Two interactive tools to help you plan and tell your research story.</p><div class="tools-step-cards"><div class="tools-step-card"><div class="tools-step-card-step">Step 1</div><h2>Plan Your Impact</h2><p>Map your research outputs to outcomes, identify your impact pathways, and build your impact plan.</p><div class="tools-step-card-time">⏱ 45–60 min</div><button class="btn btn-primary" type="button">Start →</button></div><div class="tools-step-arrow">→</div><div class="tools-step-card"><div class="tools-step-card-step">Step 2</div><h2>Build Your Narrative CV</h2><p>Develop a draft outline of your Narrative CV using guided prompts and real examples.</p><div class="tools-step-card-time">⏱ 60–90 min</div><button class="btn btn-primary" type="button">Start →</button></div></div><p class="tools-already-link"><button class="btn-link" type="button">Already completed Step 1? Jump straight to Step 2 →</button></p><div class="tools-planner-area is-hidden"><button class="btn btn-ghost tools-back-btn" type="button">← Back to Tools</button></div></div></div></section>
+<section class="page page-learn is-active" data-page="learn"><div class="container"><h1 tabindex="-1">Learn</h1><p class="lead">Plan your impact and build your understanding of what research impact means.</p><div class="explore-tabs" role="tablist"><button class="explore-tab" type="button" data-tab="impact101" role="tab" aria-selected="false" aria-controls="learn-panel-impact101" tabindex="-1">Impact 101</button><button class="explore-tab is-active" type="button" data-tab="tools" role="tab" aria-selected="true" aria-controls="learn-panel-tools" tabindex="0">Tools</button></div><div class="explore-tab-content is-active" id="learn-panel-tools" role="tabpanel"><p class="lead">Two interactive tools to help you plan and tell your research story.</p><div class="tools-step-cards"><div class="tools-step-card"><div class="tools-step-card-step">Step 1</div><h2>Plan Your Impact</h2><p>Map your research outputs to outcomes, identify your impact pathways, and build your impact plan.</p><div class="tools-step-card-time">⏱ 45–60 min</div><button class="btn btn-primary" type="button">Start →</button></div><div class="tools-step-arrow">→</div><div class="tools-step-card"><div class="tools-step-card-step">Step 2</div><h2>Build Your Narrative CV</h2><p>Develop a draft outline of your Narrative CV using guided prompts and real examples.</p><div class="tools-step-card-time">⏱ 60–90 min</div><button class="btn btn-primary" type="button">Start →</button></div></div><p class="tools-already-link"><button class="btn-link" type="button">Already completed Step 1? Jump straight to Step 2 →</button></p><div class="tools-planner-area is-hidden"><button class="btn btn-ghost tools-back-btn" type="button">← Back to Tools</button></div></div></div></section>
 </main>
 <footer class="mh-footer">Pathways to Impact · Office of Research, Concordia University · <a href="mailto:impact@concordia.ca">impact@concordia.ca</a><br>Static migration snapshot — interactive behaviour (carousel autoplay, hash routing, live data) is not reproduced.</footer>
-<script>document.addEventListener("click",function(e){var b=e.target.closest("[aria-expanded]");if(!b)return;var x=b.getAttribute("aria-expanded")==="true";b.setAttribute("aria-expanded",String(!x));var body=b.nextElementSibling;if(body)body.classList.toggle("is-open",!x);});</script>
+<script>document.addEventListener("click",function(e){var b=e.target.closest("[aria-expanded]");if(!b)return;var x=b.getAttribute("aria-expanded")==="true";b.setAttribute("aria-expanded",String(!x));var y=b.nextElementSibling;if(y)y.classList.toggle("is-open",!x);});</script>
 </body>
 </html>

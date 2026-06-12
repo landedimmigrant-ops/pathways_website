@@ -120,8 +120,134 @@ label {
 .brand {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   color: var(--burgundy);
-  font-size: 24px;
+  font-size: 28px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.brand-home-glyph {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.brand:hover {
+  opacity: 0.78;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--burgundy);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-link {
+  font-size: 16px;
+  color: var(--text);
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--burgundy);
+}
+
+.nav-link.is-active {
+  color: var(--burgundy);
   font-weight: 700;
+  border-bottom-color: transparent;
+  text-decoration: none;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  .nav-hamburger {
+    display: flex;
+  }
+
+  /* Scope to the header so the in-modal nav (also .main-nav) stays visible. */
+  .site-header .main-nav {
+    display: none;
+    width: 100%;
+  }
+
+  .site-header.is-nav-open .main-nav {
+    display: block;
+  }
+
+  .site-header.is-nav-open .nav-list {
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  .site-header.is-nav-open .nav-link {
+    display: block;
+    padding: 12px 0;
+    font-size: 18px;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
 }
 
 .bg-burgundy {
@@ -158,40 +284,6 @@ label {
 
 .text-dark {
   color: #1a1a1a;
-}
-
-.brand-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.nav-list {
-  list-style: none;
-  display: flex;
-  gap: 22px;
-  flex-wrap: wrap;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-link {
-  font-size: 16px;
-  color: var(--text);
-  padding: 6px 0;
-  border-bottom: 2px solid transparent;
-}
-
-.nav-link:hover {
-  color: var(--burgundy);
-}
-
-.nav-link.is-active {
-  color: var(--burgundy);
-  font-weight: 700;
-  border-bottom-color: transparent;
-  text-decoration: none;
 }
 
 .page {
@@ -1402,7 +1494,10 @@ label {
 .impact-planner-entry.is-hidden,
 .impact-planner-workflow.is-hidden,
 .impact-planner-summary.is-hidden,
-.tools-planner-area.is-hidden {
+.tools-planner-area.is-hidden,
+.tools-step-cards.is-hidden,
+.tools-already-link.is-hidden,
+.narrative-funder-note.is-hidden {
   display: none;
 }
 
@@ -1861,6 +1956,41 @@ label {
   font-size: 19px;
   font-weight: 700;
   margin: 0 0 12px;
+}
+
+/* ── "In development" notice (pathways without services yet) ──── */
+
+.pathway-dev-notice {
+  margin-top: 36px;
+  padding: 26px 30px;
+  background: #faf9f6;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--dev-notice-accent, var(--burgundy));
+  border-radius: 10px;
+}
+
+.pathway-dev-notice-eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dev-notice-accent, var(--burgundy));
+}
+
+.pathway-dev-notice-body {
+  margin: 0;
+  max-width: 60ch;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.pathway-dev-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .pathway-filter-bar {
@@ -2716,7 +2846,7 @@ label {
 }
 
 .vision-article {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.65;
   color: var(--text);
 }
@@ -2856,6 +2986,23 @@ label {
 .modal-topbar-actions {
   display: flex;
   gap: 10px;
+}
+
+/* Persistent nav inside full-page modal overlays — logo + Explore/Learn/About
+   sit at the far right of the sticky top bar (Back stays left). */
+.modal-topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.modal-topbar-nav .nav-list {
+  gap: 18px;
+}
+
+.modal-home-link {
+  font-size: 18px;
 }
 
 .modal {
@@ -3107,6 +3254,22 @@ label {
 @media (max-width: 768px) {
   .modal-topbar {
     padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Tight modal bar: drop the wordmark (keep the ⌂ home glyph) and shrink the
+     nav gap so Back + ⌂ + Explore/Learn/About fit on a phone. */
+  .modal-home-link .brand-label {
+    display: none;
+  }
+
+  .modal-topbar-nav {
+    gap: 14px;
+  }
+
+  .modal-topbar-nav .nav-list {
+    gap: 14px;
   }
 
   .modal {
@@ -3164,11 +3327,6 @@ label {
   .header-inner {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .nav-list {
-    flex-wrap: wrap;
-    gap: 12px;
   }
 
   .hero-title {
@@ -3322,75 +3480,6 @@ label {
   letter-spacing: 0.06em;
   color: var(--muted);
   margin: 0 0 16px;
-}
-
-/* ── Header row + hamburger ──────────────────────────────────── */
-
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.nav-hamburger {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  flex-direction: column;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.hamburger-bar {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--text);
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-@media (max-width: 640px) {
-  .nav-hamburger {
-    display: flex;
-  }
-
-  .main-nav {
-    display: none;
-    width: 100%;
-  }
-
-  .site-header.is-nav-open .main-nav {
-    display: block;
-  }
-
-  .site-header.is-nav-open .nav-list {
-    flex-direction: column;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
-    margin-top: 8px;
-  }
-
-  .site-header.is-nav-open .nav-link {
-    display: block;
-    padding: 12px 0;
-    font-size: 18px;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
-    opacity: 0;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
 }
 
 /* ── Persistent context bar ─────────────────────────────────── */
@@ -4147,10 +4236,29 @@ label {
   flex-shrink: 0;
 }
 
-.ncv-section-header h3 {
+.ncv-section-header h3,
+.ncv-section-header h2 {
   font-size: 18px;
   font-weight: 700;
   margin: 0;
+}
+
+.vision-sub-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--burgundy);
+  margin: 20px 0 8px;
+}
+
+.vision-future-heading {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--burgundy);
+}
+
+.vision-impact-cards {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
 .ncv-body {
@@ -4158,6 +4266,12 @@ label {
   color: var(--text);
   margin-bottom: 12px;
   line-height: 1.65;
+}
+
+/* Inline links in body / cards read as links in running text */
+.ncv-body a,
+.ncv-summary-card a {
+  text-decoration: underline;
 }
 
 /* Summary card */
@@ -4333,6 +4447,26 @@ label {
 .ncv-expand-body.is-open {
   display: block;
 }
+
+/* Pathway-coloured accordions (Vision page) — each of the 7 pathways carries its
+   signature colour as a left border + label, reusing the Explore pathway palette.
+   Communications uses the darker #b07d00 for border/text (the gold #e5a712 is too
+   low-contrast as a line/label), matching the .pw / .pathway-card treatment. */
+.ncv-expand-block[data-pathway] { border-left-width: 4px; border-left-style: solid; }
+.ncv-expand-block[data-pathway="academic"]          { border-left-color: #912338; }
+.ncv-expand-block[data-pathway="academic"] .ncv-expand-btn          { color: #912338; }
+.ncv-expand-block[data-pathway="research-creation"] { border-left-color: #508212; }
+.ncv-expand-block[data-pathway="research-creation"] .ncv-expand-btn { color: #508212; }
+.ncv-expand-block[data-pathway="community"]         { border-left-color: #db0272; }
+.ncv-expand-block[data-pathway="community"] .ncv-expand-btn         { color: #db0272; }
+.ncv-expand-block[data-pathway="innovation"]        { border-left-color: #da3a16; }
+.ncv-expand-block[data-pathway="innovation"] .ncv-expand-btn        { color: #da3a16; }
+.ncv-expand-block[data-pathway="commercialization"] { border-left-color: #573996; }
+.ncv-expand-block[data-pathway="commercialization"] .ncv-expand-btn { color: #573996; }
+.ncv-expand-block[data-pathway="policy"]            { border-left-color: #0072a8; }
+.ncv-expand-block[data-pathway="policy"] .ncv-expand-btn            { color: #0072a8; }
+.ncv-expand-block[data-pathway="communications"]    { border-left-color: #b07d00; }
+.ncv-expand-block[data-pathway="communications"] .ncv-expand-btn    { color: #b07d00; }
 
 .ncv-expand-body .ncv-body {
   font-size: 14px;
@@ -5501,16 +5635,20 @@ body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-app
 .mh-main{padding:8px 0 0;}
 .mh-footer{margin-top:40px;border-top:1px solid var(--border);background:#fafafa;padding:18px 24px;color:var(--muted);font-size:13px;text-align:center;}
 .mh-footer a{color:var(--link);}
-.carousel-wrap{height:auto!important;box-shadow:none;}.carousel-track{flex-direction:column!important;transform:none!important;}.carousel-track .slide{min-height:0;}.nav-btn,.dot-nav,.carousel-pause,.slide-counter,.progress-bar{display:none!important;}
-.modal-overlay{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important;inset:auto!important;}</style>
+.carousel-wrap{height:auto!important;box-shadow:none;}
+.carousel-track{flex-direction:column!important;transform:none!important;}
+.carousel-track .slide{min-height:0;}
+.nav-btn,.dot-nav,.carousel-pause,.slide-counter,.progress-bar{display:none!important;}
+.modal-overlay{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important;inset:auto!important;}
+</style>
 </head>
 <body>
-<div class="mh-banner">Migration export — static, self-contained snapshot for AEM evaluation. Source route: <code>#explore?service=ext-stakeholder-analysis</code>. Not the live app.</div>
+<div class="mh-banner">Migration export — a static, self-contained snapshot for AEM evaluation. Source route: <code>#explore?service=ext-stakeholder-analysis</code>. Not the live app.</div>
 <header class="mh-header"><span class="mh-brand">Pathways to Impact</span><span class="mh-tag">Concordia University · Office of Research</span><span class="mh-section">Resource: Stakeholder Analysis Matrix Template</span></header>
 <main class="mh-main">
-<div class="modal-overlay"><div class="modal-topbar"><button class="modal-back-btn" type="button">← Back</button><div class="modal-topbar-actions"><a class="btn primary" href="https://tools4dev.org/resources/stakeholder-analysis-matrix-template/" target="_blank" rel="noopener noreferrer">Open resource ↗</a></div></div><div class="modal"><h1 class="modal-title">Stakeholder Analysis Matrix Template</h1><p class="modal-author">By: Tools4Dev</p><div class="modal-meta-bar"><div class="modal-meta-item"><strong>Format:</strong> External Resource</div><div class="modal-meta-item"><strong>Time:</strong> 3 min</div><div class="modal-meta-item"><strong>Stage:</strong> Developing an Idea</div><div class="modal-meta-item"><strong>Pathway:</strong> Community Engagement, Policy, Commercialization</div></div><div class="modal-tag-bar"><span class="tag">stakeholders</span><span class="tag">partnerships</span><span class="tag">engagement strategy</span><span class="tag">influence</span><span class="tag">analysis</span></div><div class="modal-body"><p>Map the people who make research matter. Identify key partners, understand their influence and priorities, and plan how best to engage them throughout your project.</p><h2>Who it is for</h2><p>Researchers and project teams at the planning stage who need to identify and engage stakeholders.</p><h2>What you will do</h2><p>A practical template to systematically identify stakeholders, assess their influence and interest, and plan effective engagement strategies. Supports stronger partnership-building and strategic impact planning.</p><h2>Outcomes</h2><p>A completed stakeholder map with engagement strategies aligned to the needs of communities, policymakers, and partners.</p></div><p class="modal-external-note">This resource is hosted externally. You will leave the Pathways to Impact website.</p><div class="modal-bottom-cta"><a class="btn primary modal-cta-btn" href="https://tools4dev.org/resources/stakeholder-analysis-matrix-template/" target="_blank" rel="noopener noreferrer">Open resource ↗</a></div><div class="modal-related"><h2 class="modal-related-title">Researchers who used this also found…</h2><div class="modal-related-grid"><div class="modal-related-card"><span class="format-badge format-badge--consultation"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10c0 3.866-3.582 7-8 7a9 9 0 01-4-.93L2 18l1.4-3.5A7 7 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"></path></svg><span class="format-badge-text">Consultation</span></span><p class="modal-related-card-title">Research Agreements &amp; IP Support Consultation</p><p class="modal-related-card-summary">This one-on-one consultation supports Concordia researchers with the review, negotiation, and administration of research agreements involving public and private sponsors. The service provides practical guidance on agreement terms, IP considerations, and institutional processes, helping researchers move smoothly from agreement to project completion. Sessions are case-specific and focused on resolving real issues tied to upcoming or active sponsored research projects.</p><button class="btn" type="button">View details →</button></div><div class="modal-related-card"><span class="format-badge format-badge--workshop"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="14" height="14" rx="2"></rect><path d="M16 2v4M8 2v4M3 9h14"></path></svg><span class="format-badge-text">Workshop</span></span><p class="modal-related-card-title">Research Partnerships with Montréal's Black and Indigenous Communities</p><p class="modal-related-card-summary">This interactive workshop, developed through the Office of Community Engagement, supports researchers who want guidance and practical resources for partnering with Montréal’s Black and Indigenous communities in research design and practice. It highlights how Indigenous and Black communities are shaping the transformation of research practices, and helps researchers approach engagement with clarity, intention, and respect. Through reflective questions, grounding frameworks, and tangible examples, participants learn how to apply best practices for collaborative, community-engaged research.</p><button class="btn" type="button">View details →</button></div><div class="modal-related-card"><span class="format-badge format-badge--consultation"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10c0 3.866-3.582 7-8 7a9 9 0 01-4-.93L2 18l1.4-3.5A7 7 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"></path></svg><span class="format-badge-text">Consultation</span></span><p class="modal-related-card-title">4th Space Research Activation &amp; Public Engagement Support</p><p class="modal-related-card-summary">Turn your research into a compelling public experience. Through a consultation with the 4th Space team, researchers can explore developing public-facing events that connect their research with communities and build assets that support the long-term impact of their work.</p><button class="btn" type="button">View details →</button></div></div></div></div></div>
+<div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Stakeholder Analysis Matrix Template"><div class="modal-topbar"><button class="modal-back-btn" type="button">← Back</button><div class="modal-topbar-actions"><a class="btn primary" href="https://tools4dev.org/resources/stakeholder-analysis-matrix-template/" target="_blank" rel="noopener noreferrer">Open resource ↗</a></div><div class="modal-topbar-nav"><a class="brand modal-home-link" href="#home" aria-label="Go to Pathways to Impact home" title="Return home"><span class="brand-home-glyph" aria-hidden="true">⌂</span><span class="brand-label">Pathways to Impact</span></a><nav class="main-nav modal-main-nav"><ul class="nav-list"><li><a class="nav-link" href="#explore" data-page="explore">Explore</a></li><li><a class="nav-link" href="#learn" data-page="learn">Learn</a></li><li><a class="nav-link" href="#about" data-page="about">About</a></li></ul></nav></div></div><div class="modal"><h1 class="modal-title" tabindex="-1">Stakeholder Analysis Matrix Template</h1><p class="modal-author">By: Tools4Dev</p><div class="modal-meta-bar"><div class="modal-meta-item"><strong>Format:</strong> External Resource</div><div class="modal-meta-item"><strong>Time:</strong> 3 min</div><div class="modal-meta-item"><strong>Stage:</strong> Developing an Idea</div><div class="modal-meta-item"><strong>Pathway:</strong> Community Engagement, Policy, Commercialization</div></div><div class="modal-tag-bar"><span class="tag">stakeholders</span><span class="tag">partnerships</span><span class="tag">engagement strategy</span><span class="tag">influence</span><span class="tag">analysis</span></div><div class="modal-body"><p>Map the people who make research matter. Identify key partners, understand their influence and priorities, and plan how best to engage them throughout your project.</p><h2>Who it is for</h2><p>Researchers and project teams at the planning stage who need to identify and engage stakeholders.</p><h2>What you will do</h2><p>A practical template to systematically identify stakeholders, assess their influence and interest, and plan effective engagement strategies. Supports stronger partnership-building and strategic impact planning.</p><h2>Outcomes</h2><p>A completed stakeholder map with engagement strategies aligned to the needs of communities, policymakers, and partners.</p></div><p class="modal-external-note">This resource is hosted externally. You will leave the Pathways to Impact website.</p><div class="modal-bottom-cta"><a class="btn primary modal-cta-btn" href="https://tools4dev.org/resources/stakeholder-analysis-matrix-template/" target="_blank" rel="noopener noreferrer">Open resource ↗</a></div><div class="modal-related"><h2 class="modal-related-title">Researchers who used this also found…</h2><div class="modal-related-grid"><div class="modal-related-card"><span class="format-badge format-badge--consultation"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10c0 3.866-3.582 7-8 7a9 9 0 01-4-.93L2 18l1.4-3.5A7 7 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"></path></svg><span class="format-badge-text">Consultation</span></span><p class="modal-related-card-title">Research Agreements &amp; IP Support Consultation</p><p class="modal-related-card-summary">This one-on-one consultation supports Concordia researchers with the review, negotiation, and administration of research agreements involving public and private sponsors. The service provides practical guidance on agreement terms, IP considerations, and institutional processes, helping researchers move smoothly from agreement to project completion. Sessions are case-specific and focused on resolving real issues tied to upcoming or active sponsored research projects.</p><button class="btn" type="button">View details →</button></div><div class="modal-related-card"><span class="format-badge format-badge--workshop"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="14" height="14" rx="2"></rect><path d="M16 2v4M8 2v4M3 9h14"></path></svg><span class="format-badge-text">Workshop</span></span><p class="modal-related-card-title">Research Partnerships with Montréal's Black and Indigenous Communities</p><p class="modal-related-card-summary">This interactive workshop, developed through the Office of Community Engagement, supports researchers who want guidance and practical resources for partnering with Montréal’s Black and Indigenous communities in research design and practice. It highlights how Indigenous and Black communities are shaping the transformation of research practices, and helps researchers approach engagement with clarity, intention, and respect. Through reflective questions, grounding frameworks, and tangible examples, participants learn how to apply best practices for collaborative, community-engaged research.</p><button class="btn" type="button">View details →</button></div><div class="modal-related-card"><span class="format-badge format-badge--consultation"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10c0 3.866-3.582 7-8 7a9 9 0 01-4-.93L2 18l1.4-3.5A7 7 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"></path></svg><span class="format-badge-text">Consultation</span></span><p class="modal-related-card-title">External Partnerships &amp; Sensitive Research Risk Assessment</p><p class="modal-related-card-summary">This one-on-one consultation introduces researchers to how risk-based assessments of external research partnerships and projects in sensitive research areas are conducted. The consultation will cover the requirements, the types of risks reviewed, and the steps that will be carried out as part of the follow-up assessment. This consultation is designed to be interactive and practical, giving researchers a clear understanding of what will be reviewed and the opportunity to receive support developing appropriate risk mitigation strategies. Participants are encouraged to bring forward any questions, potential partnerships, or concerns they would like to discuss.</p><button class="btn" type="button">View details →</button></div></div></div></div></div>
 </main>
-<footer class="mh-footer">Pathways to Impact · Office of Research, Concordia University · <a href="mailto:impact@concordia.ca">impact@concordia.ca</a><br>Static migration snapshot — interactive behaviour and live data are not reproduced.</footer>
+<footer class="mh-footer">Pathways to Impact · Office of Research, Concordia University · <a href="mailto:impact@concordia.ca">impact@concordia.ca</a><br>Static migration snapshot — interactive behaviour (carousel autoplay, hash routing, live data) is not reproduced.</footer>
 <script>document.addEventListener("click",function(e){var b=e.target.closest("[aria-expanded]");if(!b)return;var x=b.getAttribute("aria-expanded")==="true";b.setAttribute("aria-expanded",String(!x));var y=b.nextElementSibling;if(y)y.classList.toggle("is-open",!x);});</script>
 </body>
 </html>

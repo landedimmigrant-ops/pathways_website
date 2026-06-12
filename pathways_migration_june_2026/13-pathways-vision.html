@@ -120,8 +120,134 @@ label {
 .brand {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   color: var(--burgundy);
-  font-size: 24px;
+  font-size: 28px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.brand-home-glyph {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.brand:hover {
+  opacity: 0.78;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--burgundy);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-link {
+  font-size: 16px;
+  color: var(--text);
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--burgundy);
+}
+
+.nav-link.is-active {
+  color: var(--burgundy);
   font-weight: 700;
+  border-bottom-color: transparent;
+  text-decoration: none;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  .nav-hamburger {
+    display: flex;
+  }
+
+  /* Scope to the header so the in-modal nav (also .main-nav) stays visible. */
+  .site-header .main-nav {
+    display: none;
+    width: 100%;
+  }
+
+  .site-header.is-nav-open .main-nav {
+    display: block;
+  }
+
+  .site-header.is-nav-open .nav-list {
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  .site-header.is-nav-open .nav-link {
+    display: block;
+    padding: 12px 0;
+    font-size: 18px;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
 }
 
 .bg-burgundy {
@@ -158,40 +284,6 @@ label {
 
 .text-dark {
   color: #1a1a1a;
-}
-
-.brand-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.nav-list {
-  list-style: none;
-  display: flex;
-  gap: 22px;
-  flex-wrap: wrap;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-link {
-  font-size: 16px;
-  color: var(--text);
-  padding: 6px 0;
-  border-bottom: 2px solid transparent;
-}
-
-.nav-link:hover {
-  color: var(--burgundy);
-}
-
-.nav-link.is-active {
-  color: var(--burgundy);
-  font-weight: 700;
-  border-bottom-color: transparent;
-  text-decoration: none;
 }
 
 .page {
@@ -1402,7 +1494,10 @@ label {
 .impact-planner-entry.is-hidden,
 .impact-planner-workflow.is-hidden,
 .impact-planner-summary.is-hidden,
-.tools-planner-area.is-hidden {
+.tools-planner-area.is-hidden,
+.tools-step-cards.is-hidden,
+.tools-already-link.is-hidden,
+.narrative-funder-note.is-hidden {
   display: none;
 }
 
@@ -1861,6 +1956,41 @@ label {
   font-size: 19px;
   font-weight: 700;
   margin: 0 0 12px;
+}
+
+/* ── "In development" notice (pathways without services yet) ──── */
+
+.pathway-dev-notice {
+  margin-top: 36px;
+  padding: 26px 30px;
+  background: #faf9f6;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--dev-notice-accent, var(--burgundy));
+  border-radius: 10px;
+}
+
+.pathway-dev-notice-eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dev-notice-accent, var(--burgundy));
+}
+
+.pathway-dev-notice-body {
+  margin: 0;
+  max-width: 60ch;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.pathway-dev-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .pathway-filter-bar {
@@ -2716,7 +2846,7 @@ label {
 }
 
 .vision-article {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.65;
   color: var(--text);
 }
@@ -2856,6 +2986,23 @@ label {
 .modal-topbar-actions {
   display: flex;
   gap: 10px;
+}
+
+/* Persistent nav inside full-page modal overlays — logo + Explore/Learn/About
+   sit at the far right of the sticky top bar (Back stays left). */
+.modal-topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.modal-topbar-nav .nav-list {
+  gap: 18px;
+}
+
+.modal-home-link {
+  font-size: 18px;
 }
 
 .modal {
@@ -3107,6 +3254,22 @@ label {
 @media (max-width: 768px) {
   .modal-topbar {
     padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Tight modal bar: drop the wordmark (keep the ⌂ home glyph) and shrink the
+     nav gap so Back + ⌂ + Explore/Learn/About fit on a phone. */
+  .modal-home-link .brand-label {
+    display: none;
+  }
+
+  .modal-topbar-nav {
+    gap: 14px;
+  }
+
+  .modal-topbar-nav .nav-list {
+    gap: 14px;
   }
 
   .modal {
@@ -3164,11 +3327,6 @@ label {
   .header-inner {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .nav-list {
-    flex-wrap: wrap;
-    gap: 12px;
   }
 
   .hero-title {
@@ -3322,75 +3480,6 @@ label {
   letter-spacing: 0.06em;
   color: var(--muted);
   margin: 0 0 16px;
-}
-
-/* ── Header row + hamburger ──────────────────────────────────── */
-
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.nav-hamburger {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  flex-direction: column;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.hamburger-bar {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--text);
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-@media (max-width: 640px) {
-  .nav-hamburger {
-    display: flex;
-  }
-
-  .main-nav {
-    display: none;
-    width: 100%;
-  }
-
-  .site-header.is-nav-open .main-nav {
-    display: block;
-  }
-
-  .site-header.is-nav-open .nav-list {
-    flex-direction: column;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
-    margin-top: 8px;
-  }
-
-  .site-header.is-nav-open .nav-link {
-    display: block;
-    padding: 12px 0;
-    font-size: 18px;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(2) {
-    opacity: 0;
-  }
-
-  .site-header.is-nav-open .hamburger-bar:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
 }
 
 /* ── Persistent context bar ─────────────────────────────────── */
@@ -4147,10 +4236,29 @@ label {
   flex-shrink: 0;
 }
 
-.ncv-section-header h3 {
+.ncv-section-header h3,
+.ncv-section-header h2 {
   font-size: 18px;
   font-weight: 700;
   margin: 0;
+}
+
+.vision-sub-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--burgundy);
+  margin: 20px 0 8px;
+}
+
+.vision-future-heading {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--burgundy);
+}
+
+.vision-impact-cards {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
 .ncv-body {
@@ -4158,6 +4266,12 @@ label {
   color: var(--text);
   margin-bottom: 12px;
   line-height: 1.65;
+}
+
+/* Inline links in body / cards read as links in running text */
+.ncv-body a,
+.ncv-summary-card a {
+  text-decoration: underline;
 }
 
 /* Summary card */
@@ -4333,6 +4447,26 @@ label {
 .ncv-expand-body.is-open {
   display: block;
 }
+
+/* Pathway-coloured accordions (Vision page) — each of the 7 pathways carries its
+   signature colour as a left border + label, reusing the Explore pathway palette.
+   Communications uses the darker #b07d00 for border/text (the gold #e5a712 is too
+   low-contrast as a line/label), matching the .pw / .pathway-card treatment. */
+.ncv-expand-block[data-pathway] { border-left-width: 4px; border-left-style: solid; }
+.ncv-expand-block[data-pathway="academic"]          { border-left-color: #912338; }
+.ncv-expand-block[data-pathway="academic"] .ncv-expand-btn          { color: #912338; }
+.ncv-expand-block[data-pathway="research-creation"] { border-left-color: #508212; }
+.ncv-expand-block[data-pathway="research-creation"] .ncv-expand-btn { color: #508212; }
+.ncv-expand-block[data-pathway="community"]         { border-left-color: #db0272; }
+.ncv-expand-block[data-pathway="community"] .ncv-expand-btn         { color: #db0272; }
+.ncv-expand-block[data-pathway="innovation"]        { border-left-color: #da3a16; }
+.ncv-expand-block[data-pathway="innovation"] .ncv-expand-btn        { color: #da3a16; }
+.ncv-expand-block[data-pathway="commercialization"] { border-left-color: #573996; }
+.ncv-expand-block[data-pathway="commercialization"] .ncv-expand-btn { color: #573996; }
+.ncv-expand-block[data-pathway="policy"]            { border-left-color: #0072a8; }
+.ncv-expand-block[data-pathway="policy"] .ncv-expand-btn            { color: #0072a8; }
+.ncv-expand-block[data-pathway="communications"]    { border-left-color: #b07d00; }
+.ncv-expand-block[data-pathway="communications"] .ncv-expand-btn    { color: #b07d00; }
 
 .ncv-expand-body .ncv-body {
   font-size: 14px;
@@ -5491,7 +5625,6 @@ label {
 }
 
 
-/* ===== migration-export chrome (added by export tooling, not part of the app) ===== */
 body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
 .mh-banner{background:#fff8e6;border-bottom:1px solid #f0e0a8;color:#6b5300;font-size:12px;letter-spacing:.04em;padding:8px 24px;text-align:center;}
 .mh-banner code{background:#fff;border:1px solid #eadfb0;border-radius:4px;padding:1px 5px;}
@@ -5502,19 +5635,20 @@ body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-app
 .mh-main{padding:8px 0 0;}
 .mh-footer{margin-top:40px;border-top:1px solid var(--border);background:#fafafa;padding:18px 24px;color:var(--muted);font-size:13px;text-align:center;}
 .mh-footer a{color:var(--link);}
-/* Reveal every carousel slide stacked (the live carousel shows one at a time via JS) */
 .carousel-wrap{height:auto!important;box-shadow:none;}
 .carousel-track{flex-direction:column!important;transform:none!important;}
 .carousel-track .slide{min-height:0;}
 .nav-btn,.dot-nav,.carousel-pause,.slide-counter,.progress-bar{display:none!important;}
+.modal-overlay{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important;inset:auto!important;}
 </style>
 </head>
 <body>
-<div class="mh-banner">Migration export — a static, self-contained snapshot of one Pathways&nbsp;SPA section for AEM evaluation. Source route: <code>#pathways-vision</code>. Not the live app.</div><header class="mh-header"><span class="mh-brand">Pathways to Impact</span><span class="mh-tag">Concordia University · Office of Research</span><span class="mh-section">Pathways Vision</span></header>
+<div class="mh-banner">Migration export — a static, self-contained snapshot for AEM evaluation. Source route: <code>#pathways-vision</code>. Not the live app.</div>
+<header class="mh-header"><span class="mh-brand">Pathways to Impact</span><span class="mh-tag">Concordia University · Office of Research</span><span class="mh-section">Pathways Vision</span></header>
 <main class="mh-main">
-<section class="page page-pathways-vision is-active" data-page="pathways-vision" id="pathways-vision"><div class="container"><div class="vision-reading"><a class="vision-back-link" href="#about">← Back to Pathways</a><h1>Pathways Vision</h1><p class="vision-intro">How we understand and support research impact at Concordia.</p><article class="vision-article" aria-label="Pathways Vision"><section class="vision-section"><h2>Pathways to Impact: Executive Summary (DRAFT)</h2></section><section class="vision-section"><h3>Introduction</h3><p>Researchers are working in a rapidly changing academic environment. Expectations around the role of research in society are evolving, and new forms of engagement are emerging across disciplines and sectors.</p><p>These changes extend beyond demonstrating outcomes. They reflect broader shifts in how research is valued, supported, and connected to society, including:</p><details class="vision-expander"><summary class="vision-expander-summary">Read more</summary><div class="vision-expander-body"><ul class="vision-list"><li>A growing emphasis on research impact, shaped by urgent societal challenges and renewed attention to public trust in research</li><li>Changing expectations from funders and governments around the public value of research</li><li>A shift toward more inclusive, responsible, and meaningful approaches to research assessment</li></ul><p>In this context, researchers are increasingly asked to think about impact as part of an ongoing process that unfolds across the life of a research project. For research to lead to meaningful impact, certain practices, relationships, and forms of support need to be in place over time.</p><h3>Defining Research Impact</h3><p>At Concordia, we define research impact as the change that research activities contribute to society and beyond. We understand this change as an ongoing process of engagement that can lead to academic, social, cultural, economic, environmental, or policy effects. The consequences of research, or impacts, can:</p><ul class="vision-list"><li>be positive or negative</li><li>be of different types or natures</li><li>occur at different times and scales</li><li>result from the research process itself, as well as from its results</li></ul><h3>Framing Research Impact</h3><p>We consider the impact areas below as a way of framing the different forms research impact can take. These areas do not capture the full range of how impact is understood or experienced but offer a starting point to help clarify research impact goals and advance them with greater intention, capacity and assessment.</p><ul class="vision-list"><li>**Academic Impact:** Contributing to knowledge development and creation via publications and knowledge mobilization activities such as datasets, open access outputs, or conference presentations.</li><li>**Cultural Impact:** Relating to heritage, the arts, or sociological elements such as norms, values, ideas, and attitudinal changes.</li><li>**Economic Impact:** Driving economic development, generating new products and services, creating or contributing to enterprises.</li><li>**Environmental Impact:** Benefiting natural and built environments, ecosystems, and associated communities.</li><li>**Health and Wellbeing Impact:** Advancing drugs, treatments, public awareness, education, training, and access to healthcare.</li><li>**Policy Impact:** Informing or influencing decision-making by governments, public bodies, NGOs, or the private sector.</li><li>**Social Impact:** Informing public debate, improving welfare, equality, inclusion, quality of life, and opportunities.</li></ul><p>This understanding of impact underpins the need for flexible approaches that can respond to different research contexts, goals, and moments in the research process.</p><h3>Concordia’s Support for Researchers</h3><p>At Concordia University, we aim to support researchers by expanding and coordinating support for:</p><ul class="vision-list"><li>Considering impact earlier in the research process</li><li>Engaging more meaningfully with partners, communities, and stakeholders</li><li>Communicating research beyond academic audiences</li><li>Participating in open science and knowledge mobilization practices</li><li>Exploring how research can inform action, policy, or practice</li><li>Reflecting on how impact is understood, documented, and assessed</li><li>Seeking appropriate institutional support and recognition for this work</li></ul></div></details></section><section class="vision-section"><h3>Pathways to Impact</h3><p>Led by the Office of the Vice-President, Research, Innovation and Impact (OVPRII), the Pathways to Impact initiative responds to changing expectations around research impact. The initiative brings together university structures and resources to create a coordinated approach that strengthens academic, scientific, and societal impact.</p><p>At its core, the initiative is about enhancing how support is organized around researchers. By connecting researchers with expertise and services across the university and external resources, this integrated approach ensures they have access to the relationships and resources that advance their impact work.</p><p>Ultimately, we want to ensure:</p><ul class="vision-list"><li>Researchers are supported to maximize the diverse impacts of their work</li><li>Institutional units collaborate to offer tools, resources, and training that meet researcher and partner needs</li><li>Researchers are well-positioned for success in funding</li><li>Societal stakeholders know and value our research contributions</li></ul></section><section class="vision-section"><h3>The 7 Pathways</h3><p>Below are the Pathways to Impact, describing ways researchers could engage to create impact and what each pathway offers.</p><h3>1. Academic Scholarship (Scholarly Practice &amp; Recognition)</h3><p>You might engage here if you want to:</p><ul class="vision-list"><li>Share your research openly and responsibly</li><li>Communicate the significance of your work beyond publications</li><li>Strengthen how your research is assessed and recognized</li><li>Increase the reach and long-term value of your outputs</li><li>Develop narrative CVs</li><li>Plan and manage research data responsibly</li></ul><h3>2. Research Creation (Creative &amp; Experimental Research)</h3><p>You might engage here if you want to:</p><ul class="vision-list"><li>Explore non-traditional and creative research outputs</li><li>Use creative methods to engage audiences and address social issues</li><li>Center experimentation, reflection, and making</li><li>Create/test prototypes with collaborative feedback</li><li>Integrate sustainable and ethical practices</li></ul><h3>3. Community Engagement (Community Partnership &amp; Co-Creation)</h3><p>You might engage here if you want to:</p><ul class="vision-list"><li>Co-design research</li><li>Build trust-based partnerships</li><li>Share authority and decision-making</li><li>Collaborate on research questions, methods, and outcomes</li><li>Use participatory or citizen science approaches</li></ul><h3>4. Innovation (Translational Thinking)</h3><p>You might engage here if you want to:</p><ul class="vision-list"><li>Explore applications of your research</li><li>Develop innovation-oriented thinking</li><li>Test ideas before formal partnerships</li><li>Reframe problems and opportunities</li></ul><h3>5. Entrepreneurship &amp; Commercialization</h3><p>You might engage here if you want to:</p><ul class="vision-list"><li>Develop industry partnerships</li><li>Explore entrepreneurial pathways</li><li>Protect and manage IP</li><li>License or commercialize research</li><li>Navigate agreements and commercialization routes</li></ul><h3>6. Public Policy (Policy Advocacy &amp; Systems Influence)</h3><p>You might engage here if you want to:</p><ul class="vision-list"><li>Work with governments, NGOs, and policy bodies</li><li>Produce policy-tailored outputs</li><li>Develop policy-relevant writing</li><li>Influence curricula</li><li>Contribute to international policy development</li></ul><h3>7. Communications (Public Communication &amp; Engagement)</h3><p>You might engage here if you want to:</p><ul class="vision-list"><li>Reach public audiences</li><li>Engage with media</li><li>Contribute to public scholarship and dialogue</li><li>Develop strategies for public-facing communication</li></ul></section><section class="vision-section"><h3>Pathways to Impact: An Integrated Support Service</h3><p>Together, the 7 Pathways form a living support system that will evolve with feedback, learning, and new services.</p><h3>Units currently involved:</h3><ul class="vision-list"><li>4th Space</li><li>University Communication Services</li><li>Office of Community Engagement and SHIFT Centre</li><li>Concordia Library</li><li>District 3</li><li>Office of Research</li><li>V1 Studio (external)</li><li>More to come…</li></ul></section><section class="vision-section"><h3>Concordia’s Pathways to Impact Vision</h3><h3>The future we anticipate:</h3><ul class="vision-list"><li>Researchers are supported to maximize the diverse impacts of their work</li><li>Multiple pathways to impact are recognized and strengthened</li><li>Research impact is valued and visible</li><li>Institutional units collaborate to offer needed resources and training</li><li>Impact aligns with Concordia’s core commitments</li><li>Achieving research impact is easy, normative, and rewarding</li><li>Stakeholders know and value our research</li><li>Researchers succeed in funding competitions</li><li>Concordia is a recognized leader in research impact</li></ul><p>Research impact, at an institutional level, is shaped by how intentionally we consider how research can benefit society. By engaging diverse pathways and creating supportive structures, the initiative strengthens the conditions for all research to generate meaningful societal benefits.</p></section></article></div></div></section>
+<section class="page page-pathways-vision is-active" data-page="pathways-vision" id="pathways-vision"><div class="container"><div class="vision-reading"><a class="vision-back-link" href="#about">← Back to Pathways</a><h1>Pathways Vision</h1><p class="vision-intro">How we understand and support research impact at Concordia.</p><article class="vision-article" aria-label="Pathways Vision"><div class="ncv-section"><div class="ncv-section-header"><h2>Introduction</h2></div><p class="ncv-body">Researchers are working in a rapidly changing academic environment. Expectations around the role of research in society are evolving, and new forms of engagement are emerging across disciplines and sectors.</p><p class="ncv-body">These changes extend beyond demonstrating outcomes. They reflect broader shifts in how research is valued, supported, and connected to society, including:</p><ul class="ncv-list"><li>A growing emphasis on research impact, shaped by urgent societal challenges and renewed attention to public trust in research</li><li>Changing expectations from funders and governments around the public value of research</li><li>A shift toward more inclusive, responsible, and meaningful approaches to research assessment</li></ul><p class="ncv-body">In this context, researchers are increasingly asked to think about impact as part of an ongoing process that unfolds across the life of a research project. For research to lead to meaningful impact, certain practices, relationships, and forms of support need to be in place over time.</p><h3 class="vision-sub-heading">Defining Research Impact</h3><div class="ncv-summary-card"><p class="ncv-body">At Concordia, we define research impact as the change that research activities contribute to society and beyond. We understand this change as an ongoing process of engagement that can lead to academic, social, cultural, economic, environmental, or policy effects. The consequences of research, or impacts, can:</p><ul class="ncv-list"><li><strong>be positive or negative</strong></li><li><strong>be of different types or natures</strong></li><li><strong>occur at different times and scales</strong></li><li><strong>result from the research process itself, as well as from its results</strong></li></ul></div><h3 class="vision-sub-heading">Framing Research Impact</h3><p class="ncv-body">We consider the impact areas below as a way of framing the different forms research impact can take. These areas do not capture the full range of how impact is understood or experienced but offer a starting point to help clarify research impact goals and advance them with greater intention, capacity and assessment.</p><div class="ncv-section-cards vision-impact-cards"><div class="ncv-section-card"><h4>Academic Impact:</h4><p>Contributing to knowledge development and creation via publications and knowledge mobilization activities such as establishment of datasets, sharing of open access research outputs, or presentations to conferences.</p></div><div class="ncv-section-card"><h4>Cultural Impact:</h4><p>May refer to heritage and the arts, or understood in a sociological sense: cultural norms, values, ideas, attitudinal changes.</p></div><div class="ncv-section-card"><h4>Economic Impact:</h4><p>Driving economic development, generating new products and services, creating a new enterprise or contributing to an existing one.</p></div><div class="ncv-section-card"><h4>Environmental Impact:</h4><p>Beneficiaries are the natural and built environment with its ecosystem services, together with benefitting societies, individuals or groups.</p></div><div class="ncv-section-card"><h4>Health and Wellbeing Impact:</h4><p>New drugs and treatments, therapies, education and training, public awareness, and access to health care provision.</p></div><div class="ncv-section-card"><h4>Policy Impact:</h4><p>Informing, influencing and improving decision-making by government and public bodies, NGOs and in the private sector.</p></div><div class="ncv-section-card"><h4>Social Impact:</h4><p>Informing public debate, stimulating public interest, improving welfare, equality and inclusion, quality of life and opportunities.</p></div></div><p class="ncv-body">Impact definitions were taken from <a href="https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/CRHOFA" target="_blank" rel="noopener">Erasmus Impact Indicators tool</a>, slightly modifying some.</p><p class="ncv-body">This understanding of impact underpins the need for flexible support that can respond to different research contexts, goals, and moments in the research process.</p><h3 class="vision-sub-heading">Concordia’s Support for Researchers</h3><p class="ncv-body">At Concordia University, we aim to support researchers by expanding and coordinating support for:</p><ul class="ncv-list"><li>Considering impact earlier in the research process</li><li>Engaging more meaningfully with partners, communities, and stakeholders</li><li>Communicating research beyond academic audiences</li><li>Participating in open science and knowledge mobilization practices</li><li>Exploring how research can inform action, policy, or practice</li><li>Reflecting on how impact is understood, documented, and assessed</li><li>Seeking appropriate institutional support and recognition for this work</li></ul></div><div class="ncv-section"><div class="ncv-section-header"><h2>Pathways to Impact</h2></div><p class="ncv-body">Led by the Office of the Vice-President, Research, Innovation and Impact (OVPRII), the Pathways to Impact initiative responds to the changing expectations around research impact. The initiative brings together existing university structures and resources to create a coordinated approach that strengthens the academic, scientific, and societal impact of research. This whole-university approach recognizes that impact is shaped collectively, and that units and sectors across the institution play a role in enabling and amplifying researchers’ impact goals.</p><p class="ncv-body">At its core, the Pathways to Impact initiative is about enhancing how support is organized around researchers. By connecting researchers with expertise and services from across the university in addition to external resources, this integrated approach aims to ensure researchers have access to both the resources and the relationships that will help them advance their impact work.</p><p class="ncv-body">Ultimately, we want to ensure:</p><ul class="ncv-list"><li>Researchers are supported to maximize the diverse impacts of their work</li><li>Institutional units collaborate to offer tools, resources and training that meet the needs of researchers and their societal partners</li><li>Our researchers are well-positioned for success in funding</li><li>Societal stakeholders know and value our research contributions</li></ul></div><div class="ncv-section"><div class="ncv-section-header"><h2>The 7 Pathways</h2></div><p class="ncv-body">Below are the Pathways to Impact, describing different methods researchers could engage to create impact and what each pathway offers. Within each pathway are a range of activities, including workshops, clinics, consultations, and other forms of engagement, designed to respond to different research impact needs.</p><div class="ncv-expand-block" data-pathway="academic"><button class="ncv-expand-btn" type="button" aria-expanded="false"><span>1. Academic Scholarship (Scholarly Practice &amp; Recognition)</span><span class="ncv-chevron">▾</span></button><div class="ncv-expand-body"><p class="ncv-body">This pathway supports researchers who aim to strengthen the reach, transparency, and integrity of their scholarship while navigating evolving expectations around research assessment. It focuses on how research is produced, shared, and recognized within academia.</p><p class="ncv-body">You might engage here if you want to:</p><ul class="ncv-list"><li>Share your research openly and responsibly</li><li>Communicate the significance of your work beyond publications</li><li>Strengthen how your research is assessed and recognized</li><li>Increase the reach and long-term value of your research outputs</li><li>Develop narrative CVs that reflect the full scope of your research contributions</li><li>Plan for and manage research data responsibly</li></ul></div></div><div class="ncv-expand-block" data-pathway="research-creation"><button class="ncv-expand-btn" type="button" aria-expanded="false"><span>2. Research Creation (Creative &amp; Experimental Research)</span><span class="ncv-chevron">▾</span></button><div class="ncv-expand-body"><p class="ncv-body">This pathway acknowledges research practices grounded in process, experimentation, and alternative forms of expression, with particular relevance to artistic and creative disciplines. It supports impact development through creative and experimental approaches to knowledge-making.</p><p class="ncv-body">You might engage here if you want to:</p><ul class="ncv-list"><li>Explore non-traditional and creative research outputs</li><li>Use creative methods to engage audiences and address social issues</li><li>Center experimentation, reflection, and making as part of the research process</li><li>Create, test, and iterate prototypes through feedback from collaborators, communities, or users</li><li>Integrate sustainable and ethical practices into creative work</li></ul></div></div><div class="ncv-expand-block" data-pathway="community"><button class="ncv-expand-btn" type="button" aria-expanded="false"><span>3. Community Engagement (Community Partnership &amp; Co-Creation)</span><span class="ncv-chevron">▾</span></button><div class="ncv-expand-body"><p class="ncv-body">This pathway supports researchers working collaboratively with communities and non-academic partners. It focuses on building meaningful, reciprocal relationships that shape research questions, methods, and outcomes.</p><p class="ncv-body">You might engage here if you want to:</p><ul class="ncv-list"><li>Co-design research with communities and partners</li><li>Build and sustain trust-based partnerships</li><li>Share authority and decision-making throughout the research process</li><li>Work collaboratively on research questions, methods, and outcomes</li><li>Use participatory and citizen science approaches where appropriate</li></ul></div></div><div class="ncv-expand-block" data-pathway="innovation"><button class="ncv-expand-btn" type="button" aria-expanded="false"><span>4. Innovation (Translational Thinking)</span><span class="ncv-chevron">▾</span></button><div class="ncv-expand-body"><p class="ncv-body">This pathway supports researchers who are interested in exploring new applications, uses, and directions for their research. It focuses on how research can move beyond its original context into new settings, practices, or applications, without requiring a commitment to commercialization or venture creation.</p><p class="ncv-body">You might engage here if you want to:</p><ul class="ncv-list"><li>Explore potential applications of your research beyond its original context</li><li>Develop innovation-oriented and translational ways of thinking</li><li>Test and refine ideas before committing to formal partnerships or commercialization</li><li>Reframe problems and opportunities</li></ul></div></div><div class="ncv-expand-block" data-pathway="commercialization"><button class="ncv-expand-btn" type="button" aria-expanded="false"><span>5. Entrepreneurship &amp; Commercialization</span><span class="ncv-chevron">▾</span></button><div class="ncv-expand-body"><p class="ncv-body">This pathway supports researchers who are ready to pursue structured routes to impact through entrepreneurship, industry collaboration, and market-based mechanisms. It focuses on industry partnerships, venture creation, and the protection and commercialization of research outputs.</p><p class="ncv-body">You might engage here if you want to:</p><ul class="ncv-list"><li>Develop industry or external partnerships connected to your research</li><li>Explore entrepreneurial pathways, including venture creation or spin-offs</li><li>Protect, manage, and make strategic decisions about intellectual property</li><li>License, commercialize, or scale research outputs through market-based routes</li><li>Navigate agreements, partnerships, and commercialization processes</li></ul></div></div><div class="ncv-expand-block" data-pathway="policy"><button class="ncv-expand-btn" type="button" aria-expanded="false"><span>6. Public Policy (Policy Advocacy &amp; Systems Influence)</span><span class="ncv-chevron">▾</span></button><div class="ncv-expand-body"><p class="ncv-body">This pathway supports researchers whose work contributes research evidence and expertise to policy and decision-making processes. It focuses on informing public policy, regulation, and institutional decision-making across governments, NGOs, and other organizations at local, national, and international levels.</p><p class="ncv-body">You might engage here if you want to:</p><ul class="ncv-list"><li>Work with government, NGO, and other political decision-making and influencing bodies</li><li>Produce research outputs tailored for policy and decision-making contexts</li><li>Develop policy-relevant writing and communication skills</li><li>Create change in educational curricula across all levels informed by new knowledge and policies</li><li>Influence international policy development and practices of international agencies or institutions</li></ul></div></div><div class="ncv-expand-block" data-pathway="communications"><button class="ncv-expand-btn" type="button" aria-expanded="false"><span>7. Communications (Public Communication &amp; Engagement)</span><span class="ncv-chevron">▾</span></button><div class="ncv-expand-body"><p class="ncv-body">This pathway supports researchers who seek to share their work with broader publics and contribute to public understanding. It focuses on communicating research clearly and responsibly beyond academic audiences.</p><p class="ncv-body">You might engage here if you want to:</p><ul class="ncv-list"><li>Reach public audiences beyond academic contexts</li><li>Engage with media to share research responsibly and effectively</li><li>Contribute to public scholarship, dialogue, and debate</li><li>Develop skills and strategies for public-facing research communication</li></ul></div></div></div><div class="ncv-section"><div class="ncv-section-header"><h2>Pathways to Impact: An Integrated Support Service</h2></div><p class="ncv-body">Together, the 7 Pathways form a living support system that will evolve through feedback, learning, and the addition of new services as researcher needs and opportunities emerge. You may engage with one pathway or several, at different moments of a research project depending on the nature of your work, goals, and where you are in your research journey.</p><h3 class="vision-sub-heading">Units currently involved in the integrated support service:</h3><div class="ncv-tag-row"><span class="ncv-tag">4th Space</span><span class="ncv-tag">University Communication Services</span><span class="ncv-tag">Office of Community Engagement and SHIFT Centre for Social Transformation</span><span class="ncv-tag">Concordia Library</span><span class="ncv-tag">District 3</span><span class="ncv-tag">Office of Research</span><span class="ncv-tag">V1 Studio (external unit)</span><span class="ncv-tag">More to come...</span></div></div><div class="ncv-section"><div class="ncv-section-header"><h2>The future we anticipate</h2></div><div class="ncv-summary-card"><ul class="ncv-list"><li>Researchers are supported to maximize the diverse impacts of their work.</li><li>Multiple pathways to impact are recognized and strengthened.</li><li>The full range of research impact is valued and made visible.</li><li>Institutional units collaborate to offer tools, resources and training that meet the needs of researchers and their societal partners.</li><li>Research impact aligns with broader institutional goals, advancing Concordia’s core commitments and priorities.</li><li>Achieving research impact is made easy, normative and rewarding.</li><li>Societal stakeholders know and value our research contributions.</li><li>Our researchers are well-positioned for success in funding competitions.</li><li>Concordia is a recognized leader in research impact.</li></ul><p class="ncv-body">Research impact, at an institutional level, is shaped by how intentionally we consider the ways research can benefit society. There is no one-size-fits-all approach to generating societal benefit from academic and scientific knowledge, nor a single ideal institutional model for enabling it. By advocating for the thoughtful engagement of diverse pathways to impact and creating a supportive structure, the Pathways to Impact initiative anticipates that, as a community, we can significantly enhance the potential for all research to generate meaningful societal benefits.</p></div></div></article></div></div></section>
 </main>
 <footer class="mh-footer">Pathways to Impact · Office of Research, Concordia University · <a href="mailto:impact@concordia.ca">impact@concordia.ca</a><br>Static migration snapshot — interactive behaviour (carousel autoplay, hash routing, live data) is not reproduced.</footer>
-<script>document.addEventListener("click",function(e){var b=e.target.closest("[aria-expanded]");if(!b)return;var x=b.getAttribute("aria-expanded")==="true";b.setAttribute("aria-expanded",String(!x));var body=b.nextElementSibling;if(body)body.classList.toggle("is-open",!x);});</script>
+<script>document.addEventListener("click",function(e){var b=e.target.closest("[aria-expanded]");if(!b)return;var x=b.getAttribute("aria-expanded")==="true";b.setAttribute("aria-expanded",String(!x));var y=b.nextElementSibling;if(y)y.classList.toggle("is-open",!x);});</script>
 </body>
 </html>
