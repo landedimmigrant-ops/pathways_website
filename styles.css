@@ -1486,7 +1486,10 @@ label {
 .impact-planner-entry.is-hidden,
 .impact-planner-workflow.is-hidden,
 .impact-planner-summary.is-hidden,
-.tools-planner-area.is-hidden {
+.tools-planner-area.is-hidden,
+.tools-step-cards.is-hidden,
+.tools-already-link.is-hidden,
+.narrative-funder-note.is-hidden {
   display: none;
 }
 
@@ -1973,6 +1976,13 @@ label {
   font-size: 17px;
   line-height: 1.55;
   color: var(--text);
+}
+
+.pathway-dev-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .pathway-filter-bar {
