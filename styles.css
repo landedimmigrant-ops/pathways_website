@@ -2109,7 +2109,7 @@ label {
 }
 
 .research-viewer.is-open {
-  max-height: 2400px;
+  max-height: 8000px;
 }
 
 .research-viewer-card {
