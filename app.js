@@ -1155,23 +1155,79 @@
     }
   };
 
+  // Emphasized logo that returns home — house glyph + wordmark. Shared by the
+  // site header and the in-modal nav so they look and behave identically.
+  const buildBrandLink = (extraClass) => {
+    const link = el("a", extraClass ? `brand ${extraClass}` : "brand");
+    link.href = "#home";
+    link.setAttribute("aria-label", data.brand.homeAriaLabel);
+    link.title = "Return home";
+    const glyph = el("span", "brand-home-glyph", "⌂");
+    glyph.setAttribute("aria-hidden", "true");
+    link.appendChild(glyph);
+    link.appendChild(el("span", "brand-label", data.brand.name));
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      navigateTo("home");
+    });
+    return link;
+  };
+
+  // Primary nav (Explore / Learn / About). Reused in the site header and inside
+  // full-page modal overlays so the same links are available across the board.
+  const buildPrimaryNav = (extraClass) => {
+    const nav = el("nav", extraClass ? `main-nav ${extraClass}` : "main-nav");
+    const navList = el("ul", "nav-list");
+    data.navigation.forEach((item) => {
+      const li = el("li");
+      const link = el("a", "nav-link", item.label);
+      link.href = `#${item.id}`;
+      link.dataset.page = item.id;
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        navigateTo(item.id);
+      });
+      li.appendChild(link);
+      navList.appendChild(li);
+    });
+    nav.appendChild(navList);
+    return nav;
+  };
+
   const buildHeader = () => {
     const header = el("div", "site-header");
     const container = el("div", "container header-inner");
 
-    const brandLink = el("a", "brand", data.brand.name);
-    brandLink.href = "#home";
-    brandLink.setAttribute("aria-label", data.brand.homeAriaLabel);
-    brandLink.title = "Return home";
-    const homeGlyph = el("span", "brand-home-glyph", "⌂");
-    homeGlyph.setAttribute("aria-hidden", "true");
-    brandLink.insertBefore(homeGlyph, brandLink.firstChild);
-    brandLink.addEventListener("click", (event) => {
-      event.preventDefault();
-      navigateTo("home");
+    const brandBlock = el("div", "brand-block");
+    const brandLink = buildBrandLink();
+    const nav = buildPrimaryNav();
+
+    const hamburger = el("button", "nav-hamburger");
+    hamburger.type = "button";
+    hamburger.setAttribute("aria-label", "Toggle navigation");
+    hamburger.setAttribute("aria-expanded", "false");
+    for (let i = 0; i < 3; i++) {
+      hamburger.appendChild(el("span", "hamburger-bar"));
+    }
+    hamburger.addEventListener("click", () => {
+      const isOpen = header.classList.toggle("is-nav-open");
+      hamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+    // Auto-close the mobile menu after a nav link is chosen.
+    nav.addEventListener("click", (event) => {
+      if (event.target.closest(".nav-link")) {
+        header.classList.remove("is-nav-open");
+        hamburger.setAttribute("aria-expanded", "false");
+      }
     });
 
-    container.appendChild(brandLink);
+    const headerRow = el("div", "header-row");
+    headerRow.appendChild(brandLink);
+    headerRow.appendChild(hamburger);
+
+    brandBlock.appendChild(headerRow);
+    brandBlock.appendChild(nav);
+    container.appendChild(brandBlock);
     header.appendChild(container);
     siteHeader.appendChild(header);
   };
@@ -5830,23 +5886,16 @@
       updateResults(filtered);
     };
 
-    // Persistent home control inside full-page modal overlays (workshops,
-    // guides, booking) \u2014 the site header is covered by the .modal-overlay sheet,
-    // so the logo lives in the modal top bar too. Click returns home and the
-    // route change clears the lingering service modal.
-    const addModalHomeLink = (topbar) => {
-      const home = el("a", "brand modal-home-link", data.brand.name);
-      home.href = "#home";
-      home.setAttribute("aria-label", data.brand.homeAriaLabel);
-      home.title = "Return home";
-      const glyph = el("span", "brand-home-glyph", "\u2302");
-      glyph.setAttribute("aria-hidden", "true");
-      home.insertBefore(glyph, home.firstChild);
-      home.addEventListener("click", (event) => {
-        event.preventDefault();
-        navigateTo("home");
-      });
-      topbar.appendChild(home);
+    // Persistent nav inside full-page modal overlays (workshops, guides,
+    // booking): the .modal-overlay sheet covers the site header, so the logo
+    // and the Explore/Learn/About links live in the modal top bar too \u2014 keeping
+    // the nav available across the board. Any of them changes the route, which
+    // dismisses the overlay (showPage's leave-explore reconcile clears it).
+    const addModalNav = (topbar) => {
+      const cluster = el("div", "modal-topbar-nav");
+      cluster.appendChild(buildBrandLink("modal-home-link"));
+      cluster.appendChild(buildPrimaryNav("modal-main-nav"));
+      topbar.appendChild(cluster);
     };
 
     const openBookingRedirect = (opp) => {
@@ -5860,7 +5909,7 @@
       backBtn.type = "button";
       backBtn.addEventListener("click", requestModalClose);
       topbar.appendChild(backBtn);
-      addModalHomeLink(topbar);
+      addModalNav(topbar);
       overlay.appendChild(topbar);
 
       const modal = el("div", "modal booking-redirect-modal");
@@ -5909,7 +5958,7 @@
       backBtn.type = "button";
       backBtn.addEventListener("click", requestModalClose);
       topbar.appendChild(backBtn);
-      addModalHomeLink(topbar);
+      addModalNav(topbar);
       overlay.appendChild(topbar);
 
       const modal = el("div", "modal booking-modal");
@@ -6136,7 +6185,7 @@
         topbarActions.appendChild(resourceBtn);
       }
       topbar.appendChild(topbarActions);
-      addModalHomeLink(topbar);
+      addModalNav(topbar);
       overlay.appendChild(topbar);
 
       // Page content
@@ -6644,6 +6693,18 @@
     appRoot.appendChild(aboutPage);
   };
 
+  // Highlight the active primary-nav item; sub-pages map to their parent
+  // section (vision → about, tools/NCV/learn modules → learn).
+  const setActiveNav = (pageId) => {
+    const activePageId = pageId === "pathways-vision" ? "about"
+      : pageId === "tools-narrative" || pageId === "tools" ? "learn"
+      : pageId.startsWith("learn-module") ? "learn"
+      : pageId;
+    siteHeader.querySelectorAll(".nav-link").forEach((link) => {
+      link.classList.toggle("is-active", link.dataset.page === activePageId);
+    });
+  };
+
   const showPage = (pageId, anchorId) => {
     const validPage = pages.has(pageId) ? pageId : "home";
     state.page = validPage;
@@ -6657,6 +6718,7 @@
       page.classList.toggle("is-active", id === validPage);
     });
 
+    setActiveNav(validPage);
     if (routeFooter) {
       routeFooter.classList.toggle("is-visible", validPage !== "home");
     }

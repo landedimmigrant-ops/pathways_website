@@ -7,6 +7,11 @@ window.PATHWAYS_DATA = {
     name: "Pathways to Impact",
     homeAriaLabel: "Go to Pathways to Impact home"
   },
+  navigation: [
+    { id: "explore", label: "Explore" },
+    { id: "learn", label: "Learn" },
+    { id: "about", label: "About" }
+  ],
   units: [
     {
       id: "research-development",
