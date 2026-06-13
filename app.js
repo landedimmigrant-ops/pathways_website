@@ -4505,7 +4505,11 @@
     article.setAttribute("aria-label", "Pathways Vision");
 
     if (content.pathwaysVisionLoadError || !content.pathwaysVisionMarkdown.trim()) {
-      article.appendChild(el("p", null, "Pathways Vision content could not be loaded. Add `pathways_to_impact.md` to the project root to display the approved text."));
+      article.appendChild(el("p", null, "This page isn’t available right now. Browse the rest of the site, or get in touch and we’ll point you to the right place."));
+      const backToExplore = el("a", "btn", "Explore the pathways");
+      backToExplore.href = "#explore";
+      backToExplore.addEventListener("click", (e) => { e.preventDefault(); navigateTo("explore"); });
+      article.appendChild(backToExplore);
     } else {
       const sourceMarkdown = stripFrontMatter(content.pathwaysVisionMarkdown);
       const blocks = parseMarkdownBlocks(sourceMarkdown);
@@ -6616,7 +6620,8 @@
     section.openResearchStage = (journeyId) => {
       setActiveTab(tabResearch);
       const journey = journeys.find(j => j.id === journeyId);
-      if (journey) openResearchPanel(journey);
+      if (journey) { openResearchPanel(journey); return true; }
+      return false; // unknown journey id — caller strips the stale param
     };
     section.openTab = (tabName) => {
       if (tabName === "research") { setActiveTab(tabResearch); return "research"; }
@@ -6687,7 +6692,18 @@
       if (!serviceId) return;
 
       const opp = exploreItems.find((item) => item.id === serviceId);
-      if (!opp) return; // bad/stale service id — leave URL but don't crash
+      if (!opp) {
+        // Bad/stale service id (e.g. a shared link to a since-removed item):
+        // strip ?service=/?book= so the address bar matches the modal-less view
+        // actually shown, instead of leaving a dead param to copy/share.
+        const stale = parseRouteFromHash(window.location.hash).params;
+        stale.delete("service");
+        stale.delete("book");
+        const q = stale.toString();
+        const cleaned = `#explore${q ? "?" + q : ""}`;
+        if (window.location.hash !== cleaned) history.replaceState(null, "", cleaned);
+        return;
+      }
 
       if (withBooking) {
         openBookingModal(opp);
@@ -6850,7 +6866,7 @@
         state.pendingWorkshopId = "";
       }
       if (explorePage && explorePage.openResearchStage && state.pendingResearchJourneyId) {
-        explorePage.openResearchStage(state.pendingResearchJourneyId);
+        const stageOpened = explorePage.openResearchStage(state.pendingResearchJourneyId);
         // Canonicalize the address so the open stage panel is always
         // shareable, including the home-lifecycle flow that sets the pending
         // id directly without a ?journey= URL. replaceState — silent.
@@ -6860,7 +6876,11 @@
         // resource card in the stage panels a dead button.
         const liveParams = parseRouteFromHash(window.location.hash).params;
         if (!liveParams.get("service")) {
-          const journeyHash = `#explore?tab=research&journey=${state.pendingResearchJourneyId}`;
+          // Valid journey → canonical ...&journey=<id>; unknown id → strip the
+          // stale param so the address matches the stage-list view shown.
+          const journeyHash = stageOpened
+            ? `#explore?tab=research&journey=${state.pendingResearchJourneyId}`
+            : `#explore?tab=research`;
           if (window.location.hash !== journeyHash) {
             history.replaceState(null, "", journeyHash);
           }

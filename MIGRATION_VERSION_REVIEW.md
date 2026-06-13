@@ -197,10 +197,10 @@ The hero partner chip read "University Communication Services"; every other refe
 
 | # | Severity | Issue | Proposed change |
 |---|---|---|---|
-| 29 | Low | Invalid `?journey=` value is re-written back into the URL (misleading shareable address) | Have `openResearchStage` return success; canonicalize to `…&journey=<id>` only if it resolved, else strip the param. |
-| 30 | Low | Invalid `?service=` id leaves the param with no modal/feedback | In `reconcileServiceModal`'s `!opp` branch, `replaceState` to strip `service`/`book`; optional inline "no longer available" notice. |
+| 29 | Low | **✅ FIXED (iter 12)** — Invalid `?journey=` value was re-written back into the URL (misleading shareable address) | `openResearchStage` now returns success; showPage canonicalizes to `…&journey=<id>` only if it resolved, else strips the param. Verified: `journey=bogus` → `#explore?tab=research`; valid journeys + #21 in-panel card click unaffected. |
+| 30 | Low | **✅ FIXED (iter 12)** — Invalid `?service=` id left the param with no modal/feedback | `reconcileServiceModal`'s `!opp` branch now `replaceState`s to strip `service`/`book`. Verified: `service=bogus` → `#explore`, no modal, no crash. |
 | 31 | Low | Pagination page is not written to the URL (lost on reload/share) | If sharable: write `?page=` in `writeExploreUrl`, call it from `goToPage`, read+clamp in `syncFromUrl`. |
-| 32 | Low | Pathways Vision shows a developer instruction ("Add `pathways_to_impact.md`…") if the fetch fails post-migration | Replace fallback with user copy + Back/Contact; ideally bake the vision text as a hardcoded fallback so the fetch isn't load-bearing. |
+| 32 | Low | **✅ FIXED (iter 12)** — Pathways Vision showed a developer instruction ("Add `pathways_to_impact.md`…") if the fetch fails post-migration | Fallback replaced with user copy ("This page isn't available right now…") + an "Explore the pathways" action; dev/backtick phrasing removed. (Baking the text as a hardcoded fallback remains a further hardening option.) |
 | 33 | Low | `<main id="app" aria-live="polite">` over-announces routine UI updates to SRs | Remove the broad `aria-live`; scope a `role="status"` results-count region; move focus to the new page H1 on route change. |
 | 34 | Low | Carousel dot targets are 7×7px (far below tap-target guidance) | Keep the 7px visual; add a transparent `::before { inset:-10px }` hit area (≥24px) on `.dot`. |
 | 35 | Low | Orphan duplicate `#tools` page (nav-less, distinct from Learn → Tools) | Redirect `#tools` → `#learn?tab=tools` (or drop `buildTools()`/registration entirely). |
@@ -237,3 +237,13 @@ Verified the two iteration-9 High fixes at **mobile width (375×812)**, a condit
 - **#21 (research-stage resource cards)** — opening Active Research → tapping a card's "View details" opens the detail modal (`&service=` preserved), Escape closes it and returns to the open stage panel. No horizontal overflow.
 - **#22 (skip link)** — from `#about`, activating the skip link keeps `hash=#about`, stays on About, and moves focus to `#app`. No horizontal overflow.
 No console errors. Both High fixes hold on mobile. (2 commits unpushed: `7fe58bf`, `e68b0c9`.)
+
+---
+
+## Iteration 12 (2026-06-13) — implemented 3 documented Lows (URL hygiene + Vision fallback) — asset `?v=155`
+
+Started implementing the safest, clearly-correct items from the documented list (the routing-hygiene + content ones; left the layout-finesse #34 and the multi-site-touch #35 documented):
+- **#30 — invalid `?service=` cleanup** (`reconcileServiceModal` `!opp` branch strips `service`/`book` via `replaceState`). **Verified:** `#explore?service=bogus` → `#explore`, no modal, no crash.
+- **#29 — invalid `?journey=` cleanup** (`openResearchStage` returns success; showPage strips the param when the id doesn't resolve). **Verified:** `journey=bogus` → `#explore?tab=research` (stage list); valid journey deep-link still opens its panel and the **#21** in-panel card click still opens the modal with `&service=` preserved — no regression.
+- **#32 — Pathways Vision fallback copy** — the dev-facing "Add `pathways_to_impact.md` to the project root" string is replaced with user copy + an "Explore the pathways" action. **Verified:** the normal (success) path still renders the full vision article (9 headings / 35 paragraphs); fallback only shows on a fetch failure.
+No console errors across the tested routes. `app.js` only; assets → `?v=155`. Remaining documented Lows: #31, #33–#42 (and #34/#35) — still pending a scope call. **Unpushed commits now: `7fe58bf`, `e68b0c9`, `f1f312c`, + this.**
