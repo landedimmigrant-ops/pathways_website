@@ -5629,6 +5629,11 @@
     explorerSection.appendChild(controls);
 
     const resultsMeta = el("div", "results-meta");
+    // Scoped live region: announce just the result count on filter/search
+    // changes (replaces the over-broad aria-live that was on <main id="app">,
+    // which re-announced every card/panel/accordion update).
+    resultsMeta.setAttribute("aria-live", "polite");
+    resultsMeta.setAttribute("aria-atomic", "true");
     const resultsLabel = el("span", "meta-label", data.explore.labels.results);
     const resultsCount = el("span", "meta-value", "0");
     resultsMeta.appendChild(resultsLabel);
