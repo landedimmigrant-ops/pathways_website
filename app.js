@@ -6259,6 +6259,15 @@
           emailInput.classList.toggle("is-invalid", !email);
           return;
         }
+        // Reject a malformed email so the confirmation doesn't promise a reply
+        // "at <garbage>" and the request stays contactable.
+        if (!emailInput.checkValidity()) {
+          emailInput.classList.add("is-invalid");
+          emailInput.reportValidity();
+          emailInput.focus();
+          return;
+        }
+        emailInput.classList.remove("is-invalid");
 
         submitBtn.disabled = true;
         submitBtn.textContent = "Sending\u2026";
