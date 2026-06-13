@@ -228,3 +228,12 @@ Focused regression pass on the riskiest iteration-9 edits (no new deep review �
 - **#26 booking-path change is non-regressive.** `shouldExternalBooking` now also requires `status==="open"`; on a normal open item ("4th Space… Book a consultation") the CTA still does the external handoff — `window.open` fired with the correct **shared institutional** URL (`outlook.office.com/book/PathwaystoImpact@liveconcordia…`), and it did *not* mis-route to the in-page form. The all-"open" live catalogue behaves exactly as before.
 - **#21 (research-stage cards) and #22 (skip link) confirmed still holding** after the full edit set.
 No new user-facing issues found. The 14 documented Lows (#29–#42) remain open pending a scope call; **#9/#12** and the bilingual caveat remain accepted-open. 1 commit (`7fe58bf`) unpushed.
+
+---
+
+## Iteration 11 (2026-06-12) — mobile (375px) verification of the High fixes — **no new issues**
+
+Verified the two iteration-9 High fixes at **mobile width (375×812)**, a condition only checked at desktop before:
+- **#21 (research-stage resource cards)** — opening Active Research → tapping a card's "View details" opens the detail modal (`&service=` preserved), Escape closes it and returns to the open stage panel. No horizontal overflow.
+- **#22 (skip link)** — from `#about`, activating the skip link keeps `hash=#about`, stays on About, and moves focus to `#app`. No horizontal overflow.
+No console errors. Both High fixes hold on mobile. (2 commits unpushed: `7fe58bf`, `e68b0c9`.)
