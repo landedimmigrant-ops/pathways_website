@@ -6196,6 +6196,7 @@
       nameInput.type = "text";
       nameInput.placeholder = "Your full name";
       nameInput.required = true;
+      nameInput.maxLength = 100; // cap the name echoed into the confirmation title / payload
       nameField.appendChild(nameInput);
       form.appendChild(nameField);
 
@@ -7100,6 +7101,15 @@
       history.replaceState(history.state, "", `#explore?pathway=${initialPathwayKey}`);
     }
 
+    // #tools is an orphan duplicate of the canonical Learn → Tools tab; forward
+    // it so there's a single tools surface (a hand-typed #tools URL otherwise
+    // loads a second, drift-prone Tools page). replaceState — silent.
+    if (initialRoute.page === "tools") {
+      initialRoute.page = "learn";
+      initialRoute.params.set("tab", "tools");
+      history.replaceState(history.state, "", "#learn?tab=tools");
+    }
+
     if (initialRoute.page === "explore") {
       state.pendingPathwayKey = initialPathwayKey;
     }
@@ -7147,6 +7157,12 @@
       if (nextRoute.page === "home" && nextPathwayKey) {
         nextRoute.page = "explore";
         history.replaceState(history.state, "", `#explore?pathway=${nextPathwayKey}`);
+      }
+      // #tools → Learn → Tools tab (orphan duplicate; keep a single tools surface).
+      if (nextRoute.page === "tools") {
+        nextRoute.page = "learn";
+        nextRoute.params.set("tab", "tools");
+        history.replaceState(history.state, "", "#learn?tab=tools");
       }
       state.pendingPathwayKey = nextRoute.page === "explore" ? nextPathwayKey : "";
       state.pendingWorkshopId = nextRoute.page === "explore"

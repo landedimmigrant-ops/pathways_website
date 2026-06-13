@@ -40,7 +40,6 @@ body {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   font-size: 18px;
   line-height: 1.6;
-  min-width: 350px;
 }
 
 body.is-modal-open {
@@ -573,6 +572,8 @@ label {
   font-size: 22px;
   font-weight: 700;
   margin: 0 0 8px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .booking-confirm-text {
   font-size: 15px;

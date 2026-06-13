@@ -203,12 +203,12 @@ The hero partner chip read "University Communication Services"; every other refe
 | 32 | Low | **✅ FIXED (iter 12)** — Pathways Vision showed a developer instruction ("Add `pathways_to_impact.md`…") if the fetch fails post-migration | Fallback replaced with user copy ("This page isn't available right now…") + an "Explore the pathways" action; dev/backtick phrasing removed. (Baking the text as a hardcoded fallback remains a further hardening option.) |
 | 33 | Low | `<main id="app" aria-live="polite">` over-announces routine UI updates to SRs | Remove the broad `aria-live`; scope a `role="status"` results-count region; move focus to the new page H1 on route change. |
 | 34 | Low | Carousel dot targets are 7×7px (far below tap-target guidance) | Keep the 7px visual; add a transparent `::before { inset:-10px }` hit area (≥24px) on `.dot`. |
-| 35 | Low | Orphan duplicate `#tools` page (nav-less, distinct from Learn → Tools) | Redirect `#tools` → `#learn?tab=tools` (or drop `buildTools()`/registration entirely). |
-| 36 | Low | `body { min-width: 350px }` forces horizontal scroll under 350px | Remove the `min-width`; layout already reflows via existing media queries; verify at 320px. |
+| 35 | Low | **✅ FIXED (iter 13)** — Orphan duplicate `#tools` page (distinct from Learn → Tools) | `#tools` now forwards to `#learn?tab=tools` via `replaceState` (init + hashchange, mirroring the B-12 pattern). Verified both cold-load and in-session → the canonical Tools tab; the standalone `buildTools()` page is now unreachable (harmless dead code). |
+| 36 | Low | **✅ FIXED (iter 13)** — `body { min-width: 350px }` forced horizontal scroll under 350px | Removed the `min-width`. Verified at the narrowest preview width: `body` min-width `0`, no page-level horizontal overflow, home layout clean (carousel internals are clipped by `overflow:hidden`, not page scroll). |
 | 37 | Low | Lab2Market consultation books via a personal **Calendly** link, not institutional MS Bookings | Data fix in `content/data/workshops.json` — swap to the institutional scheduler (confirm with V1 Studio), or mark non-open until ready. |
 | 38 | Low | Booking/waitlist form accepts a malformed email (confirmation promises follow-up "at asdf") | Add `emailInput.checkValidity()` (or regex) guard in the submit handler, reusing `.is-invalid`. |
 | 39 | Low | Feedback modal never validates its optional email before sending | Validate only when non-empty (`email && !checkValidity()`), reusing `.is-invalid`. |
-| 40 | Low | Booking confirmation interpolates the entered name with no length cap | `maxlength="100"` on the name input + `overflow-wrap:break-word` on `.booking-confirm-title`. |
+| 40 | Low | **✅ FIXED (iter 13)** — Booking confirmation interpolated the entered name with no length cap | `maxLength = 100` on the booking name input + `overflow-wrap/word-break` on `.booking-confirm-title` so a pathological token wraps inside the modal. |
 | 41 | Low | NCV export: empty contribution/mentorship items export as bare numbered headers | Filter empty items before numbering in `buildExportText`; emit "(None added)" when none. |
 | 42 | Low | NCV Review "done" state is satisfied by downloading an empty/placeholder outline | Gate the stage-4 done-state (and/or the download) on actual content present, not the bare click. |
 
@@ -247,3 +247,12 @@ Started implementing the safest, clearly-correct items from the documented list 
 - **#29 — invalid `?journey=` cleanup** (`openResearchStage` returns success; showPage strips the param when the id doesn't resolve). **Verified:** `journey=bogus` → `#explore?tab=research` (stage list); valid journey deep-link still opens its panel and the **#21** in-panel card click still opens the modal with `&service=` preserved — no regression.
 - **#32 — Pathways Vision fallback copy** — the dev-facing "Add `pathways_to_impact.md` to the project root" string is replaced with user copy + an "Explore the pathways" action. **Verified:** the normal (success) path still renders the full vision article (9 headings / 35 paragraphs); fallback only shows on a fetch failure.
 No console errors across the tested routes. `app.js` only; assets → `?v=155`. Remaining documented Lows: #31, #33–#42 (and #34/#35) — still pending a scope call. **Unpushed commits now: `7fe58bf`, `e68b0c9`, `f1f312c`, + this.**
+
+---
+
+## Iteration 13 (2026-06-13) — 3 more documented Lows (orphan route, mobile overflow, name cap) — asset `?v=156`
+
+- **#35 — orphan `#tools` page → Learn → Tools tab.** `#tools` rendered a *separate* `buildTools()` page (its own `<h1>Tools</h1>`) distinct from the canonical Learn → Tools tab — a drift-prone duplicate. Now forwarded to `#learn?tab=tools` via `replaceState` in both init and the hashchange handler (B-12 pattern). **Verified:** cold-load `#tools` and in-session `location.hash="#tools"` both land on the real Tools tab (planner cards present), URL canonicalized.
+- **#36 — `body { min-width: 350px }` removed.** It forced horizontal scroll under 350px. **Verified** at the narrowest preview width: `body` min-width `0px`, no page-level horizontal overflow, home renders cleanly (the wide carousel internals are clipped by the carousel's `overflow:hidden`, not page scroll).
+- **#40 — booking name length cap.** `maxLength=100` on the booking name input + `overflow-wrap/word-break` on `.booking-confirm-title` so an overlong name can't overflow the confirmation modal or bloat the payload.
+No console errors across 7 routes (incl. `#tools` and 320px). `app.js` + `styles.css`; assets → `?v=156`. **Remaining documented Lows: #31, #33, #34, #37, #38, #39, #41, #42.** Unpushed commits: `7fe58bf`, `e68b0c9`, `f1f312c`, `6950e61`, + this.
