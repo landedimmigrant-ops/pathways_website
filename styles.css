@@ -5339,6 +5339,16 @@ label {
   width: 7px; height: 7px; border-radius: 50%;
   background: rgba(255,255,255,0.35);
   cursor: pointer; transition: all 0.3s; border: none;
+  position: relative;
+}
+/* Enlarge the tap/click target to ~25px without changing the 7px visual dot —
+   the painted dots are far below WCAG 2.5.8 / iOS tap-target guidance. The
+   transparent hit area is absolutely positioned so it doesn't affect layout. */
+.dot::before {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
 }
 .dot.active { background: #fff; width: 22px; border-radius: 4px; }
 .dot.dark-dot { background: rgba(0,0,0,0.2); }
