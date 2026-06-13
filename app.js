@@ -102,8 +102,13 @@
   // True when a CTA should send the user to an external booking page in a new
   // tab (MS Bookings) instead of opening the in-page booking-request modal.
   // Used by detail-modal CTAs and by reconcileServiceModal's deep-link guard.
+  // Only hand off to the external page when the session is actually bookable.
+  // When full → fall through to the in-page waitlist form (CTA says "Join the
+  // waitlist"); when cancelled → fall through to the detail modal's cancelled
+  // notice. Without the status check, a full/cancelled row with a bookingUrl
+  // would open the live MS Bookings page despite the CTA promising otherwise.
   const shouldExternalBooking = (opp) =>
-    BOOKINGS.enabled && opp && opp.bookingUrl;
+    BOOKINGS.enabled && opp && opp.bookingUrl && getStatus(opp) === "open";
   const STATUS_LABELS = {
     full: "Fully booked",
     cancelled: "Cancelled"
@@ -308,7 +313,7 @@
   // B-16: collapse fine-grained time-commitment values (e.g. "10 min", "45 min",
   // "1 hour", "2 hrs", "Self-paced") into a small set of canonical buckets so
   // the filter dropdown isn't a noisy list of every duration variant.
-  const TIME_BUCKETS = ["< 15 min", "15–30 min", "30–60 min", "1–2 hours", "2+ hours", "Self-paced"];
+  const TIME_BUCKETS = ["< 15 min", "15–30 min", "30–60 min", "1–2 hours", "2+ hours", "Self-paced", "Flexible / on demand"];
   // Canonical research-lifecycle order — single source of truth for the stage
   // filter dropdown (B-26) and the home-slide stage links (B-25). Mirrors the
   // journey order in data.js.
@@ -326,6 +331,10 @@
     const s = (raw || "").toString().trim().toLowerCase();
     if (!s) return "";
     if (s.includes("self") && s.includes("paced")) return "Self-paced";
+    // Flexible availability (e.g. "On demand", "Ongoing") is a real, intentional
+    // value — give it a selectable bucket so the item isn't dropped by the time
+    // filter (and so it isn't a phantom dropdown value the user can't reach).
+    if (s.includes("demand") || s.includes("ongoing") || s.includes("flexible") || s.includes("varies")) return "Flexible / on demand";
     const minMatch = s.match(/(\d+)\s*[-–]?\s*(\d+)?\s*min/);
     if (minMatch) {
       const lo = parseInt(minMatch[1], 10);
@@ -344,7 +353,9 @@
       if (h <= 2) return "1–2 hours";
       return "2+ hours";
     }
-    return raw;
+    // Unrecognised value: collapse to empty so it matches only the "All" state
+    // rather than leaking in as a phantom dropdown option no user can select.
+    return "";
   };
 
   const stageKeyToLabel = data.start.journeys.reduce((acc, journey) => {
@@ -1685,7 +1696,7 @@
             <span class="partner-chip">Office of Research</span>
             <span class="partner-chip">4th Space</span>
             <span class="partner-chip">Concordia Library</span>
-            <span class="partner-chip">University Communication Services</span>
+            <span class="partner-chip">University Communications Services</span>
             <span class="partner-chip">Community Engagement &amp; SHIFT Centre</span>
             <span class="partner-chip">District 3</span>
             <span class="partner-chip">V1 Studio</span>
@@ -6065,6 +6076,10 @@
       // (replaceState strips ?book=1). By the time we reach this function, the
       // intent is unambiguously: render the in-page request form.
       const oppStatus = getStatus(opp);
+      // Defence-in-depth: a cancelled session must never render a working request
+      // form, even via a stale ?book=1 deep link. Show the detail modal's
+      // cancelled notice instead of the booking form.
+      if (oppStatus === "cancelled") { openModal(opp); return; }
       const isWaitlist = oppStatus === "full";
 
       clear(modalRoot);
@@ -6765,7 +6780,14 @@
       if (explorePage && explorePage.resetState) {
         explorePage.resetState();
       }
-      // Leaving explore — make sure no service modal lingers.
+      // Leaving explore — tear down any modal unconditionally. The B-13 booking
+      // confirmation clears currentModalKey while the overlay is still up, so
+      // reconcileServiceModal's key-diff guard ("" === "") early-returns and
+      // leaks the overlay (scroll-lock + Escape/focus-trap listeners). closeModal
+      // no-ops cleanly when nothing is open.
+      if (explorePage && explorePage.closeModal) {
+        explorePage.closeModal();
+      }
       if (explorePage && explorePage.reconcileServiceModal) {
         explorePage.reconcileServiceModal("", false);
       }
@@ -6832,9 +6854,16 @@
         // Canonicalize the address so the open stage panel is always
         // shareable, including the home-lifecycle flow that sets the pending
         // id directly without a ?journey= URL. replaceState — silent.
-        const journeyHash = `#explore?tab=research&journey=${state.pendingResearchJourneyId}`;
-        if (window.location.hash !== journeyHash) {
-          history.replaceState(null, "", journeyHash);
+        // BUT preserve a live ?service=/?book= param: an in-panel resource card
+        // click navigates to ?tab=research&journey=<id>&service=<id>; stripping
+        // service here (before reconcileServiceModal runs below) made every
+        // resource card in the stage panels a dead button.
+        const liveParams = parseRouteFromHash(window.location.hash).params;
+        if (!liveParams.get("service")) {
+          const journeyHash = `#explore?tab=research&journey=${state.pendingResearchJourneyId}`;
+          if (window.location.hash !== journeyHash) {
+            history.replaceState(null, "", journeyHash);
+          }
         }
         state.pendingResearchJourneyId = "";
       }
@@ -6996,6 +7025,7 @@
   const normalizeUnknownHash = () => {
     const raw = (window.location.hash || "").replace("#", "");
     if (!raw) return;
+    if (raw === "app") return; // in-page skip-link target, not a route
     if (supportAnchorIds.has(raw)) return;
     const pagePart = raw.split("?")[0];
     if (!pages.has(pagePart)) history.replaceState(null, "", "#home");
@@ -7067,6 +7097,21 @@
       state.pendingSupportSearch = initialRoute.params.get("q") || "";
     }
     showPage(initialRoute.page, initialRoute.anchorId);
+
+    // Skip-to-content link: move focus to <main> directly, WITHOUT routing.
+    // Letting the href="#app" set the hash makes "app" an unknown route, so
+    // normalizeUnknownHash bounces the user to Home on every non-home page —
+    // a WCAG 2.4.1 (Bypass Blocks) failure that defeats the skip link.
+    const skipLink = document.querySelector(".skip-link");
+    const mainRegion = document.getElementById("app");
+    if (skipLink && mainRegion) {
+      skipLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        mainRegion.setAttribute("tabindex", "-1");
+        mainRegion.focus();
+        mainRegion.scrollIntoView({ block: "start" });
+      });
+    }
 
     window.addEventListener("hashchange", () => {
       if (state.suppressNextHashChange) {

@@ -156,3 +156,66 @@ Full first pass complete; fixes applied and verified in iterations 3–4 (asset 
 - **#19 (B-27) holds across all three stages.** Content heights: Developing ~4847px, Active ~4923px, Finishing ~4018px — all well under the new `8000px` cap; all 12 / 12 / 10 cards render with no clipping (confirmed with the transition disabled to read the true cascade target: `max-height: 8000px`, `offsetHeight === scrollHeight`, last card fully within the viewer).
 - **Browse / All Resources count is correct:** "Results: 24" and "Showing 1–12 of 24 resources," 2 pages at 12/page.
 - *Preview-environment caveat (for future loop iterations — not a site bug):* the Claude preview renderer can leave a CSS `transition` clock frozen at `currentTime: 0` (frames not painting), so any element whose visible height comes from an in-flight transition (the research viewer's `max-height`, carousel slides) reads `offsetHeight: 0` / `computedMaxH: 0px` even though it renders fine in a real browser. Also, `preview_resize` "reset to native size" once left the viewport at **7px** wide, collapsing the layout. **To verify transition-driven heights, disable the transition first** (`el.style.transition='none'`) and read the cascade target, or check `scrollHeight`/content presence rather than `offsetHeight`; and pin the viewport with an explicit width. Don't re-file these as bugs.
+
+---
+
+## Iteration 9 (2026-06-12) — deep multi-agent review (asset `?v=154`)
+
+Ran an exhaustive parallel review (≈10 dimension-finders → adversarial per-finding verification against the current source *and* this doc + the triage log → completeness critic → second targeted round; 59 agents). It surfaced **23 confirmed-new findings** (2 High, 5 Medium, 16 Low), reconfirmed 7 known-open items, and dismissed 14 (already-fixed / false-positive / not-user-facing). **8 fixed this iteration** (the 2 High browser-verified; the Mediums are safe and several are latent in current live data — see notes); the rest are documented below with proposed changes.
+
+**Important data nuance found during verification:** the live Google Sheet has **drifted** from the static `content/workshops.json` in places (e.g. 4th Space time is **"45 min"** live vs **"On demand"** in the JSON; all live workshops carry a `bookingUrl` and `status:"open"`). So several findings are **real in code but latent in current live data** — they bite the baked/testing mode, the migration export, or once booking-status data goes live. Fixes for these are safe no-ops on the current live catalogue.
+
+### Fixed + browser-verified (real on the live site now)
+
+### 21. ✅ FIXED — Research-stage panel resource cards are dead (Details opens nothing) — `High / Bug`
+On `#explore?tab=research` → open any stage → click **View details** on a related-resource card, nothing happened: the panel just re-rendered and the `&service=` param was stripped from the hash. Root cause: the journey-canonicalization `replaceState` in `showPage` (app.js ~6835) rebuilt the hash as bare `#explore?tab=research&journey=<id>`, dropping `&service=` **before** `reconcileServiceModal` read it a few lines later — so the modal never opened. Every resource card in all three stage panels was a dead button (cards worked fine from All Resources and Pathways panels, which don't canonicalize). **Fix:** skip the canonicalization when a live `?service=` param is present (preserve it for `reconcileServiceModal`). **Verified:** card → detail modal opens ("4th Space…"), `&service=` preserved in URL, **Esc** closes and returns to the open Active Research panel.
+
+### 22. ✅ FIXED — Skip-to-content link bounces keyboard users back to Home — `High / A11y`
+The skip link (`href="#app"`, the first focusable element) set `location.hash="#app"`; `#app` isn't a route, so `normalizeUnknownHash` rewrote it to `#home` and `showPage("home")` ran — silently navigating keyboard/SR users **away** from whatever page they were on, to Home. WCAG 2.4.1 (Bypass Blocks) failure on every non-home page. (This also corrects the iteration-2 "skip link works" claim above — it didn't.) **Fix:** intercept the skip-link click, move focus to `#app` directly (`tabindex=-1` + `.focus()` + `scrollIntoView`) without touching the hash; plus a defensive `if (raw === "app") return;` guard in `normalizeUnknownHash`. **Verified:** from `#about`, activating the skip link keeps `hash=#about`, stays on About, and moves focus to `#app`.
+
+### Fixed — safe / defensive (mostly latent in current live data)
+
+### 23. ✅ FIXED — "On demand" time value is unreachable / a phantom in the Time-commitment filter — `Medium / Bug`
+`bucketTime` returned the raw string for unrecognized durations, so an "On demand" item became a bucket value with **no matching dropdown option** (the dropdown is `TIME_BUCKETS`); selecting any time bucket dropped the item with no way back. **Fix:** added a **"Flexible / on demand"** bucket (matches demand/ongoing/flexible/varies) to `TIME_BUCKETS`, and changed the fall-through from `return raw` → `return ""` so any future unmapped value collapses to "All" instead of leaking a phantom option. *Latent in live data:* the live sheet has 4th Space at "45 min" (the JSON has "On demand"), so no live item currently triggers it — but the fix protects the baked/testing/export modes and any future sheet entry. *(Also flags a JSON↔Sheet data drift worth reconciling.)*
+
+### 24. ✅ FIXED — Booking & contact form inputs <16px → iOS Safari auto-zoom — `Medium / Mobile`
+`.booking-input/.booking-textarea` were 15px and `.contact-form-*` were 14px; iOS Safari auto-zooms on focus of any sub-16px field (the Explore search/filters were already set to 16px per #18, but these forms were missed). **Fix:** both raised to 16px in `styles.css`. *(The in-page booking form is reachable only for `bookingUrl`-less items — latent in the all-external live catalogue — but the fix is safe and the contact/feedback forms benefit.)*
+
+### 25. ✅ FIXED — Post-booking confirmation modal leaks (stays open, scroll-locked) when leaving Explore via a topbar nav link — `Medium / Bug`
+After a successful in-page booking (B-13 path) clears `currentModalKey`, navigating away via the modal's own topbar nav left the overlay layered on the new page, `body.is-modal-open` set, and Escape/focus-trap listeners leaked — because the leave-explore `reconcileServiceModal("", false)` early-returns on `"" === ""`. **Fix:** call `closeModal()` unconditionally in the leave-explore block (it no-ops cleanly when nothing is open). *Latent:* in-page booking needs a `bookingUrl`-less item.
+
+### 26. ✅ FIXED — "Join the waitlist" / cancelled CTAs opened the live MS Bookings page — `Medium / Bug`
+For a session that is **full** (CTA says "Join the waitlist") or **cancelled**, if it also had a `bookingUrl`, the handler still did `window.open(bookingUrl)` — sending the user to a live booking page instead of the in-page waitlist / cancelled notice. **Fix:** made the external-booking handoff status-aware — `shouldExternalBooking` now also requires `getStatus(opp) === "open"`, which fixes all three call sites (both CTAs + the deep-link guard) and covers both the full and cancelled cases. *Latent:* all live statuses are currently "open".
+
+### 27. ✅ FIXED — Cancelled session with `?book=1` deep link rendered a working request form — `Medium / Bug`
+A `#explore?service=X&book=1` deep link to a cancelled in-page service showed a functional "Request this service" form (contradicting the detail modal's cancelled notice). **Fix:** defence-in-depth early guard in `openBookingModal` — if `getStatus === "cancelled"`, route to `openModal` (cancelled notice) and return. *Latent:* needs a cancelled status in data.
+
+### 28. ✅ FIXED — Home carousel partner chip typo "University Communication**s** Services" — `Low / Content`
+The hero partner chip read "University Communication Services"; every other reference (data.js, workshop body) uses the official "University Communication**s** Services". **Fix:** added the missing "s" (app.js).
+
+### Documented — proposed changes (not implemented; need a product/scope call before this frozen build changes further)
+
+| # | Severity | Issue | Proposed change |
+|---|---|---|---|
+| 29 | Low | Invalid `?journey=` value is re-written back into the URL (misleading shareable address) | Have `openResearchStage` return success; canonicalize to `…&journey=<id>` only if it resolved, else strip the param. |
+| 30 | Low | Invalid `?service=` id leaves the param with no modal/feedback | In `reconcileServiceModal`'s `!opp` branch, `replaceState` to strip `service`/`book`; optional inline "no longer available" notice. |
+| 31 | Low | Pagination page is not written to the URL (lost on reload/share) | If sharable: write `?page=` in `writeExploreUrl`, call it from `goToPage`, read+clamp in `syncFromUrl`. |
+| 32 | Low | Pathways Vision shows a developer instruction ("Add `pathways_to_impact.md`…") if the fetch fails post-migration | Replace fallback with user copy + Back/Contact; ideally bake the vision text as a hardcoded fallback so the fetch isn't load-bearing. |
+| 33 | Low | `<main id="app" aria-live="polite">` over-announces routine UI updates to SRs | Remove the broad `aria-live`; scope a `role="status"` results-count region; move focus to the new page H1 on route change. |
+| 34 | Low | Carousel dot targets are 7×7px (far below tap-target guidance) | Keep the 7px visual; add a transparent `::before { inset:-10px }` hit area (≥24px) on `.dot`. |
+| 35 | Low | Orphan duplicate `#tools` page (nav-less, distinct from Learn → Tools) | Redirect `#tools` → `#learn?tab=tools` (or drop `buildTools()`/registration entirely). |
+| 36 | Low | `body { min-width: 350px }` forces horizontal scroll under 350px | Remove the `min-width`; layout already reflows via existing media queries; verify at 320px. |
+| 37 | Low | Lab2Market consultation books via a personal **Calendly** link, not institutional MS Bookings | Data fix in `content/data/workshops.json` — swap to the institutional scheduler (confirm with V1 Studio), or mark non-open until ready. |
+| 38 | Low | Booking/waitlist form accepts a malformed email (confirmation promises follow-up "at asdf") | Add `emailInput.checkValidity()` (or regex) guard in the submit handler, reusing `.is-invalid`. |
+| 39 | Low | Feedback modal never validates its optional email before sending | Validate only when non-empty (`email && !checkValidity()`), reusing `.is-invalid`. |
+| 40 | Low | Booking confirmation interpolates the entered name with no length cap | `maxlength="100"` on the name input + `overflow-wrap:break-word` on `.booking-confirm-title`. |
+| 41 | Low | NCV export: empty contribution/mentorship items export as bare numbered headers | Filter empty items before numbering in `buildExportText`; emit "(None added)" when none. |
+| 42 | Low | NCV Review "done" state is satisfied by downloading an empty/placeholder outline | Gate the stage-4 done-state (and/or the download) on actual content present, not the bare click. |
+
+### Reconfirmed known-open (already accepted/tracked — no action this pass)
+NCV **builder** prototype exposure & its mobile drawer/cache-bust quirks (umbrella **#12**); plain-text contact email (**#9**); Formspree placeholder → "logged locally" booking confirmation (**B-09**, on hold for the MS Forms migration); legacy `#start`/`#support` search has no empty state (**B-19**, intentional alias); and the **bilingual** gaps (`lang="en"`, English-only `<title>`/OG meta, hardcoded English copy) — handled in the AEM migration, per the standing caveat.
+
+### Dismissed (14) — verified not actionable
+False-positives (e.g. `#home?pathway=` forwarding, French-text truncation concerns that don't actually clip) and not-user-facing/code-health items (unclamped page/step indices that are visually harmless, auto-rotate timer after leaving Home, no-i18n-layer observation, planner export already guarded). Recorded in the workflow output; not re-filed.
+
+**Net:** 8 fixes committed (2 High verified live; 6 Medium/Low safe — several defensive against latent data states); 14 Low items documented with proposed changes for a product call; assets bumped to `?v=154`. No console errors across all 7 routes after the changes.
