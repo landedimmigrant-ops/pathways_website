@@ -219,3 +219,12 @@ NCV **builder** prototype exposure & its mobile drawer/cache-bust quirks (umbrel
 False-positives (e.g. `#home?pathway=` forwarding, French-text truncation concerns that don't actually clip) and not-user-facing/code-health items (unclamped page/step indices that are visually harmless, auto-rotate timer after leaving Home, no-i18n-layer observation, planner export already guarded). Recorded in the workflow output; not re-filed.
 
 **Net:** 8 fixes committed (2 High verified live; 6 Medium/Low safe — several defensive against latent data states); 14 Low items documented with proposed changes for a product call; assets bumped to `?v=154`. No console errors across all 7 routes after the changes.
+
+---
+
+## Iteration 10 (2026-06-12) — regression-verify iteration 9 — **no new issues**
+
+Focused regression pass on the riskiest iteration-9 edits (no new deep review — the 59-agent pass already covered the surface):
+- **#26 booking-path change is non-regressive.** `shouldExternalBooking` now also requires `status==="open"`; on a normal open item ("4th Space… Book a consultation") the CTA still does the external handoff — `window.open` fired with the correct **shared institutional** URL (`outlook.office.com/book/PathwaystoImpact@liveconcordia…`), and it did *not* mis-route to the in-page form. The all-"open" live catalogue behaves exactly as before.
+- **#21 (research-stage cards) and #22 (skip link) confirmed still holding** after the full edit set.
+No new user-facing issues found. The 14 documented Lows (#29–#42) remain open pending a scope call; **#9/#12** and the bilingual caveat remain accepted-open. 1 commit (`7fe58bf`) unpushed.
