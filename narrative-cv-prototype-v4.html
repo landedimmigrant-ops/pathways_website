@@ -11,7 +11,7 @@
 
     Merges: V3's context-tailored prompt library + the V1/V2 prototype's T1 lint
     engine (with the recalibrated ownership rule) + the insights from studying real
-    developed CVs. New in V4: a draft-first "X-ray" entry mode, reordered flow
+    developed CVs. New in V4: a draft-first "structural read" entry mode, reordered flow
     (PS written last), genre skeleton exemplars, weave with connective suggestions,
     advisor consult packet, print-fidelity view, session re-entry.
 
@@ -108,7 +108,7 @@
     .v4-skeleton-on .v4-skel-legend { display: flex; }
     .v4-skel-chip { font-size: 0.72rem; font-weight: 600; border-radius: 10px; padding: 2px 9px; color: #444; }
 
-    /* X-ray */
+    /* Structural read (draft-first entry; internal key stays "xray") */
     .v4-xray-ta { min-height: 220px; }
     .v4-para-card { border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; margin: 0 0 10px; background: #fff; }
     .v4-para-text { font-size: 0.85rem; color: #444; line-height: 1.55; margin: 0 0 6px; }
@@ -130,7 +130,7 @@
 
   <div class="proto-shell">
     <h1 class="proto-title">Narrative CV — V4</h1>
-    <p class="proto-subtitle">The convergence prototype: start fresh or X-ray an existing draft. Hard-coded prompts, live auto-checks, and an advisor-consult export. Everything stays on your device (<code>ncv-v4</code>).</p>
+    <p class="proto-subtitle">The convergence prototype: start fresh or get a structural read of an existing draft. Hard-coded prompts, live auto-checks, and an advisor-consult export. Everything stays on your device (<code>ncv-v4</code>).</p>
     <div id="ncv-v4-root"></div>
   </div>
 
@@ -399,10 +399,10 @@
       }
     };
 
-    // ── Stages (dynamic: X-ray stage only in draft mode; PS comes LAST) ────
+    // ── Stages (dynamic: structural-read stage only in draft mode; PS comes LAST) ──
     const stages = () => {
       const s = [{ key: "setup", short: "Setup" }];
-      if (ns.mode === "xray") s.push({ key: "xray", short: "Draft X-ray" });
+      if (ns.mode === "xray") s.push({ key: "xray", short: "Structural read" });
       s.push({ key: "contrib", short: "Contributions" });
       s.push({ key: "mentor", short: "Mentorship" });
       s.push({ key: "ps", short: "Personal stmt" });
@@ -614,7 +614,7 @@
     // ── Stage: Setup ────────────────────────────────────────────────────────
     function renderSetup(c) {
       stageHead(c, "Setup", "How are you arriving?",
-        "Two ways in. If you already have a draft — most people do, eventually — start with the X-ray and let it show you where the genre's load-bearing moves are missing.");
+        "Two ways in. If you already have a draft — most people do, eventually — start with the structural read and let it show you where the genre's load-bearing moves are missing.");
 
       const grid = el("div", "v4-mode-grid");
       [["compose", "Start fresh", "Build contribution by contribution with guided prompts, live checks, and worked examples. The personal statement comes last — it's clearest once the rest exists."],
@@ -646,10 +646,10 @@
       progWrap.appendChild(progInput);
       c.appendChild(progWrap);
 
-      navRow(c, { nextLabel: ns.mode === "xray" ? "To the X-ray →" : "Start drafting →" });
+      navRow(c, { nextLabel: ns.mode === "xray" ? "To the structural read →" : "Start drafting →" });
     }
 
-    // ── Stage: Draft X-ray ──────────────────────────────────────────────────
+    // ── Stage: Structural read (state key "xray" kept for saved drafts) ────
     const XRAY_SAMPLE = [
       "I am a researcher working on urban water systems. We have worked on various projects related to stormwater over the years and our work has been well-received by the community.",
       "1. Stormwater modelling. We developed a model for predicting overflow events. It was published in a leading journal and has been widely cited. We participated in several collaborations with municipalities.",
@@ -679,7 +679,7 @@
 
     function renderXray(c) {
       lensBar(c);
-      stageHead(c, "Draft X-ray", "Read your draft the way the genre does",
+      stageHead(c, "Structural read", "Read your draft the way the genre does",
         "Paste your existing draft. The tool segments it and runs the same deterministic checks paragraph by paragraph, then maps it against the structural moves developed narrative CVs make. It's a heuristic reading, not a judgment — and nothing leaves your device.");
 
       const taWrap = el("div", "contribution-field");
@@ -692,7 +692,7 @@
       c.appendChild(taWrap);
 
       const btnRow = el("div", "narrative-funder-toggle");
-      const runBtn = el("button", "btn btn-primary", "Run the X-ray");
+      const runBtn = el("button", "btn btn-primary", "Run the structural read");
       runBtn.addEventListener("click", () => { saveState(); renderStage(); window.setTimeout(() => { const r = document.getElementById("v4-xray-results"); if (r) r.scrollIntoView({ behavior: "smooth", block: "start" }); }, 80); });
       const sampleBtn = el("button", "btn btn-outline", "Try with a sample draft");
       sampleBtn.addEventListener("click", () => { ns.xray.text = XRAY_SAMPLE; saveState(); renderStage(); });
@@ -705,7 +705,7 @@
         const a = analyzeDraft(ns.xray.text);
 
         const cov = el("div", "narrative-completeness");
-        cov.appendChild(el("h3", "narrative-legend-title", "Structural moves — what the X-ray can see"));
+        cov.appendChild(el("h3", "narrative-legend-title", "Structural moves — what this read can see"));
         a.coverage.forEach(([label, on]) => {
           const row = el("div", "completeness-row");
           row.appendChild(el("span", "completeness-label", label));
@@ -731,7 +731,7 @@
 
         const nextNote = el("div", "narrative-funder-note");
         nextNote.appendChild(el("strong", null, "Next: "));
-        nextNote.appendChild(document.createTextNode("rebuild the weakest contribution in the Contributions step — the prompts there target exactly the moves the X-ray found missing. Or export this analysis from the Review step and bring it to your advisor."));
+        nextNote.appendChild(document.createTextNode("rebuild the weakest contribution in the Contributions step — the prompts there target exactly the moves this read found missing. Or export this analysis from the Review step and bring it to your advisor."));
         results.appendChild(nextNote);
         c.appendChild(results);
       }
