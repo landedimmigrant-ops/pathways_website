@@ -1,0 +1,132 @@
+{
+    "mode": "xray",
+    "stageKey": "review",
+    "lens": {
+        "agency": "cihr",
+        "format": "tcv",
+        "program": "CIHR Project Grant \u2014 Spring 2027",
+        "discipline": "health",
+        "careerStage": "early",
+        "workMode": [
+            "community"
+        ]
+    },
+    "xray": {
+        "text": "**Personal Statement**\n\nI am an assistant professor of public health at Concordia University. My research focuses on food environments and diabetes prevention in West African immigrant communities in Montreal. We partnered with community kitchens and our findings were shared widely with stakeholders. My work has been published in a high-impact journal (IF 14.2) and my h-index is 11.\n\n**Research Contributions**\n\n1. Food environment audit\nI led the design of a two-year food-environment audit across 12 corner stores in Saint-Michel, working with three community organizations over seven years of prior relationship-building. A community advisory board was established and a screening protocol was developed. As of May 2024 the audit dataset was the only one of its kind in Quebec. The main paper has been cited 41 times and appeared in The Lancet Regional Health \u2013 Americas.\n\n2. Diabetes prevention pilot\nWe developed a culturally adapted diabetes prevention program with two community kitchens. Our program could reduce screening gaps and we hope to expand it to other neighbourhoods. Sixty participants were recruited and retention was good.\n\nI have supervised several students. In the future we hope to continue this work."
+    },
+    "contributions": [
+        {
+            "title": "Corner-store food environments made visible in Saint-Michel",
+            "stakes": "Diabetes risk in West African immigrant neighbourhoods is shaped by what corner stores stock, but until 2024 no Quebec dataset described those food environments at store level \u2014 services were planned on census proxies.",
+            "roleMode": "led",
+            "roleLine": "I led the audit design and analysis; community partners led store relationships and data collection.",
+            "activities": "I led the design of a two-year food-environment audit across 12 corner stores in Saint-Michel, co-developed with three community organizations after seven years of relationship-building. I trained six community data collectors and led the analysis; partners set the audit calendar and owned store consent.",
+            "outputs": "A store-level food-environment dataset covering all 12 audited stores (community-held), a bilingual audit toolkit, the main audit paper, and a plain-language neighbourhood report distributed through partner networks.",
+            "outcomes": "The regional public-health directorate added corner-store measures to its 2025 neighbourhood profiles, and two partner organizations now run the audit annually without me. The main paper has been cited 41 times in 20 months.",
+            "impact": "If store-level auditing spreads to other boroughs \u2014 two have asked \u2014 food-environment data could shift diabetes prevention planning from census proxies to street-level evidence across Montreal.",
+            "translational": "A Saint-Michel store owner reorganized shelf placement after seeing the audit report; the advisory board now cites it in every partner meeting.",
+            "evidence": [
+                {
+                    "text": "Audit paper, The Lancet Regional Health \u2013 Americas (2024); cited 41 times in 20 months",
+                    "type": "Peer-reviewed"
+                },
+                {
+                    "text": "Corner-store measures adopted in the regional directorate 2025 neighbourhood profiles (public document)",
+                    "type": "Policy / practice uptake"
+                },
+                {
+                    "text": "Community-held audit dataset; annual collection cycles run independently by two partner organizations",
+                    "type": "Dataset / tool"
+                }
+            ],
+            "flags": {
+                "impact": "unsure"
+            },
+            "notes": {
+                "impact": "Is \"two boroughs have asked\" enough to claim city-scale impact, or is this overreaching?"
+            },
+            "showWeave": true
+        },
+        {
+            "title": "A diabetes-prevention program that cooks where people already cook",
+            "stakes": "Standard diabetes-prevention curricula assume kitchens, foods, and schedules that don't match West African immigrant households, so uptake in the communities at highest risk stays low.",
+            "roleMode": "coled",
+            "roleLine": "I co-led the adaptation with two community kitchens; the recipes and delivery model are theirs, the evaluation design is mine.",
+            "activities": "I co-designed a culturally adapted prevention program with two community kitchens, led the evaluation design, and ran the 60-participant pilot with 82% retention at six months. Community cooks led session delivery; I led the measurement and analysis.",
+            "outputs": "The adapted 12-week curriculum (community-owned), a facilitator training guide, the pilot evaluation paper (under review), and a costed scale-up brief for the regional directorate.",
+            "outcomes": "Both kitchens have kept the program running past the 12-week pilot without project funding, and one has trained a second cohort of facilitators.",
+            "impact": "If the pilot results hold, kitchen-based delivery could become a recognized prevention pathway for communities the clinic-based model misses \u2014 the scale-up brief is in front of the directorate now.",
+            "translational": "A participant told the advisory board the program was the first time a health service had cooked her food, not lectured her about it.",
+            "evidence": [
+                {
+                    "text": "Pilot evaluation manuscript (under review, 2026); 60 participants, 82% six-month retention",
+                    "type": "Peer-reviewed"
+                }
+            ],
+            "flags": {},
+            "notes": {},
+            "showWeave": false
+        },
+        {
+            "title": "Community data governance for small health datasets",
+            "stakes": "",
+            "roleMode": "",
+            "roleLine": "",
+            "activities": "",
+            "outputs": "",
+            "outcomes": "",
+            "impact": "",
+            "translational": "",
+            "evidence": [
+                {
+                    "text": "",
+                    "type": "Peer-reviewed"
+                }
+            ],
+            "flags": {},
+            "notes": {},
+            "showWeave": false
+        }
+    ],
+    "mentorCounts": {
+        "phd": "0",
+        "masters": "2",
+        "undergrad": "5",
+        "postdoc": "0"
+    },
+    "mentees": [
+        {
+            "who": "A.D.",
+            "stage": "Master's",
+            "destination": "Epidemiologist, Montreal regional public-health directorate",
+            "why": "First trainee from the partner community to join the lab; now sits on the other side of the data."
+        },
+        {
+            "who": "K.M.",
+            "stage": "Undergrad",
+            "destination": "MSc Public Health, McGill",
+            "why": "Recruited through a community kitchen, not a course."
+        }
+    ],
+    "mentorPhilosophy": "Every trainee presents to the community advisory board before they present at any conference \u2014 the partners hear it first, and the trainees learn who the work answers to.",
+    "mentorEDI": "I recruit through partner organizations as well as course lists; of seven trainees so far, five are from the communities the research serves and four are first-generation university students.",
+    "mentorCrossStage": "",
+    "ps": {
+        "role": "assistant professor of public health",
+        "institution": "Concordia University",
+        "field": "food environments and diabetes prevention in West African immigrant communities",
+        "challenge": "Diabetes prevention keeps failing the communities at highest risk because the evidence describes neighbourhoods from the outside \u2014 census proxies instead of the stores, kitchens, and budgets people actually navigate.",
+        "streams": "Two strands: making food environments visible at street level, and adapting prevention to where people already cook. The thread is that the communities hold the data and the delivery.",
+        "pivot": "I came to research from a community-kitchen volunteer shift during my MPH \u2014 watching a nutrition workshop empty out taught me more than the coursework did.",
+        "standing": "A Lancet Regional Health paper, some early adoption by the directorate, and a CIHR Catalyst grant.",
+        "programFit": "The Project Grant rewards sustained community partnership and measurable prevention outcomes \u2014 both are the core of this program, and the pilot gives it the preliminary data the competition expects.",
+        "horizon": "Scaling the kitchen-based model across four boroughs with the directorate, with community organizations as co-applicants, not sites."
+    },
+    "consultQuestions": "Is contribution 1 strong enough to lead with, or does the pilot (contribution 2) read as more fundable? And is my standing paragraph too thin for a Project Grant panel?",
+    "selfCheck": {
+        "0": true,
+        "1": true,
+        "4": true
+    },
+    "lastSavedAt": 1786385638611
+}
