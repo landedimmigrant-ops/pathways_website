@@ -61,6 +61,8 @@ content/workshops/      — local .md fallback bodies (only used if a workshop
                           row has no docUrl)
 content/workshops.json  — local manifest fallback (only if SHEETS.enabled=false)
 pathways_to_impact.md   — long-form vision page body
+narrative-cv-prototype-v4.html — the Narrative CV tool (single file, no backend);
+                          clean URL + developer pointer at ncv_tool_v4/
 scripts/export_to_csv.js — one-shot to seed sheets from data.js
 BOOKINGS_PLAN.md        — MS Bookings architecture + open decisions
 COORDINATOR_GUIDE.md    — non-technical editor playbook
