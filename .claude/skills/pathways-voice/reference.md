@@ -1,36 +1,32 @@
 # pathways-voice — reference
 
-Detail behind `SKILL.md`. Evidence and sources: `voice/register-corpus.md`.
+Detail behind `SKILL.md`.
+Measured evidence: `voice/construction-study.md`. Source quotations: `voice/register-corpus.md`.
 
 ---
 
-## 1. AGENCY — the controlled vocabulary
+## 1. Funder vocabulary
 
-Funder terms are **not jargon to the audience that uses them**. A researcher reads the exact term as
-a signal that you know their world; a friendlier synonym reads as a signal that you don't. Use the
-term, gloss it once, move on.
+Funder terms are **not jargon to this audience**. A researcher reads the exact term as a signal you
+know their world; a friendlier synonym signals you don't. Use the term, gloss it once, move on.
 
-**Terminology moves.** Everything below was verified 2026-08-10. Re-check before betting on it.
+**Terminology moves.** Verified 2026-08-10. Re-check before betting on it.
 
-### 1a. Current vs legacy
-
-| Concept | Use | Do not use | Why / source |
+| Concept | Use | Not | Why |
 |---|---|---|---|
-| Moving research knowledge into use | **knowledge mobilization** (KMb, or KM at CIHR) | knowledge transfer | SSHRC and CIHR now share this umbrella term |
+| Moving research knowledge into use | **knowledge mobilization** (KMb; KM at CIHR) | knowledge transfer | SSHRC and CIHR now share this umbrella term |
 | Research co-designed with users as equal partners | **research co-production** | integrated knowledge translation, iKT | CIHR glossary: "Formerly known at CIHR as integrated knowledge translation" |
-| CIHR's pre-2026 framing | *knowledge translation (KT)* — **historical reference only** | as a live CIHR offer | CIHR 2026 Strategy frames KT as two decades of predecessor practice |
-| Someone who can act on research | **knowledge user** | stakeholder, end user, target | CIHR glossary definition is specific and usable |
+| CIHR's pre-2026 framing | *knowledge translation (KT)* — **history only** | as a live offer | CIHR's 2026 Strategy frames KT as predecessor practice |
+| Someone who can act on research | **knowledge user** | stakeholder, end user | CIHR's definition is specific and usable |
 | Someone holding traditional or cultural knowledge | **knowledge holder** | — | CIHR glossary — **sourced to Concordia University** |
 | Arts-and-research practice | **research-creation** | practice-based research | SSHRC's defined term; Concordia pairs "research or research-creation" |
-| Early-career | **emerging scholar** (SSHRC) / early-career researcher | junior, young researcher | SSHRC definition turns on 6 years post-degree |
-| Trainees, in Tri-agency CV context | **highly qualified personnel (HQP)** | — | TCV conventions; see `ncv-genre-sources.md` §1 |
-| Population | **people living in Canada** | Canadians | CIHR 2026 Strategy opening line |
-| Open research | **open science** / **open scholarship** | — | Concordia pairs both; CIHR defines open science |
-| Consolidating a literature | **knowledge synthesis** | literature review | different activity in CIHR's glossary |
-| Connecting researchers and users | **knowledge brokering** | networking | CIHR glossary |
-| Stopping unsupported practice | **de-implementation** | — | CIHR glossary |
+| Early-career | **emerging scholar** (SSHRC) / early-career researcher | junior, young researcher | *Young* is an age claim you don't mean |
+| Trainees, in Tri-agency CV context | **highly qualified personnel (HQP)** | — | See `ncv-genre-sources.md` §1 |
+| Population | **people living in Canada** | Canadians | CIHR 2026 Strategy |
+| Open research | **open science** / **open scholarship** | — | Concordia pairs both |
+| Consolidating a literature | **knowledge synthesis** | literature review | Different activity in CIHR's glossary |
 
-### 1b. Definitions worth quoting exactly
+**Definitions worth quoting exactly**
 
 - **KMb (SSHRC)** — "The reciprocal and complementary flow and uptake of research knowledge between
   researchers, knowledge brokers and knowledge users—both within and beyond academia."
@@ -38,169 +34,172 @@ term, gloss it once, move on.
   public sphere, with the goal of improving health, supporting more effective health services and
   products, and strengthening health systems."
 
-Same term, different emphasis: SSHRC's is **reciprocal flow**; CIHR's is **directional, toward
-outcomes**. When writing for a mixed audience, describe the activity, not the agency's framing of it.
+Same term, different emphasis: SSHRC's is **reciprocal flow**, CIHR's is **directional toward
+outcomes**. For a mixed audience, describe the activity rather than either agency's framing.
 
-### 1c. CRC designated groups
+**CRC designated groups** — use the program's own wording: "women and gender-equity seeking groups,
+persons with disabilities, Indigenous Peoples and racialized minorities." *Visible minority* belongs
+only to *Employment Equity Act* contexts.
 
-Use the program's own wording: "women and gender-equity seeking groups, persons with disabilities,
-Indigenous Peoples and racialized minorities." *Visible minority* is the *Employment Equity Act*
-term and belongs only where that instrument is what's being discussed.
-
-Career interruptions: "The time devoted to these types of leaves must not be included in the
-assessment of their research productivity."
-
-### 1d. The metric rule (T5)
+### The metric rule (V8)
 
 | Metric | Status |
 |---|---|
-| Journal Impact Factor | **Never encourage.** Reviewers instructed to disregard |
+| Journal Impact Factor | **Never encourage.** Reviewers are instructed to disregard it |
 | h-index | **Never encourage.** DORA sceptical |
 | Career-total citation counts | **Never encourage.** |
 | Individual article/book citation count | **Allowed** in support of a qualitative claim about that work |
 
-Concordia's own FAQ draws this line; the Tri-agency and FRQ are DORA signatories. Copy that invites
-a researcher to lead with their h-index is steering them toward something the reviewer is told to
-ignore. That is a correctness failure, not a style preference.
+Copy inviting a researcher to lead with their h-index steers them toward something the reviewer is
+told to ignore. That is a correctness failure, not a style preference.
 
 ---
 
-## 2. Sentence patterns
+## 2. The shape library
 
-### 2a. DESK patterns (the default)
+Canonical constructions, all lifted from the corpus. Use these before inventing a sentence.
 
-Lifted from Concordia's own NCV page and FAQ — these are house-authentic, not invented.
+### 2a. COMMUNICATE
 
-| Pattern | Shape | Example |
+| Shape | Template | Corpus example |
 |---|---|---|
-| Performable imperative | *Verb + concrete object* | "Read the reviewer evaluation guidelines." |
-| Imperative + time cost | *Verb + honest estimate* | "Allow time: it can take a day or more to get your first draft ready." |
-| Negation + redirect | *Don't X — do Y* | "Don't try to relate everything — choose what's important for the proposed research." |
-| Calibrated hedge | *it seems prudent to…* | Marks a genuinely open question. Not a liability dodge. |
-| Admitted gap | *We don't have an answer yet* | The strongest trust move available. Use when true. |
-| Quoted authority | *claim + "quote" + link* | Attach the agency's words to the claim they license. |
-| Concrete quantity | *a number, not a vibe* | "four to six pages", "half a page", "a day or more" |
+| Orientation promise | *This page will help you [do X].* | "This page will help guide you through everything you need to know about managing your grant." |
+| Reader-benefit opener | *[Verb] … so you can [outcome].* | "Get familiar with the resources available to you to ensure you achieve your research or research-creation goals." |
+| Plain definition | *X is a Y that Z.* | "Mitacs is a national, not-for-profit organization that supports collaborative research-based innovation." |
+| Stakes marker | *This is a critical step because [consequence].* | "This is a critical step in the process as this will serve as a test on how a review committee might read and assess your proposal." |
+| Question heading | *[The reader's own question, first person]* | "Can I access ConRAD from off-campus?" · "I can't access ConRAD. What do I do?" |
 
-### 2b. PODIUM patterns (use where routed)
+### 2b. INSTRUCT
 
-| Pattern | Example |
-|---|---|
-| Initiative as subject + commitment verb | "Pathways to Impact recognizes that impact requires institutional support." |
-| Named alignment to priorities | "…in alignment with the university's mission and strategic vision." |
-| Triad for cadence | "resources, tools and expertise" — **one per paragraph, maximum** |
+| Shape | Template | Corpus example |
+|---|---|---|
+| Conditional | *If you [situation], you [modal] [action] [object].* | "If you believe that you have developed an invention with commercial potential, you need to submit a Declaration of Invention (DOI) form to the Office of Research." |
+| Purpose-fronted | *To [goal], you [modal] [action].* | "To access ConRAD off-campus, you must log into Concordia's VPN service." |
+| Topic-fronted | *For [topic], [action].* | "For industrial transfer grants and agreements, please contact the Partnerships, Intellectual Property and Security team." |
+| Label list | ***Handle*** *— imperative. Rationale.* | "**Concise** Get right to the point. You will most likely have a limited amount of space at your disposal." |
+| Time anchor | *…[at least N days / within N days / before X].* | "…at least 10 working days ahead of the agency deadlines." |
 
-PODIUM done well is *specific about commitments*. PODIUM done badly stacks adjectives before
-institutional nouns ("seamless integrated support service"). If you can delete an adjective without
-changing what is promised, delete it.
+### 2c. SUPPORT
 
-### 2c. The failure mode to watch
+| Shape | Template | Corpus example |
+|---|---|---|
+| Situated handoff | *For [situation], please contact [Name, title].* | "For any assistance, contact Gabriel Sales, Senior Advisor, Research Security." |
+| Full handoff | *For [situation], please contact [Name, title] [channel] [timing].* | "For developmental content review and feedback, please contact your Advisor, Research Development directly by email at least 10 working days ahead of the agency deadlines." |
+| Helper offer | *our [team] can [specific action] and [specific action].* | "…our Research Grants team can help prepare the agreement and take care of the transfer." |
+| Failure catch | *If you cannot [X], don't hesitate to [Y].* | "If you cannot find what you need, don't hesitate to contact the Office of Research." |
+| Early warning | *Contact [team] early in [process] so that we can [benefit].* | "Contact the PIPS and Research Development teams early in the negotiation process so that we can provide guidance and support." |
+| Honest gap | *We don't have an answer for this yet.* | "This is a huge question… We don't have an answer for this question yet." |
 
-**Imperative-shaped PODIUM.** Verb-first, unperformable:
+### 2d. Modal ladder (V5)
 
-> "Maximize your research impact by fostering trust and co-creation with community partners."
+| Strength | Use when | Corpus rate (Concordia instruction) |
+|---|---|---|
+| **must** | A genuine funder or policy requirement | 0.6/1k — Concordia is sparing; NSERC runs 1.8/1k |
+| **need to** | A practical necessity to get the outcome | 0.6/1k |
+| **should** | Pathways' own advice | 0.8/1k — Concordia is the *only* source that meaningfully uses this |
+| **can** | An option or capability | 1.1/1k |
+| **may** | A genuine possibility or permission | — |
 
-Diagnose with T1. The head verb (*maximize*) names an outcome, and the method (*fostering trust*) is
-itself an outcome. Nothing here starts on Tuesday. Fix by naming the first concrete step.
+**Never downgrade a funder's modal.** If the agency says *must*, Pathways says *must* and attributes
+it. Advisory voice is the house style for our own guidance only.
 
 ---
 
 ## 3. Worked rewrites — real Pathways copy
 
-All sources are live strings in `data.js`. **Proposals only; nothing has been applied.**
+Live strings from `data.js`. **Proposals only; nothing applied.**
 
 | # | Before | Checks | After |
 |---|---|---|---|
-| 1 | "Pathways to Impact is a coordinated support system for creating impact through research." | T2 subject is an abstraction; T7 *impact* twice | "Pathways to Impact connects you with the people at Concordia who help research reach beyond the university." |
-| 2 | "Connect with support for engagement, evaluation, and knowledge mobilization." | T1 *connect with support* isn't performable; T6 Oxford comma | "Find an advisor for partner engagement, evaluation or knowledge mobilization." |
-| 3 | "Strengthen funder-facing impact language." | T1; T3 no evidence; T7 *impact* as modifier | "Rewrite your impact section using the wording reviewers are told to look for." |
-| 4 | "Strengthen proposals with credible pathways and evidence." | T1; T3 *credible* on what basis | "Back each claim in your proposal with a named source of evidence." |
-| 5 | "Changes in behavior by your target audience" | T6 US spelling | "Changes in behaviour by your target audience" |
-| 6 | "Pathways to Impact helps researchers plan, evidence, and share the value of their work." | T6 Oxford comma; *evidence* as a verb is unidiomatic | "Pathways to Impact helps researchers plan their work, gather evidence for it and share what it changed." |
+| 1 | "Pathways to Impact is a coordinated support system for creating impact through research." | V1 opens with what we are; V2 no reader | "Pathways to Impact helps you plan your research impact, gather evidence for it and get it in front of the people who can use it." |
+| 2 | "Connect with support for engagement, evaluation, and knowledge mobilization." | V3 unperformable; V7 no human; V9 Oxford comma | "Book a consultation on partner engagement, evaluation or knowledge mobilization — email impact@concordia.ca." |
+| 3 | "Strengthen funder-facing impact language." | V3 *strengthen*; V6 no time anchor | "Rewrite your impact section before your internal deadline, using the criteria reviewers are given." |
+| 4 | "Strengthen proposals with credible pathways and evidence." | V3; V8 *credible* on what basis | "Back each impact claim in your proposal with evidence you can name." |
+| 5 | "Changes in behavior by your target audience" | V9 US spelling | "Changes in behaviour by your target audience" |
+| 6 | "Choose the stage that best matches your project and explore short modules designed for that moment in the research journey." | V4 no condition; 21 words to say two things | "**If you're not sure where to start**, choose the stage that matches your project. Each stage has short modules for that point in the work." |
 | 7 | "Map pathways from research outputs to practical outcomes." | **passes** — performable verb, concrete object | *(keep)* |
 
-Row 7 matters as much as the others: the live prototype copy is **already closer to DESK than
-Concordia's official Pathways page is.** This skill is mostly protecting an existing strength, not
-importing a new one.
+### Heading conversions — the biggest available win
 
-### Known systematic issues in live copy (audited 2026-08-10)
+Current Pathways headings are nouns. The corpus says task pages should run 25–40% questions, in the
+researcher's own voice:
 
-Counted across ~2,800 words of prose strings in `data.js`:
+| Noun heading | Question heading |
+|---|---|
+| Narrative CV support | "Do I need a narrative CV yet?" |
+| Impact planning | "How do I show impact when my work isn't finished?" |
+| Knowledge mobilization | "Who actually needs to hear about my research?" |
+| Partner engagement | "I want to work with a community partner. Where do I start?" |
+| Evaluation | "How will I know if any of this worked?" |
 
-- **61 serial (Oxford) commas** — CP forbids them. Concordia's official page is itself inconsistent:
-  "designed, funded, and assessed" (Oxford) sits a few paragraphs from "defined, funded and
-  evaluated" (none). **Pick one and apply it everywhere**; CP says no Oxford comma, and that is the
-  recommendation, but consistency matters more than which way it goes.
-- **One US spelling** — `behavior`, [data.js:611](../../../data.js). *Erasmus Medical Center*
-  (line 960) is a proper noun and must not be changed. *program* is correct Canadian.
-- **"impact" appears 82 times in ~2,800 words** (~29 per 1,000). It's the project's name; that
-  inflates the count legitimately. Flag only bare-modifier uses ("impact language", "impact work").
+Keep noun headings for **navigation and directories**, where the reader is scanning a known
+vocabulary. Use question headings wherever the reader arrives with a problem rather than a term.
+
+### Systematic issues in live copy (audited 2026-08-10)
+
+- **126 serial (Oxford) commas** across `data.js` and `content/`. CP forbids them; Concordia's own
+  official page is internally inconsistent ("designed, funded, and assessed" vs "defined, funded and
+  evaluated"). Needs **one project-wide decision**, not case-by-case edits.
+- **One US spelling** — `behavior`, `data.js:611`. *Erasmus Medical Center* (line 960) is a proper
+  noun; *program* is correct Canadian.
+- **"impact" 82 times in ~2,800 words.** It's the project's name, so the count is inflated
+  legitimately. Flag only bare-modifier uses ("impact language", "impact work").
 
 ---
 
-## 3b. Which checks can be automated (validation run, 2026-08-10)
+## 4. Which checks can be automated
 
-The checks were run mechanically against 12 `content/` files the system had not been built from —
-11 workshop descriptions plus `content/learn/narrative-cv-guide.md`. Results:
+Validated against 12 `content/` files the system was not built from:
 
-| Check | Hits | Verdict |
+| Check | Result | Verdict |
 |---|---|---|
-| T6 Oxford comma | 65 across 12 files (**126 project-wide** with `data.js`) | **True positives.** Safely automatable |
-| T6 spelling / % / numbers | 0 | Clean. Safely automatable |
-| T4 legacy funder terms | 0 | Clean — no *iKT* or *knowledge transfer* anywhere |
-| T5 metrics | 6 | **All false positives** |
-| T1 abstraction | 2 | **Both false positives** |
+| V9 Oxford comma | 65 hits (126 project-wide) | **True positives.** Safely automatable |
+| V9 spelling / numbers / % | 0 | Clean. Safely automatable |
+| V8 legacy funder terms | 0 — no *iKT* or *knowledge transfer* anywhere | Clean |
+| V8 metrics | 6 hits, **all false positives** | Triage only |
+| V3 abstraction | 2 hits, **both false positives** | Triage only |
 
-The false positives are the useful finding:
+The false positives are the point: all six metric hits were `narrative-cv-guide.md` **warning
+against** h-index — "none of these translate well into citation counts or journal rankings". The
+grep sees the term, not the polarity. Both V3 hits were `curated` used literally ("Curated selection
+(3–10 most significant contributions)").
 
-- All six T5 hits are `narrative-cv-guide.md` **warning against** h-index and citation counts —
-  "none of these translate well into citation counts or journal rankings". The grep sees the term;
-  it cannot see the polarity.
-- Both T1 hits are `curated` used in its literal sense — "Curated selection (3–10 most significant
-  contributions)", set against "Exhaustive inventory". That is the right word, correctly used.
-
-> **Rule: T4, T5, T7 and T1 are triage, not verdicts.** A term match is a prompt to read the
-> sentence, never a licence to rewrite it. Only **T6 mechanics** — Oxford comma, spelling, numbers,
-> capitalization — may be applied without reading the surrounding argument. Anything that "fixes" a
-> warning into an endorsement has done real damage.
-
-The Oxford comma finding is the actionable one: at 126 instances across `data.js` and `content/`,
-it is a settled project-wide habit that simply disagrees with CP. It needs a **single decision**,
-applied everywhere, not case-by-case edits.
+> **Rule: only V9 mechanics may be applied without reading the surrounding argument.** V1–V8 are
+> triage. A term match is a prompt to read the sentence, never a licence to rewrite it. Copy that
+> "fixes" a warning into an endorsement has done real damage.
 
 ---
 
-## 4. Review report template
+## 5. Review report template
 
 ```
 ## Voice review — <surface>
 
-**Register:** DESK | PODIUM   (routed because: <reason>)
+**Jobs on this page:** communicate → instruct → support
 
-**Checks fired:** T1 ×n · T3 ×n · T6 ×n
+**Checks fired:** V1 ×n · V3 ×n · V6 ×n · V9 ×n
 
 | # | Fragment | Check | Proposed |
 |---|---|---|---|
-| 1 | "<exact quote>" | T1 | "<rewrite>" |
+| 1 | "<exact quote>" | V3 | "<rewrite>" |
 
-**Claims I did not rewrite** (would change meaning — needs a decision):
+**Not rewritten** (would change the claim — needs a decision):
 - "<quote>" — <what's ambiguous>
 
 **Applied:** nothing. Proposals only.
 ```
 
-Lead with the counts. Quote fragments exactly — never paraphrase the thing you're criticizing.
+Lead with counts. Quote fragments exactly.
 
 ---
 
-## 5. Ordering conflicts
+## 6. Ordering conflicts
 
-When checks disagree, resolve in this order:
+1. **V5 modal accuracy** and **V8 funder facts** — these make copy *wrong*. They win over everything.
+2. **Quotations and proper nouns** — never edited for house style.
+3. **V9 mechanics** — CP.
+4. **V1–V4, V6, V7** — voice and construction.
+5. Cosmetics — drop them if a fix costs clarity.
 
-1. **T5 metric rule** and **T4 term accuracy** — these make copy *wrong*. They win over everything.
-2. **Direct quotations and proper nouns** — never edited for house style.
-3. **T6 mechanics** — CP.
-4. **T1–T3 voice** — abstraction and performability.
-5. **T7–T8** — density and futurity. Cosmetic; drop them if a fix costs clarity.
-
-A long sentence that carries a real qualification beats a short one that drops it. CP's brevity
-preference is a wire-service constraint, not a rule about explanatory writing.
+A long sentence carrying a real condition beats a short one that drops it. CP's brevity preference is
+a wire-service constraint; the corpus shows instruction pages are the longest thing Concordia writes.

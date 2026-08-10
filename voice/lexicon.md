@@ -33,7 +33,12 @@ Wrong funder terms are a **correctness** failure. See `reference.md` §1 for sou
 
 ## 2. Verbs
 
-The Tuesday Test (T1): can the reader start this today?
+Performability (V3): can the reader start this today?
+
+> **Where verb-first belongs.** The corpus measures imperative sentences at 3–8% across every
+> source, Concordia and agencies alike. Verb-first phrasing is for **headings, buttons and list
+> items**. Running instructional prose is *second person + modal* — see §2b. A page written entirely
+> in imperatives sounds like neither Concordia nor a funder.
 
 | Use — performable | Avoid — outcomes in imperative costume |
 |---|---|
@@ -50,6 +55,28 @@ The Tuesday Test (T1): can the reader start this today?
 **"Support" is the project's occupational hazard.** It is the right noun for what Pathways offers
 and the wrong verb for almost every sentence. "Connect with support for evaluation" names nothing.
 "Book an hour with an evaluation advisor" names an action, a duration and a person.
+
+### 2b. Modals — the obligation ladder
+
+The single most important word class in instructional copy, and the easiest to get factually wrong.
+
+| Modal | Use for | Concordia rate | Note |
+|---|---|---:|---|
+| **must** | A genuine funder or policy requirement | 0.6/1k | NSERC runs 1.8/1k. Relay at the funder's own strength |
+| **need to** | A practical necessity for the outcome | 0.6/1k | Softer than *must*, still binding in practice |
+| **should** | Pathways' own advice | 0.8/1k | Concordia is the **only** source in the corpus that meaningfully uses this |
+| **can** | An option or a capability | 1.1/1k | The grammar of possibility — Concordia leads on it |
+| **may** | Genuine permission or possibility | — | Don't use it to hedge a requirement |
+
+**Never downgrade a funder's modal.** If an agency says *must*, Pathways says *must* and attributes
+it. Advisory voice is house style for our own guidance, not for relaying rules.
+
+### 2c. Politeness
+
+*Please* runs **4.4 per 1,000 words** on Concordia instruction pages — against 0.2 at SSHRC and 0.6
+at NSERC. It is not padding here; it is house style, and it is what makes an instruction read as a
+request from a colleague rather than a condition of funding. Keep it in support moves ("please
+contact…") and out of hard requirements ("you must" needs no softening).
 
 ---
 

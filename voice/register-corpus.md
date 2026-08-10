@@ -13,6 +13,15 @@ funder's current instructions disagree, the funder wins.
 Companion to `ncv-genre-sources.md` (which covers narrative-CV *structure* and hard formatting
 rules). This document covers *language*. Deliberately no overlap.
 
+> **Scope note, added after the construction study.** This document is the **verbatim-evidence and
+> terminology** layer, and remains current for both. Its §1 proposes a two-register model
+> (institutional vs practitioner) built from a five-page sample. That model has since been
+> **superseded** by `construction-study.md`, which measured 232 pages and reframed the system as one
+> voice with three jobs — communicate, instruct, support. The §1 *observation* (Concordia writes in
+> two clearly different ways) held up and was confirmed at scale; the *prescription* built on it did
+> not. Where this document and `construction-study.md` disagree about how to write, the construction
+> study wins. Where they disagree about what a source says, this document wins.
+
 ---
 
 ## 1. Concordia — two registers, one domain
