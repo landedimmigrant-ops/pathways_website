@@ -421,6 +421,33 @@ Found during the scan. Recorded as evidence that the checks in this skill catch 
 5. **Typo in the Key Pillars section:** "tacking global challenges" for *tackling*.
 6. **"launching soon"** on a page for a platform under development since a 2021 proposal. Undated
    futurity ages badly; it is the kind of phrase a voice check should flag for a date or removal.
+7. **The Oxford comma is inconsistent within a single page.** The Pathways page carries "how
+   research is being **designed, funded, and assessed**" (serial comma) a few paragraphs from "how
+   research is **defined, funded and evaluated**" (none) — two near-identical constructions about
+   the same idea. CP forbids the serial comma; either ruling is survivable, the inconsistency is
+   not.
+
+### 5b. Live prototype copy — audit, 2026-08-10
+
+Counted programmatically across ~2,800 words of prose strings in `data.js`. Recorded as evidence
+that the checks catch real things. **Nothing was changed.**
+
+| Finding | Count | Check |
+|---|---|---|
+| Serial (Oxford) commas | **61** | T6 — CP forbids; also inconsistent with Concordia's dominant published usage |
+| US spellings | **1** — `behavior`, `data.js:611` | T6 |
+| Abstraction markers (*leverage, seamless, holistic, robust*…) | **1** — `ecosystem` | T1/T2 |
+| `%` used in prose | 0 | T6 — clean |
+| Bare digits 0–9 | 2, both legitimate (an outcome label, a numbered objective) | T6 — clean |
+| `impact*` | 82 in ~2,800 words (~29 per 1,000) | T7 — inflated legitimately by the project's name; flag only bare-modifier uses |
+
+Two non-findings worth recording so they are not "fixed" later: **`Erasmus Medical Center`**
+(`data.js:960`) is a proper noun, and **`program`** is correct Canadian spelling — *programme* would
+be the error.
+
+**The prototype's copy scores better on abstraction than Concordia's own official Pathways page.**
+One abstraction marker across 2,800 words is a good result. The live gaps are overwhelmingly
+mechanical, not tonal.
 
 ---
 
