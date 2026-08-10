@@ -14,3 +14,5 @@
 
 # temporary pre-regeneration backup of the migration export (Step 0 rollback insurance; deleted after verify)
 pathways_migration_june_2026.pre-regen.bak/
+# ncv-persona skill — internal run log (not for git history)
+.claude/skills/ncv-persona/log.local.md

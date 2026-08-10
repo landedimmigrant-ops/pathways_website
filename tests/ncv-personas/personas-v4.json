@@ -1,0 +1,370 @@
+{
+  "$schema": "V4 persona corpus for the ncv-persona skill (.claude/skills/ncv-persona/). Array order = roster run order. Envelope mirrors personas.json (V1, untouched); `state` is replaced by `seed` (V4-state-shaped content bank — the script of what the persona types; injected into localStorage ONLY for re-entry/resume simulation) and `behavior` (how they drive the tool). plantedTraps[].expect = the CORRECT tool behavior (flag|clean|strength|detect); runs report each trap caught/missed/false-positive. Batch 2 (david, priya, james — migrate from personas.json) and sylvie/marcus are added in session 2 per the plan.",
+  "personas": [
+    {
+      "id": "nadia",
+      "name": "Dr. Nadia Osei",
+      "careerStage": "Early career (Year 1 tenure-track)",
+      "yearsPostPhd": 5,
+      "appointment": "Assistant Professor",
+      "faculty": "Faculty of Arts and Science",
+      "department": "Health, Kinesiology and Applied Physiology",
+      "primaryFunder": { "agency": "CIHR", "competition": "CIHR Project Grant — Spring 2027", "model": "TCV" },
+      "parallelFunder": { "agency": "FRQS", "competition": "Chercheur-boursier Junior 1 (planned)", "model": "CV-FRQ" },
+      "bio": "PhD Toronto 2021 (public health), postdoc McGill 2021–2024. Studies food environments and type-2 diabetes prevention with West African immigrant communities in Saint-Michel and Little Burgundy, Tiohtià:ke/Montréal. First narrative CV ever; has an old-style biosketch blurb she reuses for everything. Knows the CIHR Project Grant won't require the TCV until Fall 2027 at the earliest (ncv-genre-sources.md §1) but wants to be ready and her mentor told her to start now.",
+      "funderNotes": "TCV for CIHR: self-contained, no hyperlinks. Her FRQS parallel would need the CV-FRQ (Times New Roman, A/B/C audience tags, date per contribution — ncv-genre-sources.md §2); she doesn't know any of that yet.",
+      "behavior": {
+        "entryMode": "xray",
+        "language": "en",
+        "lens": { "agency": "cihr", "discipline": "health", "careerStage": "early", "program": "CIHR Project Grant — Spring 2027", "workMode": ["community", "team"] },
+        "patience": "med",
+        "skips": ["ps.standing (feels immodest — writes one thin line)", "mentorCrossStage (has none)", "contribution 3 beyond a title (out of time)"],
+        "typingStyle": "pastes-old-text",
+        "lintReaction": "defers",
+        "flagsUsage": "sets ? when unsure, almost never ✗ on her own work",
+        "sessionPlan": "Paste messy draft → run structural read → read every result → follow the Next bridge → rebuild contributions 1 and 2 fully, title-only for 3 → mentorship quick → PS → review + consult questions.",
+        "sessionGoal": "Walk away with two solid contributions and a personal-statement skeleton I could show my mentor next week.",
+        "plantedTraps": [
+          { "text": "**Personal Statement** (markdown header line in pasted draft)", "where": "xray draft", "expect": "detect-as-header", "defect": "V4#8" },
+          { "text": "numbered contribution blocks separated by single newlines", "where": "xray draft", "expect": "detect-as-separate-heading-and-body", "defect": "V4#9" },
+          { "text": "cited 41 times ... The Lancet Regional Health – Americas (no literal word 'journal')", "where": "xray draft", "expect": "detect (evidence references)", "defect": "V4#10" },
+          { "text": "as of May 2024", "where": "xray draft + retyped stakes, contribution 1", "expect": "clean", "defect": "V4#1" },
+          { "text": "three community organizations / seven years (spelled-out numbers)", "where": "xray draft + activities, contribution 1", "expect": "strength (specificity)", "defect": "V4#2" },
+          { "text": "published in a high-impact journal (IF 14.2); my h-index is 11", "where": "xray draft", "expect": "flag (banned prestige surrogates, reviewer guidelines)", "defect": "genre" },
+          { "text": "A community advisory board was established and a screening protocol was developed (passive voice, agency erased)", "where": "xray draft", "expect": "flag (passive/agency)", "defect": "genre" },
+          { "text": "We partnered with community kitchens and our findings were shared widely (we/our, no I)", "where": "xray draft", "expect": "flag (ownership)", "defect": "control-caught" },
+          { "text": "Our program could reduce screening gaps and we hope to expand it (hedged outcomes)", "where": "xray draft", "expect": "flag (hedging outside impact)", "defect": "control-caught" },
+          { "text": "I led the design of a two-year food-environment audit across 12 corner stores", "where": "xray draft + activities, contribution 1", "expect": "strength (ownership + number)", "defect": "control-clean" }
+        ],
+        "quirks": "Opens the exemplar and actually reads it. Trusts red text more than green. Types fast, doesn't re-read help text once she thinks she has the pattern. Gets visibly annoyed at retyping things the tool already saw in her pasted draft."
+      },
+      "seed": {
+        "lens": { "agency": "cihr", "format": "tcv", "program": "CIHR Project Grant — Spring 2027", "discipline": "health", "careerStage": "early", "workMode": ["community", "team"] },
+        "xray": {
+          "text": "**Personal Statement**\n\nI am an assistant professor of public health at Concordia University. My research focuses on food environments and diabetes prevention in West African immigrant communities in Montreal. We partnered with community kitchens and our findings were shared widely with stakeholders. My work has been published in a high-impact journal (IF 14.2) and my h-index is 11.\n\n**Research Contributions**\n\n1. Food environment audit\nI led the design of a two-year food-environment audit across 12 corner stores in Saint-Michel, working with three community organizations over seven years of prior relationship-building. A community advisory board was established and a screening protocol was developed. As of May 2024 the audit dataset was the only one of its kind in Quebec. The main paper has been cited 41 times and appeared in The Lancet Regional Health – Americas.\n\n2. Diabetes prevention pilot\nWe developed a culturally adapted diabetes prevention program with two community kitchens. Our program could reduce screening gaps and we hope to expand it to other neighbourhoods. Sixty participants were recruited and retention was good.\n\nI have supervised several students. In the future we hope to continue this work."
+        },
+        "contributions": [
+          {
+            "title": "Corner-store food environments made visible in Saint-Michel",
+            "stakes": "Diabetes risk in West African immigrant neighbourhoods is shaped by what corner stores stock, but as of May 2024 no Quebec dataset described those food environments at store level — services were planned on census proxies.",
+            "roleMode": "led",
+            "roleLine": "I led the audit design and analysis; community partners led store relationships and data collection.",
+            "activities": "I led the design of a two-year food-environment audit across 12 corner stores in Saint-Michel, co-developed with three community organizations after seven years of relationship-building. I trained six community data collectors and led the analysis; partners set the audit calendar and owned store consent.",
+            "outputs": "A store-level food-environment dataset (community-held), a bilingual audit toolkit, the main audit paper, and a plain-language neighbourhood report distributed through partner networks.",
+            "outcomes": "The regional public-health directorate added corner-store measures to its 2025 neighbourhood profiles, and two partner organizations now run the audit annually without me. The main paper has been cited 41 times in 20 months.",
+            "impact": "If store-level auditing spreads to other boroughs — two have asked — food-environment data could shift diabetes prevention planning from census proxies to street-level evidence across Montreal.",
+            "translational": "A Saint-Michel store owner reorganized shelf placement after seeing the audit report; the advisory board now cites it in every partner meeting.",
+            "evidence": [
+              { "text": "Audit paper, The Lancet Regional Health – Americas (2024); cited 41 times in 20 months", "type": "Peer-reviewed" },
+              { "text": "Corner-store measures adopted in the DRSP 2025 neighbourhood profiles (public document)", "type": "Policy / practice uptake" },
+              { "text": "Community-held audit dataset, annual collection cycles run by two partner organizations", "type": "Dataset / tool" }
+            ],
+            "flags": {}, "notes": {}, "showWeave": false
+          },
+          {
+            "title": "A diabetes-prevention program that cooks where people already cook",
+            "stakes": "Standard diabetes-prevention curricula assume kitchens, foods, and schedules that don't match West African immigrant households, so uptake in the communities at highest risk stays low.",
+            "roleMode": "coled",
+            "roleLine": "I co-led the adaptation with two community kitchens; the recipes and delivery model are theirs, the evaluation design is mine.",
+            "activities": "I co-designed a culturally adapted prevention program with two community kitchens, led the evaluation design, and ran the 60-participant pilot with 82% retention at six months. Community cooks led session delivery; I led the measurement and analysis.",
+            "outputs": "The adapted 12-week curriculum (community-owned), a facilitator training guide, the pilot evaluation paper (under review), and a costed scale-up brief for the regional directorate.",
+            "outcomes": "Both kitchens have kept the program running past the pilot without project funding, and one has trained a second cohort of facilitators.",
+            "impact": "If the pilot results hold, kitchen-based delivery could become a recognized prevention pathway for communities the clinic-based model misses — the scale-up brief is in front of the directorate now.",
+            "translational": "A participant told the advisory board the program was the first time a health service had cooked her food, not lectured her about it.",
+            "evidence": [
+              { "text": "Pilot evaluation manuscript (under review, 2026); 60 participants, 82% six-month retention", "type": "Peer-reviewed" },
+              { "text": "Scale-up brief submitted to the regional public-health directorate (2026)", "type": "Policy / practice uptake" }
+            ],
+            "flags": {}, "notes": {}, "showWeave": false
+          },
+          {
+            "title": "Community data governance for small health datasets",
+            "stakes": "", "roleMode": "", "roleLine": "", "activities": "", "outputs": "", "outcomes": "", "impact": "", "translational": "",
+            "evidence": [{ "text": "", "type": "Peer-reviewed" }],
+            "flags": {}, "notes": {}, "showWeave": false
+          }
+        ],
+        "mentorCounts": { "phd": "0", "masters": "2", "undergrad": "5", "postdoc": "0" },
+        "mentees": [
+          { "who": "A.D.", "stage": "Master's", "destination": "Epidemiologist, Montreal regional public-health directorate", "why": "First trainee from the partner community to join the lab; now sits on the other side of the data." },
+          { "who": "K.M.", "stage": "Undergrad", "destination": "MSc Public Health, McGill", "why": "Recruited through a community kitchen, not a course." }
+        ],
+        "mentorPhilosophy": "Every trainee presents to the community advisory board before they present at any conference — the partners hear it first, and the trainees learn who the work answers to.",
+        "mentorEDI": "I recruit through partner organizations as well as course lists; of seven trainees so far, five are from the communities the research serves and four are first-generation university students.",
+        "mentorCrossStage": "",
+        "ps": {
+          "role": "assistant professor of public health",
+          "institution": "Concordia University",
+          "field": "food environments and diabetes prevention in West African immigrant communities",
+          "challenge": "Diabetes prevention keeps failing the communities at highest risk because the evidence describes neighbourhoods from the outside — census proxies instead of the stores, kitchens, and budgets people actually navigate.",
+          "streams": "Two strands: making food environments visible at street level, and adapting prevention to where people already cook. The thread is that the communities hold the data and the delivery.",
+          "pivot": "I came to research from a community-kitchen volunteer shift during my MPH — watching a nutrition workshop empty out taught me more than the coursework did.",
+          "standing": "Early signals: a Lancet Regional Health paper cited 41 times, adoption of our audit measures by the regional directorate, and a CIHR Catalyst grant (2025).",
+          "programFit": "The Project Grant rewards sustained community partnership and measurable prevention outcomes — both are the core of this program, and the pilot gives it the preliminary data the competition expects.",
+          "horizon": "Scaling the kitchen-based model across four boroughs with the directorate, with community organizations as co-applicants, not sites."
+        },
+        "consultQuestions": "Is contribution 1 strong enough to lead with, or does the pilot (contribution 2) read as more fundable? And is my standing paragraph too thin for a Project Grant panel?"
+      }
+    },
+    {
+      "id": "aisha",
+      "name": "Dr. Aisha Khan",
+      "careerStage": "Early career (postdoc, 3 yr post-PhD)",
+      "yearsPostPhd": 3,
+      "appointment": "Postdoctoral Fellow",
+      "faculty": "Gina Cody School of Engineering and Computer Science",
+      "department": "CENPARMI / Computer Science & Software Engineering",
+      "primaryFunder": { "agency": "NSERC", "competition": "NSERC Discovery Launch Supplement", "model": "TCV" },
+      "parallelFunder": { "agency": "FRQNT", "competition": "Établissement de la relève professorale (planned)", "model": "CV-FRQ" },
+      "bio": "PhD McGill 2023. Postdoc at CENPARMI (co-supervised by Prof. Sabine Bergler). NLP for low-resource South Asian languages; community-builds with diasporic communities in Tiohtià:ke/Montréal. On the academic job market; first independent NSERC application. Migrated from the V1 persona corpus (tests/ncv-personas/personas.json + drafts/aisha.md); V1 diagnostic/revision notes carried into flags/notes so she exercises the ✗/? loop and the advisor packet hard.",
+      "funderNotes": "TCV (NSERC): self-contained, no hyperlinks — her instinct is to link HuggingFace/GitHub everywhere, which the genre forbids (ncv-genre-sources.md §1). FRQNT parallel would allow bibliographic links and needs French framing later.",
+      "behavior": {
+        "entryMode": "compose",
+        "language": "en",
+        "lens": { "agency": "nserc", "discipline": "stem", "careerStage": "early", "program": "NSERC Discovery Launch Supplement", "workMode": ["community", "team"] },
+        "patience": "high",
+        "skips": ["translational prompt if it appears (unsure it applies to benchmarks)", "mentorCrossStage"],
+        "typingStyle": "types-fresh",
+        "lintReaction": "defers",
+        "flagsUsage": "heavy — recreates her V1 revision notes as ✗/? flags with notes; wants the advisor packet full",
+        "sessionPlan": "All three contributions typed fully (she is thorough); mentorship (undergrad group only); PS; review with consult questions.",
+        "sessionGoal": "A complete first draft with my open questions attached, ready for my co-supervisor's red pen.",
+        "plantedTraps": [
+          { "text": "as of May 2024, no open benchmark covered Bengali dialect variation", "where": "stakes, contribution 1", "expect": "clean", "defect": "V4#1" },
+          { "text": "two dialect tracks and five evaluation task families (spelled-out numbers)", "where": "outputs, contribution 1", "expect": "strength (specificity)", "defect": "V4#2" },
+          { "text": "We built TamilEval across two institutions; I supervise the morphology track and hold responsibility for its evaluation design (present-tense ownership verbs)", "where": "roleLine, contribution 2", "expect": "strength (team voice + ownership)", "defect": "V4#6" },
+          { "text": "one-line roleLine with no numbers", "where": "roleLine, contribution 1", "expect": "clean (role lines don't need quantities)", "defect": "V4#12" },
+          { "text": "I led the design of BanglaBench-1.0, recruited and trained 12 community translators across two major dialects", "where": "activities, contribution 1", "expect": "strength (ownership + numbers)", "defect": "control-clean" }
+        ],
+        "quirks": "Reads every help text once, fully. Uses the weave after each contribution to check flow. Reacts to every red flag by editing — even when the flag is wrong, which costs her time she notices. Writes precise, slightly formal notes to her advisor."
+      },
+      "seed": {
+        "lens": { "agency": "nserc", "format": "tcv", "program": "NSERC Discovery Launch Supplement", "discipline": "stem", "careerStage": "early", "workMode": ["community", "team"] },
+        "xray": { "text": "" },
+        "contributions": [
+          {
+            "title": "BanglaBench — the first community-validated open benchmark for Bengali NLP",
+            "stakes": "Most NLP advances ride on English; as of May 2024, no open benchmark covered Bengali dialect variation, so 230 million speakers were evaluated — when at all — on translated English tasks.",
+            "roleMode": "led",
+            "roleLine": "I designed the benchmark and the community-validation methodology; the dialect coverage is the translators' as much as mine.",
+            "activities": "I led the design and release of BanglaBench-1.0, the first comprehensive open benchmark for Bengali natural language understanding. I personally designed the task taxonomy, recruited and trained 12 community translators across two major dialects, and authored the validation framework. Lead author on the EMNLP 2024 paper.",
+            "outputs": "BanglaBench-1.0 (open source, MIT licence) with two dialect tracks and five evaluation task families, the EMNLP 2024 paper, a community-translator recruitment guide, and a dialect-coverage validation toolkit.",
+            "outcomes": "BanglaBench is used by 31 research groups across five countries, including two Bangladeshi government labs, and is the named evaluation standard in a Government of Bangladesh-funded ML hub at the University of Dhaka. Cited in 18 peer-reviewed papers since late 2024.",
+            "impact": "If BanglaBench becomes the de facto Bengali evaluation standard — negotiation with the open-ML community is active — it could shift low-resource NLP from English-centric leaderboards toward community-validated, language-specific evaluation.",
+            "translational": "",
+            "evidence": [
+              { "text": "EMNLP 2024 paper; outstanding-paper honourable mention; cited in 18 peer-reviewed papers", "type": "Peer-reviewed" },
+              { "text": "Named evaluation standard, Government of Bangladesh ML hub, University of Dhaka (2025)", "type": "Policy / practice uptake" },
+              { "text": "BanglaBench-1.0 in use by 31 research groups across five countries", "type": "Dataset / tool" }
+            ],
+            "flags": { "impact": "unsure" },
+            "notes": { "impact": "Does the academic-impact framing feel grounded enough? Maybe add one concrete example of a paper using the dialect framework." },
+            "showWeave": false
+          },
+          {
+            "title": "TamilEval — morphology-aware evaluation for one of the world's 20 biggest languages",
+            "stakes": "Tamil's rich morphology breaks evaluation schemes designed for English, so open Tamil models were being scored on tasks that ignored the very structures they fail on.",
+            "roleMode": "coled",
+            "roleLine": "We built TamilEval across two institutions; I supervise the morphology track and hold responsibility for its evaluation design.",
+            "activities": "I co-designed TamilEval-0.5 with a five-person team across Concordia and IIIT-Madras, led the morphology-aware evaluation track, and supervised one master's student through the annotation pipeline. Second author on the ACL 2025 Findings paper; primary owner of the morphology track.",
+            "outputs": "TamilEval-0.5 (Apache 2.0), the ACL 2025 Findings paper, and a Tamil morphology evaluation toolkit for open-model developers.",
+            "outcomes": "Adopted by three Indian research groups and by the Tamil Virtual Academy for evaluating their open-source Tamil LLM; two community annotation contributions arrived unprompted in the first six months.",
+            "impact": "If TamilEval reaches v1.0 with full morphology coverage, it could become the standard open evaluation for Tamil — currently underserved relative to its 80 million speakers.",
+            "translational": "",
+            "evidence": [
+              { "text": "ACL 2025 Findings paper, selected for the Resource Track", "type": "Peer-reviewed" },
+              { "text": "Adopted by the Tamil Virtual Academy for their open-source Tamil LLM evaluation", "type": "Policy / practice uptake" }
+            ],
+            "flags": { "outputs": "work" },
+            "notes": { "outputs": "Name the Tamil Virtual Academy LLM specifically, and add one line on what the morphology toolkit does and who it's for." },
+            "showWeave": false
+          },
+          {
+            "title": "Privacy-preserving NLP co-designed with diasporic communities (pilot)",
+            "stakes": "Diasporic South Asian communities in Montréal generate text their languages' NLP tools can't serve — and the cloud tools that could serve them raise privacy costs those communities have named explicitly.",
+            "roleMode": "part",
+            "roleLine": "I brought the NLP; the community partners brought the questions, the recruitment, and the instrument design.",
+            "activities": "I co-designed a six-month pilot with three diasporic community organisations on what privacy-preserving on-device NLP could offer them, led the consultation workshops and the synthesis, and built the prototype. Community partners led recruitment and instrument design; one partner co-authored the methodology.",
+            "outputs": "A white paper, a community-validated needs assessment, and an open-source prototype demonstrating on-device Bengali summarisation.",
+            "outcomes": "One organisation has piloted the prototype with its volunteer translation team and contributed feedback toward v2; three partners are co-signing a SSHRC partnership letter of intent.",
+            "impact": "This could become a working model for community-owned NLP development in diasporic contexts — a gap both the NLP and community-research literatures name but neither fills. Early-stage, and I say so.",
+            "translational": "",
+            "evidence": [
+              { "text": "White paper downloaded 230+ times in three months; two partners requested phase 2 in writing", "type": "Media / public" },
+              { "text": "On-device Bengali summarisation prototype (open source), piloted by one partner's translation team", "type": "Dataset / tool" }
+            ],
+            "flags": { "activities": "work", "outcomes": "unsure" },
+            "notes": {
+              "activities": "Check the framing: partners led recruitment and instrument design — earlier drafts made my role sound bigger than it was.",
+              "outcomes": "Are the SSHRC LOI and the v2 feedback really outcomes, or inputs to the next project? Maybe move to Impact and leave Outcomes lighter."
+            },
+            "showWeave": false
+          }
+        ],
+        "mentorCounts": { "phd": "0", "masters": "1", "undergrad": "4", "postdoc": "0" },
+        "mentees": [
+          { "who": "R.C.", "stage": "Undergrad RA", "destination": "MSc, McGill (NLP)", "why": "2024 NSERC USRA on a project we co-designed; first-generation university student." },
+          { "who": "S.P.", "stage": "Undergrad RA", "destination": "MSc, University of Toronto", "why": "Won a Concordia undergraduate research prize for the BanglaBench dialect work." }
+        ],
+        "mentorPhilosophy": "Structure first, autonomy second: explicit milestone scaffolding for a new RA's first 6 weeks, then progressive handover of ownership — weekly 30-minute one-on-ones throughout, code through mandatory pair review.",
+        "mentorEDI": "I recruit through WiCS and the CS undergraduate society and require no prior research experience — only coursework and curiosity. Two of my four current RAs are first-generation university students.",
+        "mentorCrossStage": "",
+        "ps": {
+          "role": "postdoctoral fellow in machine learning",
+          "institution": "Concordia University (CENPARMI)",
+          "field": "natural language processing for low-resource South Asian languages",
+          "challenge": "NLP's accuracy gap follows the training-data map: 1.7 billion South Asian language speakers face worse systems every year the field scales on data their languages don't have — and closing the gap needs evaluation standards built with the language communities, not just more scraped text.",
+          "streams": "Benchmarks built with communities (BanglaBench, TamilEval), and community-owned applications of them (the on-device pilot). One thread: who sets the evaluation standard controls whose language counts.",
+          "pivot": "I came to NLP through community translation work in my family's Bengali church-basement school; the benchmarks are that experience, formalised.",
+          "standing": "Two first-of-their-kind open benchmarks in active use by 30+ groups internationally, an EMNLP outstanding-paper honourable mention, and adoption by a national ML hub — two years post-PhD.",
+          "programFit": "The Discovery Launch Supplement exists to convert a postdoc trajectory into an independent program: the benchmarks are the track record, the community-owned NLP program is the launch.",
+          "horizon": "An independent Concordia program in privacy-preserving, community-co-designed NLP for diasporic South Asian communities, in partnership with the Centre for Engineering in Society."
+        },
+        "consultQuestions": "Should contribution 3 (the pilot) lead, since it's where the independent program comes from — or is it too early-stage to lead an NSERC document? And does my impact framing for BanglaBench overclaim?"
+      }
+    },
+    {
+      "id": "marie_claude",
+      "name": "Pre. Marie-Claude Bélanger",
+      "careerStage": "Senior (Full Professor, CRC Tier 1)",
+      "yearsPostPhd": 24,
+      "appointment": "Full Professor; Concordia Research Chair in Community Health Equity (Tier 1, 2018–present)",
+      "faculty": "Faculty of Arts and Science",
+      "department": "Health, Kinesiology and Applied Physiology",
+      "primaryFunder": { "agency": "CIHR", "competition": "CIHR Project Grant", "model": "TCV" },
+      "parallelFunder": { "agency": "FRQS", "competition": "Programme de carrière — Chercheur-boursier sénior", "model": "CV-FRQ" },
+      "bio": "PhD Université de Montréal 2002, community health. 22+ years of community-based participatory research with Indigenous-led organisations in Tiohtià:ke/Montréal (Native Friendship Centre, Centre des femmes autochtones, Projets Autochtones du Québec). Bilingual, French-primary; files FRQS in French. Migrated from the V1 corpus (drafts/marie_claude.md). She has written many CVs and has strong opinions; the tool is the junior party in this interaction.",
+      "funderNotes": "TCV for CIHR here (English). Her FRQS renewal is CV-FRQ in French — she knows the July 2026 French instructions are authoritative and will notice the tool offers her nothing for the A/B/C audience tags or the date-per-contribution rule (ncv-genre-sources.md §2).",
+      "behavior": {
+        "entryMode": "compose",
+        "language": "en",
+        "lens": { "agency": "cihr", "discipline": "health", "careerStage": "senior", "program": "CIHR Project Grant", "workMode": ["community", "team"] },
+        "patience": "high",
+        "skips": ["nothing on principle — but abbreviates where the tool wastes her time"],
+        "typingStyle": "mixed",
+        "lintReaction": "pushes-back",
+        "flagsUsage": "leaves text as written when she disagrees with a flag; sets ? with a tart note instead of editing",
+        "sessionPlan": "Five contributions seeded; types 1, 2 and 4 fully, abbreviates 3 and 5 (title + activities only). Full mentorship (large numbers, 5 mentee rows). PS last, quickly — she has written many. Review + consult questions aimed at Eli.",
+        "sessionGoal": "See whether this tool respects how community-based research is actually voiced — and leave with a packet worth bringing to the research office.",
+        "plantedTraps": [
+          { "text": "I co-designed the protocol with three urban Indigenous organisations; my team led instrument adaptation ('we/our' + 'my team' + 'I co-designed' together)", "where": "activities, contribution 1", "expect": "strength (team voice + individual ownership)", "defect": "control-caught" },
+          { "text": "The protocol was adopted by the City of Montréal's 2024 strategy; community partners run their own annual cycles ('we' absent, ownership genuinely shared)", "where": "outcomes, contribution 1", "expect": "clean", "defect": "control-clean" },
+          { "text": "Our partners hold the data and our role is to serve their governance ('our' twice, deliberately — she will not add an 'I' here)", "where": "activities, contribution 3 (abbreviated)", "expect": "flag (ownership) — she disagrees and flags ? instead of editing", "defect": "control-caught-pushback" },
+          { "text": "Hypothesised: the toolkit could become a national reference (hedged impact)", "where": "impact, contribution 1", "expect": "strength (hedging appropriate in impact)", "defect": "control-caught" },
+          { "text": "leave evidence row 1 empty, fill rows 2 and 3", "where": "evidence, contribution 2", "expect": "stable keys between entry UI and weave/export", "defect": "V4#4" },
+          { "text": "supervised 14 PhD students and 5 postdocs (digits, in activities)", "where": "activities, contribution 4", "expect": "strength (specificity)", "defect": "control-clean" }
+        ],
+        "quirks": "Skips help text (has read a hundred guidance documents). Uses the weave once, judges it, doesn't reopen it. Checks whether the tool's advice matches the actual CIHR reviewer guidelines she has read. Writes consult questions addressed to a named advisor. Notices immediately when totals she typed elsewhere aren't reused."
+      },
+      "seed": {
+        "lens": { "agency": "cihr", "format": "tcv", "program": "CIHR Project Grant", "discipline": "health", "careerStage": "senior", "workMode": ["community", "team"] },
+        "xray": { "text": "" },
+        "contributions": [
+          {
+            "title": "A food-security protocol the City of Montréal now builds on",
+            "stakes": "Urban Indigenous food insecurity was invisible in municipal planning because no data existed that communities themselves owned and governed.",
+            "roleMode": "coled",
+            "roleLine": "I co-designed the protocol and led the methodology; the communities own the data and the decisions.",
+            "activities": "I co-designed a longitudinal food-security protocol with three urban Indigenous organisations in Tiohtià:ke/Montréal under their OCAP data-sovereignty frameworks. I led the methodology development and analysis training across 7 years; my team led instrument adaptation; community partners led recruitment and interpretation.",
+            "outputs": "A bilingual community-validated survey instrument, a 7-year community-owned longitudinal dataset with federated access, three community-authored reports, and five co-authored peer-reviewed papers.",
+            "outcomes": "The protocol was adopted by the City of Montréal's 2024 Urban Indigenous Housing Strategy. Two of three partner organisations run their own annual collection cycles independent of the academic team, and the federated-access agreement is a referenced model in two other Canadian cities.",
+            "impact": "Hypothesised: with the four-city SSHRC partnership now in progress, the protocol could become a national reference for community-owned urban Indigenous health data — a structural shift in who holds the evidence.",
+            "translational": "",
+            "evidence": [
+              { "text": "Cited as methodological anchor, City of Montréal Urban Indigenous Housing Strategy 2024 (public document)", "type": "Policy / practice uptake" },
+              { "text": "Three follow-on partnership grants (SSHRC, CIHR, CFREF) totalling $4.7M built on this protocol", "type": "Funding" },
+              { "text": "2023 CIHR Knowledge Translation Award", "type": "Award / recognition" }
+            ],
+            "flags": {}, "notes": {}, "showWeave": false
+          },
+          {
+            "title": "Eleven years of housing-precarity evidence with the Native Friendship Centre",
+            "stakes": "Chronic-disease trajectories among precariously housed urban Indigenous adults were undocumented in Québec — policy ran on point-in-time counts that missed the trajectory entirely.",
+            "roleMode": "led",
+            "roleLine": "I designed and led the cohort; the Centre co-governs it and its consent design is now the study's most-cited feature.",
+            "activities": "I designed and led an 11-year longitudinal cohort study of housing precarity and health among urban Indigenous adults, in partnership with the Native Friendship Centre of Montréal. I personally led the recruitment protocol, the data-governance design, and the senior-author role on every major output.",
+            "outputs": "Two peer-reviewed papers on chronic-disease trajectories (one in The Lancet Regional Health – Americas), an open-access policy brief, and a community-facing summary distributed through three Indigenous community centres.",
+            "outcomes": "The cohort data informed Santé Québec's 2022 update to municipal Indigenous health-services planning, and three Indigenous health units in Québec have adopted the cohort-recruitment protocol.",
+            "impact": "Hypothesised: the consent and data-governance design could become the default reference for urban Indigenous cohort research in Canada — closing a methodological gap this literature has named for two decades.",
+            "translational": "",
+            "evidence": [
+              { "text": "", "type": "Peer-reviewed" },
+              { "text": "Lancet Regional Health – Americas paper cited 87 times in 24 months", "type": "Replication / citation" },
+              { "text": "Santé Québec 2022 planning update, documented in the public report", "type": "Policy / practice uptake" }
+            ],
+            "flags": {}, "notes": {}, "showWeave": false
+          },
+          {
+            "title": "OCAP methodology for urban, multi-community research",
+            "stakes": "OCAP principles were developed for single-community settings; urban multi-community research had no formalized application of them.",
+            "roleMode": "led",
+            "roleLine": "I am the primary author of the urban OCAP methodology; community advisors govern its every revision.",
+            "activities": "Our partners hold the data and our role is to serve their governance. I led a 4-year methodological project on applying OCAP in urban, multi-community contexts, with community-partner advisory throughout.",
+            "outputs": "A methodological paper (Journal of Indigenous Wellbeing 2021), a peer-reviewed methods reader, and a community-protocol toolkit shared with two Indigenous Health Authority offices.",
+            "outcomes": "The toolkit is a First Nations Information Governance Centre recommended supplement to OCAP training; two Tier 1 Indigenous research chairs cite it in their grant infrastructures.",
+            "impact": "",
+            "translational": "",
+            "evidence": [
+              { "text": "Adopted by FNIGC as recommended OCAP training supplement (2023); cited in 41 peer-reviewed papers", "type": "Policy / practice uptake" }
+            ],
+            "flags": {}, "notes": {}, "showWeave": false
+          },
+          {
+            "title": "The Chair as training infrastructure — Community Health Equity",
+            "stakes": "Community-based health research fails when the people trained to do it all come from, and return to, the academy.",
+            "roleMode": "led",
+            "roleLine": "I designed and lead the Chair's research and training program.",
+            "activities": "Since 2018 I have led the Concordia Research Chair in Community Health Equity (Tier 1). I personally designed the Chair's research program, supervised 14 PhD students and 5 postdocs through it, and led the design of its annual community-knowledge-translation events.",
+            "outputs": "Seven years of annual public symposia, three community-policy briefs, and an open-access training program in community-based research with 220+ trainees.",
+            "outcomes": "Chair-trained alumni hold positions at Statistics Canada's Indigenous health unit, two Indigenous-led research organisations, McGill's Indigenous health research program, and three Québec universities. Three Chair-trained PhDs now hold Canada Research Chairs.",
+            "impact": "Hypothesised: the training infrastructure is the most durable contribution — researchers I trained now set priorities for Canadian Indigenous health research, and that capacity effect compounds over decades.",
+            "translational": "",
+            "evidence": [
+              { "text": "Chair externally reviewed 2023 with strong outcomes; three alumni hold Canada Research Chairs", "type": "Award / recognition" },
+              { "text": "Training program cited as a model in two CIHR institutional reviews", "type": "Policy / practice uptake" }
+            ],
+            "flags": {}, "notes": {}, "showWeave": false
+          },
+          {
+            "title": "Anti-colonial methods, from the margins to the adjudication guides",
+            "stakes": "What counts as rigorous community-based health research was defined without the communities in it.",
+            "roleMode": "led",
+            "roleLine": "I chaired the panels and co-authored the guidance that moved anti-colonial review criteria into national adjudication.",
+            "activities": "Across my career I have been a methodological developer, senior reviewer, and chair of national review panels for anti-colonial approaches to community-based health research, including co-authoring the CIHR-commissioned guidance document (2022).",
+            "outputs": "Two handbook chapters, a keynote series, and the CIHR-commissioned guidance on anti-colonial research methods.",
+            "outcomes": "The guidance is referenced in Tri-Council Policy Statement consultation processes, and two national review panels I chaired have integrated anti-colonial criteria into their adjudication guides.",
+            "impact": "",
+            "translational": "",
+            "evidence": [
+              { "text": "CIHR guidance document downloaded 5,400+ times; 2023 CIHR Knowledge Translation Award", "type": "Policy / practice uptake" }
+            ],
+            "flags": {}, "notes": {}, "showWeave": false
+          }
+        ],
+        "mentorCounts": { "phd": "14", "masters": "22", "undergrad": "40", "postdoc": "5" },
+        "mentees": [
+          { "who": "A PhD alumna", "stage": "PhD", "destination": "Canada Research Chair, Québec university", "why": "One of three Chair-trained PhDs who now hold CRCs." },
+          { "who": "J.T.", "stage": "PhD", "destination": "Senior researcher, Statistics Canada Indigenous health unit", "why": "First in their family through graduate school; now shapes national data practice." },
+          { "who": "A postdoc", "stage": "Postdoc", "destination": "CRC Tier 2", "why": "One of two former postdocs holding Tier 2 chairs." },
+          { "who": "A community trainee", "stage": "Community researcher", "destination": "Graduate program in Indigenous health", "why": "Entered the lab from a partner organisation, not a classroom." },
+          { "who": "M.L.", "stage": "Master's", "destination": "Indigenous-led research organisation", "why": "Recruited through the partner network; stayed in the community sector by choice." }
+        ],
+        "mentorPhilosophy": "Supervision is a long-term relationship, not a transaction: once you have been my student you remain part of the lab community as long as you wish, and I expect to learn from you as your research matures past mine.",
+        "mentorEDI": "Of 14 PhDs completed, 5 are Indigenous, 7 racialised, 11 first-generation graduate students — recruited deliberately through community-partner networks as much as academic channels, with mandatory community-partner relationship-building from year one.",
+        "mentorCrossStage": "Five postdocs mentored as independent collaborators (all five now in tenure-track or research-policy positions), plus junior faculty across three Québec universities through the Chair's network.",
+        "ps": {
+          "role": "community-based health researcher",
+          "institution": "Concordia University",
+          "field": "structural determinants of health in urban Indigenous communities",
+          "challenge": "Urban Indigenous health inequities are driven by structural determinants — housing, food sovereignty, the racial geographies of cities — and the policy response lags because the evidence has been held in pieces, by the wrong hands.",
+          "streams": "Community-owned data infrastructure; housing-precarity cohorts; anti-colonial methods. One thread: the communities own the evidence about their own health.",
+          "pivot": "Twenty-two years ago a community partner asked me who would own the data. The honest answer changed my methods, and then my field.",
+          "standing": "CRC Tier 1 since 2018; $4.7M in follow-on partnership funding; 14 PhDs and 5 postdocs trained, three now holding CRCs; 2023 CIHR Knowledge Translation Award.",
+          "programFit": "The Project Grant rewards sustained partnership and demonstrable uptake; this program has both, plus the training infrastructure that makes the results durable.",
+          "horizon": "A national community-owned data infrastructure for urban Indigenous health, under development with five sister sites and FNIGC, meeting OCAP standards while connecting to municipal and federal policy systems."
+        },
+        "consultQuestions": "Eli — two things. Does contribution 3's voice survive your read (I will not put an 'I' in the data-governance sentence), and should the Chair contribution lead instead of the food-security protocol for a Project Grant panel?"
+      }
+    }
+  ]
+}
