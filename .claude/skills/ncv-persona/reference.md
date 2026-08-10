@@ -11,7 +11,10 @@ SKILL.md has the protocol; this file has everything the protocol leans on.
 - Per-run stamp: `git rev-parse --short HEAD`; require
   `git status --porcelain narrative-cv-prototype-v4.html` to be empty.
 - The tool stores everything under localStorage key **`ncv-v4`**. Only ever remove that key
-  (other prototypes share the origin).
+  (other prototypes share the origin). Note: the tool re-writes default state on first
+  render (`renderStage` → `saveState`), so after a clean-slate reload the key EXISTS with
+  `mode: ""` — "blank" means default-state content, not a missing key. Verify blankness by
+  `mode === ""` + both mode cards unselected, not by key absence.
 
 ## Browser-pane quirks (verified 2026-07/08 — treat as environment limits, not defects)
 
