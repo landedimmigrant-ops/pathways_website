@@ -86,6 +86,14 @@
   .beat-tab:hover[aria-selected="false"] .beat-num { color: var(--burgundy); }
   .beat-tab[aria-selected="true"] { background: var(--burgundy); color: #fff; font-weight: 700; }
   .beat-tab[aria-selected="true"] .beat-num { color: rgba(255,255,255,.6); }
+  /* While a preview is open the previewed row takes the fill, so the row the
+     reader actually committed to keeps a quieter marker — otherwise clicking a
+     beat and then hovering elsewhere loses all trace of the choice. */
+  .beat-tab.is-locked[aria-selected="false"] {
+    background: #e9dfe1; color: var(--ink); font-weight: 600;
+    box-shadow: inset 3px 0 0 0 var(--burgundy);
+  }
+  .beat-tab.is-locked[aria-selected="false"] .beat-num { color: var(--burgundy); }
   .beat-tab:focus-visible { outline: 2px solid #0072a8; outline-offset: -2px; }
 
   /* All panels share one grid cell on desktop; only the open one displays. */
@@ -422,13 +430,16 @@
 
   (function () {
     var rail = document.getElementById('beat-rail');
+    var unit = document.querySelector('.beats-shell');
     var tabs = Array.prototype.slice.call(rail.querySelectorAll('.beat-tab'));
     var panels = Array.prototype.slice.call(document.querySelectorAll('.beat-panel'));
-    var HOVER_DELAY = 120;
+    var HOVER_DELAY = 120;   // pointer must rest this long before a beat opens
+    var LEAVE_DELAY = 220;   // grace after leaving, so clipping a corner doesn't snap back
 
     var locked = 0;      // the beat the reader has committed to
     var hovered = null;  // the beat being previewed
     var hoverTimer = null;
+    var leaveTimer = null;
 
     function shown() { return hovered === null ? locked : hovered; }
 
@@ -439,25 +450,28 @@
         // Roving tabindex follows the LOCKED beat, not the previewed one, so
         // tabbing into the rail lands on what the reader actually chose.
         t.setAttribute('tabindex', n === locked ? '0' : '-1');
+        t.classList.toggle('is-locked', n === locked);
       });
       panels.forEach(function (p, n) { p.classList.toggle('is-open', n === i); });
     }
 
     function cancelHover() { if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; } }
+    function cancelLeave() { if (leaveTimer) { clearTimeout(leaveTimer); leaveTimer = null; } }
 
     tabs.forEach(function (tab, i) {
       tab.addEventListener('pointerenter', function (e) {
         // Touch fires pointerenter immediately before click; let click own it.
         if (e.pointerType === 'touch') return;
+        cancelLeave();
         cancelHover();
         hoverTimer = setTimeout(function () { hovered = i; render(); }, HOVER_DELAY);
       });
       tab.addEventListener('click', function () {
-        cancelHover();
+        cancelHover(); cancelLeave();
         locked = i; hovered = null; render();
       });
       tab.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') { cancelHover(); locked = 0; hovered = null; render(); tabs[0].focus(); return; }
+        if (e.key === 'Escape') { cancelHover(); cancelLeave(); locked = 0; hovered = null; render(); tabs[0].focus(); return; }
         var next = -1;
         if (e.key === 'ArrowDown') next = (i + 1) % tabs.length;
         else if (e.key === 'ArrowUp') next = (i - 1 + tabs.length) % tabs.length;
@@ -465,16 +479,35 @@
         else if (e.key === 'End') next = tabs.length - 1;
         if (next < 0) return;
         e.preventDefault();
-        cancelHover();
+        cancelHover(); cancelLeave();
         locked = next; hovered = null; render();
         tabs[next].focus();
       });
     });
 
-    // Leaving the rail drops the preview back to whatever is locked.
-    rail.addEventListener('pointerleave', function () {
+    // Bound to the whole component, NOT the rail: moving the pointer off a row
+    // and into the panel is how you read the beat you just previewed. Closing on
+    // the rail's own pointerleave made a previewed beat impossible to read
+    // without clicking it first.
+    unit.addEventListener('pointerleave', function (e) {
+      if (e.pointerType === 'touch') return;
       cancelHover();
+      cancelLeave();
+      leaveTimer = setTimeout(function () {
+        if (hovered !== null) { hovered = null; render(); }
+      }, LEAVE_DELAY);
+    });
+    unit.addEventListener('pointerenter', cancelLeave);
+
+    // A tab switched away mid-hover never gets its pointerleave, which would
+    // strand the preview open on return.
+    function dropPreview() {
+      cancelHover(); cancelLeave();
       if (hovered !== null) { hovered = null; render(); }
+    }
+    window.addEventListener('blur', dropPreview);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) dropPreview();
     });
 
     render();
