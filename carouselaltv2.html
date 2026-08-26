@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home concept v2 — beat rail | Pathways to Impact</title>
+<meta name="description" content="Concept v2: the home carousel replaced by a side rail of beats with a shared panel. Hover to preview, click to hold. One screen, no timer.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #912338;
+    --burgundy-deep: #6E1A2B;
+    --ink: #1a1a1a;
+    --muted: #5a5a5a;
+    --line: #e6e6e6;
+    --rail: #f0f0f0;
+    --paper-warm: #FBF9F7;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: #fff; color: var(--ink);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 18px; line-height: 1.6;
+  }
+  a { color: var(--burgundy); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .skip-link { position: absolute; top: -100%; left: 16px; background: var(--burgundy); color: #fff;
+    padding: 8px 16px; border-radius: 0 0 4px 4px; font-size: 14px; font-weight: 600; z-index: 10000; text-decoration: none; }
+  .skip-link:focus { top: 0; }
+  :focus-visible { outline: 2px solid #0072a8; outline-offset: 2px; }
+
+  /* demo chrome */
+  .demo-bar { background: #1a1a1a; color: #f2eae7; font-size: 12.5px; letter-spacing: .04em;
+    padding: 8px 24px; display: flex; gap: 16px; align-items: center; justify-content: center;
+    flex-wrap: wrap; text-transform: uppercase; }
+  .demo-bar a { color: #f2eae7; text-decoration: underline; text-underline-offset: 3px; }
+  .notes-toggle { background: transparent; border: 1px solid rgba(255,255,255,.35); color: #f2eae7;
+    font: inherit; font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 999px; cursor: pointer; }
+  .notes-toggle:hover { border-color: #fff; }
+  .note { display: none; margin: 12px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--burgundy-deep);
+    background: #FBEFF1; border: 1px dashed rgba(145,35,56,.4); border-radius: 8px; padding: 8px 12px; max-width: 68ch; }
+  body.notes-on .note { display: block; }
+  .note b { font-weight: 600; }
+
+  /* site chrome */
+  .site-header { border-bottom: 1px solid var(--line); background: #fff; }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0; flex-wrap: wrap; }
+  .brand { font-size: 20px; font-weight: 700; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
+  .brand span { color: var(--burgundy); }
+  .main-nav { display: flex; gap: 26px; font-size: 15.5px; font-weight: 500; }
+  .main-nav a { color: var(--muted); text-decoration: none; }
+  .main-nav a:hover { color: var(--burgundy); }
+
+  /* hero */
+  .hero { padding: 32px 0 18px; }
+  .hero h1 { font-size: clamp(28px, 3.6vw, 38px); line-height: 1.14; letter-spacing: -.02em; margin: 0; max-width: 20ch; }
+  .hero h1 em { font-style: normal; color: var(--burgundy); }
+  .hero p { color: var(--muted); max-width: 62ch; margin: 12px 0 0; font-size: 16.5px; }
+
+  /* ---------- the beat rail ---------- */
+  .beats-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 0 0 12px; }
+  .beats-head h2 { font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  .beats-hint { font-size: 13.5px; color: var(--muted); }
+
+  .beats-shell {
+    display: grid; grid-template-columns: 220px 1fr; align-items: stretch;
+    border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--rail);
+  }
+  .beat-rail { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; background: var(--rail); }
+  .beat-tab {
+    display: block; width: 100%; background: none; border: none;
+    border-bottom: 1px solid var(--line); padding: 15px 16px; text-align: left;
+    font: inherit; font-size: 13.5px; font-weight: 500; color: #555; cursor: pointer;
+    line-height: 1.3; transition: background .12s, color .12s;
+  }
+  .beat-tab:last-child { border-bottom: none; }
+  .beat-tab .beat-num { display: block; font-size: 11px; font-weight: 600; letter-spacing: .1em; color: #8a8a8a; margin-bottom: 3px; }
+  /* Deliberately stronger than the #f0f0f0 -> #efefef shift in styles.css:1906,
+     which is invisible in practice. */
+  .beat-tab:hover[aria-selected="false"] { background: #e4e4e4; color: var(--ink); }
+  .beat-tab:hover[aria-selected="false"] .beat-num { color: var(--burgundy); }
+  .beat-tab[aria-selected="true"] { background: var(--burgundy); color: #fff; font-weight: 700; }
+  .beat-tab[aria-selected="true"] .beat-num { color: rgba(255,255,255,.6); }
+  .beat-tab:focus-visible { outline: 2px solid #0072a8; outline-offset: -2px; }
+
+  /* All panels share one grid cell on desktop; only the open one displays. */
+  .beat-panel {
+    grid-column: 2; grid-row: 1;
+    background: var(--burgundy); color: #fff; padding: 24px 28px;
+    grid-template-columns: minmax(0, 290px) minmax(0, 1fr);
+    gap: 28px; align-items: center;
+    /* Fixed, not min-height: the tallest beat is ~130px taller than the
+       shortest, and a panel that resizes as the pointer crosses the rail is
+       exactly the twitchiness the hover delay exists to prevent. */
+    height: 480px;
+    display: none;
+  }
+  .beat-panel.is-open { display: grid; }
+  .beat-copy { display: flex; flex-direction: column; gap: 10px; }
+  .beat-copy .kicker { font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .beat-copy p { margin: 0; font-size: 15.5px; line-height: 1.55; color: rgba(255,255,255,.88); }
+  .beat-copy p strong { color: #fff; font-weight: 600; }
+  .beat-link { color: #fff; font-size: 14.5px; font-weight: 600; text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,.45); align-self: flex-start; margin-top: 2px; }
+  .beat-link:hover { border-bottom-color: #fff; }
+  .beat-figure { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; height: 100%; }
+  .beat-figure svg { max-width: 100%; max-height: 250px; height: auto; }
+  /* v1 baked a heading and a caption into some graphics because it had no copy
+     column beside them. Here the copy column says the same thing, so showing
+     both would be the exact repetition this version exists to remove. */
+  .beat-figure .v-title, .beat-figure .v-sub { display: none; }
+
+  /* graphic internals carried over from v1 */
+  .v-traits { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 430px; }
+  .v-traits .lab { width: 100%; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 2px; }
+  .v-traits div.item { background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.16);
+    border-radius: 999px; padding: 5px 12px; font-size: 12.5px; font-weight: 500; }
+  .v-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; width: 100%; max-width: 430px; }
+  .v-pw { background: #fff; border-radius: 8px; padding: 9px 10px; display: flex; align-items: center; gap: 8px;
+    text-align: left; border-left: 3px solid var(--pw, #912338); }
+  .v-pw .ic { width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center; flex: none; }
+  .v-pw .nm { font-size: 12.5px; font-weight: 600; color: #26201E; line-height: 1.25; }
+  .v-pw.wide { grid-column: 1 / -1; }
+  .v-lc { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 380px; }
+  .v-lc .st { display: flex; gap: 12px; align-items: flex-start; text-align: left; background: rgba(255,255,255,.07); border-radius: 10px; padding: 11px 13px; }
+  .v-lc .bub { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.12); display: grid; place-items: center; flex: none; }
+  .v-lc .ti { font-size: 15px; font-weight: 700; }
+  .v-lc .de { font-size: 12.5px; color: rgba(255,255,255,.68); line-height: 1.4; }
+  .v-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 430px; }
+  .v-chips span { font-size: 12.5px; font-weight: 500; padding: 5px 11px; border-radius: 999px;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); }
+  .v-chips.promise span { background: rgba(255,255,255,.17); }
+  .v-sub { font-size: 13px; color: rgba(255,255,255,.62); max-width: 40ch; line-height: 1.5; margin: 0; }
+  .v-title { font-size: 16px; font-weight: 700; letter-spacing: -.01em; }
+
+  /* outro */
+  .outro { background: var(--paper-warm); border-top: 1px solid var(--line); margin-top: 30px; padding: 26px 0; }
+  .outro-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .outro p { margin: 0; color: var(--muted); font-size: 16px; }
+  .btn { display: inline-block; font: inherit; font-size: 15.5px; font-weight: 600; text-decoration: none;
+    padding: 10px 20px; border-radius: 8px; border: 2px solid var(--burgundy); transition: transform .15s ease; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--burgundy); color: #fff; }
+  footer.foot { padding: 20px 0 44px; font-size: 14px; color: var(--muted); }
+
+  /* ---------- mobile: rail on top, panel beneath ---------- */
+  @media (max-width: 859px) {
+    .beats-shell { grid-template-columns: 1fr; }
+    .beat-rail { grid-column: 1; grid-row: 1; }
+    .beat-tab:last-child { border-bottom: 1px solid var(--line); }
+    .beat-panel { grid-column: 1; grid-row: 2; grid-template-columns: 1fr; gap: 16px; height: auto; padding: 20px; }
+    .beat-figure { height: auto; }
+    .beats-hint { display: none; }
+    .v-lc .de { display: none; }
+  }
+
+  /* ---------- no-JS: every beat visible, stacked ---------- */
+  .no-js .beats-shell { grid-template-columns: 1fr; }
+  .no-js .beat-rail { grid-row: auto; }
+  .no-js .beat-panel { display: grid; height: auto; grid-column: 1; grid-row: auto; border-top: 1px solid rgba(255,255,255,.15); }
+  .no-js .beats-hint { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<div class="demo-bar">
+  <span>Concept v2 · beat rail · not linked from the live site</span>
+  <a href="carouselaltv1.html">← v1 (scroll)</a>
+  <a href="index.html">Current prototype</a>
+  <button class="notes-toggle" type="button" id="notes-btn" aria-pressed="false">Design notes: off</button>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html">Pathways <span>to Impact</span></a>
+    <nav class="main-nav" aria-label="Main">
+      <a href="index.html#explore">Explore</a>
+      <a href="index.html#learn">Learn</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero wrap">
+    <h1>Research is where <em>change begins.</em></h1>
+    <p>Resources, services, and tools from across Concordia — curated by the Office of Research to support your research impact journey, wherever you are in it.</p>
+  </section>
+
+  <section class="wrap" aria-labelledby="beats-h">
+    <div class="beats-head">
+      <h2 id="beats-h">What Pathways is</h2>
+      <span class="beats-hint" aria-hidden="true">Hover a step to preview · click to hold it</span>
+    </div>
+
+    <div class="beats-shell">
+      <div class="beat-rail" role="tablist" aria-orientation="vertical" aria-labelledby="beats-h" id="beat-rail">
+        <button class="beat-tab" type="button" role="tab" id="beat-tab-0"
+                aria-controls="beat-panel-0" aria-selected="false" tabindex="-1">
+          <span class="beat-num">01</span>What impact means
+        </button>
+        <button class="beat-tab" type="button" role="tab" id="beat-tab-1"
+                aria-controls="beat-panel-1" aria-selected="false" tabindex="-1">
+          <span class="beat-num">02</span>Why it needs support
+        </button>
+        <button class="beat-tab" type="button" role="tab" id="beat-tab-2"
+                aria-controls="beat-panel-2" aria-selected="false" tabindex="-1">
+          <span class="beat-num">03</span>Seven pathways
+        </button>
+        <button class="beat-tab" type="button" role="tab" id="beat-tab-3"
+                aria-controls="beat-panel-3" aria-selected="false" tabindex="-1">
+          <span class="beat-num">04</span>Support at every stage
+        </button>
+        <button class="beat-tab" type="button" role="tab" id="beat-tab-4"
+                aria-controls="beat-panel-4" aria-selected="false" tabindex="-1">
+          <span class="beat-num">05</span>Who is behind it
+        </button>
+      </div>
+      <div class="beat-panel" id="beat-panel-0" role="tabpanel" aria-labelledby="beat-tab-0" tabindex="0">
+        <div class="beat-copy">
+          <span class="kicker">Defining research impact</span>
+          <p>At Concordia, research impact is the <strong>change</strong> that research activities contribute to society and beyond — an ongoing process of engagement that can lead to academic, social, cultural, economic, environmental, or policy effects.</p>
+          <a class="beat-link" href="index.html#learn">Learn more about research impact →</a>
+        </div>
+        <div class="beat-figure">
+          <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Research at the centre of a field of impact areas: policy, community, industry, training, culture, environment, health and equity.">
+            <circle cx="150" cy="150" r="58"  stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+            <circle cx="150" cy="150" r="98"  stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+            <circle cx="150" cy="150" r="135" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <circle cx="150" cy="150" r="40" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+            <text x="150" y="146" text-anchor="middle" fill="white" font-size="11" font-weight="800" font-family="Inter,Segoe UI,sans-serif">RESEARCH</text>
+            <text x="150" y="160" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-size="9" font-family="Inter,Segoe UI,sans-serif">DISCOVERY</text>
+            <text x="150" y="84"  text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="700" font-family="Inter,Segoe UI,sans-serif">POLICY</text>
+            <text x="150" y="224" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="700" font-family="Inter,Segoe UI,sans-serif">TRAINING</text>
+            <text x="242" y="154" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="12" font-weight="800" font-family="Inter,Segoe UI,sans-serif">COMMUNITY</text>
+            <text x="58"  y="154" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="12" font-weight="800" font-family="Inter,Segoe UI,sans-serif">INDUSTRY</text>
+            <circle cx="150" cy="92" r="3" fill="rgba(255,255,255,0.5)"/>
+            <circle cx="150" cy="208" r="3" fill="rgba(255,255,255,0.5)"/>
+            <circle cx="238" cy="150" r="3" fill="rgba(255,255,255,0.55)"/>
+            <circle cx="62"  cy="150" r="3" fill="rgba(255,255,255,0.55)"/>
+            <line x1="150" y1="110" x2="150" y2="95" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <line x1="190" y1="150" x2="234" y2="150" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+            <line x1="150" y1="190" x2="150" y2="205" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <line x1="110" y1="150" x2="66"  y2="150" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+            <text x="225" y="98"  text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Inter,Segoe UI,sans-serif">CULTURE</text>
+            <text x="225" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Inter,Segoe UI,sans-serif">ENVIRONMENT</text>
+            <text x="75"  y="98"  text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Inter,Segoe UI,sans-serif">HEALTH</text>
+            <text x="75"  y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Inter,Segoe UI,sans-serif">EQUITY</text>
+          </svg>
+          <div class="v-traits">
+            <div class="lab">Impact can be…</div>
+            <div class="item">Positive or negative</div>
+            <div class="item">Different types &amp; natures</div>
+            <div class="item">Different times &amp; scales</div>
+            <div class="item">From the process &amp; its results</div>
+          </div>
+        </div>
+      </div>
+      <div class="beat-panel" id="beat-panel-1" role="tabpanel" aria-labelledby="beat-tab-1" tabindex="0">
+        <div class="beat-copy">
+          <span class="kicker">The challenge</span>
+          <p>Research doesn’t automatically become impact. Knowledge moves through systems — academic, social, political — and the path is rarely straight. Most researchers navigate it without a map.</p>
+          <a class="beat-link" href="index.html#learn">Plan your impact →</a>
+        </div>
+        <div class="beat-figure">
+          <svg width="440" height="180" viewBox="0 0 440 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Discovery leads to publication, then a broken link marked with a question mark, then uptake and impact.">
+            <line x1="71"  y1="60" x2="134" y2="60" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+            <line x1="186" y1="60" x2="212" y2="60" stroke="rgba(255,255,255,0.28)" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <line x1="248" y1="60" x2="274" y2="60" stroke="rgba(255,255,255,0.28)" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <text x="230" y="66" text-anchor="middle" fill="rgba(244,208,213,0.95)" font-size="20" font-weight="700" font-family="Inter,Segoe UI,sans-serif">?</text>
+            <line x1="326" y1="60" x2="379" y2="60" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+            <circle cx="45"  cy="60" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <circle cx="160" cy="60" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <circle cx="300" cy="60" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <circle cx="405" cy="60" r="26" fill="rgba(244,208,213,0.14)" stroke="rgba(244,208,213,0.6)" stroke-width="1.5"/>
+            <g transform="translate(31,46)" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5 L10 14 L6 22 L22 22 L18 14 L18 5"/><line x1="8" y1="5" x2="20" y2="5"/><path d="M9 17 C11 15 17 15 19 17" opacity="0.4"/></g>
+            <g transform="translate(146,46)" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="4" width="18" height="20" rx="2"/><line x1="5" y1="9" x2="23" y2="9"/><line x1="9" y1="13" x2="19" y2="13"/><line x1="9" y1="16.5" x2="19" y2="16.5"/><line x1="9" y1="20" x2="15" y2="20" opacity="0.5"/></g>
+            <g transform="translate(286,46)" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="3" opacity="0.7"/><circle cx="19" cy="9" r="3" opacity="0.7"/><circle cx="14" cy="10" r="3.5"/><path d="M6 22 C6 18 9 16 14 16 C19 16 22 18 22 22"/></g>
+            <g transform="translate(391,46)" fill="none" stroke="rgba(244,208,213,0.95)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="14,4 16.5,11 24,11 18,15.5 20.5,22.5 14,18 7.5,22.5 10,15.5 4,11 11.5,11"/></g>
+            <text x="45"  y="107" text-anchor="middle" fill="rgba(255,255,255,0.72)" font-size="12" font-family="Inter,Segoe UI,sans-serif">Discovery</text>
+            <text x="160" y="107" text-anchor="middle" fill="rgba(255,255,255,0.72)" font-size="12" font-family="Inter,Segoe UI,sans-serif">Publication</text>
+            <text x="300" y="107" text-anchor="middle" fill="rgba(255,255,255,0.72)" font-size="12" font-family="Inter,Segoe UI,sans-serif">Uptake</text>
+            <text x="405" y="107" text-anchor="middle" fill="rgba(244,208,213,0.95)" font-size="12" font-weight="700" font-family="Inter,Segoe UI,sans-serif">Impact</text>
+            <text x="230" y="140" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="11.5" font-family="Inter,Segoe UI,sans-serif">the path is rarely straight</text>
+          </svg>
+        </div>
+      </div>
+      <div class="beat-panel" id="beat-panel-2" role="tabpanel" aria-labelledby="beat-tab-2" tabindex="0">
+        <div class="beat-copy">
+          <span class="kicker">The framework</span>
+          <p>Not a checklist — a starting place. Each pathway offers a different approach to creating real-world change from your research. Most researchers find more than one applies to them.</p>
+          <a class="beat-link" href="index.html#explore">Explore the seven pathways →</a>
+        </div>
+        <div class="beat-figure">
+          <div class="v-grid">
+            <div class="v-pw wide" style="--pw:#912338">
+              <span class="ic" style="background:rgba(145,35,56,0.1)"><svg viewBox="0 0 28 28" width="17" height="17" fill="none" stroke="#912338" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 22 V8 C14 8 10 6 5 8 V22 C10 20 14 22 14 22 Z"/><path d="M14 22 V8 C14 8 18 6 23 8 V22 C18 20 14 22 14 22 Z"/></svg></span>
+              <span class="nm">Academic Scholarship</span>
+            </div>
+            <div class="v-pw" style="--pw:#DB0272">
+              <span class="ic" style="background:rgba(219,2,114,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#DB0272" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="6" r="3"/><circle cx="4.5" cy="8" r="2.2" opacity="0.6"/><circle cx="13.5" cy="8" r="2.2" opacity="0.6"/><path d="M5 16 C5 13 7 11.5 9 11.5 C11 11.5 13 13 13 16" opacity="0.8"/></svg></span>
+              <span class="nm">Community Engagement</span>
+            </div>
+            <div class="v-pw" style="--pw:#DA3A16">
+              <span class="ic" style="background:rgba(218,58,22,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#DA3A16" stroke-width="1.5" stroke-linecap="round"><path d="M9 2 C6.2 2 4 4.2 4 7 C4 9 5.2 10.5 6 11.5 L12 11.5 C12.8 10.5 14 9 14 7 C14 4.2 11.8 2 9 2"/><line x1="6.5" y1="13.5" x2="11.5" y2="13.5"/><line x1="7.5" y1="15.5" x2="10.5" y2="15.5"/></svg></span>
+              <span class="nm">Innovation</span>
+            </div>
+            <div class="v-pw" style="--pw:#573996">
+              <span class="ic" style="background:rgba(87,57,150,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#573996" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,14 6,9 10,11 15,4"/><polyline points="11,4 15,4 15,8"/></svg></span>
+              <span class="nm">Commercialization</span>
+            </div>
+            <div class="v-pw" style="--pw:#0072A8">
+              <span class="ic" style="background:rgba(0,114,168,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#0072A8" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="2" width="12" height="14" rx="1.5"/><line x1="6" y1="6" x2="12" y2="6"/><line x1="6" y1="9" x2="12" y2="9"/><line x1="6" y1="12" x2="9.5" y2="12"/></svg></span>
+              <span class="nm">Policy</span>
+            </div>
+            <div class="v-pw" style="--pw:#B07D00">
+              <span class="ic" style="background:rgba(176,125,0,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#B07D00" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="11" r="2"/><path d="M5.5 7.5 C5.5 5.5 7.1 4 9 4 C10.9 4 12.5 5.5 12.5 7.5" opacity="0.7"/><line x1="9" y1="13" x2="9" y2="16"/><line x1="6.5" y1="16" x2="11.5" y2="16"/></svg></span>
+              <span class="nm">Communications</span>
+            </div>
+            <div class="v-pw" style="--pw:#508212">
+              <span class="ic" style="background:rgba(80,130,18,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#508212" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15 L11 5.5 L13 4 L14 5 L12.5 7 L3 15 Z"/><circle cx="3.5" cy="14.5" r="1.5" fill="rgba(80,130,18,0.3)"/></svg></span>
+              <span class="nm">Research Creation</span>
+            </div>
+          </div>
+          <p class="v-sub">Most researchers find more than one applies to them.</p>
+        </div>
+      </div>
+      <div class="beat-panel" id="beat-panel-3" role="tabpanel" aria-labelledby="beat-tab-3" tabindex="0">
+        <div class="beat-copy">
+          <span class="kicker">The research lifecycle</span>
+          <p>Impact support looks different at every stage. Pathways is built for all three moments in a research project — developing an idea, active research, and finishing up.</p>
+          <a class="beat-link" href="index.html#explore">Find support for your stage →</a>
+        </div>
+        <div class="beat-figure">
+          <div class="v-lc">
+            <div class="st">
+              <span class="bub"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="21" x2="12" y2="11"/><path d="M12 11 C12 7 8.5 5 6 6 C6 9 8 12 12 11"/><path d="M12 14 C12 11 15.5 9 18 10 C18 13 15 15.5 12 14"/></svg></span>
+              <span><span class="ti">Developing</span><br><span class="de">Shaping your question, building partnerships, planning impact from the start.</span></span>
+            </div>
+            <div class="st">
+              <span class="bub"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="13,3 7,13 12,13 11,21 17,11 12,11 13,3"/></svg></span>
+              <span><span class="ti">Active</span><br><span class="de">Research is running. You're generating knowledge and need to move it out.</span></span>
+            </div>
+            <div class="st">
+              <span class="bub"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2" fill="rgba(255,255,255,0.7)" stroke="none"/></svg></span>
+              <span><span class="ti">Finishing</span><br><span class="de">Findings are ready. Now comes dissemination, uptake, and sustained change.</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="beat-panel" id="beat-panel-4" role="tabpanel" aria-labelledby="beat-tab-4" tabindex="0">
+        <div class="beat-copy">
+          <span class="kicker">Your support network</span>
+          <p>Led by the Office of Research, Pathways brings together units from across the university to create a coordinated, growing support network around researchers. New services, new tools, and stories of impact champions — this site grows with the research community.</p>
+          <a class="beat-link" href="index.html#about">See all partners →</a>
+        </div>
+        <div class="beat-figure">
+          <svg width="250" height="250" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pathways to Impact at the centre of a network of seven partner units.">
+            <line x1="130" y1="100" x2="130" y2="50"  stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="156" y1="108" x2="196" y2="84"  stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="163" y1="130" x2="230" y2="156" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="152" y1="158" x2="180" y2="210" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="108" y1="158" x2="80"  y2="210" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="97"  y1="130" x2="30"  y2="156" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="104" y1="108" x2="66"  y2="84"  stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <circle cx="130" cy="130" r="40" fill="rgba(255,255,255,0.08)"/>
+            <circle cx="130" cy="130" r="30" fill="#FFFFFF"/>
+            <text x="130" y="127" text-anchor="middle" fill="#912338" font-size="8" font-weight="800" font-family="Inter,Segoe UI,sans-serif">PATHWAYS</text>
+            <text x="130" y="138" text-anchor="middle" fill="rgba(145,35,56,0.7)" font-size="7" font-family="Inter,Segoe UI,sans-serif">TO IMPACT</text>
+            <circle cx="130" cy="36" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+            <circle cx="208" cy="72" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+            <circle cx="244" cy="156" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+            <circle cx="186" cy="224" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+            <circle cx="74" cy="224" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+            <circle cx="16" cy="156" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+            <circle cx="52" cy="72" r="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" stroke-dasharray="3 2"/>
+          </svg>
+          <div class="v-chips">
+            <span>Office of Research</span><span>4th Space</span><span>Library</span><span>SHIFT</span><span>District 3</span><span>V1 Studio</span>
+          </div>
+          <div class="v-title">We're building this with you</div>
+          <div class="v-chips" style="max-width:340px">
+            <span>Constantly updated</span><span>Impact champions</span><span>Events &amp; workshops</span><span>Human support</span>
+          </div>
+          <p class="v-sub">New services, new tools, and stories of impact champions at Concordia.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="note"><b>What changed from v1.</b> Same graphics, same story, but the reader picks the beat instead of scrolling through all of them — the whole component is one screen instead of 5,600px. The rail row is the only place a beat is named; the panel never repeats it, which is the duplication the current pathways detail page has (its rail label and its panel heading are the same string).</p>
+    <p class="note"><b>Worth flagging.</b> Hover-to-preview is a new behaviour for this site — every existing master-detail here is click-selected. Clicking still locks a beat, and keyboard and touch work with no hover at all, so nothing is reachable by hovering alone.</p>
+  </section>
+
+  <section class="outro">
+    <div class="wrap outro-inner">
+      <p>That is what Pathways is. The site itself starts here.</p>
+      <a class="btn btn-primary" href="index.html#explore">Explore the Pathways →</a>
+    </div>
+  </section>
+
+  <footer class="foot wrap">
+    <p>Concept page · Pathways to Impact · Office of Research, Concordia University. Not linked from the live prototype navigation.</p>
+  </footer>
+
+</main>
+
+<script>
+  document.documentElement.classList.remove('no-js');
+  document.documentElement.classList.add('js');
+
+  (function () {
+    var rail = document.getElementById('beat-rail');
+    var tabs = Array.prototype.slice.call(rail.querySelectorAll('.beat-tab'));
+    var panels = Array.prototype.slice.call(document.querySelectorAll('.beat-panel'));
+    var HOVER_DELAY = 120;
+
+    var locked = 0;      // the beat the reader has committed to
+    var hovered = null;  // the beat being previewed
+    var hoverTimer = null;
+
+    function shown() { return hovered === null ? locked : hovered; }
+
+    function render() {
+      var i = shown();
+      tabs.forEach(function (t, n) {
+        t.setAttribute('aria-selected', n === i ? 'true' : 'false');
+        // Roving tabindex follows the LOCKED beat, not the previewed one, so
+        // tabbing into the rail lands on what the reader actually chose.
+        t.setAttribute('tabindex', n === locked ? '0' : '-1');
+      });
+      panels.forEach(function (p, n) { p.classList.toggle('is-open', n === i); });
+    }
+
+    function cancelHover() { if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; } }
+
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('pointerenter', function (e) {
+        // Touch fires pointerenter immediately before click; let click own it.
+        if (e.pointerType === 'touch') return;
+        cancelHover();
+        hoverTimer = setTimeout(function () { hovered = i; render(); }, HOVER_DELAY);
+      });
+      tab.addEventListener('click', function () {
+        cancelHover();
+        locked = i; hovered = null; render();
+      });
+      tab.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { cancelHover(); locked = 0; hovered = null; render(); tabs[0].focus(); return; }
+        var next = -1;
+        if (e.key === 'ArrowDown') next = (i + 1) % tabs.length;
+        else if (e.key === 'ArrowUp') next = (i - 1 + tabs.length) % tabs.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        if (next < 0) return;
+        e.preventDefault();
+        cancelHover();
+        locked = next; hovered = null; render();
+        tabs[next].focus();
+      });
+    });
+
+    // Leaving the rail drops the preview back to whatever is locked.
+    rail.addEventListener('pointerleave', function () {
+      cancelHover();
+      if (hovered !== null) { hovered = null; render(); }
+    });
+
+    render();
+
+    var notesBtn = document.getElementById('notes-btn');
+    notesBtn.addEventListener('click', function () {
+      var on = document.body.classList.toggle('notes-on');
+      notesBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      notesBtn.textContent = 'Design notes: ' + (on ? 'on' : 'off');
+    });
+  })();
+</script>
+
+</body>
+</html>
