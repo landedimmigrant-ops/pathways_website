@@ -193,16 +193,30 @@
   .btn-primary { background: var(--burgundy); color: #fff; }
   footer.foot { padding: 20px 0 44px; font-size: 14px; color: var(--muted); }
 
-  /* ---------- tablet: two columns ---------- */
-  @media (max-width: 899px) and (min-width: 620px) {
-    .beat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* ---------- tablet: still three across, panel stacks internally ---------- */
+  @media (max-width: 899px) and (min-width: 700px) {
     .beat-panel { grid-template-columns: 1fr; gap: 18px; height: auto; }
     .beat-figure { height: auto; }
   }
 
-  /* ---------- phone: one column, cards become a plain accordion ---------- */
-  @media (max-width: 619px) {
-    .beat-grid { grid-template-columns: 1fr; }
+  /* ---------- phone: one column, each panel back under its own card ---------- */
+  @media (max-width: 699px) {
+    .beat-grid { display: flex; flex-direction: column; }
+    /* The DOM is top row, all six panels, bottom row — the order that lets one
+       panel hold the middle slot on desktop. Stacked in a single column that
+       grouping is meaningless, so re-interleave each panel behind its card. */
+    .beat-grid > :nth-child(1)  { order: 0; }
+    .beat-grid > :nth-child(4)  { order: 1; }
+    .beat-grid > :nth-child(2)  { order: 2; }
+    .beat-grid > :nth-child(5)  { order: 3; }
+    .beat-grid > :nth-child(3)  { order: 4; }
+    .beat-grid > :nth-child(6)  { order: 5; }
+    .beat-grid > :nth-child(10) { order: 6; }
+    .beat-grid > :nth-child(7)  { order: 7; }
+    .beat-grid > :nth-child(11) { order: 8; }
+    .beat-grid > :nth-child(8)  { order: 9; }
+    .beat-grid > :nth-child(12) { order: 10; }
+    .beat-grid > :nth-child(9)  { order: 11; }
     .beat-panel { grid-template-columns: 1fr; gap: 16px; height: auto; padding: 18px; }
     .beat-figure { height: auto; }
     .grid-hint { display: none; }
@@ -412,27 +426,6 @@
           </svg>
         </div>
       </div>
-      <button class="beat-card" type="button" id="beat-card-3"
-              aria-expanded="false" aria-controls="beat-panel-3">
-        <span class="beat-card-num">04</span>
-        <p class="beat-card-title">Seven pathways</p>
-        <p class="beat-card-teaser">Seven ways to create real-world change</p>
-        <span class="beat-card-chev" aria-hidden="true">▾</span>
-      </button>
-      <button class="beat-card" type="button" id="beat-card-4"
-              aria-expanded="false" aria-controls="beat-panel-4">
-        <span class="beat-card-num">05</span>
-        <p class="beat-card-title">Support at every stage</p>
-        <p class="beat-card-teaser">Developing, active, or finishing up</p>
-        <span class="beat-card-chev" aria-hidden="true">▾</span>
-      </button>
-      <button class="beat-card" type="button" id="beat-card-5"
-              aria-expanded="false" aria-controls="beat-panel-5">
-        <span class="beat-card-num">06</span>
-        <p class="beat-card-title">You’re not alone</p>
-        <p class="beat-card-teaser">A growing network across the university</p>
-        <span class="beat-card-chev" aria-hidden="true">▾</span>
-      </button>
       <div class="beat-panel" id="beat-panel-3" role="region" aria-labelledby="beat-card-3">
         <div class="beat-copy">
           <span class="kicker">The framework</span>
@@ -533,9 +526,30 @@
           <p class="v-sub">New services, new tools, and stories of impact champions at Concordia.</p>
         </div>
       </div>
+      <button class="beat-card" type="button" id="beat-card-3"
+              aria-expanded="false" aria-controls="beat-panel-3">
+        <span class="beat-card-num">04</span>
+        <p class="beat-card-title">Seven pathways</p>
+        <p class="beat-card-teaser">Seven ways to create real-world change</p>
+        <span class="beat-card-chev" aria-hidden="true">▾</span>
+      </button>
+      <button class="beat-card" type="button" id="beat-card-4"
+              aria-expanded="false" aria-controls="beat-panel-4">
+        <span class="beat-card-num">05</span>
+        <p class="beat-card-title">Support at every stage</p>
+        <p class="beat-card-teaser">Developing, active, or finishing up</p>
+        <span class="beat-card-chev" aria-hidden="true">▾</span>
+      </button>
+      <button class="beat-card" type="button" id="beat-card-5"
+              aria-expanded="false" aria-controls="beat-panel-5">
+        <span class="beat-card-num">06</span>
+        <p class="beat-card-title">You’re not alone</p>
+        <p class="beat-card-teaser">A growing network across the university</p>
+        <span class="beat-card-chev" aria-hidden="true">▾</span>
+      </button>
     </div>
 
-    <p class="note"><b>Zone 3 — the tour.</b> The same story as v1 and v2, as a grid of six. All six titles are visible at once, and opening one pushes only the rows beneath it — cards never move sideways, so nothing slides out from under the pointer.</p>
+    <p class="note"><b>Zone 3 — the tour.</b> The same story as v1 and v2, as a grid of six. Three cards, the open panel, three cards — the panel always holds the middle slot, so whichever card you click, nothing on the page moves. All six titles stay visible the whole time.</p>
     <p class="note"><b>Why click and not hover.</b> Hovering floods a card so it feels live under the cursor, but opening is a click. In a grid, hover-to-open would push the row below down as you swept toward it, moving your target away. Click-to-open is also what every other master-detail on this site already does.</p>
   </section>
 
@@ -559,7 +573,10 @@
   (function () {
     var cards = Array.prototype.slice.call(document.querySelectorAll('.beat-card'));
     var panels = Array.prototype.slice.call(document.querySelectorAll('.beat-panel'));
-    var open = 0;   // index of the open beat, or -1 for none
+    // One beat is always open. Allowing all-closed would collapse the middle
+    // slot and pull the bottom row up by the panel's full height — the jump
+    // this layout exists to prevent.
+    var open = 0;
 
     function render() {
       cards.forEach(function (c, n) { c.setAttribute('aria-expanded', n === open ? 'true' : 'false'); });
@@ -568,13 +585,10 @@
 
     cards.forEach(function (card, i) {
       card.addEventListener('click', function () {
-        // Clicking the open card closes it; the grid is allowed to be all-closed.
-        open = (open === i) ? -1 : i;
+        // Clicking the already-open card is a no-op rather than a close.
+        if (open === i) return;
+        open = i;
         render();
-      });
-      card.addEventListener('keydown', function (e) {
-        if (e.key !== 'Escape' || open < 0) return;
-        open = -1; render(); cards[i].focus();
       });
     });
 
