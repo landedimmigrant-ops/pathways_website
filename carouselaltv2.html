@@ -57,13 +57,49 @@
   .main-nav a:hover { color: var(--burgundy); }
 
   /* hero */
-  .hero { padding: 32px 0 18px; }
+  .hero { padding: 30px 0 4px; }
   .hero h1 { font-size: clamp(28px, 3.6vw, 38px); line-height: 1.14; letter-spacing: -.02em; margin: 0; max-width: 20ch; }
   .hero h1 em { font-style: normal; color: var(--burgundy); }
   .hero p { color: var(--muted); max-width: 62ch; margin: 12px 0 0; font-size: 16.5px; }
 
+  .tiles-section { padding: 34px 0 0; }
+  .tiles-heading { font-size: 15px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)); gap: 14px; }
+  .tile {
+    display: flex; flex-direction: column; gap: 6px; text-align: left; text-decoration: none;
+    background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 18px 18px 44px;
+    position: relative; color: var(--ink); transition: border-color .15s ease, transform .15s ease;
+  }
+  .tile:hover { border-color: var(--burgundy); transform: translateY(-2px); }
+  .tile:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 3px; }
+  .tile-kicker { font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .tile-title { font-size: 18px; font-weight: 700; color: var(--burgundy); line-height: 1.25; margin: 0; }
+  .tile-desc { font-size: 14.5px; line-height: 1.5; color: var(--muted); margin: 0; }
+  .tile-arrow { position: absolute; right: 16px; bottom: 14px; color: var(--burgundy); font-size: 17px; }
+  .tile.is-unsure { background: var(--paper-warm); }
+
+  /* ---------- the threshold: "First time here?" ---------- */
+  .threshold { padding: 46px 0 10px; text-align: center; }
+  .threshold-rule { display: flex; align-items: center; gap: 18px; color: var(--line); }
+  .threshold-rule::before, .threshold-rule::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .threshold-label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .threshold-cta {
+    display: inline-flex; flex-direction: column; align-items: center; gap: 8px;
+    margin-top: 22px; text-decoration: none; color: var(--ink); padding: 8px 14px; border-radius: 10px;
+  }
+  .threshold-cta:hover { background: var(--paper-warm); }
+  .threshold-cta:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 2px; }
+  .threshold-cta strong { font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
+  .threshold-cta span { font-size: 15px; color: var(--muted); max-width: 46ch; }
+  .arrow-down {
+    width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(145,35,56,.3);
+    display: grid; place-items: center; color: var(--burgundy); margin-top: 4px;
+    animation: nudge 2.4s ease-in-out infinite;
+  }
+  @keyframes nudge { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(6px); } }
+
   /* ---------- the beat rail ---------- */
-  .beats-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 0 0 12px; }
+  .beats-head { display: flex; align-items: baseline; justify-content: flex-end; gap: 16px; flex-wrap: wrap; margin: 0 0 12px; }
   .beats-head h2 { font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0; }
   .beats-hint { font-size: 13.5px; color: var(--muted); }
 
@@ -207,14 +243,57 @@
     <p>Resources, services, and tools from across Concordia — curated by the Office of Research to support your research impact journey, wherever you are in it.</p>
   </section>
 
-  <section class="wrap" aria-labelledby="beats-h">
+<section class="tiles-section wrap" aria-labelledby="tiles-h">
+    <h2 class="tiles-heading" id="tiles-h">What would you like to do?</h2>
+    <div class="tiles">
+      <a class="tile" href="index.html#explore">
+        <span class="tile-kicker">7 impact areas</span>
+        <p class="tile-title">Explore the Pathways</p>
+        <p class="tile-desc">Discover seven ways to create impact — academic, community, policy, communications, and more.</p>
+        <span class="tile-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="tile" href="index.html#explore">
+        <span class="tile-kicker">By research stage</span>
+        <p class="tile-title">Find support where you are</p>
+        <p class="tile-desc">Browse resources matched to whether you're developing an idea, in active research, or finishing up.</p>
+        <span class="tile-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="tile" href="index.html#learn">
+        <span class="tile-kicker">Frameworks &amp; tools</span>
+        <p class="tile-title">Learn what impact means</p>
+        <p class="tile-desc">Explore frameworks, use our interactive impact planner, and build your approach.</p>
+        <span class="tile-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="tile is-unsure" href="index.html#about">
+        <span class="tile-kicker">Need guidance?</span>
+        <p class="tile-title">Not sure where to start?</p>
+        <p class="tile-desc">Get in touch with us and we'll help you find the right path.</p>
+        <span class="tile-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+    <p class="note"><b>Zone 1 — returning users.</b> Unchanged from the current home page. Someone who already knows what Pathways is lands, sees four tasks, and leaves for the site. No narrative is imposed on them and nothing above this point moves.</p>
+  </section>
+
+  <!-- ============ ZONE 2: the threshold ============ -->
+  <section class="threshold wrap">
+    <div class="threshold-rule"><span class="threshold-label">Or start at the beginning</span></div>
+    <a class="threshold-cta" href="#tour" id="tour-cta">
+      <strong>First time here?</strong>
+      <span>See what research impact means at Concordia, and how this site is built to support it.</span>
+      <span class="arrow-down" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="2.5" x2="8" y2="12.5"/><polyline points="3.5,8.5 8,13 12.5,8.5"/></svg>
+      </span>
+    </a>
+    <p class="note" style="margin-left:auto;margin-right:auto"><b>Zone 2 — the doorway.</b> The tour is opt-in and clearly labelled. This is the difference from the carousel: the story is offered, not auto-played at everyone who lands.</p>
+  </section>
+
+  <section class="wrap" id="tour">
     <div class="beats-head">
-      <h2 id="beats-h">What Pathways is</h2>
       <span class="beats-hint" aria-hidden="true">Hover a step to preview · click to hold it</span>
     </div>
 
     <div class="beats-shell">
-      <div class="beat-rail" role="tablist" aria-orientation="vertical" aria-labelledby="beats-h" id="beat-rail">
+      <div class="beat-rail" role="tablist" aria-orientation="vertical" aria-label="What Pathways to Impact is" id="beat-rail">
         <button class="beat-tab" type="button" role="tab" id="beat-tab-0"
                 aria-controls="beat-panel-0" aria-selected="false" tabindex="-1">
           <span class="beat-num">01</span>What impact means
@@ -407,7 +486,7 @@
       </div>
     </div>
 
-    <p class="note"><b>What changed from v1.</b> Same graphics, same story, but the reader picks the beat instead of scrolling through all of them — the whole component is one screen instead of 5,600px. The rail row is the only place a beat is named; the panel never repeats it, which is the duplication the current pathways detail page has (its rail label and its panel heading are the same string).</p>
+    <p class="note"><b>Zone 3 — the tour.</b> Same graphics, same story, but the reader picks the beat instead of scrolling through all of them — the whole component is one screen instead of 5,600px. The rail row is the only place a beat is named; the panel never repeats it, which is the duplication the current pathways detail page has (its rail label and its panel heading are the same string).</p>
     <p class="note"><b>Worth flagging.</b> Hover-to-preview is a new behaviour for this site — every existing master-detail here is click-selected. Clicking still locks a beat, and keyboard and touch work with no hover at all, so nothing is reachable by hovering alone.</p>
   </section>
 
