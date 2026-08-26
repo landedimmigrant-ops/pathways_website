@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home concept v1 — scroll narrative | Pathways to Impact</title>
+<meta name="description" content="Concept v1: a scroll-driven replacement for the home carousel. Task tiles for returning users, an opt-in narrative tour for first-time visitors.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #912338;
+    --burgundy-deep: #6E1A2B;
+    --ink: #1a1a1a;
+    --muted: #5a5a5a;
+    --line: #e6e6e6;
+    --paper: #ffffff;
+    --paper-warm: #FBF9F7;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  a { color: var(--burgundy); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  .skip-link {
+    position: absolute; top: -100%; left: 16px; background: var(--burgundy); color: #fff;
+    padding: 8px 16px; border-radius: 0 0 4px 4px; font-size: 14px; font-weight: 600;
+    z-index: 10000; text-decoration: none;
+  }
+  .skip-link:focus { top: 0; }
+
+  /* ---------- demo chrome ---------- */
+  .demo-bar {
+    background: #1a1a1a; color: #f2eae7; font-size: 12.5px; letter-spacing: .04em;
+    padding: 8px 24px; display: flex; gap: 16px; align-items: center; justify-content: center;
+    flex-wrap: wrap; text-transform: uppercase;
+  }
+  .demo-bar a { color: #f2eae7; text-decoration: underline; text-underline-offset: 3px; }
+  .notes-toggle {
+    background: transparent; border: 1px solid rgba(255,255,255,.35); color: #f2eae7;
+    font: inherit; font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 999px; cursor: pointer;
+  }
+  .notes-toggle:hover { border-color: #fff; }
+  .note {
+    display: none; margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--burgundy-deep);
+    background: #FBEFF1; border: 1px dashed rgba(145,35,56,.4); border-radius: 8px;
+    padding: 8px 12px; max-width: 60ch;
+  }
+  body.notes-on .note { display: block; }
+  .note b { font-weight: 600; }
+
+  /* ---------- site chrome ---------- */
+  .site-header { border-bottom: 1px solid var(--line); background: #fff; }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 18px 0; flex-wrap: wrap; }
+  .brand { font-size: 20px; font-weight: 700; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
+  .brand span { color: var(--burgundy); }
+  .main-nav { display: flex; gap: 26px; font-size: 15.5px; font-weight: 500; }
+  .main-nav a { color: var(--muted); text-decoration: none; }
+  .main-nav a:hover { color: var(--burgundy); }
+
+  /* ---------- hero + tiles (returning users) ---------- */
+  .hero { padding: 56px 0 8px; }
+  .hero h1 { font-size: clamp(30px, 4vw, 42px); line-height: 1.12; letter-spacing: -.02em; margin: 0; max-width: 20ch; }
+  .hero p { color: var(--muted); max-width: 60ch; margin: 14px 0 0; font-size: 17px; }
+
+  .tiles-section { padding: 34px 0 0; }
+  .tiles-heading { font-size: 15px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)); gap: 14px; }
+  .tile {
+    display: flex; flex-direction: column; gap: 6px; text-align: left; text-decoration: none;
+    background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 18px 18px 44px;
+    position: relative; color: var(--ink); transition: border-color .15s ease, transform .15s ease;
+  }
+  .tile:hover { border-color: var(--burgundy); transform: translateY(-2px); }
+  .tile:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 3px; }
+  .tile-kicker { font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .tile-title { font-size: 18px; font-weight: 700; color: var(--burgundy); line-height: 1.25; margin: 0; }
+  .tile-desc { font-size: 14.5px; line-height: 1.5; color: var(--muted); margin: 0; }
+  .tile-arrow { position: absolute; right: 16px; bottom: 14px; color: var(--burgundy); font-size: 17px; }
+  .tile.is-unsure { background: var(--paper-warm); }
+
+  /* ---------- the threshold: "First time here?" ---------- */
+  .threshold { padding: 46px 0 10px; text-align: center; }
+  .threshold-rule { display: flex; align-items: center; gap: 18px; color: var(--line); }
+  .threshold-rule::before, .threshold-rule::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .threshold-label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .threshold-cta {
+    display: inline-flex; flex-direction: column; align-items: center; gap: 8px;
+    margin-top: 22px; text-decoration: none; color: var(--ink); padding: 8px 14px; border-radius: 10px;
+  }
+  .threshold-cta:hover { background: var(--paper-warm); }
+  .threshold-cta:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 2px; }
+  .threshold-cta strong { font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
+  .threshold-cta span { font-size: 15px; color: var(--muted); max-width: 46ch; }
+  .arrow-down {
+    width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(145,35,56,.3);
+    display: grid; place-items: center; color: var(--burgundy); margin-top: 4px;
+    animation: nudge 2.4s ease-in-out infinite;
+  }
+  @keyframes nudge { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(6px); } }
+
+  /* ---------- scrollytelling ---------- */
+  .scrolly { padding: 10px 0 0; }
+  .scrolly-inner { position: relative; }
+  .stage { }
+  .stage-card {
+    background: var(--burgundy); color: #fff; border-radius: 16px; overflow: hidden;
+    position: relative; display: flex; flex-direction: column;
+  }
+  .stage-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 20px 0; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase;
+    color: rgba(255,255,255,.55); flex: none;
+  }
+  .stage-ticks { display: flex; gap: 5px; }
+  .stage-ticks i { width: 16px; height: 3px; border-radius: 2px; background: rgba(255,255,255,.22); display: block; transition: background .3s ease; }
+  .stage-ticks i.on { background: rgba(255,255,255,.85); }
+  .stage-body { position: relative; flex: 1; min-height: 0; }
+  .viz {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 18px 24px 26px; text-align: center; gap: 12px;
+  }
+  .viz svg { max-width: 100%; height: auto; }
+
+  /* steps */
+  .step { border-left: 2px solid var(--line); padding: 0 0 0 26px; margin-bottom: 8px; }
+  .step-eyebrow { font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--burgundy); margin: 0 0 10px; }
+  .step h2 { font-size: clamp(25px, 3.1vw, 34px); line-height: 1.16; letter-spacing: -.02em; margin: 0 0 14px; max-width: 18ch; }
+  .step h2 em { font-style: italic; color: var(--burgundy); }
+  .step p { color: var(--muted); font-size: 17px; margin: 0 0 16px; max-width: 46ch; }
+  .step p strong { color: var(--ink); font-weight: 600; }
+  .step-link { font-size: 15.5px; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(145,35,56,.35); }
+  .step-link:hover { border-bottom-color: var(--burgundy); }
+  .step-ctas { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .btn {
+    display: inline-block; font: inherit; font-size: 15.5px; font-weight: 600; text-decoration: none;
+    padding: 11px 20px; border-radius: 8px; cursor: pointer; border: 2px solid var(--burgundy);
+    transition: transform .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--burgundy); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--burgundy); }
+
+  /* viz internals */
+  .v-traits { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 330px; }
+  .v-traits .lab { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 2px; }
+  .v-traits div.item {
+    background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.16); border-radius: 8px;
+    padding: 9px 14px; font-size: 15px; font-weight: 500;
+  }
+  .v-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; width: 100%; max-width: 420px; }
+  .v-pw {
+    background: #fff; border-radius: 8px; padding: 9px 10px; display: flex; align-items: center; gap: 8px;
+    text-align: left; border-left: 3px solid var(--pw, #912338);
+  }
+  .v-pw .ic { width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center; flex: none; }
+  .v-pw .nm { font-size: 12.5px; font-weight: 600; color: #26201E; line-height: 1.25; }
+  .v-pw.wide { grid-column: 1 / -1; }
+  .v-lc { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 360px; }
+  .v-lc .st { display: flex; gap: 12px; align-items: flex-start; text-align: left; background: rgba(255,255,255,.07); border-radius: 10px; padding: 11px 13px; }
+  .v-lc .bub { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.12); display: grid; place-items: center; flex: none; }
+  .v-lc .ti { font-size: 15px; font-weight: 700; }
+  .v-lc .de { font-size: 12.5px; color: rgba(255,255,255,.68); line-height: 1.4; }
+  .v-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 400px; }
+  .v-chips span {
+    font-size: 12.5px; font-weight: 500; padding: 5px 11px; border-radius: 999px;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+  }
+  .v-title { font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+  .v-sub { font-size: 13.5px; color: rgba(255,255,255,.68); max-width: 38ch; line-height: 1.5; }
+
+  /* ---------- outro ---------- */
+  .outro { background: var(--paper-warm); border-top: 1px solid var(--line); margin-top: 40px; padding: 44px 0; text-align: center; }
+  .outro h2 { font-size: 26px; letter-spacing: -.01em; margin: 0 0 8px; }
+  .outro p { color: var(--muted); margin: 0 auto 20px; max-width: 52ch; font-size: 16px; }
+  .outro .step-ctas { justify-content: center; }
+  footer.foot { padding: 26px 0 60px; font-size: 14px; color: var(--muted); }
+
+  /* ---------- desktop scrollytelling layout ---------- */
+  @media (min-width: 900px) {
+    .js .scrolly-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr); gap: 60px; align-items: start; }
+    .js .steps { grid-column: 1; grid-row: 1; padding: 8vh 0 12vh; }
+    .js .stage { grid-column: 2; grid-row: 1; position: sticky; top: 0; height: 100vh; display: flex; align-items: center; }
+    .js .stage-card { width: 100%; height: min(560px, 74vh); }
+    .js .stage-body > .viz { position: absolute; inset: 0; opacity: 0; transform: translateY(14px); transition: opacity .45s ease, transform .45s ease; pointer-events: none; }
+    .js .stage-body > .viz.is-active { opacity: 1; transform: none; pointer-events: auto; }
+    .js .step { min-height: 82vh; display: flex; flex-direction: column; justify-content: center; opacity: .34; transition: opacity .4s ease, border-color .4s ease; }
+    .js .step.is-active { opacity: 1; border-left-color: var(--burgundy); }
+  }
+
+  /* ---------- mobile: sticky stage on top ---------- */
+  @media (max-width: 899px) {
+    .js .stage { position: sticky; top: 0; z-index: 5; padding: 10px 0; background: linear-gradient(to bottom, #fff 72%, rgba(255,255,255,0)); }
+    .js .stage-card { height: 40vh; min-height: 250px; }
+    .js .stage-body > .viz { position: absolute; inset: 0; opacity: 0; transition: opacity .4s ease; pointer-events: none; padding: 10px 16px 16px; }
+    .js .stage-body > .viz.is-active { opacity: 1; pointer-events: auto; }
+    .js .step { min-height: 72vh; display: flex; flex-direction: column; justify-content: center; }
+    /* The step text alongside already carries this detail, and the stage band
+       is short on a phone — keep only what the graphic itself needs to say. */
+    .viz .v-sub { display: none; }
+    .viz .v-lc { gap: 7px; }
+    .viz .v-lc .de { display: none; }
+    .viz .v-lc .st { align-items: center; }
+  }
+
+  /* no-JS + reduced motion */
+  .no-js .stage-card { height: auto; }
+  .no-js .stage-head { display: none; }
+  .no-js .viz { border-bottom: 1px solid rgba(255,255,255,.15); padding: 26px 24px; }
+  .no-js .step { min-height: 0; margin-bottom: 40px; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .arrow-down { animation: none; }
+    * { transition-duration: .01ms !important; }
+    .js .step { opacity: 1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<div class="demo-bar">
+  <span>Concept v1 · scroll narrative · not linked from the live site</span>
+  <a href="index.html">← Current prototype</a>
+  <button class="notes-toggle" type="button" id="notes-btn" aria-pressed="false">Design notes: off</button>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html">Pathways <span>to Impact</span></a>
+    <nav class="main-nav" aria-label="Main">
+      <a href="index.html#explore">Explore</a>
+      <a href="index.html#learn">Learn</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ ZONE 1: returning users ============ -->
+  <section class="hero wrap">
+    <h1>Research is where <em style="font-style:normal;color:var(--burgundy)">change begins.</em></h1>
+    <p>Resources, services, and tools from across Concordia — curated by the Office of Research to support your research impact journey, wherever you are in it.</p>
+  </section>
+
+  <section class="tiles-section wrap" aria-labelledby="tiles-h">
+    <h2 class="tiles-heading" id="tiles-h">What would you like to do?</h2>
+    <div class="tiles">
+      <a class="tile" href="index.html#explore">
+        <span class="tile-kicker">7 impact areas</span>
+        <p class="tile-title">Explore the Pathways</p>
+        <p class="tile-desc">Discover seven ways to create impact — academic, community, policy, communications, and more.</p>
+        <span class="tile-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="tile" href="index.html#explore">
+        <span class="tile-kicker">By research stage</span>
+        <p class="tile-title">Find support where you are</p>
+        <p class="tile-desc">Browse resources matched to whether you're developing an idea, in active research, or finishing up.</p>
+        <span class="tile-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="tile" href="index.html#learn">
+        <span class="tile-kicker">Frameworks &amp; tools</span>
+        <p class="tile-title">Learn what impact means</p>
+        <p class="tile-desc">Explore frameworks, use our interactive impact planner, and build your approach.</p>
+        <span class="tile-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="tile is-unsure" href="index.html#about">
+        <span class="tile-kicker">Need guidance?</span>
+        <p class="tile-title">Not sure where to start?</p>
+        <p class="tile-desc">Get in touch with us and we'll help you find the right path.</p>
+        <span class="tile-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+    <p class="note"><b>Zone 1 — returning users.</b> Unchanged from the current home page. Someone who already knows what Pathways is lands, sees four tasks, and leaves for the site. No narrative is imposed on them and nothing above this point moves.</p>
+  </section>
+
+  <!-- ============ ZONE 2: the threshold ============ -->
+  <section class="threshold wrap">
+    <div class="threshold-rule"><span class="threshold-label">Or start at the beginning</span></div>
+    <a class="threshold-cta" href="#tour" id="tour-cta">
+      <strong>First time here?</strong>
+      <span>See what research impact means at Concordia, and how this site is built to support it.</span>
+      <span class="arrow-down" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="2.5" x2="8" y2="12.5"/><polyline points="3.5,8.5 8,13 12.5,8.5"/></svg>
+      </span>
+    </a>
+    <p class="note" style="margin-left:auto;margin-right:auto"><b>Zone 2 — the doorway.</b> The tour is opt-in and clearly labelled. This is the difference from the carousel: the story is offered, not auto-played at everyone who lands.</p>
+  </section>
+
+  <!-- ============ ZONE 3: the scroll narrative ============ -->
+  <section class="scrolly wrap" id="tour" aria-label="What Pathways to Impact is">
+    <p class="note" style="margin-bottom:20px"><b>Zone 3 — the tour.</b> The same seven beats the carousel carried, but the reader drives the pace, position is visible in the scrollbar and the ticks, and nothing is hidden: with JavaScript off or reduced motion on, all seven panels stack as a plain document.</p>
+
+    <div class="scrolly-inner">
+
+      <!-- sticky graphic stage -->
+      <div class="stage">
+        <div class="stage-card">
+          <div class="stage-head">
+            <span id="stage-counter">01 / 07</span>
+            <span class="stage-ticks" id="stage-ticks" aria-hidden="true">
+              <i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </span>
+          </div>
+          <div class="stage-body" id="stage-body">
+
+            <!-- V1 radial impact diagram -->
+            <div class="viz is-active" data-viz="0">
+              <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Research at the centre of a field of impact areas: policy, community, industry, training, culture, environment, health and equity.">
+                <circle cx="150" cy="150" r="58"  stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+                <circle cx="150" cy="150" r="98"  stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+                <circle cx="150" cy="150" r="135" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                <circle cx="150" cy="150" r="40" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+                <text x="150" y="146" text-anchor="middle" fill="white" font-size="11" font-weight="800" font-family="Inter,Segoe UI,sans-serif">RESEARCH</text>
+                <text x="150" y="160" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-size="9" font-family="Inter,Segoe UI,sans-serif">DISCOVERY</text>
+                <text x="150" y="84"  text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="700" font-family="Inter,Segoe UI,sans-serif">POLICY</text>
+                <text x="150" y="224" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="700" font-family="Inter,Segoe UI,sans-serif">TRAINING</text>
+                <text x="242" y="154" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="12" font-weight="800" font-family="Inter,Segoe UI,sans-serif">COMMUNITY</text>
+                <text x="58"  y="154" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="12" font-weight="800" font-family="Inter,Segoe UI,sans-serif">INDUSTRY</text>
+                <circle cx="150" cy="92" r="3" fill="rgba(255,255,255,0.5)"/>
+                <circle cx="150" cy="208" r="3" fill="rgba(255,255,255,0.5)"/>
+                <circle cx="238" cy="150" r="3" fill="rgba(255,255,255,0.55)"/>
+                <circle cx="62"  cy="150" r="3" fill="rgba(255,255,255,0.55)"/>
+                <line x1="150" y1="110" x2="150" y2="95" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                <line x1="190" y1="150" x2="234" y2="150" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                <line x1="150" y1="190" x2="150" y2="205" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                <line x1="110" y1="150" x2="66"  y2="150" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                <text x="225" y="98"  text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Inter,Segoe UI,sans-serif">CULTURE</text>
+                <text x="225" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Inter,Segoe UI,sans-serif">ENVIRONMENT</text>
+                <text x="75"  y="98"  text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Inter,Segoe UI,sans-serif">HEALTH</text>
+                <text x="75"  y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Inter,Segoe UI,sans-serif">EQUITY</text>
+              </svg>
+            </div>
+
+            <!-- V2 impact can be… -->
+            <div class="viz" data-viz="1">
+              <div class="v-traits">
+                <div class="lab">Impact can be…</div>
+                <div class="item">Positive or negative</div>
+                <div class="item">Different types &amp; natures</div>
+                <div class="item">Different times &amp; scales</div>
+                <div class="item">From the process &amp; its results</div>
+              </div>
+            </div>
+
+            <!-- V3 the gap -->
+            <div class="viz" data-viz="2">
+              <svg width="440" height="180" viewBox="0 0 440 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Discovery leads to publication, then a broken link marked with a question mark, then uptake and impact.">
+                <line x1="71"  y1="60" x2="134" y2="60" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+                <line x1="186" y1="60" x2="212" y2="60" stroke="rgba(255,255,255,0.28)" stroke-width="1.5" stroke-dasharray="3 4"/>
+                <line x1="248" y1="60" x2="274" y2="60" stroke="rgba(255,255,255,0.28)" stroke-width="1.5" stroke-dasharray="3 4"/>
+                <text x="230" y="66" text-anchor="middle" fill="rgba(244,208,213,0.95)" font-size="20" font-weight="700" font-family="Inter,Segoe UI,sans-serif">?</text>
+                <line x1="326" y1="60" x2="379" y2="60" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+                <circle cx="45"  cy="60" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="160" cy="60" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="300" cy="60" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="405" cy="60" r="26" fill="rgba(244,208,213,0.14)" stroke="rgba(244,208,213,0.6)" stroke-width="1.5"/>
+                <g transform="translate(31,46)" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5 L10 14 L6 22 L22 22 L18 14 L18 5"/><line x1="8" y1="5" x2="20" y2="5"/><path d="M9 17 C11 15 17 15 19 17" opacity="0.4"/></g>
+                <g transform="translate(146,46)" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="4" width="18" height="20" rx="2"/><line x1="5" y1="9" x2="23" y2="9"/><line x1="9" y1="13" x2="19" y2="13"/><line x1="9" y1="16.5" x2="19" y2="16.5"/><line x1="9" y1="20" x2="15" y2="20" opacity="0.5"/></g>
+                <g transform="translate(286,46)" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="3" opacity="0.7"/><circle cx="19" cy="9" r="3" opacity="0.7"/><circle cx="14" cy="10" r="3.5"/><path d="M6 22 C6 18 9 16 14 16 C19 16 22 18 22 22"/></g>
+                <g transform="translate(391,46)" fill="none" stroke="rgba(244,208,213,0.95)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="14,4 16.5,11 24,11 18,15.5 20.5,22.5 14,18 7.5,22.5 10,15.5 4,11 11.5,11"/></g>
+                <text x="45"  y="107" text-anchor="middle" fill="rgba(255,255,255,0.72)" font-size="12" font-family="Inter,Segoe UI,sans-serif">Discovery</text>
+                <text x="160" y="107" text-anchor="middle" fill="rgba(255,255,255,0.72)" font-size="12" font-family="Inter,Segoe UI,sans-serif">Publication</text>
+                <text x="300" y="107" text-anchor="middle" fill="rgba(255,255,255,0.72)" font-size="12" font-family="Inter,Segoe UI,sans-serif">Uptake</text>
+                <text x="405" y="107" text-anchor="middle" fill="rgba(244,208,213,0.95)" font-size="12" font-weight="700" font-family="Inter,Segoe UI,sans-serif">Impact</text>
+                <text x="230" y="140" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="11.5" font-family="Inter,Segoe UI,sans-serif">the path is rarely straight</text>
+              </svg>
+            </div>
+
+            <!-- V4 seven pathways -->
+            <div class="viz" data-viz="3">
+              <div class="v-grid">
+                <div class="v-pw wide" style="--pw:#912338">
+                  <span class="ic" style="background:rgba(145,35,56,0.1)"><svg viewBox="0 0 28 28" width="17" height="17" fill="none" stroke="#912338" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 22 V8 C14 8 10 6 5 8 V22 C10 20 14 22 14 22 Z"/><path d="M14 22 V8 C14 8 18 6 23 8 V22 C18 20 14 22 14 22 Z"/></svg></span>
+                  <span class="nm">Academic Scholarship</span>
+                </div>
+                <div class="v-pw" style="--pw:#DB0272">
+                  <span class="ic" style="background:rgba(219,2,114,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#DB0272" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="6" r="3"/><circle cx="4.5" cy="8" r="2.2" opacity="0.6"/><circle cx="13.5" cy="8" r="2.2" opacity="0.6"/><path d="M5 16 C5 13 7 11.5 9 11.5 C11 11.5 13 13 13 16" opacity="0.8"/></svg></span>
+                  <span class="nm">Community Engagement</span>
+                </div>
+                <div class="v-pw" style="--pw:#DA3A16">
+                  <span class="ic" style="background:rgba(218,58,22,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#DA3A16" stroke-width="1.5" stroke-linecap="round"><path d="M9 2 C6.2 2 4 4.2 4 7 C4 9 5.2 10.5 6 11.5 L12 11.5 C12.8 10.5 14 9 14 7 C14 4.2 11.8 2 9 2"/><line x1="6.5" y1="13.5" x2="11.5" y2="13.5"/><line x1="7.5" y1="15.5" x2="10.5" y2="15.5"/></svg></span>
+                  <span class="nm">Innovation</span>
+                </div>
+                <div class="v-pw" style="--pw:#573996">
+                  <span class="ic" style="background:rgba(87,57,150,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#573996" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,14 6,9 10,11 15,4"/><polyline points="11,4 15,4 15,8"/></svg></span>
+                  <span class="nm">Commercialization</span>
+                </div>
+                <div class="v-pw" style="--pw:#0072A8">
+                  <span class="ic" style="background:rgba(0,114,168,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#0072A8" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="2" width="12" height="14" rx="1.5"/><line x1="6" y1="6" x2="12" y2="6"/><line x1="6" y1="9" x2="12" y2="9"/><line x1="6" y1="12" x2="9.5" y2="12"/></svg></span>
+                  <span class="nm">Policy</span>
+                </div>
+                <div class="v-pw" style="--pw:#B07D00">
+                  <span class="ic" style="background:rgba(176,125,0,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#B07D00" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="11" r="2"/><path d="M5.5 7.5 C5.5 5.5 7.1 4 9 4 C10.9 4 12.5 5.5 12.5 7.5" opacity="0.7"/><line x1="9" y1="13" x2="9" y2="16"/><line x1="6.5" y1="16" x2="11.5" y2="16"/></svg></span>
+                  <span class="nm">Communications</span>
+                </div>
+                <div class="v-pw" style="--pw:#508212">
+                  <span class="ic" style="background:rgba(80,130,18,0.09)"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="#508212" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15 L11 5.5 L13 4 L14 5 L12.5 7 L3 15 Z"/><circle cx="3.5" cy="14.5" r="1.5" fill="rgba(80,130,18,0.3)"/></svg></span>
+                  <span class="nm">Research Creation</span>
+                </div>
+              </div>
+              <p class="v-sub">Most researchers find more than one applies to them.</p>
+            </div>
+
+            <!-- V5 lifecycle -->
+            <div class="viz" data-viz="4">
+              <div class="v-lc">
+                <div class="st">
+                  <span class="bub"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="21" x2="12" y2="11"/><path d="M12 11 C12 7 8.5 5 6 6 C6 9 8 12 12 11"/><path d="M12 14 C12 11 15.5 9 18 10 C18 13 15 15.5 12 14"/></svg></span>
+                  <span><span class="ti">Developing</span><br><span class="de">Shaping your question, building partnerships, planning impact from the start.</span></span>
+                </div>
+                <div class="st">
+                  <span class="bub"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="13,3 7,13 12,13 11,21 17,11 12,11 13,3"/></svg></span>
+                  <span><span class="ti">Active</span><br><span class="de">Research is running. You're generating knowledge and need to move it out.</span></span>
+                </div>
+                <div class="st">
+                  <span class="bub"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2" fill="rgba(255,255,255,0.7)" stroke="none"/></svg></span>
+                  <span><span class="ti">Finishing</span><br><span class="de">Findings are ready. Now comes dissemination, uptake, and sustained change.</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- V6 network -->
+            <div class="viz" data-viz="5">
+              <svg width="250" height="250" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pathways to Impact at the centre of a network of seven partner units.">
+                <line x1="130" y1="100" x2="130" y2="50"  stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <line x1="156" y1="108" x2="196" y2="84"  stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <line x1="163" y1="130" x2="230" y2="156" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <line x1="152" y1="158" x2="180" y2="210" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <line x1="108" y1="158" x2="80"  y2="210" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <line x1="97"  y1="130" x2="30"  y2="156" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <line x1="104" y1="108" x2="66"  y2="84"  stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <circle cx="130" cy="130" r="40" fill="rgba(255,255,255,0.08)"/>
+                <circle cx="130" cy="130" r="30" fill="#FFFFFF"/>
+                <text x="130" y="127" text-anchor="middle" fill="#912338" font-size="8" font-weight="800" font-family="Inter,Segoe UI,sans-serif">PATHWAYS</text>
+                <text x="130" y="138" text-anchor="middle" fill="rgba(145,35,56,0.7)" font-size="7" font-family="Inter,Segoe UI,sans-serif">TO IMPACT</text>
+                <circle cx="130" cy="36" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                <circle cx="208" cy="72" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                <circle cx="244" cy="156" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                <circle cx="186" cy="224" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                <circle cx="74" cy="224" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                <circle cx="16" cy="156" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                <circle cx="52" cy="72" r="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" stroke-dasharray="3 2"/>
+              </svg>
+              <div class="v-chips">
+                <span>Office of Research</span><span>4th Space</span><span>Library</span><span>SHIFT</span><span>District 3</span><span>V1 Studio</span>
+              </div>
+            </div>
+
+            <!-- V7 closing -->
+            <div class="viz" data-viz="6">
+              <div class="v-title">We're building this with you</div>
+              <div class="v-chips" style="max-width:340px">
+                <span>Constantly updated</span><span>Impact champions</span><span>Events &amp; workshops</span><span>Human support</span>
+              </div>
+              <p class="v-sub">New services, new tools, and stories of impact champions at Concordia.</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- scrolling steps -->
+      <div class="steps" id="steps">
+
+        <div class="step is-active" data-step="0">
+          <p class="step-eyebrow">Pathways to Impact · Concordia University</p>
+          <h2>Research is where <em>change</em> begins.</h2>
+          <p>This site brings together resources, services, and tools from across Concordia — curated by the Office of Research to support your research impact journey, wherever you are in it.</p>
+        </div>
+
+        <div class="step" data-step="1">
+          <p class="step-eyebrow">Defining research impact</p>
+          <h2>What do we mean by <em>change</em>?</h2>
+          <p>At Concordia, we define research impact as the <strong>change</strong> that research activities contribute to society and beyond — an ongoing process of engagement that can lead to academic, social, cultural, economic, environmental, or policy effects.</p>
+          <a class="step-link" href="index.html#learn">Learn more about research impact →</a>
+        </div>
+
+        <div class="step" data-step="2">
+          <p class="step-eyebrow">The challenge</p>
+          <h2>The gap between knowledge and change is real.</h2>
+          <p>Research doesn't automatically become impact. Knowledge moves through systems — academic, social, political — and the path is rarely straight. Most researchers navigate it without a map.</p>
+          <a class="step-link" href="index.html#learn">Plan your impact →</a>
+        </div>
+
+        <div class="step" data-step="3">
+          <p class="step-eyebrow">The framework</p>
+          <h2>Seven pathways to impact.</h2>
+          <p>Not a checklist — a starting place. Each pathway offers a different approach to creating real-world change from your research. Most researchers find more than one applies to them.</p>
+          <a class="step-link" href="index.html#explore">Explore the seven pathways →</a>
+        </div>
+
+        <div class="step" data-step="4">
+          <p class="step-eyebrow">The research lifecycle</p>
+          <h2>Meet you where you are.</h2>
+          <p>Impact support looks different at every stage. Pathways is designed for all three moments in your research project — developing an idea, active research, and finishing up.</p>
+          <a class="step-link" href="index.html#explore">Find support for your stage →</a>
+        </div>
+
+        <div class="step" data-step="5">
+          <p class="step-eyebrow">Your support network</p>
+          <h2>You don't navigate this <em>alone.</em></h2>
+          <p>Led by the Office of Research, Pathways to Impact brings together units from across the university — and beyond — to create a coordinated, growing support network around researchers. This is an evolving collaboration.</p>
+          <a class="step-link" href="index.html#about">See all partners →</a>
+        </div>
+
+        <div class="step" data-step="6">
+          <p class="step-eyebrow">You're not on your own</p>
+          <h2>We're building this with you.</h2>
+          <p>New services, new tools, and stories of impact champions at Concordia — this site grows with the research community. If you need help navigating it, or just want to talk through your impact goals, we're here.</p>
+          <div class="step-ctas">
+            <a class="btn btn-primary" href="index.html#explore">Explore the site →</a>
+            <a class="btn btn-ghost" href="index.html#about">Contact us</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="outro">
+    <div class="wrap">
+      <h2>Now — what would you like to do?</h2>
+      <p>You've seen what Pathways is. The four tasks at the top of this page are where the site actually begins.</p>
+      <div class="step-ctas">
+        <a class="btn btn-primary" href="index.html#explore">Explore the Pathways →</a>
+        <a class="btn btn-ghost" href="#main">Back to the top</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot wrap">
+    <p>Concept page · Pathways to Impact · Office of Research, Concordia University. Not linked from the live prototype navigation.</p>
+  </footer>
+
+</main>
+
+<script>
+  document.documentElement.classList.remove('no-js');
+  document.documentElement.classList.add('js');
+
+  (function () {
+    var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
+    var vizzes = Array.prototype.slice.call(document.querySelectorAll('.viz'));
+    var ticks = Array.prototype.slice.call(document.querySelectorAll('#stage-ticks i'));
+    var counter = document.getElementById('stage-counter');
+    var current = -1;
+
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function activate(i) {
+      if (i === current || i < 0 || i >= steps.length) return;
+      current = i;
+      steps.forEach(function (s, n) { s.classList.toggle('is-active', n === i); });
+      vizzes.forEach(function (v, n) { v.classList.toggle('is-active', n === i); });
+      ticks.forEach(function (t, n) { t.classList.toggle('on', n <= i); });
+      counter.textContent = pad(i + 1) + ' / ' + pad(steps.length);
+    }
+
+    // Pick the step whose centre sits closest to the middle of the viewport.
+    // Measuring on every frame always yields exactly one answer, where an
+    // IntersectionObserver band can miss or re-order entries during a fast
+    // flick or an anchor jump and leave the graphic on the wrong panel.
+    var ticking = false;
+    function sync() {
+      ticking = false;
+      var mid = window.innerHeight / 2;
+      var best = 0;
+      var bestDist = Infinity;
+      for (var i = 0; i < steps.length; i++) {
+        var b = steps[i].getBoundingClientRect();
+        var d = Math.abs((b.top + b.bottom) / 2 - mid);
+        if (d < bestDist) { bestDist = d; best = i; }
+      }
+      activate(best);
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(sync);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    // A hidden tab suspends requestAnimationFrame, so any scrolling that
+    // happened while it was in the background never got measured. Re-sync
+    // directly on return rather than waiting for the next scroll.
+    document.addEventListener('visibilitychange', sync);
+    window.addEventListener('pageshow', sync);
+    sync();
+
+    var notesBtn = document.getElementById('notes-btn');
+    notesBtn.addEventListener('click', function () {
+      var on = document.body.classList.toggle('notes-on');
+      notesBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      notesBtn.textContent = 'Design notes: ' + (on ? 'on' : 'off');
+    });
+  })();
+</script>
+
+</body>
+</html>
