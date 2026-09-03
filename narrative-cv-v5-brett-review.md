@@ -1,4 +1,4 @@
-# Narrative CV V4 review with Brett — working notes for V5
+# Narrative CV V4 review — working notes for V5
 
 **Source:** Anytype → Pathways to Impact → "Narratvie cv tooll review with Brett" (UX Report, created
 2026-08-27). Raw session notes, no typed fields filled in. This file is the cleanup pass, with every
@@ -6,7 +6,7 @@ note traced to the actual thing in [narrative-cv-prototype-v4.html](narrative-cv
 
 **How to use this.** Each item has:
 
-- **Brett:** what you wrote, tidied but not reinterpreted
+- **Note:** what you wrote, tidied but not reinterpreted
 - **Where:** the real UI location, with file:line and the exact current string
 - **Read as:** how I understand the note — correct me where I'm wrong
 - **Follow-up:** what I need from you before this becomes a build instruction
@@ -15,8 +15,8 @@ note traced to the actual thing in [narrative-cv-prototype-v4.html](narrative-cv
 Items marked ✅ are unambiguous and ready to build. Items marked ❓ still need your answer.
 
 **One coverage note before you start:** every note in this session is against the **Start fresh**
-path. The **Structural read** entry mode (paste-a-draft) has no notes against it at all — either
-Brett never opened it, or it wasn't part of the session. Worth deciding whether V5 needs a second
+path. The **Structural read** entry mode (paste-a-draft) has no notes against it at all — either it
+was never opened in the session, or it wasn't part of it. Worth deciding whether V5 needs a second
 session covering that path before it ships.
 
 ---
@@ -70,9 +70,9 @@ session covering that path before it ships.
 
 <a id="b-1"></a>
 ### B-1 · Which intro sentence, and what should it say ❓
-> **Brett:** "intro sentence: what is the right statement here"
+> **Note:** "intro sentence: what is the right statement here"
 
-**Where:** two candidates, and I can't tell which one he was looking at.
+**Where:** two candidates, and I can't tell which one you were looking at.
 1. Page subtitle — [narrative-cv-prototype-v4.html:133](narrative-cv-prototype-v4.html:133):
    *"The convergence prototype: start fresh or get a structural read of an existing draft. Hard-coded
    prompts, live auto-checks, and an advisor-consult export. Everything stays on your device."*
@@ -93,7 +93,7 @@ them what they'll walk away with?
 
 <a id="b-2"></a>
 ### B-2 · "Start fresh" selection feedback is too subtle ✅
-> **Brett:** "start fresh — needs better feedback when clicked, maybe a title of something, or a
+> **Note:** "start fresh — needs better feedback when clicked, maybe a title of something, or a
 > colour change"
 
 **Where:** the two mode cards, [narrative-cv-prototype-v4.html:619–629](narrative-cv-prototype-v4.html:619).
@@ -113,7 +113,7 @@ unchosen card dims, or a line appears reading "You're building from scratch. Nex
 
 <a id="b-3"></a>
 ### B-3 · Page jumps to top when you click agency / discipline / stage ✅
-> **Brett:** "why does it keep the page up when you click options like agency — then it pops up"
+> **Note:** "why does it keep the page up when you click options like agency — then it pops up"
 
 **Where:** every chip in Setup goes through `chipRow` →
 [narrative-cv-prototype-v4.html:607](narrative-cv-prototype-v4.html:607) `saveState(); renderStage();`
@@ -134,7 +134,7 @@ reference that rather than open a new ticket.
 
 <a id="b-4"></a>
 ### B-4 · "language:" — the note was never written ❓
-> **Brett:** "langauge:" *(bare heading, nothing under it)*
+> **Note:** "langauge:" *(bare heading, nothing under it)*
 
 Sits between the agency-popup note and the Contributions notes. Could be the EN/FR question, or the
 register of the copy generally. Not the same thing as the French-requirement question already tracked
@@ -151,7 +151,7 @@ about what the *guide* claims, this is about the *tool*.
 
 <a id="b-5"></a>
 ### B-5 · "that's the destination" ❓ probably already resolved
-> **Brett:** "contributions: that's the destination:"
+> **Note:** "contributions: that's the destination:"
 
 **Where:** almost certainly quoting the Contributions lede —
 [narrative-cv-prototype-v4.html:745](narrative-cv-prototype-v4.html:745): *"…the fields are a thinking
@@ -169,7 +169,7 @@ or wanted it changed.
 
 <a id="b-6"></a>
 ### B-6 · Work-mode question disappears after one click ✅
-> **Brett:** "when choosing the type of work, solo — not sure what happens. It feels like a recent,
+> **Note:** "when choosing the type of work, solo — not sure what happens. It feels like a recent,
 > not visible change in mode. We need to make these modes more visible."
 
 **Where:** [narrative-cv-prototype-v4.html:748–752](narrative-cv-prototype-v4.html:748). The whole
@@ -179,7 +179,7 @@ mode, the re-render removes the entire question from the page.
 **Read as:** it's billed as "choose any" (multi-select) but behaves as single-shot: pick "Largely
 solo" and the question vanishes before you can add "Team-based". Your only trace of the choice is a
 small pill in the "Tailored for:" bar. This is the **same defect nadia's persona run found**
-("work-mode single-shot bug", logged 2026-08-10) — Brett independently hit it, which is a good signal
+("work-mode single-shot bug", logged 2026-08-10) — you hit it independently, which is a good signal
 for priority.
 
 **Follow-up:** Should the question stay visible permanently (with selections shown), or collapse to
@@ -191,7 +191,7 @@ an editable summary line once answered?
 
 <a id="b-7"></a>
 ### B-7 · "Edit context" throws you back to Setup ✅
-> **Brett:** "if we want to edit context, it takes us back to the first page — maybe we need to keep
+> **Note:** "if we want to edit context, it takes us back to the first page — maybe we need to keep
 > these on the side like filters."
 
 **Where:** the "Tailored for:" bar that sits atop every stage after Setup —
@@ -200,7 +200,7 @@ an editable summary line once answered?
 [line 493](narrative-cv-prototype-v4.html:493) — `ns.stageKey = "setup"; renderStage();`.
 
 **Read as:** you lose your place in Contributions to change one chip, then have to navigate forward
-again. Brett's proposal — make the context a persistent side panel you edit in place, like filters —
+again. Your proposal — make the context a persistent side panel you edit in place, like filters —
 is a genuine design change, not just a bug fix.
 
 **Follow-up:** Adopt the side-filter model for V5, or the cheaper fix (edit in a modal / inline
@@ -212,7 +212,7 @@ popover, stay on the page)? The side panel competes for space with the existing 
 
 <a id="b-8"></a>
 ### B-8 · "Show the skeleton" — keep ✅
-> **Brett:** "positive functions to keep — example: show the skeleton (structure)"
+> **Note:** "positive functions to keep — example: show the skeleton (structure)"
 
 **Where:** [narrative-cv-prototype-v4.html:774–779](narrative-cv-prototype-v4.html:774).
 
@@ -224,7 +224,7 @@ No change. Recorded so V5 doesn't regress it.
 
 <a id="b-9"></a>
 ### B-9 · The six segment colours are too pale ✅
-> **Brett:** "make colours of the section more visible"
+> **Note:** "make colours of the section more visible"
 
 **Where:** [narrative-cv-prototype-v4.html:101–106](narrative-cv-prototype-v4.html:101) — the six
 `.seg-*` backgrounds revealed by the skeleton toggle: `#fdf4dc` stakes, `#f9ebed` role, `#e8f4fd`
@@ -243,14 +243,14 @@ against the body text.)
 
 <a id="b-10"></a>
 ### B-10 · Say the example is fictional ❓
-> **Brett:** "use fictional example instead"
+> **Note:** "use fictional example instead"
 
 **Where:** the exemplar box title —
 [narrative-cv-prototype-v4.html:759](narrative-cv-prototype-v4.html:759): *"What a finished
 contribution reads like (Social sciences, **invented**)"*.
 
 **Read as:** it already says "invented" — so either the word isn't landing (buried in a
-parenthetical, at the end, in the same weight as the discipline name), or Brett wants the word
+parenthetical, at the end, in the same weight as the discipline name), or you want the word
 "fictional" specifically.
 
 **Follow-up:** Is this a word swap, or does the disclaimer need to be more prominent? Given how hard
@@ -262,7 +262,7 @@ the privacy line is on this project, I'd argue for prominence over word choice.
 
 <a id="b-11"></a>
 ### B-11 · The social-sciences shape hint assumes policy uptake ✅
-> **Brett:** "social sciences contribution often runs: what happens if you don't have policy"
+> **Note:** "social sciences contribution often runs: what happens if you don't have policy"
 
 **Where:** `SHAPE_HINTS.social` —
 [narrative-cv-prototype-v4.html:179](narrative-cv-prototype-v4.html:179): *"Agenda / concept → How
@@ -283,7 +283,7 @@ practitioner, community, policy)? And should I check the other four hints for th
 
 <a id="b-12"></a>
 ### B-12 · Three different taxonomies on the same screen ✅
-> **Brett:** "is this based on activities, outputs, outcomes, impact — does this make sense"
+> **Note:** "is this based on activities, outputs, outcomes, impact — does this make sense"
 
 **Where:** all three of these are visible in the Contributions stage simultaneously, and none of them
 use the same words:
@@ -294,7 +294,7 @@ use the same words:
 | Shape hint (`SHAPE_HINTS.social`, [line 179](narrative-cv-prototype-v4.html:179)) | Agenda / concept · How you developed it · Scholarly + policy uptake · Leadership dimension |
 | The actual form fields ([lines 829–861](narrative-cv-prototype-v4.html:829)) | Stakes · Role · Activities · Outputs · Outcomes · Impact |
 
-**Read as:** Brett is asking whether the framework holds together, and the honest answer is that the
+**Read as:** the note is asking whether the framework holds together, and the honest answer is that the
 screen currently teaches three overlapping vocabularies for one structure. This is a real coherence
 problem, not just a labelling nit — it's probably *why* B-11 and B-5 came up in the same breath.
 
@@ -308,7 +308,7 @@ vocabulary with the discipline flavour carried in examples, not in a competing s
 
 <a id="b-13"></a>
 ### B-13 · Cite where the example comes from ✅
-> **Brett:** "can we cite where we are getting this example from"
+> **Note:** "can we cite where we are getting this example from"
 
 **Where:** exemplar box, [line 759](narrative-cv-prototype-v4.html:759).
 
@@ -328,7 +328,7 @@ is invented" enough?
 
 <a id="b-14"></a>
 ### B-14 · "I led it" / "I co-led it" scrolls you to the top ✅
-> **Brett:** "when you click 'I led it' or 'I co-led it' it shoots you back up — super annoying"
+> **Note:** "when you click 'I led it' or 'I co-led it' it shoots you back up — super annoying"
 
 **Where:** role chips at
 [narrative-cv-prototype-v4.html:837–841](narrative-cv-prototype-v4.html:837) → `renderStage()` →
@@ -343,7 +343,7 @@ thrown to the top of the page mid-thought. Same one-line root cause.
 
 <a id="b-15"></a>
 ### B-15 · Reword the role line — and it's currently only a placeholder ✅
-> **Brett:** "redo this line, 'in one line what's your move' → **In one line, what was your unique
+> **Note:** "redo this line, 'in one line what's your move' → **In one line, what was your unique
 > contribution within the team.**"
 
 **Where:** `PROMPTS.contrib.roleLine.q` —
@@ -356,10 +356,10 @@ textarea's `placeholder` ([line 846](narrative-cv-prototype-v4.html:846)) — so
 instant you start typing, and screen readers treat it as a hint, not a question.
 
 **Read as:** two things — the wording, and the fact that the good question is hidden in a
-disappearing placeholder. Brett's replacement is plainer, though "within the team" may not fit the
+disappearing placeholder. Your replacement is plainer, though "within the team" may not fit the
 "Largely solo" work mode.
 
-**Follow-up:** Take Brett's line as-is, or vary it by work mode (solo researchers have no team to be
+**Follow-up:** Take your line as-is, or vary it by work mode (solo researchers have no team to be
 unique within)? And should the question become the visible label, demoting "Your role in this work"?
 
 **→ V5 instruction:**
@@ -370,7 +370,7 @@ unique within)? And should the question become the visible label, demoting "Your
 
 <a id="b-16"></a>
 ### B-16 · Highlight the words that triggered the flag ❓
-> **Brett:** "any way to highlight also the words that are triggering the feedback"
+> **Note:** "any way to highlight also the words that are triggering the feedback"
 
 **Where:** `renderChecks` — [narrative-cv-prototype-v4.html:500–512](narrative-cv-prototype-v4.html:500).
 Flags already quote the offending word (*"Vague: 'several' — replace with concrete evidence"*), but
@@ -389,7 +389,7 @@ risks paste and undo bugs; (c) is cheap and safe.
 
 <a id="b-17"></a>
 ### B-17 · Say plainly that these are suggestions ✅
-> **Brett:** "maybe we need to have a note these are just suggestions"
+> **Note:** "maybe we need to have a note these are just suggestions"
 
 **Where:** nowhere currently, except the compressed phrase in [B-20](#b-20).
 
@@ -401,7 +401,7 @@ risks paste and undo bugs; (c) is cheap and safe.
 
 <a id="b-18"></a>
 ### B-18 · "our" is flagged even when "I" is present ✅ confirmed
-> **Brett:** "there is a bug, it flags 'our' even if we use 'I' — will this get annoying?"
+> **Note:** "there is a bug, it flags 'our' even if we use 'I' — will this get annoying?"
 
 **Where:** `lintField` ownership rule —
 [narrative-cv-prototype-v4.html:249–257](narrative-cv-prototype-v4.html:249).
@@ -416,7 +416,7 @@ nearby. The individual marker test is
 team shipped it"* passes. *"I **wrote** the protocol, and our team shipped it"* **flags** — because
 `wrote` isn't in `ACTION_VERBS`. Same for *analysed, conducted, tested, built out, wrote up,
 published, presented, mentored, taught, coordinated*, and any past tense not on the 30-word list.
-So the rule fires on ordinary sentences that do state individual ownership. Brett's "will this get
+So the rule fires on ordinary sentences that do state individual ownership. Your "will this get
 annoying?" answers itself — yes, for anyone whose verbs aren't on our list.
 
 **Follow-up:** Two ways out — (a) keep the list but grow it substantially, or (b) drop the verb list
@@ -429,19 +429,19 @@ genuinely vague sentences through. Which risk do you prefer: over-flagging or un
 
 <a id="b-19"></a>
 ### B-19 · The "no numbers" flag — phrasing and framing ❓
-> **Brett:** "bug feedback in orange, no numbers given — maybe ask 'is that ok', not the comment
+> **Note:** "bug feedback in orange, no numbers given — maybe ask 'is that ok', not the comment
 > about reviewers, or give feedback as a question"
 
 **Where:** [narrative-cv-prototype-v4.html:264](narrative-cv-prototype-v4.html:264): *"No numbers,
 dates, or quantities — give reviewers something to verify"*, rendered in `.v4-flag`
 ([line 64](narrative-cv-prototype-v4.html:64)) which is `#da3a16` — Concordia **orange**, exactly as
-Brett described.
+you described.
 
 **Read as:** three separate objections bundled in one note —
 1. it fires on *every* empty-of-numbers field, including ones where numbers are wrong (a stakes
    opener rarely has a number in it);
 2. "give reviewers something to verify" speaks for the reviewer, in a slightly threatening register;
-3. it asserts rather than asks — Brett's alternative is roughly *"No numbers here — is that right for
+3. it asserts rather than asks — your alternative is roughly *"No numbers here — is that right for
    this field?"*
 
 **Follow-up:** Which do you want? My read is that (3) fixes the tone, but (1) is the bigger problem —
@@ -454,7 +454,7 @@ the way hedging already is ([lines 275–283](narrative-cv-prototype-v4.html:275
 
 <a id="b-20"></a>
 ### B-20 · "a hint, not a gate" doesn't communicate ✅
-> **Brett:** "what does that mean — a hint not a gate"
+> **Note:** "what does that mean — a hint not a gate"
 
 **Where:** [narrative-cv-prototype-v4.html:510](narrative-cv-prototype-v4.html:510) — every field's
 meta line ends: *"78 words (aim 40–80, uncalibrated) · rubric 2/4 — a hint, not a gate"*.
@@ -474,7 +474,7 @@ we ourselves call uncalibrated may be doing more harm than good.
 
 <a id="b-21"></a>
 ### B-21 · "Your call:" needs explaining ✅
-> **Brett:** "'your call' maybe needs better explanation"
+> **Note:** "'your call' maybe needs better explanation"
 
 **Where:** [narrative-cv-prototype-v4.html:542](narrative-cv-prototype-v4.html:542) — the label on
 the ✓ / ✗ / ? row under every prompt. The three buttons carry tooltips ("Looks right", "Needs work",
@@ -493,7 +493,7 @@ advisor:")? That also sets up [B-35](#b-35).
 
 <a id="b-22"></a>
 ### B-22 · "Academic impact counts" badge reads as a warning ✅
-> **Brett:** "maybe a different way to say academic impact counts here — maybe not in red, but part
+> **Note:** "maybe a different way to say academic impact counts here — maybe not in red, but part
 > of the system"
 
 **Where:** the badge on the Impact prompt —
@@ -518,7 +518,7 @@ Note that `.v4-tag` is shared with the "new" badges — restyling one restyles b
 
 <a id="b-23"></a>
 ### B-23 · Reword the "real person / clinic / policy" question ✅
-> **Brett:** "clarify: did this work reach a real person, clinic or policy or community"
+> **Note:** "clarify: did this work reach a real person, clinic or policy or community"
 
 **Where:** `PROMPTS.contrib.translational.q` —
 [narrative-cv-prototype-v4.html:389](narrative-cv-prototype-v4.html:389), verbatim: *"Did this work
@@ -536,7 +536,7 @@ what we want is a story; the help text asks for the story, the question doesn't.
 
 <a id="b-24"></a>
 ### B-24 · Translational overlaps Outcomes ✅ the overlap is real
-> **Brett:** "is this not repetitive — is this about a real life example, an anecdote?"
+> **Note:** "is this not repetitive — is this about a real life example, an anecdote?"
 
 **Where:** compare, for a social-sciences researcher:
 - Outcomes ([line 384](narrative-cv-prototype-v4.html:384)): *"Who took this up — scholars,
@@ -547,8 +547,8 @@ what we want is a story; the help text asks for the story, the question doesn't.
 Both appear for `social` and `health` disciplines ([gate at line 865](narrative-cv-prototype-v4.html:865)).
 
 **Read as:** yes, repetitive as written. The distinction we *intend* is scope vs. texture — Outcomes
-wants the general uptake, Translational wants one concrete human moment. Brett's second question
-("is this about an anecdote?") is him correctly guessing the intent that the copy fails to state.
+wants the general uptake, Translational wants one concrete human moment. Your second question
+("is this about an anecdote?") correctly guesses the intent that the copy fails to state.
 
 **Follow-up:** Keep both and make Translational explicitly the anecdote ("Tell one moment where this
 reached someone — a single scene, two sentences")? Or cut it and fold the anecdote ask into Outcomes?
@@ -559,7 +559,7 @@ reached someone — a single scene, two sentences")? Or cut it and fold the anec
 
 <a id="b-25"></a>
 ### B-25 · "Proof points" vs "Evidence" — pick one ✅
-> **Brett:** "'add your proof points' — need clarify? You want to say evidence of impact?"
+> **Note:** "'add your proof points' — need clarify? You want to say evidence of impact?"
 
 **Where:** the same concept is called three different things:
 - *"Add your proof points — one at a time."* — [line 390](narrative-cv-prototype-v4.html:390)
@@ -569,7 +569,7 @@ reached someone — a single scene, two sentences")? Or cut it and fold the anec
   ([line 1187](narrative-cv-prototype-v4.html:1187)), the state key `evidence`, the coverage row
   "Evidence attached to a contribution" ([line 1068](narrative-cv-prototype-v4.html:1068)).
 
-**Read as:** "proof points" is the odd one out and reads as consultant-speak. Brett's "evidence of
+**Read as:** "proof points" is the odd one out and reads as consultant-speak. Your "evidence of
 impact" is close, though strictly these are evidence for the whole contribution, not just its impact.
 
 **Follow-up:** Standardise on "Evidence" throughout, or "Evidence of impact"? The first matches what
@@ -581,7 +581,7 @@ the export and the real CVs call it.
 
 <a id="b-26"></a>
 ### B-26 · "description is bad" ❓ confirm which one
-> **Brett:** "description is bad"
+> **Note:** "description is bad"
 
 **Where:** it follows the proof-points note directly, so most likely the evidence help text —
 [line 390](narrative-cv-prototype-v4.html:390): *"Pick a type for each. The tool keys them a, b, c…
@@ -599,7 +599,7 @@ assumes they've seen a developed CV.
 
 <a id="b-27"></a>
 ### B-27 · No "Other" in the evidence-type dropdown ✅ resolved
-> **Brett:** "add other to drop down so they can…" *(sentence cut off)*
+> **Note:** "add other to drop down so they can…" *(sentence cut off)*
 
 **Where:** `EVIDENCE_TYPES` —
 [narrative-cv-prototype-v4.html:170–173](narrative-cv-prototype-v4.html:170): Peer-reviewed · Media /
@@ -624,7 +624,7 @@ would read poorly there.
 
 <a id="b-28"></a>
 ### B-28 · Are mentee names allowed? ❓ this is a funder-rules question
-> **Brett:** "are you allowed to use names"
+> **Note:** "are you allowed to use names"
 
 **Where:** the tool currently sidesteps it —
 [line 985](narrative-cv-prototype-v4.html:985): *"Who → stage → where they went → why it matters. Use
@@ -646,7 +646,7 @@ in the tool.
 
 <a id="b-29"></a>
 ### B-29 · "why this trajectory matters" → "why this example matters" ❓ small
-> **Brett:** "change the one-line trajectory after name of student, to 'why this example matters'"
+> **Note:** "change the one-line trajectory after name of student, to 'why this example matters'"
 
 **Where:** [line 999](narrative-cv-prototype-v4.html:999) — the free-text line under each mentee row:
 placeholder *"One line — why this trajectory matters (optional)"*.
@@ -664,7 +664,7 @@ vocabulary inconsistent.
 
 <a id="b-30"></a>
 ### B-30 · Are the three mentorship prompts clear? ❓ your pass
-> **Brett:** "need to figure if these questions are clear"
+> **Note:** "need to figure if these questions are clear"
 
 **Where:** the three prompts, [lines 393–398](narrative-cv-prototype-v4.html:393):
 1. *"Your mentoring approach — shown through one concrete thing you do."*
@@ -679,7 +679,7 @@ vocabulary inconsistent.
 
 <a id="b-31"></a>
 ### B-31 · The EDI prompt specifically ✅
-> **Brett:** "'what real context shapes who you mentor and how?' — need clarify"
+> **Note:** "'what real context shapes who you mentor and how?' — need clarify"
 
 **Where:** `PROMPTS.mentor.edi.q` — [line 395](narrative-cv-prototype-v4.html:395), with help text
 *"Ground equity in your actual environment — your institution's makeup, a program you built, a
@@ -701,7 +701,7 @@ so the help text should say so.
 
 <a id="b-32"></a>
 ### B-32 · "Two questions do most of the work" ✅ resolved
-> **Brett:** "edit — 'two questions do most' — don't like that style"
+> **Note:** "edit — 'two questions do most' — don't like that style"
 
 **Where:** you were quoting the PS stage lede —
 [narrative-cv-prototype-v4.html:1019](narrative-cv-prototype-v4.html:1019): *"It appears first in the
@@ -720,7 +720,7 @@ the fact that it announces two questions and then the page shows six prompts?
 
 <a id="b-33"></a>
 ### B-33 · "Pull it together" ✅ resolved
-> **Brett:** "pull it together — need to review this language"
+> **Note:** "pull it together — need to review this language"
 
 **Where:** the Review stage heading —
 [narrative-cv-prototype-v4.html:1059](narrative-cv-prototype-v4.html:1059): kicker *"Step · Review &
@@ -739,7 +739,7 @@ pass. The lede also carries [B-35](#b-35)'s problem in its last clause.
 
 <a id="b-34"></a>
 ### B-34 · "(PS)" is never expanded ✅
-> **Brett:** "what is PS (personal statement) — maybe colour code these"
+> **Note:** "what is PS (personal statement) — maybe colour code these"
 
 **Where:** the Review coverage checklist —
 [lines 1071–1074](narrative-cv-prototype-v4.html:1071): *"Central challenge named **(PS)**"*, *"Origin
@@ -760,7 +760,7 @@ section, or is the flat list fine once the labels read properly?
 
 <a id="b-35"></a>
 ### B-35 · The advisor packet framing implies priority ⛔ blocked
-> **Brett:** "statement about advisor packet gives the impression of priority — need to discuss this
+> **Note:** "statement about advisor packet gives the impression of priority — need to discuss this
 > with advisors"
 
 **Where:** three places say it, with escalating confidence:
@@ -773,7 +773,7 @@ section, or is the flat list fine once the labels read properly?
 
 **Read as:** "dramatically more productive" is a claim about advisors' time made without advisors in
 the room — it implies the tool front-loads the consult and sets the agenda for it. That's the
-"impression of priority" Brett is naming, and he's right that it's an advisor-relations question
+"impression of priority" the note names, and it's right that it's an advisor-relations question
 before it's a copy question.
 
 **Follow-up:** Who's the conversation with, and by when? Everything else in this doc can proceed
@@ -787,7 +787,7 @@ without it — this one item shouldn't hold up V5, but the copy shouldn't ship u
 
 <a id="b-36"></a>
 ### B-36 · Nothing in the tool links to the guide ✅ confirmed
-> **Brett:** "notice that we don't link to sections of the narrative CV guide — read it if you want
+> **Note:** "notice that we don't link to sections of the narrative CV guide — read it if you want
 > to browse through it"
 
 **Where:** confirmed by search — there is no reference to the guide anywhere in the V4 file. The
@@ -808,7 +808,7 @@ links built against slot labels will survive that swap.
 
 <a id="b-37"></a>
 ### B-37 · "look at examples in our tool" ❓
-> **Brett:** "look at examples in our tool."
+> **Note:** "look at examples in our tool."
 
 Isolated line near the end, no clear referent. Could be a note-to-self to audit the exemplars
 (→ [B-10](#b-10)/[B-13](#b-13)), or to look at how examples are handled somewhere else.
@@ -821,7 +821,7 @@ Isolated line near the end, no clear referent. Could be a note-to-self to audit 
 
 <a id="b-38"></a>
 ### B-38 · Say it's not AI, and that it's confidential ✅
-> **Brett:** "put a note that it is not AI driven, it's confidential"
+> **Note:** "put a note that it is not AI driven, it's confidential"
 
 **Where:** we do say it, three times, all in our own language:
 - Prototype banner, [line 127](narrative-cv-prototype-v4.html:127): *"no LLM · storage: `ncv-v4`"*
@@ -830,8 +830,8 @@ Isolated line near the end, no clear referent. Could be a note-to-self to audit 
 - Structural read lede, [line 683](narrative-cv-prototype-v4.html:683): *"nothing leaves your device"*
 
 **Read as:** the first two are prototype chrome that disappears at port time, and all three are
-phrased for us — "no LLM", a raw localStorage key in parentheses. The third is on a stage Brett never
-opened. So a researcher on the main path is never plainly told: *this isn't AI, nothing you type is
+phrased for us — "no LLM", a raw localStorage key in parentheses. The third is on a stage never
+opened in the session. So a researcher on the main path is never plainly told: *this isn't AI, nothing you type is
 sent anywhere, nobody can see this.* Given researchers will be pasting unpublished work into it, that
 statement is doing real trust work and should be first-class, permanent, and in plain language.
 
