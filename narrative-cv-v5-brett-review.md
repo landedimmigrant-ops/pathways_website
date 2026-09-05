@@ -920,20 +920,24 @@ matters to them?
 
 ---
 
-## What I need from you, in one place
+## What to check first in the second pass
 
-**Ten answers** unblock the rest: [B-1](#b-1) which intro, [B-4](#b-4) what "language:" meant,
-[B-5](#b-5) keep or rework, [B-10](#b-10) word vs prominence, [B-16](#b-16) which highlight approach,
-[B-19](#b-19) which of three fixes, [B-26](#b-26) which description, [B-29](#b-29) scope of the
-rename, [B-30](#b-30) which prompts fail, [B-37](#b-37) what this was.
+**Ten were inferred, not decided** — check these before the rest: [B-1](#b-1) (which intro),
+[B-4](#b-4) (what "language:" meant), [B-5](#b-5) (keep or rework), [B-10](#b-10) (word vs
+prominence), [B-16](#b-16) (which highlight approach), [B-19](#b-19) (which of three fixes),
+[B-26](#b-26) (which description), [B-29](#b-29) (scope of the rename), [B-30](#b-30) (which prompts
+failed), [B-37](#b-37) (what this was).
 
-**Two are not ours to decide:** [B-28](#b-28) (are names allowed — funder rules, goes to Eli's list)
-and [B-35](#b-35) (advisor packet framing — needs the advisor conversation).
+**Two are not ours to decide:** [B-28](#b-28) (names — built on the genre sources, still for Eli to
+confirm) and [B-35](#b-35) (advisor packet framing — claim removed, the rest waits for the advisor
+conversation).
 
-**Two design calls** are bigger than copy and worth deciding before build starts:
-[B-7](#b-7) (context as side filters vs. a page you navigate to) and [B-12](#b-12) (one vocabulary
-across the exemplar, the shape hint and the fields, or keep three).
+**Two design calls were made and reshape the tool** — override if you disagree: [B-7](#b-7)
+(context edits inline, not a side-filter panel) and [B-12](#b-12) (one six-job vocabulary across the
+exemplar, the shape hints and the fields).
 
-**One free win:** [B-3](#b-3) and [B-14](#b-14) are the same line of code
-([line 467](narrative-cv-prototype-v4.html:467)), and fixing it removes the single most-reported
-irritation across both this session and nadia's persona run.
+**One suggested override from the copy pass:** [B-23](#b-23)/[B-24](#b-24) — drop the gate on the
+"one moment" prompt so STEM, humanities and creative researchers see it too.
+
+**The free win landed:** [B-3](#b-3) and [B-14](#b-14) were one line of code; fixed. See
+[narrative-cv-v5-decisions.md](narrative-cv-v5-decisions.md) for everything else.
