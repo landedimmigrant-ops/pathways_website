@@ -228,3 +228,10 @@ behaviours (C1–C12), 11 flags (F1–F11). Calls made on the flags:
   **Not verified by eye:** colour and spacing — the browser pane was hidden, so screenshots failed;
   worth a look on a real screen.
   **Next:** Prem's second pass → Overrides → rebuild diffs → `/ncv-persona next` against V5.
+- **2026-09-05 · persona re-run — nadia on V5 beta.** Report:
+  `tests/ncv-personas/v5-sessions/nadia-2026-09-05.md`. Traps 5 caught / 5 missed / **0
+  false-positive** (V4: 4/4/3). Ten V4-era findings closed. **One regression to fix before the
+  second pass lands:** B-18's `my <noun>` marker hides *we/our* beside "My research…" — restrict
+  `my` to people/role nouns (H1 in the report). Also worth folding in: work-mode row collapses
+  after one pick (H2), no read-back marks in the Structural read (H3), "✓ done — missing on 3"
+  wording (H4), prestige numbers still counted (H5).
