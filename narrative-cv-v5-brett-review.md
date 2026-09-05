@@ -10,7 +10,8 @@ note traced to the actual thing in [narrative-cv-prototype-v4.html](narrative-cv
 - **Where:** the real UI location, with file:line and the exact current string
 - **Read as:** how I understand the note — correct me where I'm wrong
 - **Follow-up:** what I need from you before this becomes a build instruction
-- **→ V5 instruction:** *empty — this is your second-pass slot*
+- **Beta decision:** what V5 beta did with the item on 2026-09-05, without waiting — see [narrative-cv-v5-decisions.md](narrative-cv-v5-decisions.md)
+- **→ V5 instruction:** *empty — your second-pass slot. Leave it blank to keep the beta decision; write here to override it.*
 
 Items marked ✅ are unambiguous and ready to build. Items marked ❓ still need your answer.
 
@@ -87,6 +88,8 @@ prompts") and disappears at port time anyway. #2 is the real first thing a resea
 **Follow-up:** Which one? And what's the job of that sentence — orient them to the tool, or tell
 them what they'll walk away with?
 
+**Beta decision (2026-09-05):** INFERRED — it's the Setup lede (V4 line 617), not the prototype subtitle (which is chrome and disappears at port). Its job: say what they'll leave with, and that nothing leaves their device. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -106,6 +109,8 @@ selecting look almost identical. Nothing else on the page changes to confirm the
 
 **Follow-up:** Colour alone, or should selecting a mode also change something structural — e.g. the
 unchosen card dims, or a line appears reading "You're building from scratch. Next: your contributions"?
+
+**Beta decision (2026-09-05):** DECIDED — a selected card gets an unmistakable state (filled header band, "Selected" mark), the other card dims, and a one-line confirmation under the grid names the next step. *build*
 
 **→ V5 instruction:**
 
@@ -128,6 +133,8 @@ that's the "pops up". **Same root cause as [B-14](#b-14).** One fix covers both.
 `NCV_V4_ANALYSIS_2026-07-21.md` as "every chip click re-renders + scrolls to top", so V5 should
 reference that rather than open a new ticket.
 
+**Beta decision (2026-09-05):** DECIDED — scroll to top only when the *stage* changes; every in-stage re-render (chips, role buttons, add/remove) preserves scroll position. One root cause, one fix. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -142,6 +149,8 @@ as F-2 in [narrative-cv-guide-factual-review.md](narrative-cv-guide-factual-revi
 about what the *guide* claims, this is about the *tool*.
 
 **Follow-up:** What were you about to write here?
+
+**Beta decision (2026-09-05):** INFERRED — read as the *register* of the copy, which the voice pass covers. If it meant EN/FR, that is a separate build. *deferred (FR) · open for Prem*
 
 **→ V5 instruction:**
 
@@ -162,6 +171,8 @@ scaffold — in the final CV they disappear into one flowing paragraph. Read the
 or wanted it changed.
 
 **Follow-up:** Keep, or rework?
+
+**Beta decision (2026-09-05):** INFERRED — keep the idea (read the finished example before the fields), rewrite the sentence. *build*
 
 **→ V5 instruction:**
 
@@ -185,6 +196,8 @@ for priority.
 **Follow-up:** Should the question stay visible permanently (with selections shown), or collapse to
 an editable summary line once answered?
 
+**Beta decision (2026-09-05):** DECIDED — the question stays on the Contributions stage permanently; multi-select; once answered it collapses to a one-line summary with a *change* control. (Same fix closes nadia's H1.) *build*
+
 **→ V5 instruction:**
 
 ---
@@ -206,6 +219,8 @@ is a genuine design change, not just a bug fix.
 **Follow-up:** Adopt the side-filter model for V5, or the cheaper fix (edit in a modal / inline
 popover, stay on the page)? The side panel competes for space with the existing Steps sidebar.
 
+**Beta decision (2026-09-05):** DECIDED — inline: *Edit context* expands the chip rows under the Tailored-for bar on the stage you are on; nothing navigates. The side-filter panel idea is parked — it competes with the Steps sidebar for the same space. *build · alt deferred*
+
 **→ V5 instruction:**
 
 ---
@@ -217,6 +232,8 @@ popover, stay on the page)? The side panel competes for space with the existing 
 **Where:** [narrative-cv-prototype-v4.html:774–779](narrative-cv-prototype-v4.html:774).
 
 No change. Recorded so V5 doesn't regress it.
+
+**Beta decision (2026-09-05):** keep as is. *no change*
 
 **→ V5 instruction:**
 
@@ -237,6 +254,8 @@ saturation stakes/outcomes and role/outcomes are hard to tell apart, especially 
 border / label chip? (These are Concordia palette tints, so going darker needs a contrast check
 against the body text.)
 
+**Beta decision (2026-09-05):** DECIDED — one step deeper on each of the six tints plus a 3px left border in the beat's colour; body text must stay ≥ 4.5:1 on all six. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -255,6 +274,8 @@ parenthetical, at the end, in the same weight as the discipline name), or you wa
 
 **Follow-up:** Is this a word swap, or does the disclaimer need to be more prominent? Given how hard
 the privacy line is on this project, I'd argue for prominence over word choice.
+
+**Beta decision (2026-09-05):** DECIDED — prominence over word choice: a visible "Fictional example" tag on the exemplar box instead of a trailing parenthetical. Word: *fictional* (Prem's). *build*
 
 **→ V5 instruction:**
 
@@ -276,6 +297,8 @@ exists in `health` ("Equity & reach") but social is the sharpest case.
 
 **Follow-up:** Rewrite the social hint to make policy one option among several (scholarly, public,
 practitioner, community, policy)? And should I check the other four hints for the same problem?
+
+**Beta decision (2026-09-05):** DECIDED — rewritten so policy is one kind of uptake among several; all five hints re-expressed on the same six beats (see B-12). *build*
 
 **→ V5 instruction:**
 
@@ -302,6 +325,8 @@ problem, not just a labelling nit — it's probably *why* B-11 and B-5 came up i
 discipline-native language that shouldn't be forced into the generic frame? I lean toward one
 vocabulary with the discipline flavour carried in examples, not in a competing set of labels.
 
+**Beta decision (2026-09-05):** DECIDED — one vocabulary. The canonical six beats: **Stakes · Your role · What you did · What resulted · What already changed · What could change.** Field labels carry the name as a kicker; the skeleton legend uses the identical names; shape hints become discipline flavour on those same six, not a competing four-step list. Beat 5 keeps *already* (copy pass, F1): it is the one word separating it from *What could change*, and demonstrated-vs-hypothesised is the genre's central distinction. Reader-facing word is **job**, not *beat* — the tool already says "every sentence is doing a job". *build*
+
 **→ V5 instruction:**
 
 ---
@@ -320,6 +345,8 @@ grounded rather than our invention.
 at the two real CVs. Is a line like "the shape follows Tri-agency and FRQ instructions; the content
 is invented" enough?
 
+**Beta decision (2026-09-05):** DECIDED — one line under the exemplar: the *shape* follows the Tri-agency CV and CV-FRQ instructions (link to the guide); the *content* is fictional. The real CVs are never cited. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -336,6 +363,8 @@ is invented" enough?
 
 **Read as:** worse here than in Setup ([B-3](#b-3)) — you're deep inside contribution 3 and get
 thrown to the top of the page mid-thought. Same one-line root cause.
+
+**Beta decision (2026-09-05):** DECIDED — scroll to top only when the *stage* changes; every in-stage re-render (chips, role buttons, add/remove) preserves scroll position. One root cause, one fix. *build*
 
 **→ V5 instruction:**
 
@@ -362,6 +391,8 @@ disappearing placeholder. Your replacement is plainer, though "within the team" 
 **Follow-up:** Take your line as-is, or vary it by work mode (solo researchers have no team to be
 unique within)? And should the question become the visible label, demoting "Your role in this work"?
 
+**Beta decision (2026-09-05):** DECIDED — the question becomes the visible label (it was only a placeholder). Two variants by work mode: team / community / industry → Prem's line, *"In one line, what was your unique contribution within the team?"*; solo → *"In one line, what did you do that wouldn't exist without you?"* *build*
+
 **→ V5 instruction:**
 
 ---
@@ -383,6 +414,8 @@ risks paste and undo bugs; (c) is cheap and safe.
 
 **Follow-up:** Which of those three? I'd start with (c) unless you want in-place marking specifically.
 
+**Beta decision (2026-09-05):** DECIDED — option (c): a read-back line under the checks that shows the field text with the triggering words marked, only when a flag fires. Textareas can't render marks in place; the overlay and contenteditable routes are parked. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -394,6 +427,8 @@ risks paste and undo bugs; (c) is cheap and safe.
 **Where:** nowhere currently, except the compressed phrase in [B-20](#b-20).
 
 **Read as:** pairs with B-20 — same need, and they should be solved by one piece of copy, not two.
+
+**Beta decision (2026-09-05):** DECIDED — drop the visible rubric score and "uncalibrated"; the meta line becomes a word count plus one plain sentence; a one-time note at the top of Contributions says the checks are suggestions and nothing blocks you. *build*
 
 **→ V5 instruction:**
 
@@ -423,6 +458,8 @@ annoying?" answers itself — yes, for anyone whose verbs aren't on our list.
 and treat any `I` + past-tense verb within N words as ownership. (b) is more robust but will let some
 genuinely vague sentences through. Which risk do you prefer: over-flagging or under-flagging?
 
+**Beta decision (2026-09-05):** DECIDED — accept any `I` + verb-like word (the list ∪ regular *-ed* forms ∪ common irregular pasts) within three words, and `my <noun>`, as ownership. Prefer under-flagging: a missed vague sentence costs less than nagging a clear one. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -448,6 +485,8 @@ you described.
 the check should probably not fire at all on `stakes`. Should the number check become field-aware
 the way hedging already is ([lines 275–283](narrative-cv-prototype-v4.html:275))?
 
+**Beta decision (2026-09-05):** DECIDED — field-aware: fires only on *What you did*, *What resulted*, *What changed*; never on stakes, the role line, impact, personal statement or mentorship. Phrased as a question; no "reviewers". (Closes nadia's H11.) *build*
+
 **→ V5 instruction:**
 
 ---
@@ -468,6 +507,8 @@ you; you decide.* "Uncalibrated" in particular is us talking to ourselves about
 **Follow-up:** Rewrite the whole meta line, or drop the rubric score entirely? A score out of 4 that
 we ourselves call uncalibrated may be doing more harm than good.
 
+**Beta decision (2026-09-05):** DECIDED — drop the visible rubric score and "uncalibrated"; the meta line becomes a word count plus one plain sentence; a one-time note at the top of Contributions says the checks are suggestions and nothing blocks you. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -486,6 +527,8 @@ says so. A researcher sees three unexplained symbols.
 
 **Follow-up:** Replace the label with something that states the purpose (e.g. "Mark this for your
 advisor:")? That also sets up [B-35](#b-35).
+
+**Beta decision (2026-09-05):** DECIDED — the label states what the row is for; buttons show symbol + word (✓ Fine · ✗ Needs work · ? Ask advisor); tooltips stay. *build*
 
 **→ V5 instruction:**
 
@@ -510,6 +553,8 @@ impact counts fully…"*).
 **Follow-up:** Drop the badge and keep the help sentence, or restyle the badge as neutral/positive?
 Note that `.v4-tag` is shared with the "new" badges — restyling one restyles both.
 
+**Beta decision (2026-09-05):** DECIDED — remove the badge; keep the reassurance as a plain sentence in the help text. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -529,6 +574,8 @@ and one is an abstraction (policy) — so the sentence reads oddly. It's also a 
 what we want is a story; the help text asks for the story, the question doesn't.
 
 **Follow-up:** Do you want this to stay a gated optional field, or become a standard prompt?
+
+**Beta decision (2026-09-05):** DECIDED — keep both and keep the gate. *What changed* stays the general uptake; the translational prompt becomes explicitly *one moment* (a single scene, two sentences). The copy makes the split obvious. *build*
 
 **→ V5 instruction:**
 
@@ -553,6 +600,8 @@ wants the general uptake, Translational wants one concrete human moment. Your se
 **Follow-up:** Keep both and make Translational explicitly the anecdote ("Tell one moment where this
 reached someone — a single scene, two sentences")? Or cut it and fold the anecdote ask into Outcomes?
 
+**Beta decision (2026-09-05):** DECIDED — keep both and keep the gate. *What changed* stays the general uptake; the translational prompt becomes explicitly *one moment* (a single scene, two sentences). The copy makes the split obvious. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -575,6 +624,8 @@ impact" is close, though strictly these are evidence for the whole contribution,
 **Follow-up:** Standardise on "Evidence" throughout, or "Evidence of impact"? The first matches what
 the export and the real CVs call it.
 
+**Beta decision (2026-09-05):** DECIDED — "Evidence" everywhere. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -592,6 +643,8 @@ explains what the researcher should type, and "the way a developed CV keys its r
 assumes they've seen a developed CV.
 
 **Follow-up:** Confirm it's this line and not another description?
+
+**Beta decision (2026-09-05):** INFERRED — it's the evidence help text (V4 line 390). Rewritten: what to type first, how the tool uses it second. *build*
 
 **→ V5 instruction:**
 
@@ -615,6 +668,8 @@ dropdown is inconsistent with that.
 **Follow-up:** Just add "Other", or "Other" plus a free-text box to name the type? The type string
 gets printed in the export ([line 1188](narrative-cv-prototype-v4.html:1188)), so a bare "Other"
 would read poorly there.
+
+**Beta decision (2026-09-05):** DECIDED — add *Other* plus a short free-text label that appears when it's chosen; the export prints the typed label. *build*
 
 **→ V5 instruction:**
 
@@ -640,6 +695,8 @@ kind of item flagged there as needing someone who knows rather than more desk re
 **Follow-up:** Add this to the list for Eli / the agencies? Once answered it becomes one clear line
 in the tool.
 
+**Beta decision (2026-09-05):** RESOLVED from `ncv-genre-sources.md` §1: the formats *expect* names — an asterisk after each supervised HQP's name in citations, and mentorship paragraphs name destinations. The tool now says naming is standard and initials are fine if they prefer. Stays on Eli's list only to confirm there's no privacy constraint we've missed. *build · open for Eli*
+
 **→ V5 instruction:**
 
 ---
@@ -658,6 +715,8 @@ vocabulary inconsistent.
 
 **Follow-up:** Change just this line, or move the whole section off "trajectory"?
 
+**Beta decision (2026-09-05):** DECIDED — change the placeholder as asked; "trajectory" stays in the section lede because it's the genre's own word. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -672,6 +731,8 @@ vocabulary inconsistent.
 3. *"Beyond your own students — who else do you mentor?"*
 
 **Follow-up:** Read these three and mark which fail. #1 isn't a question, which may be part of it.
+
+**Beta decision (2026-09-05):** DECIDED — all three become questions; the equity prompt names its subject; its help text says why it asks for something structural rather than a statement. *build*
 
 **→ V5 instruction:**
 
@@ -692,6 +753,8 @@ what's being asked or why. "Real context" is doing far too much work.
 **Follow-up:** Name the subject in the question itself, or is the indirection deliberate — trying to
 avoid an EDI-statement reflex and get something concrete instead? That's a defensible design, but if
 so the help text should say so.
+
+**Beta decision (2026-09-05):** DECIDED — all three become questions; the equity prompt names its subject; its help text says why it asks for something structural rather than a statement. *build*
 
 **→ V5 instruction:**
 
@@ -714,6 +777,8 @@ makes it a copy rewrite of the lede, not a change to any prompt. (I had this wro
 **Follow-up:** What's wrong with it specifically — the folksy "do most of the work" construction, or
 the fact that it announces two questions and then the page shows six prompts?
 
+**Beta decision (2026-09-05):** DECIDED — rewrite; "two questions do most of the work" goes; the lede says the prompts are a synthesis of what they just wrote. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -732,6 +797,8 @@ your own flags and questions — designed to make a consult dramatically more pr
 pass. The lede also carries [B-35](#b-35)'s problem in its last clause.
 
 **Follow-up:** Whole stage-head rewrite, or just the heading?
+
+**Beta decision (2026-09-05):** DECIDED — new heading and lede; no "dramatically more productive". *build*
 
 **→ V5 instruction:**
 
@@ -753,6 +820,8 @@ see at a glance which part of the CV is thin.
 
 **Follow-up:** Expanding "PS" is obvious. Do you also want the coverage list grouped/coloured by
 section, or is the flat list fine once the labels read properly?
+
+**Beta decision (2026-09-05):** DECIDED — expanded; coverage rows grouped under section headers; a failing contribution row names *which* contribution (closes nadia's H5). *build*
 
 **→ V5 instruction:**
 
@@ -779,6 +848,8 @@ before it's a copy question.
 **Follow-up:** Who's the conversation with, and by when? Everything else in this doc can proceed
 without it — this one item shouldn't hold up V5, but the copy shouldn't ship unchanged either.
 
+**Beta decision (2026-09-05):** PARTIAL — the claim is removed now (neutral: a packet you can bring to an advisor). Whether the packet should set a consult's agenda is the advisor conversation; unchanged until then. *build copy · open*
+
 **→ V5 instruction:**
 
 ---
@@ -802,6 +873,8 @@ the contributions section of the guide, Mentorship → its section, and so on.
 dependency: the guide is mid-rewrite, and the slot labels in the voice version are unchanged, so
 links built against slot labels will survive that swap.
 
+**Beta decision (2026-09-05):** DECIDED — one link per stage to the guide at `index.html#learn-narrative-cv` with `target="_top"` (works standalone and inside the iframe embed), plus one in the shell. Section-level anchors wait for the guide rewrite to land. *build*
+
 **→ V5 instruction:**
 
 ---
@@ -814,6 +887,8 @@ Isolated line near the end, no clear referent. Could be a note-to-self to audit 
 (→ [B-10](#b-10)/[B-13](#b-13)), or to look at how examples are handled somewhere else.
 
 **Follow-up:** What was this?
+
+**Beta decision (2026-09-05):** INFERRED — folded into B-10/B-13 (audit the exemplars, label and source them). *closed · open for Prem*
 
 **→ V5 instruction:**
 
@@ -838,6 +913,8 @@ statement is doing real trust work and should be first-class, permanent, and in 
 **Follow-up:** Where should it live — a persistent line in the shell, or the Setup stage only? And is
 "not AI" the right framing, or is "nothing you write leaves this browser" the thing that actually
 matters to them?
+
+**Beta decision (2026-09-05):** DECIDED — one plain-language line, persistent in the shell, replacing the dev-speak banner: no AI, nothing leaves the browser, drafts stay on this device. *build*
 
 **→ V5 instruction:**
 
