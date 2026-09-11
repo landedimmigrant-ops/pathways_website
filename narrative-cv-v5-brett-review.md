@@ -90,7 +90,7 @@ them what they'll walk away with?
 
 **Beta decision (2026-09-05):** INFERRED — it's the Setup lede (V4 line 617), not the prototype subtitle (which is chrome and disappears at port). Its job: say what they'll leave with, and that nothing leaves their device. *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Keep the walk-away sentence, but open with the tool's intention — it exists to help you get familiar with how the narrative CV asks you to think about and represent your work; built without AI models; your data stays private; what you produce is a **first outline**. Combine with B-4 (prototype + English-only) into one intro paragraph. Voice pass at build.
 
 ---
 
@@ -152,7 +152,7 @@ about what the *guide* claims, this is about the *tool*.
 
 **Beta decision (2026-09-05):** INFERRED — read as the *register* of the copy, which the voice pass covers. If it meant EN/FR, that is a separate build. *deferred (FR) · open for Prem*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** The unfinished note meant: say in the intro that this is a **prototype** and **currently works in English only**. Folds into the B-1 paragraph. FR/bilingual stays a separate future build.
 
 ---
 
@@ -174,7 +174,7 @@ or wanted it changed.
 
 **Beta decision (2026-09-05):** INFERRED — keep the idea (read the finished example before the fields), rewrite the sentence. *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Content is right — keep. Flag the paragraph for the **pathways-voice pass** along with everything else changed in this round.
 
 ---
 
@@ -221,7 +221,7 @@ popover, stay on the page)? The side panel competes for space with the existing 
 
 **Beta decision (2026-09-05):** DECIDED — inline: *Edit context* expands the chip rows under the Tailored-for bar on the stage you are on; nothing navigates. The side-filter panel idea is parked — it competes with the Steps sidebar for the same space. *build · alt deferred*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Inline edit-in-place confirmed — no side panel. **But the control must read as a control:** restyle from a quiet link to a proper button (border/background, sized like other buttons) so it is visible at a glance. **Relabel** — "Edit context" is our word. Not "preferences" (these are facts about their situation, not taste settings); point back at the "Tailored for:" line, e.g. "Change these" / "Change your details". Voice pass settles it.
 
 ---
 
@@ -277,7 +277,7 @@ the privacy line is on this project, I'd argue for prominence over word choice.
 
 **Beta decision (2026-09-05):** DECIDED — prominence over word choice: a visible "Fictional example" tag on the exemplar box instead of a trailing parenthetical. Word: *fictional* (Prem's). *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Keep as built — "Fictional example" tag plus the source line. No change.
 
 ---
 
@@ -327,7 +327,7 @@ vocabulary with the discipline flavour carried in examples, not in a competing s
 
 **Beta decision (2026-09-05):** DECIDED — one vocabulary. The canonical six beats: **Stakes · Your role · What you did · What resulted · What already changed · What could change.** Field labels carry the name as a kicker; the skeleton legend uses the identical names; shape hints become discipline flavour on those same six, not a competing four-step list. Beat 5 keeps *already* (copy pass, F1): it is the one word separating it from *What could change*, and demonstrated-vs-hypothesised is the genre's central distinction. Reader-facing word is **job**, not *beat* — the tool already says "every sentence is doing a job". *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Confirmed. One vocabulary — Stakes · Your role · What you did · What resulted · What already changed · What could change — identical in the example legend, the discipline hints and the field kickers; "job" as the reader-facing word. No change.
 
 ---
 
@@ -416,7 +416,7 @@ risks paste and undo bugs; (c) is cheap and safe.
 
 **Beta decision (2026-09-05):** DECIDED — option (c): a read-back line under the checks that shows the field text with the triggering words marked, only when a flag fires. Textareas can't render marks in place; the overlay and contenteditable routes are parked. *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Keep the read-back but stop it being noise. **Always on in the Structural read.** In Contributions fields, show it **only when it adds information** — the field is long (~25+ words) **or** a flag counts a repeated word; a short field with one flagged word relies on the flag, which already names the word. **Relabel** so it states its purpose, not its mechanism ("Where they are:" or similar; voice pass).
 
 ---
 
@@ -487,7 +487,7 @@ the way hedging already is ([lines 275–283](narrative-cv-prototype-v4.html:275
 
 **Beta decision (2026-09-05):** DECIDED — field-aware: fires only on *What you did*, *What resulted*, *What changed*; never on stakes, the role line, impact, personal statement or mentorship. Phrased as a question; no "reviewers". (Closes nadia's H11.) *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Keep field-aware + question form, and narrow further — fires **only on "What you did" and "What already changed"**. **Remove from "What resulted"**: that prompt asks for a list of things, so a list without numbers is a correct answer and flagging it is a false positive. Principle: the number check only fires where the prompt itself asked for a quantity. Optionally add a light "and where you can, how many" to the *What resulted* help text instead.
 
 ---
 
@@ -577,7 +577,7 @@ what we want is a story; the help text asks for the story, the question doesn't.
 
 **Beta decision (2026-09-05):** DECIDED — keep both and keep the gate. *What changed* stays the general uptake; the translational prompt becomes explicitly *one moment* (a single scene, two sentences). The copy makes the split obvious. *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Confirmed, including the amendment: **keep the "One moment" prompt un-gated** — every discipline and work mode sees it, still optional.
 
 ---
 
@@ -602,7 +602,7 @@ reached someone — a single scene, two sentences")? Or cut it and fold the anec
 
 **Beta decision (2026-09-05):** DECIDED — keep both and keep the gate. *What changed* stays the general uptake; the translational prompt becomes explicitly *one moment* (a single scene, two sentences). The copy makes the split obvious. *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Confirmed — both prompts stay, distinct jobs; One moment stays un-gated for everyone.
 
 ---
 
@@ -646,7 +646,7 @@ assumes they've seen a developed CV.
 
 **Beta decision (2026-09-05):** INFERRED — it's the evidence help text (V4 line 390). Rewritten: what to type first, how the tool uses it second. *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Confirmed — it was the evidence help text. Keep as rewritten; voice pass with the rest.
 
 ---
 
@@ -717,7 +717,7 @@ vocabulary inconsistent.
 
 **Beta decision (2026-09-05):** DECIDED — change the placeholder as asked; "trajectory" stays in the section lede because it's the genre's own word. *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Swap the field label **and move the whole Mentorship section off "trajectory"** — the lede, any help text, and the export / advisor-packet label ("Trajectories:") included. Plain language about the people you trained and where they went. Wording in the voice pass.
 
 ---
 
@@ -734,7 +734,7 @@ vocabulary inconsistent.
 
 **Beta decision (2026-09-05):** DECIDED — all three become questions; the equity prompt names its subject; its help text says why it asks for something structural rather than a statement. *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** All three stay questions. Goal: **nuanced, specific answers — never canned EDI statements, but people should still think about it.** So **drop the "Equity in practice —" label** and keep the concrete question (the abstract noun is what summons boilerplate; the question is self-evidently about access without it). Strengthen the "a practice, not a position" signal in the help. Apply the same rule to all three — **ask for one specific instance, not a category** — including Q3, which currently invites a bare list.
 
 ---
 
@@ -756,7 +756,7 @@ so the help text should say so.
 
 **Beta decision (2026-09-05):** DECIDED — all three become questions; the equity prompt names its subject; its help text says why it asks for something structural rather than a statement. *build*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Covered by B-30 — drop the abstract label, keep the concrete question, strengthen the help's "practice not position" signal.
 
 ---
 
@@ -890,7 +890,7 @@ Isolated line near the end, no clear referent. Could be a note-to-self to audit 
 
 **Beta decision (2026-09-05):** INFERRED — folded into B-10/B-13 (audit the exemplars, label and source them). *closed · open for Prem*
 
-**→ V5 instruction:**
+**→ V5 instruction:** **Prem (2026-09-11):** Confirmed as "audit the examples", **plus new scope: add worked examples to the Personal statement and Mentorship stages** (closes gap U8 — Contributions is the only stage with one today). Same treatment as the Contributions exemplar: fictional, tagged, sourced, skeleton toggle where it helps. **And always refer to the guide** — every stage and every example box links out to it. Examples must be invented; nothing from the two real CVs in shape or content.
 
 ---
 

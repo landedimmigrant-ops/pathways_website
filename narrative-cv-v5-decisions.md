@@ -23,7 +23,27 @@ applies to the file and checks it.
 
 ## Overrides (from Prem's second pass)
 
-*None yet — fill in when the updated notes come back.*
+Walked item by item 2026-09-11; answers recorded in the `→ V5 instruction:` slots of
+`narrative-cv-v5-brett-review.md` (and mirrored to the Anytype page). Everything not listed here
+stands as decided.
+
+| Item | Beta decision | Prem's instruction | Status |
+|---|---|---|---|
+| B-1 + B-4 | Setup lede = "what you'll walk away with" + privacy | **Amended** — lead with the tool's *intention* (get familiar with how the narrative CV asks you to think about and represent your work), say it is a **prototype**, **English only for now**, **no AI models**, data private, output is a **first outline**; keep the walk-away sentence after it | rebuild |
+| B-5 | Keep the idea, rewrite the sentence | Confirmed; flagged for the voice pass | voice only |
+| B-7 | Inline edit-in-place, side panel parked | **Amended** — inline confirmed, but the control must *look* like a control (proper button, not a quiet link) and be **relabelled** away from "Edit context"; not "preferences" — point back at "Tailored for:" | rebuild |
+| B-10 | Prominent "Fictional example" tag | Confirmed | no change |
+| B-12 | One six-job vocabulary | Confirmed | no change |
+| B-16 | Read-back line under every flagged field | **Amended** — always in the Structural read; in Contributions **only when it adds information** (long field ~25+ words, or a repeated flagged word); **relabel** to state purpose not mechanism | rebuild |
+| B-19 | Number check on What you did / What resulted / What already changed | **Amended** — **drop What resulted**. A list of things without numbers is a correct answer; flagging it was the last false positive. Principle: the check fires only where the prompt asked for a quantity | rebuild |
+| B-23 / B-24 | Both prompts kept; gate dropped 2026-09-11 | Confirmed, gate stays dropped | no change |
+| B-26 | Evidence help text rewritten | Confirmed | voice only |
+| B-29 | Swap the one field, keep "trajectory" elsewhere | **Amended** — move the **whole Mentorship section** off "trajectory", export/packet label included | rebuild |
+| B-30 / B-31 | Three questions; equity prompt names its subject | **Amended** — **drop the "Equity in practice —" label**, keep the concrete question; the abstract noun summons boilerplate. Goal is nuanced specifics, never canned EDI statements. Apply "ask for one specific instance, not a category" to all three, including Q3 | rebuild |
+| B-37 | Folded into B-10/B-13 | **Extended** — **add worked examples to Personal statement and Mentorship** (closes U8), same treatment as the Contributions exemplar; **and link to the guide from every stage and every example box** | new build |
+
+**Standing instruction from this pass:** a `pathways-voice` pass closes the round, over everything
+changed today plus the B-5 and B-26 paragraphs.
 
 ---
 
