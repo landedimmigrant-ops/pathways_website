@@ -271,3 +271,14 @@ behaviours (C1–C12), 11 flags (F1–F11). Calls made on the flags:
   Structural-read retype wall (U6), evidence-row lint (#13), advisor-packet naming (B-35, advisors),
   mentee-naming confirmation (B-28, Eli), the bare `journal` match in the evidence coverage row
   (kept — removing it would un-detect legitimate drafts).
+- **2026-09-11 · second pass, built.** Prem walked the 13 inferred/design items one by one; answers
+  are in the review doc's instruction slots and summarised in the **Overrides** table above. Opus
+  wrote the new content and copy as `narrative-cv-v5-secondpass-spec.md` (S192–S241, authored under
+  the `pathways-voice` skill — that is the voice pass for this round); Sonnet built it; Fable
+  verified in the browser. Shipped: new intro, PS + Mentorship worked examples (U8 closed), guide
+  links everywhere, conditional read-back, number check off *What resulted*, Mentorship off
+  "trajectory", equity question de-labelled, edit-context button restyled. Confirmed no-change:
+  B-10, B-12, B-23/24. **Open follow-ups:** the two new examples are social-sciences only (the
+  Contributions one switches by discipline) — decide after the researcher session whether they need
+  per-discipline variants; guide links all land on the page, not section anchors, until the guide
+  rewrite lands.
