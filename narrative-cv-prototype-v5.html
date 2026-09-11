@@ -146,6 +146,7 @@
     .v4-totals-grid label { font-size: 0.8rem; color: var(--muted); display: block; margin: 0 0 3px; }
     .v4-export-area { width: 100%; box-sizing: border-box; min-height: 260px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.55; padding: 12px; border: 1px solid var(--border); border-radius: 8px; white-space: pre; overflow: auto; color: var(--text); }
     .v4-inline-link { display: inline-block; margin-top: 0.25rem; }
+    .v4-save-warning { margin: 0 0 0.6rem; padding: 0.6rem 0.9rem; border: 1px solid #c0392b; background: #fdecea; color: #7a1f15; border-radius: 4px; font-size: 0.85rem; line-height: 1.5; }
     .v4-anchor-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.95rem; color: var(--text); }
     .v4-anchor-line .v4-text-input { flex: 1 1 160px; width: auto; }
   </style>
@@ -161,6 +162,7 @@
     <h1 class="proto-title">Narrative CV — V5 beta</h1>
     <p class="proto-subtitle">Start fresh, or get a structural read of an existing draft. Guided prompts, live checks, and an advisor packet.</p>
     <p class="v4-privacy">🔒 <span class="v4-privacy-full">No AI, and nothing you write leaves this browser. The checks are fixed rules, and your draft is saved on this device only — if you clear your browser data, the draft goes with it.</span><span class="v4-privacy-short">No AI. Nothing you write leaves this browser.</span></p>
+    <p class="v4-save-warning" id="v4-save-warning" hidden>Saving isn’t working in this browser right now — nothing new is being kept. Copy your draft out (Review → Copy draft) before you close this tab.</p>
     <p class="v4-inline-link"><a class="v4-guide-link" href="index.html#learn-narrative-cv" target="_top">Read the narrative CV guide</a></p>
     <div id="ncv-v4-root"></div>
   </div>
@@ -311,6 +313,9 @@
     // B-18: common irregular pasts, so "I wrote / built / led …" register as ownership even though
     // they aren't in ACTION_VERBS. Any regular -ed word (>=4 letters) also counts — see verbAlt below.
     const IRREGULAR_PAST = ["wrote","built","ran","led","taught","took","made","gave","set","began","brought","chose","found","held","kept","met","put","saw","sent","spent","won","drew","grew","threw","oversaw","undertook","co-wrote"];
+    // H1: only these nouns turn "my …" into a claim of role. "My research", "my work", "my paper"
+    // are topic statements — they say what the work is about, not which part of it was yours.
+    const MY_ROLE_NOUN = /\bmy\s+(?:group|lab|team|students?|trainees?|collaborators?|co-?authors?|postdocs?|role|part|contributions?|responsibilit(?:y|ies))\b/i;
     const WEAK_PHRASES = ["worked on","participated in","assisted with","was involved in","helped with"];
     const VAGUE_QUANTITY = ["various","several","many","a number of","a few","multiple"];
     const VAGUE_REPUTATION = ["well-received","widely cited","highly regarded","well-known"];
@@ -319,6 +324,26 @@
     // are flagged rather than rewarded as specificity. Absorbs the three journal-prestige phrases
     // that used to live in VAGUE_LIST ("leading journal" included, per the decisions log's move-out).
     const PRESTIGE_TERMS = ["impact factor","JIF","h-index","h index","i10-index","top-tier","top tier","high-impact","high impact","prestigious","Q1 journal","leading journal"];
+    // H5: metric-with-a-number shapes the term list cannot see on its own — "IF 14.2",
+    // "impact factor of 14.2", "h-index is 11". They flag like the listed terms, and their own
+    // numbers come out of the text before specificity is counted: a JIF is not a research number.
+    // JIF/IF are matched case-sensitively on purpose — lowercase "if 12 stores adopt it" is a
+    // conditional, not a metric.
+    const PRESTIGE_METRIC_PATTERNS = [
+      /\bJIF\s*[:=]?\s*\d+(?:[.,]\d+)?/g,
+      /\bIF\s*[:=]?\s*\d+(?:[.,]\d+)?/g,
+      /\bimpact\s+factors?\b(?:\s+\w+){0,3}?\s*[:=]?\s*\d+(?:[.,]\d+)?/gi,
+      /\bh[-\s]?index\b(?:\s+\w+){0,3}?\s*[:=]?\s*\d+(?:[.,]\d+)?/gi
+    ];
+    function prestigeMetricMatches(t) {
+      const found = [];
+      PRESTIGE_METRIC_PATTERNS.forEach(re => {
+        re.lastIndex = 0;
+        let m;
+        while ((m = re.exec(t))) { found.push({ text: m[0], index: m.index }); if (re.lastIndex === m.index) re.lastIndex++; }
+      });
+      return found;
+    }
     const HEDGES = ["could","would","should","might","may","perhaps","somewhat","relatively","fairly","slightly","tried to","attempted to"];
     const LENGTH_RANGES = { activities: [40, 80], outputs: [30, 60], outcomes: [50, 100], impact: [40, 100], stakes: [15, 60] };
     // H8: spelled-out numbers count as specific numbers too ("two-year" counts as one hit).
@@ -346,13 +371,15 @@
       const isProse = kind === "prose"; // H12: light checks only — no numbers, hedges untouched.
 
       // Ownership — B-18: "I" + (a listed verb, any real -ed word of >=4 letters, or a common
-      // irregular past) within three tokens, or "my <anything>", counts as an individual marker.
-      // Prefer under-flagging: a missed vague sentence costs less than nagging a clear one.
+      // irregular past) within three tokens, or "my <people/role noun>", counts as an individual
+      // marker. H1: the `my` half used to accept any "my <word>", so "My research focuses…" read as
+      // a role claim and let a nearby "we partnered / our findings" pass. The verb half is
+      // unchanged. Prefer under-flagging: a missed vague sentence costs less than nagging a clear one.
       const weMatches = [...t.matchAll(/\b(we|us|our)\b/gi)].map(m => ({ text: m[0], index: m.index }));
       const weCount = weMatches.length;
       const verbAlt = "(?:" + ACTION_VERBS.join("|") + "|" + IRREGULAR_PAST.join("|") + "|\\w{2,}ed)\\b";
       const iVerb = new RegExp("\\bI\\b(?:\\s+\\S+){0,3}?\\s*\\b" + verbAlt, "i").test(t);
-      const myWord = /\bmy\s+\w+/i.test(t);
+      const myWord = MY_ROLE_NOUN.test(t);
       const ownership = iVerb || myWord;
       const weak = [];
       WEAK_PHRASES.forEach(p => { const ms = allMatches(t, p); if (ms.length) { weak.push(p); ms.forEach(m => out.hits.push({ text: m.text, rule: "weak" })); } });
@@ -365,10 +392,17 @@
       weak.forEach(p => out.flags.push("“" + p + "” doesn't say what you did — name the specific action."));
       if (ownership && !weak.length) out.score++;
 
+      // H5: matched once, used twice — to name the metrics in the flag below, and to keep their
+      // numbers out of the specificity count just above it.
+      const metricHits = prestigeMetricMatches(t);
+
       // Specificity — B-19/H11: field-aware, phrased as a question; H4: a leading "N." / "N)"
       // enumerator isn't a specific number; H8: spelled-out numbers count too. Skipped for "prose".
       if (!isProse) {
-        const forNums = t.replace(/^\s*\d+[.)]\s+/, "");
+        // H5: the prestige metrics' own numbers are removed from this working copy first — they are
+        // the very numbers the prestige flag asks you to cut. Numbers elsewhere still count.
+        let forNums = t.replace(/^\s*\d+[.)]\s+/, "");
+        metricHits.forEach(m => { forNums = forNums.split(m.text).join(" "); });
         const nums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
         if (nums) { out.strengths.push(nums + " specific number" + (nums > 1 ? "s" : "")); out.score++; }
         else if (kind === "activities" || kind === "outputs" || kind === "outcomes") {
@@ -389,7 +423,16 @@
       // H3: prestige / journal-metric language — flagged, not rewarded as specificity.
       const prestige = [];
       PRESTIGE_TERMS.forEach(p => { const ms = allMatches(t, p); if (ms.length) { prestige.push(p); ms.forEach(m => out.hits.push({ text: m.text, rule: "prestige" })); } });
-      if (prestige.length) out.flags.push("“" + prestige[0] + "” — reviewers are told to disregard h-index, journal impact factor and venue prestige. Say what the work changed instead.");
+      // H5: a metric shape is named only when no listed term already covers it, so "h-index is 11"
+      // is not named twice; it still feeds the read-back marks either way.
+      metricHits.forEach(m => {
+        out.hits.push({ text: m.text, rule: "prestige" });
+        const low = m.text.toLowerCase();
+        if (!prestige.some(p => low.indexOf(p.toLowerCase()) !== -1)) prestige.push(m.text);
+      });
+      // H5: name every term that matched, the way the hedge flag does — naming only the first left
+      // "high-impact" flagged silently.
+      if (prestige.length) out.flags.push(prestige.map(p => "“" + p + "”").join(", ") + " — reviewers are told to disregard h-index, journal impact factor and venue prestige. Say what the work changed instead.");
 
       // Hedging — field-aware; H7: capitalised "May" before a year/day is the month, not a hedge.
       // Skipped for "prose" (neither flagged nor praised).
@@ -450,7 +493,24 @@
         }
       } catch (_) { ns = defaultState(); }
     };
-    const saveState = () => { ns.lastSavedAt = Date.now(); try { localStorage.setItem(NCV_KEY, JSON.stringify(ns)); } catch (_) {} };
+    let saveFailed = false;
+    const saveState = () => {
+      ns.lastSavedAt = Date.now();
+      try {
+        localStorage.setItem(NCV_KEY, JSON.stringify(ns));
+        if (saveFailed) {
+          saveFailed = false;
+          const w = document.getElementById("v4-save-warning");
+          if (w) w.hidden = true;
+        }
+      } catch (_) {
+        if (!saveFailed) {
+          saveFailed = true;
+          const w = document.getElementById("v4-save-warning");
+          if (w) w.hidden = false;
+        }
+      }
+    };
 
     // ── Lens resolver (lighter than V3: agency/discipline/stage/workMode) ──
     const activeTokens = () => {
@@ -596,10 +656,18 @@
       panel.appendChild(el("h2", null, "Steps"));
       const list = el("ol", "narrative-stage-list");
       stages().forEach((st) => {
-        const li = el("li", "narrative-stage-item" + (st.key === ns.stageKey ? " is-active" : "") + (stageDone(st.key) ? " is-done" : ""));
+        const isActive = st.key === ns.stageKey;
+        const li = el("li", "narrative-stage-item" + (isActive ? " is-active" : "") + (stageDone(st.key) ? " is-done" : ""));
         li.appendChild(el("span", "narrative-stage-dot"));
         li.appendChild(el("span", null, st.short));
-        li.addEventListener("click", () => { ns.stageKey = st.key; renderStage(); });
+        li.tabIndex = 0;
+        li.setAttribute("role", "button");
+        if (isActive) li.setAttribute("aria-current", "step");
+        const activateStage = () => { ns.stageKey = st.key; renderStage(); };
+        li.addEventListener("click", activateStage);
+        li.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") { e.preventDefault(); activateStage(); }
+        });
         list.appendChild(li);
       });
       panel.appendChild(list);
@@ -759,14 +827,16 @@
       const wrap = el("div", "contribution-field");
       if (opts.beat) { const bp = el("p", "v4-beat", opts.beat); bp.setAttribute("aria-hidden", "true"); wrap.appendChild(bp); }
       if (opts.plainLabel) wrap.appendChild(el("p", "v4-beat", opts.plainLabel));
+      const qText = resolveQ(def);
       const q = el("label", "v4-q");
-      q.appendChild(document.createTextNode(resolveQ(def)));
+      q.appendChild(document.createTextNode(qText));
       // F8: "new since V3" badges dropped — prototype chrome, meaningless to a researcher.
       // isNew kept harmlessly on the PROMPTS defs, just no longer rendered.
       wrap.appendChild(q);
       const help = resolveHelp(def);
       if (help) wrap.appendChild(el("p", "v4-help", help));
       const ta = el("textarea", "contribution-textarea");
+      ta.setAttribute("aria-label", qText);
       if (opts.minHeight) ta.style.minHeight = opts.minHeight;
       if (opts.placeholder) ta.placeholder = opts.placeholder;
       ta.value = getVal() || "";
@@ -858,6 +928,7 @@
         row.appendChild(chip);
       });
       parent.appendChild(row);
+      return row;
     };
 
     // ── Stage: Setup ────────────────────────────────────────────────────────
@@ -902,6 +973,31 @@
       "In the future we hope to continue this work and expand it to other cities."
     ].join("\n\n");
 
+    // V4 #8/#9: heading detection for pasted drafts. Returns the text to show (markers stripped)
+    // when the line reads as a heading, or null to treat it as body. Conservative by design: an
+    // explicit marker (**bold**, "# ", "1." / "1)") is always trusted; an unmarked line has to be
+    // short, free of sentence punctuation and either title-cased or colon-ended before it counts.
+    const HEADING_STOPWORDS = ["a","an","and","the","of","for","in","on","to","with","at","by","from","as","or","&"];
+    function headingLabel(line, allowUnmarked) {
+      const s = (line || "").trim();
+      if (!s) return null;
+      const bold = s.match(/^\*\*\s*([^*]+?)\s*\*\*\s*:?$/);
+      if (bold) return bold[1].trim();
+      const hash = s.match(/^#{1,6}\s+(.+?)\s*#*$/);
+      if (hash) return hash[1].trim();
+      const words = s.split(/\s+/);
+      if (/^\s*\d+[.)]\s+\S/.test(s) && words.length < 12) return s;
+      if (!allowUnmarked) return null;
+      if (words.length >= 9) return null;
+      if (/[.!?]/.test(s)) return null;
+      if (!/^[A-Za-z0-9][A-Za-z0-9 \u2013\u2014\-&/'’()]*:?$/.test(s)) return null;
+      if (/^(i|we|my|our|they|it|this|these|there)\b/i.test(s)) return null;
+      const content = words.map(w => w.replace(/[^A-Za-z0-9'’]/g, "")).filter(w => w && HEADING_STOPWORDS.indexOf(w.toLowerCase()) === -1);
+      if (!content.length) return null;
+      if (!content.every(w => /^[A-Z0-9]/.test(w)) && !/:$/.test(s)) return null;
+      return s;
+    }
+
     function analyzeDraft(text) {
       const paras = text.split(/\n\s*\n+/).map(p => p.trim()).filter(Boolean);
       const whole = text;
@@ -910,16 +1006,32 @@
         ["Names a problem / stakes (challenge, gap, need, risk…)", /\b(challenge|problem|gap|need|risk|barrier|question|fail|crisis)\b/i.test(whole)],
         ["Numbered or titled contributions detected", /^\s*\d+[\.\)]\s/m.test(whole)],
         ["Specific numbers, dates, or quantities present", /\b\d+(?:[.,]\d+)?%?\b/.test(whole)],
-        ["Evidence references detected (years, “et al.”, journals…)", /(\(\s*(19|20)\d{2}\s*\)|\bet al\.|\bjournal\b|\bproceedings\b|\bpress\b)/i.test(whole)],
+        // V4 #10: citation shapes the old test could not see — "cited 41 times", a DOI, a volume
+        // number, or a year in a "…2024; 12" citation tail. No general journal-name recognition.
+        ["Evidence references detected (years, citations, “et al.”, journals…)",
+          /(\(\s*(19|20)\d{2}\s*\)|\bet al\.|\bjournal\b|\bproceedings\b|\bpress\b|\bcited\s+\d+\s+times\b|\bdoi\b|\bvol\.\s*\d|\b(19|20)\d{2}\s*[;,]\s*(?:pp?\.|\d))/i.test(whole)],
         ["Mentorship / supervision named", /\b(mentor|supervis|student|trainee|postdoc|PhD)/i.test(whole)],
         ["Mentee destinations named (where they went)", /\b(now (at|a|an)|went on to|gone on to|moved to|joined|placed at|faculty (at|position)|professor at)\b/i.test(whole)],
         ["Future direction stated", /\b(future|next|looking ahead|will|propose|aim to|working toward)\b/i.test(whole)]
       ];
-      const paraReports = paras.map((p, i) => {
-        const isHeading = /^\s*\d+[\.\)]\s/.test(p) && p.split(/\s+/).length < 12;
+      const paraReports = [];
+      let bodyNum = 0;
+      paras.forEach((p, i) => {
+        const lines = p.split(/\n/);
+        const rest = lines.slice(1).join("\n").trim();
+        // V4 #8/#9: a marked-up first line (**bold**, "# ", "1." / "1)") is a heading even when the
+        // body follows on the next line with no blank line between them — then the remainder is
+        // linted as its own paragraph. The unmarked short-title shape is only trusted when it is
+        // the whole block: inside a block, a short first line is far more often a wrapped sentence.
+        const head = headingLabel(lines[0], !rest);
+        if (head !== null) {
+          paraReports.push({ i, text: head, isHeading: true, num: 0, lint: lintField("", "generic") });
+          if (rest) paraReports.push({ i, text: rest, isHeading: false, num: ++bodyNum, lint: lintField(rest, "generic") });
+          return;
+        }
         // H4: strip a leading "N." / "N)" enumerator before linting — it's structure, not a number.
         const forLint = p.replace(/^\s*\d+[.)]\s+/, "");
-        return { i, text: p, isHeading, lint: lintField(forLint, "generic") };
+        paraReports.push({ i, text: p, isHeading: false, num: ++bodyNum, lint: lintField(forLint, "generic") });
       });
       return { paras: paraReports, coverage };
     }
@@ -933,6 +1045,7 @@
       const taWrap = el("div", "contribution-field");
       taWrap.appendChild(el("label", "v4-q", "Your draft"));
       const ta = el("textarea", "contribution-textarea v4-xray-ta");
+      ta.setAttribute("aria-label", "Your draft");
       ta.placeholder = "Paste your narrative CV draft here…";
       ta.value = ns.xray.text || "";
       ta.addEventListener("input", e => { ns.xray.text = e.target.value; saveState(); });
@@ -965,13 +1078,19 @@
         results.appendChild(el("p", "v4-help", "Paragraph by paragraph (hedge notes are informational here — hedging is right for impact claims, wrong for outcomes):"));
         a.paras.forEach(pr => {
           const card = el("div", "v4-para-card");
-          card.appendChild(el("p", "v4-para-num", pr.isHeading ? "Heading" : "Paragraph " + (pr.i + 1)));
+          card.appendChild(el("p", "v4-para-num", pr.isHeading ? "Heading" : "Paragraph " + pr.num));
           card.appendChild(el("p", "v4-para-text", pr.text.length > 280 ? pr.text.slice(0, 280) + "…" : pr.text));
           if (!pr.isHeading) {
             const checks = el("div", "v4-checks");
             pr.lint.strengths.forEach(s => checks.appendChild(el("span", "v4-strength", "✓ " + s)));
             pr.lint.flags.forEach(f => checks.appendChild(el("span", "v4-flag", "⚠ " + f)));
             if (!pr.lint.strengths.length && !pr.lint.flags.length) checks.appendChild(el("span", "v4-meta", "No checks triggered."));
+            // H3/B-16: the same read-back the Contributions fields show — the paragraph with every
+            // triggering word marked. Flagged paragraphs only; headings are never linted.
+            if (pr.lint.flags.length && pr.lint.hits.length) {
+              checks.appendChild(el("span", "v4-meta", "Your text, with those words marked:"));
+              checks.appendChild(renderReadback(pr.text, pr.lint.hits));
+            }
             card.appendChild(checks);
           }
           results.appendChild(card);
@@ -1003,7 +1122,9 @@
         c.appendChild(note);
       }
 
-      // B-6 / H1: work mode stays on this stage permanently. Once >=1 is picked it collapses to a
+      // B-6 / H1 / H2: work mode stays on this stage permanently. While the row is open (or
+      // nothing is picked yet) chip clicks toggle selections and the row stays open; once >=1 is
+      // picked, a "Done" button appears at the end of the chip row, and only Done collapses to a
       // one-line summary with a "change" control that reopens the multi-select row.
       const hasWorkMode = (ns.lens.workMode || []).length > 0;
       if (hasWorkMode && !ns.ui.workModeOpen) {
@@ -1014,9 +1135,14 @@
         summary.appendChild(changeBtn);
         c.appendChild(summary);
       } else {
-        chipRow(c, "How does your work usually happen? Choose any that apply.",
+        const wmRow = chipRow(c, "How does your work usually happen? Choose any that apply.",
           "This sets which role and outcome prompts you see below. Pick more than one if more than one is true — most people are more than one.", WORK_MODES,
-          () => ns.lens.workMode, (v) => { ns.lens.workMode = v; }, true);
+          () => ns.lens.workMode, (v) => { ns.lens.workMode = v; ns.ui.workModeOpen = true; }, true);
+        if (hasWorkMode) {
+          const doneBtn = el("button", "narrative-draft-btn v4-inline-link", "Done");
+          doneBtn.addEventListener("click", () => { ns.ui.workModeOpen = false; saveState(); renderStage(); });
+          wmRow.appendChild(doneBtn);
+        }
       }
 
       // Genre skeleton exemplar
@@ -1028,9 +1154,10 @@
       exBox.appendChild(el("p", "narrative-legend-title", "What a finished contribution reads like — " + (labelOf(DISCIPLINES, disc) || "STEM")));
       const para = el("p", "v4-exemplar");
       exemplar.forEach(seg => {
-        const span = el("span", "seg seg-" + seg.r, seg.t + " ");
+        const span = el("span", "seg seg-" + seg.r, seg.t);
         if (seg.keys) seg.keys.forEach(k => span.appendChild(el("span", "v4-super", k)));
         para.appendChild(span);
+        para.appendChild(document.createTextNode(" "));
       });
       exBox.appendChild(para);
       const legend = el("div", "v4-skel-legend");
@@ -1069,13 +1196,16 @@
 
       ns.contributions.forEach((contrib, i) => c.appendChild(renderContribCard(contrib, i)));
 
-      const addBtn = el("button", "add-contribution-btn", "+ Add another contribution");
-      addBtn.addEventListener("click", () => {
-        if (ns.contributions.length >= 10) return;
-        ns.contributions.push(blankContribution());
-        saveState(); renderStage();
-      });
-      c.appendChild(addBtn);
+      if (ns.contributions.length >= 10) {
+        c.appendChild(el("p", "v4-help", "The formats cap out around ten contributions — you’re at the limit. Combine related work into one theme if you need room."));
+      } else {
+        const addBtn = el("button", "add-contribution-btn", "+ Add another contribution");
+        addBtn.addEventListener("click", () => {
+          ns.contributions.push(blankContribution());
+          saveState(); renderStage();
+        });
+        c.appendChild(addBtn);
+      }
       navRow(c);
     }
 
@@ -1124,9 +1254,11 @@
         roleRow.appendChild(b);
       });
       rWrap.appendChild(roleRow);
-      rWrap.appendChild(el("label", "v4-q", resolveRoleLineQ()));
+      const roleQText = resolveRoleLineQ();
+      rWrap.appendChild(el("label", "v4-q", roleQText));
       rWrap.appendChild(el("p", "v4-help", roleDef.help));
       const rTa = el("textarea", "contribution-textarea");
+      rTa.setAttribute("aria-label", roleQText);
       rTa.style.minHeight = "52px";
       rTa.value = contrib.roleLine || "";
       const rChecks = el("div", "v4-checks");
@@ -1144,12 +1276,10 @@
       promptBlock(card, PROMPTS.contrib.impact, () => contrib.impact, v => contrib.impact = v,
         { minHeight: "70px", lintKind: "impact", flagObj: contrib, flagKey: "impact", beat: BEAT_LABEL.impact });
 
+      // F2: the gate is removed (decisions-log override) — every discipline and work mode
+      // sees this prompt now; it stays optional and its copy is unchanged.
       const tDef = PROMPTS.contrib.translational;
-      const modeHit = (ns.lens.workMode || []).some(w => (tDef.gateModes || []).includes(w));
-      const discHit = (tDef.gateDiscipline || []).includes(ns.lens.discipline);
-      if (modeHit || discHit) {
-        promptBlock(card, tDef, () => contrib.translational, v => contrib.translational = v, { minHeight: "60px", plainLabel: "One moment (optional)" });
-      }
+      promptBlock(card, tDef, () => contrib.translational, v => contrib.translational = v, { minHeight: "60px", plainLabel: "One moment (optional)" });
 
       card.appendChild(renderEvidence(contrib));
 
@@ -1170,9 +1300,11 @@
         row.appendChild(el("span", "v4-key-badge", String.fromCharCode(97 + j)));
         const txt = el("input", "v4-text-input");
         txt.type = "text"; txt.placeholder = "Citation, adoption, award, dataset…";
+        txt.setAttribute("aria-label", "Evidence item");
         txt.value = ev.text || "";
         txt.addEventListener("input", e => { ev.text = e.target.value; saveState(); });
         const sel = el("select", "impact-select");
+        sel.setAttribute("aria-label", "Evidence type");
         sel.style.fontSize = "0.85rem"; sel.style.padding = "0.5rem";
         EVIDENCE_TYPES.forEach(t => { const o = el("option", null, t); o.value = t; if (ev.type === t) o.selected = true; sel.appendChild(o); });
         // B-27: re-render so the "Other" free-text label can appear/disappear (scroll preserved
@@ -1377,8 +1509,8 @@
       const missingFor = (testFn) => startedContribs.filter(({ c2 }) => !testFn(c2)).map(({ c2, idx }) => ({ num: idx + 1, title: c2.title }));
       // C7 / S171: name the offenders — number + headline when titled, "contribution N" when not;
       // comma-separated, capped at three with "and N more".
-      const withMissing = (label, missing) => {
-        if (!missing.length) return label;
+      const withMissing = (label, missing, on) => {
+        if (on || !missing.length) return label;
         const items = missing.map(m => m.title ? (m.num + ". " + m.title) : ("contribution " + m.num));
         const shown = items.length > 3 ? items.slice(0, 3).join(", ") + " and " + (items.length - 3) + " more" : items.join(", ");
         return label + " — missing on " + shown;
@@ -1393,9 +1525,12 @@
       section("Setup");
       row("Context set — agency, discipline and career stage", !!(ns.mode && ns.lens.agency && ns.lens.discipline));
       section("Contributions");
-      row(withMissing("At least one full contribution — headline, what you did, what already changed", missingFor(contribFullTest)), ns.contributions.some(contribFullTest));
-      row(withMissing("Every contribution has a role line", missingFor(contribRoleTest)), ns.contributions.every(contribRoleTest));
-      row(withMissing("Evidence attached to at least one contribution", missingFor(contribEvidenceTest)), ns.contributions.some(contribEvidenceTest));
+      const contribFullOn = ns.contributions.some(contribFullTest);
+      row(withMissing("At least one full contribution — headline, what you did, what already changed", missingFor(contribFullTest), contribFullOn), contribFullOn);
+      const contribRoleOn = ns.contributions.every(contribRoleTest);
+      row(withMissing("Every contribution has a role line", missingFor(contribRoleTest), contribRoleOn), contribRoleOn);
+      const contribEvidenceOn = ns.contributions.some(contribEvidenceTest);
+      row(withMissing("Evidence attached to at least one contribution", missingFor(contribEvidenceTest), contribEvidenceOn), contribEvidenceOn);
       section("Mentorship");
       row("One person named, with where they went", ns.mentees.some(m => m.who && m.destination));
       row("Mentoring approach written", !!ns.mentorPhilosophy);
@@ -1445,6 +1580,7 @@
       cq.appendChild(cqq);
       cq.appendChild(el("p", "v4-help", "What do you want a second pair of eyes on? These sit at the top of the advisor packet, with everything you marked ✗ or ?."));
       const cqTa = el("textarea", "contribution-textarea");
+      cqTa.setAttribute("aria-label", "Questions for your advisor");
       cqTa.style.minHeight = "70px";
       cqTa.placeholder = "e.g. Is contribution 2 strong enough to lead with? Does my last claim overreach?";
       cqTa.value = ns.consultQuestions || "";
