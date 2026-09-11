@@ -1,16 +1,17 @@
 # ncv-persona — reference
 
-Mechanics for running a persona session against `narrative-cv-prototype-v4.html`.
+Mechanics for a persona session against the current prototype — `narrative-cv-prototype-v5.html`
+(key `ncv-v5`, reports in `v5-sessions/`). V4 paths below apply only to explicit legacy runs.
 SKILL.md has the protocol; this file has everything the protocol leans on.
 
 ## Environment
 
 - Server: preview_start `{name: "pathways-review"}` → **port 8765** (defined in
   `.claude/launch.json`). Never use `pathways` (:8000) — that's the user's working server.
-- URL: `http://localhost:8765/narrative-cv-prototype-v4.html`. Branch: `integration-prototype`.
+- URL: `http://localhost:8765/narrative-cv-prototype-v5.html`. Branch: `integration-prototype`.
 - Per-run stamp: `git rev-parse --short HEAD`; require
   `git status --porcelain narrative-cv-prototype-v4.html` to be empty.
-- The tool stores everything under localStorage key **`ncv-v4`**. Only ever remove that key
+- The tool stores everything under localStorage key **`ncv-v5`** (V4 legacy: `ncv-v4`). Only ever remove that key
   (other prototypes share the origin). Note: the tool re-writes default state on first
   render (`renderStage` → `saveState`), so after a clean-slate reload the key EXISTS with
   `mode: ""` — "blank" means default-state content, not a missing key. Verify blankness by
@@ -35,6 +36,18 @@ SKILL.md has the protocol; this file has everything the protocol leans on.
 - The tool's builder functions (`buildExportText`, `buildAdvisorPacket`) are IIFE-scoped —
   unreachable from the console. Capture surfaces are the readonly export textarea
   (`.v4-export-area`) and `localStorage`.
+
+## V5 deltas (2026-09-11)
+
+The V4 DOM map below still holds, plus: work-mode chips live on Contributions permanently —
+chips + **Done** while open, `.v4-workmode-summary` + *Change* when closed; **Edit context**
+expands inline under the Tailored-for bar (no navigation); field labels carry `.v4-beat` job
+kickers; flagged fields render a `.v4-readback` line with `<mark>`ed trigger words (also in
+Structural-read cards); *One moment (optional)* shows for every discipline; evidence types
+include **Other** (+ free-text label); Review coverage is grouped by section and names failing
+contributions only on unmet rows; sidebar steps are keyboard-operable. Known-closed defects:
+#1 #2 #5 #8 #9 #10 (partial) #12 #14 #15, U1 (half). Still open: #4 #6-nuances #13, U6, passive
+voice. The cumulative index in `log.local.md` marks V5-closed slugs.
 
 ## V4 DOM map
 
@@ -76,7 +89,7 @@ Stages (sidebar `.narrative-stage-item`, label text): Setup · Structural read (
 // draft text (Review stage)
 document.querySelector('.v4-export-area').value
 // full state
-localStorage.getItem('ncv-v4')
+localStorage.getItem('ncv-v5')
 // all live lint on current stage
 [...document.querySelectorAll('.v4-checks')].map(n => n.innerText).filter(Boolean)
 // structural-read results

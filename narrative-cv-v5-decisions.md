@@ -235,3 +235,19 @@ behaviours (C1–C12), 11 flags (F1–F11). Calls made on the flags:
   `my` to people/role nouns (H1 in the report). Also worth folding in: work-mode row collapses
   after one pick (H2), no read-back marks in the Structural read (H3), "✓ done — missing on 3"
   wording (H4), prestige numbers still counted (H5).
+- **2026-09-11 · fix round (pre-researcher) — done.** Everything actionable from the user tests,
+  before the tool goes to a real researcher. Opus took detection, Sonnet took UI, Fable verified in
+  the browser against nadia's probe strings. Fixed: H1 (`my` restricted to people/role nouns — the
+  regression), H2 (work-mode row collapses only on *Done*), H3 (read-back marks in the Structural
+  read), H4 (coverage rows name missing contributions only when unmet), H5 (prestige flag names
+  every term, catches "IF 14.2", excludes metric numbers from the count), V4 #8/#9 (pasted bold and
+  enumerated headings become unlinted Heading cards; heading+body blocks split), #10 ("cited N
+  times"/doi/vol. detected), #14 (exemplar keys attach to their own sentence), #15 (ten-contribution
+  cap says so), #7 (storage-failure warning), #11 (keyboard sidebar, aria-current, aria-labels).
+  **Two decision amendments, revert if you disagree:** B-18 amended — `my` counts only with a
+  people/role noun; B-23/B-24 amended — the gate on *One moment* is dropped (copy-pass F2's
+  recommended override, taken under Prem's 2026-09-11 "fix from all findings" instruction), so every
+  discipline sees it. Still open by design: passive-voice detection (needs a calibration set), the
+  Structural-read retype wall (U6), evidence-row lint (#13), advisor-packet naming (B-35, advisors),
+  mentee-naming confirmation (B-28, Eli), the bare `journal` match in the evidence coverage row
+  (kept — removing it would un-detect legitimate drafts).
