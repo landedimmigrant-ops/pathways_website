@@ -226,7 +226,7 @@
         { beat: "activities", text: "the method, the build, the validation" },
         { beat: "outputs", text: "tools, code, datasets, methods papers" },
         { beat: "outcomes", text: "who has adopted it, and what they measure now" },
-        { beat: "impact", text: "the practice, if it holds at scale" }
+        { beat: "impact", text: "the practice across the sector, if it holds at scale" }
       ],
       health: [
         { beat: "stakes", text: "something current care misses, and who it misses" },
@@ -253,7 +253,7 @@
         { beat: "impact", text: "what the field counts as evidence" }
       ],
       creative: [
-        { beat: "stakes", text: "what the form, the site or the audience was not reaching" },
+        { beat: "stakes", text: "what the existing form, site or audience was leaving out" },
         { beat: "role", text: "what you made, and with whom" },
         { beat: "activities", text: "the commissions, the collaborations, the making" },
         { beat: "outputs", text: "works, performances, recordings, exhibitions" },
@@ -275,34 +275,34 @@
     SEG_META.forEach(([k, l]) => { BEAT_LABEL[k] = l; });
     const EXEMPLARS = {
       stem: [
-        { r: "stakes", t: "Aging bridges can fail with little warning, and manual inspection is costly, slow, and intermittent." },
+        { r: "stakes", t: "Aging bridges can fail with little warning, and manual inspection is costly, slow and intermittent." },
         { r: "role", t: "I led the development of a low-cost acoustic method for detecting fatigue before it is visible, co-designing the field trials with two municipal engineering teams." },
-        { r: "activities", t: "My group built the sensing pipeline, trained the detection models on three years of field recordings, and ran blind validation against inspector reports." },
-        { r: "outputs", t: "This work produced an open-source monitoring toolkit, a public benchmark dataset, and two methods papers.", keys: ["a", "b"] },
+        { r: "activities", t: "My group built the sensing pipeline, trained the detection models on three years of field recordings and ran blind validation against inspector reports." },
+        { r: "outputs", t: "This work produced an open-source monitoring toolkit, a public benchmark dataset and two methods papers.", keys: ["a", "b"] },
         { r: "outcomes", t: "To date, two transit agencies have adopted the toolkit for pilot monitoring, and the benchmark has been used by four independent groups.", keys: ["c"] },
         { r: "impact", t: "If validated at scale, continuous low-cost monitoring could shift bridge inspection from periodic to preventive across the aging infrastructure stock — a hypothesis the pilot data now lets us test." }
       ],
       health: [
         { r: "stakes", t: "Clinics rarely ask about food access, so a treatable driver of poor health stays invisible in primary care." },
         { r: "role", t: "I co-led, with a community health centre, the design of a two-question food-security screen that fits inside routine intake." },
-        { r: "activities", t: "My team ran co-design workshops with patients and intake staff, piloted the screen across four clinics, and measured uptake over 18 months." },
-        { r: "outputs", t: "The work produced a validated screening protocol, a training module for intake staff, and a peer-reviewed validation study.", keys: ["a"] },
+        { r: "activities", t: "My team ran co-design workshops with patients and intake staff, piloted the screen across four clinics and measured uptake over 18 months." },
+        { r: "outputs", t: "The work produced a validated screening protocol, a training module for intake staff and a peer-reviewed validation study.", keys: ["a"] },
         { r: "outcomes", t: "Three regional clinics have embedded the screen in routine intake, and referrals to food-support programs rose measurably at the pilot sites.", keys: ["b"] },
         { r: "impact", t: "Embedded screening could make food insecurity as routine to check as blood pressure — a system-level change we are now studying." }
       ],
       social: [
         { r: "stakes", t: "Policy debates about immigrant economic integration ran on snapshots; nobody followed the same people long enough to see the real trajectory." },
         { r: "role", t: "I built and lead a longitudinal program tracking earnings for a single cohort across a decade." },
-        { r: "activities", t: "I negotiated access to linked administrative data, designed the cohort methodology, and led the analysis across three waves." },
-        { r: "outputs", t: "The program produced a public-use dataset, a methods framework now used by two statistical agencies, and a book-length study.", keys: ["a", "b"] },
+        { r: "activities", t: "I negotiated access to linked administrative data, designed the cohort methodology and led the analysis across three waves." },
+        { r: "outputs", t: "The program produced a public-use dataset, a methods framework now used by two statistical agencies and a book-length study.", keys: ["a", "b"] },
         { r: "outcomes", t: "Two provincial ministries cited the trajectory findings in settlement-program reviews, and the dataset underpins a growing body of secondary studies.", keys: ["c"] },
         { r: "impact", t: "Trajectory-based evidence could reshape how integration policy is evaluated — from point-in-time outcomes to decade-scale mobility." }
       ],
       humanities: [
-        { r: "stakes", t: "Home-movie archives of migrant communities were decaying, uncatalogued, and absent from the historical record." },
+        { r: "stakes", t: "Home-movie archives of migrant communities were decaying, uncatalogued and absent from the historical record." },
         { r: "role", t: "I direct a recovery project that treats these archives as primary sources for diasporic memory." },
         { r: "activities", t: "I led digitisation partnerships with three community organisations and developed the interpretive framework for reading domestic footage as historical evidence." },
-        { r: "outputs", t: "The project produced a digitised open collection, a monograph, and a touring exhibition programme.", keys: ["a", "b"] },
+        { r: "outputs", t: "The project produced a digitised open collection, a monograph and a touring exhibition programme.", keys: ["a", "b"] },
         { r: "outcomes", t: "The collection is now taught in four university curricula, and the exhibition reached audiences in six cities.", keys: ["c"] },
         { r: "impact", t: "Treating domestic footage as evidence could widen whose history gets kept — a methodological shift the field is beginning to take up." }
       ],
@@ -310,7 +310,7 @@
         { r: "stakes", t: "Conventional theatre kept stories of displacement inside the building, away from the places where they happened." },
         { r: "role", t: "I created and direct a site-specific performance cycle staged in transit stations and border landscapes." },
         { r: "activities", t: "I composed the cycle across three commissions, working with displaced performers as co-creators rather than subjects." },
-        { r: "outputs", t: "The cycle comprises four staged works, an audio walk, and a documentary record of the process.", keys: ["a"] },
+        { r: "outputs", t: "The cycle comprises four staged works, an audio walk and a documentary record of the process.", keys: ["a"] },
         { r: "outcomes", t: "The works toured to three international festivals, and two companies have licensed the participatory staging method.", keys: ["b"] },
         { r: "impact", t: "Site-based co-creation could change who performance about displacement is for — moving the audience to the site of the story." }
       ]
@@ -422,10 +422,10 @@
       const ownership = iVerb || myWord;
       const weak = [];
       WEAK_PHRASES.forEach(p => { const ms = allMatches(t, p); if (ms.length) { weak.push(p); ms.forEach(m => out.hits.push({ text: m.text, rule: "weak" })); } });
-      if (ownership && weCount) out.strengths.push("Team voice and your own role, both visible — that is the balance the format asks for.");
-      else if (ownership) out.strengths.push("Your own role is marked.");
+      if (ownership && weCount) out.strengths.push("Team voice and your own role are both visible.");
+      else if (ownership) out.strengths.push("Your own role is named.");
       if (weCount && !ownership) {
-        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " with no “I …” nearby — as written, which part was yours is invisible.");
+        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " with no “I …” nearby — nothing here says which part was yours.");
         weMatches.forEach(m => out.hits.push({ text: m.text, rule: "ownership" }));
       }
       weak.forEach(p => out.flags.push("“" + p + "” doesn't say what you did — name the specific action."));
@@ -482,12 +482,12 @@
         const hedges = [];
         HEDGES.forEach(h => { const ms = allMatches(hedgeText, h); if (ms.length) { hedges.push(h); ms.forEach(m => out.hits.push({ text: m.text, rule: "hedge" })); } });
         if (kind === "impact") {
-          if (hedges.length) { out.strengths.push("Hedged — exactly right here. What could change is the one place for it."); out.score++; }
+          if (hedges.length) { out.strengths.push("Hedged — this is the field where that belongs."); out.score++; }
         } else if (kind === "generic") {
           if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + " — right when you are saying what might follow, loose when you are saying what happened.");
           else out.score++;
         } else {
-          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + " — this field is for what happened. Move the maybes to What could change.");
+          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + " — this field is for what happened. What might follow goes under What could change.");
           else out.score++;
         }
       }
@@ -567,6 +567,7 @@
       .replace(/\{program\}/g, ns.lens.program || "this competition")
       .replace(/\{agency\}/g, labelOf(AGENCIES, ns.lens.agency) || "your agency");
     const resolveQ = (def) => {
+      if (def.noProgramQ && !ns.lens.program) return def.noProgramQ;
       if (def.variants) {
         for (const tok of activeTokens()) if (def.variants[tok]) return interpolate(def.variants[tok]);
       }
@@ -595,11 +596,11 @@
     const PROMPTS = {
       ps: {
         challenge: {
-          q: "What is the one big problem your whole research program returns to?",
+          q: "What is the problem your whole research program keeps returning to?",
           help: "One or two sentences — a throughline, not a single project.",
           variants: {
             humanities: "What is the central question your work keeps asking?",
-            creative: "What inquiry drives your body of work?",
+            creative: "What question does your body of work keep asking?",
             social: "What problem in the world does your research keep returning to?"
           }
         },
@@ -609,9 +610,12 @@
           q: "List your strongest signals of standing.",
           help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out h-index and journal impact factor — reviewers are told to disregard both.",
           isNew: true,
-          variants: { early: "List your strongest signals so far — key papers, fellowships, awards, the scale of a dataset or collaboration. Early-career records still carry signal; name what you have." }
+          variants: { early: "List your strongest signals so far — key papers, fellowships, awards, the scale of a dataset or collaboration. Name what you have." }
         },
-        programFit: { q: "You're aiming at {program} ({agency}). Why is this the right competition for where you are?", help: "What does it reward that you already do? A narrative CV is aimed, not generic — name the match.", isNew: true },
+        // Approved fix: with no competition named in Setup, ask about the competition itself
+        // instead of interpolating empty placeholders. noProgramQ is checked in resolveQ()
+        // before the normal variants/interpolate path runs.
+        programFit: { q: "You're aiming at {program} ({agency}). Why is this the right competition for where you are?", noProgramQ: "Which competition do you have in mind, and why does it fit where you are?", help: "What does it reward that you already do? A narrative CV is aimed, not generic — name the match.", isNew: true },
         horizon: { q: "Where is this heading next?", help: "Name the direction, not a to-do list. The statement should end pointed forward." }
       },
       contrib: {
@@ -636,18 +640,18 @@
           }
         },
         impact: { q: "What could change at the scale of a field, sector or population?", help: "This is the one field where hedged language belongs — say what could follow, not what already has. Academic impact counts fully here: changing how others think, what gets studied, how a problem gets framed. Influence on the direction of thought is on the reviewers' own list.", academicTag: true },
-        translational: { q: "What is one moment when this work reached someone?", help: "One scene, two sentences — a person, a clinic, a classroom, a community meeting, a committee that used it. This is the texture behind What already changed, not a second version of it. Optional.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
+        translational: { q: "What is one moment when this work reached someone?", help: "One scene, two sentences — a person, a clinic, a classroom, a community meeting, a committee that used it. This is one concrete instance of What already changed, not a second version of it. Optional.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
         evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter — a, b, c — and the letter appears in your draft beside the sentence it backs up." }
       },
       mentor: {
-        philosophy: { q: "What is one concrete thing you do that shows how you mentor?", help: "Not a slogan — one practice you actually have. How you run a first meeting, how you decide authorship, how you hand a project over when someone is ready for it." },
+        philosophy: { q: "What is one concrete thing you do that shows how you mentor?", help: "One practice you actually have, not a statement of principle. How you run a first meeting, how you decide authorship, how you hand a project over when someone is ready for it." },
         edi: {
           // B-30/B-31: the "Equity in practice —" label is dropped (the abstract noun summoned
           // boilerplate); the question underneath already asks for a structure, not a statement.
           q: "Who gets into your group, and what have you changed about how they get there?", help: "One thing you changed, not a statement of values: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so what you changed carries further than what you believe.",
           variants: { community: "Who do your community partnerships bring into research, and what did you change to make that possible?" }
         },
-        crossStage: { q: "Beyond your own students — who else do you mentor? Take one person and say what you actually did.", help: "Informal mentoring counts here, and the format says so: early-career colleagues, postdocs you don't supervise, visiting scholars, peers, community researchers. One example with something in it — a grant you read, an introduction you made, a room you got someone into — says more than the list of who." }
+        crossStage: { q: "Beyond your own students — who else do you mentor? Take one person and say what you actually did.", help: "Informal mentoring counts here, and the format says so: early-career colleagues, postdocs you don't supervise, visiting scholars, peers, community researchers. One concrete example — a grant you read, an introduction you made, a room you got someone into — says more than a list of names." }
       }
     };
 
@@ -761,15 +765,15 @@
       chipRow(parent, "Which funding agency?", "This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec. If you are not sure, pick Other — you can change it later.", AGENCIES,
         () => ns.lens.agency,
         (v) => { ns.lens.agency = v; const a = AGENCIES.find(x => x.v === v); ns.lens.format = a ? a.fmt : ""; });
-      chipRow(parent, "Closest disciplinary home", "This changes the worked example and the shape hints you see. Pick the closest fit — it changes nothing you write.", DISCIPLINES,
+      chipRow(parent, "Closest disciplinary home", "This changes the worked example and the discipline notes you see. Pick the closest fit — it changes nothing you write.", DISCIPLINES,
         () => ns.lens.discipline, (v) => { ns.lens.discipline = v; });
-      chipRow(parent, "Career stage", "This changes a few of the prompts. Reviewers are also told not to penalize a non-linear career — gaps and changes of direction are not held against you.", CAREER_STAGES,
+      chipRow(parent, "Career stage", "This changes a few of the prompts — early career, for instance, asks for the signals you have so far, not a full career's worth of standing.", CAREER_STAGES,
         () => ns.lens.careerStage, (v) => { ns.lens.careerStage = v; });
       const progWrap = el("div", "contribution-field");
       progWrap.appendChild(el("label", "v4-q", "Competition you're aiming at (optional)"));
       progWrap.appendChild(el("p", "v4-help", "A narrative CV is aimed, not generic. If you name the competition here, the personal statement prompt will ask about that competition by name."));
       const progInput = el("input", "v4-text-input");
-      progInput.type = "text"; progInput.placeholder = "e.g. the specific chair, grant, or award";
+      progInput.type = "text"; progInput.placeholder = "e.g. the specific chair, grant or award";
       progInput.value = ns.lens.program || "";
       progInput.addEventListener("input", (e) => { ns.lens.program = e.target.value; saveState(); });
       progWrap.appendChild(progInput);
@@ -1052,7 +1056,7 @@
 
     // ── Stage: Setup ────────────────────────────────────────────────────────
     function renderSetup(c) {
-      stageHead(c, "Setup", "How are you arriving?",
+      stageHead(c, "Setup", "Start fresh, or bring a draft?",
         "This tool will help you get familiar with how a narrative CV asks you to think about your work and describe it. It is a prototype, and it works in English only for now. It runs without AI models — the checks are fixed rules, and nothing you type leaves this browser. What you build here is a first outline in your own words: your contributions, your mentorship record and a personal statement, plus the questions you want to take to an advisor.",
         "What a narrative CV is, and which funders use it");
 
@@ -1073,9 +1077,9 @@
       const confirm = el("p", "v4-mode-confirm" + (ns.mode ? "" : " is-muted"));
       confirm.setAttribute("aria-live", "polite");
       confirm.textContent = ns.mode === "xray"
-        ? "Structural read — selected. Set your context below, then you paste your draft."
+        ? "Structural read — selected. Set your context below, then paste your draft."
         : ns.mode === "compose"
-          ? "Start fresh — selected. Set your context below, then you go straight to writing your contributions."
+          ? "Start fresh — selected. Set your context below, then go straight to your contributions."
           : "Choose one to start. Switching later keeps everything you have written.";
       c.appendChild(confirm);
 
@@ -1124,13 +1128,13 @@
         ["Opens with “I am a …” anchor", /\bI am an?\b/i.test(whole)],
         ["Names a problem / stakes (challenge, gap, need, risk…)", /\b(challenge|problem|gap|need|risk|barrier|question|fail|crisis)\b/i.test(whole)],
         ["Numbered or titled contributions detected", /^\s*\d+[\.\)]\s/m.test(whole)],
-        ["Specific numbers, dates, or quantities present", /\b\d+(?:[.,]\d+)?%?\b/.test(whole)],
+        ["Specific numbers, dates or quantities present", /\b\d+(?:[.,]\d+)?%?\b/.test(whole)],
         // V4 #10: citation shapes the old test could not see — "cited 41 times", a DOI, a volume
         // number, or a year in a "…2024; 12" citation tail. No general journal-name recognition.
         ["Evidence references detected (years, citations, “et al.”, journals…)",
           /(\(\s*(19|20)\d{2}\s*\)|\bet al\.|\bjournal\b|\bproceedings\b|\bpress\b|\bcited\s+\d+\s+times\b|\bdoi\b|\bvol\.\s*\d|\b(19|20)\d{2}\s*[;,]\s*(?:pp?\.|\d))/i.test(whole)],
         ["Mentorship / supervision named", /\b(mentor|supervis|student|trainee|postdoc|PhD)/i.test(whole)],
-        ["Mentee destinations named (where they went)", /\b(now (at|a|an)|went on to|gone on to|moved to|joined|placed at|faculty (at|position)|professor at)\b/i.test(whole)],
+        ["Where the people you trained went", /\b(now (at|a|an)|went on to|gone on to|moved to|joined|placed at|faculty (at|position)|professor at)\b/i.test(whole)],
         ["Future direction stated", /\b(future|next|looking ahead|will|propose|aim to|working toward)\b/i.test(whole)]
       ];
       const paraReports = [];
@@ -1157,8 +1161,8 @@
 
     function renderXray(c) {
       lensBar(c);
-      stageHead(c, "Structural read", "Read your draft the way the genre does",
-        "Paste your existing draft. The tool segments it and runs the same deterministic checks paragraph by paragraph, then maps it against the structural moves developed narrative CVs make. It is a rough reading, not a judgment. Nothing you paste leaves this browser.",
+      stageHead(c, "Structural read", "What your draft already has, and what it doesn't",
+        "Paste your existing draft. The tool splits it into paragraphs, runs the same fixed-rule checks on each, then maps it against the moves a developed narrative CV makes. It is a rough reading, not a judgment. Nothing you paste leaves this browser.",
         "What the format expects in each section");
 
       const taWrap = el("div", "contribution-field");
@@ -1167,15 +1171,18 @@
       ta.setAttribute("aria-label", "Your draft");
       ta.placeholder = "Paste your narrative CV draft here…";
       ta.value = ns.xray.text || "";
-      ta.addEventListener("input", e => { ns.xray.text = e.target.value; saveState(); });
       taWrap.appendChild(ta);
       c.appendChild(taWrap);
 
       const btnRow = el("div", "narrative-funder-toggle");
       const runBtn = el("button", "btn btn-primary", "Run the structural read");
       runBtn.addEventListener("click", () => { saveState(); renderStage(); window.setTimeout(() => { const r = document.getElementById("v4-xray-results"); if (r) r.scrollIntoView({ behavior: "smooth", block: "start" }); }, 80); });
+      // Approved fix: never let the sample overwrite a pasted draft — hide the button while
+      // the box has text, and bring it back the moment the box is empty.
       const sampleBtn = el("button", "btn btn-outline", "Try with a sample draft");
+      sampleBtn.hidden = !!ns.xray.text.trim();
       sampleBtn.addEventListener("click", () => { ns.xray.text = XRAY_SAMPLE; saveState(); renderStage(); });
+      ta.addEventListener("input", e => { ns.xray.text = e.target.value; saveState(); sampleBtn.hidden = !!e.target.value.trim(); });
       btnRow.appendChild(runBtn); btnRow.appendChild(sampleBtn);
       c.appendChild(btnRow);
 
@@ -1194,7 +1201,7 @@
         });
         results.appendChild(cov);
 
-        results.appendChild(el("p", "v4-help", "Paragraph by paragraph (hedge notes are informational here — hedging is right for impact claims, wrong for outcomes):"));
+        results.appendChild(el("p", "v4-help", "Paragraph by paragraph (the hedge notes here are notes, not flags — hedging belongs in what could change, not in what already did):"));
         a.paras.forEach(pr => {
           const card = el("div", "v4-para-card");
           card.appendChild(el("p", "v4-para-num", pr.isHeading ? "Heading" : "Paragraph " + pr.num));
@@ -1217,7 +1224,7 @@
 
         const nextNote = el("div", "narrative-funder-note");
         nextNote.appendChild(el("strong", null, "Next: "));
-        nextNote.appendChild(document.createTextNode("rebuild the weakest contribution in the Contributions step — the prompts there target exactly the moves this read found missing. Or export this analysis from the Review step and bring it to your advisor."));
+        nextNote.appendChild(document.createTextNode("take any contribution you want to rework into the Contributions step — the prompts there ask for the moves this read looked for. Or export this read from the Review step and bring it to your advisor."));
         results.appendChild(nextNote);
         c.appendChild(results);
       }
@@ -1228,7 +1235,7 @@
     function renderContributions(c) {
       lensBar(c);
       stageHead(c, "Step · Most significant contributions", "Your strongest contributions",
-        "Group connected work into themes — a cluster of papers, a program, a partnership all count as one contribution. Three to five is a good target, and the formats allow up to ten. The fields below are scaffolding for thinking; in the finished CV they disappear into one flowing paragraph, so read the example first and you will see what you are aiming at.",
+        "Group connected work into themes — a cluster of papers, a program, a partnership all count as one contribution. Three to five is a good target, and the formats allow up to ten. The fields below break the work into parts; in the finished CV they disappear into one flowing paragraph. The example shows what that looks like.",
         "What counts as a contribution");
 
       // B-17 + B-20: a one-time note that the checks below are suggestions, not a gate.
@@ -1255,7 +1262,7 @@
         c.appendChild(summary);
       } else {
         const wmRow = chipRow(c, "How does your work usually happen? Choose any that apply.",
-          "This sets which role and outcome prompts you see below. Pick more than one if more than one is true — most people are more than one.", WORK_MODES,
+          "This sets which role and outcome prompts you see below. Pick more than one if more than one is true.", WORK_MODES,
           () => ns.lens.workMode, (v) => { ns.lens.workMode = v; ns.ui.workModeOpen = true; }, true);
         if (hasWorkMode) {
           const doneBtn = el("button", "narrative-draft-btn v4-inline-link", "Done");
@@ -1288,7 +1295,7 @@
         const hintList = el("ul", "v4-shape-hint-list");
         SHAPE_HINTS[disc].forEach(h => hintList.appendChild(el("li", null, (BEAT_LABEL[h.beat] || h.beat) + " — " + h.text)));
         hint.appendChild(hintList);
-        hint.appendChild(el("p", "v4-help", "This is flavour, not a checklist. Skip any job your record doesn't have — a contribution is not weaker for missing one."));
+        hint.appendChild(el("p", "v4-help", "These are examples, not a checklist. Skip any job your record doesn't have — a contribution is not weaker for missing one."));
         c.appendChild(hint);
       }
 
@@ -1460,7 +1467,7 @@
       const w = buildWeave(contrib);
       const box = el("div", "narrative-legend");
       box.style.marginTop = "0.75rem";
-      box.appendChild(el("p", "narrative-legend-note", "Your material on one surface, with suggested joins. This is not the finished paragraph — you still write that, in your own words."));
+      box.appendChild(el("p", "narrative-legend-note", "Your material in one place, with suggested joins. This is not the finished paragraph — you still write that, in your own words."));
       if (w.title) box.appendChild(el("p", "narrative-legend-title", w.title));
       if (w.roleLine) box.appendChild(el("p", "v4-weave-role", w.roleLine));
       const body = el("p", "v4-weave-body");
@@ -1492,7 +1499,7 @@
     // ── Stage: Mentorship ───────────────────────────────────────────────────
     function renderMentorship(c) {
       lensBar(c);
-      stageHead(c, "Step · Supervisory and mentorship", "What you made possible for others",
+      stageHead(c, "Step · Supervisory and mentorship", "Who you trained, and how you mentor",
         "Start with the totals, then make it concrete. The most persuasive thing in this section is one person you trained and where they went. Formal supervision counts here, and so does informal mentoring.",
         "What counts as mentorship activity");
 
@@ -1560,7 +1567,7 @@
     // ── Stage: Personal statement (written LAST, appears first in export) ──
     function renderPersonal(c) {
       lensBar(c);
-      stageHead(c, "Step · Personal statement (written last)", "Who you are & why your work matters",
+      stageHead(c, "Step · Personal statement (written last)", "Who you are, and the thread through your work",
         "It appears first in the finished CV, and it is the last thing you write. The prompts below ask you to name the thread running through the contributions you have just written.",
         "What the personal statement has to do");
 
@@ -1660,7 +1667,7 @@
       row("Mentoring approach written", !!ns.mentorPhilosophy);
       section("Personal statement");
       row("Central challenge named", !!ns.ps.challenge);
-      row("Origin or pivot story written", !!ns.ps.pivot);
+      row("How you got here — written", !!ns.ps.pivot);
       row("Standing paragraph drafted", !!ns.ps.standing);
       row("Why this competition — answered", !!ns.ps.programFit);
       c.appendChild(cov);
@@ -1866,7 +1873,7 @@
       html += "<h2>Supervisory & mentorship activities</h2>";
       const mc = ns.mentorCounts;
       const totals = [["PhD", mc.phd], ["Master's", mc.masters], ["Undergrad", mc.undergrad], ["Postdoc", mc.postdoc]].filter(([, v]) => v).map(([k, v]) => esc(v) + " " + k);
-      if (totals.length) html += "<p><b>Totals (last 5 years):</b> " + totals.join(", ") + "</p>";
+      if (totals.length) html += "<p><b>Totals (last five years):</b> " + totals.join(", ") + "</p>";
       const traj = ns.mentees.filter(m => m.who || m.destination);
       traj.forEach(m => { html += "<p>" + esc([m.who, m.stage].filter(Boolean).join(", ")) + (m.destination ? " → " + esc(m.destination) : "") + (m.why ? ". " + esc(m.why) : "") + "</p>"; });
       [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(s => s && s.trim()).forEach(s => { html += "<p>" + esc(s.trim()) + "</p>"; });

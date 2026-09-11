@@ -282,3 +282,16 @@ behaviours (C1–C12), 11 flags (F1–F11). Calls made on the flags:
   Contributions one switches by discipline) — decide after the researcher session whether they need
   per-discipline variants; guide links all land on the page, not section anchors, until the guide
   rewrite lands.
+- **2026-09-11 · full voice pass, built.** Prem's test: "speak to researchers like collaborators"; his
+  trigger was the Setup heading "How are you arriving?" (patronizing). Opus audited ~290 strings
+  under `pathways-voice` → `narrative-cv-v5-voice-audit.md` (33 changed, V1–V33); Sonnet applied.
+  Headline: Setup heading is now **"Start fresh, or bring a draft?"**; three more stage headings
+  were arch and are plain now (Structural read, Mentorship, Personal statement); the lint
+  *strengths* were grading homework ("that is the balance the format asks for") and now state what
+  is there; internal words that leaked to readers (segments, flavour, shape hints, deterministic,
+  mentee) are gone; serial commas out of the example prose. Three non-voice catches fixed in the
+  same build: program-fit question has a fallback when no competition is set; "Try with a sample
+  draft" can't overwrite a pasted draft; career-stage help no longer attributes a rule to reviewers
+  (the only reviewer-instruction claim in the tool remains the sourced impact-factor/h-index one).
+  Left alone on purpose: the privacy/prototype/no-AI lines (truth claims, not copy), the B-1 lede
+  (Prem-specified), and the guide-link texts.
