@@ -341,3 +341,25 @@ behaviours (C1–C12), 11 flags (F1–F11). Calls made on the flags:
   on the work-mode chips (Change → chip → Done) and on career stage, without a reload and with the
   scroll position kept; the match line names what is shown; no console errors; `lint` clean on all 60.
 
+- **2026-09-12 · register pass on the example library and the tool copy — built.** Prem's review of
+  the 60 cells: "review the language so it's more like an academic … weird glitches … like arriving,
+  the negative statements, this is, it's not". Measured before rewriting: 56 of 60 cells carried at
+  least one of the patterns; the tool copy carried 20 "X, not Y" contrasts, 13 nobody/never/nothing,
+  6 "this is", 5 "actually". **The rule, now standing for all NCV prose:** declarative and specific;
+  state a gap as a gap ("has received little study", "limits comparability"); no contrastive framing
+  (*rather than, instead of, not X but Y, X, not Y*); no dramatized absence (*nobody, never, goes
+  unrecorded, stays invisible*); no personification (*records arrive, data sit, hands that week*); no
+  emphatic *actually*; no aphoristic closers (*who counts as, who gets to, on their own terms*); no
+  gerund-led impact sentences; no colon reveals; a plain negative at most once per paragraph. Built
+  by five Opus rewriters (one discipline each, facts and numbers frozen) against a detector plus the
+  tool's own checks; Fable varied the impact openings afterwards ("If …" had become the new
+  template: now 18 of 60) and cleaned the topic lines; Fable rewrote 47 copy strings and the Personal
+  statement and Mentorship examples by hand. The retained five approved examples were included on
+  the same terms (four changed; the bridges one already passed). Result: 4 of 60 cells carry a single
+  plain negative, all permitted; `node scripts/ncv-v5-examples.js register` re-checks the rule and
+  `lint` the tool's checks. Copy left as it was on purpose: the privacy and prototype truth claims
+  ("nothing you write leaves this browser"), two-part questions ("Who used it, and what shifted"),
+  the Structural read heading, and "This cannot be undone" on the clear-draft confirm.
+  **Verified in the browser:** the card renders the rewritten cells, discipline/stage/mode swaps
+  still work, no console errors. Follow-up worth considering: the same rule as a tenth check in the
+  `pathways-voice` skill.

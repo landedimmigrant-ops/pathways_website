@@ -2,8 +2,9 @@
 /**
  * Narrative CV V5 — worked-example library tools. Reads narrative-cv-prototype-v5.html only.
  *
- *   node scripts/ncv-v5-examples.js lint     # run the tool's own field checks over all 60 cells
- *   node scripts/ncv-v5-examples.js review   # regenerate narrative-cv-v5-examples-review.md
+ *   node scripts/ncv-v5-examples.js lint      # run the tool's own field checks over all 60 cells
+ *   node scripts/ncv-v5-examples.js register  # Prem's register rule: no contrast, drama, idiom or flourish
+ *   node scripts/ncv-v5-examples.js review    # regenerate narrative-cv-v5-examples-review.md
  *
  * The library lives between the EXEMPLAR_LIBRARY:begin/end markers in the prototype; the lint
  * engine is the prototype's own lintField, extracted from the same file so the two cannot drift.
@@ -108,7 +109,44 @@ function review() {
   console.log("wrote " + path.relative(ROOT, REVIEW));
 }
 
+// Register (Prem, 2026-09-12): the examples read as an academic writes — declarative and specific.
+// Hard patterns must be absent; a plain negative (is not / cannot / without) at most once per cell.
+const REGISTER_HARD = {
+  "rather than / instead of": /\b(rather than|instead of)\b/gi,
+  "not … but / X, not Y / not only": /\bnot\b[^.;]{0,40}?\bbut\b|,\s*not\b|\bnot only\b/gi,
+  "nobody / never / nowhere / nothing": /\b(nobody|no one|no-one|never|nowhere|nothing)\b/gi,
+  "goes / stays / sits un-": /\b(go|goes|went|gone|stay|stays|stayed|remain|remains|sit|sits|sat|left|leave|leaves)\s+(un\w+|invisible|unfelt|out of reach|apart|hidden|beside)\b/gi,
+  "leaves no": /\b(leave|leaves|left)\s+(no|almost no)\b/gi,
+  "this is": /\bthis is\b/gi,
+  "actually / really / quietly / simply": /\b(actually|really|genuinely|quietly|simply)\b/gi,
+  "arriv-": /\barriv\w*/gi,
+  "who counts / gets to / decides": /\b(who|what)\s+(counts|gets to|decides|is able|is willing|is for|answers to|is held to)\b/gi,
+  "which is what / where": /\bwhich is (what|where|the)\b/gi,
+  "idiom": /\b(on (their|its|his|her) own terms|at the door|in the dark|the footnote|the moment a|as though|in the hands of|hands that)\b/gi,
+  ", and who / what": /,\s*and (who|what|which)\b/gi,
+  "colon reveal": /:\s+[a-z]/g,
+  "em dash": /—/g
+};
+const REGISTER_SOFT = /\b(is not|are not|was not|were not|isn['’]t|aren['’]t|cannot|can['’]t|does not|do not|did not|has not|have not|no longer|without)\b/gi;
+function register() {
+  let problems = 0, count = 0;
+  cells((disc, mode, stage, group, ex) => {
+    if (!ex) return; count++;
+    const tag = disc + "/" + mode + "/" + stage, issues = []; let soft = 0;
+    ex.segments.forEach(s => {
+      for (const [name, re] of Object.entries(REGISTER_HARD)) { re.lastIndex = 0; const ms = s.t.match(re); if (ms) issues.push("[" + s.r + "] " + name + ": " + ms.join(" / ")); }
+      if (s.r === "impact" && /^\s*[A-Z]\w+ing\b/.test(s.t)) issues.push("[impact] opens with a gerund");
+      REGISTER_SOFT.lastIndex = 0; const sn = s.t.match(REGISTER_SOFT); if (sn) soft += sn.length;
+    });
+    if (soft > 1) issues.push("plain negatives: " + soft + " (at most one per cell)");
+    if (issues.length) { problems += issues.length; console.log("✗ " + tag + " — " + (ex.topic || "")); issues.forEach(i => console.log("    " + i)); }
+  });
+  console.log(count + " cells checked — " + (problems ? problems + " register issue(s)" : "register clean"));
+  process.exit(problems ? 1 : 0);
+}
+
 const cmd = process.argv[2];
 if (cmd === "lint") lint();
+else if (cmd === "register") register();
 else if (cmd === "review") review();
-else { console.log("usage: node scripts/ncv-v5-examples.js lint | review"); process.exit(2); }
+else { console.log("usage: node scripts/ncv-v5-examples.js lint | register | review"); process.exit(2); }
