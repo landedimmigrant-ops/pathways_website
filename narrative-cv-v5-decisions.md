@@ -295,3 +295,49 @@ behaviours (C1–C12), 11 flags (F1–F11). Calls made on the flags:
   (the only reviewer-instruction claim in the tool remains the sourced impact-factor/h-index one).
   Left alone on purpose: the privacy/prototype/no-AI lines (truth claims, not copy), the B-1 lede
   (Prem-specified), and the guide-link texts.
+- **2026-09-11 · dynamic worked example on Contributions — built.** Prem's instruction: the fictional
+  example card should change with the work-mode chips (and combinations), and with the discipline and
+  career stage from Setup; write STEM, humanities and health at least in a team-based and a
+  solo/community variant; keep the badge and the red heading; research it so every selection gets a
+  specific example. Built as a full library: **5 disciplines × 4 work modes × 3 career stages = 60
+  cells**, each a different invented researcher and project (`EXEMPLAR_LIBRARY`, between the
+  `EXEMPLAR_LIBRARY:begin/end` markers). Fable directed and wrote the brief; five Opus writers took one
+  discipline each; every sentence was run through the tool's own `lintField` (ownership, numbers,
+  vague words, hedges, prestige terms) plus Canadian Press spelling and Oxford-comma checks, so no
+  example contradicts the check under a field. Review surface for Prem:
+  `narrative-cv-v5-examples-review.md` (all 60, with an Overrides table at the top); regenerate it, and re-run the
+  checks after any edit, with `node scripts/ncv-v5-examples.js review` / `lint` (reads the HTML only).
+  Research behind the brief: the Tri-agency CV's own contribution categories and reviewer
+  indicators (ncv-genre-sources.md), the Concordia workshop deck ("who benefited and how"; credit
+  collaborators and trainees), the Glasgow/Aberdeen pilot prose examples (first person, active
+  verbs, role clear in collaborations, everything evidenced), U Winnipeg's category list, the RMIT
+  guide to evidence for creative-practice outputs, a published arts-and-humanities narrative CV
+  example. Inferences to override:
+  - INFERRED — matrix size: full 60 rather than the six Prem named. Reason: stage-proportionate
+    claims are the thing early-career readers most need to see, and the reviewer guidelines read a
+    record relative to career stage. If 60 is too many to keep, drop the stage axis to two levels
+    (early / established) and 20 cells remain.
+  - INFERRED — default cell before a question is answered: the discipline's usual mode (STEM and
+    health: team-based; social sciences, humanities, creative: largely solo); mid career.
+  - INFERRED — combinations: a cell scores the modes it shares with the answers minus the tags it
+    carries that were not picked; ties go to the more specific mode (community, industry, team,
+    solo). Some cells carry two tags on purpose (an engineering industry partnership is team work; a
+    community-engaged health project is a team), so the common pairs get an exact match.
+  - INFERRED — a one-line "This example: Health / clinical · Community-engaged and team-based · Early
+    career." under the heading, so the swap is legible; it adds one sentence pointing at the
+    unanswered question when work mode or stage is not set. Heading unchanged in form (discipline
+    only); badge unchanged.
+  - DECIDED — the five approved examples are retained as cells (stem/team/mid, health/community/mid,
+    social/solo/mid, humanities/community/mid, creative/community/mid) with two edits: Canadian
+    spelling (digitization, organizations, program) per the voice skill's V9, and "us/we" taken out
+    of two impact sentences because the tool's own ownership check flagged them.
+  - Not done, on purpose: the Personal statement and Mentorship examples stay social-sciences only
+    (the open follow-up from the second pass). Same treatment is possible with the same generator.
+  - Noted for Prem, not a defect: the new cells run 120–158 words against the approved five at 99–130, so
+    the card is a little denser; five community cells (one per discipline) are Indigenous-led
+    partnerships written with the organization setting the questions and holding the record — worth
+    a read by someone with that lived expertise before the tool goes wide.
+  **Verified in the browser:** the card swaps on discipline chips (Tailored for → Change these answers),
+  on the work-mode chips (Change → chip → Done) and on career stage, without a reload and with the
+  scroll position kept; the match line names what is shown; no console errors; `lint` clean on all 60.
+

@@ -10,6 +10,7 @@ pattern as `/ncv_tool_v4/`: this folder's `index.html` is a thin redirect.
 | **Live** | https://landedimmigrant-ops.github.io/pathways_website/ncv_tool_v5/ |
 | **What changed from V4, and why** | [`../narrative-cv-v5-decisions.md`](../narrative-cv-v5-decisions.md) |
 | **The review it was built from** | [`../narrative-cv-v5-brett-review.md`](../narrative-cv-v5-brett-review.md) |
+| **The 60 worked examples the Contributions card can show** (review sheet; `node scripts/ncv-v5-examples.js lint\|review`) | [`../narrative-cv-v5-examples-review.md`](../narrative-cv-v5-examples-review.md) |
 
 V4 is untouched and remains at `/ncv_tool_v4/`. Drafts persist in `localStorage`
 under `ncv-v5` (V4 uses `ncv-v4`), so the two can be tested side by side in one
