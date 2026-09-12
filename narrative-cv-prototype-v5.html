@@ -171,8 +171,8 @@
   <div class="proto-shell">
     <h1 class="proto-title">Narrative CV — V5 beta</h1>
     <p class="proto-subtitle">A drafting space for the Tri-agency CV and the CV-FRQ.</p>
-    <p class="v4-privacy">🔒 <span class="v4-privacy-full">No AI, and nothing you write leaves this browser. Your draft is saved on this device only — if you clear your browser data, the draft goes with it.</span><span class="v4-privacy-short">No AI. Nothing you write leaves this browser.</span></p>
-    <p class="v4-save-warning" id="v4-save-warning" hidden>Saving isn’t working in this browser right now — nothing new is being kept. Copy your draft out (Review → Copy draft) before you close this tab.</p>
+    <p class="v4-privacy">🔒 <span class="v4-privacy-full">No AI. Anything you write is your own: it stays here, on this device, and is not stored anywhere else. Clearing your browser data clears the draft too.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
+    <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Copy your draft out (Review → Copy draft) before you close this tab.</p>
     <p class="v4-inline-link"><a class="v4-guide-link" href="index.html#learn-narrative-cv" target="_top">Read the narrative CV guide</a></p>
     <div id="ncv-v4-root"></div>
   </div>
@@ -1295,7 +1295,7 @@
       chipRow(parent, "Which funding agency?", "This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec. If you are not sure, pick Other — you can change it later.", AGENCIES,
         () => ns.lens.agency,
         (v) => { ns.lens.agency = v; const a = AGENCIES.find(x => x.v === v); ns.lens.format = a ? a.fmt : ""; });
-      chipRow(parent, "Closest disciplinary home", "This changes the worked example and the discipline notes you see. Pick the closest fit — it changes nothing you write.", DISCIPLINES,
+      chipRow(parent, "Closest disciplinary home", "This changes the worked example and the discipline notes you see. Pick the closest fit — your draft stays as it is.", DISCIPLINES,
         () => ns.lens.discipline, (v) => { ns.lens.discipline = v; });
       chipRow(parent, "Career stage", "This changes a few of the prompts — early career, for instance, asks for the signals you have so far.", CAREER_STAGES,
         () => ns.lens.careerStage, (v) => { ns.lens.careerStage = v; });
@@ -1588,7 +1588,7 @@
     // ── Stage: Setup ────────────────────────────────────────────────────────
     function renderSetup(c) {
       stageHead(c, "Setup", "Start fresh, or bring a draft?",
-        "This tool will help you get familiar with how a narrative CV asks you to think about your work and describe it. It is a prototype, and it works in English only for now. It runs without AI models — the checks are fixed rules, and nothing you type leaves this browser. What you build here is a first outline in your own words: your contributions, your mentorship record and a personal statement, plus the questions you want to take to an advisor.",
+        "This tool will help you get familiar with how a narrative CV asks you to think about your work and describe it. It is a prototype, and it works in English only for now. It runs without AI models: the checks are fixed rules. Anything you write is your own; it stays here and is not stored anywhere else. What you build here is a first outline in your own words: your contributions, your mentorship record and a personal statement, plus the questions you want to take to an advisor.",
         "What a narrative CV is, and which funders use it");
 
       const grid = el("div", "v4-mode-grid");
@@ -1693,7 +1693,7 @@
     function renderXray(c) {
       lensBar(c);
       stageHead(c, "Structural read", "What your draft already has, and what it doesn't",
-        "Paste your existing draft. The tool splits it into paragraphs, runs the same fixed-rule checks on each, then maps it against the moves a developed narrative CV makes. It is a rough reading. Nothing you paste leaves this browser.",
+        "Paste your existing draft. The tool splits it into paragraphs, runs the same fixed-rule checks on each, then maps it against the moves a developed narrative CV makes. It is a rough reading. Anything you paste stays here, with the rest of your draft.",
         "What the format expects in each section");
 
       const taWrap = el("div", "contribution-field");
@@ -1772,7 +1772,7 @@
       // B-17 + B-20: a one-time note that the checks below are suggestions, not a gate.
       if (!ns.ui.checksNoteSeen) {
         const note = el("div", "v4-checks-note");
-        note.appendChild(el("p", null, "The checks under each field are suggestions. They do not block, score or send anything. You know your record better than a word list does."));
+        note.appendChild(el("p", null, "The checks under each field are suggestions. They leave you free to continue, carry no score and stay here with your draft. You know your record better than a word list does."));
         const gotIt = el("button", "narrative-draft-btn v4-inline-link", "Got it");
         gotIt.addEventListener("click", () => { ns.ui.checksNoteSeen = true; saveState(); renderStage(); });
         note.appendChild(gotIt);

@@ -363,3 +363,11 @@ behaviours (C1–C12), 11 flags (F1–F11). Calls made on the flags:
   **Verified in the browser:** the card renders the rewritten cells, discipline/stage/mode swaps
   still work, no console errors. Follow-up worth considering: the same rule as a tenth check in the
   `pathways-voice` skill.
+- **2026-09-12 · privacy and reassurance lines, positive voice — built.** Prem's example for the
+  register: "anything you write is your own, it does not get stored elsewhere, it stays here." The
+  lines I had left as truth claims are now in that voice: the banner ("No AI. Anything you write is
+  your own: it stays here, on this device, and is not stored anywhere else. Clearing your browser
+  data clears the draft too." / short: "Anything you write stays here."), the Setup lede's privacy
+  sentence, the Structural read lede ("Anything you paste stays here, with the rest of your draft."),
+  the save warning, the checks note ("They leave you free to continue, carry no score and stay here
+  with your draft.") and the discipline help ("your draft stays as it is"). Verified in the browser.
