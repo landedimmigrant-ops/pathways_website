@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pathway Cards 16 to 18</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=block">
+<style>
+/* Page frame and a minimal stand-in for the AEM c-card base styles. */
+:root {
+  --burgundy: #912338;
+  --brand: "gill-sans-nova", "Gill Sans Nova", "Gill Sans", "Gill Sans MT", "Trebuchet MS", sans-serif;
+  --brand-cond: "gill-sans-nova-condensed", "Gill Sans Nova Condensed", "Gill Sans", "Gill Sans MT", "Trebuchet MS", sans-serif;
+  --text: "Inter", Arial, sans-serif;
+}
+body { margin: 0; background: #fff; color: #1a1a1a; font: 16px/1.45 var(--text); }
+#boot { padding-block: 2.25rem 4rem; }
+.container { max-width: 1224px; margin: 0 auto; padding: 0 12px; box-sizing: border-box; }
+h1 { font: 800 clamp(2.6rem, 6vw, 4.25rem)/1.05 var(--brand-cond); color: var(--burgundy); margin: 0 0 .75rem; text-wrap: balance; }
+.intro { font-size: 1.25rem; line-height: 1.5; max-width: 44rem; margin: 0 0 3rem; color: #333; }
+.option-label { font: 700 1.15rem/1.3 var(--brand); color: var(--burgundy); margin: 0 0 1rem; }
+.option-2, .option-16, .option-17, .option-18 { margin-bottom: 3rem; padding-bottom: 3rem; border-bottom: 1px solid #e6e6e6; }
+.c-card { display: flex; }
+.c-card__container { display: flex; position: relative; flex: 1 1 auto; min-width: 0; box-sizing: border-box; }
+.c-card__container > a { display: flex; flex: 1 1 auto; text-decoration: none; color: inherit; }
+.c-card__overlay-hover { display: none; }
+.c-card__content { display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
+.c-card__text-block { display: flex; flex-direction: column; }
+.c-card__title { margin: 0; }
+.c-card__text p { margin: 0; }
+.pathways-lead { margin-bottom: 1rem; }
+.c-card-deck__rows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 0.75rem; }
+.card-deck-parsys { display: contents; }
+@media (max-width: 991.98px) { .c-card-deck__rows { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 768px)    { .c-card-deck__rows { grid-template-columns: minmax(0, 1fr); } }
+</style>
+
+<style id="css-shared">
+/* Option 2's card, shared by 16 to 18: 14px radius, soft shadow, 1px #ececec
+   border, tinted disc with the icon in the pathway colour, brand title in black.
+   Colour, tint and icon set once per pathway. */
+#boot .option-2 .c-card .c-card__container,
+#boot .option-16 .c-card .c-card__container,
+#boot .option-17 .c-card .c-card__container,
+#boot .option-18 .c-card .c-card__container {
+    overflow: hidden;
+    background-color: #fff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.06);
+    border: 1px solid #ececec;
+    border-radius: 14px;
+    transition: background-color 0.2s ease, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+#boot .option-2 .c-card__container[style*="#912338" i],
+#boot .option-16 .c-card__container[style*="#912338" i],
+#boot .option-17 .c-card__container[style*="#912338" i],
+#boot .option-18 .c-card__container[style*="#912338" i] { --pc: #912338; --pc-ink: #fff; --pc-tint: #f6e8eb; }
+#boot .option-2 .c-card__container[style*="#DB0272" i],
+#boot .option-16 .c-card__container[style*="#DB0272" i],
+#boot .option-17 .c-card__container[style*="#DB0272" i],
+#boot .option-18 .c-card__container[style*="#DB0272" i] { --pc: #db0272; --pc-ink: #fff; --pc-tint: #fce8f3; }
+#boot .option-2 .c-card__container[style*="#DA3A16" i],
+#boot .option-16 .c-card__container[style*="#DA3A16" i],
+#boot .option-17 .c-card__container[style*="#DA3A16" i],
+#boot .option-18 .c-card__container[style*="#DA3A16" i] { --pc: #da3a16; --pc-ink: #fff; --pc-tint: #fcece8; }
+#boot .option-2 .c-card__container[style*="#573996" i],
+#boot .option-16 .c-card__container[style*="#573996" i],
+#boot .option-17 .c-card__container[style*="#573996" i],
+#boot .option-18 .c-card__container[style*="#573996" i] { --pc: #573996; --pc-ink: #fff; --pc-tint: #eeeaf7; }
+#boot .option-2 .c-card__container[style*="#0072A8" i],
+#boot .option-16 .c-card__container[style*="#0072A8" i],
+#boot .option-17 .c-card__container[style*="#0072A8" i],
+#boot .option-18 .c-card__container[style*="#0072A8" i] { --pc: #0072a8; --pc-ink: #fff; --pc-tint: #e6f3f8; }
+#boot .option-2 .c-card__container[style*="#E5A712" i],
+#boot .option-16 .c-card__container[style*="#E5A712" i],
+#boot .option-17 .c-card__container[style*="#E5A712" i],
+#boot .option-18 .c-card__container[style*="#E5A712" i] { --pc: #e5a712; --pc-ink: #1a1a1a; --pc-tint: #f8f1dd; }
+#boot .option-2 .c-card__container[style*="#8CC63E" i],
+#boot .option-16 .c-card__container[style*="#8CC63E" i],
+#boot .option-17 .c-card__container[style*="#8CC63E" i],
+#boot .option-18 .c-card__container[style*="#8CC63E" i] { --pc: #8cc63e; --pc-ink: #1a1a1a; --pc-tint: #eef6e3; }
+#boot .option-2 .c-card .c-card__overlay-hover,
+#boot .option-16 .c-card .c-card__overlay-hover,
+#boot .option-17 .c-card .c-card__overlay-hover,
+#boot .option-18 .c-card .c-card__overlay-hover { display: none; }
+#boot .option-2 .c-card .c-card__link-div > a,
+#boot .option-16 .c-card .c-card__link-div > a,
+#boot .option-17 .c-card .c-card__link-div > a,
+#boot .option-18 .c-card .c-card__link-div > a { flex: 1 1 auto; background-color: transparent; border-radius: 13px; }
+#boot .option-2 .c-card .c-card__content,
+#boot .option-16 .c-card .c-card__content,
+#boot .option-17 .c-card .c-card__content,
+#boot .option-18 .c-card .c-card__content {
+    position: relative;
+    z-index: 1;
+    justify-content: flex-start;
+    padding: 1.6rem 1.6rem 1.7rem;
+    border-radius: 13px;
+}
+/* the disc, with the Material Symbols glyph inside it */
+#boot .option-2 .c-card .c-card__content::before,
+#boot .option-16 .c-card .c-card__content::before,
+#boot .option-17 .c-card .c-card__content::before,
+#boot .option-18 .c-card .c-card__content::before {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin: 0 0 1.1rem;
+    border-radius: 50%;
+    background-color: var(--pc-tint, #f6e8eb);
+    color: var(--pc, #912338);
+    font-family: "Material Symbols Outlined", sans-serif;
+    font-size: 1.7rem;
+    line-height: 1;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: normal;
+    -webkit-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+#boot .option-2 .c-card__container[style*="#912338" i] .c-card__content::before,
+#boot .option-16 .c-card__container[style*="#912338" i] .c-card__content::before,
+#boot .option-17 .c-card__container[style*="#912338" i] .c-card__content::before,
+#boot .option-18 .c-card__container[style*="#912338" i] .c-card__content::before { content: "school" / ""; }
+#boot .option-2 .c-card__container[style*="#DB0272" i] .c-card__content::before,
+#boot .option-16 .c-card__container[style*="#DB0272" i] .c-card__content::before,
+#boot .option-17 .c-card__container[style*="#DB0272" i] .c-card__content::before,
+#boot .option-18 .c-card__container[style*="#DB0272" i] .c-card__content::before { content: "groups" / ""; }
+#boot .option-2 .c-card__container[style*="#DA3A16" i] .c-card__content::before,
+#boot .option-16 .c-card__container[style*="#DA3A16" i] .c-card__content::before,
+#boot .option-17 .c-card__container[style*="#DA3A16" i] .c-card__content::before,
+#boot .option-18 .c-card__container[style*="#DA3A16" i] .c-card__content::before { content: "lightbulb" / ""; }
+#boot .option-2 .c-card__container[style*="#573996" i] .c-card__content::before,
+#boot .option-16 .c-card__container[style*="#573996" i] .c-card__content::before,
+#boot .option-17 .c-card__container[style*="#573996" i] .c-card__content::before,
+#boot .option-18 .c-card__container[style*="#573996" i] .c-card__content::before { content: "rocket_launch" / ""; }
+#boot .option-2 .c-card__container[style*="#0072A8" i] .c-card__content::before,
+#boot .option-16 .c-card__container[style*="#0072A8" i] .c-card__content::before,
+#boot .option-17 .c-card__container[style*="#0072A8" i] .c-card__content::before,
+#boot .option-18 .c-card__container[style*="#0072A8" i] .c-card__content::before { content: "account_balance" / ""; }
+#boot .option-2 .c-card__container[style*="#E5A712" i] .c-card__content::before,
+#boot .option-16 .c-card__container[style*="#E5A712" i] .c-card__content::before,
+#boot .option-17 .c-card__container[style*="#E5A712" i] .c-card__content::before,
+#boot .option-18 .c-card__container[style*="#E5A712" i] .c-card__content::before { content: "campaign" / ""; }
+#boot .option-2 .c-card__container[style*="#8CC63E" i] .c-card__content::before,
+#boot .option-16 .c-card__container[style*="#8CC63E" i] .c-card__content::before,
+#boot .option-17 .c-card__container[style*="#8CC63E" i] .c-card__content::before,
+#boot .option-18 .c-card__container[style*="#8CC63E" i] .c-card__content::before { content: "palette" / ""; }
+#boot .option-2 .c-card .c-card__title,
+#boot .option-16 .c-card .c-card__title,
+#boot .option-17 .c-card .c-card__title,
+#boot .option-18 .c-card .c-card__title {
+    padding-left: 0;
+    margin: 0 0 0.35rem;
+    font-family: var(--cds-font-family-brand, "gill-sans-nova"), "Gill Sans Nova", "Gill Sans", "Gill Sans MT", sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.3;
+    font-weight: 700;
+    color: #1a1a1a !important;
+    transition: color 0.2s ease;
+}
+#boot .option-2 .c-card .pathways-lead .c-card__title,
+#boot .option-16 .c-card .pathways-lead .c-card__title,
+#boot .option-17 .c-card .pathways-lead .c-card__title,
+#boot .option-18 .c-card .pathways-lead .c-card__title { font-size: 1.5rem; }
+#boot .option-2 .c-card .c-card__text,
+#boot .option-16 .c-card .c-card__text,
+#boot .option-17 .c-card .c-card__text,
+#boot .option-18 .c-card .c-card__text,
+#boot .option-2 .c-card .c-card__text--white,
+#boot .option-16 .c-card .c-card__text--white,
+#boot .option-17 .c-card .c-card__text--white,
+#boot .option-18 .c-card .c-card__text--white,
+#boot .option-2 .c-card .c-card__text--black,
+#boot .option-16 .c-card .c-card__text--black,
+#boot .option-17 .c-card .c-card__text--black,
+#boot .option-18 .c-card .c-card__text--black { color: #5a5a5a; transition: color 0.2s ease; }
+#boot .option-2 .c-card .c-card__text p,
+#boot .option-16 .c-card .c-card__text p,
+#boot .option-17 .c-card .c-card__text p,
+#boot .option-18 .c-card .c-card__text p { font-size: 1rem; line-height: 1.5; }
+#boot .option-2 .c-card .c-card__container:hover ,
+#boot .option-2 .c-card .c-card__container:focus-within ,
+#boot .option-16 .c-card .c-card__container:hover ,
+#boot .option-16 .c-card .c-card__container:focus-within ,
+#boot .option-17 .c-card .c-card__container:hover ,
+#boot .option-17 .c-card .c-card__container:focus-within ,
+#boot .option-18 .c-card .c-card__container:hover ,
+#boot .option-18 .c-card .c-card__container:focus-within  { border-color: var(--pc); }
+#boot .option-2 .c-card .c-card__container a:focus,
+#boot .option-16 .c-card .c-card__container a:focus,
+#boot .option-17 .c-card .c-card__container a:focus,
+#boot .option-18 .c-card .c-card__container a:focus { outline: 0; }
+#boot .option-2 .c-card .c-card__link-div:has(> a:focus-visible),
+#boot .option-16 .c-card .c-card__link-div:has(> a:focus-visible),
+#boot .option-17 .c-card .c-card__link-div:has(> a:focus-visible),
+#boot .option-18 .c-card .c-card__link-div:has(> a:focus-visible) { outline: 2px solid #0072a8; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+    #boot .option-2 .c-card .c-card__container,
+#boot .option-16 .c-card .c-card__container,
+#boot .option-17 .c-card .c-card__container,
+#boot .option-18 .c-card .c-card__container,
+    #boot .option-2 .c-card .c-card__content::before,
+#boot .option-16 .c-card .c-card__content::before,
+#boot .option-17 .c-card .c-card__content::before,
+#boot .option-18 .c-card .c-card__content::before,
+    #boot .option-2 .c-card .c-card__title,
+#boot .option-16 .c-card .c-card__title,
+#boot .option-17 .c-card .c-card__title,
+#boot .option-18 .c-card .c-card__title,
+    #boot .option-2 .c-card .c-card__text,
+#boot .option-16 .c-card .c-card__text,
+#boot .option-17 .c-card .c-card__text,
+#boot .option-18 .c-card .c-card__text,
+    #boot .option-2 .c-card .c-card__link-div > a::before,
+#boot .option-16 .c-card .c-card__link-div > a::before,
+#boot .option-17 .c-card .c-card__link-div > a::before,
+#boot .option-18 .c-card .c-card__link-div > a::before { transition: none; }
+}
+</style>
+<style id="css-option-2">
+/* Option 2 - Icon cards, as proposed: hover only turns the border to the pathway colour */
+</style>
+<style id="css-option-16">
+/* Option 16 - Tint fill, disc inverts: the card fills with the light colour,
+   the disc goes solid and the icon flips to white (dark on yellow and green) */
+#boot .option-16 .c-card .c-card__container:hover,
+#boot .option-16 .c-card .c-card__container:focus-within { background-color: var(--pc-tint) !important; }
+#boot .option-16 .c-card .c-card__container:hover .c-card__content::before,
+#boot .option-16 .c-card .c-card__container:focus-within .c-card__content::before { background-color: var(--pc); color: var(--pc-ink); }
+</style>
+<style id="css-option-17">
+/* Option 17 - Full colour fill: the card fills with the pathway colour, text
+   flips to white (dark on yellow and green), the disc goes white with the coloured icon */
+#boot .option-17 .c-card .c-card__container:hover,
+#boot .option-17 .c-card .c-card__container:focus-within {
+    background-color: var(--pc) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+#boot .option-17 .c-card .c-card__container:hover .c-card__title,
+#boot .option-17 .c-card .c-card__container:focus-within .c-card__title { color: var(--pc-ink) !important; }
+#boot .option-17 .c-card .c-card__container:hover .c-card__text,
+#boot .option-17 .c-card .c-card__container:focus-within .c-card__text { color: var(--pc-ink); opacity: 0.9; }
+#boot .option-17 .c-card .c-card__container:hover .c-card__content::before,
+#boot .option-17 .c-card .c-card__container:focus-within .c-card__content::before { background-color: #fff; color: var(--pc); }
+</style>
+<style id="css-option-18">
+/* Option 18 - Colour spreads from the disc: the pathway colour grows out of the
+   disc to fill the card, then text flips to white (dark on yellow and green) */
+#boot .option-18 .c-card .c-card__link-div > a { position: relative; overflow: hidden; }
+#boot .option-18 .c-card .c-card__link-div > a::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 3.35rem;
+    left: 3.35rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin: -1.75rem 0 0 -1.75rem;
+    border-radius: 50%;
+    background-color: var(--pc);
+    transform: scale(0);
+    transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+#boot .option-18 .c-card .c-card__container:hover > a::before,
+#boot .option-18 .c-card .c-card__container:focus-within > a::before { transform: scale(60); }
+#boot .option-18 .c-card .c-card__container:hover,
+#boot .option-18 .c-card .c-card__container:focus-within { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 10px 24px rgba(0, 0, 0, 0.12); }
+#boot .option-18 .c-card .c-card__title,
+#boot .option-18 .c-card .c-card__text { transition: color 0.25s ease 0.12s; }
+#boot .option-18 .c-card .c-card__container:hover .c-card__title,
+#boot .option-18 .c-card .c-card__container:focus-within .c-card__title { color: var(--pc-ink) !important; }
+#boot .option-18 .c-card .c-card__container:hover .c-card__text,
+#boot .option-18 .c-card .c-card__container:focus-within .c-card__text { color: var(--pc-ink); opacity: 0.9; }
+#boot .option-18 .c-card .c-card__content::before { transition: background-color 0.25s ease 0.08s, color 0.25s ease 0.08s; }
+#boot .option-18 .c-card .c-card__container:hover .c-card__content::before,
+#boot .option-18 .c-card .c-card__container:focus-within .c-card__content::before { background-color: #fff; color: var(--pc); }
+@media (prefers-reduced-motion: reduce) {
+    #boot .option-18 .c-card .c-card__container:hover,
+    #boot .option-18 .c-card .c-card__container:focus-within { background-color: var(--pc) !important; }
+    #boot .option-18 .c-card .c-card__link-div > a::before { display: none; }
+}
+</style>
+</head>
+<body>
+<div id="boot">
+<div class="container">
+  <h1>The seven pathways</h1>
+  <p class="intro">Explore the pathways below to find the lens that best fits your goals, audiences, and outputs.</p>
+</div>
+
+<div class="option-2">
+<div class="container">
+  <h2 class="option-label">Option 2 - Icon cards</h2>
+  <div class="c-card section"><div class="c-card__container c-card__container--left pathways-lead c-card__link-div" style="background-color: #912338;"><a href="#academic-scholarship" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Academic scholarship</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Advance knowledge, methods, and scholarly contribution within and beyond your field.</p></div></div></div></a></div></div>
+  <div class="c-card-deck section">
+    <div class="c-card-deck__rows cols-3 stack-tablet-2 stack-mobile-1">
+      <div class="card-deck-parsys parsys">
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #DB0272;"><a href="#community-engagement" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Community engagement</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Co-create research with communities and sustain reciprocal partnerships.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #DA3A16;"><a href="#innovation" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Innovation</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Translate research into new methods, tools, or services that improve practice.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #573996;"><a href="#commercialization" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Commercialization</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Move research-based ideas toward market-ready products or ventures.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left d-tint c-card__link-div" style="background-color: #0072A8;"><a href="#policy" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Policy</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Connect evidence to policy conversations and decision-making timelines.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #E5A712;"><a href="#communications" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--black">Communications</h2><div class="c-card__text c-card__text--black c-card__link--default"><p>Share research in accessible ways that reach public and professional audiences.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #8CC63E;"><a href="#research-creation" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--black">Research-creation</h2><div class="c-card__text c-card__text--black c-card__link--default"><p>Create and present research through artistic and practice-based approaches.</p></div></div></div></a></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="option-16">
+<div class="container">
+  <h2 class="option-label">Option 16 - Tint fill, disc inverts</h2>
+  <div class="c-card section"><div class="c-card__container c-card__container--left pathways-lead c-card__link-div" style="background-color: #912338;"><a href="#academic-scholarship" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Academic scholarship</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Advance knowledge, methods, and scholarly contribution within and beyond your field.</p></div></div></div></a></div></div>
+  <div class="c-card-deck section">
+    <div class="c-card-deck__rows cols-3 stack-tablet-2 stack-mobile-1">
+      <div class="card-deck-parsys parsys">
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #DB0272;"><a href="#community-engagement" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Community engagement</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Co-create research with communities and sustain reciprocal partnerships.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #DA3A16;"><a href="#innovation" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Innovation</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Translate research into new methods, tools, or services that improve practice.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #573996;"><a href="#commercialization" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Commercialization</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Move research-based ideas toward market-ready products or ventures.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left d-tint c-card__link-div" style="background-color: #0072A8;"><a href="#policy" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Policy</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Connect evidence to policy conversations and decision-making timelines.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #E5A712;"><a href="#communications" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--black">Communications</h2><div class="c-card__text c-card__text--black c-card__link--default"><p>Share research in accessible ways that reach public and professional audiences.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #8CC63E;"><a href="#research-creation" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--black">Research-creation</h2><div class="c-card__text c-card__text--black c-card__link--default"><p>Create and present research through artistic and practice-based approaches.</p></div></div></div></a></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="option-17">
+<div class="container">
+  <h2 class="option-label">Option 17 - Full colour fill</h2>
+  <div class="c-card section"><div class="c-card__container c-card__container--left pathways-lead c-card__link-div" style="background-color: #912338;"><a href="#academic-scholarship" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Academic scholarship</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Advance knowledge, methods, and scholarly contribution within and beyond your field.</p></div></div></div></a></div></div>
+  <div class="c-card-deck section">
+    <div class="c-card-deck__rows cols-3 stack-tablet-2 stack-mobile-1">
+      <div class="card-deck-parsys parsys">
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #DB0272;"><a href="#community-engagement" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Community engagement</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Co-create research with communities and sustain reciprocal partnerships.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #DA3A16;"><a href="#innovation" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Innovation</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Translate research into new methods, tools, or services that improve practice.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #573996;"><a href="#commercialization" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Commercialization</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Move research-based ideas toward market-ready products or ventures.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left d-tint c-card__link-div" style="background-color: #0072A8;"><a href="#policy" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Policy</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Connect evidence to policy conversations and decision-making timelines.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #E5A712;"><a href="#communications" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--black">Communications</h2><div class="c-card__text c-card__text--black c-card__link--default"><p>Share research in accessible ways that reach public and professional audiences.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #8CC63E;"><a href="#research-creation" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--black">Research-creation</h2><div class="c-card__text c-card__text--black c-card__link--default"><p>Create and present research through artistic and practice-based approaches.</p></div></div></div></a></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="option-18">
+<div class="container">
+  <h2 class="option-label">Option 18 - Colour spreads from the disc</h2>
+  <div class="c-card section"><div class="c-card__container c-card__container--left pathways-lead c-card__link-div" style="background-color: #912338;"><a href="#academic-scholarship" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Academic scholarship</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Advance knowledge, methods, and scholarly contribution within and beyond your field.</p></div></div></div></a></div></div>
+  <div class="c-card-deck section">
+    <div class="c-card-deck__rows cols-3 stack-tablet-2 stack-mobile-1">
+      <div class="card-deck-parsys parsys">
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #DB0272;"><a href="#community-engagement" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Community engagement</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Co-create research with communities and sustain reciprocal partnerships.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #DA3A16;"><a href="#innovation" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Innovation</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Translate research into new methods, tools, or services that improve practice.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #573996;"><a href="#commercialization" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Commercialization</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Move research-based ideas toward market-ready products or ventures.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left d-tint c-card__link-div" style="background-color: #0072A8;"><a href="#policy" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--white">Policy</h2><div class="c-card__text c-card__text--white c-card__link--default"><p>Connect evidence to policy conversations and decision-making timelines.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #E5A712;"><a href="#communications" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--black">Communications</h2><div class="c-card__text c-card__text--black c-card__link--default"><p>Share research in accessible ways that reach public and professional audiences.</p></div></div></div></a></div></div>
+        <div class="c-card section"><div class="c-card__container c-card__container--left c-card__link-div" style="background-color: #8CC63E;"><a href="#research-creation" target="_self" class="no-icon"><div class="c-card__overlay-hover"></div><div class="c-card__content"><div class="c-card__text-block"><h2 class="c-card__title default c-card__title--black">Research-creation</h2><div class="c-card__text c-card__text--black c-card__link--default"><p>Create and present research through artistic and practice-based approaches.</p></div></div></div></a></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</body>
+</html>
