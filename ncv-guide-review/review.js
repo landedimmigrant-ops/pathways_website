@@ -24,6 +24,13 @@
     get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } },
   };
+  function requireName() {
+    var a = String(ls.get("rv.author", "") || "").trim();
+    if (a) return a;
+    a = String(prompt("Your name (so we know who to follow up with)") || "").trim();
+    if (!a) { toast("Add your name to post a comment"); return null; }
+    ls.set("rv.author", a); return a;
+  }
   const fmtDate = (ts) => { const d = new Date(ts); return isNaN(d) ? "" : d.toLocaleString("en-CA", { dateStyle: "medium", timeStyle: "short" }); };
   let toastTimer;
   function toast(msg) {
@@ -68,7 +75,14 @@
         try { const j = JSON.parse(body); rows = Array.isArray(j) ? j : j.rows || []; } catch (e) { rows = parseCSV(body); }
         rows = rows.filter((x) => !x.page || x.page === this.page);
         const byId = new Map(rows.map((x) => [x.id, x]));
-        local.forEach((x) => { if (!byId.has(x.id)) byId.set(x.id, x); });
+        // `local` is an outbox of rows whose write did not confirm, never a mirror of
+        // the sheet: a row deleted in the sheet must disappear for its author too.
+        // An unsent row is worth re-showing only while a retry is plausible. Past that
+        // it is indistinguishable from a row deleted in the sheet, so let it go.
+        const FRESH_MS = 60 * 60 * 1000;
+        const pending = local.filter((x) => !byId.has(x.id) && Date.now() - Date.parse(x.ts || 0) < FRESH_MS);
+        ls.set(this.key, pending);
+        pending.forEach((x) => byId.set(x.id, x));
         state.backend = "sheet";
         return Array.from(byId.values());
       } catch (e) {
@@ -77,10 +91,13 @@
       }
     },
     async add(row) {
-      const local = ls.get(this.key, []); local.push(row); ls.set(this.key, local);
+      const keep = (r) => { const l = ls.get(this.key, []); l.push(r); ls.set(this.key, l); };
+      const drop = (id) => ls.set(this.key, ls.get(this.key, []).filter((x) => x.id !== id));
+      keep(row);
       if (this.backend !== "sheet" || !CFG.storage.writeUrl) return { ok: true, where: "local" };
       try {
         await fetch(CFG.storage.writeUrl, { method: "POST", mode: "cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "review_comment", page: this.page, row }) });
+        drop(row.id); // it lives in the sheet now; the outbox keeps only what did not send
         return { ok: true, where: "sheet" };
       } catch (e) { return { ok: false, where: "local", error: String(e.message || e) }; }
     },
@@ -311,7 +328,7 @@
     const idx = buildIndex(); const anchor = anchorFromRange(pendingRange, idx); if (!anchor) return;
     const rect = pendingRange.getBoundingClientRect(); const name = ls.get("rv.author", "");
     const html = "<h4>New comment</h4><p class=\"rv-quote\">" + esc(anchor.quote) + "</p>"
-      + '<label for="rv-name">Your name</label><input type="text" id="rv-name" value="' + esc(name) + '" placeholder="So we know who to follow up with" autocomplete="name">'
+      + '<label for="rv-name">Your name (required)</label><input type="text" id="rv-name" value="' + esc(name) + '" placeholder="So we know who to follow up with" autocomplete="name" required>'
       + '<label for="rv-type">Kind</label><select id="rv-type"><option value="error">Error or typo</option><option value="question">Question</option><option value="suggestion">Suggestion</option><option value="approve">Looks right</option></select>'
       + '<label for="rv-text">Comment</label><textarea id="rv-text" placeholder="What is wrong, or what should change?"></textarea><div class="rv-err" hidden></div>'
       + '<div class="rv-row"><button type="button" class="rv-b rv-b--primary" data-act="save">Save comment</button><span class="rv-grow"></span><button type="button" class="rv-b" data-act="cancel">Cancel</button></div>';
@@ -320,9 +337,10 @@
       const b = e.target.closest("[data-act]"); if (!b) return;
       if (b.dataset.act === "cancel") return closePopover();
       const author = $("#rv-name", p).value.trim(), text = $("#rv-text", p).value.trim(), type = $("#rv-type", p).value, err = $(".rv-err", p);
-      if (!text) { err.textContent = "Write the comment first."; err.hidden = false; return; }
+      if (!author) { err.textContent = "Add your name, so we know who to follow up with."; err.hidden = false; $("#rv-name", p).focus(); return; }
+      if (!text) { err.textContent = "Write the comment first."; err.hidden = false; $("#rv-text", p).focus(); return; }
       ls.set("rv.author", author); closePopover(); window.getSelection().removeAllRanges();
-      await addRow({ kind: "comment", type, author: author || "anonymous", text, ...anchor });
+      await addRow({ kind: "comment", type, author, text, ...anchor });
       state.active = state.rows[state.rows.length - 1].id; openPanel(true, "comments"); renderComments();
     });
   }
@@ -383,11 +401,11 @@
       case "cancel-reply": { $(".rv-card__replybox", card).hidden = true; return; }
       case "send-reply": {
         const text = $("textarea", card).value.trim(); if (!text) return;
-        const author = ls.get("rv.author", "") || prompt("Your name") || "anonymous"; ls.set("rv.author", author);
+        const author = requireName(); if (!author) return;
         await addRow({ kind: "reply", parent: id, author, text }); return;
       }
       case "resolve": {
-        const t = threads().find((x) => x.id === id); const author = ls.get("rv.author", "") || prompt("Your name") || "anonymous"; ls.set("rv.author", author);
+        const t = threads().find((x) => x.id === id); const author = requireName(); if (!author) return;
         await addRow({ kind: "status", parent: id, author, status: t && t.status === "resolved" ? "open" : "resolved", text: "" }); return;
       }
     }
