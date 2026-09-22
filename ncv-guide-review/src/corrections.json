@@ -1,0 +1,176 @@
+{
+  "_about": "Edits applied to src/aem-main.html by scripts/build-ncv-guide-review.py. IDs match ncv-guide-aem-review-2026-09-21.md. `find` is matched ignoring whitespace differences between tags and inside text; `occurrence` picks the nth match when the text appears more than once; `count` is the number of matches expected (default 1) and the build fails if it differs. Order matters: I-1 runs before P-9.",
+  "edits": [
+    {
+      "id": "I-1", "group": "A", "title": "Remove the stray table row",
+      "note": "The row 'Personal Statement focus' belongs to the TCV/CV-FRQ table only. Delete it from the traditional/narrative table.",
+      "find": "<tr><td>Personal Statement focus</td><td>Your expertise relative to this specific opportunity or project</td><td>Your fit with the program's objectives and how your work complements the team</td></tr>",
+      "replace": "<!--rv:I-1-->",
+      "count": 2, "occurrence": 2
+    },
+    {
+      "id": "I-2", "group": "A", "title": "Callout: dash inside the bold, space after it",
+      "find": "<b>The core shift</b> —A traditional CV says what you did.",
+      "replace": "<!--rv:I-2--><b>The core shift —</b> A traditional CV says what you did."
+    },
+    {
+      "id": "I-3", "group": "A", "title": "On this page: lower-case narrative",
+      "find": "<a href=\"#why\">Why Narrative CVs exist</a>",
+      "replace": "<a href=\"#why\"><!--rv:I-3-->Why narrative CVs exist</a>"
+    },
+    {
+      "id": "I-4", "group": "A", "title": "Accordion title: a \"contribution\"",
+      "find": "What counts as \"contributions\"?",
+      "replace": "<!--rv:I-4-->What counts as a \"contribution\"?"
+    },
+    {
+      "id": "L-19", "group": "A", "title": "Heading: drop the stray article",
+      "find": "The TCV vs CV-FRQ — key differences",
+      "replace": "<!--rv:L-19-->TCV vs CV-FRQ — key differences"
+    },
+    {
+      "id": "L-19b", "group": "A", "title": "On this page: TCV vs CV-FRQ",
+      "find": "<a href=\"#compare\">The TCV vs CV-FRQ</a>",
+      "replace": "<a href=\"#compare\"><!--rv:L-19-->TCV vs CV-FRQ</a>"
+    },
+    {
+      "id": "P-13", "group": "B", "title": "Lead: drafting-time expectation (F-11)",
+      "find": "<p>Review this short orientation before you begin drafting your own.</p>",
+      "replace": "<p><!--rv:P-13-->Review this short orientation before you begin drafting your own. A first draft can take a day or more, so you should allow time before your deadline.</p>"
+    },
+    {
+      "id": "P-6", "group": "A", "title": "Top button: name the destination",
+      "note": "In AEM: a Text component above the existing Button component; button label changed.",
+      "find": "<div class=\"c-button section\"><div class=\"text-left\"><a href=\"/content/concordia/en/research/pathways-to-impact/learn/tools/narrative-cv-builder.html\" target=\"_self\" class=\"btn btn-ghost-filled btn-bg-912338\"><span>Familiar with the Narrative CV? Get started!</span></a></div></div>",
+      "replace": "<div class=\"c-wysiwyg wysiwyg section\"><div class=\"rte \"><p><!--rv:P-6--><span class=\"xlarge-text\">If you already know the format, you can go straight to the builder.</span></p></div></div>\n<div class=\"c-button section\"><div class=\"text-left\"><a href=\"/content/concordia/en/research/pathways-to-impact/learn/tools/narrative-cv-builder.html\" target=\"_self\" class=\"btn btn-ghost-filled btn-bg-912338\"><span><!--rv:P-6-->Open the Narrative CV builder</span></a></div></div>"
+    },
+    {
+      "id": "P-21", "group": "C", "title": "CoARA is a coalition, not a document (F-18)",
+      "find": "Key documents driving this include",
+      "replace": "<!--rv:P-21-->Key initiatives behind this shift include"
+    },
+    {
+      "id": "P-22", "group": "C", "title": "Name the CCV correctly (F-18)",
+      "find": "the traditional CV-style Common CV",
+      "replace": "<!--rv:P-22-->the Canadian Common CV (CCV)"
+    },
+    {
+      "id": "P-26", "group": "C", "title": "Funder list lead-in is not a question",
+      "find": "Which funders currently use narrative CV formats:",
+      "replace": "<!--rv:P-26-->Funders that currently use narrative CV formats:"
+    },
+    {
+      "id": "P-9a", "group": "B", "title": "Section 1 card: official name (F-15)",
+      "find": "Section 1</span><br>Personal Statement</h3>",
+      "replace": "Section 1</span><br><!--rv:P-9-->Personal statement</h3>"
+    },
+    {
+      "id": "P-9b", "group": "B", "title": "Section 2 card: official name (F-15)",
+      "find": "Section 2</span><br>Most Significant Contributions</h3>",
+      "replace": "Section 2</span><br><!--rv:P-9-->Most significant contributions and experiences</h3>"
+    },
+    {
+      "id": "P-9c", "group": "B", "title": "Section 3 card: official name (F-15)",
+      "find": "Section 3</span><br>Supervisory &amp; Mentorship Activities</h3>",
+      "replace": "Section 3</span><br><!--rv:P-9-->Supervisory and mentorship activities</h3>"
+    },
+    {
+      "id": "P-10a", "group": "B", "title": "Section 2 card: selection criterion (F-16, F-6)",
+      "find": "Up to 10 contributions that give the most complete picture of your research. Not necessarily your most recent — your most representative.",
+      "replace": "<!--rv:P-10-->Up to 10 contributions or experiences that relate to your application. Choose the ones most relevant to the funding opportunity, which may differ from your most recent work."
+    },
+    {
+      "id": "P-11", "group": "B", "title": "A cluster of work can be one contribution (F-7)",
+      "find": "Contributions go well beyond publications. The TCV instructions explicitly invite a wide range of outputs and activities. You can include:",
+      "replace": "<!--rv:P-11-->Contributions go well beyond publications. The TCV instructions explicitly invite a wide range of outputs and activities. A contribution can be a single output or a collection of related work presented together. You can include:"
+    },
+    {
+      "id": "P-10b", "group": "B", "title": "Accordion note: selection criterion (F-16)",
+      "find": "The key question is: what gives the most complete picture of your research and its effects? Not: what is the longest list of outputs I can generate.",
+      "replace": "<!--rv:P-10-->The question to ask is which contributions best support this application and what each one changed. A short list of well-explained contributions is stronger than a long list."
+    },
+    {
+      "id": "P-25", "group": "C", "title": "Supervision bullet: not humanities-only; postdocs separate",
+      "find": "<li><span class=\"xlarge-text\">Graduate supervision (MA, PhD, postdoctoral)</span></li>",
+      "replace": "<li><span class=\"xlarge-text\"><!--rv:P-25-->Graduate supervision (master's and doctoral)</span></li>\n<li><span class=\"xlarge-text\"><!--rv:P-25-->Postdoctoral supervision</span></li>"
+    },
+    {
+      "id": "P-16", "group": "B", "title": "One FRQ since June 2024 (F-20)",
+      "find": "<td>FRQSC, FRQNT, FRQS</td>",
+      "replace": "<td><!--rv:P-16-->Fonds de recherche du Québec (FRQ), all three sectors: Nature et technologies, Santé, Société et culture</td>"
+    },
+    {
+      "id": "P-9d", "group": "B", "title": "Table row label: the CV-FRQ has no 'personal statement' (F-15)",
+      "find": "<td>Personal Statement focus</td>",
+      "replace": "<td><!--rv:P-9-->Focus of the first section</td>"
+    },
+    {
+      "id": "P-17", "group": "B", "title": "CV-FRQ hyperlink rule as the FRQ states it (F-4)",
+      "find": "<td>Permitted for supporting materials</td>",
+      "replace": "<td><!--rv:P-17-->Permitted as bibliographic references when directly related to a contribution. Links cannot replace information that belongs in the application.</td>"
+    },
+    {
+      "id": "P-9e", "group": "B", "title": "Table row: official section names in both formats (F-15)",
+      "find": "<tr><td>Contributions section name</td><td>Most Significant Contributions</td><td>Réalisations les plus significatives</td></tr>",
+      "replace": "<tr><td><!--rv:P-9-->Section names</td><td>Personal statement<br>Most significant contributions and experiences<br>Supervisory and mentorship activities</td><td lang=\"fr\">Parcours et compétences de la personne candidate<br>Contributions et expériences les plus importantes<br>Activités de supervision et de mentorat</td></tr>"
+    },
+    {
+      "id": "P-8a", "group": "B", "title": "Page limits: the known figures (F-3)",
+      "find": "<tr><td>Page limits</td><td>Varies by competition — always check the program guide</td><td>Varies by competition — always check the program guide</td></tr>",
+      "replace": "<tr><td><!--rv:P-8-->Maximum length</td><td>5 pages in English, 6 pages in French</td><td>5 pages in English, 6 pages in French</td></tr>"
+    },
+    {
+      "id": "P-8b", "group": "B", "title": "Note under the table: overflow rule (F-3)",
+      "note": "In AEM: a Text component directly under the first table.",
+      "find": "aria-label=\"Table comparing features of the Tri-agency CV and the FRQ CV\">",
+      "replace": "aria-label=\"Table comparing features of the Tri-agency CV and the FRQ CV\" data-rv-after=\"P-8b\">",
+      "mark": false
+    },
+    {
+      "id": "P-10c", "group": "B", "title": "Scope row: up to 10, no floor (F-6)",
+      "find": "Curated selection (3–10 most significant contributions)",
+      "replace": "<!--rv:P-10-->Curated selection (up to 10 contributions or experiences)"
+    },
+    {
+      "id": "P-20", "group": "C", "title": "Accordion title: OK, without emphasis",
+      "find": "Is it really okay to say \"I\" throughout?",
+      "replace": "<!--rv:P-20-->Is it OK to say \"I\" throughout?"
+    },
+    {
+      "id": "P-18", "group": "C", "title": "Name the workshop; end the sentence (L-4, L-5)",
+      "find": "The guidance from the workshop is practical: replace \"we\" with \"I\" or \"I led a team that…\" You can acknowledge collaboration while still making your own contribution legible.",
+      "replace": "<!--rv:P-18-->In our Narrative CV workshops, we suggest replacing \"we\" with \"I,\" or with a phrase such as \"I led a team that developed the protocol.\" You can acknowledge collaboration and still make your own contribution clear."
+    },
+    {
+      "id": "P-12", "group": "B", "title": "Metrics reviewers are asked to disregard (F-8)",
+      "find": "Citation counts are one form of evidence, but they systematically undervalue applied, community-engaged, and practice-based research. Alternative forms include:",
+      "replace": "<!--rv:P-12-->Citation counts are one form of evidence, but they systematically undervalue applied, community-engaged, and practice-based research. Reviewers of Tri-agency applications are asked to disregard the Journal Impact Factor and other journal-based metrics. DORA also treats the h-index and career-total citation counts as unreliable measures of an individual's work. The citation count for a single article or book can support a qualitative account of that work. Other forms of evidence include:"
+    },
+    {
+      "id": "P-19", "group": "C", "title": "Name the workshop (L-5)",
+      "find": "These come up in almost every workshop. You are not alone in thinking any of them.",
+      "replace": "<!--rv:P-19-->Researchers raise these concerns in almost every Narrative CV workshop we run. You are not alone in thinking any of them."
+    },
+    {
+      "id": "P-24", "group": "C", "title": "the people you train",
+      "find": "the people you trained",
+      "replace": "<!--rv:P-24-->the people you train"
+    },
+    {
+      "id": "P-23", "group": "C", "title": "Reviewers assess; funders fund",
+      "find": "Reviewers cannot fund what they cannot see.",
+      "replace": "<!--rv:P-23-->Reviewers can assess only what you describe."
+    },
+    {
+      "id": "P-27b", "group": "C", "title": "Interdisciplinary accordion: register (L-16, L-17)",
+      "find": "This is one of the places where Narrative CVs actually work better for you than traditional ones. Rather than forcing your work into a single disciplinary metric system, you can describe what your contributions mean across the fields they touch.",
+      "replace": "<!--rv:P-27-->A Narrative CV suits interdisciplinary work better than a traditional CV does. You can describe what your contributions mean in each field they touch, without fitting them to a single discipline's metrics."
+    },
+    {
+      "id": "P-27a", "group": "C", "title": "Heading and On this page: drop 'actually' (L-16)",
+      "find": "What reviewers actually look for",
+      "replace": "<!--rv:P-27-->What reviewers look for",
+      "count": 2, "occurrence": "all"
+    }
+  ]
+}

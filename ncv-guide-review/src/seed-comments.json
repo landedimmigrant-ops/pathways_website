@@ -1,0 +1,82 @@
+{
+  "_about": "Comments placed on the page at build time. `quote` must appear verbatim (whitespace-insensitive) in the built page text; the build warns if it does not. New comments from reviewers go to the storage backend, never here.",
+  "snapshot": "AEM dev site, 2026-09-22 (research/pathways-to-impact/learn/impact-101/narrative-cv.html)",
+  "storage": {
+    "backend": "sheet",
+    "writeUrl": "https://script.google.com/macros/s/AKfycbwwruq8soD4_RBYOwSjpFFn1-sW5B3G3BPi8Br-mpugZInpj4CCzGM2lDUxZEX7vxkjLQ/exec",
+    "readUrl": "https://script.google.com/macros/s/AKfycbwwruq8soD4_RBYOwSjpFFn1-sW5B3G3BPi8Br-mpugZInpj4CCzGM2lDUxZEX7vxkjLQ/exec?action=review_list&page=ncv-guide",
+    "page": "ncv-guide"
+  },
+  "comments": [
+    {
+      "id": "seed-F-1",
+      "type": "proposal",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "Yes — and it is not just permitted, it is the point. Funders want to understand your individual contribution to collaborative work. Using \"we\" throughout makes it impossible for reviewers to assess your specific role.",
+      "text": "F-1, proposed replacement pending Eli's sign-off: \"Yes. The Tri-agency instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. If every sentence says 'we,' reviewers cannot tell what you did.\" Basis: the SSHRC and CIHR instructions, checked on 2026-09-21, ask for \"your role in each contribution or experience\" and contain no first-person wording."
+    },
+    {
+      "id": "seed-F-9",
+      "type": "proposal",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "The biggest shift is not structural — it is rhetorical. A Narrative CV asks you to move from listing to explaining, and from passive to active voice.",
+      "text": "F-9, proposed replacement pending Eli's sign-off: \"The main change is rhetorical. A Narrative CV asks you to explain your contributions as well as list them, and to make your own role visible in each one.\" Active voice is a means; the instructions ask for a visible role."
+    },
+    {
+      "id": "seed-F-2",
+      "type": "question",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "French required for most programs",
+      "text": "F-2: Is French required for most FRQ programs? Our August scan of the FRQ presentation standards reads the opposite: forms are in French, and attached documents may be in French or English. The FRQ's CV pages state no language rule. Please confirm with the FRQ, or with someone who has filed recently, before this row goes live."
+    },
+    {
+      "id": "seed-F-5",
+      "type": "question",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "introduced in 2021, piloted with select programs, and has since expanded",
+      "text": "F-5: The 2021 date is unverified, and \"has since expanded\" is softer than the current picture. CIHR (2026-03-19) will not use the TCV for the Project Grant before Fall 2027 at the earliest; SSHRC requires it in Destination Horizon, Knowledge Synthesis and Impact Awards. Should this sentence name the competitions that currently use the TCV, with a date?"
+    },
+    {
+      "id": "seed-F-10",
+      "type": "question",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "Four things that consistently score higher in reviewed contributions:",
+      "text": "F-10: Is \"consistently score higher\" based on review outcome data or on workshop experience? If the former, the basis should be cited. If the latter, the sentence should say so."
+    },
+    {
+      "id": "seed-F-17",
+      "type": "question",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "Wellcome Trust (UK)",
+      "text": "F-17: Wellcome does not appear in our sourced scan of narrative CV formats; UKRI and NWO do. Can you point to Wellcome's format, or should it come off the list?"
+    },
+    {
+      "id": "seed-F-19",
+      "type": "question",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "co-designed a food security protocol with three urban Indigenous organizations in Montréal, subsequently adopted by the City's housing strategy.",
+      "text": "F-19: This example is invented. On an official Concordia page it reads as a real case, it names Indigenous organizations and the City, and a food-security protocol is paired with a housing strategy. Is there a real example, usable with consent, that could replace it?"
+    },
+    {
+      "id": "seed-F-21",
+      "type": "question",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "Not permitted (self-contained document).",
+      "text": "F-21: Our August scan records this rule (hyperlinks banned in the TCV, with an exception for audio-visual creative works). The strings \"hyperlink\" and \"URL\" are absent from the SSHRC instructions, the CIHR instructions and the CIHR FAQ as of 2026-09-21. Where does the rule live (template, presentation standards or reviewer guidelines), so the row can be cited?"
+    },
+    {
+      "id": "seed-Q-4",
+      "type": "question",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "please contact the Pathways to Impact team at",
+      "text": "Q-4: Concordia's house style names a person with their title. Is there a named narrative CV advisor to put here?"
+    },
+    {
+      "id": "seed-Q-1",
+      "type": "question",
+      "author": "Claude (review, 2026-09-21)",
+      "quote": "Why narrative CVs exist",
+      "text": "Q-1: Capitalisation is mixed on the page: \"Narrative CV\" appears 12 times and \"narrative CV\" three times. The agencies, Concordia's FAQ and the builder page use lower case in running text. Which rule should the page follow?"
+    }
+  ]
+}
