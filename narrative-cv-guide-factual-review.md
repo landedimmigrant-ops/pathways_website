@@ -308,7 +308,7 @@ FRQ's CV-FRQ pages in French and English.
 | F-18 | `s1.expand.p1`, `s1.expand.p2` | CoARA called a document; the CCV misnamed | High | Low |
 | F-19 | `s6.exp2.p1` | The Specificity example is invented and names Indigenous organizations and the City | n/a | Medium |
 | F-20 | `s3.table` Funders | "FRQSC, FRQNT, FRQS" predates the single FRQ | High (verified) | Medium |
-| F-21 | `s3.table` Hyperlinks (TCV) | Source location of the TCV hyperlink rule needs confirming | Medium | Low |
+| F-21 | `s3.table` Hyperlinks (TCV) | Source found: reviewer guidelines §5. Answered; P-31 | High (verified) | Low |
 | **F-22** | new accordion | Fonts differ by agency; NSERC stricter than its published footnote | High (verified) | **High** |
 
 **F-15 · Section names.** The guide's cards read "Personal Statement", "Most Significant
@@ -366,8 +366,15 @@ getting NSERC's position in writing, and asking whether the published standards 
 
 This also closes part of F-13: formatting rules do belong in the guide, not only the builder.
 
-**F-21 · TCV hyperlink rule.** "Not permitted (self-contained document). Exception: audio/visual
-creative works." matches `ncv-genre-sources.md` §1. The strings "hyperlink" and "URL" are absent
-from the SSHRC instructions, the CIHR instructions and the CIHR FAQ as of today, so the rule lives
-elsewhere (the template, the presentation standards or the reviewer guidelines). Worth locating
-before launch so the row can be cited.
+**F-21 · TCV hyperlink rule. Answered 2026-09-22.** The rule lives in the reviewer guidelines,
+not the applicant instructions, which is why the string search of the instructions and FAQ found
+nothing. "Guidelines for reviewing the tri-agency CV", section 5, "Self-contained information" (CIHR,
+`cihr-irsc.gc.ca/e/54339.html`; NSERC publishes the same text without the last clause): "The sole
+exception for which other sources may be permitted is for hyperlinks, but only if they are used to
+demonstrate audio/visual creative outputs, if applicable for specific funding opportunities." and
+"However, there is no guarantee that hyperlinks will be accessed." The page cell now carries both
+conditions (P-31).
+
+**For the NSERC conversation (with F-22):** NSERC's Research Portal presentation standards say "Do not
+include hyperlinks or bookmarks in your documents", with no exception, while NSERC's own reviewer
+guidelines allow the audio/visual one. This is the second place NSERC's published rules disagree.

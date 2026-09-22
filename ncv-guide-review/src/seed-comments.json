@@ -61,8 +61,8 @@
       "id": "seed-F-21",
       "type": "question",
       "author": "Claude (review, 2026-09-21)",
-      "quote": "Not permitted (self-contained document).",
-      "text": "F-21: Our August scan records this rule (hyperlinks banned in the TCV, with an exception for audio-visual creative works). The strings \"hyperlink\" and \"URL\" are absent from the SSHRC instructions, the CIHR instructions and the CIHR FAQ as of 2026-09-21. Where does the rule live (template, presentation standards or reviewer guidelines), so the row can be cited?"
+      "quote": "Not permitted: the CV must be self-contained.",
+      "text": "F-21, answered 2026-09-22. The rule is in the reviewer guidelines, not the applicant instructions: 'Guidelines for reviewing the tri-agency CV', section 5, 'Self-contained information' (CIHR, cihr-irsc.gc.ca/e/54339.html; NSERC publishes the same text). It reads: \"The sole exception for which other sources may be permitted is for hyperlinks, but only if they are used to demonstrate audio/visual creative outputs, if applicable for specific funding opportunities.\" and \"However, there is no guarantee that hyperlinks will be accessed.\" The cell now carries both conditions (P-31). Note for the NSERC conversation: NSERC's Research Portal presentation standards say \"Do not include hyperlinks or bookmarks in your documents\", which does not allow the exception its own reviewer guidelines grant."
     },
     {
       "id": "seed-Q-4",
