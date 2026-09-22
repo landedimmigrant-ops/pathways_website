@@ -355,9 +355,22 @@
       + '<div class="rv-panel__tools"></div><div class="rv-panel__body"></div>';
     document.body.appendChild(panel);
     panel.addEventListener("click", onPanelClick);
+    panel.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.matches(".rv-card[tabindex]")) { e.preventDefault(); goToThread(e.target.dataset.id, e.target); } });
     return panel;
   }
-  function openPanel(open, tab) { ensurePanel(); state.panelOpen = open; if (tab) state.tab = tab; panel.classList.toggle("is-open", open); renderPanel(); renderBar(); alignActive(); }
+  function openPanel(open, tab) {
+    ensurePanel();
+    // On wide screens the page makes room for the panel, which re-wraps the text. Hold the
+    // reader's place: the active highlight, else whatever sits in the middle of the screen.
+    let anchor = state.active ? $('mark.rv-hl[data-cid="' + state.active + '"]', main) : null;
+    if (!anchor) { const e = document.elementFromPoint(Math.min(200, innerWidth / 4), innerHeight / 2); anchor = e && main.contains(e) ? e : null; }
+    const before = anchor ? anchor.getBoundingClientRect().top : 0;
+    state.panelOpen = open; if (tab) state.tab = tab;
+    panel.classList.toggle("is-open", open);
+    document.body.classList.toggle("rv-panel-open", open);
+    if (anchor && anchor.isConnected) window.scrollBy(0, anchor.getBoundingClientRect().top - before);
+    renderPanel(); renderBar(); alignActive();
+  }
   function renderPanel() {
     if (!panel) return;
     $$(".rv-tab", panel).forEach((t) => t.classList.toggle("is-on", t.dataset.tab === state.tab));
@@ -379,7 +392,7 @@
   }
   function cardHTML(t) {
     const orphan = located.get(t.id) === false;
-    return '<div class="rv-card' + (t.status === "resolved" ? " is-resolved" : "") + (state.active === t.id ? " is-active" : "") + '" data-id="' + esc(t.id) + '">'
+    return '<div class="rv-card' + (t.status === "resolved" ? " is-resolved" : "") + (state.active === t.id ? " is-active" : "") + '" data-id="' + esc(t.id) + '"' + (orphan ? "" : ' tabindex="0" title="Show this passage on the page"') + '>'
       + '<div class="rv-card__meta"><span class="rv-chip rv-chip--' + esc(t.type || "question") + '">' + esc(TYPES[t.type] || "Comment") + "</span>" + (t.status === "resolved" ? '<span class="rv-chip rv-chip--resolved">Resolved</span>' : "") + "<b>" + esc(t.author || "anonymous") + "</b><span>" + esc(fmtDate(t.ts)) + "</span>" + (t.section ? "<span>· " + esc(t.section) + "</span>" : "") + "</div>"
       + '<p class="rv-card__quote' + (orphan ? " is-orphan" : "") + '" title="' + (orphan ? "This passage is no longer on the page" : "") + '">' + (orphan ? "[passage not found] " : "") + esc(t.quote) + "</p>"
       + '<p class="rv-card__text">' + esc(t.text) + "</p>"
@@ -388,6 +401,8 @@
       + '<div class="rv-card__replybox" hidden><textarea placeholder="Reply"></textarea><div class="rv-card__actions"><button type="button" class="rv-b rv-b--primary" data-act="send-reply">Send</button><button type="button" class="rv-b" data-act="cancel-reply">Cancel</button></div></div></div>';
   }
   async function onPanelClick(e) {
+    const hit = e.target.closest(".rv-card[tabindex]");
+    if (hit && !e.target.closest("button, textarea, input, select, a, .rv-card__replybox") && !String(window.getSelection())) { goToThread(hit.dataset.id, hit); return; }
     const b = e.target.closest("[data-act], .rv-tab"); if (!b) return;
     if (b.classList.contains("rv-tab")) { state.tab = b.dataset.tab; renderPanel(); alignActive(); return; }
     const card = b.closest(".rv-card"); const id = card && card.dataset.id;
@@ -396,7 +411,7 @@
       case "filter": state.filter = b.dataset.v; renderPanel(); return alignActive();
       case "export": { const ok = await copyText(exportMarkdown()); toast(ok ? "Copied all comments as Markdown" : "Copy failed"); return; }
       case "goto-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (hosts[0]) { revealElement(hosts[0]); hosts[0].classList.add("rv-flash"); } return; }
-      case "goto": { state.active = id; const m = $('mark.rv-hl[data-cid="' + id + '"]', main); if (m) revealElement(m); renderComments(); return; }
+      case "goto": return goToThread(id, card);
       case "reply": { $(".rv-card__replybox", card).hidden = false; $("textarea", card).focus(); return; }
       case "cancel-reply": { $(".rv-card__replybox", card).hidden = true; return; }
       case "send-reply": {
@@ -421,7 +436,7 @@
 
   // Keep the active card level with its highlight: same eye line on click, and as the page scrolls.
   function alignActive() {
-    if (!panel) return;
+    if (!panel || state.pageDriving) return;
     const body = $(".rv-panel__body", panel);
     const card = state.active && state.panelOpen ? $('.rv-card[data-id="' + state.active + '"]', panel) : null;
     const mark = card ? $('mark.rv-hl[data-cid="' + state.active + '"]', main) : null;
@@ -434,6 +449,38 @@
     const target = cardInList - markLine;
     if (target < 0) { body.style.paddingTop = (10 - target) + "px"; body.scrollTop = 0; } // the first cards: push down to meet the line
     else body.scrollTop = target;
+  }
+  function setActive(id) {
+    state.active = id;
+    $$("mark.rv-hl", main).forEach((m) => m.classList.toggle("is-active", m.dataset.cid === id));
+    if (panel) $$(".rv-card", panel).forEach((c) => c.classList.toggle("is-active", c.dataset.id === id));
+  }
+  function pulse(id) {
+    $$('mark.rv-hl[data-cid="' + id + '"]', main).forEach((m) => { m.classList.remove("rv-pulse"); void m.offsetWidth; m.classList.add("rv-pulse"); });
+  }
+  // Reverse of a highlight click: bring the passage level with the card the viewer clicked.
+  let driveTimer = 0;
+  function goToThread(id, card) {
+    const mark = $('mark.rv-hl[data-cid="' + id + '"]', main);
+    if (!mark) { toast("This passage is no longer on the page"); return; }
+    setActive(id);
+    const acc = mark.closest(".accordion-collapse");
+    if (acc && !acc.classList.contains("show")) { const btn = $('[aria-controls="' + acc.id + '"]', main); if (btn) setOpen(btn, true); }
+    // Below 900px the panel sits over the page, so step it aside to show the passage.
+    const covered = matchMedia("(max-width: 899px)").matches;
+    if (covered) openPanel(false);
+    const line = covered || !card ? innerHeight / 3 : card.getBoundingClientRect().top;
+    const top = Math.max(0, scrollY + mark.getBoundingClientRect().top - line);
+    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches && Math.abs(top - scrollY) > 4;
+    state.pageDriving = true; clearTimeout(driveTimer);
+    const done = () => { if (!state.pageDriving) return; state.pageDriving = false; clearTimeout(driveTimer); window.removeEventListener("scrollend", done); alignActive(); pulse(id); };
+    window.addEventListener("scrollend", done);
+    driveTimer = setTimeout(done, smooth ? 1000 : 60);
+    const startY = scrollY;
+    window.scrollTo({ top, behavior: smooth ? "smooth" : "auto" });
+    // Some browsers swallow a smooth scroll (seen at phone width). If nothing has moved
+    // shortly after, jump there instead; if the viewer took over the scroll, leave them be.
+    if (smooth) setTimeout(() => { if (state.pageDriving && Math.abs(scrollY - startY) < 2) window.scrollTo({ top, behavior: "auto" }); }, 180);
   }
   let alignFrame = 0;
   const queueAlign = () => { if (!state.active || !state.panelOpen) return; cancelAnimationFrame(alignFrame); alignFrame = requestAnimationFrame(alignActive); };

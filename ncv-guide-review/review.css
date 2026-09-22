@@ -155,6 +155,20 @@ mark.rv-hl.is-proposal { background: rgba(176,125,0,.16); border-bottom-color: v
 .rv-card { border: 1px solid var(--rv-line); border-radius: 8px; padding: 10px 12px; margin: 0 0 10px; background: #fff; }
 .rv-card.is-active { border: 3px solid var(--rv-hl-edge); background: var(--rv-hl-card); box-shadow: 0 0 0 3px rgba(255, 190, 0, .28), 0 4px 14px rgba(0, 0, 0, .12); padding: 8px 10px; }
 .rv-card.is-active .rv-card__quote { border-left-color: var(--rv-hl-edge); }
+.rv-card[tabindex] { cursor: pointer; }
+.rv-card[tabindex]:not(.is-active):hover { border-color: var(--rv-hl-edge); background: #fffcee; }
+.rv-card[tabindex]:focus-visible { outline: 2px solid var(--rv-accent); outline-offset: 2px; }
+.rv-card .rv-card__actions, .rv-card textarea { cursor: auto; }
+
+/* arriving at a passage from its card: a short yellow pulse draws the eye */
+@keyframes rvPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 190, 0, .8); } 100% { box-shadow: 0 0 0 12px rgba(255, 190, 0, 0); } }
+mark.rv-hl.rv-pulse { animation: rvPulse .9s ease-out 2; }
+@media (prefers-reduced-motion: reduce) { mark.rv-hl.rv-pulse { animation: none; } }
+
+/* wide screens: the page makes room for the open panel instead of running underneath it */
+@media (min-width: 900px) {
+  body.rv-panel-open #boot, body.rv-panel-open .rv-bar { margin-right: 400px; }
+}
 .rv-card.is-resolved { opacity: .72; }
 .rv-card__meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--rv-ink-2); margin-bottom: 6px; }
 .rv-card__meta b { color: var(--rv-ink); }
