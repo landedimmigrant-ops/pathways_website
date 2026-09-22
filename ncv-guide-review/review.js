@@ -295,7 +295,7 @@
     ts.sort((a, b) => b.loc.start - a.loc.start);
     ts.forEach(({ t, loc }) => wrapRange(loc.start, loc.end, idx, { cid: t.id, cls: (t.status === "resolved" ? "is-resolved " : "") + (t.type === "proposal" ? "is-proposal " : "") + (state.active === t.id ? "is-active" : ""), title: (TYPES[t.type] || "Comment") + " by " + (t.author || "anonymous") }));
     renderPanel(); renderBar();
-    if (state.active && panel && state.panelOpen) { const c = $('.rv-card[data-id="' + state.active + '"]', panel); if (c) c.scrollIntoView({ block: "nearest" }); }
+    alignActive();
   }
   async function addRow(row) {
     row.id = row.id || uid(); row.ts = row.ts || new Date().toISOString(); row.page = store.page;
@@ -357,7 +357,7 @@
     panel.addEventListener("click", onPanelClick);
     return panel;
   }
-  function openPanel(open, tab) { ensurePanel(); state.panelOpen = open; if (tab) state.tab = tab; panel.classList.toggle("is-open", open); renderPanel(); renderBar(); }
+  function openPanel(open, tab) { ensurePanel(); state.panelOpen = open; if (tab) state.tab = tab; panel.classList.toggle("is-open", open); renderPanel(); renderBar(); alignActive(); }
   function renderPanel() {
     if (!panel) return;
     $$(".rv-tab", panel).forEach((t) => t.classList.toggle("is-on", t.dataset.tab === state.tab));
@@ -389,11 +389,11 @@
   }
   async function onPanelClick(e) {
     const b = e.target.closest("[data-act], .rv-tab"); if (!b) return;
-    if (b.classList.contains("rv-tab")) { state.tab = b.dataset.tab; renderPanel(); return; }
+    if (b.classList.contains("rv-tab")) { state.tab = b.dataset.tab; renderPanel(); alignActive(); return; }
     const card = b.closest(".rv-card"); const id = card && card.dataset.id;
     switch (b.dataset.act) {
       case "close": return openPanel(false);
-      case "filter": state.filter = b.dataset.v; return renderPanel();
+      case "filter": state.filter = b.dataset.v; renderPanel(); return alignActive();
       case "export": { const ok = await copyText(exportMarkdown()); toast(ok ? "Copied all comments as Markdown" : "Copy failed"); return; }
       case "goto-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (hosts[0]) { revealElement(hosts[0]); hosts[0].classList.add("rv-flash"); } return; }
       case "goto": { state.active = id; const m = $('mark.rv-hl[data-cid="' + id + '"]', main); if (m) revealElement(m); renderComments(); return; }
@@ -410,7 +410,35 @@
       }
     }
   }
-  main.addEventListener("click", (e) => { const m = e.target.closest("mark.rv-hl"); if (!m) return; state.active = m.dataset.cid; openPanel(true, "comments"); renderComments(); const c = $('.rv-card[data-id="' + state.active + '"]', panel); if (c) c.scrollIntoView({ block: "nearest" }); });
+  main.addEventListener("click", (e) => {
+    const m = e.target.closest("mark.rv-hl"); if (!m) return;
+    state.active = m.dataset.cid;
+    // a resolved thread is hidden under the Open filter; show it rather than open an empty panel
+    const t = threads().find((x) => x.id === state.active);
+    if (t && t.status === "resolved" && state.filter === "open") state.filter = "all";
+    openPanel(true, "comments"); renderComments();
+  });
+
+  // Keep the active card level with its highlight: same eye line on click, and as the page scrolls.
+  function alignActive() {
+    if (!panel) return;
+    const body = $(".rv-panel__body", panel);
+    const card = state.active && state.panelOpen ? $('.rv-card[data-id="' + state.active + '"]', panel) : null;
+    const mark = card ? $('mark.rv-hl[data-cid="' + state.active + '"]', main) : null;
+    if (!card || !mark) { body.style.paddingTop = ""; body.style.paddingBottom = ""; return; }
+    body.style.paddingTop = ""; // measure from the natural layout
+    body.style.paddingBottom = body.clientHeight + "px"; // room for the last card to rise to any line
+    const bodyTop = body.getBoundingClientRect().top;
+    const cardInList = card.getBoundingClientRect().top - bodyTop + body.scrollTop;
+    const markLine = mark.getBoundingClientRect().top - bodyTop;
+    const target = cardInList - markLine;
+    if (target < 0) { body.style.paddingTop = (10 - target) + "px"; body.scrollTop = 0; } // the first cards: push down to meet the line
+    else body.scrollTop = target;
+  }
+  let alignFrame = 0;
+  const queueAlign = () => { if (!state.active || !state.panelOpen) return; cancelAnimationFrame(alignFrame); alignFrame = requestAnimationFrame(alignActive); };
+  window.addEventListener("scroll", queueAlign, { passive: true });
+  window.addEventListener("resize", queueAlign);
   main.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.matches("mark.rv-hl")) { e.preventDefault(); e.target.click(); } });
   function sortIds(a, b) { const [pa, na] = a.split("-"), [pb, nb] = b.split("-"); return pa === pb ? (+na - +nb) : pa.localeCompare(pb); }
   function exportMarkdown() {

@@ -21,6 +21,7 @@ that no longer applies.
 
   python3 scripts/build-ncv-guide-review.py
 """
+import hashlib
 import json
 import re
 import sys
@@ -277,6 +278,10 @@ def main():
         "snapshot": seeds.get("snapshot", ""),
     }
 
+    aem_css = patch_css(read("aem-used.css"))
+    # content hashes on every asset link: a changed file always reaches reviewers, never a cached copy
+    ver = lambda text: hashlib.md5(text.encode("utf-8")).hexdigest()[:10]
+
     page = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -288,8 +293,8 @@ def main():
 <link rel="stylesheet" href="https://use.typekit.net/ewy3egs.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Cabin+Condensed:wght@400;500;600;700&family=Cabin:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,300,0..1,-25">
-<link rel="stylesheet" href="aem.css">
-<link rel="stylesheet" href="review.css">
+<link rel="stylesheet" href="aem.css?v={ver(aem_css)}">
+<link rel="stylesheet" href="review.css?v={ver((OUT_DIR / "review.css").read_text(encoding="utf-8"))}">
 </head>
 <body class="concordia page basicpage rv-view-review">
 <div id="rv-bar" class="rv-bar" role="region" aria-label="Review tools"></div>
@@ -304,12 +309,12 @@ def main():
 </div>
 {inline_sprite()}
 <script>window.RV_CONFIG = {json.dumps(config, ensure_ascii=False)};</script>
-<script src="review.js"></script>
+<script src="review.js?v={ver((OUT_DIR / "review.js").read_text(encoding="utf-8"))}"></script>
 </body>
 </html>
 '''
     (OUT_DIR / "index.html").write_text(page, encoding="utf-8")
-    (OUT_DIR / "aem.css").write_text(patch_css(read("aem-used.css")), encoding="utf-8")
+    (OUT_DIR / "aem.css").write_text(aem_css, encoding="utf-8")
 
     markers = sorted(set(re.findall(r"<!--rv:([A-Z]-\d+)-->", main_html)))
     missing = [m for m in markers if m not in changes]

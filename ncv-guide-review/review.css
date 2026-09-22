@@ -10,6 +10,8 @@
   --rv-accent-2: #d3e1e9;
   --rv-hl: rgba(255, 214, 10, 0.42);
   --rv-hl-strong: rgba(255, 190, 0, 0.72);
+  --rv-hl-edge: #d9a400;        /* solid yellow for outlines: the active highlight and its card */
+  --rv-hl-card: #fff6cc;
   --rv-hl-done: rgba(120, 190, 120, 0.28);
   --rv-error: #b00020;
   --rv-question: #0072a8;
@@ -83,7 +85,7 @@ mark.rv-hl {
   border-bottom: 2px solid rgba(180, 130, 0, .6); cursor: pointer;
 }
 mark.rv-hl.is-resolved { background: var(--rv-hl-done); border-bottom-color: rgba(60,130,60,.5); }
-mark.rv-hl.is-active { background: var(--rv-hl-strong); }
+mark.rv-hl.is-active { background: var(--rv-hl-strong); outline: 2px solid var(--rv-hl-edge); outline-offset: 1px; border-radius: 2px; }
 mark.rv-hl.is-proposal { background: rgba(176,125,0,.16); border-bottom-color: var(--rv-proposal); }
 
 /* ---------- floating comment button ---------- */
@@ -151,7 +153,8 @@ mark.rv-hl.is-proposal { background: rgba(176,125,0,.16); border-bottom-color: v
 .rv-chip--proposal { background: var(--rv-proposal); }
 .rv-chip--resolved { background: #7a8593; }
 .rv-card { border: 1px solid var(--rv-line); border-radius: 8px; padding: 10px 12px; margin: 0 0 10px; background: #fff; }
-.rv-card.is-active { border-color: var(--rv-accent); box-shadow: 0 0 0 2px var(--rv-accent-2); }
+.rv-card.is-active { border: 3px solid var(--rv-hl-edge); background: var(--rv-hl-card); box-shadow: 0 0 0 3px rgba(255, 190, 0, .28), 0 4px 14px rgba(0, 0, 0, .12); padding: 8px 10px; }
+.rv-card.is-active .rv-card__quote { border-left-color: var(--rv-hl-edge); }
 .rv-card.is-resolved { opacity: .72; }
 .rv-card__meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--rv-ink-2); margin-bottom: 6px; }
 .rv-card__meta b { color: var(--rv-ink); }
