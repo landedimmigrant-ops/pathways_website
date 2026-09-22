@@ -50,6 +50,13 @@ page limit; exists to bridge data gaps until the Tri-agency Grants Management So
 - Agency template mandatory. **CIHR/SSHRC: Arial 12**, black, single spacing minimum, 2 cm
   margins, unprotected PDF ≤ 5 MB. **NSERC defers formatting to each funding opportunity**
   — three agencies, three formatting regimes; a tool cannot hardcode one.
+  **Update 2026-09-22:** NSERC's presentation and attachment standards (Research Portal and NSERC
+  Online, both read that day) set **12-point Times New Roman for all text**, "All content, including
+  references (if applicable), must follow these formatting standards." So NSERC defers to the
+  opportunity's *standards*, and those standards are TNR 12, not Arial. NSERC also told Prem directly
+  that the TCV allows **no** font exception for tables or references — stricter than the footnote in
+  NSERC's own published standards ("Font and size rules do not apply to text within tables and
+  figures"). Unresolved: see F-22 in `narrative-cv-guide-factual-review.md`.
 - Citations: any style common in the field; **asterisk (`*`) after each supervised HQP's
   name; bold the lead author** where authorship order doesn't show it.
 - **Self-contained: hyperlinks banned**, single exception = demonstrating **audio/visual
