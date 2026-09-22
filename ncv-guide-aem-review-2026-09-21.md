@@ -125,7 +125,7 @@ F-1 to F-14 are described in full in `narrative-cv-guide-factual-review.md`. All
 | ID | Dev page text | Today | Fix | Status |
 |---|---|---|---|---|
 | F-1 | "Yes — and it is not just permitted, it is the point. Funders want to understand your individual contribution…" | The instructions ask for "your role in each contribution" and contain no first-person wording. Confidence stays high. | P-28 (group D) | held (Eli) |
-| F-2 | Language row: "French required for most programs" | The FRQ's CV pages state no language rule. Still unconfirmed. | none | held (Eli) |
+| F-2 | Language row: "French required for most programs" | **Answered 2026-09-22: wrong.** FRQ presentation standards: "The pre-application and application forms must be filled out in French. The documents attached to the form can be written in either French or English." CV-FRQ instructions (July 2026): "6 pages (ou 5 pages en version anglaise)". One case to confirm: new-portal competitions, where the CV is completed in the portal rather than attached. | P-32 | open |
 | F-3 | Page limits row: "Varies by competition — always check the program guide" in both columns | **Verified.** TCV: five pages in English, six in French, overflow removed. CV-FRQ 5/6 comes from Concordia's published NCV page and our August scan; the FRQ web pages do not state it. The dev builder page in the same section already says "maximum 5 pages in English, 6 pages in French". | P-8 | open |
 | F-4 | CV-FRQ hyperlinks: "Permitted for supporting materials" | **Verified** at the FRQ. | P-17 | open |
 | F-5 | "introduced in 2021, piloted with select programs, and has since expanded" | Not checked. | none | held (Eli) |
@@ -280,6 +280,13 @@ Also source: `s3.table`.
 
 Also source: `s3.table`.
 
+**P-32** (F-2) · TCV/CV-FRQ table, Language row, CV-FRQ cell:
+> French or English. The FRQ application form itself must be completed in French.
+
+Sources: FRQ presentation standards (the attached-documents rule) and the CV-FRQ instructions, July
+2026 (an English version is limited to 5 pages). The old cell told researchers French was required,
+which would steer an anglophone away from writing in their stronger language.
+
 **P-31** (F-21) · TCV/CV-FRQ table, Hyperlinks row, TCV cell:
 > Not permitted: the CV must be self-contained. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it. Reviewers are not guaranteed to open it.
 
@@ -352,7 +359,7 @@ Why sign-off: "leave the grammatical person open" rests on the absence of any fi
 
 ### Group E: held, no text offered
 
-F-2 (FRQ language rule) · F-5 (2021 date and rollout state) · F-10 ("consistently score higher") · F-17 (Wellcome Trust) · F-19 (invented example) · F-21 (source of the TCV hyperlink rule) · F-13 and F-14 (where formatting rules live).
+F-5 (2021 date and rollout state) · F-10 ("consistently score higher") · F-17 (Wellcome Trust) · F-19 (invented example) · F-21 (source of the TCV hyperlink rule) · F-13 and F-14 (where formatting rules live).
 
 ---
 

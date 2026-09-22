@@ -247,6 +247,14 @@
       "note": "Source: 'Guidelines for reviewing the tri-agency CV', section 5, at CIHR (cihr-irsc.gc.ca/e/54339.html) and NSERC. Read 2026-09-22.",
       "find": "<td>Not permitted (self-contained document).<br>Exception: audio/visual creative works.</td>",
       "replace": "<td><!--rv:P-31-->Not permitted: the CV must be self-contained. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it. Reviewers are not guaranteed to open it.</td>"
+    },
+    {
+      "id": "P-32",
+      "group": "B",
+      "title": "CV-FRQ language: French or English, form in French (F-2)",
+      "note": "Sources: FRQ presentation standards ('The documents attached to the form can be written in either French or English'); CV-FRQ instructions, July 2026 ('6 pages (ou 5 pages en version anglaise)'). Read 2026-09-22.",
+      "find": "<td>French required for most programs</td>",
+      "replace": "<td><!--rv:P-32-->French or English. The FRQ application form itself must be completed in French.</td>"
     }
   ]
 }

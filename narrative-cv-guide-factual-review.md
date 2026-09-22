@@ -9,7 +9,7 @@ claims across unchanged, so the voice work can be reviewed without also signing 
 the TCV, CV-FRQ and international formats with URLs and dates — plus Concordia's own published NCV
 page and FAQ. That document has its own caveats in its §6; anything it flags as unverified is
 flagged here too. **I have not gone back to the agencies to confirm any of this.** Three items
-(F-2, F-5, F-10) need someone who actually knows, not more desk research.
+(F-2, F-5, F-10) need someone who actually knows (F-2 answered 2026-09-22), not more desk research.
 
 **How to read the confidence column.** *High* = stated explicitly in a primary source I can point
 to. *Medium* = sourced but with a caveat. *Unverified* = I could not confirm the current text and
@@ -22,7 +22,7 @@ could not confirm a replacement either.
 | # | Slot | Issue | Confidence | Priority |
 |---|---|---|---|---|
 | **F-1** | `s4.expand-a.p1` | Implies funders require first person. They don't — they require role clarity | High | **High** |
-| **F-2** | `s3.table` Language | "French required for most programs" may be wrong | Medium | **High** |
+| **F-2** | `s3.table` Language | Wrong: the CV-FRQ may be in French or English. Answered; P-32 | High (verified) | **High** |
 | **F-3** | `s3.table` Page limits | "Varies by competition" is vaguer than the known limits; overflow rule missing | High | **High** |
 | F-4 | `s3.table` Hyperlinks | CV-FRQ rule stated too loosely | Medium | Medium |
 | F-5 | `s1.expand.p2` | "Introduced in 2021" unverified; rollout state out of date | Unverified | Medium |
@@ -86,6 +86,19 @@ plainly either way. **Do not ship the voice version's wording on this row withou
 note that the voice version keeps the *current* text precisely because of this.
 
 **Confidence: Medium**, and the stakes are high enough that medium isn't good enough.
+
+**Answered 2026-09-22 — the current text is wrong.** FRQ presentation standards: "The pre-application
+and application forms must be filled out in French. The documents attached to the form can be written
+in either French or English." The CV-FRQ instructions (July 2026, the authoritative French text) set
+a limit for an English CV: "Le CV descriptif ne doit pas excéder 6 pages (ou 5 pages en version
+anglaise)." The page now reads "French or English. The FRQ application form itself must be completed
+in French." (P-32).
+
+**One case still worth confirming with the FRQ:** on the new FRQnet portal the CV is completed
+directly in the "CV-FRQ" section of the application instead of being attached. The instructions keep
+the English page limit without distinguishing the two portals, which indicates English is accepted
+there too, but the standards' wording (forms in French, attachments in either language) does not
+settle that case outright.
 
 ---
 

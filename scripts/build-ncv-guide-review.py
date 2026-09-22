@@ -259,6 +259,7 @@ def main():
         "P-14": {"title": "Contact line (F-12)", "group": "B", "note": ""},
         "P-15": {"title": "Reviewed date and status line", "group": "B", "note": ""},
         "P-8": {"title": "Page limits and the overflow rule (F-3)", "group": "B", "note": "Verified at SSHRC and the CIHR FAQ on 2026-09-21."},
+        "P-32": {"title": "CV-FRQ language: French or English, form in French (F-2)", "group": "B", "note": "FRQ presentation standards and CV-FRQ instructions (July 2026). Read 2026-09-22."},
         "P-31": {"title": "TCV hyperlinks: the exception is conditional, and reviewers may not open links (F-21)", "group": "B", "note": "Source: 'Guidelines for reviewing the tri-agency CV', section 5, at CIHR and NSERC. Read 2026-09-22."},
         "P-30": {"title": "Fonts differ by agency: Arial at SSHRC and CIHR, Times New Roman at NSERC (F-22)", "group": "B", "note": "In AEM: a new accordion under the comparison table. Raised by NSERC to Prem 2026-09-22; fonts verified at SSHRC, NSERC and the FRQ the same day."},
         "P-9": {"title": "Official section names (F-15)", "group": "B", "note": "Verified at SSHRC, CIHR and the FRQ on 2026-09-21."},
