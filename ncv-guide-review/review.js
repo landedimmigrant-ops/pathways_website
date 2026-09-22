@@ -225,8 +225,14 @@
   }
   function nearestHeading(node) {
     const el = node.nodeType === 3 ? node.parentElement : node;
-    const sect = el && el.closest(".c-grid-container"); const h = sect && $("h2", sect);
-    return h ? norm(h.textContent).trim() : "";
+    const sect = el && el.closest(".c-grid-container");
+    const h = sect && $("h2", sect);
+    if (h) return norm(h.textContent).trim();
+    // the title block and the closing block sit outside every h2 section
+    if (!sect) return "";
+    if ($("h1", sect)) return "Page introduction";
+    if ($("#next", sect)) return "Closing block";
+    return "";
   }
   function locate(anchor, idx) {
     const q = norm(anchor.quote).trim(); if (!q) return null;
