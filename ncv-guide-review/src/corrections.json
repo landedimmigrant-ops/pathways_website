@@ -255,6 +255,22 @@
       "note": "Sources: FRQ presentation standards ('The documents attached to the form can be written in either French or English'); CV-FRQ instructions, July 2026 ('6 pages (ou 5 pages en version anglaise)'). Read 2026-09-22.",
       "find": "<td>French required for most programs</td>",
       "replace": "<td><!--rv:P-32-->French or English. The FRQ application form itself must be completed in French.</td>"
+    },
+    {
+      "id": "P-33",
+      "group": "B",
+      "title": "Funder list: Wellcome Trust removed (F-17)",
+      "note": "Prem, 2026-09-22: take it off the list. Wellcome is absent from our sourced scan; UKRI and NWO are sourced.",
+      "find": "<li><span class=\"xlarge-text\">Wellcome Trust (UK)</span></li>",
+      "replace": "<!--rv:P-33-->"
+    },
+    {
+      "id": "P-34",
+      "group": "C",
+      "title": "Specificity example: neutral and marked as illustrative (F-19)",
+      "note": "Prem, 2026-09-22: no real source, so present it as an example. The invented case no longer names Indigenous organizations or the City, and the protocol now lands in a food policy, not a housing strategy.",
+      "find": "co-designed a food security protocol with three urban Indigenous organizations in Montréal, subsequently adopted by the City's housing strategy.\"",
+      "replace": "<!--rv:P-34-->co-designed a food security protocol with three community organizations, later adopted into a municipal food policy.\" These examples are illustrative."
     }
   ]
 }

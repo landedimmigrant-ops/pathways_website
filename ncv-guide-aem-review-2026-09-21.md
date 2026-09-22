@@ -139,9 +139,9 @@ F-1 to F-14 are described in full in `narrative-cv-guide-factual-review.md`. All
 | F-13, F-14 | Formatting rules and citation conventions absent | Decision needed on where these live (guide or builder). | none | held |
 | **F-15** | Section names: "Most Significant Contributions"; table row "Most Significant Contributions · Réalisations les plus significatives"; CV-FRQ section 1 presented as a "Personal Statement" | **Verified.** Neither name matches the agencies. | P-9 | open |
 | **F-16** | "Not necessarily your most recent — your most representative"; "the most complete picture of your research" | **Verified.** The agencies tie selection to the application: "that relate to your application". | P-10 | open |
-| **F-17** | Funder list includes "Wellcome Trust (UK)" | UKRI and NWO are in our sourced scan; Wellcome is not. | none | held (Eli) |
+| **F-17** | Funder list includes "Wellcome Trust (UK)" | UKRI and NWO are in our sourced scan; Wellcome is not. | P-33 | decided |
 | **F-18** | "Key documents… CoARA"; "the traditional CV-style Common CV" | Naming errors. | P-21, P-22 | open |
-| **F-19** | Specificity example: "co-designed a food security protocol with three urban Indigenous organizations in Montréal, subsequently adopted by the City's housing strategy" | The example is invented, names Indigenous organizations and the City, and pairs a food-security protocol with a housing strategy. | none. Q-6. | held |
+| **F-19** | Specificity example: "co-designed a food security protocol with three urban Indigenous organizations in Montréal, subsequently adopted by the City's housing strategy" | The example is invented, names Indigenous organizations and the City, and pairs a food-security protocol with a housing strategy. | P-34 | decided |
 | **F-20** | Funders row: "FRQSC, FRQNT, FRQS" | **Verified.** One FRQ since June 1, 2024, with three sectors. | P-16 | open |
 | **F-22** | Fonts absent from the guide, and they differ by agency | **Verified 2026-09-22.** SSHRC TCV instructions: "12-point, Arial font in black type. You can apply different fonts and sizes only in tables, figures and legends." NSERC presentation standards: "Use 12-point Times New Roman font for all text." FRQ presentation standards: "Font : Times New Roman (12 points)." **NSERC told Prem on 2026-09-22 that the TCV allows no exception for references or tables**, which is stricter than the footnote in NSERC's own published standards. | P-30 | open |
 | **F-21** | TCV hyperlinks: "Not permitted (self-contained document). Exception: audio/visual creative works." | **Answered 2026-09-22.** The rule is in the reviewer guidelines, not the applicant instructions: "Guidelines for reviewing the tri-agency CV", section 5 (CIHR `cihr-irsc.gc.ca/e/54339.html`; NSERC the same): "The sole exception for which other sources may be permitted is for hyperlinks, but only if they are used to demonstrate audio/visual creative outputs, if applicable for specific funding opportunities." and "However, there is no guarantee that hyperlinks will be accessed." | P-31 | open |
@@ -412,3 +412,26 @@ page is reproduced in the repo as a paste reference with a comment layer, for El
 - Agency facts in §4.1 were confirmed by string match in the agencies' live pages on the same day. Items that could not be confirmed are labelled held.
 - Staging caveats: `noindex`, the missing French page and the empty description may change at publish.
 - Not reviewed: every other dev-site page, including the builder.
+
+## 10. Decisions and source of truth (2026-09-22)
+
+From this date the review copy (`ncv-guide-review/`, live at
+`https://landedimmigrant-ops.github.io/pathways_website/ncv-guide-review/`) is the source of truth for
+the guide's content. The AEM page is corrected from it by hand. New comments from staff are processed
+in batches: pull the Guide review tab, propose fixes, apply the approved ones as tagged corrections,
+and close each thread with a one-line note of what was done.
+
+**Decided by Prem on the page, 2026-09-22, and applied:**
+
+| Item | Decision | Applied as | Status |
+|---|---|---|---|
+| F-17 | Take Wellcome Trust off the funder list | P-33 | decided |
+| F-19 | No real source: present the example as illustrative. The invented case also loses the Indigenous organizations and the City, and the protocol goes into a food policy | P-34 | decided |
+| Q-1 | Capitalisation follows the agencies: "narrative CV" in running text (14 places); capital only on the page title and the table column header | L-1 | decided |
+| Q-4 | No named person; keep impact@concordia.ca | none | decided |
+| F-22 | State the font rules as instructions, without "NSERC has advised us" | P-30 reworded | decided |
+| F-21 | Answered from the reviewer guidelines | P-31 | decided |
+
+**Open, waiting on Eli** (the only open threads on the page): F-1 and F-9 (first-person and
+active-voice proposals), F-2 (the new-portal language case), F-5 (the 2021 date and the current
+rollout), F-10 ("consistently score higher").

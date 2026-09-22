@@ -6,6 +6,14 @@ can mark errors and questions in place.
 
 Live (once pushed): `https://landedimmigrant-ops.github.io/pathways_website/ncv-guide-review/`
 
+## Source of truth
+
+Since 2026-09-22 this page is the source of truth for the guide's content; the AEM page is corrected
+from it by hand, using the tags and Copy text. Staff comment on the page. Comments are processed in
+batches: pull the Guide review tab, propose fixes, apply the approved ones in `src/corrections.json`
+(or the build script for structural blocks), rebuild, then close each thread with a reply saying what
+was done and a resolve. Only threads waiting on a person stay open.
+
 ## What reviewers see
 
 - **Review view** (default): every corrected block carries a blue tag (`I-1`, `P-9`…). Click a tag

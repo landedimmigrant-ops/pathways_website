@@ -19,7 +19,7 @@
       "id": "seed-F-9",
       "type": "proposal",
       "author": "Claude (review, 2026-09-21)",
-      "quote": "The biggest shift is not structural — it is rhetorical. A Narrative CV asks you to move from listing to explaining, and from passive to active voice.",
+      "quote": "The biggest shift is not structural — it is rhetorical. A narrative CV asks you to move from listing to explaining, and from passive to active voice.",
       "text": "F-9, proposed replacement pending Eli's sign-off: \"The main change is rhetorical. A Narrative CV asks you to explain your contributions as well as list them, and to make your own role visible in each one.\" Active voice is a means; the instructions ask for a visible role."
     },
     {
@@ -47,14 +47,14 @@
       "id": "seed-F-17",
       "type": "question",
       "author": "Claude (review, 2026-09-21)",
-      "quote": "Wellcome Trust (UK)",
+      "quote": "Funders that currently use narrative CV formats:",
       "text": "F-17: Wellcome does not appear in our sourced scan of narrative CV formats; UKRI and NWO do. Can you point to Wellcome's format, or should it come off the list?"
     },
     {
       "id": "seed-F-19",
       "type": "question",
       "author": "Claude (review, 2026-09-21)",
-      "quote": "co-designed a food security protocol with three urban Indigenous organizations in Montréal, subsequently adopted by the City's housing strategy.",
+      "quote": "These examples are illustrative.",
       "text": "F-19: This example is invented. On an official Concordia page it reads as a real case, it names Indigenous organizations and the City, and a food-security protocol is paired with a housing strategy. Is there a real example, usable with consent, that could replace it?"
     },
     {
@@ -82,7 +82,7 @@
       "id": "seed-F-22",
       "type": "question",
       "author": "Claude (review, 2026-09-22)",
-      "quote": "NSERC has advised us that this covers everything, including references and tables, so the exception above does not apply to an NSERC application.",
+      "quote": "NSERC requires 12-point Times New Roman for all text, including references and tables.",
       "text": "F-22: NSERC told Prem on 2026-09-22 that the TCV allows no font exception for tables and references. NSERC's own published presentation standards say the opposite in a footnote: \"Font and size rules do not apply to text within tables and figures. However, the font must be clearly legible.\" (Research Portal and NSERC Online presentation and attachment standards, read 2026-09-22.) We have published the stricter rule, because following it cannot make an application non-compliant either way. Worth getting NSERC's position in writing, and asking whether their published standards will be updated. Verified the same day: SSHRC requires \"12-point, Arial font in black type\" with the exception; NSERC requires 12-point Times New Roman; the CV-FRQ requires \"Times New Roman (12 points)\"."
     }
   ]

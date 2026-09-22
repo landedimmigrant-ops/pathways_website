@@ -32,7 +32,7 @@ SRC = ROOT / "ncv-guide-review" / "src"
 OUT_DIR = ROOT / "ncv-guide-review"
 
 BUILDER_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/tools/narrative-cv-builder.html"
-META_DESCRIPTION = ("An orientation to the Narrative CV for Concordia researchers: the three sections, "
+META_DESCRIPTION = ("An orientation to the narrative CV for Concordia researchers: the three sections, "
                     "what reviewers look for and how the Tri-agency CV differs from the CV-FRQ.")
 
 
@@ -155,7 +155,7 @@ FORMATTING_ACCORDION = """
             <p><span class="xlarge-text">The three Tri-agency partners do not use the same formatting rules, so the agency you are applying to decides the format of your TCV.</span></p>
             <ul>
               <li><span class="xlarge-text"><b>SSHRC and CIHR</b> require 12-point Arial in black type. You can use different fonts and sizes in tables, figures and legends, as long as the text is readable when the page is viewed at 100%.</span></li>
-              <li><span class="xlarge-text"><b>NSERC</b> requires 12-point Times New Roman. NSERC has advised us that this covers everything, including references and tables, so the exception above does not apply to an NSERC application.</span></li>
+              <li><span class="xlarge-text"><b>NSERC</b> requires 12-point Times New Roman for all text, including references and tables. The exception for tables, figures and legends does not apply to an NSERC application.</span></li>
               <li><span class="xlarge-text">The <b>CV-FRQ</b> requires 12-point Times New Roman, with margins of at least 2 cm, your name in the header and the document title in the footer.</span></li>
             </ul>
             <p><span class="xlarge-text">None of them accept condensed fonts, and all of them require you to use the agency's own template.</span></p>
@@ -166,6 +166,26 @@ FORMATTING_ACCORDION = """
     </div>
   </div>
 </div>"""
+
+
+def lowercase_running_text(html):
+    """L-1 (Q-1): "narrative CV" in lower case in running text, as the agencies write it.
+    A capital stays only where the phrase opens a heading, a table cell or a sentence."""
+    changed = 0
+    out = []
+    for part in re.split(r"(<[^>]+>)", html):
+        if part.startswith("<") or "Narrative CV" not in part:
+            out.append(part)
+            continue
+        def fix(m, part=part):
+            nonlocal changed
+            before = part[: m.start()]
+            if not before.strip() or re.search(r"[.!?:]\s*$", before):
+                return m.group(0)
+            changed += 1
+            return "<!--rv:L-1-->narrative CV"
+        out.append(re.sub(r"Narrative CV", fix, part))
+    return "".join(out), changed
 
 
 def closing_block(text):
@@ -250,6 +270,9 @@ def main():
     main_html = cards_three_up(main_html)
     main_html = note_after_table(main_html)
     main_html = closing_block(main_html)
+    main_html, lowered = lowercase_running_text(main_html)
+    if lowered != 14:
+        raise SystemExit(f"[L-1] expected 14 mid-sentence 'Narrative CV', found {lowered}")
 
     changes = {e["id"].rstrip("abcde"): {"title": e["title"], "group": e["group"], "note": e.get("note", "")}
                for e in corrections["edits"]}
@@ -259,9 +282,12 @@ def main():
         "P-14": {"title": "Contact line (F-12)", "group": "B", "note": ""},
         "P-15": {"title": "Reviewed date and status line", "group": "B", "note": ""},
         "P-8": {"title": "Page limits and the overflow rule (F-3)", "group": "B", "note": "Verified at SSHRC and the CIHR FAQ on 2026-09-21."},
+        "L-1": {"title": "Lower-case 'narrative CV' in running text, as the agencies write it (Q-1)", "group": "C", "note": "Prem, 2026-09-22: go with what the agencies use. 14 places; the page title and the table column header keep their capital."},
+        "P-33": {"title": "Funder list: Wellcome Trust removed (F-17)", "group": "B", "note": "Prem, 2026-09-22."},
+        "P-34": {"title": "Specificity example: neutral and marked as illustrative (F-19)", "group": "C", "note": "Prem, 2026-09-22."},
         "P-32": {"title": "CV-FRQ language: French or English, form in French (F-2)", "group": "B", "note": "FRQ presentation standards and CV-FRQ instructions (July 2026). Read 2026-09-22."},
         "P-31": {"title": "TCV hyperlinks: the exception is conditional, and reviewers may not open links (F-21)", "group": "B", "note": "Source: 'Guidelines for reviewing the tri-agency CV', section 5, at CIHR and NSERC. Read 2026-09-22."},
-        "P-30": {"title": "Fonts differ by agency: Arial at SSHRC and CIHR, Times New Roman at NSERC (F-22)", "group": "B", "note": "In AEM: a new accordion under the comparison table. Raised by NSERC to Prem 2026-09-22; fonts verified at SSHRC, NSERC and the FRQ the same day."},
+        "P-30": {"title": "Fonts differ by agency: Arial at SSHRC and CIHR, Times New Roman at NSERC (F-22)", "group": "B", "note": "In AEM: a new accordion under the comparison table. Stated as instructions (Prem, 2026-09-22). Fonts verified at SSHRC, NSERC and the FRQ the same day."},
         "P-9": {"title": "Official section names (F-15)", "group": "B", "note": "Verified at SSHRC, CIHR and the FRQ on 2026-09-21."},
         "P-10": {"title": "Selection criterion: contributions that relate to the application (F-16, F-6)", "group": "B", "note": ""},
         "P-27": {"title": "Drop 'actually'; register (L-16)", "group": "C", "note": ""},

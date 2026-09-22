@@ -391,3 +391,12 @@ conditions (P-31).
 **For the NSERC conversation (with F-22):** NSERC's Research Portal presentation standards say "Do not
 include hyperlinks or bookmarks in your documents", with no exception, while NSERC's own reviewer
 guidelines allow the audio/visual one. This is the second place NSERC's published rules disagree.
+
+---
+
+## Status, 2026-09-22
+
+**Decided by Prem:** F-17 (Wellcome removed), F-19 (example kept, marked illustrative, made neutral),
+F-22 (font rules stated as instructions). **Answered from sources:** F-2 (French or English; one
+new-portal case open), F-21 (reviewer guidelines §5). **Still open for Eli:** F-1, F-9, F-2 (new
+portal only), F-5, F-10. These five are the only open threads on the review page.
