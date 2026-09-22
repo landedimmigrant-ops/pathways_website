@@ -120,12 +120,15 @@
   }
 
   // ---------------------------------------------------------------- views
-  function setView(v) {
-    state.view = v; ls.set("rv.view", v);
-    document.body.classList.toggle("rv-view-review", v === "review");
-    document.body.classList.toggle("rv-view-reference", v === "reference");
-    closePopover(); hideFab();
-    if (v === "reference") { expandAll(false); openPanel(false); } else expandAll(true);
+  // AEM copy mode: off for reviewers (page + comments only); on for whoever pastes into AEM
+  // (every change tagged, any block copyable, comment tools out of the way).
+  function setAem(on) {
+    state.aem = !!on; ls.set("rv.aem", state.aem);
+    document.body.classList.toggle("rv-aem", state.aem);
+    closePopover(); hideFab(); clearHover();
+    state.tab = state.aem ? "changes" : "comments";
+    if (state.panelOpen) { renderPanel(); alignActive(); }
+    expandAll(true);
     renderBar();
   }
 
@@ -182,17 +185,14 @@
     return popover;
   }
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closePopover(); hideFab(); } });
-  document.addEventListener("mousedown", (e) => { if (popover && !popover.contains(e.target) && !e.target.closest(".rv-fab, .rv-tag")) closePopover(); });
+  document.addEventListener("mousedown", (e) => { if (popover && !popover.contains(e.target) && !e.target.closest(".rv-fab, .rv-tag, .rv-copychip")) closePopover(); });
 
-  function showChange(id, tagEl) {
-    const ch = CFG.changes[id] || { title: "Changed", group: "", note: "" };
-    const hosts = changeHosts.get(id) || [];
-    const host = tagEl.closest(".rv-changed") || hosts[0];
-    const html = '<h4><span class="rv-group-' + esc(ch.group) + '">' + esc(GROUPS[ch.group] || ch.group) + "</span>" + esc(id) + " · " + esc(ch.title) + "</h4>"
-      + (ch.note ? '<p class="rv-note">' + esc(ch.note) + "</p>" : "")
-      + '<p class="rv-meta">Copy the corrected block for the AEM editor.' + (hosts.length > 1 ? " This change touches " + hosts.length + " blocks; this copies the one you clicked." : "") + "</p>"
+  function showCopy(host, rect, headingHtml, extraHtml) {
+    const preview = blockText(host).replace(/\s+/g, " ").trim();
+    const html = "<h4>" + headingHtml + "</h4>" + (extraHtml || "")
+      + '<p class="rv-quote">' + esc(preview.length > 160 ? preview.slice(0, 160) + "…" : preview) + "</p>"
       + '<div class="rv-row"><button type="button" class="rv-b rv-b--primary" data-act="copy-text">Copy text</button><button type="button" class="rv-b" data-act="copy-html">Copy HTML</button><span class="rv-grow"></span><button type="button" class="rv-b" data-act="close">Close</button></div>';
-    const p = openPopover(tagEl.getBoundingClientRect(), html);
+    const p = openPopover(rect, html);
     p.addEventListener("click", async (e) => {
       const b = e.target.closest("[data-act]"); if (!b) return;
       if (b.dataset.act === "close") return closePopover();
@@ -200,6 +200,37 @@
       toast(ok ? "Copied" : "Copy failed: select the text and copy it by hand");
     });
   }
+  function showChange(id, tagEl) {
+    const ch = CFG.changes[id] || { title: "Changed", group: "", note: "" };
+    const hosts = changeHosts.get(id) || [];
+    const host = tagEl.closest(".rv-changed") || hosts[0];
+    showCopy(host, tagEl.getBoundingClientRect(),
+      '<span class="rv-group-' + esc(ch.group) + '">' + esc(GROUPS[ch.group] || ch.group) + "</span>" + esc(id) + " · " + esc(ch.title),
+      (ch.note ? '<p class="rv-note">' + esc(ch.note) + "</p>" : "")
+      + (hosts.length > 1 ? '<p class="rv-meta">This change touches ' + hosts.length + " blocks; this copies the one you clicked.</p>" : ""));
+  }
+
+  // Any block, in copy mode: hover shows a Copy handle. Changed blocks use their tag instead.
+  const BLOCK_SEL = "tr, .c-introduction, .c-title, .c-button, .c-anchor-navigation, .accordion-header, .rte, .c-table";
+  let copyChip = null, chipHost = null;
+  function clearHover() { if (chipHost) chipHost.classList.remove("rv-hover"); chipHost = null; if (copyChip) copyChip.hidden = true; }
+  function placeChip(host) {
+    if (!copyChip) {
+      copyChip = document.createElement("button"); copyChip.type = "button"; copyChip.className = "rv-copychip";
+      copyChip.textContent = "Copy"; copyChip.setAttribute("aria-label", "Copy this block for AEM");
+      copyChip.addEventListener("click", (e) => { e.preventDefault(); if (chipHost) showCopy(chipHost, copyChip.getBoundingClientRect(), "Copy this block for AEM", ""); });
+      document.body.appendChild(copyChip);
+    }
+    chipHost = host; host.classList.add("rv-hover");
+    const r = host.getBoundingClientRect();
+    copyChip.style.left = (r.left + scrollX + 6) + "px"; copyChip.style.top = (r.top + scrollY - 11) + "px"; copyChip.hidden = false;
+  }
+  main.addEventListener("mouseover", (e) => {
+    if (!state.aem || popover) return;
+    const host = e.target.closest(BLOCK_SEL);
+    if (!host || !main.contains(host) || host.closest(".rv-changed")) { clearHover(); return; }
+    if (host !== chipHost) { clearHover(); placeChip(host); }
+  });
   document.addEventListener("click", (e) => { const t = e.target.closest(".rv-tag"); if (t) { e.preventDefault(); showChange(t.dataset.rvId, t); } });
 
   // ---------------------------------------------------------------- text index and anchors
@@ -309,7 +340,7 @@
   let fab = null; let pendingRange = null;
   function hideFab() { if (fab) { fab.remove(); fab = null; } pendingRange = null; }
   function onSelect() {
-    if (state.view !== "review") return;
+    if (state.aem) return;
     const sel = window.getSelection(); if (!sel || sel.isCollapsed || !sel.rangeCount) { hideFab(); return; }
     const r = sel.getRangeAt(0); if (!main.contains(r.commonAncestorContainer)) { hideFab(); return; }
     if (!norm(r.toString()).trim()) { hideFab(); return; }
@@ -373,12 +404,14 @@
   }
   function renderPanel() {
     if (!panel) return;
-    $$(".rv-tab", panel).forEach((t) => t.classList.toggle("is-on", t.dataset.tab === state.tab));
+    state.tab = state.aem ? "changes" : "comments";
+    $(".rv-panel__tabs", panel).hidden = true;
+    $(".rv-panel__head h3", panel).textContent = state.aem ? "Changes to copy into AEM" : "Comments";
     const tools = $(".rv-panel__tools", panel), body = $(".rv-panel__body", panel);
     if (state.tab === "changes") {
       const ids = Object.keys(CFG.changes).filter((id) => changeHosts.has(id)).sort(sortIds);
-      tools.innerHTML = '<span class="rv-meta">' + ids.length + " changes against the AEM page. Click a tag on the page, or Go to, then Copy text for the editor.</span>";
-      body.innerHTML = ids.map((id) => { const c = CFG.changes[id]; return '<div class="rv-change"><span class="rv-change__id">' + esc(id) + '</span><div class="rv-change__title">' + esc(c.title) + "<small>" + esc(GROUPS[c.group] || "") + (c.note ? " · " + esc(c.note) : "") + '</small></div><button type="button" class="rv-b" data-act="goto-change" data-id="' + esc(id) + '">Go to</button></div>'; }).join("");
+      tools.innerHTML = '<span class="rv-meta">' + ids.length + " changes against the AEM page. Work down the list: Go to shows the block, Copy copies its corrected text.</span>";
+      body.innerHTML = ids.map((id) => { const c = CFG.changes[id]; return '<div class="rv-change"><span class="rv-change__id">' + esc(id) + '</span><div class="rv-change__title">' + esc(c.title) + "<small>" + esc(GROUPS[c.group] || "") + (c.note ? " · " + esc(c.note) : "") + '</small></div><button type="button" class="rv-b" data-act="goto-change" data-id="' + esc(id) + '">Go to</button><button type="button" class="rv-b" data-act="copy-change" data-id="' + esc(id) + '">Copy</button></div>'; }).join("");
       return;
     }
     const all = threads(); const open = all.filter((t) => t.status !== "resolved"), done = all.filter((t) => t.status === "resolved");
@@ -410,7 +443,8 @@
       case "close": return openPanel(false);
       case "filter": state.filter = b.dataset.v; renderPanel(); return alignActive();
       case "export": { const ok = await copyText(exportMarkdown()); toast(ok ? "Copied all comments as Markdown" : "Copy failed"); return; }
-      case "goto-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (hosts[0]) { revealElement(hosts[0]); hosts[0].classList.add("rv-flash"); } return; }
+      case "goto-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (hosts[0]) { revealElement(hosts[0]); hosts[0].classList.remove("rv-flash"); void hosts[0].offsetWidth; hosts[0].classList.add("rv-flash"); } return; }
+      case "copy-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (!hosts[0]) return; const ok = await copyText(blockText(hosts[0])); toast(ok ? "Copied " + b.dataset.id : "Copy failed"); return; }
       case "goto": return goToThread(id, card);
       case "reply": { $(".rv-card__replybox", card).hidden = false; $("textarea", card).focus(); return; }
       case "cancel-reply": { $(".rv-card__replybox", card).hidden = true; return; }
@@ -426,7 +460,7 @@
     }
   }
   main.addEventListener("click", (e) => {
-    const m = e.target.closest("mark.rv-hl"); if (!m) return;
+    const m = e.target.closest("mark.rv-hl"); if (!m || state.aem) return;
     state.active = m.dataset.cid;
     // a resolved thread is hidden under the Open filter; show it rather than open an empty panel
     const t = threads().find((x) => x.id === state.active);
@@ -507,27 +541,29 @@
     const nChanges = changeHosts.size; const all = threads(); const nOpen = all.filter((t) => t.status !== "resolved").length;
     const status = state.backend === "sheet" ? "Comments save to the review sheet" : state.backend === "error" ? "Sheet unreachable: comments stay in this browser" : "Comments stay in this browser only";
     bar.innerHTML = '<span class="rv-bar__title">Review copy · Narrative CV guide<small>' + esc(CFG.snapshot || "") + "</small></span>"
-      + '<span class="rv-seg" role="group" aria-label="View"><button type="button" class="rv-btn' + (state.view === "review" ? " is-on" : "") + '" data-act="view" data-v="review">Review</button><button type="button" class="rv-btn' + (state.view === "reference" ? " is-on" : "") + '" data-act="view" data-v="reference">Reference</button></span>'
       + '<button type="button" class="rv-btn" data-act="expand">' + (allOpen() ? "Collapse all" : "Expand all") + "</button>"
       + '<span class="rv-bar__spacer"></span>'
-      + (state.view === "review" ? '<button type="button" class="rv-btn' + (state.panelOpen && state.tab === "changes" ? " is-on" : "") + '" data-act="panel" data-tab="changes">Changes<span class="rv-count">' + nChanges + "</span></button>"
-        + '<button type="button" class="rv-btn' + (state.panelOpen && state.tab === "comments" ? " is-on" : "") + '" data-act="panel" data-tab="comments">Comments<span class="rv-count">' + nOpen + "</span></button>"
-        + '<span class="rv-status' + (state.backend === "sheet" ? " is-sheet" : state.backend === "error" ? " is-error" : "") + '" title="' + esc(state.backendNote) + '">' + status + "</span>"
-        : '<span class="rv-status">Reference view: the page as the AEM editor should reproduce it</span>');
+      + (state.aem
+        ? '<button type="button" class="rv-btn' + (state.panelOpen ? " is-on" : "") + '" data-act="panel" data-tab="changes">Changes<span class="rv-count">' + nChanges + "</span></button>"
+          + '<span class="rv-status is-aem">Click a blue tag, or hover any block and choose Copy</span>'
+        : '<button type="button" class="rv-btn' + (state.panelOpen ? " is-on" : "") + '" data-act="panel" data-tab="comments">Comments<span class="rv-count">' + nOpen + "</span></button>"
+          + '<span class="rv-status' + (state.backend === "sheet" ? " is-sheet" : state.backend === "error" ? " is-error" : "") + '" title="' + esc(state.backendNote) + '">' + status + "</span>")
+      + '<label class="rv-switch" title="For the web editor: shows every change with Copy text and Copy HTML"><input type="checkbox" id="rv-aem-switch" role="switch"' + (state.aem ? " checked" : "") + '><span class="rv-switch__track" aria-hidden="true"></span><span>AEM copy mode</span></label>';
   }
   if (bar) bar.addEventListener("click", (e) => {
     const b = e.target.closest("[data-act]"); if (!b) return;
-    if (b.dataset.act === "view") setView(b.dataset.v);
-    else if (b.dataset.act === "expand") { expandAll(!allOpen()); renderBar(); }
-    else if (b.dataset.act === "panel") openPanel(!(state.panelOpen && state.tab === b.dataset.tab), b.dataset.tab);
+    if (b.dataset.act === "expand") { expandAll(!allOpen()); renderBar(); }
+    else if (b.dataset.act === "panel") openPanel(!state.panelOpen, b.dataset.tab);
   });
+  if (bar) bar.addEventListener("change", (e) => { if (e.target.id === "rv-aem-switch") setAem(e.target.checked); });
 
   // ---------------------------------------------------------------- init
   async function init() {
     markChanges();
     const seeds = (CFG.seeds || []).map((s) => ({ kind: "comment", ts: "2026-09-21T12:00:00.000Z", status: "open", ...s }));
     state.rows = seeds.concat(await store.load());
-    setView(ls.get("rv.view", "review"));
+    const q = new URLSearchParams(location.search).get("aem");
+    setAem(q === "1" ? true : q === "0" ? false : ls.get("rv.aem", false));
     renderComments();
     const missing = seeds.filter((s) => located.get(s.id) === false).map((s) => s.id);
     if (missing.length) console.warn("Seeded comments not found on the page:", missing);

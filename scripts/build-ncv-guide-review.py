@@ -324,7 +324,7 @@ def main():
 <link rel="stylesheet" href="aem.css?v={ver(aem_css)}">
 <link rel="stylesheet" href="review.css?v={ver((OUT_DIR / "review.css").read_text(encoding="utf-8"))}">
 </head>
-<body class="concordia page basicpage rv-view-review">
+<body class="concordia page basicpage">
 <div id="rv-bar" class="rv-bar" role="region" aria-label="Review tools"></div>
 <div id="boot">
 <div class="rv-chrome">

@@ -16,15 +16,17 @@ was done and a resolve. Only threads waiting on a person stay open.
 
 ## What reviewers see
 
-- **Review view** (default): every corrected block carries a blue tag (`I-1`, `P-9`…). Click a tag
-  for what changed and a **Copy text** button for the AEM editor. Questions already placed on the
-  page show as yellow highlights. Select any text and choose **Comment on this** to add a comment;
-  reply and resolve from the panel.
-- **Reference view**: the page exactly as the AEM editor should reproduce it. No tags, no
-  highlights, accordions collapsed as on the live site.
-- **Changes** in the top bar lists every correction with a Go to button: a checklist for whoever
-  pastes into AEM.
-- **Copy all as Markdown** in the Comments panel exports every thread.
+**Default (reviewers).** The corrected page and the comment tools, with no change tracking on show.
+Questions already placed on the page are yellow highlights. Select any text and choose **Comment on
+this**; click a highlight to open its comment, or click a comment to go to its passage. The panel
+opens on the open threads.
+
+**AEM copy mode (whoever pastes into AEM).** The **AEM copy mode** switch at the right of the top
+bar. Every corrected block shows its tag (`I-1`, `P-9`…) and a blue edge; click a tag for what
+changed and **Copy text** / **Copy HTML**. Any other block shows a **Copy** handle on hover. The panel
+becomes the checklist of changes, each with **Go to** and **Copy**. Comment highlights go plain and
+the comment button stays away. The switch remembers each viewer's choice; a link ending in
+`?aem=1` opens straight into copy mode (send that one to the web editor), `?aem=0` forces it off.
 
 The Concordia chrome (header, breadcrumb, footer) is a static snapshot; its links point at
 www.concordia.ca.

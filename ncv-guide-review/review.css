@@ -54,20 +54,42 @@
 .rv-status.is-error::before { background: #ff4d4f; }
 @media (max-width: 600px) { .rv-bar__title small { display: none; } }
 
-/* ---------- reference view: nothing of ours shows inside the page ---------- */
-body.rv-view-reference .rv-tag,
-body.rv-view-reference .rv-fab,
-body.rv-view-reference .rv-panel,
-body.rv-view-reference .rv-popover { display: none !important; }
-body.rv-view-reference mark.rv-hl { background: transparent; border: 0; color: inherit; padding: 0; }
-body.rv-view-reference .rv-changed { box-shadow: none; }
+/* ---------- two modes ----------
+   Default (reviewers): the page and the comment tools. No change tracking shows.
+   body.rv-aem (AEM copy mode): every change tagged, any block copyable, comment highlights plain. */
+body:not(.rv-aem) .rv-tag,
+body:not(.rv-aem) .rv-copychip { display: none !important; }
+body.rv-aem .rv-fab { display: none !important; }
+body.rv-aem mark.rv-hl { background: transparent; border: 0; outline: 0; color: inherit; padding: 0; cursor: auto; box-shadow: none; animation: none; }
+body.rv-aem .rv-hover { outline: 2px dashed var(--rv-accent); outline-offset: 3px; }
+.rv-copychip {
+  position: absolute; z-index: 2050;
+  font: 700 11px/1 var(--rv-font); letter-spacing: .03em; color: #fff; background: var(--rv-accent);
+  border: 0; border-radius: 10px; padding: 5px 9px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+.rv-copychip[hidden] { display: none !important; }
+.rv-copychip:hover { background: #00608e; }
+.rv-flash { animation: rvFlash 1.3s ease-out 1; }
+@keyframes rvFlash { 0% { box-shadow: 0 0 0 4px rgba(0,114,168,.5); } 100% { box-shadow: 0 0 0 14px rgba(0,114,168,0); } }
+@media (prefers-reduced-motion: reduce) { .rv-flash { animation: none; } }
+
+/* the switch in the top bar */
+.rv-switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font: 600 12.5px/1 var(--rv-font); color: var(--rv-bar-text); user-select: none; position: relative; }
+.rv-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.rv-switch__track { width: 34px; height: 20px; border-radius: 10px; background: rgba(255,255,255,.25); position: relative; transition: background .15s; flex: 0 0 auto; }
+.rv-switch__track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.rv-switch input:checked + .rv-switch__track { background: var(--rv-accent); }
+.rv-switch input:checked + .rv-switch__track::after { transform: translateX(14px); }
+.rv-switch input:focus-visible + .rv-switch__track { outline: 2px solid #ffd60a; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .rv-switch__track, .rv-switch__track::after { transition: none; } }
+.rv-status.is-aem::before { background: var(--rv-accent); }
 
 /* ---------- change markers ---------- */
 .rv-rel { position: relative; }
-body.rv-view-review .rv-changed { box-shadow: inset 3px 0 0 var(--rv-accent); }
-body.rv-view-review tr.rv-changed { box-shadow: none; }
-body.rv-view-review tr.rv-changed > td:first-child,
-body.rv-view-review tr.rv-changed > th:first-child { box-shadow: inset 3px 0 0 var(--rv-accent); }
+body.rv-aem .rv-changed { box-shadow: inset 3px 0 0 var(--rv-accent); }
+body.rv-aem tr.rv-changed { box-shadow: none; }
+body.rv-aem tr.rv-changed > td:first-child,
+body.rv-aem tr.rv-changed > th:first-child { box-shadow: inset 3px 0 0 var(--rv-accent); }
 .rv-tag {
   position: absolute; top: -10px; right: 8px; z-index: 5;
   font: 700 10.5px/1 var(--rv-font); letter-spacing: .03em;
@@ -195,6 +217,6 @@ mark.rv-hl.rv-pulse { animation: rvPulse .9s ease-out 2; }
 @media (min-width: 768px) { #boot .row > .col-md-4 { flex: 0 0 auto; width: 33.33333333%; } }
 
 @media print {
-  .rv-bar, .rv-panel, .rv-fab, .rv-popover, .rv-tag, .rv-toast { display: none !important; }
+  .rv-bar, .rv-panel, .rv-fab, .rv-popover, .rv-tag, .rv-copychip, .rv-toast { display: none !important; }
   mark.rv-hl { background: transparent; border: 0; }
 }
