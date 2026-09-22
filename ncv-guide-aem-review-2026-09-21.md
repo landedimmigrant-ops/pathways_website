@@ -435,3 +435,14 @@ and close each thread with a one-line note of what was done.
 **Open, waiting on Eli** (the only open threads on the page): F-1 and F-9 (first-person and
 active-voice proposals), F-2 (the new-portal language case), F-5 (the 2021 date and the current
 rollout), F-10 ("consistently score higher").
+
+**Eli's answers, by email 2026-09-22, applied the same day:**
+
+| Item | Eli | Applied as | Status |
+|---|---|---|---|
+| F-1, F-9 | "Yes, that's a great change." | P-28, P-29 | decided |
+| F-10 | Sent the source: Fasoli, Frith, Nolan, Hutton and Noël (2025), *Writing and Evaluating Narrative CVs* (27 UKRI-format CVs; reviewers rated CVs and researchers more highly with less passive, low-ownership language and fewer negations). It supports Ownership only, so it is cited there; the lead now quotes the agencies' wording instead of "consistently score higher". | P-36, P-37 | decided |
+| F-5 | "I think it was 2023. I wouldn't name the ones that use it now – they're all little boutique grants and prizes." Suggested "The Tri-agency is gradually implementing the TCV requirement over a few years." No primary source dates the introduction (the agencies' pages give none; a secondary source says announced October 2024), so the page carries no year. | P-35 | decided |
+| F-2 | New-portal language case: "I would ask Holly about this – she has been in touch with FRQ to resolve questions like that." | none yet | **held (Holly)** |
+
+After this the only open thread on the page is F-2, waiting on Holly.

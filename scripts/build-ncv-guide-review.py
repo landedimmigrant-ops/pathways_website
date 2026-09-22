@@ -173,8 +173,14 @@ def lowercase_running_text(html):
     A capital stays only where the phrase opens a heading, a table cell or a sentence."""
     changed = 0
     out = []
+    in_cite = 0  # a cited title keeps its own capitals
     for part in re.split(r"(<[^>]+>)", html):
-        if part.startswith("<") or "Narrative CV" not in part:
+        if part.startswith("<"):
+            if re.match(r"<cite\b", part): in_cite += 1
+            elif part.startswith("</cite"): in_cite -= 1
+            out.append(part)
+            continue
+        if in_cite or "Narrative CV" not in part:
             out.append(part)
             continue
         def fix(m, part=part):
@@ -271,8 +277,8 @@ def main():
     main_html = note_after_table(main_html)
     main_html = closing_block(main_html)
     main_html, lowered = lowercase_running_text(main_html)
-    if lowered != 14:
-        raise SystemExit(f"[L-1] expected 14 mid-sentence 'Narrative CV', found {lowered}")
+    if lowered != 12:
+        raise SystemExit(f"[L-1] expected 12 mid-sentence 'Narrative CV', found {lowered}")
 
     changes = {e["id"].rstrip("abcde"): {"title": e["title"], "group": e["group"], "note": e.get("note", "")}
                for e in corrections["edits"]}
@@ -285,6 +291,11 @@ def main():
         "L-1": {"title": "Lower-case 'narrative CV' in running text, as the agencies write it (Q-1)", "group": "C", "note": "Prem, 2026-09-22: go with what the agencies use. 14 places; the page title and the table column header keep their capital."},
         "P-33": {"title": "Funder list: Wellcome Trust removed (F-17)", "group": "B", "note": "Prem, 2026-09-22."},
         "P-34": {"title": "Specificity example: neutral and marked as illustrative (F-19)", "group": "C", "note": "Prem, 2026-09-22."},
+        "P-28": {"title": "First person: your role is the requirement; Concordia recommends 'I' (F-1)", "group": "B", "note": "Approved by Eli, 2026-09-22."},
+        "P-29": {"title": "The change is rhetorical: make your own role visible (F-9)", "group": "B", "note": "Approved by Eli, 2026-09-22."},
+        "P-35": {"title": "TCV rollout: gradual, no year, no list of competitions (F-5)", "group": "B", "note": "Eli, 2026-09-22. No primary source gives a year."},
+        "P-36": {"title": "What reviewers look for: the agencies' own wording in place of a scoring claim (F-10)", "group": "B", "note": "Quotes the SSHRC and CIHR instructions."},
+        "P-37": {"title": "Ownership: evidence from Fasoli et al. 2025 (F-10)", "group": "B", "note": "Source sent by Eli, 2026-09-22. In AEM: a second paragraph in the Ownership accordion."},
         "P-32": {"title": "CV-FRQ language: French or English, form in French (F-2)", "group": "B", "note": "FRQ presentation standards and CV-FRQ instructions (July 2026). Read 2026-09-22."},
         "P-31": {"title": "TCV hyperlinks: the exception is conditional, and reviewers may not open links (F-21)", "group": "B", "note": "Source: 'Guidelines for reviewing the tri-agency CV', section 5, at CIHR and NSERC. Read 2026-09-22."},
         "P-30": {"title": "Fonts differ by agency: Arial at SSHRC and CIHR, Times New Roman at NSERC (F-22)", "group": "B", "note": "In AEM: a new accordion under the comparison table. Stated as instructions (Prem, 2026-09-22). Fonts verified at SSHRC, NSERC and the FRQ the same day."},

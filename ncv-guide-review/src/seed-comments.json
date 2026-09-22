@@ -12,14 +12,14 @@
       "id": "seed-F-1",
       "type": "proposal",
       "author": "Claude (review, 2026-09-21)",
-      "quote": "Yes — and it is not just permitted, it is the point. Funders want to understand your individual contribution to collaborative work. Using \"we\" throughout makes it impossible for reviewers to assess your specific role.",
+      "quote": "The Tri-agency instructions ask you to explain your role in each contribution and leave the grammatical person open.",
       "text": "F-1, proposed replacement pending Eli's sign-off: \"Yes. The Tri-agency instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. If every sentence says 'we,' reviewers cannot tell what you did.\" Basis: the SSHRC and CIHR instructions, checked on 2026-09-21, ask for \"your role in each contribution or experience\" and contain no first-person wording."
     },
     {
       "id": "seed-F-9",
       "type": "proposal",
       "author": "Claude (review, 2026-09-21)",
-      "quote": "The biggest shift is not structural — it is rhetorical. A narrative CV asks you to move from listing to explaining, and from passive to active voice.",
+      "quote": "The main change is rhetorical.",
       "text": "F-9, proposed replacement pending Eli's sign-off: \"The main change is rhetorical. A Narrative CV asks you to explain your contributions as well as list them, and to make your own role visible in each one.\" Active voice is a means; the instructions ask for a visible role."
     },
     {
@@ -33,14 +33,14 @@
       "id": "seed-F-5",
       "type": "question",
       "author": "Claude (review, 2026-09-21)",
-      "quote": "introduced in 2021, piloted with select programs, and has since expanded",
+      "quote": "the Tri-agency is gradually implementing the Tri-agency CV (TCV) requirement over a few years.",
       "text": "F-5: The 2021 date is unverified, and \"has since expanded\" is softer than the current picture. CIHR (2026-03-19) will not use the TCV for the Project Grant before Fall 2027 at the earliest; SSHRC requires it in Destination Horizon, Knowledge Synthesis and Impact Awards. Should this sentence name the competitions that currently use the TCV, with a date?"
     },
     {
       "id": "seed-F-10",
       "type": "question",
       "author": "Claude (review, 2026-09-21)",
-      "quote": "Four things that consistently score higher in reviewed contributions:",
+      "quote": "Four qualities help reviewers find them in your CV:",
       "text": "F-10: Is \"consistently score higher\" based on review outcome data or on workshop experience? If the former, the basis should be cited. If the latter, the sentence should say so."
     },
     {

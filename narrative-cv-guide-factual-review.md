@@ -400,3 +400,11 @@ guidelines allow the audio/visual one. This is the second place NSERC's publishe
 F-22 (font rules stated as instructions). **Answered from sources:** F-2 (French or English; one
 new-portal case open), F-21 (reviewer guidelines §5). **Still open for Eli:** F-1, F-9, F-2 (new
 portal only), F-5, F-10. These five are the only open threads on the review page.
+
+**Update, later on 2026-09-22 — Eli answered by email.** F-1 and F-9 approved and applied. F-10: the
+source is Fasoli et al. (2025), which supports Ownership only; cited there, and the section lead now
+quotes the agencies instead of claiming four things "consistently score higher". F-5: Eli thinks 2023
+and would not list competitions; no primary source dates the introduction, so the page says the
+Tri-agency "is gradually implementing the Tri-agency CV (TCV) requirement over a few years", with no
+year. F-2 (new-portal case): Eli says ask **Holly**, who has been in touch with the FRQ. That is the
+last open item.

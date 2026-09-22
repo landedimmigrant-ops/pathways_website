@@ -271,6 +271,46 @@
       "note": "Prem, 2026-09-22: no real source, so present it as an example. The invented case no longer names Indigenous organizations or the City, and the protocol now lands in a food policy, not a housing strategy.",
       "find": "co-designed a food security protocol with three urban Indigenous organizations in Montréal, subsequently adopted by the City's housing strategy.\"",
       "replace": "<!--rv:P-34-->co-designed a food security protocol with three community organizations, later adopted into a municipal food policy.\" These examples are illustrative."
+    },
+    {
+      "id": "P-28",
+      "group": "B",
+      "title": "First person: your role is the requirement; Concordia recommends 'I' (F-1)",
+      "note": "Approved by Eli, 2026-09-22.",
+      "find": "Yes — and it is not just permitted, it is the point. Funders want to understand your individual contribution to collaborative work. Using \"we\" throughout makes it impossible for reviewers to assess your specific role.",
+      "replace": "<!--rv:P-28-->Yes. The Tri-agency instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. If every sentence says \"we,\" reviewers cannot tell what you did."
+    },
+    {
+      "id": "P-29",
+      "group": "B",
+      "title": "The change is rhetorical: make your own role visible (F-9)",
+      "note": "Approved by Eli, 2026-09-22.",
+      "find": "The biggest shift is not structural — it is rhetorical. A Narrative CV asks you to move from listing to explaining, and from passive to active voice.",
+      "replace": "<!--rv:P-29-->The main change is rhetorical. A narrative CV asks you to explain your contributions as well as list them, and to make your own role visible in each one."
+    },
+    {
+      "id": "P-35",
+      "group": "B",
+      "title": "TCV rollout: gradual, no year, no list of competitions (F-5)",
+      "note": "Eli, 2026-09-22: not 2021, possibly 2023; do not name the competitions. No primary source gives a year, so none is stated.",
+      "find": "In Canada, the Tri-agency Narrative CV was introduced in 2021, piloted with select programs, and has since expanded.",
+      "replace": "<!--rv:P-35-->In Canada, the Tri-agency is gradually implementing the Tri-agency CV (TCV) requirement over a few years."
+    },
+    {
+      "id": "P-36",
+      "group": "B",
+      "title": "What reviewers look for: the agencies' own wording in place of a scoring claim (F-10)",
+      "note": "The old lead claimed four things 'consistently score higher'. The source Eli sent supports one of the four, so the lead now quotes the instructions (SSHRC and CIHR).",
+      "find": "Four things that consistently score higher in reviewed contributions:",
+      "replace": "<!--rv:P-36-->The Tri-agency instructions ask you to explain \"the impact, significance, usefulness, and your role\" in each contribution. Four qualities help reviewers find them in your CV:"
+    },
+    {
+      "id": "P-37",
+      "group": "B",
+      "title": "Ownership: evidence from Fasoli et al. 2025 (F-10)",
+      "note": "Source sent by Eli, 2026-09-22. In AEM: a second paragraph in the Ownership accordion.",
+      "find": "just make your role explicit.</span></p>",
+      "replace": "just make your role explicit.</span></p>\n<p><span class=\"xlarge-text\"><!--rv:P-37-->A 2025 UK study of 27 narrative CVs found that reviewers rated both the CV and the researcher more highly when the writing showed less passivity or avoidance of ownership, and used fewer negations (Fasoli et al., 2025, <cite>Writing and Evaluating Narrative CVs</cite>).</span></p>"
     }
   ]
 }
