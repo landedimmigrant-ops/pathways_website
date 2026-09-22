@@ -315,6 +315,7 @@ def main():
         "seeds": seeds["comments"],
         "storage": seeds.get("storage", {"backend": "local"}),
         "snapshot": seeds.get("snapshot", ""),
+        "hidden": seeds.get("hidden", []),  # sheet rows the page ignores (test comments)
     }
 
     aem_css = patch_css(read("aem-used.css"))

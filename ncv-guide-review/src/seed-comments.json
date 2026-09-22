@@ -7,6 +7,11 @@
     "readUrl": "https://script.google.com/macros/s/AKfycbwwruq8soD4_RBYOwSjpFFn1-sW5B3G3BPi8Br-mpugZInpj4CCzGM2lDUxZEX7vxkjLQ/exec?action=review_list&page=ncv-guide",
     "page": "ncv-guide"
   },
+  "hidden": [
+    "test-1",
+    "cmucxrn8gzj6aj",
+    "cmucxvebknu9rg"
+  ],
   "comments": [
     {
       "id": "seed-F-1",

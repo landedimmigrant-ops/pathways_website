@@ -73,7 +73,8 @@
         const body = await r.text();
         let rows = [];
         try { const j = JSON.parse(body); rows = Array.isArray(j) ? j : j.rows || []; } catch (e) { rows = parseCSV(body); }
-        rows = rows.filter((x) => !x.page || x.page === this.page);
+        const hidden = new Set(CFG.hidden || []);
+        rows = rows.filter((x) => (!x.page || x.page === this.page) && !hidden.has(x.id) && !hidden.has(x.parent));
         const byId = new Map(rows.map((x) => [x.id, x]));
         // `local` is an outbox of rows whose write did not confirm, never a mirror of
         // the sheet: a row deleted in the sheet must disappear for its author too.
@@ -322,7 +323,8 @@
   function renderComments() {
     unwrapAll(); located.clear();
     const idx = buildIndex();
-    const ts = threads().map((t) => ({ t, loc: locate(t, idx) })).filter((x) => { located.set(x.t.id, !!x.loc); return !!x.loc; });
+    const showResolved = state.filter === "resolved";
+    const ts = threads().filter((t) => (t.status === "resolved") === showResolved).map((t) => ({ t, loc: locate(t, idx) })).filter((x) => { located.set(x.t.id, !!x.loc); return !!x.loc; });
     ts.sort((a, b) => b.loc.start - a.loc.start);
     ts.forEach(({ t, loc }) => wrapRange(loc.start, loc.end, idx, { cid: t.id, cls: (t.status === "resolved" ? "is-resolved " : "") + (t.type === "proposal" ? "is-proposal " : "") + (state.active === t.id ? "is-active" : ""), title: (TYPES[t.type] || "Comment") + " by " + (t.author || "anonymous") }));
     renderPanel(); renderBar();
@@ -401,6 +403,7 @@
     document.body.classList.toggle("rv-panel-open", open);
     if (anchor && anchor.isConnected) window.scrollBy(0, anchor.getBoundingClientRect().top - before);
     renderPanel(); renderBar(); alignActive();
+    if (!open && state.filter === "resolved") { state.filter = "open"; state.active = null; renderComments(); }
   }
   function renderPanel() {
     if (!panel) return;
@@ -415,12 +418,11 @@
       return;
     }
     const all = threads(); const open = all.filter((t) => t.status !== "resolved"), done = all.filter((t) => t.status === "resolved");
-    const list = state.filter === "open" ? open : state.filter === "resolved" ? done : all;
-    tools.innerHTML = '<button type="button" class="rv-b' + (state.filter === "open" ? " rv-b--primary" : "") + '" data-act="filter" data-v="open">Open (' + open.length + ")</button>"
+    const list = state.filter === "resolved" ? done : open;
+    tools.innerHTML = '<button type="button" class="rv-b' + (state.filter !== "resolved" ? " rv-b--primary" : "") + '" data-act="filter" data-v="open">Open (' + open.length + ")</button>"
       + '<button type="button" class="rv-b' + (state.filter === "resolved" ? " rv-b--primary" : "") + '" data-act="filter" data-v="resolved">Resolved (' + done.length + ")</button>"
-      + '<button type="button" class="rv-b' + (state.filter === "all" ? " rv-b--primary" : "") + '" data-act="filter" data-v="all">All</button>'
       + '<button type="button" class="rv-b" data-act="export" title="Copies every comment as Markdown">Copy all as Markdown</button>';
-    if (!list.length) { body.innerHTML = '<p class="rv-panel__empty">Nothing here yet. Select any text on the page and choose <b>Comment on this</b>.</p>'; return; }
+    if (!list.length) { body.innerHTML = '<p class="rv-panel__empty">' + (state.filter === "resolved" ? "Nothing resolved yet." : "No open comments. Select any text on the page and choose <b>Comment on this</b> to add one.") + "</p>"; return; }
     body.innerHTML = list.map(cardHTML).join("");
   }
   function cardHTML(t) {
@@ -441,7 +443,7 @@
     const card = b.closest(".rv-card"); const id = card && card.dataset.id;
     switch (b.dataset.act) {
       case "close": return openPanel(false);
-      case "filter": state.filter = b.dataset.v; renderPanel(); return alignActive();
+      case "filter": state.filter = b.dataset.v; state.active = null; return renderComments();
       case "export": { const ok = await copyText(exportMarkdown()); toast(ok ? "Copied all comments as Markdown" : "Copy failed"); return; }
       case "goto-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (hosts[0]) { revealElement(hosts[0]); hosts[0].classList.remove("rv-flash"); void hosts[0].offsetWidth; hosts[0].classList.add("rv-flash"); } return; }
       case "copy-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (!hosts[0]) return; const ok = await copyText(blockText(hosts[0])); toast(ok ? "Copied " + b.dataset.id : "Copy failed"); return; }
@@ -464,7 +466,7 @@
     state.active = m.dataset.cid;
     // a resolved thread is hidden under the Open filter; show it rather than open an empty panel
     const t = threads().find((x) => x.id === state.active);
-    if (t && t.status === "resolved" && state.filter === "open") state.filter = "all";
+    if (t && t.status === "resolved" && state.filter !== "resolved") state.filter = "resolved";
     openPanel(true, "comments"); renderComments();
   });
 
