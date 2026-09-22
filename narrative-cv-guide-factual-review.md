@@ -309,6 +309,7 @@ FRQ's CV-FRQ pages in French and English.
 | F-19 | `s6.exp2.p1` | The Specificity example is invented and names Indigenous organizations and the City | n/a | Medium |
 | F-20 | `s3.table` Funders | "FRQSC, FRQNT, FRQS" predates the single FRQ | High (verified) | Medium |
 | F-21 | `s3.table` Hyperlinks (TCV) | Source location of the TCV hyperlink rule needs confirming | Medium | Low |
+| **F-22** | new accordion | Fonts differ by agency; NSERC stricter than its published footnote | High (verified) | **High** |
 
 **F-15 · Section names.** The guide's cards read "Personal Statement", "Most Significant
 Contributions" and "Supervisory & Mentorship Activities", and the table gives the CV-FRQ name as
@@ -345,6 +346,25 @@ consent, that could replace it?**
 **F-20 · One FRQ.** The FRQ was established on June 1, 2024; the FRQNT, FRQS and FRQSC were
 regrouped into it and continue as sectors (Nature et technologies, Santé, Société et culture). The
 Funders row should name the FRQ and its three sectors.
+
+**F-22 · Fonts differ by agency, and NSERC is stricter than it publishes.** Raised by NSERC to Prem
+on 2026-09-22 and added to the page the same day. Verified at source that day:
+
+- **SSHRC** (TCV instructions): "12-point, Arial font in black type. You can apply different fonts and
+  sizes only in tables, figures and legends. However, the text must be clear and readable when the page
+  is displayed at its normal size of 100%. Do not use condensed fonts."
+- **NSERC** (Research Portal and NSERC Online presentation and attachment standards): "Use 12-point
+  Times New Roman font for all text", and "All content, including references (if applicable), must
+  follow these formatting standards."
+- **CV-FRQ** (FRQ presentation standards, 2025-09-23): "Font : Times New Roman (12 points)."
+
+**The open question.** NSERC's published standards carry a footnote that contradicts what NSERC told
+Prem: "Font and size rules do not apply to text within tables and figures. However, the font must be
+clearly legible." NSERC's word to Prem is that the TCV allows no such exception. The page publishes the
+stricter reading, since following it cannot make an application non-compliant either way. **Worth
+getting NSERC's position in writing, and asking whether the published standards will be updated.**
+
+This also closes part of F-13: formatting rules do belong in the guide, not only the builder.
 
 **F-21 · TCV hyperlink rule.** "Not permitted (self-contained document). Exception: audio/visual
 creative works." matches `ncv-genre-sources.md` §1. The strings "hyperlink" and "URL" are absent

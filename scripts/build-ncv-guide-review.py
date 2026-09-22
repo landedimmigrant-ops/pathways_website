@@ -133,9 +133,38 @@ def note_after_table(text):
         j = text.index("</div>", j) + len("</div>")
     note = ('\n<div class="c-wysiwyg wysiwyg section"><div class="rte "><p><!--rv:P-8--><span class="footnote">'
             "The Tri-agency CV must not exceed its page limit. Any pages over the limit are removed with no further "
-            "notification. Formatting rules differ between agencies, so you should check the instructions for your "
-            "funding opportunity.</span></p></div></div>")
-    return text[:j] + note + text[j:]
+            "notification. Formatting also differs between the three Tri-agency partners: SSHRC and CIHR require "
+            "12-point Arial, and NSERC requires 12-point Times New Roman. See the formatting note below before you "
+            "start.</span></p></div></div>")
+    return text[:j] + note + FORMATTING_ACCORDION + text[j:]
+
+
+FORMATTING_ACCORDION = """
+<div class="c-accordion section">
+  <div class="accordion mt-4">
+    <div class="accordion-item border-default">
+      <h3 class="accordion-header xlarge">
+        <button class="accordion-button focus-custom--outline-offset-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rv_formatting_panel" aria-expanded="false" aria-controls="rv_formatting_panel">
+          <div class="title"><span><!--rv:P-30-->What font and formatting do I use?</span></div>
+        </button>
+      </h3>
+      <div id="rv_formatting_panel" class="accordion-collapse collapse">
+        <div class="accordion-body">
+          <div class="c-wysiwyg wysiwyg section"><div class="rte ">
+            <p><span class="xlarge-text">The three Tri-agency partners do not use the same formatting rules, so the agency you are applying to decides the format of your TCV.</span></p>
+            <ul>
+              <li><span class="xlarge-text"><b>SSHRC and CIHR</b> require 12-point Arial in black type. You can use different fonts and sizes in tables, figures and legends, as long as the text is readable when the page is viewed at 100%.</span></li>
+              <li><span class="xlarge-text"><b>NSERC</b> requires 12-point Times New Roman. NSERC has advised us that this covers everything, including references and tables, so the exception above does not apply to an NSERC application.</span></li>
+              <li><span class="xlarge-text">The <b>CV-FRQ</b> requires 12-point Times New Roman, with margins of at least 2 cm, your name in the header and the document title in the footer.</span></li>
+            </ul>
+            <p><span class="xlarge-text">None of them accept condensed fonts, and all of them require you to use the agency's own template.</span></p>
+            <p><span class="footnote">If you are preparing one CV for more than one agency, 12-point Times New Roman throughout meets the strictest of these rules.</span></p>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>"""
 
 
 def closing_block(text):
@@ -229,6 +258,7 @@ def main():
         "P-14": {"title": "Contact line (F-12)", "group": "B", "note": ""},
         "P-15": {"title": "Reviewed date and status line", "group": "B", "note": ""},
         "P-8": {"title": "Page limits and the overflow rule (F-3)", "group": "B", "note": "Verified at SSHRC and the CIHR FAQ on 2026-09-21."},
+        "P-30": {"title": "Fonts differ by agency: Arial at SSHRC and CIHR, Times New Roman at NSERC (F-22)", "group": "B", "note": "In AEM: a new accordion under the comparison table. Raised by NSERC to Prem 2026-09-22; fonts verified at SSHRC, NSERC and the FRQ the same day."},
         "P-9": {"title": "Official section names (F-15)", "group": "B", "note": "Verified at SSHRC, CIHR and the FRQ on 2026-09-21."},
         "P-10": {"title": "Selection criterion: contributions that relate to the application (F-16, F-6)", "group": "B", "note": ""},
         "P-27": {"title": "Drop 'actually'; register (L-16)", "group": "C", "note": ""},

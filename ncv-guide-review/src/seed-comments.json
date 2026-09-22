@@ -77,6 +77,13 @@
       "author": "Claude (review, 2026-09-21)",
       "quote": "Why narrative CVs exist",
       "text": "Q-1: Capitalisation is mixed on the page: \"Narrative CV\" appears 12 times and \"narrative CV\" three times. The agencies, Concordia's FAQ and the builder page use lower case in running text. Which rule should the page follow?"
+    },
+    {
+      "id": "seed-F-22",
+      "type": "question",
+      "author": "Claude (review, 2026-09-22)",
+      "quote": "NSERC has advised us that this covers everything, including references and tables, so the exception above does not apply to an NSERC application.",
+      "text": "F-22: NSERC told Prem on 2026-09-22 that the TCV allows no font exception for tables and references. NSERC's own published presentation standards say the opposite in a footnote: \"Font and size rules do not apply to text within tables and figures. However, the font must be clearly legible.\" (Research Portal and NSERC Online presentation and attachment standards, read 2026-09-22.) We have published the stricter rule, because following it cannot make an application non-compliant either way. Worth getting NSERC's position in writing, and asking whether their published standards will be updated. Verified the same day: SSHRC requires \"12-point, Arial font in black type\" with the exception; NSERC requires 12-point Times New Roman; the CV-FRQ requires \"Times New Roman (12 points)\"."
     }
   ]
 }

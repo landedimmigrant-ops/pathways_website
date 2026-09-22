@@ -143,6 +143,7 @@ F-1 to F-14 are described in full in `narrative-cv-guide-factual-review.md`. All
 | **F-18** | "Key documents… CoARA"; "the traditional CV-style Common CV" | Naming errors. | P-21, P-22 | open |
 | **F-19** | Specificity example: "co-designed a food security protocol with three urban Indigenous organizations in Montréal, subsequently adopted by the City's housing strategy" | The example is invented, names Indigenous organizations and the City, and pairs a food-security protocol with a housing strategy. | none. Q-6. | held |
 | **F-20** | Funders row: "FRQSC, FRQNT, FRQS" | **Verified.** One FRQ since June 1, 2024, with three sectors. | P-16 | open |
+| **F-22** | Fonts absent from the guide, and they differ by agency | **Verified 2026-09-22.** SSHRC TCV instructions: "12-point, Arial font in black type. You can apply different fonts and sizes only in tables, figures and legends." NSERC presentation standards: "Use 12-point Times New Roman font for all text." FRQ presentation standards: "Font : Times New Roman (12 points)." **NSERC told Prem on 2026-09-22 that the TCV allows no exception for references or tables**, which is stricter than the footnote in NSERC's own published standards. | P-30 | open |
 | **F-21** | TCV hyperlinks: "Not permitted (self-contained document). Exception: audio/visual creative works." | The rule is in our August scan (§1). I did not find it on the three TCV pages checked today, so its source location needs confirming. | none | held |
 
 ---
@@ -278,6 +279,22 @@ Also source: `s3.table`.
 > Permitted as bibliographic references when directly related to a contribution. Links cannot replace information that belongs in the application.
 
 Also source: `s3.table`.
+
+**P-30** (F-22) · New accordion under the TCV/CV-FRQ table, titled "What font and formatting do I use?":
+> The three Tri-agency partners do not use the same formatting rules, so the agency you are applying to decides the format of your TCV.
+> - **SSHRC and CIHR** require 12-point Arial in black type. You can use different fonts and sizes in tables, figures and legends, as long as the text is readable when the page is viewed at 100%.
+> - **NSERC** requires 12-point Times New Roman. NSERC has advised us that this covers everything, including references and tables, so the exception above does not apply to an NSERC application.
+> - The **CV-FRQ** requires 12-point Times New Roman, with margins of at least 2 cm, your name in the header and the document title in the footer.
+>
+> None of them accept condensed fonts, and all of them require you to use the agency's own template.
+>
+> *If you are preparing one CV for more than one agency, 12-point Times New Roman throughout meets the strictest of these rules.*
+
+The note under the table also gains: "Formatting also differs between the three Tri-agency partners: SSHRC and CIHR require 12-point Arial, and NSERC requires 12-point Times New Roman. See the formatting note below before you start."
+
+This closes part of F-13, which had been held pending a decision on whether formatting rules belong in
+the guide or the builder. NSERC raising it directly settles that: it belongs where a researcher reads
+before drafting.
 
 ### Group C: copy corrections (all also apply to the source)
 
