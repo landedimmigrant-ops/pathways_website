@@ -1,0 +1,142 @@
+{
+  "title": "Narrative CV guide",
+  "page_title": "Narrative CV | Pathways to Impact — review copy",
+  "meta_description": "An orientation to the narrative CV for Concordia researchers: the three sections, what reviewers look for and how the Tri-agency CV differs from the CV-FRQ.",
+  "lang": "en",
+  "source_url": "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html",
+  "head_links": [
+    "https://use.typekit.net/ewy3egs.css",
+    "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Cabin+Condensed:wght@400;500;600;700&family=Cabin:wght@400;500;600;700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,300,0..1,-25"
+  ],
+  "body_class": "concordia page basicpage",
+  "wrapper_id": "boot",
+  "site_origin": "https://www.concordia.ca",
+  "aem_image_prefix": "/etc/designs/concordia/clientlibs/img/",
+  "css_patches": [
+    [
+      "background-image: url(\"clientlibs/img/sprites.png\");",
+      ""
+    ],
+    [
+      "--cds-font-family-brand-condensed: 'gill-sans-nova-condensed',sans-serif",
+      "--cds-font-family-brand-condensed: 'gill-sans-nova-condensed','Gill Sans Nova Cond','Gill Sans MT Condensed','Cabin Condensed',sans-serif"
+    ],
+    [
+      "--cds-font-family-brand: 'gill-sans-nova',sans-serif",
+      "--cds-font-family-brand: 'gill-sans-nova','Gill Sans Nova','Gill Sans','Gill Sans MT','Cabin',sans-serif"
+    ]
+  ],
+  "groups": {
+    "A": "Build error",
+    "B": "Factual, verified",
+    "C": "Copy"
+  },
+  "changes": {
+    "I-6": {
+      "title": "Section cards: three in one row, accordions after",
+      "group": "A",
+      "note": "In AEM: a three-column layout container for the cards; both accordions follow it."
+    },
+    "P-5": {
+      "title": "Closing call to action restored",
+      "group": "A",
+      "note": "In AEM: a Box with a Text and a Button, after the last accordion."
+    },
+    "P-14": {
+      "title": "Contact line (F-12)",
+      "group": "B",
+      "note": ""
+    },
+    "P-15": {
+      "title": "Reviewed date and status line",
+      "group": "B",
+      "note": ""
+    },
+    "P-8": {
+      "title": "Page limits and the overflow rule (F-3)",
+      "group": "B",
+      "note": "Verified at SSHRC and the CIHR FAQ on 2026-09-21."
+    },
+    "L-1": {
+      "title": "Lower-case 'narrative CV' in running text, as the agencies write it (Q-1)",
+      "group": "C",
+      "note": "Prem, 2026-09-22: go with what the agencies use. 14 places; the page title and the table column header keep their capital."
+    },
+    "P-33": {
+      "title": "Funder list: Wellcome Trust removed (F-17)",
+      "group": "B",
+      "note": "Prem, 2026-09-22."
+    },
+    "P-34": {
+      "title": "Specificity example: neutral and marked as illustrative (F-19)",
+      "group": "C",
+      "note": "Prem, 2026-09-22."
+    },
+    "P-28": {
+      "title": "First person: your role is the requirement; Concordia recommends 'I' (F-1)",
+      "group": "B",
+      "note": "Approved by Eli, 2026-09-22."
+    },
+    "P-29": {
+      "title": "The change is rhetorical: make your own role visible (F-9)",
+      "group": "B",
+      "note": "Approved by Eli, 2026-09-22."
+    },
+    "P-35": {
+      "title": "TCV rollout: gradual, no year, no list of competitions (F-5)",
+      "group": "B",
+      "note": "Eli, 2026-09-22. No primary source gives a year."
+    },
+    "P-36": {
+      "title": "What reviewers look for: the agencies' own wording in place of a scoring claim (F-10)",
+      "group": "B",
+      "note": "Quotes the SSHRC and CIHR instructions."
+    },
+    "P-37": {
+      "title": "Ownership: evidence from Fasoli et al. 2025 (F-10)",
+      "group": "B",
+      "note": "Source sent by Eli, 2026-09-22. In AEM: a second paragraph in the Ownership accordion."
+    },
+    "P-32": {
+      "title": "CV-FRQ language: French or English, with the ministry-partnership exception (F-2)",
+      "group": "B",
+      "note": "FRQ presentation standards and CV-FRQ instructions (July 2026); confirmed and extended by Holly, 2026-09-22."
+    },
+    "P-31": {
+      "title": "TCV hyperlinks: the exception is conditional, and reviewers may not open links (F-21)",
+      "group": "B",
+      "note": "Source: 'Guidelines for reviewing the tri-agency CV', section 5, at CIHR and NSERC. Read 2026-09-22."
+    },
+    "P-30": {
+      "title": "Fonts differ by agency: Arial at SSHRC and CIHR, Times New Roman at NSERC (F-22)",
+      "group": "B",
+      "note": "In AEM: a new accordion under the comparison table. Stated as instructions (Prem, 2026-09-22). Fonts verified at SSHRC, NSERC and the FRQ the same day."
+    },
+    "P-9": {
+      "title": "Official section names (F-15)",
+      "group": "B",
+      "note": "Verified at SSHRC, CIHR and the FRQ on 2026-09-21."
+    },
+    "P-10": {
+      "title": "Selection criterion: contributions that relate to the application (F-16, F-6)",
+      "group": "B",
+      "note": ""
+    },
+    "P-27": {
+      "title": "Drop 'actually'; register (L-16)",
+      "group": "C",
+      "note": ""
+    },
+    "L-19": {
+      "title": "Heading: drop the stray article",
+      "group": "A",
+      "note": ""
+    },
+    "P-7": {
+      "title": "Meta description",
+      "group": "A",
+      "note": "In the page head; see the page properties in AEM."
+    }
+  }
+}

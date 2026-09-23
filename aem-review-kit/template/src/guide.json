@@ -1,0 +1,23 @@
+{
+  "title": "GUIDE NAME",
+  "page_title": "PAGE TITLE | Pathways to Impact — review copy",
+  "meta_description": "One sentence, about 155 characters, saying what a researcher gets from the page.",
+  "lang": "en",
+  "source_url": "https://www.concordia.ca/…/the-page.html",
+  "head_links": [
+    "https://use.typekit.net/ewy3egs.css",
+    "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Cabin+Condensed:wght@400;500;600;700&family=Cabin:wght@400;500;600;700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,300,0..1,-25"
+  ],
+  "body_class": "concordia page basicpage",
+  "wrapper_id": "boot",
+  "site_origin": "https://www.concordia.ca",
+  "aem_image_prefix": "/etc/designs/concordia/clientlibs/img/",
+  "css_patches": [
+    ["background-image: url(\"clientlibs/img/sprites.png\");", ""],
+    ["--cds-font-family-brand-condensed: 'gill-sans-nova-condensed',sans-serif", "--cds-font-family-brand-condensed: 'gill-sans-nova-condensed','Gill Sans Nova Cond','Gill Sans MT Condensed','Cabin Condensed',sans-serif"],
+    ["--cds-font-family-brand: 'gill-sans-nova',sans-serif", "--cds-font-family-brand: 'gill-sans-nova','Gill Sans Nova','Gill Sans','Gill Sans MT','Cabin',sans-serif"]
+  ],
+  "groups": {"A": "Build error", "B": "Factual, verified", "C": "Copy"},
+  "changes": {}
+}

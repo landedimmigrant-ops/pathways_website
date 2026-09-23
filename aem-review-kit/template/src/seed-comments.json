@@ -1,0 +1,12 @@
+{
+  "_about": "Questions placed on the page at build time; `quote` must appear verbatim (whitespace-insensitive) in the built page. Reviewer comments go to the storage backend, never here. `hidden` lists sheet row ids the page ignores (test comments).",
+  "snapshot": "AEM, YYYY-MM-DD (path/of/the/page.html)",
+  "storage": {
+    "backend": "local",
+    "writeUrl": "",
+    "readUrl": "",
+    "page": "UNIQUE-PAGE-KEY"
+  },
+  "hidden": [],
+  "comments": []
+}

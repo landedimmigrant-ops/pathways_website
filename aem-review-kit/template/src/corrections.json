@@ -1,0 +1,11 @@
+{
+  "_about": "Edits applied to src/aem-main.html by aem-review-kit/build.py, in order. `find` is matched ignoring whitespace between tags and inside text. `count` is how many matches are expected (default 1); the build fails if it differs. `occurrence` picks the nth match, or \"all\". Put <!--rv:ID--> in `replace` so the page tags the change. IDs match the correction log (I build difference, L language, F factual, P paste-ready). Sub-ids P-9a, P-9b share one tag.",
+  "edits": [
+    {
+      "id": "P-1", "group": "A", "title": "Example: what this change does",
+      "note": "Optional: how to do it in AEM, or who decided it.",
+      "find": "exact text or markup as it appears in src/aem-main.html",
+      "replace": "<!--rv:P-1-->corrected text"
+    }
+  ]
+}

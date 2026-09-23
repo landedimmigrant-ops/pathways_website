@@ -33,29 +33,28 @@ www.concordia.ca.
 
 ## Files
 
+Built with the reusable kit in `aem-review-kit/` (see its README; the process is in the
+`aem-guide-review` skill). This folder holds only what is specific to this guide.
+
 | Path | What |
 |---|---|
-| `index.html`, `aem.css` | **Built.** Do not edit by hand. |
-| `review.css`, `review.js` | The review layer. Hand-written. |
-| `src/aem-*.html`, `src/aem-used.css` | DOM snapshot of the AEM page and the stylesheet rules it uses (2026-09-22). |
+| `index.html`, `aem.css`, `review.js`, `review.css` | **Built.** Do not edit here; the layer's source is `aem-review-kit/layer/`. |
+| `src/guide.json` | Title, head links, link rewiring, CSS patches, and change entries for structural edits. |
 | `src/corrections.json` | Every text edit, keyed by the review ID. Edit this to change what the page says. |
-| `src/seed-comments.json` | Questions pre-placed on the page, and the storage settings. |
-| `src/assets/` | Logos and the SVG sprite from the AEM clientlibs. |
-| `../scripts/build-ncv-guide-review.py` | The build. |
+| `src/hooks.py` | Structural edits: three-up cards, the formatting accordion, the closing block, the lower-case pass. |
+| `src/seed-comments.json` | Questions placed on the page, storage settings, hidden test rows. |
+| `src/aem-*.html`, `src/aem-used.css`, `src/assets/` | The AEM snapshot (2026-09-22). |
 
 ## Rebuild
 
 ```bash
-python3 scripts/build-ncv-guide-review.py
+python3 aem-review-kit/build.py ncv-guide-review
 ```
 
-The build fails if a correction's `find` text is not on the page exactly the expected number of
-times, so a fresh snapshot of the AEM page surfaces every edit that no longer applies.
-
-To re-snapshot the AEM page: open it in the browser pane, run the extraction (used CSS rules,
-`main`, `header`, `footer`), post the bundle to a local receiver and split it into `src/`. The
-procedure is in the session notes of 2026-09-22; the page's own fetch to localhost is blocked by
-the browser, a form post is not.
+(`python3 scripts/build-ncv-guide-review.py` does the same.) The build fails if a correction's `find`
+text is not on the page exactly the expected number of times, so a fresh snapshot of the AEM page
+surfaces every edit that no longer applies. To re-snapshot, follow "Start a new guide review", step 2,
+in `aem-review-kit/README.md`, pointing `split.py` at this folder.
 
 ## Fonts
 
