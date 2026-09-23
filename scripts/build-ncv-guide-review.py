@@ -296,7 +296,7 @@ def main():
         "P-35": {"title": "TCV rollout: gradual, no year, no list of competitions (F-5)", "group": "B", "note": "Eli, 2026-09-22. No primary source gives a year."},
         "P-36": {"title": "What reviewers look for: the agencies' own wording in place of a scoring claim (F-10)", "group": "B", "note": "Quotes the SSHRC and CIHR instructions."},
         "P-37": {"title": "Ownership: evidence from Fasoli et al. 2025 (F-10)", "group": "B", "note": "Source sent by Eli, 2026-09-22. In AEM: a second paragraph in the Ownership accordion."},
-        "P-32": {"title": "CV-FRQ language: French or English, form in French (F-2)", "group": "B", "note": "FRQ presentation standards and CV-FRQ instructions (July 2026). Read 2026-09-22."},
+        "P-32": {"title": "CV-FRQ language: French or English, with the ministry-partnership exception (F-2)", "group": "B", "note": "FRQ presentation standards and CV-FRQ instructions (July 2026); confirmed and extended by Holly, 2026-09-22."},
         "P-31": {"title": "TCV hyperlinks: the exception is conditional, and reviewers may not open links (F-21)", "group": "B", "note": "Source: 'Guidelines for reviewing the tri-agency CV', section 5, at CIHR and NSERC. Read 2026-09-22."},
         "P-30": {"title": "Fonts differ by agency: Arial at SSHRC and CIHR, Times New Roman at NSERC (F-22)", "group": "B", "note": "In AEM: a new accordion under the comparison table. Stated as instructions (Prem, 2026-09-22). Fonts verified at SSHRC, NSERC and the FRQ the same day."},
         "P-9": {"title": "Official section names (F-15)", "group": "B", "note": "Verified at SSHRC, CIHR and the FRQ on 2026-09-21."},

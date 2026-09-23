@@ -251,10 +251,10 @@
     {
       "id": "P-32",
       "group": "B",
-      "title": "CV-FRQ language: French or English, form in French (F-2)",
-      "note": "Sources: FRQ presentation standards ('The documents attached to the form can be written in either French or English'); CV-FRQ instructions, July 2026 ('6 pages (ou 5 pages en version anglaise)'). Read 2026-09-22.",
+      "title": "CV-FRQ language: French or English, with the ministry-partnership exception (F-2)",
+      "note": "Sources: FRQ presentation standards; CV-FRQ instructions, July 2026. Holly, 2026-09-22: English is accepted on the new portal too (the online CV is attached to the application), and some programs, so far ministry partnerships, require everything in French.",
       "find": "<td>French required for most programs</td>",
-      "replace": "<td><!--rv:P-32-->French or English. The FRQ application form itself must be completed in French.</td>"
+      "replace": "<td><!--rv:P-32-->French or English*. The FRQ application form itself must be completed in French.<br>* Some FRQ programs, so far those run in partnership with Quebec ministries, require every document in French, attachments included. Check the program rules, or contact your Advisor, Research Development.</td>"
     },
     {
       "id": "P-33",

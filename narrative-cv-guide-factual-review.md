@@ -408,3 +408,7 @@ and would not list competitions; no primary source dates the introduction, so th
 Tri-agency "is gradually implementing the Tri-agency CV (TCV) requirement over a few years", with no
 year. F-2 (new-portal case): Eli says ask **Holly**, who has been in touch with the FRQ. That is the
 last open item.
+
+**F-2 closed by Holly, 2026-09-22.** English is accepted on the new portal (the online CV is attached
+to the application). Exception now on the page: some FRQ programs, so far ministry partnerships,
+require everything in French. All F-series items are now answered or decided.
