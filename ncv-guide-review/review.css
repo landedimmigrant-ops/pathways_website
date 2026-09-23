@@ -84,6 +84,23 @@ body.rv-aem .rv-hover { outline: 2px dashed var(--rv-accent); outline-offset: 3p
 @media (prefers-reduced-motion: reduce) { .rv-switch__track, .rv-switch__track::after { transition: none; } }
 .rv-status.is-aem::before { background: var(--rv-accent); }
 
+/* AEM progress: done changes leave the page; the Done view shows them in green; a change edited
+   after it was copied turns amber and goes back to To do */
+body.rv-aem:not(.rv-aem-showdone) .rv-tag.is-done { display: none !important; }
+body.rv-aem:not(.rv-aem-showdone) .rv-changed.rv-done,
+body.rv-aem:not(.rv-aem-showdone) tr.rv-changed.rv-done > td:first-child { box-shadow: none; }
+body.rv-aem.rv-aem-showdone .rv-changed.rv-done { box-shadow: inset 3px 0 0 var(--rv-approve); }
+body.rv-aem.rv-aem-showdone tr.rv-changed.rv-done { box-shadow: none; }
+body.rv-aem.rv-aem-showdone tr.rv-changed.rv-done > td:first-child { box-shadow: inset 3px 0 0 var(--rv-approve); }
+.rv-tag.is-done, .rv-change__id.is-done { background: var(--rv-approve); }
+.rv-tag.is-stale, .rv-change__id.is-stale { background: var(--rv-proposal); }
+.rv-b.rv-b--done { border-color: var(--rv-approve); color: var(--rv-approve); }
+.rv-b.rv-b--done.rv-b--primary, .rv-b.rv-b--done:hover { background: var(--rv-approve); color: #fff; }
+.rv-aem-line { display: block; font-weight: 600; margin-top: 3px; }
+.rv-aem-line.is-done { color: var(--rv-approve); }
+.rv-aem-line.is-stale { color: var(--rv-proposal); }
+.rv-change__acts { display: flex; flex-wrap: wrap; gap: 4px; flex: 0 0 auto; justify-content: flex-end; max-width: 150px; }
+
 /* ---------- change markers ---------- */
 .rv-rel { position: relative; }
 body.rv-aem .rv-changed { box-shadow: inset 3px 0 0 var(--rv-accent); }

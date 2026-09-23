@@ -14,7 +14,7 @@
 
   const TYPES = { error: "Error", question: "Question", suggestion: "Suggestion", approve: "Looks right", proposal: "Proposal" };
   const GROUPS = { A: "Build error", B: "Factual, verified", C: "Copy" };
-  const state = { view: "review", rows: [], panelOpen: false, tab: "comments", filter: "open", active: null, backend: "local", backendNote: "" };
+  const state = { view: "review", rows: [], panelOpen: false, tab: "comments", filter: "open", aemFilter: "todo", active: null, backend: "local", backendNote: "" };
 
   // ---------------------------------------------------------------- utilities
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -126,6 +126,7 @@
   function setAem(on) {
     state.aem = !!on; ls.set("rv.aem", state.aem);
     document.body.classList.toggle("rv-aem", state.aem);
+    if (!state.aem) { state.aemFilter = "todo"; document.body.classList.remove("rv-aem-showdone"); }
     closePopover(); hideFab(); clearHover();
     state.tab = state.aem ? "changes" : "comments";
     if (state.panelOpen) { renderPanel(); alignActive(); }
@@ -188,17 +189,25 @@
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closePopover(); hideFab(); } });
   document.addEventListener("mousedown", (e) => { if (popover && !popover.contains(e.target) && !e.target.closest(".rv-fab, .rv-tag, .rv-copychip")) closePopover(); });
 
-  function showCopy(host, rect, headingHtml, extraHtml) {
+  function showCopy(host, rect, headingHtml, extraHtml, changeId) {
     const preview = blockText(host).replace(/\s+/g, " ").trim();
-    const html = "<h4>" + headingHtml + "</h4>" + (extraHtml || "")
+    const st = changeId ? changeStatus(changeId) : null;
+    const line = !st ? "" : st.done ? '<p class="rv-meta rv-aem-line is-done">Done in AEM · ' + esc(st.row.author) + ", " + esc(fmtDate(st.row.ts)) + "</p>"
+      : st.stale ? '<p class="rv-meta rv-aem-line is-stale">Changed since ' + esc(st.row.author) + " copied it on " + esc(fmtDate(st.row.ts)) + ". Copy it again.</p>" : "";
+    const aemBtn = !st ? "" : st.done ? '<button type="button" class="rv-b" data-act="aem-reopen">Back to To do</button>'
+      : '<button type="button" class="rv-b rv-b--done" data-act="aem-done">Mark done in AEM</button>';
+    const html = "<h4>" + headingHtml + "</h4>" + (extraHtml || "") + line
       + '<p class="rv-quote">' + esc(preview.length > 160 ? preview.slice(0, 160) + "…" : preview) + "</p>"
-      + '<div class="rv-row"><button type="button" class="rv-b rv-b--primary" data-act="copy-text">Copy text</button><button type="button" class="rv-b" data-act="copy-html">Copy HTML</button><span class="rv-grow"></span><button type="button" class="rv-b" data-act="close">Close</button></div>';
+      + '<div class="rv-row"><button type="button" class="rv-b rv-b--primary" data-act="copy-text">Copy text</button><button type="button" class="rv-b" data-act="copy-html">Copy HTML</button>' + aemBtn + '<span class="rv-grow"></span><button type="button" class="rv-b" data-act="close">Close</button></div>';
     const p = openPopover(rect, html);
     p.addEventListener("click", async (e) => {
       const b = e.target.closest("[data-act]"); if (!b) return;
       if (b.dataset.act === "close") return closePopover();
+      if (b.dataset.act === "aem-done" || b.dataset.act === "aem-reopen") { closePopover(); return markAem(changeId, b.dataset.act === "aem-done"); }
       const ok = await copyText(b.dataset.act === "copy-text" ? blockText(host) : cleanHTML(host).innerHTML.replace(/\n\s*\n/g, "\n").trim());
-      toast(ok ? "Copied" : "Copy failed: select the text and copy it by hand");
+      const done = $('[data-act="aem-done"]', p);
+      if (ok && done) { $$(".rv-b--primary", p).forEach((x) => x.classList.remove("rv-b--primary")); done.classList.add("rv-b--primary"); }
+      toast(!ok ? "Copy failed: select the text and copy it by hand" : done ? "Copied. Once it is in AEM, choose Mark done." : "Copied");
     });
   }
   function showChange(id, tagEl) {
@@ -208,7 +217,40 @@
     showCopy(host, tagEl.getBoundingClientRect(),
       '<span class="rv-group-' + esc(ch.group) + '">' + esc(GROUPS[ch.group] || ch.group) + "</span>" + esc(id) + " · " + esc(ch.title),
       (ch.note ? '<p class="rv-note">' + esc(ch.note) + "</p>" : "")
-      + (hosts.length > 1 ? '<p class="rv-meta">This change touches ' + hosts.length + " blocks; this copies the one you clicked.</p>" : ""));
+      + (hosts.length > 1 ? '<p class="rv-meta">This change touches ' + hosts.length + " blocks; this copies the one you clicked.</p>" : ""), id);
+  }
+
+  // ---------------------------------------------------------------- AEM progress: "done in AEM" marks
+  // Marked by hand after pasting, saved as rows (kind "aem", parent "chg:<id>") next to the comments.
+  // Each mark carries a fingerprint of the change's text: if that text is edited later, the change
+  // goes back to To do, so a stale paste never passes as done.
+  function fnv(str) { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, "0"); }
+  const changePrint = (id) => "v:" + fnv((changeHosts.get(id) || []).map(blockText).join("\n"));
+  function aemMarks() {
+    const m = new Map();
+    state.rows.filter((r) => r.kind === "aem" && String(r.parent || "").startsWith("chg:"))
+      .sort((a, b) => (a.ts || "").localeCompare(b.ts || "")).forEach((r) => m.set(r.parent.slice(4), r));
+    return m;
+  }
+  function changeStatus(id, marks) {
+    const r = (marks || aemMarks()).get(id);
+    if (!r || r.status !== "done") return { done: false, stale: false, row: r || null };
+    const stale = !!r.quote && r.quote !== changePrint(id);
+    return { done: !stale, stale, row: r };
+  }
+  function paintAem() {
+    const marks = aemMarks();
+    $$(".rv-tag", main).forEach((t) => { const st = changeStatus(t.dataset.rvId, marks); t.classList.toggle("is-done", st.done); t.classList.toggle("is-stale", st.stale); });
+    $$(".rv-changed", main).forEach((c) => { const ids = (c.dataset.rvIds || "").split(" ").filter(Boolean); c.classList.toggle("rv-done", ids.length > 0 && ids.every((id) => changeStatus(id, marks).done)); });
+  }
+  async function markAem(id, done) {
+    const author = requireName(); if (!author) return;
+    const row = { id: uid(), ts: new Date().toISOString(), page: store.page, kind: "aem", parent: "chg:" + id, status: done ? "done" : "open",
+      author, text: done ? "Marked done in AEM" : "Put back to To do", quote: changePrint(id), type: "", prefix: "", suffix: "", section: "" };
+    state.rows.push(row);
+    const res = await store.add(row);
+    toast((done ? id + " marked done in AEM" : id + " is back on the To do list") + (res.where === "sheet" ? "" : " (saved in this browser only)"));
+    paintAem(); renderPanel(); renderBar();
   }
 
   // Any block, in copy mode: hover shows a Copy handle. Changed blocks use their tag instead.
@@ -229,7 +271,8 @@
   main.addEventListener("mouseover", (e) => {
     if (!state.aem || popover) return;
     const host = e.target.closest(BLOCK_SEL);
-    if (!host || !main.contains(host) || host.closest(".rv-changed")) { clearHover(); return; }
+    const ch = host && host.closest(".rv-changed");
+    if (!host || !main.contains(host) || (ch && (!ch.classList.contains("rv-done") || document.body.classList.contains("rv-aem-showdone")))) { clearHover(); return; }
     if (host !== chipHost) { clearHover(); placeChip(host); }
   });
   document.addEventListener("click", (e) => { const t = e.target.closest(".rv-tag"); if (t) { e.preventDefault(); showChange(t.dataset.rvId, t); } });
@@ -404,6 +447,7 @@
     if (anchor && anchor.isConnected) window.scrollBy(0, anchor.getBoundingClientRect().top - before);
     renderPanel(); renderBar(); alignActive();
     if (!open && state.filter === "resolved") { state.filter = "open"; state.active = null; renderComments(); }
+    if (!open && state.aemFilter === "done") { state.aemFilter = "todo"; document.body.classList.remove("rv-aem-showdone"); }
   }
   function renderPanel() {
     if (!panel) return;
@@ -412,9 +456,27 @@
     $(".rv-panel__head h3", panel).textContent = state.aem ? "Changes to copy into AEM" : "Comments";
     const tools = $(".rv-panel__tools", panel), body = $(".rv-panel__body", panel);
     if (state.tab === "changes") {
+      const marks = aemMarks();
       const ids = Object.keys(CFG.changes).filter((id) => changeHosts.has(id)).sort(sortIds);
-      tools.innerHTML = '<span class="rv-meta">' + ids.length + " changes against the AEM page. Work down the list: Go to shows the block, Copy copies its corrected text.</span>";
-      body.innerHTML = ids.map((id) => { const c = CFG.changes[id]; return '<div class="rv-change"><span class="rv-change__id">' + esc(id) + '</span><div class="rv-change__title">' + esc(c.title) + "<small>" + esc(GROUPS[c.group] || "") + (c.note ? " · " + esc(c.note) : "") + '</small></div><button type="button" class="rv-b" data-act="goto-change" data-id="' + esc(id) + '">Go to</button><button type="button" class="rv-b" data-act="copy-change" data-id="' + esc(id) + '">Copy</button></div>'; }).join("");
+      const st = Object.fromEntries(ids.map((id) => [id, changeStatus(id, marks)]));
+      const done = ids.filter((id) => st[id].done), todo = ids.filter((id) => !st[id].done);
+      const showDone = state.aemFilter === "done";
+      document.body.classList.toggle("rv-aem-showdone", showDone);
+      tools.innerHTML = '<button type="button" class="rv-b' + (!showDone ? " rv-b--primary" : "") + '" data-act="aem-filter" data-v="todo">To do (' + todo.length + ")</button>"
+        + '<button type="button" class="rv-b' + (showDone ? " rv-b--primary" : "") + '" data-act="aem-filter" data-v="done">Done (' + done.length + ")</button>"
+        + '<span class="rv-meta">' + done.length + " of " + ids.length + " copied into AEM. Copy a change, paste it into AEM, then mark it done.</span>";
+      const list = showDone ? done : todo;
+      if (!list.length) { body.innerHTML = '<p class="rv-panel__empty">' + (showDone ? "Nothing marked done yet." : "Every change is copied into AEM.") + "</p>"; return; }
+      body.innerHTML = list.map((id) => {
+        const c = CFG.changes[id], s = st[id];
+        const who = s.row ? esc(s.row.author) + ", " + esc(fmtDate(s.row.ts)) : "";
+        const line = s.done ? '<small class="rv-aem-line is-done">Done in AEM · ' + who + "</small>"
+          : s.stale ? '<small class="rv-aem-line is-stale">Changed since it was copied (' + who + "). Copy it again.</small>" : "";
+        return '<div class="rv-change"><span class="rv-change__id' + (s.done ? " is-done" : s.stale ? " is-stale" : "") + '">' + esc(id) + '</span><div class="rv-change__title">' + esc(c.title)
+          + "<small>" + esc(GROUPS[c.group] || "") + (c.note ? " · " + esc(c.note) : "") + "</small>" + line + "</div>"
+          + '<div class="rv-change__acts"><button type="button" class="rv-b" data-act="goto-change" data-id="' + esc(id) + '">Go to</button><button type="button" class="rv-b" data-act="copy-change" data-id="' + esc(id) + '">Copy</button>'
+          + (s.done ? '<button type="button" class="rv-b" data-act="aem-reopen" data-id="' + esc(id) + '">Undo</button>' : '<button type="button" class="rv-b rv-b--done" data-act="aem-done" data-id="' + esc(id) + '">Done</button>') + "</div></div>";
+      }).join("");
       return;
     }
     const all = threads(); const open = all.filter((t) => t.status !== "resolved"), done = all.filter((t) => t.status === "resolved");
@@ -446,7 +508,10 @@
       case "filter": state.filter = b.dataset.v; state.active = null; return renderComments();
       case "export": { const ok = await copyText(exportMarkdown()); toast(ok ? "Copied all comments as Markdown" : "Copy failed"); return; }
       case "goto-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (hosts[0]) { revealElement(hosts[0]); hosts[0].classList.remove("rv-flash"); void hosts[0].offsetWidth; hosts[0].classList.add("rv-flash"); } return; }
-      case "copy-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (!hosts[0]) return; const ok = await copyText(blockText(hosts[0])); toast(ok ? "Copied " + b.dataset.id : "Copy failed"); return; }
+      case "copy-change": { const hosts = changeHosts.get(b.dataset.id) || []; if (!hosts[0]) return; const ok = await copyText(blockText(hosts[0])); toast(ok ? "Copied " + b.dataset.id + ". Once it is in AEM, choose Done." : "Copy failed"); return; }
+      case "aem-filter": state.aemFilter = b.dataset.v; renderPanel(); return;
+      case "aem-done": return markAem(b.dataset.id, true);
+      case "aem-reopen": return markAem(b.dataset.id, false);
       case "goto": return goToThread(id, card);
       case "reply": { $(".rv-card__replybox", card).hidden = false; $("textarea", card).focus(); return; }
       case "cancel-reply": { $(".rv-card__replybox", card).hidden = true; return; }
@@ -540,7 +605,7 @@
   const bar = $("#rv-bar");
   function renderBar() {
     if (!bar) return;
-    const nChanges = changeHosts.size; const all = threads(); const nOpen = all.filter((t) => t.status !== "resolved").length;
+    const marks = aemMarks(); const nChanges = [...changeHosts.keys()].filter((id) => !changeStatus(id, marks).done).length; const all = threads(); const nOpen = all.filter((t) => t.status !== "resolved").length;
     const status = state.backend === "sheet" ? "Comments save to the review sheet" : state.backend === "error" ? "Sheet unreachable: comments stay in this browser" : "Comments stay in this browser only";
     bar.innerHTML = '<span class="rv-bar__title">Review copy · Narrative CV guide<small>' + esc(CFG.snapshot || "") + "</small></span>"
       + '<button type="button" class="rv-btn" data-act="expand">' + (allOpen() ? "Collapse all" : "Expand all") + "</button>"
@@ -564,6 +629,7 @@
     markChanges();
     const seeds = (CFG.seeds || []).map((s) => ({ kind: "comment", ts: "2026-09-21T12:00:00.000Z", status: "open", ...s }));
     state.rows = seeds.concat(await store.load());
+    paintAem();
     const q = new URLSearchParams(location.search).get("aem");
     setAem(q === "1" ? true : q === "0" ? false : ls.get("rv.aem", false));
     renderComments();
