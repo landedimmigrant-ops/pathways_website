@@ -55,9 +55,10 @@ def note_after_table(text):
     for _ in range(2):
         j = text.index("</div>", j) + len("</div>")
     note = ('\n<div class="c-wysiwyg wysiwyg section"><div class="rte "><p><!--rv:P-8--><span class="footnote">'
-            "The Tri-agency CV must not exceed its page limit. Any pages over the limit are removed with no further "
-            "notification. Formatting also differs between the three Tri-agency partners: SSHRC and CIHR require "
-            "12-point Arial, and NSERC requires 12-point Times New Roman. See the formatting note below before you "
+            "<!--rv:P-44-->Your TCV or CV-FRQ must not exceed its page limit. If it does, your application can be "
+            "ruled ineligible. The FRQ is especially strict about formatting and page limits. "
+            "<!--rv:P-45-->Formatting also differs between the three Tri-agency partners: SSHRC requires 12-point "
+            "Arial, and NSERC and CIHR require 12-point Times New Roman. See the formatting note below before you "
             "start.</span></p></div></div>")
     return text[:j] + note + FORMATTING_ACCORDION + text[j:]
 
@@ -74,14 +75,15 @@ FORMATTING_ACCORDION = """
       <div id="rv_formatting_panel" class="accordion-collapse collapse">
         <div class="accordion-body">
           <div class="c-wysiwyg wysiwyg section"><div class="rte ">
-            <p><span class="xlarge-text">The three Tri-agency partners do not use the same formatting rules, so the agency you are applying to decides the format of your TCV.</span></p>
+            <p><span class="xlarge-text">The three Tri-agency partners do not use the same formatting rules, so the agency you are applying to decides the format of your TCV. <!--rv:P-47-->Each agency also sets its own file-size limit.</span></p>
             <ul>
-              <li><span class="xlarge-text"><b>SSHRC and CIHR</b> require 12-point Arial in black type. You can use different fonts and sizes in tables, figures and legends, as long as the text is readable when the page is viewed at 100%.</span></li>
-              <li><span class="xlarge-text"><b>NSERC</b> requires 12-point Times New Roman for all text, including references and tables. The exception for tables, figures and legends does not apply to an NSERC application.</span></li>
+              <li><span class="xlarge-text"><!--rv:P-45--><b>SSHRC</b> requires 12-point Arial in black type. You can use different fonts and sizes in tables, figures and legends, as long as the text is readable when the page is viewed at 100%.</span></li>
+              <li><span class="xlarge-text"><!--rv:P-45--><b>CIHR</b> requires 12-point Times New Roman.</span></li>
+              <li><span class="xlarge-text"><!--rv:P-46--><b>NSERC</b> requires 12-point Times New Roman. You can use a smaller font size in tables and figures, as long as the text is readable, except in tables or figures that list references. References must be in 12-point Times New Roman wherever they appear.</span></li>
               <li><span class="xlarge-text">The <b>CV-FRQ</b> requires 12-point Times New Roman, with margins of at least 2 cm, your name in the header and the document title in the footer.</span></li>
             </ul>
             <p><span class="xlarge-text">None of them accept condensed fonts, and all of them require you to use the agency's own template.</span></p>
-            <p><span class="footnote">If you are preparing one CV for more than one agency, 12-point Times New Roman throughout meets the strictest of these rules.</span></p>
+            <!--rv:P-42-->
           </div></div>
         </div>
       </div>

@@ -43,8 +43,10 @@ The POST answers 405 after Google's redirect even when it worked; read back to c
 
 ## Facts we verified that another guide may reuse (check dates before relying on them)
 - TCV: 5 pages EN / 6 FR; overflow pages removed without notice (CIHR FAQ).
-- SSHRC/CIHR: 12-pt Arial, exception for tables/figures/legends. NSERC: 12-pt Times New Roman for
-  all text (NSERC told Prem: no exception; its published footnote says otherwise). CV-FRQ: TNR 12.
+- SSHRC: 12-pt Arial, exception for tables/figures/legends. CIHR: 12-pt Times New Roman (Eli,
+  2026-09-25). NSERC: 12-pt Times New Roman; smaller legible fonts in tables/figures except those
+  listing references (Eli, 2026-09-25, correcting what NSERC told Prem). CV-FRQ: TNR 12.
+- Over the page limit: can make an application ineligible; FRQ especially strict (Eli).
 - TCV hyperlinks: reviewer guidelines §5, audio/visual exception only where the opportunity allows,
   "no guarantee that hyperlinks will be accessed". NSERC Research Portal bans hyperlinks outright.
 - CV-FRQ language: form in French, CV French or English (also on the new portal), except some

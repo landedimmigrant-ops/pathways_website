@@ -452,3 +452,32 @@ portal; the online tool produces files that are attached to the program applicat
 attached-documents rule applies. She asked for an asterisk: some FRQ programs, so far those run in
 partnership with Quebec ministries, require every document in French, attachments included. The
 Language cell now carries it (P-32). **No factual question is open.**
+
+## 11. Eli's comments on the review copy (2026-09-25)
+
+Twelve comments from Eli on the page, the morning of 2026-09-25. **Prem's decision: trust Eli's
+comments as the authority on funder rules**; public primary sources may not show what he knows,
+so these were applied without desk verification (a source check was started and stopped).
+New wording follows the guide's tone (second person, short declaratives, the pattern of the
+neighbouring lines).
+
+**Revert point:** git tag `ncv-guide-pre-eli-2026-09-25` (commit b10ad9d) and the local copy
+`backups/ncv-guide-review-2026-09-25-pre-eli/` (review folder, this log, sheet rows as of that morning).
+
+| Thread | Eli | Applied as | Where it lives |
+|---|---|---|---|
+| cmuh1c169qcmyf | "says" → "lists"? | P-38: "A traditional CV lists what you did." | corrections.json |
+| cmuh1bfzkzsuv4 | Add (FRQ) after the name | P-39: "Fonds de recherche du Québec (FRQ)" in the opening | corrections.json |
+| cmuh1ewa2xvdnf | "narrative" before "Tri-agency CV" | P-40: "the narrative Tri-agency CV (TCV) requirement" | corrections.json |
+| cmuh0xvsqadmve | Include the FRQ's title for this section; it has a different meaning | P-41: "…then write the personal statement (in the CV-FRQ, "The candidate's background and skills") last." | corrections.json |
+| cmuh2yoawkwuet | Remove "12-point Times New Roman throughout meets the strictest of these rules." | P-42: sentence deleted | hooks.py |
+| cmuh0sff7zog7t | Also NIH (USA) and FNR (Luxembourg) | P-43: two list items, "NIH (USA)", "FNR (Luxembourg)" | corrections.json |
+| cmuh12ve47nbfq + cmuh1xegc0w84m | Also the CV-FRQ; going over the page limit may be eliminatory at every agency, almost certainly at the FRQ | P-44: "Your TCV or CV-FRQ must not exceed its page limit. If it does, your application can be ruled ineligible. The FRQ is especially strict about formatting and page limits." Replaces the CIHR FAQ line on removed pages. | hooks.py (note under table) |
+| cmuh1z4pw5f9c4 | CIHR requires Times New Roman | P-45: note under the table ("SSHRC requires 12-point Arial, and NSERC and CIHR require 12-point Times New Roman") and a separate CIHR bullet in the formatting accordion. Supersedes the CIHR half of F-22. | hooks.py |
+| cmuh13p4qptgve | Correction received: smaller legible fonts allowed in tables and figures, except those listing references; references always 12-pt TNR | P-46: NSERC bullet rewritten. Supersedes the 2026-09-22 "no exception" line. | hooks.py |
+| cmuh226m68l6t6 | File-size limits also differ by agency | P-47: "Each agency also sets its own file-size limit." | hooks.py |
+| cmuh1tmlk3aadv | Add the TCV focus to the CV-FRQ first-section cell | P-48: "Your expertise relative to this specific opportunity or project, your fit with the program's objectives, and how your work complements the team" | corrections.json |
+
+Change entries for the hook edits are in `src/guide.json → changes`. In AEM copy mode all eleven
+IDs show as To do. Section 4.1's reference line "SSHRC/CIHR: 12-pt Arial" and the NSERC note in the
+skill's `reference.md` are superseded by P-45 and P-46.

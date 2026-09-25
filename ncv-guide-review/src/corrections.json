@@ -311,6 +311,54 @@
       "note": "Source sent by Eli, 2026-09-22. In AEM: a second paragraph in the Ownership accordion.",
       "find": "just make your role explicit.</span></p>",
       "replace": "just make your role explicit.</span></p>\n<p><span class=\"xlarge-text\"><!--rv:P-37-->A 2025 UK study of 27 narrative CVs found that reviewers rated both the CV and the researcher more highly when the writing showed less passivity or avoidance of ownership, and used fewer negations (Fasoli et al., 2025, <cite>Writing and Evaluating Narrative CVs</cite>).</span></p>"
+    },
+    {
+      "id": "P-38",
+      "group": "C",
+      "title": "Callout: a traditional CV lists what you did",
+      "note": "Eli on the page, 2026-09-25 (\"lists\"?). Runs after I-2.",
+      "find": "<b>The core shift —</b> A traditional CV says what you did.",
+      "replace": "<b>The core shift —</b> <!--rv:P-38-->A traditional CV lists what you did."
+    },
+    {
+      "id": "P-39",
+      "group": "C",
+      "title": "Opening: give the FRQ acronym at first mention",
+      "note": "Eli on the page, 2026-09-25.",
+      "find": "<span lang=\"fr\"> Fonds de recherche du Québec </span> adopted narrative formats",
+      "replace": "<span lang=\"fr\">Fonds de recherche du Québec</span> <!--rv:P-39-->(FRQ) adopted narrative formats"
+    },
+    {
+      "id": "P-40",
+      "group": "C",
+      "title": "Rollout sentence: the narrative Tri-agency CV",
+      "note": "Eli on the page, 2026-09-25. Runs after P-35.",
+      "find": "implementing the Tri-agency CV (TCV) requirement",
+      "replace": "implementing the <!--rv:P-40-->narrative Tri-agency CV (TCV) requirement"
+    },
+    {
+      "id": "P-41",
+      "group": "C",
+      "title": "Three sections: name the CV-FRQ's first section too",
+      "note": "Eli on the page, 2026-09-25: the FRQ's title for this section has a different meaning. English name from frq.gouv.qc.ca/en/frq-cv/.",
+      "find": "then write the personal statement last.",
+      "replace": "then write the personal statement <!--rv:P-41-->(in the CV-FRQ, \"The candidate's background and skills\") last."
+    },
+    {
+      "id": "P-43",
+      "group": "B",
+      "title": "Funder list: add NIH and FNR",
+      "note": "Eli on the page, 2026-09-25: also NIH (National Institutes of Health, USA) and FNR (Luxembourg National Research Fund). Taken on Eli's authority (Prem, 2026-09-25).",
+      "find": "<li><span class=\"xlarge-text\">NWO (Netherlands)</span></li>",
+      "replace": "<li><span class=\"xlarge-text\">NWO (Netherlands)</span></li><li><span class=\"xlarge-text\"><!--rv:P-43-->NIH (USA)</span></li><li><span class=\"xlarge-text\"><!--rv:P-43-->FNR (Luxembourg)</span></li>"
+    },
+    {
+      "id": "P-48",
+      "group": "B",
+      "title": "Table: the CV-FRQ first section also covers the TCV focus",
+      "note": "Eli on the page, 2026-09-25: the CV-FRQ's first section also asks for your expertise relative to the opportunity. Taken on Eli's authority.",
+      "find": "<td>Your fit with the program's objectives and how your work complements the team</td>",
+      "replace": "<td><!--rv:P-48-->Your expertise relative to this specific opportunity or project, your fit with the program's objectives, and how your work complements the team</td>"
     }
   ]
 }

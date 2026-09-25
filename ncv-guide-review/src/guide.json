@@ -137,6 +137,31 @@
       "title": "Meta description",
       "group": "A",
       "note": "In the page head; see the page properties in AEM."
+    },
+    "P-42": {
+      "title": "Formatting accordion: remove the one-CV-for-several-agencies line",
+      "group": "C",
+      "note": "Eli on the page, 2026-09-25: remove this sentence. In AEM: delete the last paragraph of \"What font and formatting do I use?\"."
+    },
+    "P-44": {
+      "title": "Page limits: both CVs, and going over can make an application ineligible",
+      "group": "B",
+      "note": "Eli on the page, 2026-09-25: the rule applies to the CV-FRQ too, and exceeding the limit may be eliminatory at every agency, almost certainly at the FRQ. Replaces the CIHR FAQ line that over-limit pages are removed. In AEM: the note under the comparison table."
+    },
+    "P-45": {
+      "title": "CIHR requires Times New Roman, not Arial",
+      "group": "B",
+      "note": "Eli on the page, 2026-09-25. Changes the note under the table and the formatting accordion (SSHRC and CIHR bullet split in two). Supersedes the CIHR half of F-22."
+    },
+    "P-46": {
+      "title": "NSERC: smaller legible fonts in tables and figures, except for references",
+      "group": "B",
+      "note": "Eli on the page, 2026-09-25, a correction he received. Supersedes the 2026-09-22 NSERC line (no exception)."
+    },
+    "P-47": {
+      "title": "Formatting accordion: file-size limits differ by agency",
+      "group": "B",
+      "note": "Eli on the page, 2026-09-25."
     }
   }
 }
