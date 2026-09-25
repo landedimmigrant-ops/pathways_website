@@ -371,3 +371,96 @@ behaviours (C1–C12), 11 flags (F1–F11). Calls made on the flags:
   sentence, the Structural read lede ("Anything you paste stays here, with the rest of your draft."),
   the save warning, the checks note ("They leave you free to continue, carry no score and stay here
   with your draft.") and the discipline help ("your draft stays as it is"). Verified in the browser.
+- **2026-09-25 · guide sync + session feedback — built.** Prem: the NCV guide review copy
+  (`ncv-guide-review/`) is the source of truth; bring the tool's language and any affected
+  functionality into line with it before the tool goes to a researcher, and add a way to gather
+  feedback at the end of a session. Revert point: tag `ncv-v5-pre-guide-sync-2026-09-25`.
+  **Guide → tool (each tied to its guide item):**
+  - DECIDED — P-16/F-20: one **FRQ** chip (FRQNT, FRQSC, FRQS removed); saved drafts with the old
+    codes are mapped to `frq`. Chip order follows the guide: SSHRC, NSERC, CIHR, FRQ, Other.
+  - DECIDED — P-9/P-41: official section names, format-aware, in stage kickers, the sidebar,
+    Review coverage, the .txt export and the print view. CV-FRQ exports carry the French template
+    names beside the English ones.
+  - INFERRED — CV-FRQ section 3 is "Supervisory and **mentoring** activities" (the FRQ's own English
+    name, verified 2026-09-21 in the review log §4.1); the guide's generic card says "mentorship".
+  - DECIDED — P-48: the first section's focus differs. TCV: expertise relative to this opportunity
+    (Program-fit help says so). CV-FRQ: also fit with the program's objectives and how your work
+    complements the team, so a **new CV-FRQ-only prompt**, "How does your work complement the rest of
+    the team on this application?", with its own coverage row and export line.
+  - DECIDED — P-10/P-11/F-6/F-16: Contributions lede now says up to 10 contributions **or
+    experiences** that relate to your application, chosen for this opportunity, a collection of
+    related work can be one, a short well-explained list is stronger. **"Three to five is a good
+    target" removed**: the guide sets no target and the agencies state no minimum.
+  - DECIDED — P-28/P-18: role-line help uses the guide's first-person wording ("leave the
+    grammatical person open … Concordia recommends the first person"); the ownership flag ends with
+    the guide's line "If every sentence says 'we', reviewers cannot tell what you did."
+  - DECIDED — P-12: the prestige flag is split. Journal metrics: "reviewers of Tri-agency
+    applications are asked to disregard the JIF and other journal-based metrics". h-index: DORA
+    treats it as unreliable; a single-article citation count can support the account. The old line
+    said reviewers are told to disregard the h-index, which the guide does not say. Standing help
+    updated to match.
+  - DECIDED — P-17/P-31: **link check by format**. TCV: a link in any field is flagged; an evidence
+    row with a link gets a note (creative discipline: the audio/visual exception is named). CV-FRQ:
+    a link in a sentence is asked to move to the evidence list; a link in an evidence row is fine.
+    The engine takes the format through a third `ctx` argument, so the examples checker still runs it
+    standalone.
+  - DECIDED — P-8/P-30/P-32/P-44 to P-49: a **format box** (Setup, compact, once an agency is chosen;
+    Review, full): "You must use the agency's template", do not exceed 5 pages in English / 6 in
+    French (FRQ especially strict), the agency's font rule word for word, links, language (CV-FRQ
+    asterisk included), section names, condensed fonts, file-size limits, "the instructions for your
+    funding opportunity take precedence". The .txt export and advisor packet open with a one-line
+    reminder of the template and page limit.
+  - DECIDED — P-45/P-46: the **print view** is set in the agency's font at 12 points (SSHRC Arial;
+    NSERC, CIHR, FRQ and Other Times New Roman), references included, Letter with 2 cm margins,
+    with an on-screen note (not printed) that it is not the template.
+  - INFERRED — a **rough length line** on Review: words in the draft ÷ 500–600 words a page, against
+    the 5-page English limit, marked when over. The per-page figure is our estimate, stated as rough.
+  - DECIDED — P-13: Setup lede adds "A full first draft can take a day or more, so allow time before
+    your deadline." P-14: Review ends with the guide's contact line (impact@concordia.ca).
+  - DECIDED — Mentorship: guide's early-career advice shown when career stage is Early; supervision
+    labels follow P-25 (Doctoral, Master's, Postdoctoral, Undergraduate research).
+  - DECIDED — Review self-check rebuilt on the guide's four qualities (Ownership, Specificity,
+    Significance, Coherence) plus Selection, Mentorship and Format; keyed by name, not position.
+  - DECIDED — Impact help's unsourced "on the reviewers' own list" sentence replaced with the guide's
+    academic-impact wording.
+  - INFERRED — **passive check** (closes part of the "passive voice, open by design" item): P-37
+    now cites Fasoli et al. 2025 (reviewers rated CVs higher with less passivity). An agentless
+    passive ("was developed", not "was funded by …") is flagged only in the role line, *What you did*
+    and Structural-read paragraphs, and only when nothing in the field names you and no "we" flag
+    already fires. All 60 examples still pass `lint` and `register`.
+  - INFERRED — **guide links** now open the corrected review copy in a new tab, at the matching
+    section (#why, #three, #compare, #difference, #reviewers). The SPA's `#learn-narrative-cv` page
+    still carries the original text (3–10 contributions, FRQ sectors, Wellcome) and the AEM page is
+    not live yet (404 today). Switch `GUIDE_URL` to the AEM address when it launches. Caveat: the
+    review copy shows the staff comment tools.
+  **Feedback (new):**
+  - INFERRED — a **Note for the team** button in the banner, on every step: a short note saved with
+    the step it was written on, kept on the device.
+  - INFERRED — a last step, **Feedback**: three chip questions (usefulness 1–5, what they left with,
+    would they use it), which parts helped / got in the way, whether the worked example fit, whether
+    the checks were right, four open questions (where stuck, anything that differs from their
+    agency's rules, the one change, anything else), optional name. Every question optional.
+  - INFERRED — an opt-out **session summary**, shown in full before sending: steps visited and active
+    minutes, contributions started, checks showing by type, own ✗/? marks, which example cell was
+    shown, prompts answered, exports used, word count, screen and browser. Counts and choices only:
+    no draft text, and the competition only as named yes/no. **The draft itself is never sent.**
+  - INFERRED — transport: the same public, append-only `review_comment` action the guide review page
+    already uses, with `page = ncv-tool-v5`, so it works today with no Apps Script redeploy. Rows land
+    in the **Guide review** tab (the guide page filters them out by page). Columns: `text` = answers,
+    `quote` = notes, `prefix` = summary, `suffix` = tool version, `section` = agency · discipline ·
+    stage. Read them with `<exec URL>?action=review_list&page=ncv-tool-v5`. Fallbacks: download
+    (.txt), copy, and email to impact@concordia.ca. Anyone with the exec URL can read these rows,
+    which is why no email address or draft text is collected. A dedicated tab behind its own action
+    is the cleaner long-term home.
+  - INFERRED — Review shows a "Before you go" nudge to the Feedback step until feedback is sent; the
+    privacy line in the banner now says the Feedback step sends only what is written there.
+  **Verified in the browser (review server :8765):** FRQ chip and migration; CV-FRQ sidebar label,
+  kickers, lede, team prompt, coverage row, export headings with French names; SSHRC format box and
+  Arial print view; FRQ Times New Roman print view; TCV link flag in a field and on an evidence row;
+  CV-FRQ link flag in a field only; passive flag; early-career mentorship note; Review length line,
+  self-check, contact line, nudge; note panel save/count (desktop and 375 px); Feedback send with a
+  mocked network (payload shape checked, nothing sent to the sheet) and the failure message; Reset
+  clears notes. One bug found and fixed on the way: a shared global regex let the evidence-row
+  check skip the next field's link. No console errors; no horizontal scroll at 375 px.
+  **Not verified:** a real POST to the sheet from this page (the guide review page uses the same
+  call in production).
