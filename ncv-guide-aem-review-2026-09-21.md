@@ -505,3 +505,12 @@ keeps "do not exceed" with no consequence stated, so P-44 is decided and nothing
 is open. Revert point before this step: tag `ncv-guide-pre-underline-2026-09-25` (commit 7b22ee4).
 Underline removed the same day (Prem): on a Concordia page, underlined burgundy reads as a link.
 Both lines stay bold in #912338 inside the bordered callout.
+
+### 11.2 Builder links removed for now (2026-09-25, Prem)
+
+P-50: both links to the Narrative CV builder are off. The top lead-in line and button (P-6), and
+the closing "Ready to start drafting?" box with its button (P-5). The contact line and status line
+at the end stay. In AEM: delete the Text and Button components above the opening, and the grey Box
+at the end. **To restore:** `SHOW_BUILDER = True` in `ncv-guide-review/src/hooks.py` and delete the
+P-50 entry in `src/corrections.json`. Revert point: tag `ncv-guide-pre-builder-removal-2026-09-25`
+(commit 504e894).

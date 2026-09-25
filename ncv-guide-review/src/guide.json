@@ -167,6 +167,11 @@
       "title": "Template callout: you must use the agency's current template",
       "group": "B",
       "note": "Eli's notes, 2026-09-25: 'across the board, absolutely, you must use the template provided', stressed, maybe in red; use the formatting of the current version. In AEM: a Box component like 'The core shift' (tint, 4px left border #912338), placed directly under the comparison table; the first line bold in #912338. Underline tried and removed the same day: it reads as a link (Prem)."
+    },
+    "P-50": {
+      "title": "Builder links removed for now",
+      "group": "C",
+      "note": "Prem, 2026-09-25. Both links to the Narrative CV builder are off: the button at the top (P-6) and the 'Ready to start drafting?' box at the end (P-5). In AEM: delete both. To restore: SHOW_BUILDER = True in src/hooks.py and delete the P-50 entry in corrections.json."
     }
   }
 }

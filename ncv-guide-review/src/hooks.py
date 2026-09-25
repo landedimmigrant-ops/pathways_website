@@ -5,6 +5,8 @@ Called by aem-review-kit/build.py after src/corrections.json has been applied.
 import re
 
 BUILDER_URL = 'https://www.concordia.ca/research/pathways-to-impact/learn/tools/narrative-cv-builder.html'
+# P-50: builder links off for now (Prem, 2026-09-25). True brings back the closing builder box.
+SHOW_BUILDER = False
 
 # filled in by apply() from the kit, so these functions read like ordinary code
 next_block = block_end = None
@@ -100,23 +102,14 @@ def closing_block(text):
     """P-5, P-14, P-15: a closing call to action, the contact line and the status line."""
     anchor = "</section>\n</div>"
     i = text.rindex(anchor) + len(anchor)
+    builder_box = BUILDER_BOX.format(BUILDER_URL=BUILDER_URL) if SHOW_BUILDER else '        <!--rv:P-50-->'
     block = f'''
 <div class="c-grid-container grid-container section">
   <section class="border-bottom picturefill-container margin-top-desktop-0 margin-bottom-desktop-0 margin-top-mobile-0 margin-bottom-mobile-0" style="background-color: transparent;">
     <div class="container width940 mx-auto padding-top-desktop-40px padding-bottom-desktop-40px padding-top-mobile-20px padding-bottom-mobile-20px">
       <div class="grid-container-parsys parsys">
         <div class="c-anchor-link section"><a id="next"></a></div>
-        <div class="c-box box section">
-          <div class="bloc p-4 mb-4 box-text-black box-link-black" style="background-color: #F0F0F0 !important;">
-            <div class="parsys">
-              <div class="c-wysiwyg wysiwyg section"><div class="rte ">
-                <h3><!--rv:P-5-->Ready to start drafting?</h3>
-                <p><span class="xlarge-text">The Narrative CV builder helps you develop a draft outline with guided prompts and examples. You can expect to spend 60 to 90 minutes on it.</span></p>
-              </div></div>
-              <div class="c-button section"><div class="text-left"><a href="{BUILDER_URL}" target="_self" class="btn btn-ghost-filled btn-bg-912338"><span>Open the Narrative CV builder</span></a></div></div>
-            </div>
-          </div>
-        </div>
+{builder_box}
         <div class="c-wysiwyg wysiwyg section"><div class="rte ">
           <p><!--rv:P-14--><span class="xlarge-text">If you have questions about your Narrative CV, please contact the Pathways to Impact team at <a href="mailto:impact@concordia.ca">impact@concordia.ca</a>.</span></p>
           <p><!--rv:P-15--><span class="footnote">Last reviewed: September 2026. This guide gives Concordia's advice and is not an official position of the Tri-agency or the Fonds de recherche du Québec. The instructions for your funding opportunity take precedence.</span></p>
@@ -128,6 +121,20 @@ def closing_block(text):
     return text[:i] + block + text[i:]
 
 
+BUILDER_BOX = '''
+        <div class="c-box box section">
+          <div class="bloc p-4 mb-4 box-text-black box-link-black" style="background-color: #F0F0F0 !important;">
+            <div class="parsys">
+              <div class="c-wysiwyg wysiwyg section"><div class="rte ">
+                <h3><!--rv:P-5-->Ready to start drafting?</h3>
+                <p><span class="xlarge-text">The Narrative CV builder helps you develop a draft outline with guided prompts and examples. You can expect to spend 60 to 90 minutes on it.</span></p>
+              </div></div>
+              <div class="c-button section"><div class="text-left"><a href="{BUILDER_URL}" target="_self" class="btn btn-ghost-filled btn-bg-912338"><span>Open the Narrative CV builder</span></a></div></div>
+            </div>
+          </div>
+        </div>'''
+
+
 def apply(html, kit, guide):
     global next_block, block_end
     next_block, block_end = kit.next_block, kit.block_end
@@ -136,6 +143,7 @@ def apply(html, kit, guide):
     html = closing_block(html)           # P-5, P-14, P-15
     # L-1 (Q-1): "narrative CV" in lower case in running text, as the agencies write it
     html, lowered = kit.recase_running_text(html, "Narrative CV", "narrative CV", "L-1")
-    if lowered != 12:
-        raise SystemExit(f"[L-1] expected 12 mid-sentence 'Narrative CV', found {lowered}")
+    expected = 12 if SHOW_BUILDER else 9   # three sit in the builder links (P-50)
+    if lowered != expected:
+        raise SystemExit(f"[L-1] expected {expected} mid-sentence 'Narrative CV', found {lowered}")
     return html

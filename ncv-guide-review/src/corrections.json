@@ -359,6 +359,14 @@
       "note": "Eli on the page, 2026-09-25: the CV-FRQ's first section also asks for your expertise relative to the opportunity. Taken on Eli's authority.",
       "find": "<td>Your fit with the program's objectives and how your work complements the team</td>",
       "replace": "<td><!--rv:P-48-->Your expertise relative to this specific opportunity or project, your fit with the program's objectives, and how your work complements the team</td>"
+    },
+    {
+      "id": "P-50",
+      "group": "C",
+      "title": "Top of page: builder link removed for now",
+      "note": "Prem, 2026-09-25: remove the link to the NCV builder for now. Removes the P-6 lead-in line and button. In AEM: delete the Text component and the Button component above the opening. To restore, delete this entry.",
+      "find": "<div class=\"c-wysiwyg wysiwyg section\"><div class=\"rte \"><p><!--rv:P-6--><span class=\"xlarge-text\">If you already know the format, you can go straight to the builder.</span></p></div></div>\n<div class=\"c-button section\"><div class=\"text-left\"><a href=\"/content/concordia/en/research/pathways-to-impact/learn/tools/narrative-cv-builder.html\" target=\"_self\" class=\"btn btn-ghost-filled btn-bg-912338\"><span><!--rv:P-6-->Open the Narrative CV builder</span></a></div></div>",
+      "replace": "<!--rv:P-50-->"
     }
   ]
 }
