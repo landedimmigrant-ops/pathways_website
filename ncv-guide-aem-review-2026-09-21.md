@@ -503,3 +503,5 @@ The red is Concordia's burgundy (#912338), the only red already on the page and 
 template." and "Do not exceed the page limit.", each bold in #912338. Word came back that the page
 keeps "do not exceed" with no consequence stated, so P-44 is decided and nothing on the page
 is open. Revert point before this step: tag `ncv-guide-pre-underline-2026-09-25` (commit 7b22ee4).
+Underline removed the same day (Prem): on a Concordia page, underlined burgundy reads as a link.
+Both lines stay bold in #912338 inside the bordered callout.
