@@ -56,9 +56,9 @@ def note_after_table(text):
         j = text.index("</div>", j) + len("</div>")
     note = ('\n<div class="c-box box section"><div class="bloc d-tint p-4 pb-1 mt-4 mb-4" style="border-left: 4px solid #912338;">'
             '<div class="parsys"><div class="c-wysiwyg wysiwyg section"><div class="rte ">'
-            '<p><span class="xlarge-text" style="color: #912338;"><!--rv:P-49--><b>You must use the agency\'s template.</b></span></p>'
+            '<p><span class="xlarge-text" style="color: #912338;"><!--rv:P-49--><b><u>You must use the agency\'s template.</u></b></span></p>'
             '<p><span class="xlarge-text">Prepare your TCV or CV-FRQ in the current version of the template your agency provides, '
-            "and keep the formatting it sets. <!--rv:P-44--><b>Do not exceed the page limit.</b> The FRQ is especially strict "
+            "and keep the formatting it sets. <!--rv:P-44--><b><u style=\"color: #912338;\">Do not exceed the page limit.</u></b> The FRQ is especially strict "
             "about formatting and page limits.</span></p></div></div></div></div></div>"
             '\n<div class="c-wysiwyg wysiwyg section"><div class="rte "><p><!--rv:P-8--><span class="footnote">'
             "<!--rv:P-45-->Formatting also differs between the three Tri-agency partners: SSHRC requires 12-point "

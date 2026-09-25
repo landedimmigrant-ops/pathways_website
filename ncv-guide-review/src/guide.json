@@ -146,7 +146,7 @@
     "P-44": {
       "title": "Page limits: do not exceed them (both CVs)",
       "group": "B",
-      "note": "Eli, 2026-09-25 (comments on the page, then separate notes the same day): state 'do not exceed the page limit' for the TCV and the CV-FRQ. Whether an over-limit application is rejected is being confirmed, so the page states no consequence; the 25 Sept wording 'can be ruled ineligible' was withdrawn. The CIHR FAQ line on removed pages stays out. In AEM: inside the template callout under the comparison table."
+      "note": "Eli, 2026-09-25: state 'do not exceed the page limit' for the TCV and the CV-FRQ, and no consequence. Confirmed the same day: the page sticks with 'do not exceed' (decided, no longer provisional). The earlier 'can be ruled ineligible' and the CIHR FAQ line on removed pages stay out. In AEM: inside the template callout under the comparison table, bold, underlined, in #912338."
     },
     "P-45": {
       "title": "CIHR requires Times New Roman, not Arial",
@@ -166,7 +166,7 @@
     "P-49": {
       "title": "Template callout: you must use the agency's current template",
       "group": "B",
-      "note": "Eli's notes, 2026-09-25: 'across the board, absolutely, you must use the template provided', stressed, maybe in red; use the formatting of the current version. In AEM: a Box component like 'The core shift' (tint, 4px left border #912338), placed directly under the comparison table; the first line bold in #912338."
+      "note": "Eli's notes, 2026-09-25: 'across the board, absolutely, you must use the template provided', stressed, maybe in red; use the formatting of the current version. In AEM: a Box component like 'The core shift' (tint, 4px left border #912338), placed directly under the comparison table; the first line bold in #912338. Underlined (Prem, 2026-09-25)."
     }
   }
 }

@@ -495,6 +495,11 @@ skill's `reference.md` are superseded by P-45 and P-46.
 | Note | Applied as | Status |
 |---|---|---|
 | 1 | P-49: a callout directly under the comparison table (same Box component as "The core shift": tint, left border #912338). First line bold in #912338: "You must use the agency's template." Then: "Prepare your TCV or CV-FRQ in the current version of the template your agency provides, and keep the formatting it sets." | decided (Eli) |
-| 2 | P-44 revised: "**Do not exceed the page limit.** The FRQ is especially strict about formatting and page limits." Moved into the callout. The earlier "If it does, your application can be ruled ineligible" is withdrawn. | **provisional**: revisit when Eli confirms what happens to an over-limit application |
+| 2 | P-44 revised: "**Do not exceed the page limit.** The FRQ is especially strict about formatting and page limits." Moved into the callout. The earlier "If it does, your application can be ruled ineligible" is withdrawn. | **decided** 2026-09-25: word back that the page sticks with "do not exceed"; no consequence will be stated |
 
 The red is Concordia's burgundy (#912338), the only red already on the page and one AEM supports.
+
+**Follow-up, 2026-09-25 (Prem):** both callout lines underlined, "You must use the agency's
+template." and "Do not exceed the page limit.", each bold in #912338. Word came back that the page
+keeps "do not exceed" with no consequence stated, so P-44 is decided and nothing on the page
+is open. Revert point before this step: tag `ncv-guide-pre-underline-2026-09-25` (commit 7b22ee4).
