@@ -481,3 +481,20 @@ neighbouring lines).
 Change entries for the hook edits are in `src/guide.json → changes`. In AEM copy mode all eleven
 IDs show as To do. Section 4.1's reference line "SSHRC/CIHR: 12-pt Arial" and the NSERC note in the
 skill's `reference.md` are superseded by P-45 and P-46.
+
+### 11.1 Eli's separate notes (2026-09-25, via Prem)
+
+1. "Across the board, absolutely, you must use the template provided", to be stressed, maybe in
+   red; use the formatting of the current version.
+2. Whether an application is rejected for going over the page limit is being confirmed. Until then,
+   state "do not exceed page limits".
+
+**Revert point:** git tag `ncv-guide-pre-eli-notes-2026-09-25` (commit 8a189cf) and
+`backups/ncv-guide-review-2026-09-25-pre-eli-notes/`.
+
+| Note | Applied as | Status |
+|---|---|---|
+| 1 | P-49: a callout directly under the comparison table (same Box component as "The core shift": tint, left border #912338). First line bold in #912338: "You must use the agency's template." Then: "Prepare your TCV or CV-FRQ in the current version of the template your agency provides, and keep the formatting it sets." | decided (Eli) |
+| 2 | P-44 revised: "**Do not exceed the page limit.** The FRQ is especially strict about formatting and page limits." Moved into the callout. The earlier "If it does, your application can be ruled ineligible" is withdrawn. | **provisional**: revisit when Eli confirms what happens to an over-limit application |
+
+The red is Concordia's burgundy (#912338), the only red already on the page and one AEM supports.

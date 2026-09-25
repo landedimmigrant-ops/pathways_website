@@ -144,9 +144,9 @@
       "note": "Eli on the page, 2026-09-25: remove this sentence. In AEM: delete the last paragraph of \"What font and formatting do I use?\"."
     },
     "P-44": {
-      "title": "Page limits: both CVs, and going over can make an application ineligible",
+      "title": "Page limits: do not exceed them (both CVs)",
       "group": "B",
-      "note": "Eli on the page, 2026-09-25: the rule applies to the CV-FRQ too, and exceeding the limit may be eliminatory at every agency, almost certainly at the FRQ. Replaces the CIHR FAQ line that over-limit pages are removed. In AEM: the note under the comparison table."
+      "note": "Eli, 2026-09-25 (comments on the page, then separate notes the same day): state 'do not exceed the page limit' for the TCV and the CV-FRQ. Whether an over-limit application is rejected is being confirmed, so the page states no consequence; the 25 Sept wording 'can be ruled ineligible' was withdrawn. The CIHR FAQ line on removed pages stays out. In AEM: inside the template callout under the comparison table."
     },
     "P-45": {
       "title": "CIHR requires Times New Roman, not Arial",
@@ -162,6 +162,11 @@
       "title": "Formatting accordion: file-size limits differ by agency",
       "group": "B",
       "note": "Eli on the page, 2026-09-25."
+    },
+    "P-49": {
+      "title": "Template callout: you must use the agency's current template",
+      "group": "B",
+      "note": "Eli's notes, 2026-09-25: 'across the board, absolutely, you must use the template provided', stressed, maybe in red; use the formatting of the current version. In AEM: a Box component like 'The core shift' (tint, 4px left border #912338), placed directly under the comparison table; the first line bold in #912338."
     }
   }
 }
