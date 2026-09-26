@@ -514,3 +514,25 @@ at the end stay. In AEM: delete the Text and Button components above the opening
 at the end. **To restore:** `SHOW_BUILDER = True` in `ncv-guide-review/src/hooks.py` and delete the
 P-50 entry in `src/corrections.json`. Revert point: tag `ncv-guide-pre-builder-removal-2026-09-25`
 (commit 504e894).
+
+### 11.3 Eli's second round of page comments (2026-09-25, afternoon)
+
+Six comments from Eli on the page, 17:46–18:18 UTC. Prem marked three of them resolved by accident
+that night; all six are applied, **on Eli's authority** (no desk verification, per Prem's standing
+instruction). New text follows Eli's wording.
+
+**Revert point:** git tag `ncv-guide-pre-eli-round2-2026-09-25` (commit 8b68e32) and
+`backups/ncv-guide-review-2026-09-25-pre-eli-round2/` (review folder, this log, sheet rows).
+
+| Thread | Eli | Applied as | Where it lives |
+|---|---|---|---|
+| cmuh95nyg1smjj | "Maximum length": "I think you could remove this - no difference." | P-51: the row is deleted from the TCV vs CV-FRQ table. Supersedes the table half of P-8. | corrections.json |
+| cmuh97apzpifyf | "Do not exceed the page limit": add "(5 pages if in English, 6 pages if in French)" | P-52: "**Do not exceed the page limit (5 pages if in English, 6 pages if in French).**" in the template callout, bold, #912338. The figures now live only here. | hooks.py |
+| cmuh9866i746xi | The tables/figures/legends font exception: "Add to CIHR as well." | P-53: the CIHR bullet reads "CIHR requires 12-point Times New Roman. You can use different fonts and sizes in tables, figures and legends, as long as the text is readable when the page is viewed at 100%." | hooks.py |
+| cmuh9ixa9mu2ym | "what you did": "Maybe better: '...lists your outputs without context.'" | P-54: "A traditional CV lists your outputs without context." Supersedes P-38. | corrections.json |
+| cmuh9kgdmiib4i | "'...describes what you did, what changed because of it, and why that matters.'" | P-55: "A narrative CV describes what you did, what changed because of it, and why that matters." | corrections.json |
+| cmuhaauwvzvc81 | After "The FRQ in Québec developed its own parallel format (CV-FRQ)": "Add: ', and now requires it for all grant applications.'" | P-56: "…with similar principles, and now requires it for all grant applications." | corrections.json |
+
+In AEM copy mode the six IDs show as To do. The NCV V5 tool carries P-53 (CIHR font rule) and P-56
+(agency help, CV-FRQ format box); P-51/P-52 change nothing in the tool, which already states the
+limit with the rule.

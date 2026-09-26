@@ -247,7 +247,7 @@
     // The corrected guide lives in the review copy until the AEM page launches; switch GUIDE_URL to
     // the AEM address then. Anchors are the review copy's section ids.
     const GUIDE_URL = "ncv-guide-review/";
-    const TOOL_VERSION = "V5 beta, updated 2026-09-25";
+    const TOOL_VERSION = "V5 beta, updated 2026-09-25 (2)";
 
     // Official section names (guide P-9, P-41). The CV-FRQ's first section has its own name and a
     // wider focus (P-48); its English names are the FRQ's own, the French ones are the template's.
@@ -258,11 +258,11 @@
     };
 
     // Format rules by agency, worded as the guide words them (P-8, P-17, P-30, P-31, P-32, P-44 to
-    // P-47, P-49). "other" shows every agency's font rule, since the format is not known yet.
+    // P-47, P-49; CIHR's table/figure exception P-53). "other" shows every agency's font rule.
     const PAGE_LIMIT = "5 pages in English, 6 pages in French";
     const FONT_RULES = {
       sshrc: "12-point Arial in black type. You can use different fonts and sizes in tables, figures and legends, as long as the text is readable when the page is viewed at 100%.",
-      cihr: "12-point Times New Roman.",
+      cihr: "12-point Times New Roman. You can use different fonts and sizes in tables, figures and legends, as long as the text is readable when the page is viewed at 100%.",
       nserc: "12-point Times New Roman. You can use a smaller font size in tables and figures, as long as the text is readable, except in tables or figures that list references. References must be in 12-point Times New Roman wherever they appear.",
       frq: "12-point Times New Roman, with margins of at least 2 cm, your name in the header and the document title in the footer."
     };
@@ -1485,7 +1485,8 @@
       const cvName = isFrq() ? "CV-FRQ" : "TCV";
       box.appendChild(el("p", "v4-format-must", "You must use the agency's template."));
       box.appendChild(el("p", null, known
-        ? "Prepare your " + cvName + " in the current version of the template " + (L.agency === "frq" ? "the FRQ" : agencyLabel) + " provides, and keep the formatting it sets. Do not exceed the page limit: " + PAGE_LIMIT + "." + (isFrq() ? " The FRQ is especially strict about formatting and page limits." : "")
+        ? (isFrq() ? "The FRQ requires the CV-FRQ for all grant applications. " : "") +
+          "Prepare your " + cvName + " in the current version of the template " + (L.agency === "frq" ? "the FRQ" : agencyLabel) + " provides, and keep the formatting it sets. Do not exceed the page limit: " + PAGE_LIMIT + "." + (isFrq() ? " The FRQ is especially strict about formatting and page limits." : "")
         : "Prepare your CV in the current version of the template your agency provides, and keep the formatting it sets. Do not exceed the page limit: " + PAGE_LIMIT + ". Not sure whether you need the TCV or the CV-FRQ? Check the program's application guide."));
       const dl = el("dl");
       const row = (k, v) => { dl.appendChild(el("dt", null, k)); dl.appendChild(el("dd", null, v)); };
@@ -1521,7 +1522,7 @@
     // B-7: the three Setup lens chip rows + competition input, shared by renderSetup and the
     // inline "Change these answers" panel on lensBar (below) so the two never drift apart.
     function renderLensFields(parent) {
-      chipRow(parent, "Which funding agency?", "This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec (FRQ), in all three of its sectors. It also sets the format notes you see, since font rules differ between agencies. If you are not sure, check the program's application guide, or pick Other for now; you can change it later.", AGENCIES,
+      chipRow(parent, "Which funding agency?", "This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec (FRQ), which now requires it for all grant applications in its three sectors. It also sets the format notes you see, since font rules differ between agencies. If you are not sure, check the program's application guide, or pick Other for now; you can change it later.", AGENCIES,
         () => ns.lens.agency,
         (v) => { ns.lens.agency = v; const a = AGENCIES.find(x => x.v === v); ns.lens.format = a ? a.fmt : ""; });
       chipRow(parent, "Closest disciplinary home", "This changes the worked example and the discipline notes you see. Pick the closest fit — your draft stays as it is.", DISCIPLINES,

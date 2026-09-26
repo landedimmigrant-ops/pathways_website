@@ -172,6 +172,16 @@
       "title": "Builder links removed for now",
       "group": "C",
       "note": "Prem, 2026-09-25. Both links to the Narrative CV builder are off: the button at the top (P-6) and the 'Ready to start drafting?' box at the end (P-5). In AEM: delete both. To restore: SHOW_BUILDER = True in src/hooks.py and delete the P-50 entry in corrections.json."
+    },
+    "P-52": {
+      "title": "Page limit: the figures, in the callout",
+      "group": "B",
+      "note": "Eli on the page, 2026-09-25 (afternoon): add \"(5 pages if in English, 6 pages if in French)\" after \"Do not exceed the page limit\". Inside the bold #912338 line of the template callout. Replaces the Maximum length table row (P-51)."
+    },
+    "P-53": {
+      "title": "CIHR: the tables, figures and legends exception applies too",
+      "group": "B",
+      "note": "Eli on the page, 2026-09-25 (afternoon): \"Add to CIHR as well.\" The CIHR bullet in the formatting accordion now carries the same exception as SSHRC. On Eli's authority."
     }
   }
 }

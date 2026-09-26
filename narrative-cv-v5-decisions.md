@@ -464,3 +464,8 @@ behaviours (C1–C12), 11 flags (F1–F11). Calls made on the flags:
   check skip the next field's link. No console errors; no horizontal scroll at 375 px.
   **Not verified:** a real POST to the sheet from this page (the guide review page uses the same
   call in production).
+- **2026-09-25 (evening) · Eli's second round on the guide, carried into the tool.** P-53: CIHR's
+  font rule gains the tables/figures/legends exception (`FONT_RULES.cihr`). P-56: the FRQ requires
+  the CV-FRQ for all grant applications (agency help text; first line of the CV-FRQ format box).
+  P-51/P-52 (Maximum length row removed; figures in the callout) need no tool change. Tool version
+  string "V5 beta, updated 2026-09-25 (2)". Verified in the browser; examples `lint` clean.

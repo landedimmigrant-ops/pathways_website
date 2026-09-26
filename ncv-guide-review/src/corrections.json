@@ -367,6 +367,38 @@
       "note": "Prem, 2026-09-25: remove the link to the NCV builder for now. Removes the P-6 lead-in line and button. In AEM: delete the Text component and the Button component above the opening. To restore, delete this entry.",
       "find": "<div class=\"c-wysiwyg wysiwyg section\"><div class=\"rte \"><p><!--rv:P-6--><span class=\"xlarge-text\">If you already know the format, you can go straight to the builder.</span></p></div></div>\n<div class=\"c-button section\"><div class=\"text-left\"><a href=\"/content/concordia/en/research/pathways-to-impact/learn/tools/narrative-cv-builder.html\" target=\"_self\" class=\"btn btn-ghost-filled btn-bg-912338\"><span><!--rv:P-6-->Open the Narrative CV builder</span></a></div></div>",
       "replace": "<!--rv:P-50-->"
+    },
+    {
+      "id": "P-51",
+      "group": "B",
+      "title": "Comparison table: Maximum length row removed",
+      "note": "Eli on the page, 2026-09-25 (afternoon): \"I think you could remove this - no difference.\" The TCV and the CV-FRQ have the same limit, so the figures now sit in the template callout under the table (P-52). Runs after P-8. In AEM: delete the Maximum length row from the TCV vs CV-FRQ table.",
+      "find": "<tr><td><!--rv:P-8-->Maximum length</td><td>5 pages in English, 6 pages in French</td><td>5 pages in English, 6 pages in French</td></tr>",
+      "replace": "<!--rv:P-51-->"
+    },
+    {
+      "id": "P-54",
+      "group": "C",
+      "title": "Callout: a traditional CV lists your outputs without context",
+      "note": "Eli on the page, 2026-09-25 (afternoon). Supersedes P-38; runs after it.",
+      "find": "<!--rv:P-38-->A traditional CV lists what you did.",
+      "replace": "<!--rv:P-54-->A traditional CV lists your outputs without context."
+    },
+    {
+      "id": "P-55",
+      "group": "C",
+      "title": "Callout: a narrative CV describes what you did, what changed and why",
+      "note": "Eli on the page, 2026-09-25 (afternoon), his wording. \"Narrative CV\" is lower-cased afterwards by the L-1 pass.",
+      "find": "A Narrative CV says what changed because of what you did, and why that matters.",
+      "replace": "<!--rv:P-55-->A Narrative CV describes what you did, what changed because of it, and why that matters."
+    },
+    {
+      "id": "P-56",
+      "group": "B",
+      "title": "The FRQ now requires the CV-FRQ for all grant applications",
+      "note": "Eli on the page, 2026-09-25 (afternoon). On Eli's authority (not desk-verified).",
+      "find": "The FRQ in Québec developed its own parallel format (CV-FRQ) with similar principles.",
+      "replace": "The FRQ in Québec developed its own parallel format (CV-FRQ) with similar principles<!--rv:P-56-->, and now requires it for all grant applications."
     }
   ]
 }
