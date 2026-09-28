@@ -536,3 +536,22 @@ instruction). New text follows Eli's wording.
 In AEM copy mode the six IDs show as To do. The NCV V5 tool carries P-53 (CIHR font rule) and P-56
 (agency help, CV-FRQ format box); P-51/P-52 change nothing in the tool, which already states the
 limit with the rule.
+
+## 12. AEM in sync (2026-09-28)
+
+Brett pasted the corrections into AEM and marked all 55 changes **Done in AEM** on the review page
+(2026-09-28). A text scan of the AEM page against the review copy, collapsed accordions included,
+found eight gaps (L-1 twice, P-40, P-10 twice, P-27, P-7 meta description, the I-2 dash). Brett fixed
+them the same day and a second scan matched word for word; the only differences are line breaks
+(section cards, French section names, the language asterisk, the "Not sure" box). Meta description
+present. The review page's top bar now reads "In sync with AEM, checked 2026-09-28".
+
+**From here on (the standing loop):**
+1. New comments land on the review copy. Process them in a batch: tag + backup, apply each as a new
+   P- ID in `src/corrections.json` (or `hooks.py` with a `guide.json` change entry), rebuild, verify,
+   push, reply and resolve each thread, and log the round here.
+2. Each new or edited change shows as **To do** in AEM copy mode (the fingerprint on a Done mark
+   goes stale when its text changes). Earlier changes stay Done.
+3. Whoever pastes into AEM works from the To do list and marks each one Done.
+4. Re-scan the AEM page against the review copy (text diff of `<main>`, accordions included) and
+   record the result here.

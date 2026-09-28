@@ -1,6 +1,6 @@
 {
   "_about": "Comments placed on the page at build time. `quote` must appear verbatim (whitespace-insensitive) in the built page text; the build warns if it does not. New comments from reviewers go to the storage backend, never here.",
-  "snapshot": "AEM dev site, 2026-09-22 (research/pathways-to-impact/learn/impact-101/narrative-cv.html)",
+  "snapshot": "In sync with AEM, checked 2026-09-28 (research/pathways-to-impact/learn/impact-101/narrative-cv.html)",
   "storage": {
     "backend": "sheet",
     "writeUrl": "https://script.google.com/macros/s/AKfycbwwruq8soD4_RBYOwSjpFFn1-sW5B3G3BPi8Br-mpugZInpj4CCzGM2lDUxZEX7vxkjLQ/exec",
