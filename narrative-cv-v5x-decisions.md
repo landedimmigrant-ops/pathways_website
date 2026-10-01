@@ -39,6 +39,20 @@ _Empty. Write any change of mind here and it gets applied._
 | X-11 | No limit check on the portfolio itself; the 10-contribution limit applies to the CV only | INFERRED | The portfolio is the researcher's whole record; the funder limit is per application |
 | X-12 | Training totals are one item, dated ("as of"), and overwritten on save | INFERRED | Totals are always "the last five years"; keeping old values adds noise |
 
+## Round 2 (2026-10-01): a clearer flow
+
+Prem: the portfolio needs context, and the flow should feel integrated. Say up front how the tool works, offer "start new" or "open my portfolio", and let a new user save a portfolio at the end.
+
+| # | Call | Status | Why |
+|---|---|---|---|
+| X-13 | The first step is now **Start: How this tool works**. Three points: your work stays yours; use it once; or keep building with a portfolio | DECIDED | Prem's request |
+| X-14 | Three ways to start: **Start a new CV · Open my portfolio · Check a draft I already have** | DECIDED (wording INFERRED) | Prem named the first two; the draft check was V5's second mode |
+| X-15 | The application questions (agency, discipline, stage, competition) appear only after a start choice, under "About this application" | INFERRED | One decision at a time |
+| X-16 | The portfolio step ("From your portfolio") appears only for people who open a portfolio or already have one open | INFERRED | A first-time user drafting once should not meet portfolio controls mid-draft |
+| X-17 | Contribution cards show the portfolio bar only when a portfolio is open | INFERRED | Same reason |
+| X-18 | Review ends with **1. Take your draft** and **2. Keep the pieces for next time (optional)**. With no portfolio, the button is "Create my portfolio file"; with one, "Update my portfolio file". Both save the file in one action | DECIDED (wording INFERRED) | Prem: "if its new we give them the opportunity to save it as part of their portfolio, download text" |
+| X-19 | A small **Portfolio** status block under the step list: file name, piece count, saved or not, and a Save link when out of date | INFERRED | Keeps the file visible without a separate step |
+
 ## Deferred
 
 - Reordering by drag inside the CV pane (↑ ↓ buttons for now).

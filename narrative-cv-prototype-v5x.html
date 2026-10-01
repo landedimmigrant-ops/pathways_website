@@ -263,6 +263,19 @@
     .pf-foot { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 1rem 0 0; }
     .pf-card-bar { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 0.8rem; color: var(--muted); background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; margin: 0 0 12px; }
     .pf-flash-inline { color: #2a6e2a; font-weight: 600; }
+    .pf-how { margin: 0 0 1.25rem; padding-left: 1.2rem; max-width: 74ch; }
+    .pf-how li { margin: 0 0 0.45rem; line-height: 1.55; }
+    .pf-start-q { font-size: 1rem; margin: 1.5rem 0 0.6rem; }
+    @media (min-width: 900px) { .pf-start-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    .pf-start-box { border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; margin: 0 0 1rem; background: #fafafa; }
+    .pf-start-box p { margin: 0.4rem 0 0; font-size: 0.9rem; }
+    .pf-panel { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 12px; font-size: 0.8rem; }
+    .pf-panel h3 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+    .pf-panel p { margin: 0 0 2px; overflow-wrap: anywhere; }
+    .pf-panel-name { font-weight: 600; }
+    .pf-finish { border: 1px solid #e0d6d8; background: #fdf7f8; border-radius: 10px; padding: 1rem 1.1rem; margin: 1.5rem 0 1rem; }
+    .pf-finish p { font-size: 0.9rem; max-width: 74ch; }
+    .pf-finish-h { font-size: 1rem; margin: 0 0 0.4rem; }
     .pf-setup-note { border: 1px solid #e0d6d8; background: #fdf7f8; border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem 0; font-size: 0.9rem; }
   </style>
 </head>
@@ -280,7 +293,7 @@
   <div class="proto-shell">
     <h1 class="proto-title">Narrative CV — V5x portfolio test</h1>
     <p class="proto-subtitle">A drafting space for the Tri-agency CV and the CV-FRQ.</p>
-    <p class="v4-privacy">🔒 <span class="v4-privacy-full">No AI. Anything you write is your own: it stays here, on this device, and is not stored anywhere else. Clearing your browser data clears the draft too. The Feedback step at the end sends only what you write there, and only when you choose to send it.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
+    <p class="v4-privacy">🔒 <span class="v4-privacy-full">No AI and no account. Anything you write is your own: it stays here, on this device, and is not stored anywhere else. Clearing your browser data clears the draft too. If you keep a portfolio, it is a file on your own computer. The Feedback step at the end sends only what you write there, and only when you choose to send it.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
     <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Copy your draft out (Review → Copy draft) before you close this tab.</p>
     <p class="v4-inline-link"><a class="v4-guide-link" id="v4-guide-top" href="ncv-guide-review/" target="_blank" rel="noopener">Read the narrative CV guide</a></p>
     <div id="ncv-v4-root"></div>
@@ -1248,7 +1261,7 @@
       consultQuestions: "", selfCheck: {}, lastSavedAt: 0,
       // V5x: which pieces of this CV came from the portfolio (field -> portfolio id), and this CV's
       // entry in the portfolio's history.
-      pfLinks: {}, pfCvId: "",
+      pfLinks: {}, pfCvId: "", start: "",
       // Feedback for the team: answers, notes taken during the session, and a local session log
       // (steps, time, exports). All of it stays on this device until the researcher sends it.
       feedback: { answers: {}, includeSummary: true, sent: [] },
@@ -1418,7 +1431,9 @@
 
     // ── Stages (dynamic: structural-read stage only in draft mode; PS comes LAST) ──
     const stages = () => {
-      const s = [{ key: "setup", short: "Setup" }, { key: "portfolio", short: "Portfolio" }];
+      // V5x: the portfolio step appears for people who chose to start from a portfolio, or have one open.
+      const s = [{ key: "setup", short: "Start" }];
+      if (ns.start === "portfolio" || pf) s.push({ key: "portfolio", short: "From your portfolio" });
       if (ns.mode === "xray") s.push({ key: "xray", short: "Structural read" });
       s.push({ key: "contrib", short: "Contributions" });
       s.push({ key: "mentor", short: "Mentorship" });
@@ -1500,6 +1515,7 @@
         list.appendChild(li);
       });
       panel.appendChild(list);
+      panel.appendChild(pfPanelStatus());
       const content = el("div", "narrative-stage-content");
       content.id = "v4-stage-content";
       shell.appendChild(panel);
@@ -1890,45 +1906,71 @@
 
     // ── Stage: Setup ────────────────────────────────────────────────────────
     function renderSetup(c) {
-      stageHead(c, "Setup", "Start fresh, or bring a draft?",
-        "This tool will help you get familiar with how a narrative CV asks you to think about your work and describe it. It is a prototype, and it works in English only for now. It runs without AI models: the checks are fixed rules. Anything you write is your own; it stays here and is not stored anywhere else. What you build here is a first outline in your own words: your contributions, your mentorship record and a personal statement, plus the questions you want to take to an advisor. A full first draft can take a day or more, so allow time before your deadline.",
+      // V5x: the first screen says how the tool works and asks how the researcher wants to start.
+      if (!ns.start && ns.mode) ns.start = ns.mode === "xray" ? "draft" : "new";
+      stageHead(c, "Start", "How this tool works",
+        "This tool helps you work out what a narrative CV asks of you and put your own record into that shape. It is a prototype, and it works in English only for now. It runs without AI models: the checks are fixed rules. A full first draft can take a day or more, so allow time before your deadline.",
         "What a narrative CV is, and which funders use it", "why");
 
-      const grid = el("div", "v4-mode-grid");
-      [["compose", "Start fresh", "Build one contribution at a time, with prompts, a worked example and live checks. The personal statement comes last — it is easier to write once the rest exists."],
-       ["xray", "I already have a draft", "Paste it in for a structural read. The tool splits it into paragraphs, runs the same checks on each and shows you which of the format's moves are missing. Revise here, or take the read to your advisor."]
-      ].forEach(([v, h, p]) => {
-        const card = el("button", "v4-mode-card" + (ns.mode === v ? " is-on" : (ns.mode ? " is-off" : "")));
-        card.setAttribute("aria-pressed", ns.mode === v ? "true" : "false");
+      const how = el("ol", "pf-how");
+      [["Your work stays yours.", "The tool runs in this browser. There is no account, and nothing you write is sent anywhere."],
+       ["Use it once.", "Build an outline of your contributions, mentorship record and personal statement, then download or copy it and continue in your own document."],
+       ["Or keep building.", "At the end you can save the pieces of this CV to a portfolio file on your own computer. The next time you apply, open the file here and reuse them instead of starting again."]
+      ].forEach(([h, t]) => { const li = el("li"); li.appendChild(el("strong", null, h + " ")); li.appendChild(document.createTextNode(t)); how.appendChild(li); });
+      c.appendChild(how);
+
+      c.appendChild(el("h3", "pf-start-q", "How do you want to start?"));
+      const grid = el("div", "v4-mode-grid pf-start-grid");
+      [["new", "compose", "Start a new CV", "Write from scratch, one contribution at a time, with prompts, a worked example and live checks. You can keep the pieces in a portfolio at the end."],
+       ["portfolio", "compose", "Open my portfolio", "Start from a portfolio file you saved before. Choose the pieces this application needs, then tailor them."],
+       ["draft", "xray", "Check a draft I already have", "Paste it in for a structural read: the tool splits it into paragraphs, runs the same checks on each and shows which of the format's moves are missing."]
+      ].forEach(([v, mode, h, p]) => {
+        const card = el("button", "v4-mode-card" + (ns.start === v ? " is-on" : (ns.start ? " is-off" : "")));
+        card.setAttribute("aria-pressed", ns.start === v ? "true" : "false");
         card.appendChild(el("h4", null, h));
         card.appendChild(el("p", null, p));
-        card.addEventListener("click", () => { ns.mode = v; saveState(); renderStage(); });
+        card.addEventListener("click", () => { ns.start = v; ns.mode = mode; saveState(); renderStage(); });
         grid.appendChild(card);
       });
       c.appendChild(grid);
 
-      // C1: three states, always-present slot so nothing below it moves when the text changes.
-      const confirm = el("p", "v4-mode-confirm" + (ns.mode ? "" : " is-muted"));
+      const confirm = el("p", "v4-mode-confirm" + (ns.start ? "" : " is-muted"));
       confirm.setAttribute("aria-live", "polite");
-      confirm.textContent = ns.mode === "xray"
-        ? "Structural read — selected. Set your context below, then paste your draft."
-        : ns.mode === "compose"
-          ? "Start fresh — selected. Set your context below, then go straight to your contributions."
-          : "Choose one to start. Switching later keeps everything you have written.";
+      confirm.textContent = ns.start === "draft"
+        ? "Check a draft — selected. Tell us about the application below, then paste your draft."
+        : ns.start === "portfolio"
+          ? (pf ? "Open my portfolio — selected. Tell us about the application below, then choose your pieces." : "Open my portfolio — selected. Open your file here.")
+          : ns.start === "new"
+            ? "Start a new CV — selected. Tell us about the application below, then go to your contributions."
+            : "Choose one to start. Switching later keeps everything you have written.";
       c.appendChild(confirm);
 
-      renderLensFields(c);
-      if (ns.lens.agency) renderFormatNote(c, true);
+      if (ns.start === "portfolio") {
+        const box = el("div", "pf-start-box");
+        if (pf) {
+          box.appendChild(el("p", null, "Open: " + pfDisplayName() + " · " + pfItemCount() + " pieces" + (pf.owner ? " · " + pf.owner : "") + "."));
+          const b = el("button", "pf-link-btn", "Open a different file");
+          b.addEventListener("click", pfOpen);
+          box.appendChild(b);
+        } else {
+          const row = el("div", "pf-file-actions");
+          const o = el("button", "btn btn-primary", "Open my portfolio file"); o.addEventListener("click", pfOpen);
+          const sm = el("button", "btn btn-outline", "Try a sample portfolio");
+          sm.addEventListener("click", pfLoadSample);
+          row.appendChild(o); row.appendChild(sm);
+          box.appendChild(row);
+          box.appendChild(el("p", "v4-help", "The file stays on your computer; this page reads it there. No portfolio yet? Choose Start a new CV, and save one at the end. The sample belongs to an invented researcher."));
+        }
+        c.appendChild(box);
+      }
 
-      // V5x: the next step is the portfolio.
-      const pfNote = el("div", "pf-setup-note");
-      pfNote.appendChild(el("strong", null, "New in this version: a portfolio you keep. "));
-      pfNote.appendChild(document.createTextNode(pf
-        ? "Your portfolio is open with " + pfItemCount() + " pieces. The next step lets you move the ones this application needs into the CV."
-        : "The next step lets you open a portfolio file from an earlier application and reuse its contributions, evidence and mentorship record, or start one. You can also skip it and write as usual."));
-      c.appendChild(pfNote);
+      if (ns.start) {
+        c.appendChild(el("h3", "pf-start-q", "About this application"));
+        renderLensFields(c);
+        if (ns.lens.agency) renderFormatNote(c, true);
+      }
 
-      navRow(c, { nextLabel: "To your portfolio →" });
+      navRow(c, { nextLabel: ns.start === "portfolio" ? "Choose from your portfolio →" : ns.start === "draft" ? "To the structural read →" : "Start drafting →" });
     }
 
     // ── Stage: Structural read (state key "xray" kept for saved drafts) ────
@@ -2514,19 +2556,6 @@
         "The coverage list shows what is still empty, the format notes say what your agency requires and the self-check is yours to run. Then you can download a working draft, open a print view or take a packet of your own flags and questions to an advisor. The last step asks how this session went.",
         "What reviewers look for", "reviewers");
 
-      // V5x: keep what this CV produced.
-      const pfBox = el("div", "pf-setup-note");
-      pfBox.appendChild(el("strong", null, "Keep this work for next time. "));
-      pfBox.appendChild(document.createTextNode("Save this CV's contributions, mentorship record and statement pieces to your portfolio, then save the portfolio file. "));
-      const pfAll = el("button", "pf-link-btn", "Save to portfolio and go to the file");
-      pfAll.addEventListener("click", () => {
-        const n = pfSaveAll();
-        pfFlash = n ? n + " piece" + (n === 1 ? "" : "s") + " added or updated in the portfolio. Save the portfolio file to keep them." : "The portfolio already has everything in this CV.";
-        ns.stageKey = "portfolio"; renderStage();
-      });
-      pfBox.appendChild(pfAll);
-      c.appendChild(pfBox);
-
       // B-34 / H5: grouped under section headers, and the three per-contribution
       // rows name which contributions fail rather than just some()/every() into one blob.
       const cov = el("div", "narrative-completeness");
@@ -2640,6 +2669,7 @@
 
       // Draft preview + export buttons
       const exWrap = el("div", "contribution-field");
+      exWrap.appendChild(el("h3", "pf-finish-h", "1. Take your draft"));
       exWrap.appendChild(el("label", "v4-q", "Your working draft"));
       exWrap.appendChild(el("p", "v4-help", "Read-only here. Copy it or download it, then edit it in your own document."));
       const ta = el("textarea", "v4-export-area");
@@ -2671,6 +2701,7 @@
       });
       actions.appendChild(copy);
       c.appendChild(actions);
+      renderKeepForNextTime(c);
 
       const contact = el("p", "v4-help");
       contact.appendChild(document.createTextNode("If you have questions about your narrative CV, please contact the Pathways to Impact team at "));
@@ -3277,14 +3308,14 @@
           await w.write(text); await w.close();
           pfMeta.fileName = pfHandle.name;
         } catch (e) {
-          if (e && e.name === "AbortError") return;
+          if (e && e.name === "AbortError") { renderStage(); return; }
           pfHandle = null;
           pfDownload(text);
         }
       } else pfDownload(text);
       pfMeta.dirty = false; pfMeta.savedAt = Date.now();
       pfSaveLocal(); countEvent("pfSave");
-      pfFlash = "Saved to " + pfFileName() + ".";
+      pfFlash = (pfFlash ? pfFlash + " " : "") + "Saved to " + pfFileName() + ".";
       renderStage();
     }
     function pfDownload(text) {
@@ -3797,8 +3828,8 @@
     // ── Stage: Portfolio ──
     function renderPortfolio(c) {
       lensBar(c);
-      stageHead(c, "Step · Portfolio", "Your portfolio, and what goes into this CV",
-        "A portfolio is a file you keep on your own computer and add to over time. It holds your contributions with their evidence, your mentorship record and the parts of your personal statement that carry from one application to the next. For each application, open it here and move the pieces this funder needs into the CV. You edit them in the steps that follow, and anything you improve can go back into the portfolio.",
+      stageHead(c, "Step · From your portfolio", "Choose what this application needs",
+        "Your portfolio is on the left: contributions with their evidence, your mentorship record and the parts of your personal statement that carry from one application to the next. This CV is on the right. Move in the pieces that fit this opportunity, then tailor them in the steps that follow. Anything you improve can go back into the portfolio at the end.",
         false);
 
       const bar = el("div", "pf-filebar");
@@ -3818,7 +3849,7 @@
       mk("Open a portfolio file", pf ? "btn btn-outline" : "btn btn-primary", pfOpen);
       if (!pf) {
         mk("Start an empty portfolio", "btn btn-outline", () => { pfEnsure(); pfSaveLocal(); renderStage(); });
-        mk("Try the sample portfolio", "btn btn-outline", () => { pf = pfSample(); pfMeta = { fileName: "", dirty: true, savedAt: 0 }; pfSaveLocal(); countEvent("pfSample"); pfFlash = "Loaded the sample portfolio. Everything in it is fictional."; renderStage(); });
+        mk("Try a sample portfolio", "btn btn-outline", pfLoadSample);
       } else {
         mk("Close portfolio", "pf-link-btn", () => {
           if (pfMeta.dirty && !confirm("Close the portfolio? Changes not saved to a file will be lost.")) return;
@@ -3837,10 +3868,10 @@
 
       if (!pf) {
         const intro = el("div", "narrative-funder-note");
-        intro.appendChild(el("strong", null, "First time? "));
-        intro.appendChild(document.createTextNode("Start an empty portfolio and write this CV in the steps as usual; pieces you save go into the portfolio, and next time you open the file they are ready to reuse. The sample portfolio shows a filled one for an invented researcher."));
+        intro.appendChild(el("strong", null, "No portfolio yet? "));
+        intro.appendChild(document.createTextNode("Write this CV in the steps as usual. At the end, the Review step can save its pieces as your first portfolio file. The sample shows a filled portfolio for an invented researcher."));
         c.appendChild(intro);
-        navRow(c, { nextLabel: "Continue without a portfolio →" });
+        navRow(c, { nextLabel: "Continue without one →" });
         return;
       }
 
@@ -3874,7 +3905,8 @@
     function renderPfBar(bar, i) {
       clear(bar);
       const c = ns.contributions[i];
-      if (!c) return;
+      bar.hidden = !pf;
+      if (!c || !pf) return;
       const item = c.pfId && pf && pfFind("contributions", c.pfId);
       if (item) {
         if (contribDiffers(c)) {
@@ -3897,6 +3929,59 @@
       bar.appendChild(m);
       bar.dataset.flashAt = Date.now();
     }
+    const pfIsSample = () => !!pf && pf.cvs.some(cv => cv.id === "cv-sample1");
+    const pfDisplayName = () => pfMeta.fileName || (pfIsSample() ? "the sample portfolio" : "a portfolio not yet saved to a file");
+    function pfLoadSample() {
+      if (pf && pfMeta.dirty && !confirm("The portfolio open now has changes that are not saved to a file. Replace it with the sample?")) return;
+      pf = pfSample(); pfHandle = null; pfMeta = { fileName: "", dirty: false, savedAt: 0 };
+      pfSaveLocal(); countEvent("pfSample");
+      pfFlash = "Loaded the sample portfolio. Everything in it is fictional.";
+      renderStage();
+    }
+
+    // The status line under the step list.
+    function pfPanelStatus() {
+      const box = el("div", "pf-panel");
+      box.appendChild(el("h3", null, "Portfolio"));
+      if (!pf) {
+        box.appendChild(el("p", null, ns.start === "portfolio" ? "None open yet." : "None open. You can save one from this CV at the end."));
+        return box;
+      }
+      box.appendChild(el("p", "pf-panel-name", pfDisplayName()));
+      box.appendChild(el("p", null, pfItemCount() + (pfItemCount() === 1 ? " piece" : " pieces")));
+      if (pfIsSample() && !pfMeta.fileName) box.appendChild(el("p", null, "Fictional, for trying the tool"));
+      else box.appendChild(el("p", pfMeta.dirty ? "pf-dirty" : "pf-clean", pfMeta.dirty ? "Unsaved changes" : "File up to date"));
+      if (pfMeta.dirty) {
+        const b = el("button", "pf-link-btn", "Save the file");
+        b.addEventListener("click", () => pfSave(false));
+        box.appendChild(b);
+      }
+      return box;
+    }
+
+    // Review: the optional second way to finish.
+    function renderKeepForNextTime(c) {
+      const box = el("div", "pf-finish");
+      box.appendChild(el("h3", "pf-finish-h", "2. Keep the pieces for next time (optional)"));
+      if (pfFlash) { const f = el("p", "pf-flash", pfFlash); f.setAttribute("role", "status"); box.appendChild(f); pfFlash = ""; }
+      const go = el("button", "btn btn-primary");
+      if (!pf) {
+        box.appendChild(el("p", null, "Save this CV's contributions, evidence, mentorship record and statement pieces as a portfolio file on your own computer. The next time you apply, choose Open my portfolio and start from them. Nothing is sent anywhere."));
+        go.textContent = "Create my portfolio file";
+      } else {
+        box.appendChild(el("p", null, "Add this CV's pieces to " + pfDisplayName() + " and save the file. Pieces you tailored here replace their portfolio copies; new ones are added."));
+        go.textContent = "Update my portfolio file";
+      }
+      go.addEventListener("click", async () => {
+        const n = pfSaveAll();
+        pfFlash = n ? n + " piece" + (n === 1 ? "" : "s") + " saved to your portfolio." : "Your portfolio already had everything in this CV.";
+        await pfSave(!pfHandle && !pfMeta.fileName);
+      });
+      box.appendChild(go);
+      box.appendChild(el("p", "v4-help", "This step is optional. If you only need this CV, the draft above is all you need to take."));
+      c.appendChild(box);
+    }
+
     // Called after every saveState(): keeps the contribution bars current while the researcher types.
     function pfAfterSave() {
       document.querySelectorAll(".pf-card-bar").forEach(b => { if (Date.now() - (+b.dataset.flashAt || 0) > 4000) renderPfBar(b, +b.dataset.i); });
