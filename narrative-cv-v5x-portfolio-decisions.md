@@ -1,8 +1,8 @@
-# NCV V5x (portfolio test): decisions log
+# NCV V5x portfolio: decisions log
 
 V5x is a copy of the V5 beta with one addition: a **portable portfolio** the researcher keeps as a file and reuses across applications. It tests the idea in [narrative-cv-ideas.md](narrative-cv-ideas.md) (2026-09-30) and Option A of [narrative-cv-portfolio-app-plan.md](narrative-cv-portfolio-app-plan.md). V5 is untouched.
 
-- File: [narrative-cv-prototype-v5x.html](narrative-cv-prototype-v5x.html) · alias `/ncv_tool_v5x/`
+- File: [narrative-cv-prototype-v5x-portfolio.html](narrative-cv-prototype-v5x-portfolio.html) · alias `/ncv_tool_v5x_portfolio/` (the old `/ncv_tool_v5x/` address redirects here)
 - Draft storage: `ncv-v5x` (separate from V5's `ncv-v5`) · portfolio working copy: `ncv-v5x-portfolio`
 - Feedback rows go to the Guide review tab with `page = ncv-tool-v5x`
 
@@ -76,3 +76,17 @@ Prem: the portfolio needs context, and the flow should feel integrated. Say up f
 - No console errors.
 
 Not tested: the Chrome "save straight back to the file" path with a real file picker (the browser pane cannot drive the system dialog), and Safari.
+
+## Renamed, and how it catches up with the regular line (2026-10-23)
+
+V5x became **V5x portfolio** when V6 started as the regular line (see [narrative-cv-v6-decisions.md](narrative-cv-v6-decisions.md)). Only names changed: the file, the decisions log, the alias folder and the labels on screen. The storage keys (`ncv-v5x`, `ncv-v5x-portfolio`) and the feedback page key (`ncv-tool-v5x`) kept their old values so that drafts and portfolio files already in a browser still open and old feedback rows stay grouped. The old `/ncv_tool_v5x/` address redirects to the new one.
+
+**Merging V6 in when the portfolio work resumes.** V5x portfolio changes 34 lines of V5 and adds 947, so a three-way merge handles most of it. V5 (`narrative-cv-prototype-v5.html`, last edited 2026-09-25, commit `4d71449`) is the common base and stays frozen:
+
+```bash
+git merge-file narrative-cv-prototype-v5x-portfolio.html narrative-cv-prototype-v5.html narrative-cv-prototype-v6.html
+```
+
+The command writes the merged result into the portfolio file and marks any conflicts with `<<<<<<<` lines. Expect conflicts where V6 and the portfolio edit the same code: the mentorship rows and the evidence rows (both store `pfId` links), the draft state and the export text. A change to the shape of a mentorship or evidence row also changes the portfolio file format, so bump `version` in the file and migrate older files on open. Run the merge on a copy first (`git merge-file -p ... > merged.html`), check it, then replace the file.
+
+A dry run on 2026-10-23 (V6 as created, merged into this file) gave 8 conflicts, all on label and key lines: the page title, the banner, the heading, `TOOL_VERSION`, the feedback page key, `NCV_KEY`, the export heading and the reset confirmation. Keep this file's side of each. Any other conflict is real work.

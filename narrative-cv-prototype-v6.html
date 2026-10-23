@@ -3,21 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V5x portfolio test</title>
+  <title>Narrative CV — V6 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
-    Narrative CV tool — V5x: the V5 beta plus a portable portfolio (test, 2026-10-01). Everything
-    below this line describes V5, which V5x carries unchanged; the portfolio step and its file
-    format are logged in narrative-cv-v5x-decisions.md. V5 itself is untouched.
-
-    V5 beta. Forked from V4 (the convergence prototype) and built
-    from the 2026-08-27 review notes. What changed and why, item by item, is in
-    narrative-cv-v5-decisions.md; the copy is in narrative-cv-v5-copy-spec.md; the
-    review itself is narrative-cv-v5-brett-review.md. V4 stays untouched as the
-    reference (/ncv_tool_v4/ and the app.js embed still point at it).
+    Narrative CV tool — V6 beta, the regular line from 2026-10-23. A copy of V5 beta as it
+    stood on 2026-09-25 (commit 4d71449), with nothing else added yet. Eli's 2026-10-06
+    notes are the first backlog; what is decided and what is inferred is logged in
+    narrative-cv-v6-decisions.md. V5 stays frozen: it is the reference, the pilot build
+    and the merge base for V5x portfolio (narrative-cv-prototype-v5x-portfolio.html).
 
     Hard constraints: no AI and no API — deterministic and on-device (localStorage
-    `ncv-v5`). The one network call is the Feedback step's Send, which the researcher
+    `ncv-v6`). The one network call is the Feedback step's Send, which the researcher
     presses; it carries their answers and notes, never the draft (2026-09-25).
     Funder rules follow the corrected guide in ncv-guide-review/ (synced 2026-09-25).
     Every example is fictional; nothing comes from any real researcher's CV.
@@ -201,99 +197,23 @@
     .v4-fb-status.is-ok { color: #2a6e2a; font-weight: 600; }
     .v4-fb-status.is-err { color: #7a1f15; }
     .v4-fb-nudge { border: 1px solid #f9ca24; background: #fff8e1; border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem 0 0; font-size: 0.9rem; }
-
-    /* ── V5x portfolio ── */
-    .pf-filebar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; margin: 0 0 0.5rem; background: #fafafa; }
-    .pf-file-status { margin: 0; font-size: 0.9rem; }
-    .pf-file-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-    .pf-dirty { color: #8a5a00; font-weight: 600; }
-    .pf-clean { color: #2a6e2a; }
-    .pf-flash { background: #eef6ee; border: 1px solid #cfe5cf; border-radius: 6px; padding: 6px 10px; font-size: 0.88rem; margin: 0.5rem 0 1rem; }
-    .pf-owner { margin: 0.75rem 0 1rem; }
-    .pf-owner label { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 600; max-width: 420px; }
-    .pf-owner input { flex: 1; }
-    .pf-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
-    @media (max-width: 860px) { .pf-grid { grid-template-columns: minmax(0, 1fr); } }
-    .pf-pane { border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 0.9rem; min-width: 0; }
-    .pf-cv { position: sticky; top: 48px; max-height: calc(100vh - 64px); overflow: auto; }
-    @media (max-width: 860px) { .pf-cv { position: static; max-height: none; } }
-    .pf-pane-head h3 { margin: 0; font-size: 1.05rem; }
-    .pf-pane-sub { margin: 2px 0 10px; font-size: 0.8rem; color: var(--muted); }
-    .pf-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 8px; }
-    .pf-tab { font: inherit; font-size: 0.8rem; border: 1px solid var(--border); background: #fff; border-radius: 999px; padding: 4px 10px; cursor: pointer; color: var(--text); }
-    .pf-tab.is-on { background: var(--burgundy); border-color: var(--burgundy); color: #fff; }
-    .pf-tab:focus-visible, .pf-btn:focus-visible, .pf-link-btn:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 2px; }
-    .pf-search { margin: 0 0 8px; }
-    .pf-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-    .pf-group { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--burgundy); margin: 8px 0 0; }
-    .pf-empty { font-size: 0.85rem; color: var(--muted); padding: 6px 2px; }
-    .pf-item { display: flex; gap: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px 8px 6px; background: #fff; }
-    .pf-item[draggable="true"] { cursor: grab; }
-    .pf-item[draggable="true"]:hover { border-color: #c9a0a8; }
-    .pf-item.is-dragging { opacity: 0.45; }
-    .pf-item.is-placed { background: #fafafa; }
-    .pf-grip { color: #b5b5b5; font-size: 12px; letter-spacing: -2px; padding-top: 2px; user-select: none; }
-    .pf-item:not([draggable="true"]) .pf-grip { visibility: hidden; }
-    .pf-item-main { flex: 1; min-width: 0; }
-    .pf-item-title { margin: 0; font-size: 0.88rem; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
-    .pf-item-body { margin: 3px 0 0; font-size: 0.8rem; color: #444; line-height: 1.45; overflow-wrap: anywhere; }
-    .pf-item-meta { margin: 3px 0 0; font-size: 0.74rem; color: var(--muted); }
-    .pf-item-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 6px; }
-    .pf-btn { font: inherit; font-size: 0.78rem; font-weight: 600; border: 1px solid var(--burgundy); color: var(--burgundy); background: #fff; border-radius: 6px; padding: 3px 9px; cursor: pointer; }
-    .pf-btn:hover { background: #f9ebed; }
-    .pf-link-btn { font: inherit; font-size: 0.78rem; background: none; border: 0; padding: 2px 0; color: var(--burgundy); cursor: pointer; text-decoration: underline; }
-    .pf-link-btn:disabled { color: #bbb; cursor: default; text-decoration: none; }
-    .pf-select { font: inherit; font-size: 0.78rem; max-width: 220px; padding: 3px 4px; border: 1px solid var(--border); border-radius: 6px; background: #fff; }
-    .pf-in-cv { font-size: 0.78rem; color: #2a6e2a; font-weight: 600; }
-    .pf-hint { font-size: 0.75rem; color: var(--muted); }
-    .pf-quick { border-top: 1px dashed var(--border); margin-top: 12px; padding-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-    .pf-quick .v4-text-input { flex: 1 1 160px; width: auto; }
-    .pf-quick-title { flex-basis: 100%; margin: 0; font-size: 0.8rem; font-weight: 600; }
-    .pf-zone { border: 2px dashed #e0d6d8; border-radius: 8px; padding: 8px 10px 10px; margin: 0 0 10px; transition: border-color 0.12s, background 0.12s; }
-    .pf-zone h4 { margin: 0 0 4px; font-size: 0.85rem; }
-    .pf-zone-note { margin: 0 0 6px; font-size: 0.74rem; color: var(--muted); }
-    .pf-zone.is-ready, .pf-placed.is-ready { border-color: var(--burgundy); }
-    .pf-zone.is-over, .pf-placed.is-over { background: #f9ebed; border-color: var(--burgundy); }
-    .pf-drop-hint { margin: 4px 0 0; font-size: 0.8rem; color: #999; font-style: italic; }
-    .pf-placed { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 6px; background: #fff; padding: 6px 8px; margin: 6px 0 0; }
-    .pf-placed-text { flex: 1 1 220px; min-width: 0; }
-    .pf-origin { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--burgundy); background: #f9ebed; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
-    .pf-origin.is-local { color: #8a5a00; background: #fff4dc; }
-    .pf-move { display: inline-flex; gap: 6px; }
-    .pf-foot { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 1rem 0 0; }
-    .pf-card-bar { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 0.8rem; color: var(--muted); background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; margin: 0 0 12px; }
-    .pf-flash-inline { color: #2a6e2a; font-weight: 600; }
-    .pf-how { margin: 0 0 1.25rem; padding-left: 1.2rem; max-width: 74ch; }
-    .pf-how li { margin: 0 0 0.45rem; line-height: 1.55; }
-    .pf-start-q { font-size: 1rem; margin: 1.5rem 0 0.6rem; }
-    @media (min-width: 900px) { .pf-start-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    .pf-start-box { border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; margin: 0 0 1rem; background: #fafafa; }
-    .pf-start-box p { margin: 0.4rem 0 0; font-size: 0.9rem; }
-    .pf-panel { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 12px; font-size: 0.8rem; }
-    .pf-panel h3 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
-    .pf-panel p { margin: 0 0 2px; overflow-wrap: anywhere; }
-    .pf-panel-name { font-weight: 600; }
-    .pf-finish { border: 1px solid #e0d6d8; background: #fdf7f8; border-radius: 10px; padding: 1rem 1.1rem; margin: 1.5rem 0 1rem; }
-    .pf-finish p { font-size: 0.9rem; max-width: 74ch; }
-    .pf-finish-h { font-size: 1rem; margin: 0 0 0.4rem; }
-    .pf-setup-note { border: 1px solid #e0d6d8; background: #fdf7f8; border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem 0; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-  <!-- storage keys: ncv-v5x (draft), ncv-v5x-portfolio (working copy of the portfolio) -->
+  <!-- storage key: ncv-v6 -->
   <div class="proto-banner" role="status" aria-live="polite">
-    <span><strong>PROTOTYPE · V5x PORTFOLIO TEST</strong></span>
+    <span><strong>PROTOTYPE · V6 BETA</strong></span>
     <span class="v4-banner-actions">
       <button type="button" class="v4-note-open" id="v4-note-open" aria-expanded="false" aria-controls="v4-note-panel">Note for the team</button>
-      <a href="#" id="v4-reset" title="Clear V5x draft">Reset draft</a>
+      <a href="#" id="v4-reset" title="Clear V6 beta draft">Reset draft</a>
     </span>
   </div>
   <div class="v4-note-panel" id="v4-note-panel" hidden></div>
 
   <div class="proto-shell">
-    <h1 class="proto-title">Narrative CV — V5x portfolio test</h1>
+    <h1 class="proto-title">Narrative CV — V6 beta</h1>
     <p class="proto-subtitle">A drafting space for the Tri-agency CV and the CV-FRQ.</p>
-    <p class="v4-privacy">🔒 <span class="v4-privacy-full">No AI and no account. Anything you write is your own: it stays here, on this device, and is not stored anywhere else. Clearing your browser data clears the draft too. If you keep a portfolio, it is a file on your own computer. The Feedback step at the end sends only what you write there, and only when you choose to send it.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
+    <p class="v4-privacy">🔒 <span class="v4-privacy-full">No AI. Anything you write is your own: it stays here, on this device, and is not stored anywhere else. Clearing your browser data clears the draft too. The Feedback step at the end sends only what you write there, and only when you choose to send it.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
     <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Copy your draft out (Review → Copy draft) before you close this tab.</p>
     <p class="v4-inline-link"><a class="v4-guide-link" id="v4-guide-top" href="ncv-guide-review/" target="_blank" rel="noopener">Read the narrative CV guide</a></p>
     <div id="ncv-v4-root"></div>
@@ -327,7 +247,7 @@
     // The corrected guide lives in the review copy until the AEM page launches; switch GUIDE_URL to
     // the AEM address then. Anchors are the review copy's section ids.
     const GUIDE_URL = "ncv-guide-review/";
-    const TOOL_VERSION = "V5x portfolio test, 2026-10-01";
+    const TOOL_VERSION = "V6 beta, 2026-10-23 (forked from V5)";
 
     // Official section names (guide P-9, P-41). The CV-FRQ's first section has its own name and a
     // wider focus (P-48); its English names are the FRQ's own, the French ones are the template's.
@@ -362,10 +282,10 @@
 
     // Feedback goes to the project sheet through the same public, append-only action the guide
     // review page uses (Guide review tab, told apart by `page`). Read it back with
-    // <url>?action=review_list&page=ncv-tool-v5x
+    // <url>?action=review_list&page=ncv-tool-v6
     const FEEDBACK = {
       url: "https://script.google.com/macros/s/AKfycbwwruq8soD4_RBYOwSjpFFn1-sW5B3G3BPi8Br-mpugZInpj4CCzGM2lDUxZEX7vxkjLQ/exec",
-      page: "ncv-tool-v5x",
+      page: "ncv-tool-v6",
       email: "impact@concordia.ca"
     };
     const DISCIPLINES = [
@@ -1240,7 +1160,7 @@
     }
 
     // ── State ───────────────────────────────────────────────────────────────
-    const NCV_KEY = "ncv-v5x";
+    const NCV_KEY = "ncv-v6";
     const blankContribution = () => ({
       title: "", stakes: "", roleMode: "", roleLine: "",
       activities: "", outputs: "", outcomes: "", impact: "", translational: "",
@@ -1259,9 +1179,6 @@
       mentorPhilosophy: "", mentorEDI: "", mentorCrossStage: "",
       ps: { role: "", institution: "", field: "", challenge: "", streams: "", pivot: "", standing: "", programFit: "", teamFit: "", horizon: "" },
       consultQuestions: "", selfCheck: {}, lastSavedAt: 0,
-      // V5x: which pieces of this CV came from the portfolio (field -> portfolio id), and this CV's
-      // entry in the portfolio's history.
-      pfLinks: {}, pfCvId: "", start: "",
       // Feedback for the team: answers, notes taken during the session, and a local session log
       // (steps, time, exports). All of it stays on this device until the researcher sends it.
       feedback: { answers: {}, includeSummary: true, sent: [] },
@@ -1291,7 +1208,6 @@
           if (!Array.isArray(ns.contributions) || !ns.contributions.length) ns.contributions = [blankContribution()];
           ns.contributions.forEach(c => { c.flags = c.flags || {}; c.notes = c.notes || {}; c.evidence = c.evidence && c.evidence.length ? c.evidence : [{ text: "", type: "Peer-reviewed" }]; });
           if (!Array.isArray(ns.mentees) || !ns.mentees.length) ns.mentees = [blankMentee()];
-          if (!ns.pfLinks || typeof ns.pfLinks !== "object") ns.pfLinks = {};
         }
       } catch (_) { ns = defaultState(); }
     };
@@ -1300,7 +1216,6 @@
       ns.lastSavedAt = Date.now();
       try {
         localStorage.setItem(NCV_KEY, JSON.stringify(ns));
-        pfAfterSave();
         if (saveFailed) {
           saveFailed = false;
           const w = document.getElementById("v4-save-warning");
@@ -1431,9 +1346,7 @@
 
     // ── Stages (dynamic: structural-read stage only in draft mode; PS comes LAST) ──
     const stages = () => {
-      // V5x: the portfolio step appears for people who chose to start from a portfolio, or have one open.
-      const s = [{ key: "setup", short: "Start" }];
-      if (ns.start === "portfolio" || pf) s.push({ key: "portfolio", short: "From your portfolio" });
+      const s = [{ key: "setup", short: "Setup" }];
       if (ns.mode === "xray") s.push({ key: "xray", short: "Structural read" });
       s.push({ key: "contrib", short: "Contributions" });
       s.push({ key: "mentor", short: "Mentorship" });
@@ -1443,14 +1356,13 @@
       return s;
     };
     const RENDERERS = {
-      setup: (c) => renderSetup(c), portfolio: (c) => renderPortfolio(c), xray: (c) => renderXray(c),
+      setup: (c) => renderSetup(c), xray: (c) => renderXray(c),
       contrib: (c) => renderContributions(c), mentor: (c) => renderMentorship(c),
       ps: (c) => renderPersonal(c), review: (c) => renderReview(c),
       feedback: (c) => renderFeedback(c)
     };
     const stageDone = (key) => {
       if (key === "setup") return !!(ns.mode && ns.lens.agency && ns.lens.discipline);
-      if (key === "portfolio") return !!pf && pfItemCount() > 0;
       if (key === "xray") return !!ns.xray.text.trim();
       if (key === "contrib") return ns.contributions.some(c => c.title && c.activities);
       if (key === "mentor") return !!(ns.mentorPhilosophy || ns.mentees.some(m => m.who));
@@ -1515,7 +1427,6 @@
         list.appendChild(li);
       });
       panel.appendChild(list);
-      panel.appendChild(pfPanelStatus());
       const content = el("div", "narrative-stage-content");
       content.id = "v4-stage-content";
       shell.appendChild(panel);
@@ -1906,71 +1817,37 @@
 
     // ── Stage: Setup ────────────────────────────────────────────────────────
     function renderSetup(c) {
-      // V5x: the first screen says how the tool works and asks how the researcher wants to start.
-      if (!ns.start && ns.mode) ns.start = ns.mode === "xray" ? "draft" : "new";
-      stageHead(c, "Start", "How this tool works",
-        "This tool helps you work out what a narrative CV asks of you and put your own record into that shape. It is a prototype, and it works in English only for now. It runs without AI models: the checks are fixed rules. A full first draft can take a day or more, so allow time before your deadline.",
+      stageHead(c, "Setup", "Start fresh, or bring a draft?",
+        "This tool will help you get familiar with how a narrative CV asks you to think about your work and describe it. It is a prototype, and it works in English only for now. It runs without AI models: the checks are fixed rules. Anything you write is your own; it stays here and is not stored anywhere else. What you build here is a first outline in your own words: your contributions, your mentorship record and a personal statement, plus the questions you want to take to an advisor. A full first draft can take a day or more, so allow time before your deadline.",
         "What a narrative CV is, and which funders use it", "why");
 
-      const how = el("ol", "pf-how");
-      [["Your work stays yours.", "The tool runs in this browser. There is no account, and nothing you write is sent anywhere."],
-       ["Use it once.", "Build an outline of your contributions, mentorship record and personal statement, then download or copy it and continue in your own document."],
-       ["Or keep building.", "At the end you can save the pieces of this CV to a portfolio file on your own computer. The next time you apply, open the file here and reuse them instead of starting again."]
-      ].forEach(([h, t]) => { const li = el("li"); li.appendChild(el("strong", null, h + " ")); li.appendChild(document.createTextNode(t)); how.appendChild(li); });
-      c.appendChild(how);
-
-      c.appendChild(el("h3", "pf-start-q", "How do you want to start?"));
-      const grid = el("div", "v4-mode-grid pf-start-grid");
-      [["new", "compose", "Start a new CV", "Write from scratch, one contribution at a time, with prompts, a worked example and live checks. You can keep the pieces in a portfolio at the end."],
-       ["portfolio", "compose", "Open my portfolio", "Start from a portfolio file you saved before. Choose the pieces this application needs, then tailor them."],
-       ["draft", "xray", "Check a draft I already have", "Paste it in for a structural read: the tool splits it into paragraphs, runs the same checks on each and shows which of the format's moves are missing."]
-      ].forEach(([v, mode, h, p]) => {
-        const card = el("button", "v4-mode-card" + (ns.start === v ? " is-on" : (ns.start ? " is-off" : "")));
-        card.setAttribute("aria-pressed", ns.start === v ? "true" : "false");
+      const grid = el("div", "v4-mode-grid");
+      [["compose", "Start fresh", "Build one contribution at a time, with prompts, a worked example and live checks. The personal statement comes last — it is easier to write once the rest exists."],
+       ["xray", "I already have a draft", "Paste it in for a structural read. The tool splits it into paragraphs, runs the same checks on each and shows you which of the format's moves are missing. Revise here, or take the read to your advisor."]
+      ].forEach(([v, h, p]) => {
+        const card = el("button", "v4-mode-card" + (ns.mode === v ? " is-on" : (ns.mode ? " is-off" : "")));
+        card.setAttribute("aria-pressed", ns.mode === v ? "true" : "false");
         card.appendChild(el("h4", null, h));
         card.appendChild(el("p", null, p));
-        card.addEventListener("click", () => { ns.start = v; ns.mode = mode; saveState(); renderStage(); });
+        card.addEventListener("click", () => { ns.mode = v; saveState(); renderStage(); });
         grid.appendChild(card);
       });
       c.appendChild(grid);
 
-      const confirm = el("p", "v4-mode-confirm" + (ns.start ? "" : " is-muted"));
+      // C1: three states, always-present slot so nothing below it moves when the text changes.
+      const confirm = el("p", "v4-mode-confirm" + (ns.mode ? "" : " is-muted"));
       confirm.setAttribute("aria-live", "polite");
-      confirm.textContent = ns.start === "draft"
-        ? "Check a draft — selected. Tell us about the application below, then paste your draft."
-        : ns.start === "portfolio"
-          ? (pf ? "Open my portfolio — selected. Tell us about the application below, then choose your pieces." : "Open my portfolio — selected. Open your file here.")
-          : ns.start === "new"
-            ? "Start a new CV — selected. Tell us about the application below, then go to your contributions."
-            : "Choose one to start. Switching later keeps everything you have written.";
+      confirm.textContent = ns.mode === "xray"
+        ? "Structural read — selected. Set your context below, then paste your draft."
+        : ns.mode === "compose"
+          ? "Start fresh — selected. Set your context below, then go straight to your contributions."
+          : "Choose one to start. Switching later keeps everything you have written.";
       c.appendChild(confirm);
 
-      if (ns.start === "portfolio") {
-        const box = el("div", "pf-start-box");
-        if (pf) {
-          box.appendChild(el("p", null, "Open: " + pfDisplayName() + " · " + pfItemCount() + " pieces" + (pf.owner ? " · " + pf.owner : "") + "."));
-          const b = el("button", "pf-link-btn", "Open a different file");
-          b.addEventListener("click", pfOpen);
-          box.appendChild(b);
-        } else {
-          const row = el("div", "pf-file-actions");
-          const o = el("button", "btn btn-primary", "Open my portfolio file"); o.addEventListener("click", pfOpen);
-          const sm = el("button", "btn btn-outline", "Try a sample portfolio");
-          sm.addEventListener("click", pfLoadSample);
-          row.appendChild(o); row.appendChild(sm);
-          box.appendChild(row);
-          box.appendChild(el("p", "v4-help", "The file stays on your computer; this page reads it there. No portfolio yet? Choose Start a new CV, and save one at the end. The sample belongs to an invented researcher."));
-        }
-        c.appendChild(box);
-      }
+      renderLensFields(c);
+      if (ns.lens.agency) renderFormatNote(c, true);
 
-      if (ns.start) {
-        c.appendChild(el("h3", "pf-start-q", "About this application"));
-        renderLensFields(c);
-        if (ns.lens.agency) renderFormatNote(c, true);
-      }
-
-      navRow(c, { nextLabel: ns.start === "portfolio" ? "Choose from your portfolio →" : ns.start === "draft" ? "To the structural read →" : "Start drafting →" });
+      navRow(c, { nextLabel: ns.mode === "xray" ? "To the structural read →" : "Start drafting →" });
     }
 
     // ── Stage: Structural read (state key "xray" kept for saved drafts) ────
@@ -2220,11 +2097,6 @@
         head.appendChild(rm);
       }
       card.appendChild(head);
-      // V5x: where this contribution stands against the portfolio.
-      const pfBar = el("div", "pf-card-bar");
-      pfBar.dataset.i = i;
-      renderPfBar(pfBar, i);
-      card.appendChild(pfBar);
 
       const titleDef = PROMPTS.contrib.title;
       const tWrap = el("div", "contribution-field");
@@ -2669,7 +2541,6 @@
 
       // Draft preview + export buttons
       const exWrap = el("div", "contribution-field");
-      exWrap.appendChild(el("h3", "pf-finish-h", "1. Take your draft"));
       exWrap.appendChild(el("label", "v4-q", "Your working draft"));
       exWrap.appendChild(el("p", "v4-help", "Read-only here. Copy it or download it, then edit it in your own document."));
       const ta = el("textarea", "v4-export-area");
@@ -2701,7 +2572,6 @@
       });
       actions.appendChild(copy);
       c.appendChild(actions);
-      renderKeepForNextTime(c);
 
       const contact = el("p", "v4-help");
       contact.appendChild(document.createTextNode("If you have questions about your narrative CV, please contact the Pathways to Impact team at "));
@@ -2756,7 +2626,7 @@
     function buildExportText() {
       const L = ns.lens, lines = [];
       const rule = "=".repeat(60);
-      lines.push("NARRATIVE CV — WORKING DRAFT (V5x)");
+      lines.push("NARRATIVE CV — WORKING DRAFT (V6 beta)");
       const ctx = [labelOf(AGENCIES, L.agency), L.format ? (L.format === "cv-frq" ? "CV-FRQ" : "TCV") : "", L.program, labelOf(CAREER_STAGES, L.careerStage), labelOf(DISCIPLINES, L.discipline)].filter(Boolean);
       if (ctx.length) lines.push("Context (for tailoring only — not for submission): " + ctx.join(" · "));
       lines.push(formatReminder());
@@ -3205,792 +3075,10 @@
     }
     noteBtn.addEventListener("click", () => { if (notePanel.hidden) openNotePanel(); else closeNotePanel(); });
 
-    // ── V5x: the portable portfolio ─────────────────────────────────────────
-    // A portfolio is a JSON file the researcher keeps on their own computer. It holds reusable
-    // pieces in four modules (contributions, evidence, mentorship, statement pieces). For each
-    // application they open it here and move pieces into the CV; edits made in the steps can be
-    // pushed back. The file is read and written in the browser only; nothing is uploaded.
-    // A working copy is kept in localStorage (PF_KEY) so a reload does not lose it; `dirty` means
-    // the working copy has changes the file on disk does not have yet.
-    const PF_KEY = "ncv-v5x-portfolio";
-    const PF_FORMAT = "ncv-portfolio";
-    const PF_VERSION = 1;
-    const PF_CONTRIB_FIELDS = ["title", "stakes", "roleMode", "roleLine", "activities", "outputs", "outcomes", "impact", "translational"];
-    const PF_MODULES = [
-      { k: "contributions", l: "Contributions" }, { k: "evidence", l: "Evidence" },
-      { k: "mentorship", l: "Mentorship" }, { k: "statements", l: "Statement pieces" }
-    ];
-    // [portfolio kind, label, ns field]
-    const PF_PRACTICES = [["philosophy", "One thing you do", "mentorPhilosophy"], ["edi", "Who gets in", "mentorEDI"], ["crossStage", "Who else you mentor", "mentorCrossStage"]];
-    const PF_STATEMENTS = ["challenge", "streams", "pivot", "standing", "horizon"];
-    const pfNewId = (p) => p + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    const pfClone = (o) => JSON.parse(JSON.stringify(o));
-    const blankPortfolio = () => ({ format: PF_FORMAT, version: PF_VERSION, owner: "", createdAt: Date.now(), updatedAt: Date.now(),
-      contributions: [], evidence: [], people: [], practices: [], statements: [], totals: null, cvs: [] });
-
-    let pf = null;                                   // null until a portfolio is opened or started
-    let pfMeta = { fileName: "", dirty: false, savedAt: 0 };
-    let pfHandle = null;                             // file handle (Chrome/Edge), this tab only
-    let pfDragKind = "";
-    let pfFlash = "";                                // one-time status line after an action
-
-    function pfNormalize(o) {
-      const p = Object.assign(blankPortfolio(), o || {});
-      ["contributions", "evidence", "people", "practices", "statements", "cvs"].forEach(k => { if (!Array.isArray(p[k])) p[k] = []; });
-      p.contributions.forEach(c => { if (!c.id) c.id = pfNewId("c"); if (!Array.isArray(c.evidence)) c.evidence = []; });
-      ["evidence", "people", "practices", "statements"].forEach(k => p[k].forEach(x => { if (!x.id) x.id = pfNewId(k.charAt(0)); }));
-      return p;
-    }
-    function pfSaveLocal() {
-      try { localStorage.setItem(PF_KEY, JSON.stringify({ pf, meta: pfMeta })); } catch (_) {}
-    }
-    function pfLoadLocal() {
-      try {
-        const raw = localStorage.getItem(PF_KEY);
-        if (!raw) return;
-        const saved = JSON.parse(raw);
-        if (saved && saved.pf) { pf = pfNormalize(saved.pf); pfMeta = Object.assign(pfMeta, saved.meta || {}); }
-      } catch (_) { pf = null; }
-    }
-    function pfTouch() {
-      if (!pf) return;
-      pf.updatedAt = Date.now();
-      pfMeta.dirty = true;
-      pfSaveLocal();
-    }
-    function pfEnsure() {
-      if (!pf) { pf = blankPortfolio(); pfMeta = { fileName: "", dirty: true, savedAt: 0 }; }
-      return pf;
-    }
-    const pfItemCount = () => pf ? pf.contributions.length + pf.evidence.length + pf.people.length + pf.practices.length + pf.statements.length + (pf.totals ? 1 : 0) : 0;
-    const pfFind = (list, id) => (pf && pf[list] || []).find(x => x.id === id);
-
-    // ── File in and out ──
-    const pfFileName = () => pfMeta.fileName || ((pf.owner ? pf.owner.replace(/[^\w-]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase() + "-" : "") + "ncv-portfolio.json");
-    function pfAccept(text, name) {
-      let obj;
-      try { obj = JSON.parse(text); } catch (_) { alert("This file could not be read. Choose a portfolio file saved from this tool (a .json file)."); return false; }
-      if (!obj || obj.format !== PF_FORMAT) { alert("This file is not a narrative CV portfolio. Choose a file saved from this tool."); return false; }
-      pf = pfNormalize(obj);
-      pfMeta = { fileName: name || "", dirty: false, savedAt: Date.now() };
-      pfSaveLocal();
-      pfFlash = "Opened " + (name || "your portfolio") + ": " + pfItemCount() + " pieces.";
-      return true;
-    }
-    async function pfOpen() {
-      if (pf && pfMeta.dirty && !confirm("The portfolio open now has changes that are not saved to a file. Open another one anyway?")) return;
-      if (window.showOpenFilePicker) {
-        try {
-          const [h] = await window.showOpenFilePicker({ types: [{ description: "Narrative CV portfolio", accept: { "application/json": [".json"] } }] });
-          const f = await h.getFile();
-          if (pfAccept(await f.text(), f.name)) { pfHandle = h; countEvent("pfOpen"); renderStage(); }
-        } catch (e) { if (e && e.name !== "AbortError") alert("The file could not be opened."); }
-        return;
-      }
-      const inp = document.createElement("input");
-      inp.type = "file"; inp.accept = ".json,application/json";
-      inp.addEventListener("change", async () => {
-        const f = inp.files && inp.files[0];
-        if (!f) return;
-        if (pfAccept(await f.text(), f.name)) { pfHandle = null; countEvent("pfOpen"); renderStage(); }
-      });
-      inp.click();
-    }
-    async function pfSave(asNew) {
-      if (!pf) return;
-      const text = JSON.stringify(pf, null, 2);
-      if (window.showSaveFilePicker) {
-        try {
-          if (!pfHandle || asNew) {
-            pfHandle = await window.showSaveFilePicker({ suggestedName: pfFileName(), types: [{ description: "Narrative CV portfolio", accept: { "application/json": [".json"] } }] });
-          }
-          const w = await pfHandle.createWritable();
-          await w.write(text); await w.close();
-          pfMeta.fileName = pfHandle.name;
-        } catch (e) {
-          if (e && e.name === "AbortError") { renderStage(); return; }
-          pfHandle = null;
-          pfDownload(text);
-        }
-      } else pfDownload(text);
-      pfMeta.dirty = false; pfMeta.savedAt = Date.now();
-      pfSaveLocal(); countEvent("pfSave");
-      pfFlash = (pfFlash ? pfFlash + " " : "") + "Saved to " + pfFileName() + ".";
-      renderStage();
-    }
-    function pfDownload(text) {
-      const name = pfFileName();
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
-      a.download = name;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-      pfMeta.fileName = name;
-    }
-    window.addEventListener("beforeunload", (e) => {
-      if (pf && pfMeta.dirty && pfMeta.savedAt) { e.preventDefault(); e.returnValue = ""; }
-    });
-
-    // ── What is in this CV, and moving pieces in ──
-    const contribIsBlank = (c) => !PF_CONTRIB_FIELDS.some(k => k !== "roleMode" && (c[k] || "").trim()) && !(c.evidence || []).some(e => (e.text || "").trim());
-    const menteeIsBlank = (m) => !(m.who || m.stage || m.destination || m.why);
-    function pfIsPlaced(kind, id) {
-      if (kind === "contribution") return ns.contributions.some(c => c.pfId === id);
-      if (kind === "person") return ns.mentees.some(m => m.pfId === id);
-      if (kind === "evidence") return ns.contributions.some(c => (c.evidence || []).some(e => e.pfId === id));
-      if (kind === "totals") return ns.pfLinks.totals === id;
-      return Object.values(ns.pfLinks || {}).indexOf(id) !== -1;
-    }
-    function pfPlace(kind, id, target) {
-      if (kind === "contribution") {
-        const item = pfFind("contributions", id);
-        if (!item || pfIsPlaced(kind, id)) return;
-        const live = ns.contributions.filter(c => !contribIsBlank(c));
-        if (live.length >= 10) { alert("This CV already has 10 contributions, the most the format allows. Remove one first."); return; }
-        const copy = Object.assign(blankContribution(), pfClone(item));
-        delete copy.id; delete copy.updatedAt;
-        copy.evidence = copy.evidence.length ? copy.evidence : [{ text: "", type: "Peer-reviewed" }];
-        copy.flags = {}; copy.notes = {}; copy.showWeave = false; copy.pfId = id;
-        ns.contributions = live.concat(copy);
-      } else if (kind === "evidence") {
-        const item = pfFind("evidence", id);
-        const c = ns.contributions[target];
-        if (!item || !c) return;
-        c.evidence = (c.evidence || []).filter(e => (e.text || "").trim());
-        if (c.evidence.some(e => e.pfId === id)) return;
-        c.evidence.push({ text: item.text, type: item.type, pfId: id });
-      } else if (kind === "person") {
-        const item = pfFind("people", id);
-        if (!item || pfIsPlaced(kind, id)) return;
-        const copy = pfClone(item); delete copy.id; copy.pfId = id;
-        ns.mentees = ns.mentees.filter(m => !menteeIsBlank(m)).concat(copy);
-      } else if (kind === "practice") {
-        const item = pfFind("practices", id);
-        const slot = item && PF_PRACTICES.find(p => p[0] === item.kind);
-        if (!slot) return;
-        if ((ns[slot[2]] || "").trim() && ns.pfLinks[slot[2]] !== id && !confirm("This CV already has text for “" + slot[1] + "”. Replace it with the portfolio piece?")) return;
-        ns[slot[2]] = item.text; ns.pfLinks[slot[2]] = id;
-      } else if (kind === "statement") {
-        const item = pfFind("statements", id);
-        if (!item) return;
-        if (item.kind === "anchor") {
-          ns.ps.role = item.role || ""; ns.ps.institution = item.institution || ""; ns.ps.field = item.field || "";
-          ns.pfLinks["ps.anchor"] = id;
-        } else {
-          const key = "ps." + item.kind;
-          if ((ns.ps[item.kind] || "").trim() && ns.pfLinks[key] !== id && !confirm("This CV already has text for “" + (PS_KICKER[item.kind] || item.kind) + "”. Replace it with the portfolio piece?")) return;
-          ns.ps[item.kind] = item.text; ns.pfLinks[key] = id;
-        }
-      } else if (kind === "totals") {
-        if (!pf || !pf.totals) return;
-        MENTOR_COUNT_LABELS.forEach(([k]) => { ns.mentorCounts[k] = pf.totals[k] || ""; });
-        ns.pfLinks.totals = "totals";
-      }
-      countEvent("pfPlace");
-      saveState(); renderStage();
-    }
-    function pfUnplace(kind, ref) {
-      if (kind === "contribution") { ns.contributions.splice(ref, 1); if (!ns.contributions.length) ns.contributions.push(blankContribution()); }
-      else if (kind === "person") { ns.mentees.splice(ref, 1); if (!ns.mentees.length) ns.mentees.push(blankMentee()); }
-      else if (kind === "practice") { ns[ref] = ""; delete ns.pfLinks[ref]; }
-      else if (kind === "statement") {
-        if (ref === "anchor") { ns.ps.role = ""; ns.ps.institution = ""; ns.ps.field = ""; }
-        else ns.ps[ref] = "";
-        delete ns.pfLinks["ps." + ref];
-      } else if (kind === "totals") { MENTOR_COUNT_LABELS.forEach(([k]) => { ns.mentorCounts[k] = ""; }); delete ns.pfLinks.totals; }
-      saveState(); renderStage();
-    }
-
-    // ── Pushing work from this CV back into the portfolio ──
-    const contribData = (c) => {
-      const d = {};
-      PF_CONTRIB_FIELDS.forEach(k => { d[k] = c[k] || ""; });
-      d.evidence = (c.evidence || []).filter(e => (e.text || "").trim()).map(e => ({ text: e.text, type: e.type }));
-      return d;
-    };
-    function contribDiffers(c) {
-      const item = c.pfId && pfFind("contributions", c.pfId);
-      if (!item) return true;
-      const a = contribData(c), b = contribData(item);
-      return JSON.stringify(a) !== JSON.stringify(b);
-    }
-    function pfSaveContrib(c) {
-      pfEnsure();
-      const data = contribData(c);
-      const item = c.pfId && pfFind("contributions", c.pfId);
-      if (item) Object.assign(item, data, { updatedAt: Date.now() });
-      else { const id = pfNewId("c"); pf.contributions.push(Object.assign({ id, updatedAt: Date.now() }, data)); c.pfId = id; }
-      pfTouch();
-    }
-    function pfSaveAll() {
-      pfEnsure();
-      let n = 0;
-      ns.contributions.forEach(c => { if (!contribIsBlank(c) && (c.title || "").trim() && contribDiffers(c)) { pfSaveContrib(c); n++; } });
-      ns.mentees.forEach(m => {
-        if (!(m.who || "").trim()) return;
-        const data = { who: m.who, stage: m.stage || "", destination: m.destination || "", why: m.why || "" };
-        const item = m.pfId && pfFind("people", m.pfId);
-        if (item) { if (["who", "stage", "destination", "why"].some(k => (item[k] || "") !== data[k])) { Object.assign(item, data); n++; } }
-        else { const id = pfNewId("p"); pf.people.push(Object.assign({ id }, data)); m.pfId = id; n++; }
-      });
-      PF_PRACTICES.forEach(([kind, , field]) => {
-        const text = (ns[field] || "").trim();
-        if (!text) return;
-        const item = ns.pfLinks[field] && pfFind("practices", ns.pfLinks[field]);
-        if (item) { if (item.text !== ns[field]) { item.text = ns[field]; n++; } }
-        else { const id = pfNewId("m"); pf.practices.push({ id, kind, text: ns[field] }); ns.pfLinks[field] = id; n++; }
-      });
-      PF_STATEMENTS.forEach(kind => {
-        const text = (ns.ps[kind] || "").trim();
-        if (!text) return;
-        const key = "ps." + kind;
-        const item = ns.pfLinks[key] && pfFind("statements", ns.pfLinks[key]);
-        if (item) { if (item.text !== ns.ps[kind]) { item.text = ns.ps[kind]; n++; } }
-        else { const id = pfNewId("s"); pf.statements.push({ id, kind, text: ns.ps[kind] }); ns.pfLinks[key] = id; n++; }
-      });
-      if (ns.ps.role || ns.ps.institution || ns.ps.field) {
-        const item = ns.pfLinks["ps.anchor"] && pfFind("statements", ns.pfLinks["ps.anchor"]);
-        const data = { role: ns.ps.role || "", institution: ns.ps.institution || "", field: ns.ps.field || "" };
-        if (item) { if (item.role !== data.role || item.institution !== data.institution || item.field !== data.field) { Object.assign(item, data); n++; } }
-        else { const id = pfNewId("s"); pf.statements.push(Object.assign({ id, kind: "anchor" }, data)); ns.pfLinks["ps.anchor"] = id; n++; }
-      }
-      if (MENTOR_COUNT_LABELS.some(([k]) => (ns.mentorCounts[k] || "").trim())) {
-        const t = {}; MENTOR_COUNT_LABELS.forEach(([k]) => { t[k] = ns.mentorCounts[k] || ""; });
-        t.asOf = new Date().toISOString().slice(0, 10);
-        const same = pf.totals && MENTOR_COUNT_LABELS.every(([k]) => pf.totals[k] === t[k]);
-        if (!same) { pf.totals = t; n++; }
-        ns.pfLinks.totals = "totals";
-      }
-      // Record this CV in the portfolio's history, so each piece can show where it has been used.
-      const ids = ns.contributions.map(c => c.pfId).concat(ns.mentees.map(m => m.pfId))
-        .concat(Object.values(ns.pfLinks)).concat(ns.contributions.flatMap(c => (c.evidence || []).map(e => e.pfId))).filter(Boolean);
-      let cv = ns.pfCvId && pf.cvs.find(x => x.id === ns.pfCvId);
-      if (!cv) { cv = { id: pfNewId("cv"), at: Date.now() }; pf.cvs.push(cv); ns.pfCvId = cv.id; }
-      cv.label = pfCvLabel(); cv.agency = ns.lens.agency || ""; cv.program = ns.lens.program || "";
-      cv.updatedAt = Date.now(); cv.items = Array.from(new Set(ids));
-      pfTouch(); saveState(); countEvent("pfSaveAll");
-      return n;
-    }
-    function pfCvLabel() {
-      const parts = [labelOf(AGENCIES, ns.lens.agency), ns.lens.program].filter(x => x && x !== "Other / not sure");
-      return (parts.join(" · ") || "Untitled CV") + ", " + new Date().toISOString().slice(0, 7);
-    }
-    function pfUsedIn(id) {
-      return (pf ? pf.cvs : []).filter(cv => (cv.items || []).indexOf(id) !== -1).map(cv => cv.label);
-    }
-    function pfStartNewCv() {
-      if (!confirm("Start a new CV? This clears the CV on the right and everything written in the steps. Your portfolio and your Setup answers are kept. Save anything you want to keep into the portfolio first.")) return;
-      const fresh = defaultState();
-      ["contributions", "mentees", "mentorCounts", "mentorPhilosophy", "mentorEDI", "mentorCrossStage", "ps", "xray", "consultQuestions", "selfCheck", "pfLinks"].forEach(k => { ns[k] = fresh[k]; });
-      ns.pfCvId = "";
-      countEvent("pfNewCv");
-      saveState(); renderStage();
-    }
-
-    // ── Sample portfolio (fictional; the same invented sociologist as the worked examples) ──
-    function pfSample() {
-      const seg = (list, r) => (list.find(s => s.r === r) || {}).t || "";
-      const c1 = "c-sample1", c2 = "c-sample2", c3 = "c-sample3", c4 = "c-sample4";
-      return pfNormalize({
-        owner: "Sample researcher (fictional)",
-        contributions: [
-          { id: c1, title: "Shift assignment from the inside: an ethnography of retail and warehouse scheduling",
-            stakes: "Software now assigns hours to many retail and warehouse workers, and little research had observed how those assignments are made on the floor or who absorbs the changes.",
-            roleMode: "led", roleLine: "I designed and led the fieldwork, and I wrote the book and the three articles that report it.",
-            activities: "Between 2014 and 2019 I conducted 26 months of observation in four retail stores and two warehouses and interviewed 112 workers and 31 managers about how shifts are assigned and changed.",
-            outputs: "A monograph with a university press, three peer-reviewed articles and an anonymized interview archive deposited with a national data repository.",
-            outcomes: "The book is assigned in labour studies courses at nine universities, and two unions used its account of last-minute shift changes in bargaining briefs in 2022.",
-            impact: "The account of how schedules are set on the floor could inform how employment standards define notice for shift changes.",
-            translational: "",
-            evidence: [{ text: "Monograph, university press, 2020; shortlisted for a national book prize, 2021", type: "Peer-reviewed" }, { text: "Cited in two union bargaining briefs, 2022", type: "Policy / practice uptake" }] },
-          { id: c2, title: "The Household Volatility Survey: a repeated panel of hours and income",
-            stakes: "Annual income surveys miss the week-to-week swings in hours that shape household budgets, so the cost of unpredictable scheduling was largely unmeasured.",
-            roleMode: "coled", roleLine: "I co-designed the panel with a survey methodologist, and I lead its analysis of hours and income.",
-            activities: "Since 2017 the team has surveyed 1,400 households every quarter, linking weekly hours to income, debt and care arrangements. I built the scheduling module and supervise the four analysts who clean each wave.",
-            outputs: "Seven waves of linked panel data, a public codebook and five peer-reviewed articles.",
-            outcomes: "Four other research teams use the dataset under access agreements, and a federal statistics working group adopted two of its scheduling questions in 2024.",
-            impact: "If the scheduling questions enter national labour surveys, the cost of hour volatility could be measured across the population.",
-            translational: "",
-            evidence: [{ text: "Panel dataset, deposited 2019 and updated each wave; four external access agreements", type: "Dataset / tool" }, { text: "Two survey questions adopted by a federal statistics working group, 2024", type: "Policy / practice uptake" }] },
-          { id: c3, title: "Two weeks' notice: a field test of advance schedule posting with a workers' centre",
-            stakes: "Several provinces were debating advance-notice rules for work schedules with little evidence on what such rules change for workers or employers.",
-            roleMode: "led", roleLine: "I lead the research side of a partnership with a workers' centre, and I designed the comparison of workplaces that post schedules two weeks ahead with those that do not.",
-            activities: "Since 2019 we have followed 38 workplaces, 19 of which agreed to post schedules two weeks ahead, through payroll records and quarterly worker interviews. The centre's staff recruit the workplaces and co-run the interviews.",
-            outputs: "Two peer-reviewed articles, a plain-language report released with the centre and a toolkit employers use to set up advance posting.",
-            outcomes: "A provincial ministry reviewing employment standards requested the analysis in 2022 and 2024, and 11 employers outside the study have adopted the toolkit.",
-            impact: "The results could give provinces evidence on the effect of notice rules before they legislate.",
-            translational: "At a 2023 meeting at the centre, a warehouse worker described arranging childcare a full week ahead for the first time in four years.",
-            evidence: [{ text: "Analysis requested by a provincial ministry, 2022 and 2024", type: "Policy / practice uptake" }, { text: "Partnership grant, 2019–2026", type: "Funding" }] },
-          { id: c4, title: "Scheduling in home care: a pilot study with three agencies",
-            stakes: "Home-care workers are scheduled visit by visit, and scheduling volatility in care work has had little longitudinal study.",
-            roleMode: "led", roleLine: "I designed the pilot, and I lead the interviews with agencies and workers.",
-            activities: "In 2025 I interviewed 24 home-care workers and staff at three agencies, and I tested a care-work version of the panel's scheduling module with 120 households.",
-            outputs: "A pilot dataset, a revised survey module and a working paper.",
-            outcomes: "",
-            impact: "Extending the panel into care work could show whether the costs of volatility found in retail recur in the sector where volatility is growing fastest.",
-            translational: "",
-            evidence: [{ text: "Working paper, 2025", type: "Other" }] }
-        ],
-        evidence: [
-          { id: "e-sample1", text: "Invited witness, provincial standing committee on employment standards, 2023", type: "Policy / practice uptake" },
-          { id: "e-sample2", text: "Faculty research award, 2022", type: "Award / recognition" },
-          { id: "e-sample3", text: "Interview on scheduling volatility, national public radio, 2024", type: "Media / public" }
-        ],
-        people: [
-          { id: "p-sample1", who: "A.R.", stage: "PhD, 2022", destination: "Head of evaluation, national non-profit", why: "Leads evaluation with panel methods we developed together." },
-          { id: "p-sample2", who: "J.M.", stage: "MA, 2021", destination: "Analyst, provincial statistics unit", why: "Still co-authors with the group." },
-          { id: "p-sample3", who: "T.K.", stage: "Postdoc, 2023–2025", destination: "Assistant professor of sociology", why: "" },
-          { id: "p-sample4", who: "S.D.", stage: "Undergraduate RA", destination: "MA student in public policy", why: "Second author on a 2024 article." }
-        ],
-        practices: [
-          { id: "m-sample1", kind: "philosophy", text: seg(MENTOR_EXAMPLE.segments, "practice") },
-          { id: "m-sample2", kind: "edi", text: seg(MENTOR_EXAMPLE.segments, "access") },
-          { id: "m-sample3", kind: "crossStage", text: seg(MENTOR_EXAMPLE.segments, "crossStage") }
-        ],
-        statements: [
-          { id: "s-sample0", kind: "anchor", role: "associate professor", institution: "a mid-sized Canadian university", field: "the sociology of work and economic insecurity" }
-        ].concat(PF_STATEMENTS.map((k, i) => ({ id: "s-sample" + (i + 1), kind: k, text: seg(PS_EXAMPLE.segments, k) }))),
-        totals: { phd: "4", masters: "9", postdoc: "2", undergrad: "11", asOf: "2026-06-01" },
-        cvs: [{ id: "cv-sample1", label: "SSHRC · Insight Grant, 2024-10", agency: "sshrc", program: "Insight Grant", at: Date.now(),
-          items: [c1, c2, c3, "e-sample1", "p-sample1", "p-sample2", "m-sample1", "m-sample2", "s-sample1", "s-sample4"] }]
-      });
-    }
-
-    // ── Rendering helpers ──
-    const pfSnippet = (t, n) => { t = (t || "").replace(/\s+/g, " ").trim(); return t.length > n ? t.slice(0, n - 1).trim() + "…" : t; };
-    function pfItemView(kind, item) {
-      if (kind === "contribution") return { title: item.title || "Untitled contribution", body: item.roleLine || item.activities || item.stakes, meta: (item.evidence || []).length + " evidence item" + ((item.evidence || []).length === 1 ? "" : "s") };
-      if (kind === "evidence") return { title: item.text, body: "", meta: item.type };
-      if (kind === "person") return { title: [item.who, item.stage].filter(Boolean).join(", "), body: [item.destination, item.why].filter(Boolean).join(". "), meta: "Person you trained" };
-      if (kind === "practice") { const p = PF_PRACTICES.find(x => x[0] === item.kind); return { title: p ? p[1] : "Mentoring practice", body: item.text, meta: "Mentoring practice" }; }
-      if (kind === "statement") {
-        if (item.kind === "anchor") return { title: "Opening line", body: "I am " + articleFor(item.role) + " " + (item.role || "…") + " at " + (item.institution || "…") + ". My work is in " + (item.field || "…") + ".", meta: "Statement piece" };
-        return { title: PS_KICKER[item.kind] || item.kind, body: item.text, meta: "Statement piece" };
-      }
-      if (kind === "totals") return { title: "Training totals", body: MENTOR_COUNT_LABELS.map(([k, lab]) => (item[k] || "0") + " " + lab.toLowerCase()).join(" · "), meta: item.asOf ? "As of " + item.asOf : "" };
-      return { title: "", body: "", meta: "" };
-    }
-    function pfDraggable(node, kind, id) {
-      node.draggable = true;
-      node.addEventListener("dragstart", (e) => {
-        pfDragKind = kind;
-        e.dataTransfer.effectAllowed = "copy";
-        e.dataTransfer.setData("text/plain", JSON.stringify({ kind, id }));
-        node.classList.add("is-dragging");
-        document.querySelectorAll("[data-pf-accepts]").forEach(z => {
-          if (z.dataset.pfAccepts.split(" ").indexOf(kind) !== -1) z.classList.add("is-ready");
-        });
-      });
-      node.addEventListener("dragend", () => {
-        pfDragKind = "";
-        node.classList.remove("is-dragging");
-        document.querySelectorAll(".is-ready, .is-over").forEach(z => z.classList.remove("is-ready", "is-over"));
-      });
-    }
-    function pfDropZone(node, kinds, onDrop) {
-      node.dataset.pfAccepts = kinds.join(" ");
-      node.addEventListener("dragover", (e) => {
-        if (!pfDragKind || kinds.indexOf(pfDragKind) === -1) return;
-        e.preventDefault(); e.stopPropagation();
-        e.dataTransfer.dropEffect = "copy";
-        node.classList.add("is-over");
-      });
-      node.addEventListener("dragleave", (e) => { if (!node.contains(e.relatedTarget)) node.classList.remove("is-over"); });
-      node.addEventListener("drop", (e) => {
-        if (!pfDragKind || kinds.indexOf(pfDragKind) === -1) return;
-        e.preventDefault(); e.stopPropagation();
-        let d = null;
-        try { d = JSON.parse(e.dataTransfer.getData("text/plain")); } catch (_) {}
-        pfDragKind = "";
-        if (d && d.id) onDrop(d.kind, d.id);
-      });
-    }
-    function pfRemoveFromPortfolio(list, id, label) {
-      if (!confirm("Remove “" + pfSnippet(label, 60) + "” from your portfolio? A CV that already uses it keeps its copy.")) return;
-      pf[list] = pf[list].filter(x => x.id !== id);
-      pfTouch(); renderStage();
-    }
-
-    // One card in the left pane.
-    function pfCard(kind, list, item) {
-      const v = pfItemView(kind, item);
-      const placed = pfIsPlaced(kind, item.id);
-      const card = el("li", "pf-item" + (placed ? " is-placed" : ""));
-      card.dataset.search = (v.title + " " + v.body + " " + v.meta).toLowerCase();
-      if (kind !== "evidence" || ns.contributions.some(c => !contribIsBlank(c))) pfDraggable(card, kind, item.id);
-      const grip = el("span", "pf-grip", "⋮⋮"); grip.setAttribute("aria-hidden", "true");
-      card.appendChild(grip);
-      const main = el("div", "pf-item-main");
-      main.appendChild(el("p", "pf-item-title", pfSnippet(v.title, 120)));
-      if (v.body) main.appendChild(el("p", "pf-item-body", pfSnippet(v.body, 170)));
-      const used = pfUsedIn(item.id);
-      main.appendChild(el("p", "pf-item-meta", [v.meta, used.length ? "Used in: " + used.join("; ") : "Not used in a CV yet"].filter(Boolean).join(" · ")));
-      const acts = el("div", "pf-item-actions");
-      if (kind === "evidence") {
-        const targets = ns.contributions.map((c, i) => ({ c, i })).filter(({ c }) => !contribIsBlank(c));
-        if (targets.length) {
-          const sel = el("select", "pf-select");
-          sel.setAttribute("aria-label", "Contribution to add this evidence to");
-          targets.forEach(({ c, i }) => { const o = el("option", null, (i + 1) + ". " + pfSnippet(c.title || "Untitled", 40)); o.value = i; sel.appendChild(o); });
-          const add = el("button", "pf-btn", "Add to contribution");
-          add.addEventListener("click", () => pfPlace("evidence", item.id, +sel.value));
-          acts.appendChild(sel); acts.appendChild(add);
-        } else acts.appendChild(el("span", "pf-hint", "Put a contribution in the CV first, then add evidence to it."));
-      } else if (placed) acts.appendChild(el("span", "pf-in-cv", "✓ In this CV"));
-      else {
-        const add = el("button", "pf-btn", "Add to this CV →");
-        add.setAttribute("aria-label", "Add to this CV: " + v.title);
-        add.addEventListener("click", () => pfPlace(kind, item.id));
-        acts.appendChild(add);
-      }
-      if (list) {
-        const rm = el("button", "pf-link-btn", "Remove from portfolio");
-        rm.addEventListener("click", () => pfRemoveFromPortfolio(list, item.id, v.title));
-        acts.appendChild(rm);
-      }
-      main.appendChild(acts);
-      card.appendChild(main);
-      return card;
-    }
-
-    function pfLibrary(parent) {
-      const pane = el("section", "pf-pane pf-library");
-      pane.setAttribute("aria-label", "Your portfolio");
-      const head = el("div", "pf-pane-head");
-      head.appendChild(el("h3", null, "Your portfolio"));
-      head.appendChild(el("p", "pf-pane-sub", "Drag a piece into the CV, or use its button."));
-      pane.appendChild(head);
-
-      const mod = ns.ui.pfModule || "contributions";
-      const tabs = el("div", "pf-tabs");
-      tabs.setAttribute("role", "tablist");
-      const counts = { contributions: pf.contributions.length, evidence: pf.evidence.length,
-        mentorship: pf.people.length + pf.practices.length + (pf.totals ? 1 : 0), statements: pf.statements.length };
-      PF_MODULES.forEach(m => {
-        const t = el("button", "pf-tab" + (m.k === mod ? " is-on" : ""), m.l + " (" + counts[m.k] + ")");
-        t.setAttribute("role", "tab");
-        t.setAttribute("aria-selected", m.k === mod ? "true" : "false");
-        t.addEventListener("click", () => { ns.ui.pfModule = m.k; saveState(); renderStage(); });
-        tabs.appendChild(t);
-      });
-      pane.appendChild(tabs);
-
-      const search = el("input", "v4-text-input pf-search");
-      search.type = "search"; search.placeholder = "Filter this module";
-      search.setAttribute("aria-label", "Filter this module");
-      pane.appendChild(search);
-
-      const ul = el("ul", "pf-list");
-      const group = (label) => ul.appendChild(el("li", "pf-group", label));
-      if (mod === "contributions") {
-        pf.contributions.forEach(it => ul.appendChild(pfCard("contribution", "contributions", it)));
-        if (!pf.contributions.length) ul.appendChild(el("li", "pf-empty", "No contributions yet. Write one in the Contributions step and press “Save to portfolio” on its card."));
-      } else if (mod === "evidence") {
-        pf.evidence.forEach(it => ul.appendChild(pfCard("evidence", "evidence", it)));
-        if (!pf.evidence.length) ul.appendChild(el("li", "pf-empty", "No loose evidence yet. Evidence written inside a contribution travels with that contribution; add items here that are not tied to one yet, such as an award or a piece of coverage."));
-      } else if (mod === "mentorship") {
-        if (pf.totals) { group("Totals"); ul.appendChild(pfCard("totals", null, Object.assign({ id: "totals" }, pf.totals))); }
-        group("People you trained");
-        pf.people.forEach(it => ul.appendChild(pfCard("person", "people", it)));
-        if (!pf.people.length) ul.appendChild(el("li", "pf-empty", "No one yet. Add a person below, or in the Mentorship step."));
-        group("Mentoring practices");
-        pf.practices.forEach(it => ul.appendChild(pfCard("practice", "practices", it)));
-        if (!pf.practices.length) ul.appendChild(el("li", "pf-empty", "None yet. The three practice prompts in the Mentorship step are saved here."));
-      } else {
-        pf.statements.forEach(it => ul.appendChild(pfCard("statement", "statements", it)));
-        if (!pf.statements.length) ul.appendChild(el("li", "pf-empty", "None yet. The parts of your personal statement that carry from one application to the next (the problem, strands, how you got here, standing, what's next) are saved here. The fit with a specific competition stays with each CV."));
-      }
-      pane.appendChild(ul);
-      search.addEventListener("input", () => {
-        const q = search.value.trim().toLowerCase();
-        ul.querySelectorAll(".pf-item").forEach(li => { li.hidden = !!q && li.dataset.search.indexOf(q) === -1; });
-      });
-
-      // Quick capture, so the portfolio can grow outside a CV.
-      if (mod === "evidence") {
-        const f = el("div", "pf-quick");
-        f.appendChild(el("p", "pf-quick-title", "Add evidence to your portfolio"));
-        const t = el("input", "v4-text-input"); t.type = "text"; t.placeholder = "e.g. Invited keynote, national conference, 2025"; t.setAttribute("aria-label", "Evidence");
-        const s = el("select", "pf-select"); s.setAttribute("aria-label", "Type of evidence");
-        EVIDENCE_TYPES.forEach(x => { const o = el("option", null, x); o.value = x; s.appendChild(o); });
-        const b = el("button", "pf-btn", "Add");
-        b.addEventListener("click", () => { if (!t.value.trim()) { t.focus(); return; } pf.evidence.push({ id: pfNewId("e"), text: t.value.trim(), type: s.value }); pfTouch(); renderStage(); });
-        f.appendChild(t); f.appendChild(s); f.appendChild(b);
-        pane.appendChild(f);
-      } else if (mod === "mentorship") {
-        const f = el("div", "pf-quick");
-        f.appendChild(el("p", "pf-quick-title", "Add a person you trained"));
-        const who = el("input", "v4-text-input"); who.type = "text"; who.placeholder = "Name or initials"; who.setAttribute("aria-label", "Name or initials");
-        const st = el("input", "v4-text-input"); st.type = "text"; st.placeholder = "Stage — PhD, MSc, postdoc…"; st.setAttribute("aria-label", "Stage");
-        const de = el("input", "v4-text-input"); de.type = "text"; de.placeholder = "Where they are now"; de.setAttribute("aria-label", "Where they are now");
-        const b = el("button", "pf-btn", "Add");
-        b.addEventListener("click", () => { if (!who.value.trim()) { who.focus(); return; } pf.people.push({ id: pfNewId("p"), who: who.value.trim(), stage: st.value.trim(), destination: de.value.trim(), why: "" }); pfTouch(); renderStage(); });
-        [who, st, de, b].forEach(x => f.appendChild(x));
-        pane.appendChild(f);
-      } else if (mod === "contributions") {
-        const b = el("button", "pf-link-btn", "+ Write a new contribution");
-        b.addEventListener("click", () => {
-          if (!ns.contributions.some(contribIsBlank)) ns.contributions.push(blankContribution());
-          ns.stageKey = "contrib"; renderStage();
-        });
-        pane.appendChild(b);
-      }
-      parent.appendChild(pane);
-    }
-
-    // The right pane: this CV, section by section, each a drop target.
-    function pfCvPane(parent) {
-      const pane = el("section", "pf-pane pf-cv");
-      pane.setAttribute("aria-label", "This CV");
-      const head = el("div", "pf-pane-head");
-      head.appendChild(el("h3", null, "This CV"));
-      const target = [labelOf(AGENCIES, ns.lens.agency), ns.lens.program].filter(Boolean).join(" · ");
-      head.appendChild(el("p", "pf-pane-sub", target ? "For " + target + ". Edit everything in the steps that follow." : "Set the agency in Setup to see its section names. Edit everything in the steps that follow."));
-      pane.appendChild(head);
-
-      const zone = (title, kinds, onDrop, note) => {
-        const z = el("div", "pf-zone");
-        z.appendChild(el("h4", null, title));
-        if (note) z.appendChild(el("p", "pf-zone-note", note));
-        pfDropZone(z, kinds, onDrop);
-        pane.appendChild(z);
-        return z;
-      };
-      const placedRow = (z, label, sub, linked, onRemove, extra) => {
-        const r = el("div", "pf-placed");
-        const txt = el("div", "pf-placed-text");
-        txt.appendChild(el("p", "pf-item-title", pfSnippet(label, 110)));
-        if (sub) txt.appendChild(el("p", "pf-item-meta", sub));
-        r.appendChild(txt);
-        if (extra) extra(r);
-        r.appendChild(el("span", "pf-origin" + (linked ? "" : " is-local"), linked ? "From portfolio" : "Written here"));
-        const x = el("button", "btn-icon", "×");
-        x.title = "Take out of this CV"; x.setAttribute("aria-label", "Take out of this CV: " + label);
-        x.addEventListener("click", onRemove);
-        r.appendChild(x);
-        z.appendChild(r);
-        return r;
-      };
-      const empty = (z, t) => z.appendChild(el("p", "pf-drop-hint", t));
-
-      // Personal statement / background
-      const zs = zone(secName("ps"), ["statement"], (k, id) => pfPlace(k, id),
-        "The fit with this competition is written fresh in its step for each application.");
-      let any = false;
-      if (ns.ps.role || ns.ps.institution || ns.ps.field) { any = true; placedRow(zs, "Opening line: I am " + articleFor(ns.ps.role) + " " + (ns.ps.role || "…") + " at " + (ns.ps.institution || "…") + ".", "", !!ns.pfLinks["ps.anchor"], () => pfUnplace("statement", "anchor")); }
-      PF_STATEMENTS.forEach(k => {
-        if (!(ns.ps[k] || "").trim()) return;
-        any = true;
-        placedRow(zs, PS_KICKER[k] + ": " + ns.ps[k], "", !!ns.pfLinks["ps." + k], () => pfUnplace("statement", k));
-      });
-      if (!any) empty(zs, "Drop statement pieces here.");
-
-      // Contributions
-      const live = ns.contributions.map((c, i) => ({ c, i })).filter(({ c }) => !contribIsBlank(c));
-      const zc = zone(secName("contrib") + " (" + live.length + " of 10)", ["contribution"], (k, id) => pfPlace(k, id),
-        "Drop evidence onto a contribution to add it there.");
-      live.forEach(({ c, i }, pos) => {
-        const ev = (c.evidence || []).filter(e => (e.text || "").trim()).length;
-        const row = placedRow(zc, (pos + 1) + ". " + (c.title || "Untitled contribution"), ev + " evidence item" + (ev === 1 ? "" : "s"),
-          !!(c.pfId && pfFind("contributions", c.pfId)), () => pfUnplace("contribution", i), (r) => {
-            const mv = el("span", "pf-move");
-            const up = el("button", "pf-link-btn", "↑"); up.setAttribute("aria-label", "Move up"); up.disabled = pos === 0;
-            const dn = el("button", "pf-link-btn", "↓"); dn.setAttribute("aria-label", "Move down"); dn.disabled = pos === live.length - 1;
-            const swap = (j) => { const other = live[j].i; const tmp = ns.contributions[i]; ns.contributions[i] = ns.contributions[other]; ns.contributions[other] = tmp; saveState(); renderStage(); };
-            up.addEventListener("click", () => swap(pos - 1)); dn.addEventListener("click", () => swap(pos + 1));
-            mv.appendChild(up); mv.appendChild(dn); r.appendChild(mv);
-          });
-        pfDropZone(row, ["evidence"], (k, id) => pfPlace(k, id, i));
-      });
-      if (!live.length) empty(zc, "Drop contributions here. Choose the ones that fit this opportunity; up to 10.");
-
-      // Mentorship
-      const zm = zone(secName("mentor"), ["person", "practice", "totals"], (k, id) => pfPlace(k, id));
-      any = false;
-      if (MENTOR_COUNT_LABELS.some(([k]) => (ns.mentorCounts[k] || "").trim())) {
-        any = true;
-        placedRow(zm, "Totals: " + MENTOR_COUNT_LABELS.map(([k, lab]) => (ns.mentorCounts[k] || "0") + " " + lab.toLowerCase()).join(" · "), "", !!ns.pfLinks.totals, () => pfUnplace("totals"));
-      }
-      ns.mentees.forEach((m, j) => {
-        if (menteeIsBlank(m)) return;
-        any = true;
-        placedRow(zm, [m.who, m.stage].filter(Boolean).join(", "), m.destination || "", !!(m.pfId && pfFind("people", m.pfId)), () => pfUnplace("person", j));
-      });
-      PF_PRACTICES.forEach(([, lab, field]) => {
-        if (!(ns[field] || "").trim()) return;
-        any = true;
-        placedRow(zm, lab + ": " + ns[field], "", !!ns.pfLinks[field], () => pfUnplace("practice", field));
-      });
-      if (!any) empty(zm, "Drop totals, people and practices here.");
-      parent.appendChild(pane);
-    }
-
-    // ── Stage: Portfolio ──
-    function renderPortfolio(c) {
-      lensBar(c);
-      stageHead(c, "Step · From your portfolio", "Choose what this application needs",
-        "Your portfolio is on the left: contributions with their evidence, your mentorship record and the parts of your personal statement that carry from one application to the next. This CV is on the right. Move in the pieces that fit this opportunity, then tailor them in the steps that follow. Anything you improve can go back into the portfolio at the end.",
-        false);
-
-      const bar = el("div", "pf-filebar");
-      if (!pf) {
-        bar.appendChild(el("p", "pf-file-status", "No portfolio open."));
-      } else {
-        const status = el("p", "pf-file-status");
-        status.appendChild(el("strong", null, pfMeta.fileName || "New portfolio (not saved to a file yet)"));
-        status.appendChild(document.createTextNode(" · " + pfItemCount() + " piece" + (pfItemCount() === 1 ? "" : "s") + " · "));
-        status.appendChild(el("span", pfMeta.dirty ? "pf-dirty" : "pf-clean", pfMeta.dirty ? "Changes not yet saved to the file" : "Saved to the file"));
-        bar.appendChild(status);
-      }
-      const btns = el("div", "pf-file-actions");
-      const mk = (label, cls, fn) => { const b = el("button", cls, label); b.addEventListener("click", fn); btns.appendChild(b); return b; };
-      if (pf) mk(pfHandle ? "Save" : "Save portfolio file", "btn btn-primary", () => pfSave(false));
-      if (pf && pfHandle) mk("Save as…", "btn btn-outline", () => pfSave(true));
-      mk("Open a portfolio file", pf ? "btn btn-outline" : "btn btn-primary", pfOpen);
-      if (!pf) {
-        mk("Start an empty portfolio", "btn btn-outline", () => { pfEnsure(); pfSaveLocal(); renderStage(); });
-        mk("Try a sample portfolio", "btn btn-outline", pfLoadSample);
-      } else {
-        mk("Close portfolio", "pf-link-btn", () => {
-          if (pfMeta.dirty && !confirm("Close the portfolio? Changes not saved to a file will be lost.")) return;
-          pf = null; pfHandle = null; pfMeta = { fileName: "", dirty: false, savedAt: 0 };
-          try { localStorage.removeItem(PF_KEY); } catch (_) {}
-          renderStage();
-        });
-      }
-      bar.appendChild(btns);
-      c.appendChild(bar);
-      const help = el("p", "v4-help", window.showSaveFilePicker
-        ? "The file stays on your computer; this page reads and writes it there and sends it nowhere. Once you have saved it, Save writes straight back to the same file."
-        : "The file stays on your computer; this page reads it there and sends it nowhere. In this browser, saving downloads a fresh copy of the file, so replace the old one with it.");
-      c.appendChild(help);
-      if (pfFlash) { const f = el("p", "pf-flash", pfFlash); f.setAttribute("role", "status"); c.appendChild(f); pfFlash = ""; }
-
-      if (!pf) {
-        const intro = el("div", "narrative-funder-note");
-        intro.appendChild(el("strong", null, "No portfolio yet? "));
-        intro.appendChild(document.createTextNode("Write this CV in the steps as usual. At the end, the Review step can save its pieces as your first portfolio file. The sample shows a filled portfolio for an invented researcher."));
-        c.appendChild(intro);
-        navRow(c, { nextLabel: "Continue without one →" });
-        return;
-      }
-
-      const owner = el("div", "pf-owner");
-      const ol = el("label", null, "Whose portfolio");
-      const oi = el("input", "v4-text-input"); oi.type = "text"; oi.placeholder = "Your name"; oi.value = pf.owner || "";
-      oi.addEventListener("change", () => { pf.owner = oi.value.trim(); pfTouch(); renderStage(); });
-      ol.appendChild(oi); owner.appendChild(ol);
-      c.appendChild(owner);
-
-      const grid = el("div", "pf-grid");
-      pfLibrary(grid);
-      pfCvPane(grid);
-      c.appendChild(grid);
-
-      const foot = el("div", "pf-foot");
-      const saveAll = el("button", "btn btn-outline", "Save this CV's material to the portfolio");
-      saveAll.addEventListener("click", () => {
-        const n = pfSaveAll();
-        pfFlash = n ? n + " piece" + (n === 1 ? "" : "s") + " added or updated in the portfolio. Save the portfolio file to keep them." : "The portfolio already has everything in this CV.";
-        renderStage();
-      });
-      const fresh = el("button", "pf-link-btn", "Start a new CV from the portfolio");
-      fresh.addEventListener("click", pfStartNewCv);
-      foot.appendChild(saveAll); foot.appendChild(fresh);
-      c.appendChild(foot);
-      navRow(c, { nextLabel: ns.mode === "xray" ? "To the structural read →" : "To the contributions →" });
-    }
-
-    // The bar on each contribution card in the Contributions step.
-    function renderPfBar(bar, i) {
-      clear(bar);
-      const c = ns.contributions[i];
-      bar.hidden = !pf;
-      if (!c || !pf) return;
-      const item = c.pfId && pf && pfFind("contributions", c.pfId);
-      if (item) {
-        if (contribDiffers(c)) {
-          bar.appendChild(el("span", null, "From your portfolio. Edits here stay in this CV until you update the portfolio copy."));
-          const b = el("button", "pf-link-btn", "Update the portfolio copy");
-          b.addEventListener("click", () => { pfSaveContrib(c); saveState(); pfFlashBar(bar, i, "Portfolio copy updated. Save the portfolio file to keep it."); });
-          bar.appendChild(b);
-        } else bar.appendChild(el("span", "pf-clean", "From your portfolio · matches the portfolio copy"));
-      } else {
-        if (contribIsBlank(c)) { bar.appendChild(el("span", null, "Write this one here, or bring one in from the Portfolio step.")); return; }
-        bar.appendChild(el("span", null, c.pfId ? "Its portfolio copy was removed." : "Not in your portfolio yet."));
-        const b = el("button", "pf-link-btn", "Save to portfolio");
-        b.addEventListener("click", () => { pfSaveContrib(c); saveState(); pfFlashBar(bar, i, "Saved to the portfolio. Save the portfolio file (Portfolio step) to keep it."); });
-        bar.appendChild(b);
-      }
-    }
-    function pfFlashBar(bar, i, msg) {
-      renderPfBar(bar, i);
-      const m = el("span", "pf-flash-inline", msg); m.setAttribute("role", "status");
-      bar.appendChild(m);
-      bar.dataset.flashAt = Date.now();
-    }
-    const pfIsSample = () => !!pf && pf.cvs.some(cv => cv.id === "cv-sample1");
-    const pfDisplayName = () => pfMeta.fileName || (pfIsSample() ? "the sample portfolio" : "a portfolio not yet saved to a file");
-    function pfLoadSample() {
-      if (pf && pfMeta.dirty && !confirm("The portfolio open now has changes that are not saved to a file. Replace it with the sample?")) return;
-      pf = pfSample(); pfHandle = null; pfMeta = { fileName: "", dirty: false, savedAt: 0 };
-      pfSaveLocal(); countEvent("pfSample");
-      pfFlash = "Loaded the sample portfolio. Everything in it is fictional.";
-      renderStage();
-    }
-
-    // The status line under the step list.
-    function pfPanelStatus() {
-      const box = el("div", "pf-panel");
-      box.appendChild(el("h3", null, "Portfolio"));
-      if (!pf) {
-        box.appendChild(el("p", null, ns.start === "portfolio" ? "None open yet." : "None open. You can save one from this CV at the end."));
-        return box;
-      }
-      box.appendChild(el("p", "pf-panel-name", pfDisplayName()));
-      box.appendChild(el("p", null, pfItemCount() + (pfItemCount() === 1 ? " piece" : " pieces")));
-      if (pfIsSample() && !pfMeta.fileName) box.appendChild(el("p", null, "Fictional, for trying the tool"));
-      else box.appendChild(el("p", pfMeta.dirty ? "pf-dirty" : "pf-clean", pfMeta.dirty ? "Unsaved changes" : "File up to date"));
-      if (pfMeta.dirty) {
-        const b = el("button", "pf-link-btn", "Save the file");
-        b.addEventListener("click", () => pfSave(false));
-        box.appendChild(b);
-      }
-      return box;
-    }
-
-    // Review: the optional second way to finish.
-    function renderKeepForNextTime(c) {
-      const box = el("div", "pf-finish");
-      box.appendChild(el("h3", "pf-finish-h", "2. Keep the pieces for next time (optional)"));
-      if (pfFlash) { const f = el("p", "pf-flash", pfFlash); f.setAttribute("role", "status"); box.appendChild(f); pfFlash = ""; }
-      const go = el("button", "btn btn-primary");
-      if (!pf) {
-        box.appendChild(el("p", null, "Save this CV's contributions, evidence, mentorship record and statement pieces as a portfolio file on your own computer. The next time you apply, choose Open my portfolio and start from them. Nothing is sent anywhere."));
-        go.textContent = "Create my portfolio file";
-      } else {
-        box.appendChild(el("p", null, "Add this CV's pieces to " + pfDisplayName() + " and save the file. Pieces you tailored here replace their portfolio copies; new ones are added."));
-        go.textContent = "Update my portfolio file";
-      }
-      go.addEventListener("click", async () => {
-        const n = pfSaveAll();
-        pfFlash = n ? n + " piece" + (n === 1 ? "" : "s") + " saved to your portfolio." : "Your portfolio already had everything in this CV.";
-        await pfSave(!pfHandle && !pfMeta.fileName);
-      });
-      box.appendChild(go);
-      box.appendChild(el("p", "v4-help", "This step is optional. If you only need this CV, the draft above is all you need to take."));
-      c.appendChild(box);
-    }
-
-    // Called after every saveState(): keeps the contribution bars current while the researcher types.
-    function pfAfterSave() {
-      document.querySelectorAll(".pf-card-bar").forEach(b => { if (Date.now() - (+b.dataset.flashAt || 0) > 4000) renderPfBar(b, +b.dataset.i); });
-    }
-
     // ── Reset & boot ────────────────────────────────────────────────────────
     document.getElementById("v4-reset").addEventListener("click", (e) => {
       e.preventDefault();
-      if (!confirm("Clear your V5x draft, your notes for the team and your feedback answers? Your portfolio is kept. This cannot be undone.")) return;
+      if (!confirm("Clear your V6 beta draft, your notes for the team and your feedback answers? This cannot be undone.")) return;
       try { localStorage.removeItem(NCV_KEY); } catch (_) {}
       ns = defaultState();
       updateNoteBtn();
@@ -3999,7 +3087,6 @@
 
     document.getElementById("v4-guide-top").href = GUIDE_URL;
     loadState();
-    pfLoadLocal();
     updateNoteBtn();
     if (ns.mode && ns.stageKey !== "setup") reentryPending = true;
     renderStage();
