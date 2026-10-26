@@ -6,10 +6,11 @@
   <title>Narrative CV — V6 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
-    Narrative CV tool — V6 beta, the regular line from 2026-10-23. A copy of V5 beta as it
-    stood on 2026-09-25 (commit 4d71449), with nothing else added yet. Eli's 2026-10-06
-    notes are the first backlog; what is decided and what is inferred is logged in
-    narrative-cv-v6-decisions.md. V5 stays frozen: it is the reference, the pilot build
+    Narrative CV tool — V6 beta, the regular line from 2026-10-23. Forked from V5 beta as it
+    stood on 2026-09-25 (commit 4d71449), then built out from Eli's 2026-10-06 notes: trainee
+    destinations without names, two lines per evidence item, an order-of-contributions step,
+    a Word download and per-section copy, a second field with interdisciplinary examples, and
+    a read across the contributions. Every reading is logged in narrative-cv-v6-decisions.md. V5 stays frozen: it is the reference, the pilot build
     and the merge base for V5x portfolio (narrative-cv-prototype-v5x-portfolio.html).
 
     Hard constraints: no AI and no API — deterministic and on-device (localStorage
@@ -112,6 +113,17 @@
     .v4-ev-row { grid-template-columns: 22px minmax(0, 1fr) 180px 30px; }
     .v4-traj-row { grid-template-columns: minmax(120px, 0.8fr) 140px minmax(0, 1fr) minmax(0, 1fr) 30px; }
     .v4-traj-more { margin: 0 0 8px; }
+    .v4-ev-finding { display: block; width: calc(100% - 30px); box-sizing: border-box; margin: 0 0 12px 30px; min-height: 48px; resize: vertical; font: inherit; }
+    @media (max-width: 720px) { .v4-ev-finding { width: 100%; margin-left: 0; } }
+    .v6-order-list { list-style: none; padding: 0; margin: 1rem 0; }
+    .v6-order-row { display: flex; gap: 12px; align-items: center; justify-content: space-between; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin: 0 0 8px; background: #fff; }
+    .v6-order-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .v6-order-gist { color: var(--muted); font-size: 0.9em; }
+    .v6-order-tag { align-self: flex-start; font-size: 0.75em; font-weight: 700; color: var(--burgundy); text-transform: uppercase; letter-spacing: 0.04em; }
+    .v6-order-move { display: flex; gap: 6px; flex-shrink: 0; }
+    .v6-order-btn { min-width: 40px; padding: 0.35rem 0.6rem; }
+    .v6-order-btn:disabled { opacity: 0.3; cursor: default; }
+    .v4-ref-note { display: block; color: var(--muted); font-size: 0.92em; margin: 2px 0 0; }
     @media (max-width: 720px) { .v4-ev-row, .v4-traj-row { grid-template-columns: 1fr; } }
     .v4-key-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--burgundy); color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0; }
     .v4-super { vertical-align: super; font-size: 0.72em; color: var(--burgundy); font-weight: 700; margin-left: 1px; }
@@ -906,6 +918,95 @@
       }
     };
     // EXEMPLAR_LIBRARY:end
+    // ── Interdisciplinary worked examples (V6-5, Eli 2026-10-06; all invented) ──
+    // One mid-career cell for each pair of disciplines, keyed "first+second" in DISCIPLINES order.
+    // Same CELL shape and checks as EXEMPLAR_LIBRARY (scripts/ncv-v5-examples.js lint/register).
+    // INTERDISCIPLINARY_LIBRARY:begin
+    const INTERDISCIPLINARY_LIBRARY = {
+      "stem+health": { topic: "Biomedical engineer working with respirologists; a chest-worn sensor that flags decline during home recovery from pneumonia", segments: [
+        { r: "stakes", t: "Patients recovering at home from pneumonia are often readmitted after a decline that home-care nurses see only at the next scheduled visit." },
+        { r: "role", t: "I lead the engineering side of a partnership with two respirologists, and I designed the chest-worn sensor and the alert thresholds the nurses use." },
+        { r: "activities", t: "Over two years my group built three versions of the sensor and followed 140 patients through 30 days of home recovery, comparing alerts with nurse assessments." },
+        { r: "outputs", t: "The work produced a validated sensor design, an open alert algorithm and two papers, one in engineering and one in respirology.", keys: ["a","b"] },
+        { r: "outcomes", t: "A regional home-care program now gives the sensor to patients discharged after pneumonia, and readmissions in its pilot fell from 18 to 11 per cent.", keys: ["c"] },
+        { r: "impact", t: "If the thresholds hold for other respiratory conditions, home monitoring could let nurses visit when a patient needs care and reduce avoidable readmissions." }
+      ] },
+      "stem+social": { topic: "Transportation engineer working with sociologists; whether bus network redesigns reach workers whose shifts start before dawn", segments: [
+        { r: "stakes", t: "Transit agencies redesign bus networks with travel-time models that seldom account for workers whose shifts start before the first bus." },
+        { r: "role", t: "I built the network model for a joint project with two sociologists, and I designed the method that links schedule data to the shift times they gathered in interviews." },
+        { r: "activities", t: "Over three years I modelled four network redesigns in two cities, using 60 interviews and a survey of 1,200 shift workers to set the start times that matter." },
+        { r: "outputs", t: "The project produced an open model of access to work, a shift-time dataset and three papers in transportation and sociology journals.", keys: ["a","b"] },
+        { r: "outcomes", t: "One transit agency moved the first departure on six routes earlier in 2025 after reviewing the results, and a planning firm now runs the model in its network reviews.", keys: ["c"] },
+        { r: "impact", t: "If agencies adopt shift-based measures, redesigns could be judged by access to work at the hours people start, and early-shift workers could gain routes planned around them." }
+      ] },
+      "stem+humanities": { topic: "Computer scientist working with historians; handwriting recognition for water-damaged parish registers", segments: [
+        { r: "stakes", t: "Thousands of eighteenth-century parish registers in Quebec are water-damaged, and historians transcribe them by hand at about 300 pages a year." },
+        { r: "role", t: "I lead the recognition work in a project with three historians, and I designed the training method that uses their transcriptions to teach the model each scribe's hand." },
+        { r: "activities", t: "Since 2021 I have trained models on 9,000 transcribed pages from 40 parishes and measured their error rates against a second team of transcribers." },
+        { r: "outputs", t: "The project produced a searchable corpus of 210,000 register pages, an open recognition model and four papers in computing and history venues.", keys: ["a","b"] },
+        { r: "outcomes", t: "Two provincial archives now offer the corpus in their reading rooms, and researchers and genealogists ran 50,000 searches in its first year.", keys: ["c"] },
+        { r: "impact", t: "If the method transfers to other damaged collections, archives could open records that are too costly to transcribe today, and population histories could draw on far larger samples." }
+      ] },
+      "stem+creative": { topic: "Acoustical engineer and composer; adjustable hall acoustics tuned with the musicians who play in the room", segments: [
+        { r: "stakes", t: "Small concert halls are tuned for one kind of music, and ensembles that play other repertoire adapt to a room that works against them." },
+        { r: "role", t: "As an acoustical engineer and a composer, I designed the adjustable panel system and wrote the test pieces the resident musicians played during tuning." },
+        { r: "activities", t: "Over 18 months I ran 70 tuning sessions with four ensembles, recording each setting and the players' ratings of how well they heard one another." },
+        { r: "outputs", t: "The work produced a panel system installed in the hall, a set of six test compositions and two papers on tuning a room with its performers.", keys: ["a","b"] },
+        { r: "outcomes", t: "The hall now changes its acoustics between programs, and two other venues have commissioned the panel system for their 2026 renovations.", keys: ["c"] },
+        { r: "impact", t: "If musicians' ratings prove reliable as tuning data, small venues could host chamber, choral and jazz programs in one room, and acoustic design could include performers from the start." }
+      ] },
+      "health+social": { topic: "Public health researcher working with a sociologist; food insecurity among older adults who live alone", segments: [
+        { r: "stakes", t: "Food insecurity among older adults who live alone is undercounted, because household surveys reach few people over 75." },
+        { r: "role", t: "I co-lead the study with a sociologist, and I designed the health measures and the home-visit protocol community workers use to reach people living alone." },
+        { r: "activities", t: "Over three years I led a team that visited 900 older adults in three cities, linking dietary records and health data with interviews about how they get food." },
+        { r: "outputs", t: "The study produced a validated screening question, a linked dataset held by the partner health authority and three papers in public health and sociology journals.", keys: ["a","b"] },
+        { r: "outcomes", t: "Two home-care programs added the screening question to their intake in 2025, and one health authority uses the findings to plan its meal-delivery routes.", keys: ["c"] },
+        { r: "impact", t: "If the screening question holds up in rural areas, health services could identify food insecurity at the first home visit and connect people to support before their health declines." }
+      ] },
+      "health+humanities": { topic: "Physician and medical historian; consent practices in past Canadian epidemics, taught as clinical ethics cases", segments: [
+        { r: "stakes", t: "Clinical trainees learn consent rules as fixed procedures, with little sense of the abuses and debates that produced them." },
+        { r: "role", t: "As a physician trained in history, I lead an archival project on consent in Canadian epidemic responses and designed the teaching cases drawn from it." },
+        { r: "activities", t: "Since 2019 I have worked through hospital and public health archives from four epidemics and written 16 teaching cases, tested with residents in two programs." },
+        { r: "outputs", t: "The project produced a monograph, a casebook for clinical ethics teaching and an online guide to the archives for other researchers.", keys: ["a","b"] },
+        { r: "outcomes", t: "Three residency programs now use the casebook in their ethics curriculum, and a provincial research ethics board cited the monograph when it rewrote its emergency review policy.", keys: ["c"] },
+        { r: "impact", t: "If historical cases improve how trainees reason about consent, ethics education could prepare clinicians for the pressures of the next public health emergency." }
+      ] },
+      "health+creative": { topic: "Occupational therapist and theatre artist; improvisational theatre as rehabilitation after stroke", segments: [
+        { r: "stakes", t: "After a stroke, about half of patients regain arm movement in therapy and then stop using the affected arm at home, where exercises feel repetitive." },
+        { r: "role", t: "I designed and led a rehabilitation program built on improvisational theatre exercises, working as both the occupational therapist and the workshop leader." },
+        { r: "activities", t: "Over two years I ran 12-week workshops for 64 participants at two rehabilitation centres, measuring arm use at home with wrist sensors before and after." },
+        { r: "outputs", t: "The program produced a facilitator manual, a performance staged by participants and two papers, one clinical and one on the theatre methods.", keys: ["a","b"] },
+        { r: "outcomes", t: "Both centres now offer the workshops in outpatient care, and participants used the affected arm 40 per cent more at home three months after the program.", keys: ["c"] },
+        { r: "impact", t: "If the effect holds in a larger trial, creative practice could become a standard route into rehabilitation for people who find conventional exercises hard to sustain." }
+      ] },
+      "social+humanities": { topic: "Political scientist and historian; a century of municipal council debates, digitized and coded", segments: [
+        { r: "stakes", t: "Studies of local democracy in Canada rely on recent records, because municipal council minutes from before 1990 are held on paper that few researchers can search." },
+        { r: "role", t: "I co-direct the project with a historian, and I designed the coding scheme that tracks who spoke, on which issue and with what result." },
+        { r: "activities", t: "Since 2018 I have led a team that digitized and coded the minutes of 12 councils from 1920 to 2020, about 48,000 meetings." },
+        { r: "outputs", t: "The project produced an open database of council debates, a coding manual and five papers in political science and history journals.", keys: ["a","b"] },
+        { r: "outcomes", t: "Eleven research teams have used the database, and two municipalities drew on it for the history sections of their governance reviews.", keys: ["c"] },
+        { r: "impact", t: "If the coding scheme extends to other provinces, research on local democracy could follow change over a century and test claims about participation against the long record." }
+      ] },
+      "social+creative": { topic: "Sociologist and documentary filmmaker; eviction research made into films with tenant co-authors", segments: [
+        { r: "stakes", t: "Research on eviction reaches policy makers in reports that tenants seldom see, and tenants' own accounts reach the public in forms that researchers seldom cite." },
+        { r: "role", t: "I lead a project that pairs interview research with documentary film, and I directed the films with tenant co-authors who shaped each story." },
+        { r: "activities", t: "Over three years I interviewed 80 tenants facing eviction in two cities and made four short films with eight of them." },
+        { r: "outputs", t: "The project produced four films, an interview archive held with the tenants' association and two articles on co-authored documentary method.", keys: ["a","b"] },
+        { r: "outcomes", t: "The films have been screened 60 times, and a provincial housing tribunal now shows one of them when it trains new adjudicators.", keys: ["c"] },
+        { r: "impact", t: "If co-authored film proves a reliable research method, tenants could shape how housing evidence reaches decision makers, and adjudicators could hear eviction from the tenant's side." }
+      ] },
+      "humanities+creative": { topic: "Literary scholar and novelist; the letters of Montreal garment workers, edited and retold in fiction", segments: [
+        { r: "stakes", t: "The letters of immigrant garment workers in Montreal survive in family collections, and few have been read outside the families who kept them." },
+        { r: "role", t: "I lead a project that edits the letters as a scholarly edition, and I wrote a novel drawn from them alongside the edition." },
+        { r: "activities", t: "Over five years I collected 1,100 letters from 45 families, translated them from Yiddish and Italian with two collaborators and drafted the novel from the edited text." },
+        { r: "outputs", t: "The project produced a two-volume scholarly edition, a novel published in 2025 and a public archive of the scanned letters.", keys: ["a","b"] },
+        { r: "outcomes", t: "The novel was shortlisted for a national fiction prize, and two universities now teach the edition in courses on labour and migration history.", keys: ["c"] },
+        { r: "impact", t: "If the edition and the novel continue to send readers to each other, family archives could reach a wider public, and literary history could account for writers outside print culture." }
+      ] }
+    };
+    // INTERDISCIPLINARY_LIBRARY:end
+    const interKey = (a, b) => { if (!a || !b || a === b) return ""; const order = DISCIPLINES.map(d => d.v); return order.indexOf(a) < order.indexOf(b) ? a + "+" + b : b + "+" + a; };
+    const disciplineLabel = (L) => [labelOf(DISCIPLINES, L.discipline), labelOf(DISCIPLINES, L.discipline2)].filter(Boolean).join(" + ");
     // With no work mode picked yet, show the discipline's usual mode; with no career stage, mid.
     const EXEMPLAR_DEFAULT_MODE = { stem: "team", health: "team", social: "solo", humanities: "solo", creative: "solo" };
     const EXEMPLAR_DEFAULT_STAGE = "mid";
@@ -1188,7 +1289,7 @@
     const menteeParts = (m) => ({ label: (m.stage || "").trim() || "Trainee", where: menteeWhere(m), recog: (m.recognition || "").trim(), why: (m.why || "").trim() });
     const defaultState = () => ({
       mode: "", stageKey: "setup",
-      lens: { agency: "", format: "", program: "", discipline: "", careerStage: "", workMode: [] },
+      lens: { agency: "", format: "", program: "", discipline: "", discipline2: "", otherField: "", careerStage: "", workMode: [] },
       ui: {},
       xray: { text: "" },
       contributions: [blankContribution()],
@@ -1349,7 +1450,7 @@
         },
         impact: { q: "What could change at the scale of a field, sector or population?", help: "Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems get framed.", academicTag: true },
         translational: { q: "What is one moment when this work reached someone?", help: "One scene, two sentences — a person, a clinic, a classroom, a community meeting, a committee that used it. One concrete instance of What already changed, told as a scene. Optional.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
-        evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter — a, b, c — and the letter appears in your draft beside the sentence it backs up." }
+        evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter — a, b, c — and the letter appears in your draft beside the sentence it backs up. Under each item there is room for two lines on what it found, or why the dataset or tool was useful, so a reviewer has the point without opening the source." }
       },
       mentor: {
         philosophy: { q: "What is one concrete thing you do that shows how you mentor?", help: "One practice you follow, described concretely. How you run a first meeting, how you decide authorship, how you hand a project over when someone is ready for it." },
@@ -1370,6 +1471,7 @@
       s.push({ key: "contrib", short: "Contributions" });
       s.push({ key: "mentor", short: "Mentorship" });
       s.push({ key: "ps", short: isFrq() ? "Background and skills" : "Personal statement" });
+      s.push({ key: "order", short: "Order of contributions" });
       s.push({ key: "review", short: "Review" });
       s.push({ key: "feedback", short: "Feedback" });
       return s;
@@ -1377,7 +1479,7 @@
     const RENDERERS = {
       setup: (c) => renderSetup(c), xray: (c) => renderXray(c),
       contrib: (c) => renderContributions(c), mentor: (c) => renderMentorship(c),
-      ps: (c) => renderPersonal(c), review: (c) => renderReview(c),
+      ps: (c) => renderPersonal(c), order: (c) => renderOrder(c), review: (c) => renderReview(c),
       feedback: (c) => renderFeedback(c)
     };
     const stageDone = (key) => {
@@ -1386,6 +1488,7 @@
       if (key === "contrib") return ns.contributions.some(c => c.title && c.activities);
       if (key === "mentor") return !!(ns.mentorPhilosophy || ns.mentees.some(menteeHasPlace));
       if (key === "ps") return !!(ns.ps.challenge && ns.ps.standing);
+      if (key === "order") return !!ns.ui.orderDone;
       if (key === "feedback") return ns.feedback.sent.length > 0;
       return false;
     };
@@ -1545,7 +1648,22 @@
         () => ns.lens.agency,
         (v) => { ns.lens.agency = v; const a = AGENCIES.find(x => x.v === v); ns.lens.format = a ? a.fmt : ""; });
       chipRow(parent, "Closest disciplinary home", "This changes the worked example and the discipline notes you see. Pick the closest fit — your draft stays as it is.", DISCIPLINES,
-        () => ns.lens.discipline, (v) => { ns.lens.discipline = v; });
+        () => ns.lens.discipline, (v) => { ns.lens.discipline = v; if (ns.lens.discipline2 === v) ns.lens.discipline2 = ""; });
+      // V6-5 (Eli, 2026-10-06): work that spans two fields, and fields the list leaves out.
+      if (ns.lens.discipline) {
+        chipRow(parent, "Does your work also sit in another field? (optional)", "Pick one if your work spans two fields. The Contributions step then adds a worked example that spans the same two.",
+          DISCIPLINES.filter(d => d.v !== ns.lens.discipline), () => ns.lens.discipline2, (v) => { ns.lens.discipline2 = v; });
+      }
+      const otherWrap = el("div", "contribution-field");
+      otherWrap.appendChild(el("label", "v4-q", "Field not listed here? (optional)"));
+      otherWrap.appendChild(el("p", "v4-help", "Name it. Fields are added as people ask for them, and the team sees this answer only if you send feedback at the end."));
+      const otherInput = el("input", "v4-text-input");
+      otherInput.type = "text"; otherInput.placeholder = "e.g. education, law, architecture";
+      otherInput.setAttribute("aria-label", "Field not listed");
+      otherInput.value = ns.lens.otherField || "";
+      otherInput.addEventListener("input", (e) => { ns.lens.otherField = e.target.value; saveState(); });
+      otherWrap.appendChild(otherInput);
+      parent.appendChild(otherWrap);
       chipRow(parent, "Career stage", "This changes a few of the prompts — early career, for instance, asks for the signals you have so far.", CAREER_STAGES,
         () => ns.lens.careerStage, (v) => { ns.lens.careerStage = v; });
       const progWrap = el("div", "contribution-field");
@@ -1568,7 +1686,7 @@
       if (L.agency) pills.push(labelOf(AGENCIES, L.agency) + (L.format ? " · " + (L.format === "cv-frq" ? "CV-FRQ" : "TCV") : ""));
       if (L.program) pills.push(L.program);
       if (L.careerStage) pills.push(labelOf(CAREER_STAGES, L.careerStage));
-      if (L.discipline) pills.push(labelOf(DISCIPLINES, L.discipline));
+      if (L.discipline) pills.push(disciplineLabel(L));
       (L.workMode || []).forEach(w => pills.push(labelOf(WORK_MODES, w)));
       if (!pills.length) pills.push("no context set yet");
       pills.forEach(p => note.appendChild(el("span", "v4-lens-pill", p)));
@@ -2022,6 +2140,9 @@
         "Describe up to 10 contributions or experiences that relate to your application. Choose the ones most relevant to this funding opportunity, which may differ from your most recent work. A contribution can be a single output or a collection of related work presented together, such as a cluster of papers, a program or a partnership. A short list of well-explained contributions is stronger than a long list. The fields below break each one into parts; in the finished CV they read as one paragraph. The example shows what that looks like.",
         "What counts as a contribution", "three");
 
+      // V6-3 (Eli, 2026-10-06): the order is set later, in its own step after the personal statement.
+      c.appendChild(el("p", "v4-help v4-order-ahead", "Write them in any order. After the personal statement, a short step asks you to put them in the order a reviewer should read them."));
+
       // B-17 + B-20: a one-time note that the checks below are suggestions, not a gate.
       if (!ns.ui.checksNoteSeen) {
         const note = el("div", "v4-checks-note");
@@ -2075,6 +2196,22 @@
         guidance: "In the finished text the scaffold is invisible, but every sentence is still doing one of these six jobs. The fields below help you write each one. The words stay yours.",
         guideText: "More kinds of evidence that count", guideAnchor: "difference"
       }));
+
+      // V6-5: a second worked example when the researcher named a second field in Setup.
+      const inter = INTERDISCIPLINARY_LIBRARY[interKey(ns.lens.discipline, ns.lens.discipline2)];
+      if (inter) {
+        const pair = disciplineLabel(ns.lens).replace(" + ", " and ");
+        c.appendChild(renderExemplarBox({
+          id: "v6-exemplar-inter",
+          title: "When the work spans two fields — " + pair,
+          matchLine: "This example: " + pair + " · Mid career. It shows one contribution that draws on both fields.",
+          segments: inter.segments,
+          legend: SEG_META.map(([, label]) => label),
+          source: "Where the shape comes from: the Tri-agency CV instructions, which ask you to explain “the impact, significance, usefulness, and your role” in each contribution. The content is fictional: the researcher, the project and the numbers are invented.",
+          guidance: "When work spans two fields, each of the six jobs can say what the work meant in each field: the role in both, outputs in both kinds of venue, outcomes for both audiences.",
+          guideText: "Interdisciplinary work in a narrative CV", guideAnchor: "concerns"
+        }));
+      }
 
       if (SHAPE_HINTS[disc]) {
         const hint = el("div", "narrative-funder-note");
@@ -2228,6 +2365,14 @@
         row.appendChild(txt); row.appendChild(sel); row.appendChild(x);
         wrap.appendChild(row);
         wrap.appendChild(linkNote);
+        // V6-2 (Eli, 2026-10-06): two lines per item on the main finding, or why it was useful.
+        const finding = el("textarea", "v4-text-input v4-ev-finding");
+        finding.rows = 2;
+        finding.placeholder = "Two lines: what it found, or why it was useful (optional)";
+        finding.setAttribute("aria-label", "What evidence item " + String.fromCharCode(97 + j) + " found, or why it was useful");
+        finding.value = ev.note || "";
+        finding.addEventListener("input", e => { ev.note = e.target.value; saveState(); });
+        wrap.appendChild(finding);
         if (ev.type === "Other") {
           const otherWrap = el("div", "v4-ev-other");
           const otherInput = el("input", "v4-text-input");
@@ -2254,7 +2399,7 @@
       // buildAdvisorPacket (via buildExportText) and openPrintView, since they all read w.refs.
       const refs = (contrib.evidence || []).filter(e => e.text && e.text.trim())
         .map((e, i) => ({
-          key: String.fromCharCode(97 + i), text: e.text.trim(),
+          key: String.fromCharCode(97 + i), text: e.text.trim(), note: (e.note || "").trim(),
           type: (e.type === "Other" && e.otherLabel && e.otherLabel.trim()) ? e.otherLabel.trim() : (e.type || "")
         }));
       const order = ["stakes", "activities", "outputs", "outcomes", "translational", "impact"];
@@ -2292,6 +2437,7 @@
           li.appendChild(el("span", "v4-rk", r.key + "."));
           li.appendChild(document.createTextNode(r.text + " "));
           if (r.type) li.appendChild(el("span", "v4-rt", "(" + r.type + ")"));
+          if (r.note) li.appendChild(el("span", "v4-ref-note", r.note));
           ol.appendChild(li);
         });
         refsWrap.appendChild(ol);
@@ -2412,6 +2558,7 @@
       note.appendChild(el("strong", null, "Why last? "));
       note.appendChild(document.createTextNode("The statement is a synthesis of what you just wrote. If a prompt below feels hard, the answer is usually already sitting in one of your contributions."));
       c.appendChild(note);
+      renderCrossRead(c);
 
       // B-37: worked example, after the lede/note and before the fields — same placement as the
       // Contributions exemplar.
@@ -2460,7 +2607,117 @@
       promptBlock(c, PROMPTS.ps.programFit, () => ns.ps.programFit, v => ns.ps.programFit = v, { minHeight: "84px", lintKind: "prose", plainLabel: PS_KICKER.programFit });
       if (isFrq()) promptBlock(c, PROMPTS.ps.teamFit, () => ns.ps.teamFit, v => ns.ps.teamFit = v, { minHeight: "84px", lintKind: "prose", plainLabel: PS_KICKER.teamFit });
       promptBlock(c, PROMPTS.ps.horizon, () => ns.ps.horizon, v => ns.ps.horizon = v, { minHeight: "60px", lintKind: "prose", plainLabel: PS_KICKER.horizon });
-      navRow(c);
+      navRow(c, { nextLabel: "Now put your contributions in order →" });
+    }
+
+
+    // ── Stage: Order of contributions (V6-3, Eli 2026-10-06) ───────────────
+    // The section reads as one account, so the order is a choice: the widest contribution first,
+    // the one that leads into the project applied for last. Moves rearrange ns.contributions itself,
+    // so the draft, the exports and the numbering all follow.
+    const liveContributions = () => ns.contributions.map((c, i) => ({ c, i })).filter(({ c }) => c.title || c.activities);
+    function renderOrder(c) {
+      lensBar(c);
+      const prog = (ns.lens.program || "").trim();
+      stageHead(c, "Step · Order of contributions", "Put your contributions in order",
+        "The contributions section reads as one account of your work, so the order carries meaning. The order you set here is the order in your draft and in every export.", false);
+      const guide = el("div", "narrative-funder-note");
+      guide.appendChild(el("p", "narrative-legend-title", "Two questions set the order"));
+      const ul = el("ul", "v4-shape-hint-list");
+      ul.appendChild(el("li", null, "First: which contribution runs across the most of your work? It opens the section and frames the others."));
+      ul.appendChild(el("li", null, "Last: which contribution leads most directly into the project you are applying for" + (prog ? " (" + prog + ")" : "") + "? It closes the section and hands over to the application."));
+      guide.appendChild(ul);
+      guide.appendChild(el("p", "v4-help", "The ones in between follow the thread from the first to the last."));
+      c.appendChild(guide);
+
+      const live = liveContributions();
+      if (live.length < 2) {
+        c.appendChild(el("p", "v4-help", live.length
+          ? "With one contribution the order is already set. Add more in the Contributions step, or continue to Review."
+          : "No contributions written yet. Add them in the Contributions step, then come back here."));
+        navRow(c, { nextLabel: "Now review →" });
+        return;
+      }
+      const list = el("ol", "v6-order-list");
+      live.forEach(({ c: contrib, i }, pos) => {
+        const li = el("li", "v6-order-row");
+        const text = el("div", "v6-order-text");
+        text.appendChild(el("strong", null, (pos + 1) + ". " + (contrib.title || "Untitled contribution")));
+        const gist = (contrib.stakes || contrib.activities || "").trim();
+        if (gist) text.appendChild(el("span", "v6-order-gist", gist.length > 140 ? gist.slice(0, 137).replace(/\s+\S*$/, "") + "…" : gist));
+        if (pos === 0) text.appendChild(el("span", "v6-order-tag", "Opens the section"));
+        if (pos === live.length - 1) text.appendChild(el("span", "v6-order-tag", "Closes the section"));
+        li.appendChild(text);
+        const mv = el("span", "v6-order-move");
+        const swap = (to) => {
+          const j = live[to].i;
+          const tmp = ns.contributions[i]; ns.contributions[i] = ns.contributions[j]; ns.contributions[j] = tmp;
+          ns.ui.orderDone = true; countEvent("orderMove"); renderStage();
+        };
+        const name = contrib.title || "contribution " + (pos + 1);
+        const up = el("button", "btn btn-outline v6-order-btn", "↑"); up.setAttribute("aria-label", "Move up: " + name); up.disabled = pos === 0;
+        const dn = el("button", "btn btn-outline v6-order-btn", "↓"); dn.setAttribute("aria-label", "Move down: " + name); dn.disabled = pos === live.length - 1;
+        up.addEventListener("click", () => swap(pos - 1)); dn.addEventListener("click", () => swap(pos + 1));
+        mv.appendChild(up); mv.appendChild(dn);
+        li.appendChild(mv);
+        list.appendChild(li);
+      });
+      c.appendChild(list);
+      const done = el("div", "v6-order-done");
+      if (ns.ui.orderDone) done.appendChild(el("p", "v4-help", "✓ Order set. Move any contribution again if you change your mind."));
+      else {
+        const ok = el("button", "narrative-draft-btn v4-inline-link", "This order works");
+        ok.addEventListener("click", () => { ns.ui.orderDone = true; saveState(); renderStage(); });
+        done.appendChild(ok);
+      }
+      c.appendChild(done);
+      navRow(c, { nextLabel: "Now review →" });
+    }
+
+    // ── V6-6 (Eli, 2026-10-06, future note): a read across the contributions ──
+    // Before the personal statement: words that recur across contributions, and any contribution
+    // that shares words with every other one. Counting only, on this device; no model involved.
+    const CROSS_STOP = new Set(("about above after again along also among another around based because been before being below between both " +
+      "built could during each early either every first found found from further given group have having into large later least level made " +
+      "make makes many might more most much must other others over people project projects research same several shall should since " +
+      "small some still study studies such than that their them then there these they this those three through under until used using " +
+      "very were what when where which while whose will with within without would years year since across after which first second " +
+      "work works worked working produced paper papers program programs team teams method methods data results result report reports").split(/\s+/));
+    function crossTerms(text) {
+      const out = new Set();
+      (text.toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ'-]{4,}/g) || []).forEach(w => {
+        w = w.replace(/'s$/, "").replace(/(ies)$/, "y").replace(/([^s])s$/, "$1");
+        if (w.length >= 5 && !CROSS_STOP.has(w)) out.add(w);
+      });
+      return out;
+    }
+    function crossCuttingRead() {
+      const live = liveContributions().map(({ c, i }) => ({ c, i,
+        terms: crossTerms([c.title, c.stakes, c.activities, c.outputs, c.outcomes, c.translational, c.impact].filter(Boolean).join(" ")) }));
+      if (live.length < 2) return null;
+      const df = new Map();
+      live.forEach(x => x.terms.forEach(t => df.set(t, (df.get(t) || 0) + 1)));
+      const recurring = [...df.entries()].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1] || b[0].length - a[0].length).map(([t]) => t).slice(0, 8);
+      const spanning = live.length < 3 ? [] : live.filter(x => live.every(y => y === x || [...x.terms].filter(t => y.terms.has(t)).length >= 2));
+      return { recurring, spanning, count: live.length };
+    }
+    function renderCrossRead(c) {
+      const r = crossCuttingRead();
+      if (!r || (!r.recurring.length && !r.spanning.length)) return;
+      const box = el("div", "narrative-funder-note v6-cross");
+      box.appendChild(el("p", "narrative-legend-title", "A read across your " + r.count + " contributions"));
+      if (r.recurring.length) {
+        const p = el("p", null);
+        p.appendChild(document.createTextNode("Words that recur in more than one contribution: "));
+        p.appendChild(el("strong", null, r.recurring.join(", ")));
+        p.appendChild(document.createTextNode(". A word that runs through several contributions may name the problem or one of the strands below."));
+        box.appendChild(p);
+      }
+      r.spanning.forEach(x => {
+        box.appendChild(el("p", null, "“" + (x.c.title || "Contribution " + (x.i + 1)) + "” shares words with each of your other contributions. It may be cross-cutting enough to belong in the statement itself, as the problem or a strand, with the contribution kept for its evidence."));
+      });
+      box.appendChild(el("p", "v4-help", "Worked out by counting repeated words on this device. It is a suggestion; the statement says what you decide."));
+      c.appendChild(box);
     }
 
     // ── Stage: Review & export ──────────────────────────────────────────────
@@ -2503,6 +2760,7 @@
       row(withMissing("Every contribution has a role line", missingFor(contribRoleTest), contribRoleOn), contribRoleOn);
       const contribEvidenceOn = ns.contributions.some(contribEvidenceTest);
       row(withMissing("Evidence attached to at least one contribution", missingFor(contribEvidenceTest), contribEvidenceOn), contribEvidenceOn);
+      if (liveContributions().length > 1) row("Contributions put in the order a reviewer should read them", !!ns.ui.orderDone);
       section(secName("mentor"));
       row("Where one trainee went — organization, and department or unit", ns.mentees.some(menteeComplete));
       row("Mentoring approach written", !!ns.mentorPhilosophy);
@@ -2603,6 +2861,9 @@
         return b;
       };
       actions.appendChild(mkDl("Download your draft (.txt)", buildExportText, "narrative-cv-draft.txt", true, "downloadDraft"));
+      const wordBtn = el("button", "btn btn-outline", "Download for Word (.doc)");
+      wordBtn.addEventListener("click", () => { countEvent("downloadWord"); downloadWordDraft(); });
+      actions.appendChild(wordBtn);
       actions.appendChild(mkDl("Download your advisor packet (.txt)", buildAdvisorPacket, "narrative-cv-advisor-packet.txt", false, "downloadPacket"));
       const printBtn = el("button", "btn btn-outline", "Open print view");
       printBtn.addEventListener("click", () => { countEvent("printView"); openPrintView(); });
@@ -2614,6 +2875,24 @@
       });
       actions.appendChild(copy);
       c.appendChild(actions);
+
+      // V6-4: paste into the template one section at a time.
+      const whose = ns.lens.agency === "frq" ? "the FRQ's" : (ns.lens.agency && ns.lens.agency !== "other" ? labelOf(AGENCIES, ns.lens.agency) + "'s" : "your agency's");
+      const secWrap = el("div", "contribution-field");
+      secWrap.appendChild(el("label", "v4-q", "Paste into the template, one section at a time"));
+      secWrap.appendChild(el("p", "v4-help", "Each button copies one section as plain text, in the order the template sets, without the tool's notes. Paste it into the matching section of " + whose + " template. The Word download above holds all three sections, set in the agency's font."));
+      const secRow = el("div", "narrative-actions");
+      ["ps", "contrib", "mentor"].forEach(k => {
+        const label = "Copy “" + secName(k) + "”";
+        const b = el("button", "btn btn-outline", label);
+        b.addEventListener("click", async () => {
+          countEvent("copySection");
+          try { await navigator.clipboard.writeText(sectionText(k)); b.textContent = "Copied ✓"; setTimeout(() => b.textContent = label, 1500); } catch (_) {}
+        });
+        secRow.appendChild(b);
+      });
+      secWrap.appendChild(secRow);
+      c.appendChild(secWrap);
 
       const contact = el("p", "v4-help");
       contact.appendChild(document.createTextNode("If you have questions about your narrative CV, please contact the Pathways to Impact team at "));
@@ -2641,7 +2920,7 @@
       parts.push(p.challenge, p.streams, p.pivot, p.standing, p.programFit, isFrq() ? p.teamFit : "", p.horizon);
       ns.contributions.forEach(c2 => {
         parts.push(c2.title, c2.roleLine, c2.stakes, c2.activities, c2.outputs, c2.outcomes, c2.translational, c2.impact);
-        (c2.evidence || []).forEach(e => parts.push(e.text));
+        (c2.evidence || []).forEach(e => parts.push(e.text, e.note));
       });
       ns.mentees.forEach(m => { const q = menteeParts(m); parts.push(m.stage, q.where, q.recog, q.why); });
       parts.push(ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage);
@@ -2669,7 +2948,7 @@
       const L = ns.lens, lines = [];
       const rule = "=".repeat(60);
       lines.push("NARRATIVE CV — WORKING DRAFT (V6 beta)");
-      const ctx = [labelOf(AGENCIES, L.agency), L.format ? (L.format === "cv-frq" ? "CV-FRQ" : "TCV") : "", L.program, labelOf(CAREER_STAGES, L.careerStage), labelOf(DISCIPLINES, L.discipline)].filter(Boolean);
+      const ctx = [labelOf(AGENCIES, L.agency), L.format ? (L.format === "cv-frq" ? "CV-FRQ" : "TCV") : "", L.program, labelOf(CAREER_STAGES, L.careerStage), disciplineLabel(L)].filter(Boolean);
       if (ctx.length) lines.push("Context (for tailoring only — not for submission): " + ctx.join(" · "));
       lines.push(formatReminder());
       lines.push("");
@@ -2689,7 +2968,7 @@
         }
         if (w.refs.length) {
           lines.push("   Evidence:");
-          w.refs.forEach(r => lines.push("     " + r.key + ". " + r.text + (r.type ? "  (" + r.type + ")" : "")));
+          w.refs.forEach(r => { lines.push("     " + r.key + ". " + r.text + (r.type ? "  (" + r.type + ")" : "")); if (r.note) lines.push("        " + r.note); });
         }
         if (w.gaps.length) w.gaps.forEach(g => lines.push("   [gap] " + g));
         lines.push("");
@@ -2752,21 +3031,31 @@
     }
 
     // Print-fidelity view: the draft in the genre's visual form (keyed evidence boxes).
-    function openPrintView() {
+    // V6-4 (Eli, 2026-10-06): the Word file uses the same layout. `forWord` adds Word's page setup
+    // and swaps the screen note for a first paragraph the researcher deletes.
+    function buildDraftHtml(forWord) {
       const esc = (s) => String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       // Guide sync (P-30, P-45, P-46): the agency's font at 12 points, references included, on a
       // Letter page with 2 cm margins, so a printed or saved PDF gives a closer page count.
       const font = PRINT_FONT[ns.lens.agency] || PRINT_FONT.other;
       const fontName = /Arial/.test(font) ? "12-point Arial" : "12-point Times New Roman";
-      let html = "<!doctype html><html><head><meta charset='utf-8'><title>Narrative CV — print view</title><style>" +
-        "@page{size:letter;margin:2cm;}" +
-        "body{font-family:" + font + ";font-size:12pt;line-height:1.2;color:#000;max-width:17.6cm;margin:2rem auto;padding:0 1rem;}" +
+      let html = (forWord
+          ? "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Narrative CV — working draft</title><style>" +
+            "@page Section1{size:8.5in 11in;margin:2cm;}div.Section1{page:Section1;}" +
+            "body{font-family:" + font + ";font-size:12pt;line-height:1.2;color:#000;}" +
+            ".word-note{color:#555;font-style:italic;}"
+          : "<!doctype html><html><head><meta charset='utf-8'><title>Narrative CV — print view</title><style>" +
+            "@page{size:letter;margin:2cm;}" +
+            "body{font-family:" + font + ";font-size:12pt;line-height:1.2;color:#000;max-width:17.6cm;margin:2rem auto;padding:0 1rem;}") +
         "h1{font-size:12pt;font-weight:bold;margin:0 0 6pt;}h2{font-size:12pt;font-weight:bold;margin:12pt 0 4pt;}p{margin:0 0 6pt;}" +
         "sup{font-weight:bold;} .contrib{margin:0 0 8pt;} .ctitle{font-weight:bold;}" +
         ".evbox{border-left:2px solid #999;padding:0 0 0 8pt;margin:4pt 0 0;font-size:12pt;}" +
         ".screen-note{font-family:system-ui,sans-serif;font-size:13px;color:#555;background:#fff8e1;border:1px solid #f9ca24;padding:8px 12px;margin:0 0 1.5rem;line-height:1.5;}" +
         "@media print{.screen-note{display:none;} body{margin:0;padding:0;max-width:none;}}</style></head><body>";
-      html += "<p class='screen-note'>Working draft from the Pathways narrative CV tool (" + esc(TOOL_VERSION) + "), set in " + fontName + ". This is not the template: paste your text into the current version of " + esc(ns.lens.agency === "frq" ? "the FRQ's" : labelOf(AGENCIES, ns.lens.agency) && ns.lens.agency !== "other" ? labelOf(AGENCIES, ns.lens.agency) + "'s" : "your agency's") + " template before you submit, and do not exceed the page limit (" + PAGE_LIMIT + "). This note does not print.</p>";
+      const whose = ns.lens.agency === "frq" ? "the FRQ's" : (ns.lens.agency && ns.lens.agency !== "other" ? labelOf(AGENCIES, ns.lens.agency) + "'s" : "your agency's");
+      html += forWord
+        ? "<div class='Section1'><p class='word-note'>Working draft from the Pathways narrative CV tool (" + esc(TOOL_VERSION) + "), set in " + fontName + " and headed with the section names of " + esc(whose) + " template. Paste each section into the matching section of the current version of " + esc(whose) + " template, keep within the page limit (" + PAGE_LIMIT + "), then delete this paragraph.</p>"
+        : "<p class='screen-note'>Working draft from the Pathways narrative CV tool (" + esc(TOOL_VERSION) + "), set in " + fontName + ". This is not the template: paste your text into the current version of " + esc(whose) + " template before you submit, and do not exceed the page limit (" + PAGE_LIMIT + "). This note does not print.</p>";
       html += "<h2>" + esc(secName("ps")) + "</h2>";
       const anchor = (ns.ps.role || ns.ps.institution || ns.ps.field)
         ? "I am " + articleFor(ns.ps.role) + " " + esc(ns.ps.role || "___") + " at " + esc(ns.ps.institution || "___") + ". My work is in " + esc(ns.ps.field || "___") + "." : "";
@@ -2782,7 +3071,7 @@
         html += "</p>";
         if (w.refs.length) {
           html += "<div class='evbox'>";
-          w.refs.forEach(r => { html += "<div><b>" + r.key + ".</b> " + esc(r.text) + (r.type ? " <span class='note'>(" + esc(r.type) + ")</span>" : "") + "</div>"; });
+          w.refs.forEach(r => { html += "<div><b>" + r.key + ".</b> " + esc(r.text) + (r.type ? " <span class='note'>(" + esc(r.type) + ")</span>" : "") + (r.note ? "<br>" + esc(r.note) : "") + "</div>"; });
           html += "</div>";
         }
         html += "</div>";
@@ -2794,9 +3083,51 @@
       const traj = ns.mentees.filter(menteeHasContent);
       traj.forEach(m => { const q = menteeParts(m); html += "<p>" + esc(q.label) + (q.where ? " → " + esc(q.where) : "") + (q.recog ? ". Recognition: " + esc(q.recog) : "") + (q.why ? ". " + esc(q.why) : "") + "</p>"; });
       [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(s => s && s.trim()).forEach(s => { html += "<p>" + esc(s.trim()) + "</p>"; });
-      html += "</body></html>";
+      html += (forWord ? "</div>" : "") + "</body></html>";
+      return html;
+    }
+    function openPrintView() {
       const win = window.open("", "_blank");
-      if (win) { win.document.write(html); win.document.close(); }
+      if (win) { win.document.write(buildDraftHtml(false)); win.document.close(); }
+    }
+    // Word opens an HTML file saved as .doc with its fonts, headings and margins intact; no library,
+    // no network call. It is a working draft in the template's section order, set in the agency's font.
+    function downloadWordDraft() {
+      const blob = new Blob(["\ufeff", buildDraftHtml(true)], { type: "application/msword" });
+      const a = el("a"); a.href = URL.createObjectURL(blob);
+      a.download = "narrative-cv-draft" + (ns.lens.agency && ns.lens.agency !== "other" ? "-" + ns.lens.agency : "") + ".doc";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+
+    // V6-4: one section at a time, as plain text for pasting into the matching template section.
+    // No tool notes ([role], [gap], context lines); evidence keeps its letters and two-line notes.
+    function sectionText(k) {
+      const out = [];
+      if (k === "ps") {
+        const anchor = (ns.ps.role || ns.ps.institution || ns.ps.field)
+          ? "I am " + articleFor(ns.ps.role) + " " + (ns.ps.role || "___") + " at " + (ns.ps.institution || "___") + ". My work is in " + (ns.ps.field || "___") + "." : "";
+        psParts(anchor).forEach(t => out.push(t.trim()));
+        return out.join("\n\n");
+      }
+      if (k === "contrib") {
+        liveContributions().forEach(({ c: contrib }, pos) => {
+          const w = buildWeave(contrib);
+          const keys = w.refs.map(r => r.key).join(",");
+          const body = [contrib.roleLine ? contrib.roleLine.trim() : ""].concat(w.parts.map(p => p.t)).filter(Boolean).join(" ");
+          const block = [(pos + 1) + ". " + (contrib.title || "Untitled contribution")];
+          if (body) block.push(body + (keys ? " [" + keys + "]" : ""));
+          w.refs.forEach(r => block.push(r.key + ". " + r.text + (r.type ? " (" + r.type + ")" : "") + (r.note ? "\n   " + r.note : "")));
+          out.push(block.join("\n"));
+        });
+        return out.join("\n\n");
+      }
+      const mc = ns.mentorCounts;
+      const totals = MENTOR_COUNT_LABELS.filter(([key]) => mc[key]).map(([key, , label]) => mc[key] + " " + label);
+      if (totals.length) out.push("Totals (last five years): " + totals.join(", "));
+      const traj = ns.mentees.filter(menteeHasContent);
+      if (traj.length) out.push(traj.map(m => { const q = menteeParts(m); return q.label + (q.where ? " → " + q.where : "") + (q.recog ? ". Recognition: " + q.recog : "") + (q.why ? ". " + q.why : ""); }).join("\n"));
+      [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(t => t && t.trim()).forEach(t => out.push(t.trim()));
+      return out.join("\n\n");
     }
 
     // ── Feedback: questions, session summary, send ─────────────────────────
@@ -2839,9 +3170,10 @@
       if (S.startedAt) out.push("Started: " + fmtTime(S.startedAt) + " · active time on the tool: about " + mins(totalMs) + " min");
       out.push("Path: " + (ns.mode === "xray" ? "I already have a draft (structural read)" : ns.mode === "compose" ? "Start fresh" : "not chosen"));
       out.push("Context: " + [labelOf(AGENCIES, L.agency) + (L.format ? " (" + (L.format === "cv-frq" ? "CV-FRQ" : "TCV") + ")" : ""),
-        labelOf(DISCIPLINES, L.discipline), labelOf(CAREER_STAGES, L.careerStage),
+        disciplineLabel(L), labelOf(CAREER_STAGES, L.careerStage),
         (L.workMode || []).map(w => labelOf(WORK_MODES, w)).join(" + ")].filter(Boolean).join(" · ") +
         " · competition named: " + (L.program && L.program.trim() ? "yes" : "no"));
+      if ((L.otherField || "").trim()) out.push("Field not listed, as the researcher named it: " + L.otherField.trim().slice(0, 80));
       out.push("Steps (visits, active minutes): " + stages().map(st => st.short + " " + (S.visits[st.key] || 0) + "×, " + mins(S.stageMs[st.key]) + " min").join(" · "));
       const started = ns.contributions.filter(c2 => c2.title || c2.activities);
       const fields = ["stakes", "activities", "outputs", "outcomes", "impact"];
@@ -2871,7 +3203,8 @@
       if (ns.mode === "xray" || ns.xray.text.trim()) out.push("Structural read: pasted text " + (ns.xray.text.trim() ? "present" : "empty") + ", runs " + (S.events.structuralRead || 0) + ", sample draft used " + (S.events.sampleDraft || 0) + "×");
       out.push("Self-check ticked: " + Object.values(ns.selfCheck).filter(Boolean).length + " of 7");
       out.push("Actions: " + [["downloadDraft", "draft downloaded"], ["downloadPacket", "advisor packet downloaded"], ["printView", "print view"],
-        ["copyDraft", "draft copied"], ["assemble", "assembled paragraph opened"]].map(([k, l]) => l + " " + (S.events[k] || 0)).join(", "));
+        ["copyDraft", "draft copied"], ["downloadWord", "Word file downloaded"], ["copySection", "section copied"], ["orderMove", "contributions moved"],
+        ["assemble", "assembled paragraph opened"]].map(([k, l]) => l + " " + (S.events[k] || 0)).join(", "));
       out.push("Words in the draft: about " + draftWords());
       out.push("Screen: " + window.innerWidth + "×" + window.innerHeight + " · " + navigator.userAgent.slice(0, 160));
       return out.join("\n");
@@ -3025,7 +3358,7 @@
           quote: notesText() || "(no notes)",
           prefix: ns.feedback.includeSummary ? sessionSummary() : "(summary not included)",
           suffix: TOOL_VERSION,
-          section: [labelOf(AGENCIES, ns.lens.agency), labelOf(DISCIPLINES, ns.lens.discipline), labelOf(CAREER_STAGES, ns.lens.careerStage)].filter(Boolean).join(" · "),
+          section: [labelOf(AGENCIES, ns.lens.agency), disciplineLabel(ns.lens), labelOf(CAREER_STAGES, ns.lens.careerStage)].filter(Boolean).join(" · "),
           parent: "", status: "open"
         };
         const ok = await postFeedback(row);

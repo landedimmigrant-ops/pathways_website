@@ -14,4 +14,4 @@ exact copy of V5 beta (commit `4d71449`). This folder's `index.html` is a thin r
 
 Storage: draft in `localStorage` under `ncv-v6`, so V5, V5x portfolio and V6 can be tested side by side on one
 browser. Feedback rows use `page = ncv-tool-v6`. The worked-example checker (`scripts/ncv-v5-examples.js`)
-still reads V5; point it at V6 before the example library changes.
+checks V6 with `--file narrative-cv-prototype-v6.html` (70 cells: the 60 plus ten interdisciplinary).

@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /**
- * Narrative CV V5 — worked-example library tools. Reads narrative-cv-prototype-v5.html only.
+ * Narrative CV V5 — worked-example library tools. Reads narrative-cv-prototype-v5.html, or the file
+ * named with --file (V6: --file narrative-cv-prototype-v6.html, which also checks the ten
+ * interdisciplinary cells between the INTERDISCIPLINARY_LIBRARY markers).
  *
  *   node scripts/ncv-v5-examples.js lint      # run the tool's own field checks over all 60 cells
  *   node scripts/ncv-v5-examples.js register  # Prem's register rule: no contrast, drama, idiom or flourish
@@ -14,7 +16,8 @@
 const fs = require("fs");
 const path = require("path");
 const ROOT = path.join(__dirname, "..");
-const HTML = path.join(ROOT, "narrative-cv-prototype-v5.html");
+const fileArg = process.argv.indexOf("--file");
+const HTML = path.join(ROOT, fileArg > -1 ? process.argv[fileArg + 1] : "narrative-cv-prototype-v5.html");
 const REVIEW = path.join(ROOT, "narrative-cv-v5-examples-review.md");
 const src = fs.readFileSync(HTML, "utf8");
 
@@ -27,6 +30,8 @@ const engineSrc = slice("// ── T1 lint engine", "// ── State ───")
 const lintField = new Function(engineSrc.replace(/^[^\n]*\n/, "") + "\nreturn lintField;")();
 const libSrc = slice("    // EXEMPLAR_LIBRARY:begin\n", "    // EXEMPLAR_LIBRARY:end\n");
 const EXEMPLAR_LIBRARY = new Function(libSrc + "\nreturn EXEMPLAR_LIBRARY;")();
+const INTER_LIBRARY = src.indexOf("// INTERDISCIPLINARY_LIBRARY:begin") < 0 ? {}
+  : new Function(slice("    // INTERDISCIPLINARY_LIBRARY:begin\n", "    // INTERDISCIPLINARY_LIBRARY:end\n") + "\nreturn INTERDISCIPLINARY_LIBRARY;")();
 
 const DISC = [["stem", "STEM / engineering"], ["health", "Health / clinical"], ["social", "Social sciences"], ["humanities", "Humanities"], ["creative", "Creative / fine arts"]];
 const MODES = ["team", "community", "solo", "industry"];
@@ -44,6 +49,8 @@ function cells(fn) {
     const group = EXEMPLAR_LIBRARY[disc] && EXEMPLAR_LIBRARY[disc][mode];
     fn(disc, mode, stage, group, group && group[stage]);
   }
+  // Interdisciplinary cells (V6): tagged "inter/<pair>/mid".
+  for (const [pair, cell] of Object.entries(INTER_LIBRARY)) fn("inter", pair, "mid", null, cell);
 }
 
 function lint() {
