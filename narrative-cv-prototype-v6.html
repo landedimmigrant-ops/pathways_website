@@ -110,7 +110,8 @@
     /* Evidence + trajectory rows */
     .v4-ev-row, .v4-traj-row { display: grid; gap: 8px; align-items: center; margin: 0 0 8px; }
     .v4-ev-row { grid-template-columns: 22px minmax(0, 1fr) 180px 30px; }
-    .v4-traj-row { grid-template-columns: minmax(0, 1.2fr) 108px minmax(0, 1.3fr) 30px; }
+    .v4-traj-row { grid-template-columns: minmax(120px, 0.8fr) 140px minmax(0, 1fr) minmax(0, 1fr) 30px; }
+    .v4-traj-more { margin: 0 0 8px; }
     @media (max-width: 720px) { .v4-ev-row, .v4-traj-row { grid-template-columns: 1fr; } }
     .v4-key-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--burgundy); color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0; }
     .v4-super { vertical-align: super; font-size: 0.72em; color: var(--burgundy); font-weight: 700; margin-left: 1px; }
@@ -962,7 +963,7 @@
     const MENTOR_EXAMPLE = {
       segments: [
         { r: "totals", t: "Since 2018 I have supervised four PhD students, nine master's students, two postdocs and 11 undergraduate research assistants." },
-        { r: "people", t: "One PhD student, A.R., now leads evaluation at a national non-profit, and the role is built on methods I developed with that student. A master's student moved to a provincial statistics unit and still co-authors with the group." },
+        { r: "people", t: "One PhD student now leads evaluation at a national non-profit, and the role is built on methods I developed with that student, who won a best-paper prize at the field's main conference in 2024. A master's student moved to a provincial statistics unit and still co-authors with the group." },
         { r: "practice", t: "Every project in my group begins with a written agreement on authorship, data and ownership, revisited at the midpoint. The agreement takes an hour to draft, and authorship disputes, once common in my group, have stopped." },
         { r: "access", t: "Three years ago I removed the prior-experience requirement from my assistantship postings and began paying from the first week, because unpaid trial periods had been screening out applicants without family support. Two-thirds of the assistants hired since are the first in their family to attend university." },
         { r: "crossStage", t: "I also mentor two early-career colleagues in other departments and run a monthly writing group that anyone in the faculty can join." }
@@ -1167,7 +1168,24 @@
       evidence: [{ text: "", type: "Peer-reviewed" }],
       flags: {}, notes: {}, showWeave: false
     });
-    const blankMentee = () => ({ who: "", stage: "", destination: "", why: "" });
+    // Eli, 2026-10-06 (item 6): trainees are described by stage and destination, with no name.
+    // `kind` is the sector; `org` the university or organization; `unit` the department or
+    // discipline (university) or the subdivision (everything else).
+    const blankMentee = () => ({ stage: "", kind: "", org: "", unit: "", recognition: "", why: "" });
+    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["other", "Other"]];
+    const menteeKindLabel = (k) => { const m = MENTEE_KINDS.find(x => x[0] === k); return m ? m[1] : ""; };
+    // Drafts saved before this change held `who` (dropped on purpose) and a free-text
+    // `destination` (kept, moved to `org`).
+    const normalizeMentee = (m) => {
+      m = m || {};
+      return { stage: m.stage || "", kind: m.kind || "", org: m.org || m.destination || "", unit: m.unit || "", recognition: m.recognition || "", why: m.why || "" };
+    };
+    const menteeWhere = (m) => [(m.kind && m.kind !== "university" && m.kind !== "other") ? menteeKindLabel(m.kind) : "", (m.org || "").trim(), (m.unit || "").trim()].filter(Boolean).join(", ");
+    const menteeHasPlace = (m) => !!(m.kind || (m.org || "").trim() || (m.unit || "").trim());
+    const menteeHasContent = (m) => menteeHasPlace(m) || !!((m.stage || "").trim() || (m.recognition || "").trim() || (m.why || "").trim());
+    const menteeComplete = (m) => !!((m.org || "").trim() && (m.unit || "").trim());
+    // One line per trainee for the text export; the print view escapes the same pieces.
+    const menteeParts = (m) => ({ label: (m.stage || "").trim() || "Trainee", where: menteeWhere(m), recog: (m.recognition || "").trim(), why: (m.why || "").trim() });
     const defaultState = () => ({
       mode: "", stageKey: "setup",
       lens: { agency: "", format: "", program: "", discipline: "", careerStage: "", workMode: [] },
@@ -1208,6 +1226,7 @@
           if (!Array.isArray(ns.contributions) || !ns.contributions.length) ns.contributions = [blankContribution()];
           ns.contributions.forEach(c => { c.flags = c.flags || {}; c.notes = c.notes || {}; c.evidence = c.evidence && c.evidence.length ? c.evidence : [{ text: "", type: "Peer-reviewed" }]; });
           if (!Array.isArray(ns.mentees) || !ns.mentees.length) ns.mentees = [blankMentee()];
+          ns.mentees = ns.mentees.map(normalizeMentee);
         }
       } catch (_) { ns = defaultState(); }
     };
@@ -1365,7 +1384,7 @@
       if (key === "setup") return !!(ns.mode && ns.lens.agency && ns.lens.discipline);
       if (key === "xray") return !!ns.xray.text.trim();
       if (key === "contrib") return ns.contributions.some(c => c.title && c.activities);
-      if (key === "mentor") return !!(ns.mentorPhilosophy || ns.mentees.some(m => m.who));
+      if (key === "mentor") return !!(ns.mentorPhilosophy || ns.mentees.some(menteeHasPlace));
       if (key === "ps") return !!(ns.ps.challenge && ns.ps.standing);
       if (key === "feedback") return ns.feedback.sent.length > 0;
       return false;
@@ -2324,28 +2343,51 @@
       c.appendChild(totals);
 
       const trajWrap = el("div", "contribution-field");
-      const tq = el("label", "v4-q", "Name a few people you've trained — where are they now?");
+      const tq = el("label", "v4-q", "Where did a few of the people you trained go?");
       trajWrap.appendChild(tq);
-      trajWrap.appendChild(el("p", "v4-help", "Naming the people you trained is standard in this format — the Tri-agency CV asks you to mark each supervised trainee's name with an asterisk in your citations, and mentorship sections normally name where people went. Initials are fine if you would rather not use a full name."));
+      trajWrap.appendChild(el("p", "v4-help", "Describe each person by their stage and where they went; names are left out. For a university, give the university and the department or discipline. For industry, a community agency or government, give the sector, the organization and the unit or subdivision. Add any best-paper prizes or prestigious scholarships they held or went on to win."));
       ns.mentees.forEach((m, j) => {
         const row = el("div", "v4-traj-row");
-        const who = el("input", "v4-text-input"); who.type = "text"; who.placeholder = "Name or initials"; who.value = m.who || "";
-        who.addEventListener("input", e => { m.who = e.target.value; saveState(); });
         const stage = el("input", "v4-text-input"); stage.type = "text"; stage.placeholder = "Stage — PhD, MSc, postdoc…"; stage.value = m.stage || "";
+        stage.setAttribute("aria-label", "Stage of the person you trained");
         stage.addEventListener("input", e => { m.stage = e.target.value; saveState(); });
-        const dest = el("input", "v4-text-input"); dest.type = "text"; dest.placeholder = "Where they are now"; dest.value = m.destination || "";
-        dest.addEventListener("input", e => { m.destination = e.target.value; saveState(); });
+        const kind = el("select", "impact-select");
+        kind.setAttribute("aria-label", "Sector of their current position");
+        kind.style.fontSize = "0.85rem"; kind.style.padding = "0.5rem";
+        const k0 = el("option", null, "Sector…"); k0.value = ""; kind.appendChild(k0);
+        MENTEE_KINDS.forEach(([v, l]) => { const o = el("option", null, l); o.value = v; if (m.kind === v) o.selected = true; kind.appendChild(o); });
+        const org = el("input", "v4-text-input"); org.type = "text"; org.value = m.org || "";
+        org.addEventListener("input", e => { m.org = e.target.value; saveState(); });
+        const unit = el("input", "v4-text-input"); unit.type = "text"; unit.value = m.unit || "";
+        unit.addEventListener("input", e => { m.unit = e.target.value; saveState(); });
+        // Labels follow the sector: a university has a department or discipline, anywhere else a subdivision.
+        const setLabels = () => {
+          const uni = m.kind === "university";
+          org.placeholder = uni ? "University" : "Organization";
+          org.setAttribute("aria-label", uni ? "University" : "Organization");
+          unit.placeholder = uni ? "Department or discipline" : (m.kind ? "Unit or subdivision" : "Department, discipline or unit");
+          unit.setAttribute("aria-label", unit.placeholder);
+        };
+        setLabels();
+        kind.addEventListener("change", e => { m.kind = e.target.value; saveState(); setLabels(); });
         const x = el("button", "btn-icon", "×");
+        x.title = "Remove";
         x.addEventListener("click", () => { ns.mentees.splice(j, 1); if (!ns.mentees.length) ns.mentees.push(blankMentee()); saveState(); renderStage(); });
-        row.appendChild(who); row.appendChild(stage); row.appendChild(dest); row.appendChild(x);
+        row.appendChild(stage); row.appendChild(kind); row.appendChild(org); row.appendChild(unit); row.appendChild(x);
         trajWrap.appendChild(row);
+        const recog = el("input", "v4-text-input v4-traj-more");
+        recog.type = "text"; recog.placeholder = "Prizes or scholarships they held or went on to win (optional)"; recog.value = m.recognition || "";
+        recog.setAttribute("aria-label", "Prizes or scholarships");
+        recog.addEventListener("input", e => { m.recognition = e.target.value; saveState(); });
+        trajWrap.appendChild(recog);
         const why = el("input", "v4-text-input");
         why.type = "text"; why.placeholder = "One line — why this example matters (optional)"; why.value = m.why || "";
+        why.setAttribute("aria-label", "Why this example matters");
         why.style.margin = "0 0 12px";
         why.addEventListener("input", e => { m.why = e.target.value; saveState(); });
         trajWrap.appendChild(why);
       });
-      const addM = el("button", "narrative-draft-btn v4-inline-link", "+ Add a person");
+      const addM = el("button", "narrative-draft-btn v4-inline-link", "+ Add another person");
       addM.addEventListener("click", () => { ns.mentees.push(blankMentee()); saveState(); renderStage(); });
       trajWrap.appendChild(addM);
       c.appendChild(trajWrap);
@@ -2462,7 +2504,7 @@
       const contribEvidenceOn = ns.contributions.some(contribEvidenceTest);
       row(withMissing("Evidence attached to at least one contribution", missingFor(contribEvidenceTest), contribEvidenceOn), contribEvidenceOn);
       section(secName("mentor"));
-      row("One person named, with where they went", ns.mentees.some(m => m.who && m.destination));
+      row("Where one trainee went — organization, and department or unit", ns.mentees.some(menteeComplete));
       row("Mentoring approach written", !!ns.mentorPhilosophy);
       section(secName("ps"));
       row("Central challenge named", !!ns.ps.challenge);
@@ -2601,7 +2643,7 @@
         parts.push(c2.title, c2.roleLine, c2.stakes, c2.activities, c2.outputs, c2.outcomes, c2.translational, c2.impact);
         (c2.evidence || []).forEach(e => parts.push(e.text));
       });
-      ns.mentees.forEach(m => parts.push(m.who, m.stage, m.destination, m.why));
+      ns.mentees.forEach(m => { const q = menteeParts(m); parts.push(m.stage, q.where, q.recog, q.why); });
       parts.push(ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage);
       const t = parts.filter(Boolean).join(" ").trim();
       return t ? t.split(/\s+/).length : 0;
@@ -2656,10 +2698,10 @@
       const mc = ns.mentorCounts;
       const totals = MENTOR_COUNT_LABELS.filter(([k]) => mc[k]).map(([k, , out]) => mc[k] + " " + out);
       if (totals.length) lines.push("Totals (last five years): " + totals.join(", "));
-      const traj = ns.mentees.filter(m => m.who || m.destination);
+      const traj = ns.mentees.filter(menteeHasContent);
       if (traj.length) {
-        lines.push("People I trained:");
-        traj.forEach(m => lines.push("   - " + [m.who, m.stage].filter(Boolean).join(", ") + (m.destination ? " → " + m.destination : "") + (m.why ? ". " + m.why : "")));
+        lines.push("Where the people I trained went:");
+        traj.forEach(m => { const q = menteeParts(m); lines.push("   - " + q.label + (q.where ? " → " + q.where : "") + (q.recog ? ". Recognition: " + q.recog : "") + (q.why ? ". " + q.why : "")); });
       }
       [["How I mentor", ns.mentorPhilosophy], ["Who gets in, and what I changed", ns.mentorEDI], ["Who else I mentor", ns.mentorCrossStage]]
         .filter(([, v]) => v && v.trim()).forEach(([k, v]) => lines.push(k + ": " + v.trim()));
@@ -2749,8 +2791,8 @@
       const mc = ns.mentorCounts;
       const totals = MENTOR_COUNT_LABELS.filter(([k]) => mc[k]).map(([k, , out]) => esc(mc[k]) + " " + out);
       if (totals.length) html += "<p><b>Totals (last five years):</b> " + totals.join(", ") + "</p>";
-      const traj = ns.mentees.filter(m => m.who || m.destination);
-      traj.forEach(m => { html += "<p>" + esc([m.who, m.stage].filter(Boolean).join(", ")) + (m.destination ? " → " + esc(m.destination) : "") + (m.why ? ". " + esc(m.why) : "") + "</p>"; });
+      const traj = ns.mentees.filter(menteeHasContent);
+      traj.forEach(m => { const q = menteeParts(m); html += "<p>" + esc(q.label) + (q.where ? " → " + esc(q.where) : "") + (q.recog ? ". Recognition: " + esc(q.recog) : "") + (q.why ? ". " + esc(q.why) : "") + "</p>"; });
       [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(s => s && s.trim()).forEach(s => { html += "<p>" + esc(s.trim()) + "</p>"; });
       html += "</body></html>";
       const win = window.open("", "_blank");
@@ -2823,7 +2865,7 @@
       out.push("Worked example shown: " + [pick.disc, pick.modeKey, pick.stage].join(" / "));
       const psKeys = ["challenge", "streams", "pivot", "standing", "programFit", "horizon"].concat(isFrq() ? ["teamFit"] : []);
       out.push(secName("ps") + ": " + psKeys.filter(k => (ns.ps[k] || "").trim()).length + " of " + psKeys.length + " prompts answered");
-      out.push("Mentorship: " + ns.mentees.filter(m => m.who).length + " people named, totals entered: " +
+      out.push("Mentorship: " + ns.mentees.filter(menteeHasPlace).length + " trainee destinations listed, totals entered: " +
         (Object.values(ns.mentorCounts).some(v => String(v).trim()) ? "yes" : "no") + ", " +
         [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(v => (v || "").trim()).length + " of 3 prompts answered");
       if (ns.mode === "xray" || ns.xray.text.trim()) out.push("Structural read: pasted text " + (ns.xray.text.trim() ? "present" : "empty") + ", runs " + (S.events.structuralRead || 0) + ", sample draft used " + (S.events.sampleDraft || 0) + "×");
