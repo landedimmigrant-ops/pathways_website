@@ -9,6 +9,10 @@ Pulls a published Google Sheet (3 active tabs — Bugs `B-`, NCV feedback `N-`,
 Features `F-`), reports what's open, drives fixes with the user, commits, and
 writes status + commit SHA back through an Apps Script webhook.
 
+**NCV tool V7 (from 2026-10-27) has no in-tool feedback.** Its Feedback step is switched off, so no new
+`page=ncv-tool-v7` rows reach the sheet; researchers send feedback by email to impact@concordia.ca. NCV rows
+in the sheet come from V5 and V6 sessions. Treat an emailed V7 report as a new row the user adds by hand.
+
 ## Setup (once per machine)
 
 The helper scripts and webhook calls read `config.local.json` (next to this

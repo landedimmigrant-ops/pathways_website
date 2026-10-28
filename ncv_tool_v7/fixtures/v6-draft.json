@@ -1,0 +1,25 @@
+{
+  "mode": "xray",
+  "stageKey": "order",
+  "lens": { "agency": "sshrc", "format": "tcv", "program": "Insight Grants", "discipline": "social", "discipline2": "", "otherField": "", "careerStage": "mid", "workMode": ["community"] },
+  "ui": { "orderDone": true },
+  "xray": { "text": "A pasted paragraph from the structural read." },
+  "contributions": [
+    { "title": "Made-up headline: a stormwater toolkit for small towns", "stakes": "Small towns lacked flood data.", "roleMode": "", "roleLine": "I led the design.", "activities": "Ran workshops in six towns.", "outputs": "A toolkit and two papers.", "outcomes": "", "impact": "", "translational": "", "evidence": [{ "text": "Made-up citation (2024).", "type": "Peer-reviewed" }], "flags": { "stakes": "work" }, "notes": {}, "showWeave": false },
+    { "title": "Second made-up contribution", "stakes": "", "roleMode": "", "roleLine": "", "activities": "Built a dataset.", "outputs": "", "outcomes": "", "impact": "", "translational": "", "evidence": [], "flags": {}, "notes": {}, "showWeave": false }
+  ],
+  "mentorCounts": { "phd": "3", "masters": "5", "undergrad": "", "postdoc": "1" },
+  "mentees": [
+    { "stage": "PhD candidate", "kind": "university", "org": "Made-up University", "unit": "Geography", "recognition": "", "why": "" },
+    { "stage": "visiting researcher", "kind": "", "destination": "A made-up city office", "recognition": "", "why": "" },
+    { "stage": "MSc", "kind": "industry", "org": "Made-up Ltd", "unit": "Data team", "recognition": "", "why": "" }
+  ],
+  "mentorPhilosophy": "I hand over a project once a student can explain it back.",
+  "mentorEDI": "", "mentorCrossStage": "",
+  "ps": { "role": "", "institution": "", "field": "", "challenge": "Why small towns flood.", "streams": "", "pivot": "", "standing": "", "programFit": "", "teamFit": "", "horizon": "" },
+  "consultQuestions": "Is two contributions enough?",
+  "selfCheck": {}, "lastSavedAt": 1793000000000,
+  "feedback": { "answers": { "q1": 4 }, "includeSummary": true, "sent": [] },
+  "teamNotes": [{ "stage": "contrib", "at": 1793000000000, "text": "A made-up team note." }],
+  "session": { "startedAt": 1793000000000, "stageMs": {}, "visits": {}, "events": {} }
+}

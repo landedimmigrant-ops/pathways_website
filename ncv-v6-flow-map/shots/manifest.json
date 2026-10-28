@@ -1,0 +1,273 @@
+{
+ "generated": "2026-10-26T20:52:49.059Z",
+ "page": "narrative-cv-prototype-v6.html",
+ "demoData": true,
+ "shots": [
+  {
+   "id": "shell",
+   "node": "s_shell",
+   "title": "Page shell: banner, privacy line, Steps rail",
+   "files": {
+    "desktop": {
+     "file": "shell-desktop.jpg",
+     "w": 840,
+     "h": 364,
+     "bytes": 24863
+    },
+    "phone": {
+     "file": "shell-phone.jpg",
+     "w": 585,
+     "h": 780,
+     "bytes": 25079
+    }
+   }
+  },
+  {
+   "id": "setup",
+   "node": "s_setup",
+   "title": "Setup",
+   "files": {
+    "desktop": {
+     "file": "setup-desktop.jpg",
+     "w": 840,
+     "h": 1050,
+     "bytes": 78122
+    },
+    "phone": {
+     "file": "setup-phone.jpg",
+     "w": 585,
+     "h": 3000,
+     "bytes": 144994
+    }
+   }
+  },
+  {
+   "id": "xray",
+   "node": "s_xray",
+   "title": "Structural read (draft mode)",
+   "files": {
+    "desktop": {
+     "file": "xray-desktop.jpg",
+     "w": 840,
+     "h": 1050,
+     "bytes": 60518
+    },
+    "phone": {
+     "file": "xray-phone.jpg",
+     "w": 585,
+     "h": 3000,
+     "bytes": 127159
+    }
+   }
+  },
+  {
+   "id": "contrib",
+   "node": "s_contrib",
+   "title": "Contributions",
+   "files": {
+    "desktop": {
+     "file": "contrib-desktop.jpg",
+     "w": 840,
+     "h": 1050,
+     "bytes": 86508
+    },
+    "phone": {
+     "file": "contrib-phone.jpg",
+     "w": 585,
+     "h": 3000,
+     "bytes": 150999
+    }
+   }
+  },
+  {
+   "id": "weave",
+   "node": "s_weave",
+   "title": "Assembled paragraph (inside a contribution)",
+   "files": {
+    "desktop": {
+     "file": "weave-desktop.jpg",
+     "w": 840,
+     "h": 312,
+     "bytes": 23169
+    },
+    "phone": {
+     "file": "weave-phone.jpg",
+     "w": 585,
+     "h": 1044,
+     "bytes": 62938
+    }
+   }
+  },
+  {
+   "id": "mentor",
+   "node": "s_mentor",
+   "title": "Mentorship",
+   "files": {
+    "desktop": {
+     "file": "mentor-desktop.jpg",
+     "w": 840,
+     "h": 1050,
+     "bytes": 83674
+    },
+    "phone": {
+     "file": "mentor-phone.jpg",
+     "w": 585,
+     "h": 3000,
+     "bytes": 150856
+    }
+   }
+  },
+  {
+   "id": "ps",
+   "node": "s_ps",
+   "title": "Personal statement",
+   "files": {
+    "desktop": {
+     "file": "ps-desktop.jpg",
+     "w": 840,
+     "h": 1050,
+     "bytes": 92702
+    },
+    "phone": {
+     "file": "ps-phone.jpg",
+     "w": 585,
+     "h": 3000,
+     "bytes": 146627
+    }
+   }
+  },
+  {
+   "id": "order",
+   "node": "s_order",
+   "title": "Order of contributions",
+   "files": {
+    "desktop": {
+     "file": "order-desktop.jpg",
+     "w": 840,
+     "h": 911,
+     "bytes": 56389
+    },
+    "phone": {
+     "file": "order-phone.jpg",
+     "w": 585,
+     "h": 3000,
+     "bytes": 133228
+    }
+   }
+  },
+  {
+   "id": "review",
+   "node": "s_review",
+   "title": "Review and export",
+   "files": {
+    "desktop": {
+     "file": "review-desktop.jpg",
+     "w": 840,
+     "h": 1050,
+     "bytes": 65086
+    },
+    "phone": {
+     "file": "review-phone.jpg",
+     "w": 585,
+     "h": 3000,
+     "bytes": 126042
+    }
+   }
+  },
+  {
+   "id": "feedback",
+   "node": "s_feedback",
+   "title": "Feedback",
+   "files": {
+    "desktop": {
+     "file": "feedback-desktop.jpg",
+     "w": 840,
+     "h": 1050,
+     "bytes": 67080
+    },
+    "phone": {
+     "file": "feedback-phone.jpg",
+     "w": 585,
+     "h": 3000,
+     "bytes": 128719
+    }
+   }
+  },
+  {
+   "id": "notes",
+   "node": "s_notes",
+   "title": "Note for the team (panel)",
+   "files": {
+    "desktop": {
+     "file": "notes-desktop.jpg",
+     "w": 840,
+     "h": 294,
+     "bytes": 18052
+    },
+    "phone": {
+     "file": "notes-phone.jpg",
+     "w": 585,
+     "h": 630,
+     "bytes": 32049
+    }
+   }
+  },
+  {
+   "id": "lens",
+   "node": "s_lens",
+   "title": "Change these answers (inline panel)",
+   "files": {
+    "desktop": {
+     "file": "lens-desktop.jpg",
+     "w": 840,
+     "h": 664,
+     "bytes": 45069
+    },
+    "phone": {
+     "file": "lens-phone.jpg",
+     "w": 585,
+     "h": 2090,
+     "bytes": 113770
+    }
+   }
+  },
+  {
+   "id": "reentry",
+   "node": "s_reentry",
+   "title": "Welcome-back banner",
+   "files": {
+    "desktop": {
+     "file": "reentry-desktop.jpg",
+     "w": 840,
+     "h": 322,
+     "bytes": 21779
+    },
+    "phone": {
+     "file": "reentry-phone.jpg",
+     "w": 585,
+     "h": 690,
+     "bytes": 22027
+    }
+   }
+  },
+  {
+   "id": "print",
+   "node": "s_print",
+   "title": "Print view (new window)",
+   "files": {
+    "desktop": {
+     "file": "print-desktop.jpg",
+     "w": 840,
+     "h": 867,
+     "bytes": 91973
+    },
+    "phone": {
+     "file": "print-phone.jpg",
+     "w": 585,
+     "h": 3000,
+     "bytes": 126039
+    }
+   }
+  }
+ ]
+}

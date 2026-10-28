@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Narrative CV V7 mock-ups</title>
+<!--
+  Narrative CV tool, V7 design mock-ups (2026-10-27). A clickable picture of the redesign, not the app.
+  One file: inline CSS and JS, no network, no fonts, inline SVG only. Every draft, person and number
+  shown is invented. The product styles below use the Pathways tokens (styles.css :root and the
+  .narrative-* / .v4-* families); the dark bar at the foot is the mock-up's own control panel and is
+  not part of the design. Deep links for screenshots: #s=<screen>&st=<state>&w=desktop|phone&clean=1
+-->
+<style>
+/* ── Tokens: reused from styles.css :root, plus the V7 additions (see DESIGN-NOTES.md) ───────── */
+:root{
+  --bg:#ffffff; --burgundy:#912338; --text:#1a1a1a; --muted:#5a5a5a; --border:#e6e6e6; --link:#912338;
+  --panel:#f8f8f8; --panel-border:#eeeeee; --card:#fafafa; --card-border:#e0e0e0;
+  --done:#2a6e2a; --tint:#f9ebed; --tint-2:#f9f3f4; --tint-border:#f4d0d5; --warn:#da3a16; --warn-text:#7a1f15;
+  /* new in V7 */
+  --explain-bg:#f3f3f3; --field-border:#949494; --rule:#ececec; --faint:#6b6b6b; --track:#e3e3e3;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px;
+  --fs-xs:.75rem; --fs-sm:.85rem; --fs-md:.9rem; --fs-base:1rem; --fs-lg:1.05rem; --fs-h2:1.4rem; --fs-num:1.9rem;
+  --r-sm:6px; --r-md:8px; --r-lg:10px; --r-xl:12px;
+  --ease:cubic-bezier(.2,0,0,1); --t-fast:120ms; --t-med:200ms; --t-slow:260ms;
+  --lh-box:1.5; --box-lines:8;
+  /* the six jobs: existing skeleton tints and borders from the V7 file */
+  --j-stakes:#e5a712; --j-role:#912338; --j-activities:#0072a8; --j-outputs:#508212; --j-outcomes:#da3a16; --j-impact:#573996;
+  --jt-stakes:#f7e5b8; --jt-role:#e7cfd3; --jt-activities:#bfdce9; --jt-outputs:#d3e0c4; --jt-outcomes:#f7d4cc; --jt-impact:#ddd7ea;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:auto}
+body{margin:0;background:#e9e9e9;color:var(--text);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.55;padding-bottom:150px}
+body.clean{padding-bottom:0;background:#fff}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--link)}
+:focus-visible{outline:2px solid var(--burgundy);outline-offset:2px}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ico{width:1em;height:1em;fill:currentColor;flex-shrink:0;vertical-align:-.15em}
+
+/* ── The frame (desktop or 375 px phone) ─────────────────────────────────────────────────────── */
+.frame{container-type:inline-size;container-name:app;background:var(--bg);margin:0 auto;max-width:1120px;min-height:100vh;box-shadow:0 0 0 1px #d8d8d8}
+body.phone .frame{max-width:375px;box-shadow:0 0 0 1px #cfcfcf,0 10px 40px rgba(0,0,0,.12)}
+body.clean .frame{box-shadow:none}
+
+/* banner (existing .proto-banner) */
+.banner{position:sticky;top:0;z-index:50;background:#1a1a1a;color:#e5a712;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:12px;font-weight:600;letter-spacing:.04em;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.banner strong{color:#f9ca24}
+.banner-actions{display:flex;gap:14px;align-items:center;white-space:nowrap}
+.banner-btn{background:#e5a712;color:#1a1a1a;border:0;border-radius:4px;padding:4px 10px;font-weight:700;letter-spacing:.02em;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.banner-btn:focus-visible{outline:2px solid #fff}
+.banner a{color:#e5a712}
+
+.shell-pad{padding:var(--sp-5) 20px var(--sp-7)}
+.page-head{max-width:1060px;margin:0 auto var(--sp-5)}
+.page-head h1{font-size:clamp(22px,3vw,30px);margin:0 0 4px;color:var(--burgundy);line-height:1.2}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 var(--sp-4)}
+.intro{max-width:70ch;margin:0 0 var(--sp-3);font-size:var(--fs-base)}
+.guide-line{max-width:70ch;margin:0 0 var(--sp-3)}
+.privacy{display:flex;gap:8px;align-items:flex-start;color:var(--muted);font-size:.82rem;margin:0;max-width:78ch}
+.privacy .ico{margin-top:2px}
+.page-head.is-start{padding-bottom:var(--sp-5);border-bottom:1px solid var(--border)}
+
+.shell{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px;align-items:start}
+
+/* ── Rail (extends .narrative-progress-panel / .narrative-stage-item) ───────────────────────── */
+.rail{position:sticky;top:48px;background:var(--panel);border:1px solid var(--panel-border);border-radius:var(--r-xl);padding:var(--sp-5)}
+.rail h2{font-size:.95rem;font-weight:700;margin:0 0 var(--sp-4);color:#333}
+.rail-group{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:0 0 var(--sp-1)}
+.rail-group+ul{margin-bottom:var(--sp-4)}
+.rail ul{list-style:none;margin:0;padding:0}
+.ri{display:grid;grid-template-columns:10px minmax(0,1fr);column-gap:10px;width:100%;text-align:left;background:none;border:0;padding:6px 0;cursor:pointer;color:#555;font-size:.88rem;line-height:1.35;border-radius:4px;transition:color var(--t-fast)}
+.ri:hover{color:var(--burgundy)}
+.ri .mk{width:10px;height:10px;border-radius:50%;border:2px solid currentColor;margin-top:4px;transition:background var(--t-med) var(--ease),border-color var(--t-med)}
+.ri.sq .mk{border-radius:2px}
+.ri .lb{min-width:0}
+.ri .mt{grid-column:2;font-size:var(--fs-xs);color:var(--muted);font-weight:400;margin-top:1px}
+.ri.is-done{color:var(--done)}
+.ri.is-done .mk{background:currentColor}
+.ri.is-active{color:var(--burgundy);font-weight:700}
+.ri.is-active.is-done .mk{background:var(--done);border-color:var(--done)}
+.ri.is-quiet{color:var(--faint)}
+.rail-cap{font-size:var(--fs-xs);color:var(--faint);margin:-2px 0 var(--sp-4) 20px;line-height:1.4}
+.tally{border-top:1px solid #e2e2e2;padding-top:var(--sp-3);margin-top:var(--sp-1);font-size:var(--fs-xs);color:var(--muted)}
+.tally b{display:block;color:#333;font-size:.78rem;margin-bottom:2px}
+.lenbar{height:6px;background:var(--track);border-radius:3px;margin:6px 0 4px;overflow:hidden;position:relative}
+.lenbar i{display:block;height:100%;background:#7a7a7a;border-radius:3px;transition:width var(--t-slow) var(--ease)}
+.rail-save{display:inline-flex;gap:6px;align-items:center;margin-top:var(--sp-3);font-size:.82rem;color:var(--burgundy);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+
+/* ── Step header and shared text ─────────────────────────────────────────────────────────────── */
+.tailored{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:var(--fs-xs);color:var(--muted);margin:0 0 var(--sp-4)}
+.pill{display:inline-block;background:var(--tint);color:var(--burgundy);border-radius:12px;padding:1px 9px;font-size:.78rem}
+.linkbtn{background:none;border:0;padding:0;color:var(--burgundy);text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-size:inherit}
+.step-head{margin:0 0 var(--sp-5);padding-bottom:var(--sp-3);border-bottom:2px solid #f0f0f0}
+.step-head h2{font-size:var(--fs-h2);font-weight:700;margin:0 0 var(--sp-2);color:var(--burgundy);line-height:1.25}
+.step-head p{margin:0;max-width:74ch;font-size:.95rem}
+.quiet{font-size:var(--fs-sm);color:var(--muted);margin:0}
+.note{display:flex;gap:8px;align-items:flex-start;font-size:var(--fs-sm);color:var(--muted);margin:var(--sp-3) 0 0}
+.note .ico{color:var(--muted);margin-top:2px;font-size:1.05em}
+.h3{font-size:1rem;font-weight:700;margin:0 0 var(--sp-3);color:var(--text)}
+
+/* buttons (existing .btn / .btn-primary) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--burgundy);background:#fff;color:var(--burgundy);padding:9px 16px;font-size:14px;font-weight:600;line-height:1.2;cursor:pointer;border-radius:2px;min-height:40px;transition:background var(--t-fast),color var(--t-fast)}
+.btn:hover{background:var(--tint-2)}
+.btn.primary{background:var(--burgundy);color:#fff}
+.btn.primary:hover{background:#7a1d2f}
+.btn.small{min-height:32px;padding:5px 12px;font-size:13px}
+.btn.ghost{border-color:transparent;background:none;text-decoration:underline;text-underline-offset:2px;padding-left:4px;padding-right:4px}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-4);flex-wrap:wrap;margin-top:var(--sp-6);padding-top:var(--sp-4);border-top:1px solid #eee}
+.nav .note{margin:0;flex:1 1 260px}
+
+/* ── Start page: path row ────────────────────────────────────────────────────────────────────── */
+.paths{display:grid;grid-template-columns:minmax(0,1fr) 172px;gap:var(--sp-4);align-items:stretch}
+.path{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;text-align:left;cursor:pointer;border-radius:var(--r-lg);padding:var(--sp-5);font:inherit;transition:transform var(--t-fast) var(--ease),box-shadow var(--t-med),border-color var(--t-fast)}
+.path-new{background:var(--burgundy);color:#fff;border:2px solid var(--burgundy)}
+.path-new:hover{box-shadow:0 6px 20px rgba(145,35,56,.25);transform:translateY(-1px)}
+.path-new h3{font-size:1.25rem;margin:0 0 var(--sp-2);line-height:1.25}
+.path-new p{margin:0 0 var(--sp-4);font-size:.92rem;line-height:1.55;color:#fbeef0;max-width:58ch}
+.path-new .go{margin-top:auto;display:inline-flex;gap:8px;align-items:center;background:#fff;color:var(--burgundy);font-weight:700;font-size:14px;border-radius:2px;padding:8px 14px}
+.path-cont{background:#fff;border:2px solid var(--card-border);color:var(--text);width:100%;min-height:172px;padding:var(--sp-4) var(--sp-4) var(--sp-5)}
+.path-cont:hover{border-color:var(--burgundy)}
+.path-cont .ico{font-size:28px;color:var(--burgundy);margin-bottom:var(--sp-3)}
+.path-cont h3{font-size:1rem;margin:0 0 var(--sp-1);line-height:1.25}
+.path-cont p{margin:0;font-size:.8rem;color:var(--muted);line-height:1.45}
+
+/* ── Opening statement ───────────────────────────────────────────────────────────────────────── */
+.lede{font-size:1rem;margin:0 0 var(--sp-2);max-width:70ch}
+
+/* ── Questions (Profile) ─────────────────────────────────────────────────────────────────────── */
+.qcount{font-size:var(--fs-xs);color:var(--muted);text-align:right;margin:0 0 var(--sp-2)}
+.qblock{background:#fff;border:1px solid var(--card-border);border-left:3px solid var(--burgundy);border-radius:var(--r-md);padding:var(--sp-4) var(--sp-5) var(--sp-5);margin:0 0 var(--sp-3)}
+.q{font-size:var(--fs-lg);font-weight:600;margin:0 0 var(--sp-2);line-height:1.35;display:block}
+.explain{display:flex;gap:10px;align-items:flex-start;background:var(--explain-bg);border-radius:var(--r-md);padding:10px 12px;font-size:var(--fs-sm);color:var(--muted);line-height:1.55;margin:0 0 var(--sp-4);max-width:78ch}
+.explain .ico{font-size:1.1em;margin-top:2px;color:#6b6b6b}
+.explain p{margin:0}
+.explain p+p{margin-top:6px}
+.choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:var(--sp-3)}
+.choice{position:relative;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;text-align:left;background:#fff;border:2px solid var(--card-border);border-radius:var(--r-lg);padding:12px 14px;cursor:pointer;min-height:64px;transition:border-color var(--t-fast),background var(--t-fast)}
+.choice:hover{border-color:var(--burgundy)}
+.choice b{font-size:1rem;line-height:1.25}
+.choice small{display:block;font-size:.74rem;color:var(--muted);line-height:1.35;margin-top:3px}
+.choice[aria-pressed="true"],.choice[aria-checked="true"]{border-color:var(--burgundy);background:var(--tint-2)}
+.choice .tick{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--burgundy);color:#fff;display:none;align-items:center;justify-content:center;font-size:12px}
+.choice[aria-pressed="true"] .tick,.choice[aria-checked="true"] .tick{display:flex}
+.choice.wide{grid-column:1/-1;min-height:0;flex-direction:row;gap:8px;align-items:center}
+.minis{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.mini{border:1px solid var(--field-border);background:#fff;border-radius:16px;padding:5px 12px;font-size:.86rem;cursor:pointer;min-height:32px}
+.mini[aria-checked="true"],.mini[aria-pressed="true"]{background:var(--burgundy);border-color:var(--burgundy);color:#fff}
+.field-label{display:block;font-size:var(--fs-sm);font-weight:600;color:#444;margin:0 0 4px}
+.field-label .opt{font-weight:400;color:var(--muted)}
+.input,.select{width:100%;border:1px solid var(--field-border);border-radius:var(--r-sm);padding:9px 10px;background:#fff;font-size:.92rem;min-height:40px}
+.input:focus,.select:focus,.box:focus{outline:none;border-color:var(--burgundy);box-shadow:0 0 0 2px rgba(145,35,56,.18)}
+.comp-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sp-3);align-items:end;margin-bottom:var(--sp-4)}
+.feedback{display:flex;gap:8px;align-items:flex-start;font-size:var(--fs-sm);color:var(--done);margin:6px 0 0}
+.feedback .ico{margin-top:2px}
+
+/* ── The answered row: ONE component for a folded Profile answer and a shrunk card field ──────── */
+.ans{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:start;width:100%;text-align:left;background:#fff;border:1px solid var(--card-border);border-radius:var(--r-md);padding:9px 12px;cursor:pointer;transition:border-color var(--t-fast)}
+.ans:hover{border-color:#b9b9b9}
+.ans-k{font-size:var(--fs-xs);font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px;letter-spacing:.01em}
+.ans{position:relative;overflow:hidden}
+.ans-v{grid-column:1;font-size:.9rem;color:var(--text);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* long answers: the words stay at full contrast (clamped at three lines with an ellipsis); only the
+   padding strip below them fades, as a cue that there is more */
+.ans:has(.ans-v.is-long)::after{content:"";position:absolute;left:1px;right:1px;bottom:0;height:9px;background:linear-gradient(180deg,rgba(255,255,255,0),#ececec);pointer-events:none}
+.ans-d{grid-column:1;font-size:.8rem;color:var(--done);display:flex;gap:6px;align-items:flex-start}
+.ans-edit{grid-column:2;grid-row:1/span 2;font-size:.8rem;color:var(--burgundy);text-decoration:underline;text-underline-offset:2px;white-space:nowrap;align-self:center}
+.prof-list{display:flex;flex-direction:column;gap:var(--sp-2);margin:0 0 var(--sp-3)}
+
+/* ── Card (one card for contributions, people, How you mentor, Your statement, order, export) ── */
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-lg);padding:var(--sp-4) var(--sp-5) var(--sp-5);margin:0 0 var(--sp-4)}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-3);margin:0 0 var(--sp-3);min-height:28px}
+.card-t{font-weight:600;font-size:.95rem;color:#333;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-t .num{color:var(--burgundy)}
+.card-side{display:flex;align-items:center;gap:10px;flex-shrink:0;font-size:.8rem;color:var(--muted)}
+.dots{display:inline-flex;gap:3px}
+.dots i{width:6px;height:6px;border-radius:50%;background:#d4d4d4;transition:background var(--t-med)}
+.dots i.on{background:var(--done)}
+.icon-btn{width:30px;height:30px;border:1px solid #ddd;border-radius:4px;background:#fff;color:#777;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+.icon-btn:hover{color:var(--burgundy);border-color:var(--burgundy)}
+.card-sub{font-size:var(--fs-sm);color:var(--muted);margin:-4px 0 var(--sp-3)}
+.fields{display:flex;flex-direction:column;gap:var(--sp-2)}
+
+/* field: open / filled (shrunk with answer) / empty (shrunk, one-line box) */
+.f{position:relative;border-radius:var(--r-md);transition:background var(--t-med),border-color var(--t-med),padding var(--t-med) var(--ease)}
+.f-k{font-size:var(--fs-xs);font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px;margin:0 0 4px}
+.jd{width:8px;height:8px;border-radius:2px;background:var(--jc,#bdbdbd);flex-shrink:0}
+.f-more{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--t-med) var(--ease),opacity var(--t-med);opacity:0}
+.f-more>div{overflow:hidden;min-height:0}
+.f.is-open{background:#fff;border:1px solid var(--card-border);border-left:3px solid var(--burgundy);padding:12px 16px 14px}
+.f.is-open .f-more{grid-template-rows:1fr;opacity:1}
+.f.is-open .f-k{color:var(--burgundy)}
+.f .q{font-size:1rem;margin:2px 0 8px}
+.f .explain{margin-bottom:12px}
+.box{display:block;width:100%;border:1px solid var(--field-border);border-radius:var(--r-sm);background:#fff;padding:8px 10px;font-size:.92rem;line-height:var(--lh-box);resize:none;overflow:auto;transition:height var(--t-med) var(--ease),opacity var(--t-fast),padding var(--t-med),border-color var(--t-fast)}
+textarea.box{height:calc(var(--box-lines) * var(--lh-box) * 1em + 18px)}
+.f.is-empty textarea.box{height:calc(1.5em + 18px);overflow:hidden}
+.f.is-filled .box{height:0;min-height:0;padding-top:0;padding-bottom:0;border-color:transparent;opacity:0}
+.f.is-filled .anchor-line{height:0;overflow:hidden;opacity:0}
+.f.is-filled .f-k{display:none}
+.f .ans{display:none}
+.f.is-filled .ans{display:grid}
+.f.is-empty{padding:0}
+.f-checks{font-size:.8rem;line-height:1.5;margin-top:8px}
+.f:not(.is-open) .f-checks{display:none}
+.f-checks .fl{color:#b02a0a;display:block}
+.f-checks .st{color:var(--done);display:block}
+.f-checks .first{color:var(--muted);display:block;margin-top:4px}
+.f-aside{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:var(--sp-4);align-items:start}
+.cross{background:var(--panel);border:1px dashed #cfcfcf;border-radius:var(--r-md);padding:10px 12px;font-size:.8rem;color:#444;line-height:1.5}
+.cross b.t{display:block;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--burgundy);margin-bottom:4px}
+.cross p{margin:0 0 6px}
+.cross p.m{color:var(--muted);margin:0}
+.levels{margin:0 0 10px}
+.anchor-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.95rem}
+.anchor-line .input{flex:1 1 150px;width:auto}
+.f-ev-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px dashed #c4c4c4;border-radius:var(--r-md);padding:9px 12px}
+.f-ev-row .f-k{margin:0}
+.f-ev-row span.s{font-size:.85rem;color:var(--muted)}
+
+/* strip: Your paragraph so far / What you wrote / Your statement so far (one element) */
+.strip{background:#fff;border:1px solid var(--card-border);border-radius:var(--r-md);padding:12px 16px;margin-top:var(--sp-3)}
+.strip-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 6px}
+.strip-h b{font-size:var(--fs-xs);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.strip p{margin:0;font-size:.9rem;line-height:1.7}
+.strip .role{font-style:italic;color:var(--muted);font-size:.85rem;margin-bottom:4px}
+.join{display:inline-block;background:#fff8e1;color:#555;border:1px solid #f0c94a;border-radius:10px;padding:0 8px;font-size:.72rem;font-style:italic;margin:0 3px;vertical-align:1px;white-space:nowrap}
+.gap{display:block;color:var(--warn-text);font-size:.8rem;margin-top:6px}
+.strip .empty{color:var(--muted);font-style:italic}
+.seg-new{animation:segin var(--t-slow) var(--ease)}
+@keyframes segin{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+/* evidence */
+.ev-area{margin-top:var(--sp-3)}
+.ev-items{display:flex;flex-direction:column;gap:var(--sp-2);margin:0 0 var(--sp-3)}
+.ev-item{display:grid;grid-template-columns:24px minmax(0,1fr);gap:4px 10px;background:#fff;border:1px solid var(--card-border);border-radius:var(--r-md);padding:10px 12px;font-size:.88rem}
+.badge{width:22px;height:22px;border-radius:50%;background:var(--burgundy);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.ev-item .ty{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--burgundy)}
+.ev-item .why{color:var(--muted);font-size:.82rem}
+.kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:8px;margin:0 0 var(--sp-4)}
+.kind{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:#fff;border:1.5px solid var(--card-border);border-radius:var(--r-md);padding:8px 10px;cursor:pointer;transition:border-color var(--t-fast),background var(--t-fast)}
+.kind:hover{border-color:var(--burgundy)}
+.kind b{font-size:.85rem}
+.kind small{font-size:.74rem;color:var(--muted);line-height:1.35}
+.kind[aria-checked="true"]{border-color:var(--burgundy);background:var(--tint-2)}
+textarea.box.two{height:calc(2 * var(--lh-box) * 1em + 18px)}
+
+/* dashed add button (existing .add-contribution-btn) */
+.add{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:2px dashed #c4c4c4;border-radius:var(--r-md);background:none;padding:12px;color:#555;font-size:.92rem;font-weight:600;cursor:pointer;transition:border-color var(--t-fast),color var(--t-fast);margin:0 0 var(--sp-4)}
+.add:hover{border-color:var(--burgundy);color:var(--burgundy)}
+
+/* folded summary row */
+.fold{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-lg);padding:12px 16px;margin:0 0 var(--sp-3);cursor:pointer}
+.fold:hover{border-color:#bdbdbd}
+.fold .t{flex:1;min-width:0;font-weight:600;font-size:.92rem;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jobs{display:inline-flex;gap:3px}
+.jobs i{width:14px;height:14px;border-radius:3px;background:#e4e4e4;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-style:normal}
+.fold .meta{font-size:.78rem;color:var(--muted);white-space:nowrap}
+.fold .op{font-size:.8rem;color:var(--burgundy);white-space:nowrap}
+
+/* example controls + example box */
+.ex-row{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 var(--sp-4)}
+.ex-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--field-border);border-radius:20px;padding:6px 14px;font-size:.86rem;cursor:pointer;color:var(--text);min-height:36px}
+.ex-btn:hover{border-color:var(--burgundy);color:var(--burgundy)}
+.ex-btn .pm{font-weight:700;color:var(--burgundy);width:10px;text-align:center}
+.ex-btn[aria-expanded="true"]{border-color:var(--burgundy);background:var(--tint-2)}
+.exbox{background:#fff;border:1px solid var(--card-border);border-radius:var(--r-lg);padding:var(--sp-4) var(--sp-5);margin:-4px 0 var(--sp-5);animation:reveal var(--t-slow) var(--ease)}
+@keyframes reveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.exbox-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 var(--sp-3)}
+.fiction{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#fff;background:#1a1a1a;border-radius:4px;padding:3px 9px}
+.exbox h4{margin:0 0 4px;font-size:.98rem}
+.exbox .match{font-size:.8rem;color:var(--muted);margin:0 0 10px}
+.exemplar{font-size:.92rem;line-height:1.8;margin:0}
+.exemplar .seg{border-radius:4px;padding:1px 2px;transition:background var(--t-med),box-shadow var(--t-med)}
+.built .seg-stakes{background:var(--jt-stakes);box-shadow:inset 3px 0 0 var(--j-stakes);padding-left:6px}
+.built .seg-role{background:var(--jt-role);box-shadow:inset 3px 0 0 var(--j-role);padding-left:6px}
+.built .seg-activities{background:var(--jt-activities);box-shadow:inset 3px 0 0 var(--j-activities);padding-left:6px}
+.built .seg-outputs{background:var(--jt-outputs);box-shadow:inset 3px 0 0 var(--j-outputs);padding-left:6px}
+.built .seg-outcomes{background:var(--jt-outcomes);box-shadow:inset 3px 0 0 var(--j-outcomes);padding-left:6px}
+.built .seg-impact{background:var(--jt-impact);box-shadow:inset 3px 0 0 var(--j-impact);padding-left:6px}
+.legend{display:none;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.built .legend{display:flex;animation:reveal var(--t-slow) var(--ease)}
+.legend span{font-size:.74rem;font-weight:600;border-radius:10px;padding:2px 9px;color:#333}
+.exfoot{font-size:.78rem;color:var(--muted);margin:12px 0 0;padding-top:10px;border-top:1px solid var(--rule)}
+.hints{margin:0;padding-left:1.1em;font-size:.88rem}
+.hints li{margin:0 0 3px}
+
+/* toggle switch */
+.switch{display:inline-flex;align-items:center;gap:10px;background:none;border:0;padding:4px 0;cursor:pointer;font-size:.9rem;font-weight:600;color:var(--text)}
+.switch .tr{position:relative;width:38px;height:22px;border-radius:11px;background:#8a8a8a;transition:background var(--t-med) var(--ease);flex-shrink:0}
+.switch .tr::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform var(--t-med) var(--ease);box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.switch[aria-checked="true"] .tr{background:var(--burgundy)}
+.switch[aria-checked="true"] .tr::after{transform:translateX(16px)}
+
+/* dashboard tiles (Mentorship totals, Review at a glance) */
+.dash{background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-lg);padding:var(--sp-4) var(--sp-5) var(--sp-5);margin:0 0 var(--sp-5)}
+.dash-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 var(--sp-3)}
+.dash-h .h3{margin:0}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-3)}
+.tile{background:#fff;border:1px solid var(--card-border);border-radius:var(--r-md);padding:10px 12px 12px;display:flex;flex-direction:column;gap:2px}
+.tile label{font-size:.78rem;color:var(--muted);font-weight:600;order:2}
+.tile input{order:1;border:0;border-bottom:2px solid #d0d0d0;border-radius:0;padding:0 0 2px;font-size:var(--fs-num);font-weight:700;line-height:1.15;width:100%;background:transparent;color:var(--text);-moz-appearance:textfield}
+.tile input::-webkit-outer-spin-button,.tile input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.tile input:focus{outline:none;border-bottom-color:var(--burgundy)}
+.tile input::placeholder{color:#b5b5b5;font-weight:400}
+.glance{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:var(--sp-3)}
+.glance .tile{padding:12px 14px}
+.glance ul{margin:6px 0 0;padding:0;list-style:none;font-size:.88rem}
+.glance li{padding:4px 0;border-bottom:1px solid var(--rule)}
+.glance li:last-child{border-bottom:0}
+.glance .ok{display:flex;gap:8px;align-items:center;color:var(--done);font-weight:600;font-size:.9rem;margin-top:6px}
+.tile-k{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.big{font-size:var(--fs-num);font-weight:700;line-height:1.1}
+.pages{position:relative;height:10px;background:var(--track);border-radius:5px;margin:10px 0 4px;overflow:hidden}
+.pages i{position:absolute;inset:0 auto 0 0;background:#7a7a7a;border-radius:5px}
+.pages s{position:absolute;top:0;bottom:0;width:2px;background:#fff}
+.pages-scale{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted)}
+
+/* people */
+.counter{font-size:.85rem;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3);margin:0 0 var(--sp-3)}
+.one{margin:0 0 var(--sp-3)}
+.revealed{animation:reveal var(--t-slow) var(--ease)}
+.early{background:#f5f5f5;border-left:3px solid var(--burgundy);border-radius:0 6px 6px 0;padding:10px 14px;font-size:.9rem;color:#444;margin:0 0 var(--sp-4)}
+.section-t{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 var(--sp-3)}
+.section-t .h3{margin:0}
+
+/* review */
+.draft{background:#fff;border:1px solid var(--card-border);border-radius:var(--r-md);overflow:hidden;transition:height var(--t-slow) var(--ease)}
+.draft-body{height:calc(14 * 1.6em + 28px);overflow:auto;padding:14px 18px;font-family:Arial,Helvetica,sans-serif;font-size:.88rem;line-height:1.6}
+.draft-body.tnr{font-family:"Times New Roman",Times,serif;font-size:.95rem}
+.draft-body h4{font-size:.92rem;margin:0 0 4px;color:#222}
+.draft-body h4:not(:first-child){margin-top:14px}
+.draft-body p{margin:0 0 8px}
+.draft-body .r{font-style:italic;color:#444}
+.draft-body .refs{font-size:.82rem;color:#444;margin:0 0 10px;padding-left:1em}
+.draft.is-shut .draft-body{height:0;padding-top:0;padding-bottom:0}
+.slot{font-size:.8rem;color:var(--muted);margin:var(--sp-3) 0 6px;padding-left:2px;max-width:70ch}
+.slot b{color:var(--text)}
+.ocard{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-lg);padding:12px 14px;margin:0 0 var(--sp-2);transition:transform var(--t-slow) var(--ease),box-shadow var(--t-med)}
+.ocard .n{width:26px;height:26px;border-radius:50%;background:var(--burgundy);color:#fff;font-weight:700;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+.ocard .t{font-weight:600;font-size:.92rem;line-height:1.35}
+.ocard .g{font-size:.82rem;color:var(--muted);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px}
+.ocard .mv{display:flex;gap:6px}
+.ocard .mv .btn{min-width:40px;min-height:36px;padding:4px 10px;font-size:15px}
+.ocard .mv .btn:disabled{opacity:.3;cursor:default}
+.ocard.moved{box-shadow:0 0 0 2px rgba(145,35,56,.25)}
+.selfcheck label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;font-size:.9rem;color:#333;cursor:pointer}
+.selfcheck input{margin-top:4px;width:16px;height:16px;accent-color:var(--burgundy);flex-shrink:0}
+.closing{margin:var(--sp-3) 0 0;padding:10px 14px;border-left:3px solid var(--burgundy);background:#fbf7f7;font-size:.88rem;border-radius:0 6px 6px 0}
+
+/* export */
+.setup-line{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.9rem;margin:-8px 0 var(--sp-5);color:#333}
+.setup-line .k{font-weight:700}
+.preview{height:calc(10 * 1.6em + 28px)}
+.fmt{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3);margin:0 0 var(--sp-4)}
+.fmt .choice{min-height:0}
+.rec{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--done);background:#e9f3e9;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.actions{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.copy-row{display:flex;flex-direction:column;gap:8px;margin:0 0 var(--sp-4)}
+.copy-row .btn{justify-content:flex-start;width:100%;max-width:520px}
+.fmt-note{border:1px solid var(--border);border-left:4px solid var(--burgundy);border-radius:6px;background:#fbf7f7;padding:12px 14px;font-size:.85rem;line-height:1.55}
+.fmt-note p{margin:0 0 6px}
+.fmt-note .must{color:var(--burgundy);font-weight:700}
+.fmt-note dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 14px;margin:8px 0 0}
+.fmt-note dt{font-weight:700}
+.fmt-note dd{margin:0;color:#444}
+.nudge{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;border:1px solid #f0c94a;background:#fff8e1;border-radius:var(--r-md);padding:14px 16px;margin-top:var(--sp-4);font-size:.9rem}
+.nudge p{margin:0;flex:1 1 320px}
+.nudge .addr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nudge code{font-family:inherit;font-weight:600;user-select:all}
+.copied{font-size:.8rem;color:var(--done);margin-left:8px}
+
+/* ── Phone (container query on the frame, so the width toggle works on a desktop screen) ──────── */
+@container app (max-width: 700px){
+  .shell-pad{padding:var(--sp-4) 16px var(--sp-6)}
+  .shell{grid-template-columns:minmax(0,1fr);gap:var(--sp-4)}
+  .card-t{white-space:normal}
+  .card-h{align-items:flex-start}
+  .banner{padding:8px 12px;font-size:11px}
+  .banner .reset{display:none}
+  .rail{position:static;padding:var(--sp-4)}
+  .rail h2{margin-bottom:var(--sp-2)}
+  .ri{grid-template-columns:10px minmax(0,1fr) auto;padding:5px 0}
+  .ri .mt{grid-column:3;grid-row:1;align-self:center;margin:0;text-align:right;white-space:nowrap}
+  .rail-cap{margin-left:20px}
+  .tally{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center}
+  .tally b{display:inline;margin:0}
+  .tally .lenbar{flex:1 1 100%;order:3;margin:4px 0 0}
+  .paths{grid-template-columns:1fr}
+  .path-cont{min-height:0;flex-direction:row;align-items:center;gap:12px;padding:14px 16px}
+  .shell.is-start main{order:-1}
+  .path-cont .ico{margin:0}
+  .choices{grid-template-columns:1fr 1fr}
+  .comp-row{grid-template-columns:1fr}
+  .qblock{padding:14px 14px 16px}
+  .card{padding:14px 14px 16px}
+  .card-side .dots{display:none}
+  .f.is-open{padding:10px 12px 12px}
+  .f-aside{grid-template-columns:1fr}
+  .tiles{grid-template-columns:1fr 1fr}
+  .pair{grid-template-columns:1fr}
+  .glance{grid-template-columns:1fr}
+  .fmt{grid-template-columns:1fr}
+  .kinds{grid-template-columns:1fr 1fr}
+  .ocard{grid-template-columns:26px minmax(0,1fr);}
+  .ocard .mv{grid-column:2;justify-content:flex-start}
+  .step-head h2{font-size:1.25rem}
+  .fold .jobs{display:none}
+  .nav{flex-direction:column-reverse;align-items:stretch}
+  .nav .btn{width:100%}
+}
+
+/* ── Reduced motion: no slides, no height tweens; state changes are instant ─────────────────── */
+@media (prefers-reduced-motion: reduce){ *,*::before,*::after{transition-duration:0ms!important;animation:none!important} }
+body.rm *,body.rm *::before,body.rm *::after{transition-duration:0ms!important;animation:none!important}
+
+/* ── Mock-up control bar (not part of the design) ───────────────────────────────────────────── */
+.mock{position:fixed;left:0;right:0;bottom:0;z-index:200;background:#262626;color:#eee;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:12px;padding:8px 12px 10px;box-shadow:0 -4px 16px rgba(0,0,0,.25)}
+body.clean .mock{display:none}
+.mock-row{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin:2px 0}
+.mock-row>span{color:#9a9a9a;width:78px;flex-shrink:0;text-transform:uppercase;letter-spacing:.06em;font-size:10px}
+.mock button{background:#3a3a3a;color:#eee;border:1px solid #4a4a4a;border-radius:3px;padding:3px 8px;font-size:12px;cursor:pointer}
+.mock button[aria-pressed="true"]{background:#e5a712;color:#1a1a1a;border-color:#e5a712;font-weight:700}
+.mock .hide{position:absolute;right:10px;top:6px}
+.mock.is-min .mock-row{display:none}
+.mock.is-min .mock-row.keep{display:flex}
+.toast{position:fixed;left:50%;bottom:150px;transform:translateX(-50%);background:#1a1a1a;color:#fff;font-size:13px;padding:8px 14px;border-radius:6px;z-index:300;opacity:0;transition:opacity var(--t-med);pointer-events:none}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-info" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path d="M18 8h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zM9 6a3 3 0 0 1 6 0v2H9V6zm3 11a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 12H4V8h16v10z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H5V5h10v4z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></symbol>
+</svg>
+
+<div class="frame" id="frame">
+  <div class="banner">
+    <span><strong>PROTOTYPE · V7 BETA</strong></span>
+    <span class="banner-actions">
+      <button type="button" class="banner-btn" data-act="email"><svg class="ico"><use href="#i-mail"/></svg>Email us</button>
+      <a href="#" class="reset" data-act="toast" data-msg="Reset draft clears the draft stored in this browser, after a confirmation.">Reset draft</a>
+    </span>
+  </div>
+  <div class="shell-pad">
+    <header class="page-head" id="head"></header>
+    <div class="shell">
+      <nav class="rail" id="rail" aria-label="My application"></nav>
+      <main id="main" tabindex="-1"></main>
+    </div>
+  </div>
+</div>
+<div class="sr" id="live" aria-live="polite" aria-atomic="true"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<div class="mock" id="mock" aria-label="Mock-up controls (not part of the design)">
+  <button type="button" class="hide" data-mock="min">Hide controls</button>
+  <div class="mock-row keep"><span>Screen</span><div id="m-screens" class="mock-row" style="margin:0"></div></div>
+  <div class="mock-row"><span>State</span><div id="m-states" class="mock-row" style="margin:0"></div></div>
+  <div class="mock-row"><span>Options</span><div id="m-opts" class="mock-row" style="margin:0"></div></div>
+  <div class="mock-row"><span>Rail</span><div id="m-rail" class="mock-row" style="margin:0"></div><span style="width:auto;margin-left:14px">Width</span><div id="m-width" class="mock-row" style="margin:0"></div><span style="width:auto;margin-left:14px">Motion</span><div id="m-motion" class="mock-row" style="margin:0"></div></div>
+</div>
+
+<script>
+window.addEventListener("error",function(e){window.__err=(window.__err||"")+e.message+" ";});
+(function(){
+"use strict";
+/* ═══ Vocabulary (labels and help copied from narrative-cv-prototype-v7.html unless marked) ═══ */
+var YEAR = new Date().getFullYear();
+var YEARS = [YEAR, YEAR+1, YEAR+2, YEAR+3];
+var GUIDE = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
+var AGENCIES = [
+  {v:"sshrc",a:"SSHRC",n:"Social Sciences and Humanities Research Council",f:"tcv"},
+  {v:"nserc",a:"NSERC",n:"Natural Sciences and Engineering Research Council",f:"tcv"},
+  {v:"cihr",a:"CIHR",n:"Canadian Institutes of Health Research",f:"tcv"},
+  {v:"frq",a:"FRQ",n:"Fonds de recherche du Québec",f:"cv-frq"},
+  {v:"other",a:"Not sure yet",n:"You can change it later",f:"tcv"}
+];
+var FONT = {sshrc:"12-point Arial",nserc:"12-point Times New Roman",cihr:"12-point Times New Roman",frq:"12-point Times New Roman",other:"12-point Times New Roman"};
+var STAGES = [{v:"early",l:"Early career"},{v:"mid",l:"Mid career"},{v:"senior",l:"Senior"}];
+var DISC = [{v:"stem",l:"STEM / engineering"},{v:"health",l:"Health / clinical"},{v:"social",l:"Social sciences"},{v:"humanities",l:"Humanities"},{v:"creative",l:"Creative / fine arts"}];
+var MODES = [{v:"team",l:"Team-based"},{v:"community",l:"Community-engaged"},{v:"solo",l:"Largely solo"},{v:"industry",l:"Industry-partnered"}];
+var JOBS = {stakes:"Stakes",role:"Your role",activities:"What you did",outputs:"What resulted",outcomes:"What already changed",impact:"What could change"};
+var JOB_ORDER = ["stakes","role","activities","outputs","outcomes","impact"];
+var LEVELS = [{v:"led",l:"I led it"},{v:"colead",l:"I co-led it"},{v:"part",l:"I was part of it"}];
+var EV_KINDS = [
+  ["Peer-reviewed","an article, chapter or book"],["Media / public","coverage, a public talk, a podcast"],
+  ["Policy / practice uptake","a policy, guideline or program that adopted your work"],["Dataset / tool","data or software others use"],
+  ["Award / recognition","a prize, fellowship or honour"],["Funding","a grant the work attracted"],
+  ["Replication / citation","work by others that built on yours"],["Other","anything else a reviewer could check"]];
+var M_STAGES = [["doctoral","Doctoral"],["masters","Master's"],["postdoc","Postdoctoral"],["ugrad","Undergraduate research"],["other","Other"]];
+var M_SECTORS = [["university","University"],["industry","Industry"],["community","Community agency"],["government","Government"],["other","Other"]];
+
+var CF = [ // contribution card fields, in the funder's order
+  {k:"h",label:"Headline",line:true,q:"Give this contribution a headline.",help:"Short, plain and memorable — a reviewer should be able to repeat it back from memory. Name what the work was for; the paper's title belongs in the evidence list."},
+  {k:"stakes",job:"stakes",q:"Start with the problem. What was at stake, and for whom?",help:"Set up the why before the what. Strong contributions open with the problem they answered; the method follows."},
+  {k:"role",job:"role",q:"In one line, what did you do that wouldn't exist without you?",help:"The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the protocol.”"},
+  {k:"did",job:"activities",q:"What did you do?",help:"The specific work — what you designed, ran, built, negotiated or wrote. Include the scale: how many sites, how long, how many people."},
+  {k:"outputs",job:"outputs",q:"What concrete things resulted?",help:"Name them — papers, datasets, tools, methods, protocols, partnerships, programs — and say how many where you can. List the things themselves; their effects belong in the next field."},
+  {k:"changed",job:"outcomes",q:"Who took this up — scholars, practitioners, communities, the public or policy makers — and what shifted?",help:"Who used it and what shifted — concretely. If there is no change to report yet, leave this blank and put what you expect under What could change."},
+  {k:"could",job:"impact",q:"What could change at the scale of a field, sector or population?",help:"Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems get framed."},
+  {k:"moment",label:"One moment (optional)",q:"What is one moment when this work reached someone?",help:"One scene, two sentences — a person, a clinic, a classroom, a community meeting, a committee that used it. One concrete instance of What already changed, told as a scene. Optional.",optional:true}
+];
+var PF = [ // practice questions (How you mentor)
+  {k:"phil",label:"One thing you do",q:"What is one concrete thing you do that shows how you mentor?",help:"One practice you follow, described concretely. How you run a first meeting, how you decide authorship, how you hand a project over when someone is ready for it."},
+  {k:"edi",label:"Who gets in",q:"Who do your community partnerships bring into research, and what did you change to make that possible?",help:"One change you made: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so what you changed carries further than what you believe."},
+  {k:"cross",label:"Who else you mentor",q:"Beyond your own students — who else do you mentor? Take one person and say what you did.",help:"Informal mentoring counts here, and the format says so: early-career colleagues, postdocs you don't supervise, visiting scholars, peers, community researchers. One concrete example — a grant you read, an introduction you made, a room you got someone into — says more than a list of names."}
+];
+function SF(){ // statement fields; CV-FRQ adds the team question
+  var a = [
+    {k:"anchor",label:"Your first sentence",q:"Finish this line.",help:"Plain and direct: your first sentence.",anchor:true},
+    {k:"challenge",label:"The problem",q:"What problem in the world does your research keep returning to?",help:"One or two sentences — a throughline that runs across your projects.",cross:true},
+    {k:"streams",label:"Strands",q:"Name two to four strands of your work. What single thread connects them?",help:"A reviewer should see one coherent program.",cross:true},
+    {k:"pivot",label:"How you got here",q:"How did you get here?",help:"Many strong statements name a turning point — a field you came from, a pivot, a defining collaboration. It explains why your work looks the way it does."},
+    {k:"standing",label:"Standing",q:"List your strongest signals so far — key papers, fellowships, awards, the scale of a dataset or collaboration. Name what you have.",help:"Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual's work. The citation count for a single article or book can support what you say about it."},
+    {k:"programFit",label:"Why this competition",q:"",help:""},
+    {k:"horizon",label:"What's next",q:"Where is this heading next?",help:"Name the direction of the work. The statement should end by pointing forward."}
+  ];
+  var comp = D.p.undecided || !D.p.comp ? "" : D.p.comp;
+  var ag = agencyOf(D.p.agency);
+  a[5].q = comp ? "You're aiming at " + comp + " (" + (ag ? ag.a : "") + "). Why is this the right competition for where you are?" : "Which competition do you have in mind, and why does it fit where you are?";
+  a[5].help = UI.frq ? "The CV-FRQ asks this section to show your expertise relative to this specific opportunity or project and your fit with the program's objectives. Name the objectives and where your work meets them." : "The TCV asks this section to show your expertise relative to this specific opportunity or project. Name what the competition funds and the expertise you bring to it.";
+  if (UI.frq) a.splice(6,0,{k:"teamFit",label:"How you complement the team",q:"How does your work complement the rest of the team on this application?",help:"The CV-FRQ asks for this in its first section. Name what you bring to the team: a method, a site, a population, a partnership or a stage of the work. If you are applying on your own, say how your work serves the program's objectives."});
+  return a;
+}
+
+/* worked examples (fictional, from the V7 library) */
+var EX_FINISHED = {title:"What a finished contribution reads like — Social sciences",match:"Matched to your answers: Social sciences, early career, community-engaged.",segs:[
+  ["stakes","Employers disagree about whether to post wage ranges in job ads, and field evidence from live postings is limited."],
+  ["role","In my first faculty position I designed and ran a field experiment with an employer group that co-funded the study and did not control the analysis."],
+  ["activities","Across 18 months I randomized wage-range disclosure over 640 job postings at 12 firms and matched each posting to the applications it received."],
+  ["outputs","The experiment produced an analysis plan registered before data collection, an anonymized applicant dataset and an article the partner reviewed only after submission. (a, b)"],
+  ["outcomes","Nine firms in the group changed their posting templates in 2025, and a second research team has since replicated the design in a different sector. (c)"],
+  ["impact","Experimental evidence from live postings could inform employer practice on wage disclosure, and could show whether disclosure widens an applicant pool or changes its composition."]]};
+var EX_TWO = {title:"A contribution across two fields — Social sciences + Humanities",match:"Shown because you chose a second field.",segs:[
+  ["stakes","Studies of local democracy in Canada rely on recent records, because municipal council minutes from before 1990 are held on paper that few researchers can search."],
+  ["role","I co-direct the project with a historian, and I designed the coding scheme that tracks who spoke, on which issue and with what result."],
+  ["activities","Since 2018 I have led a team that digitized and coded the minutes of 12 councils from 1920 to 2020, about 48,000 meetings."],
+  ["outputs","The project produced an open database of council debates, a coding manual and five papers in political science and history journals. (a, b)"],
+  ["outcomes","Eleven research teams have used the database, and two municipalities drew on it for the history sections of their governance reviews. (c)"],
+  ["impact","If the coding scheme extends to other provinces, research on local democracy could follow change over a century and test claims about participation against the long record."]]};
+var HINTS = [["stakes","a gap in how a problem is understood or governed"],["role","the agenda you set, or the part you led"],["activities","the study, the data, the fieldwork, the framework"],["outputs","books, datasets, methods, briefs, public work"],["outcomes","who took it up: scholars, practitioners, communities, the public or policy"],["impact","how a field or a sector frames the problem"]];
+
+/* ═══ Sample drafts (all invented) ═══ */
+function C1(){return {h:"Flood-risk maps that count rental basements",stakes:"Flood-risk maps in three Ontario municipalities left out basement flooding in rental housing, so the households most exposed were missing from stormwater planning.",level:"led",role:"I designed the mapping method and led the work with two tenant associations.",did:"Over 18 months I ran 14 mapping workshops with 220 residents and matched their reports against 10 years of insurance claims and city service calls.",outputs:"The project produced an open map layer, a field protocol for resident reporting and two peer-reviewed articles.",changed:"Two of the three municipalities added the layer to their 2025 stormwater plans, and one funded backflow valves for 600 rental units.",could:"If resident reporting holds up at scale, flood planning in mid-sized cities could count the rental households it now leaves out.",moment:"",ev:[{type:"Peer-reviewed",text:"Author, A. (2024). Counting basements: resident reporting and flood risk in rental housing. Journal of Urban Flood Studies, 12(3).",why:"Shows that resident reports matched insurance claims on 84 per cent of the mapped streets."},{type:"Policy / practice uptake",text:"Stormwater Master Plan of a mid-sized Ontario city, 2025 update, section 4.2.",why:"The plan uses the map layer to set its backflow-valve program."}],folded:false};}
+function C2(){return {h:"A course on research with tenant groups, now taught at two universities",stakes:"Graduate students in planning learn survey methods, and few learn how to work with tenant organizations as research partners.",level:"led",role:"I designed the course and wrote its partnership agreement template.",did:"Since 2022 I have taught the course four times, with 62 students and six tenant groups in two cities.",outputs:"A syllabus, an open partnership agreement template and a teaching article.",changed:"",could:"If the template spreads, more planning programs could train students to share decisions with community partners.",moment:"",ev:[],folded:true};}
+function C3(){return {h:"An open dataset of 40 years of Ontario flood claims",stakes:"Researchers studying flood risk in Ontario had no consistent record of claims below the municipal level.",level:"colead",role:"I co-led the data agreement with an insurers' association and built the cleaning pipeline.",did:"I assembled and cleaned 41,000 claims from 1984 to 2024 and coded each one to a neighbourhood.",outputs:"An open dataset, a codebook and a data paper.",changed:"Five research teams have used the dataset since its release in 2024.",could:"",moment:"",ev:[{type:"Dataset / tool",text:"Ontario Flood Claims, 1984 to 2024, open repository, version 2.",why:"Holds 41,000 claims coded to neighbourhood."}],folded:true};}
+function emptyC(){return {h:"",stakes:"",level:"",role:"",did:"",outputs:"",changed:"",could:"",moment:"",ev:[],folded:false};}
+function P1(){return {stage:"doctoral",stageOther:"",sector:"university",org:"University of Toronto",unit:"Geography",prizes:"Doctoral fellowship, 2022",why:"Now runs a flood-equity lab built on the resident-reporting method we developed together.",folded:true};}
+function emptyP(){return {stage:"",stageOther:"",sector:"",org:"",unit:"",prizes:"",why:"",folded:false};}
+function blank(){return {visited:{},exported:false,
+  p:{started:false,agency:"",comp:"",undecided:false,year:"",stage:"",disc:"",disc2:"",modes:[]},
+  contribs:[], m:{tot:{doc:"",ma:"",pd:"",ug:""},people:[],phil:"",edi:"",cross:""},
+  ps:{role:"",inst:"",field:"",challenge:"",streams:"",pivot:"",standing:"",programFit:"",teamFit:"",horizon:""}, checks:{}};}
+function profileDone(d, two){d.p={started:true,agency:"sshrc",comp:"Insight Development Grants",undecided:false,year:String(YEAR+1),stage:"early",disc:"social",disc2:two===false?"none":"humanities",modes:["community","team"]};d.visited.profile=true;return d;}
+function fullData(){var d=profileDone(blank());d.contribs=[C1(),C2(),C3()];d.contribs[0].folded=true;
+  d.m={tot:{doc:"3",ma:"9",pd:"1",ug:"11"},people:[P1(),{stage:"masters",stageOther:"",sector:"government",org:"City planning department, mid-sized Ontario city",unit:"Climate adaptation office",prizes:"",why:"",folded:true}],phil:"Every project begins with a written agreement on authorship and data, which we revisit at the midpoint.",edi:"",cross:""};
+  d.ps={role:"assistant professor",inst:"an Ontario university",field:"urban geography and housing",challenge:"My research asks why flood risk falls hardest on the households least able to recover, and how planning can count them.",streams:"Three strands carry it: resident-led flood mapping, an open record of flood claims and training planners to work with tenant groups.",pivot:"",standing:"I hold a new-investigator grant, and five research teams now use the flood-claims dataset I built.",programFit:"",teamFit:"",horizon:""};
+  d.visited.contrib=d.visited.mentor=d.visited.ps=true;d.padWords=760;/* stands in for the longer answers a real draft has, so the tally reads at a realistic length */return d;}
+function completeAll(d){d.contribs[1].changed="Two tenant groups now co-supervise student projects each year, and a second university adopted the course in 2025.";d.contribs[1].ev=[{type:"Other",text:"Course outline, Planning with tenant partners, 2025 edition.",why:"Shows the partnership agreement in use."}];d.contribs[2].could="A consistent claims record could let planners test whether flood programs reach the neighbourhoods that file the most claims.";
+  d.m.edi="I opened two paid assistantships each year to tenant-association members, with training in the first month.";d.m.cross="I meet monthly with an early-career colleague in civil engineering and read her grant drafts.";
+  d.ps.pivot="I came to geography from eight years as a housing caseworker, which is why my methods start with residents' own records.";d.ps.programFit="Insight Development Grants support new lines of research, and this competition would fund the first province-wide test of resident flood reporting.";d.ps.horizon="The next phase extends resident reporting to heat and air quality in the same rental neighbourhoods.";return d;}
+
+/* ═══ State ═══ */
+var D = blank();
+var UI = {};
+var SCREEN = "start", STATE = "first", W = "desktop";
+function resetUI(){UI={profEdit:null,active:null,ex:null,built:false,ev:{},evDraft:null,draftOpen:true,strip:true,frq:false,early:false,fmt:"doc",copied:"",railCompact:false,agencyUnsure:false,firstCheckSeen:false};}
+resetUI();
+
+var SCREENS = [["start","Start page"],["profile","Profile"],["contrib","Contributions"],["mentor","Mentorship"],["ps","Personal statement"],["review","Review"],["export","Export"]];
+var STATES = {
+  start:[["first","First visit",function(){D=blank();}]],
+  profile:[
+    ["q1","Agency",function(){D=blank();D.p.started=true;D.visited.profile=true;}],
+    ["q2","Agency chosen",function(){D=blank();D.p.started=true;D.visited.profile=true;D.p.agency="sshrc";}],
+    ["q2frq","FRQ chosen",function(){D=blank();D.p.started=true;D.visited.profile=true;D.p.agency="frq";}],
+    ["disc","Discipline",function(){D=blank();D.p.started=true;D.visited.profile=true;D.p.agency="sshrc";D.p.comp="Insight Development Grants";D.p.year=String(YEAR+1);D.p.stage="early";}],
+    ["second","Second field",function(){D=blank();D.p.started=true;D.visited.profile=true;D.p.agency="sshrc";D.p.comp="Insight Development Grants";D.p.year=String(YEAR+1);D.p.stage="early";D.p.disc="social";}],
+    ["modes","Work modes",function(){D=blank();D.p.started=true;D.visited.profile=true;D.p.agency="sshrc";D.p.comp="Insight Development Grants";D.p.year=String(YEAR+1);D.p.stage="early";D.p.disc="social";D.p.disc2="humanities";UI.profEdit=5;}],
+    ["done","Complete",function(){D=profileDone(blank());}]
+  ],
+  contrib:[
+    ["arrival","Arrival",function(){D=profileDone(blank());D.contribs=[emptyC()];UI.active={s:"c",i:0,k:"h"};}],
+    ["example","Example open",function(){D=profileDone(blank());D.contribs=[emptyC()];UI.ex="finished";UI.built=true;UI.active={s:"c",i:0,k:"h"};}],
+    ["open","Field open",function(){D=profileDone(blank());var c=emptyC();c.h=C1().h;D.contribs=[c];UI.active={s:"c",i:0,k:"stakes"};}],
+    ["mixed","Mixed",function(){D=profileDone(blank());var c=emptyC(),s=C1();c.h=s.h;c.stakes=s.stakes;c.level="led";c.role=s.role;c.did="Over 18 months we ran 14 mapping workshops with 220 residents and matched their reports";D.contribs=[c];UI.active={s:"c",i:0,k:"did"};}],
+    ["complete","Complete",function(){D=profileDone(blank());var c=C1();c.ev=[];D.contribs=[c];UI.active=null;}],
+    ["evidence","Evidence",function(){D=profileDone(blank());var c=C1();c.ev=[c.ev[0]];D.contribs=[c];UI.ev[0]=true;UI.evDraft={type:"Policy / practice uptake",text:"",why:""};UI.active=null;}],
+    ["folded","Folded + next",function(){D=profileDone(blank());var a=C1();a.folded=true;var b=emptyC();b.h="A course on research with tenant groups";D.contribs=[a,b];UI.active={s:"c",i:1,k:"stakes"};}]
+  ],
+  mentor:[
+    ["arrival","Arrival",function(){D=fullData();D.m={tot:{doc:"",ma:"",pd:"",ug:""},people:[emptyP()],phil:"",edi:"",cross:""};D.visited.mentor=false;}],
+    ["filled","Totals + people",function(){D=fullData();var p=D.m.people[1];p.folded=false;p.org="";p.unit="";D.m.phil="";UI.active=null;}],
+    ["practice","How you mentor",function(){D=fullData();UI.active={s:"m",k:"edi"};}]
+  ],
+  ps:[
+    ["arrival","Arrival",function(){D=fullData();D.ps={role:"",inst:"",field:"",challenge:"",streams:"",pivot:"",standing:"",programFit:"",teamFit:"",horizon:""};D.visited.ps=false;UI.active={s:"ps",k:"anchor"};}],
+    ["mid","Mid-statement",function(){D=fullData();D.ps.streams="";D.ps.standing="";UI.active={s:"ps",k:"streams"};}]
+  ],
+  review:[
+    ["arrival","Arrival",function(){D=fullData();D.visited.review=true;}],
+    ["shrunk","Draft shrunk",function(){D=fullData();D.visited.review=true;UI.draftOpen=false;}],
+    ["nothing","Nothing missing",function(){D=completeAll(fullData());D.visited.review=true;}]
+  ],
+  export:[
+    ["default","Default",function(){D=completeAll(fullData());D.visited.review=D.visited.export=true;}],
+    ["unsure","Agency not chosen",function(){D=completeAll(fullData());D.p.agency="other";D.visited.review=D.visited.export=true;}],
+    ["phone-a","After a download",function(){D=completeAll(fullData());D.visited.review=D.visited.export=true;D.exported=true;UI.fmt="txt";}]
+  ]
+};
+var OPTS = {
+  contrib:[["Second field chosen",function(){return D.p.disc2&&D.p.disc2!=="none";},function(){D.p.disc2=(D.p.disc2&&D.p.disc2!=="none")?"none":"humanities";if(UI.ex==="two")UI.ex=null;}],["See how it's built",function(){return UI.built;},function(){UI.built=!UI.built;if(!UI.ex)UI.ex="finished";}]],
+  mentor:[["Early career",function(){return D.p.stage==="early";},function(){D.p.stage=D.p.stage==="early"?"mid":"early";}]],
+  ps:[["CV-FRQ variant",function(){return UI.frq;},function(){UI.frq=!UI.frq;D.p.agency=UI.frq?"frq":"sshrc";}],["Statement strip",function(){return UI.strip;},function(){UI.strip=!UI.strip;}]],
+  review:[["Draft open",function(){return UI.draftOpen;},function(){UI.draftOpen=!UI.draftOpen;}]]
+};
+var RAILS = [["empty","Empty","start","first"],["progress","In progress","contrib","mixed"],["full","Mostly done","review","arrival"]];
+
+/* ═══ Helpers ═══ */
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function ico(id){return '<svg class="ico" aria-hidden="true"><use href="#i-'+id+'"/></svg>';}
+function agencyOf(v){for(var i=0;i<AGENCIES.length;i++)if(AGENCIES[i].v===v)return AGENCIES[i];return null;}
+function lab(list,v){for(var i=0;i<list.length;i++){var x=list[i];if((x.v||x[0])===v)return x.l||x[1];}return "";}
+function words(s){return (String(s||"").match(/[A-Za-zÀ-ÿ0-9'’-]+/g)||[]).length;}
+function isFrq(){return D.p.agency==="frq"||UI.frq;}
+function secName(k){var frq=isFrq();return {ps:frq?"The candidate's background and skills":"Personal statement",contrib:"Most significant contributions and experiences",mentor:frq?"Supervisory and mentoring activities":"Supervisory and mentorship activities"}[k];}
+function railPs(){return isFrq()?"Background and skills":"Personal statement";}
+function cHas(c,k){if(k==="role")return !!(c.role||c.level);if(k==="ev")return c.ev.length>0;return !!String(c[k]||"").trim();}
+function cCount(c){var n=0;CF.forEach(function(f){if(cHas(c,f.k))n++;});if(c.ev.length)n++;return n;}
+function cLive(c){return CF.some(function(f){return cHas(c,f.k);});}
+function psHas(k){if(k==="anchor")return !!(D.ps.role||D.ps.inst||D.ps.field);return !!String(D.ps[k]||"").trim();}
+function psCount(){var n=0,f=SF();f.forEach(function(x){if(psHas(x.k))n++;});return [n,f.length];}
+function totSum(){var t=D.m.tot,s=0;["doc","ma","pd","ug"].forEach(function(k){s+=parseInt(t[k],10)||0;});return s;}
+function described(){return D.m.people.filter(function(p){return p.stage||p.sector||p.org;}).length;}
+function article(r){return /^[aeiou]/i.test(String(r||"").trim())?"an":"a";}
+function anchorText(){var p=D.ps;if(!p.role&&!p.inst&&!p.field)return "";return "I am "+article(p.role)+" "+(p.role||"…")+" at "+(p.inst||"…")+". My work is in "+(p.field||"…")+".";}
+function allText(){var a=[];D.contribs.forEach(function(c){CF.forEach(function(f){if(f.k!=="role")a.push(c[f.k]);});a.push(c.role);c.ev.forEach(function(e){a.push(e.text,e.why);});});
+  var m=D.m;a.push(m.phil,m.edi,m.cross);m.people.forEach(function(p){a.push(p.org,p.unit,p.prizes,p.why);});a.push(anchorText());SF().forEach(function(f){if(f.k!=="anchor")a.push(D.ps[f.k]);});return a.join(" ");}
+function draftWords(){return words(allText())+(D.padWords||0);}
+function pagesRange(w){var lo=Math.round(w/550*2)/2,hi=Math.round(w/450*2)/2;function f(x){return String(x).replace(/\.0$/,"");}if(lo===hi)return "roughly "+f(lo);return "roughly "+f(lo)+" to "+f(hi);}
+function fmtNum(n){return n.toLocaleString("en-CA");}
+function announce(t){var l=document.getElementById("live");l.textContent="";setTimeout(function(){l.textContent=t;},30);}
+function toast(t){var x=document.getElementById("toast");x.textContent=t;x.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(function(){x.classList.remove("on");},2600);}
+function motionMs(ms){return (document.body.classList.contains("rm")||matchMedia("(prefers-reduced-motion: reduce)").matches)?0:ms;}
+
+/* ═══ Header + rail ═══ */
+function renderHead(){
+  var h=document.getElementById("head"), start=SCREEN==="start";
+  h.className="page-head"+(start?" is-start":"");document.querySelector(".shell").classList.toggle("is-start",start);
+  h.innerHTML='<h1>Narrative CV</h1><p class="subtitle">A drafting tool for your Tri-agency CV or CV-FRQ.</p>'+
+    (start?'<p class="intro">This tool helps you get familiar with how a narrative CV asks you to think about your work and describe it. You build a first outline in your own words: your contributions, your mentorship record and a personal statement. A full first draft can take a day or more, so allow time before your deadline. English only for now.</p>'+
+      '<p class="guide-line">We recommend reading the <a href="'+GUIDE+'" target="_blank" rel="noopener">narrative CV guide</a> before you start, and consulting it as you go.</p>':'')+
+    '<p class="privacy">'+ico("lock")+'<span>No AI. Anything you write is your own: it stays here, on this device, and is not stored anywhere else. Clearing your browser data clears the draft too. The checks are fixed rules.</span></p>';
+}
+function railModel(){
+  var p=D.p, ag=agencyOf(p.agency), live=D.contribs.filter(cLive).length, ts=totSum(), ds=described(), pc=psCount();
+  var hasDraft = live>0;
+  var items=[
+    {id:"profile",l:"Profile",mt:ag?(ag.v==="other"?"Agency not chosen":ag.a)+(p.stage?" · "+lab(STAGES,p.stage):""):"",done:!!(D.visited.profile&&p.agency)},
+    {id:"contrib",l:"Contributions",mt:live?live+" of 10":"",done:!!(D.visited.contrib&&live)},
+    {id:"mentor",l:"Mentorship",mt:ts?ts+" trained":(ds?ds+(ds===1?" person":" people")+" described":""),done:!!(D.visited.mentor&&(ts||ds||D.m.phil))},
+    {id:"ps",l:railPs(),mt:pc[0]?pc[0]+" of "+pc[1]+" answered":"",done:!!(D.visited.ps&&pc[0])}
+  ];
+  var draft=[{id:"review",l:"Review",done:!!D.visited.review},{id:"export",l:"Export",done:!!D.exported}];
+  return {items:items,draft:draft,hasDraft:hasDraft,words:draftWords()};
+}
+function renderRail(){
+  var r=document.getElementById("rail"), m=railModel(), cur=SCREEN==="start"?"":SCREEN;
+  function li(it,sq){var cls="ri"+(sq?" sq":"")+(it.done?" is-done":"")+(it.id===cur?" is-active":"")+(sq&&!m.hasDraft&&it.id!==cur?" is-quiet":"");
+    var sr=(it.done?", started":"")+(it.id===cur?", current step":"");
+    return '<li><button type="button" class="'+cls+'" data-go="'+it.id+'"'+(it.id===cur?' aria-current="step"':'')+'><span class="mk" aria-hidden="true"></span><span class="lb">'+esc(it.l)+'<span class="sr">'+sr+'</span></span>'+(it.mt?'<span class="mt">'+esc(it.mt)+'</span>':'')+'</button></li>';}
+  var w=m.words, pages=Math.min(1,w/2500);
+  r.innerHTML='<h2>My application</h2>'+
+    '<p class="rail-group" id="rg1">Your answers</p><ul aria-labelledby="rg1">'+m.items.map(function(x){return li(x,false);}).join("")+'</ul>'+
+    '<p class="rail-group" id="rg2">Draft</p><ul aria-labelledby="rg2"'+(m.hasDraft?'':' aria-describedby="rcap"')+'>'+m.draft.map(function(x){return li(x,true);}).join("")+'</ul>'+
+    (m.hasDraft?'':'<p class="rail-cap" id="rcap">Fills in as you add contributions.</p>')+
+    (w>=200?'<div class="tally" role="group" aria-label="Draft so far"><b>Draft so far</b><span>about '+fmtNum(Math.round(w/10)*10)+' words</span><div class="lenbar" aria-hidden="true"><i style="width:'+(pages*100).toFixed(1)+'%"></i></div><span>'+pagesRange(w)+' of 5 pages</span></div>':'')+
+    '<button type="button" class="rail-save" data-act="save">'+ico("save")+'Save draft</button>';
+}
+
+/* ═══ Shared builders ═══ */
+function explain(t){return '<div class="explain">'+ico("info")+'<div><p>'+t+'</p></div></div>';}
+function tailored(){var p=D.p,ag=agencyOf(p.agency),pills=[];
+  if(ag)pills.push(ag.v==="other"?"Agency not chosen":ag.a+" · "+(ag.f==="cv-frq"?"CV-FRQ":"TCV"));
+  if(p.comp&&!p.undecided)pills.push(p.comp+(p.year?" "+p.year:""));else if(p.undecided)pills.push("Competition undecided");
+  if(p.stage)pills.push(lab(STAGES,p.stage));
+  if(p.disc)pills.push(lab(DISC,p.disc)+(p.disc2&&p.disc2!=="none"?" + "+lab(DISC,p.disc2):""));
+  p.modes.forEach(function(x){pills.push(lab(MODES,x));});
+  return '<div class="tailored"><span>Tailored for:</span>'+pills.map(function(x){return '<span class="pill">'+esc(x)+'</span>';}).join("")+'<button type="button" class="linkbtn" data-go="profile">Change</button></div>';}
+function ansRow(key,label,value,detail,attrs){ // the one answered-row component
+  var long=String(value||"").length>200;
+  return '<button type="button" class="ans" '+(attrs||"")+'><span class="ans-k">'+label+'</span><span class="ans-v'+(long?' is-long':'')+'">'+esc(value)+'</span>'+(detail?'<span class="ans-d">'+detail+'</span>':'')+'<span class="ans-edit" aria-hidden="true">Change</span><span class="sr">, answered. Select to change.</span></button>';}
+function exampleBox(ex){var segs=ex.segs.map(function(s){return '<span class="seg seg-'+s[0]+'">'+esc(s[1])+'</span>';}).join(" ");
+  return '<div class="exbox'+(UI.built?' built':'')+'" id="exbox"><div class="exbox-top"><span class="fiction">Fictional example</span>'+
+    '<button type="button" class="switch" role="switch" aria-checked="'+UI.built+'" data-act="built"><span class="tr" aria-hidden="true"></span>See how it\'s built</button></div>'+
+    '<h4>'+esc(ex.title)+'</h4><p class="match">'+esc(ex.match)+'</p><p class="exemplar">'+segs+'</p>'+
+    '<div class="legend" aria-label="Colour legend">'+JOB_ORDER.map(function(j){return '<span style="background:var(--jt-'+j+');box-shadow:inset 3px 0 0 var(--j-'+j+')">'+JOBS[j]+'</span>';}).join("")+'</div>'+
+    '<p class="exfoot">The content is fictional: the researcher, the partners and the numbers are invented. In the finished CV these sentences run together as one paragraph.</p></div>';}
+function hintsBox(){return '<div class="exbox" id="exbox"><h4>In Social sciences, the six jobs usually sound like this.</h4><ul class="hints">'+HINTS.map(function(h){return '<li><span class="jd" style="--jc:var(--j-'+h[0]+');display:inline-block;margin-right:6px"></span><b>'+JOBS[h[0]]+'</b> — '+esc(h[1])+'</li>';}).join("")+'</ul><p class="exfoot">These are examples. Skip any job your record does not include; a contribution can be complete without all six.</p></div>';}
+function exRow(list){var h='<div class="ex-row">';list.forEach(function(x){var on=UI.ex===x[0];h+='<button type="button" class="ex-btn" aria-expanded="'+on+'" aria-controls="exbox" data-ex="'+x[0]+'"><span class="pm" aria-hidden="true">'+(on?'−':'+')+'</span>'+x[1]+'</button>';});h+='</div>';
+  if(UI.ex==="finished")h+=exampleBox(EX_FINISHED);else if(UI.ex==="two")h+=exampleBox(EX_TWO);else if(UI.ex==="jobs")h+=hintsBox();else if(UI.ex==="mentor")h+=exampleBox(EX_MENTOR);else if(UI.ex==="psx")h+=exampleBox(EX_PS);return h;}
+var EX_MENTOR={title:"What a finished mentorship section reads like — Social sciences",match:"One example for now, written for Social sciences.",segs:[["stakes","Since 2018 I have supervised four PhD students, nine master's students, two postdocs and 11 undergraduate research assistants."],["activities","One PhD student now leads evaluation at a national non-profit, and the role is built on methods I developed with that student. A master's student moved to a provincial statistics unit and still co-authors with the group."],["outputs","Every project in my group begins with a written agreement on authorship, data and ownership, revisited at the midpoint."],["outcomes","Three years ago I removed the prior-experience requirement from my assistantship postings and began paying from the first week."],["impact","I also mentor two early-career colleagues in other departments and run a monthly writing group that anyone in the faculty can join."]]};
+var EX_PS={title:"What a finished personal statement reads like — Social sciences",match:"One example for now, written for Social sciences.",segs:[["role","I am an associate professor at a mid-sized Canadian university. My work is in the sociology of work and economic insecurity."],["stakes","For 15 years my research has addressed a single question, why unpredictable work scheduling imposes the greatest costs on the workers least able to absorb them."],["activities","Three strands of work address it: an ethnography of shift assignment in retail and warehousing, a repeated survey of household income volatility and a partnership with a workers' centre."],["outcomes","I hold two consecutive operating grants and have built a longitudinal dataset that four other research teams now use."],["impact","The next phase follows the same households into care work, where scheduling volatility is growing fastest and longitudinal data are scarce."]]};
+
+/* the card field (open / filled / empty), shared by contributions, How you mentor, Your statement */
+function fieldHTML(scope,i,f,value,has,isOpen,extra){
+  var id=scope+"-"+i+"-"+f.k, st=isOpen?"is-open":(has?"is-filled":"is-empty"), label=f.label||JOBS[f.job]||f.k;
+  var dot='<span class="jd" style="--jc:'+(f.job?'var(--j-'+f.job+')':'#bdbdbd')+'" aria-hidden="true"></span>';
+  var box;
+  if(f.anchor){box='<div class="anchor-line" id="'+id+'-grp">I am <span data-art>'+article(D.ps.role)+'</span> <input class="input box" data-ps="role" aria-label="Role" placeholder="role" value="'+esc(D.ps.role)+'"> at <input class="input box" data-ps="inst" aria-label="Institution" placeholder="institution" value="'+esc(D.ps.inst)+'">. My work is in <input class="input box" data-ps="field" aria-label="Field" placeholder="field" value="'+esc(D.ps.field)+'">.</div>';}
+  else if(f.line){box='<input class="box input" id="'+id+'" data-b="'+scope+'|'+i+'|'+f.k+'" value="'+esc(value)+'" aria-labelledby="'+id+'-k '+id+'-q" aria-describedby="'+id+'-st">';}
+  else {box='<textarea class="box" id="'+id+'" data-b="'+scope+'|'+i+'|'+f.k+'" aria-labelledby="'+id+'-k '+id+'-q" aria-describedby="'+id+'-st">'+esc(value)+'</textarea>';}
+  var shown=f.anchor?anchorText():(f.k==="role"?[lab(LEVELS,extra&&extra.level),value].filter(Boolean).join(" · "):value);
+  var more='<div class="f-more"><div><span class="q" id="'+id+'-q">'+esc(f.q)+'</span>'+(f.help?explain(esc(f.help)):'')+
+    (f.k==="role"?'<div class="levels"><span class="field-label" id="'+id+'-lv">How involved were you?</span><div class="minis" role="radiogroup" aria-labelledby="'+id+'-lv">'+LEVELS.map(function(l){return '<button type="button" class="mini" role="radio" aria-checked="'+(extra&&extra.level===l.v)+'" data-level="'+i+'|'+l.v+'">'+l.l+'</button>';}).join("")+'</div></div>':'')+'</div></div>';
+  var inner='<div class="f-k" id="'+id+'-k">'+dot+esc(label)+'</div>'+more+box+'<div class="f-checks" data-checks="'+id+'" aria-live="polite"></div>';
+  if(f.cross&&isOpen&&D.contribs.filter(cLive).length>1){inner='<div class="f-aside"><div>'+inner+'</div>'+crossNote()+'</div>';}
+  return '<div class="f '+st+'" data-f="'+scope+'|'+i+'|'+f.k+'">'+inner+ansRow(f.k,dot+esc(label),shown,"",'data-open="'+id+'" tabindex="-1" aria-hidden="true"')+'<span class="sr" id="'+id+'-st">'+(has?"Answered.":"Not answered yet.")+'</span></div>';
+}
+function crossNote(){return '<aside class="cross" aria-label="A read across your contributions"><b class="t">A read across your '+D.contribs.filter(cLive).length+' contributions</b><p>Words that recur in more than one contribution: <strong>flood, tenant, rental, planning</strong>. A word that runs through several contributions may name the problem or one of the strands below.</p><p class="m">Worked out by counting repeated words on this device.</p></aside>';}
+
+/* ═══ Screens ═══ */
+var R = {};
+R.start=function(){
+  return '<h2 class="sr">Start</h2><div class="paths">'+
+    '<button type="button" class="path path-new" data-act="new"><h3>New draft</h3><p>If you are starting from nothing, you work through your contributions one at a time. Each one has prompts, a worked example from your field and checks on your wording. You write the personal statement last, once the rest exists.</p><span class="go">Start a new draft →</span></button>'+
+    '<button type="button" class="path path-cont" data-act="toast" data-msg="Opens your computer\'s file picker for a draft file saved from this tool, checks it, then asks before replacing anything.">'+ico("folder")+'<span><h3>Continue draft</h3><p>Open a draft file you saved from this tool.</p></span></button></div>';
+};
+function profQs(){var p=D.p;return [
+  {id:0,label:"Agency",has:!!p.agency},
+  {id:1,label:"Competition",has:!!(p.comp||p.undecided)},
+  {id:2,label:"Career stage",has:!!p.stage},
+  {id:3,label:"Field",has:!!p.disc},
+  {id:4,label:"Another field",has:!!p.disc2},
+  {id:5,label:"How your work usually happens",has:p.modes.length>0}];}
+R.profile=function(){
+  var p=D.p, qs=profQs(), first=-1, n=0;
+  qs.forEach(function(q){if(q.has)n++;else if(first<0)first=q.id;});
+  var active=UI.profEdit!=null?UI.profEdit:first;
+  var h='<div class="step-head"><h2>Profile</h2><p>Your profile comes first: six short questions about the competition and your field. Your answers choose the worked examples, prompts and format notes you see in the steps that follow.</p>'+
+    '<p class="note">'+ico("info")+'<span>You can change these answers at any time: select Profile in the steps list.</span></p></div>';
+  h+='<p class="qcount" id="pcount">'+n+' of 6 answered</p><div class="prof-list">';
+  var lastShown = first<0?5:first;
+  for(var i=0;i<=Math.max(lastShown,active);i++){
+    if(i===active) h+=profOpen(i); else if(qs[i].has) h+=profFolded(i); else h+=profOpen(i);
+    if(i!==active && !qs[i].has) break;
+  }
+  h+='</div>';
+  if(first<0||(first===-1)) {}
+  if(n===6||first<0){h+='<div class="nav revealed"><p class="note">'+ico("info")+'<span>You can change any of these answers later: select Profile in the steps list.</span></p><button type="button" class="btn primary" data-go="contrib">Contributions →</button></div>';}
+  return h;
+};
+function agencyFeedback(){var a=agencyOf(D.p.agency);if(!a)return "";
+  if(a.v==="frq")return ico("check")+'<span>Format: the CV-FRQ. The FRQ requires the CV-FRQ for all grant applications.</span>';
+  if(a.v==="other")return ico("check")+'<span>Format: the Tri-agency CV layout for now. The format notes show every agency\'s font rule until you choose.</span>';
+  return ico("check")+'<span>Format: the Tri-agency CV (TCV), with '+esc(a.a)+'\'s font rules.</span>';}
+function profFolded(i){var p=D.p,v="",d="";
+  if(i===0){var a=agencyOf(p.agency);v=a.v==="other"?"Not sure yet":a.a+" · "+a.n;d=agencyFeedback();}
+  if(i===1){v=(p.undecided?"Undecided":p.comp)+(p.year?" · "+p.year:"");}
+  if(i===2)v=lab(STAGES,p.stage);
+  if(i===3)v=lab(DISC,p.disc);
+  if(i===4)v=p.disc2==="none"?"No, just this one":lab(DISC,p.disc2);
+  if(i===5)v=p.modes.map(function(x){return lab(MODES,x);}).join(", ");
+  return ansRow("p"+i,esc(profQs()[i].label),v,d,'data-pedit="'+i+'"');}
+function choiceBtns(list,cur,attr,multi){return list.map(function(x){var v=x.v,on=multi?cur.indexOf(v)>=0:cur===v;
+  return '<button type="button" class="choice" '+(multi?'aria-pressed':'role="radio" aria-checked')+'="'+on+'" '+attr+'="'+v+'"><span class="tick" aria-hidden="true">✓</span><b>'+esc(x.a||x.l)+'</b>'+(x.n?'<small>'+esc(x.n)+'</small>':'')+'</button>';}).join("");}
+function profOpen(i){var p=D.p,h='<section class="qblock revealed" data-pq="'+i+'" aria-labelledby="pq'+i+'"><div class="f-k" style="color:var(--burgundy);margin-top:2px">'+esc(profQs()[i].label)+'</div>';
+  if(i===0){h+='<h3 class="q" id="pq0">Choose the agency you are applying to.</h3>'+explain("This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec (FRQ), which now requires it for all grant applications in its three sectors. It also sets the format notes you see, since font rules differ between agencies. If you are not sure, check the program's application guide, or choose Not sure yet for now; you can change it later.")+'<div class="choices" role="radiogroup" aria-labelledby="pq0">'+choiceBtns(AGENCIES,p.agency,"data-agency")+'</div>';}
+  if(i===1){h+='<h3 class="q" id="pq1">Name the competition or funding you are applying for.</h3>'+explain("A narrative CV is written for a specific competition. If you name the competition here, the personal statement prompt will ask about that competition by name. If you have not chosen one yet, choose Undecided.")+
+    '<div class="comp-row"><div><label class="field-label" for="comp">Competition</label><input class="input" id="comp" data-pf="comp" placeholder="For example, the specific chair, grant or award" value="'+esc(p.comp)+'"'+(p.undecided?' disabled':'')+'></div>'+
+    '<div class="minis"><button type="button" class="mini" aria-pressed="'+p.undecided+'" data-act="undecided">Undecided</button></div></div>'+
+    '<span class="field-label" id="yl">Year you plan to apply <span class="opt">(optional)</span></span><div class="minis" role="radiogroup" aria-labelledby="yl">'+YEARS.map(function(y){return '<button type="button" class="mini" role="radio" aria-checked="'+(p.year===String(y))+'" data-year="'+y+'">'+y+'</button>';}).join("")+'</div>';}
+  if(i===2){h+='<h3 class="q" id="pq2">Which career stage are you at?</h3>'+explain("This changes a few of the prompts — early career, for instance, asks for the signals you have so far.")+'<div class="choices" role="radiogroup" aria-labelledby="pq2">'+choiceBtns(STAGES,p.stage,"data-stage")+'</div>';}
+  if(i===3){h+='<h3 class="q" id="pq3">Which field is your work closest to?</h3>'+explain("Your answer chooses the worked examples and discipline notes you see, so they come from work like yours. Pick the closest fit. You can change it later, and your draft stays as it is.")+'<div class="choices" role="radiogroup" aria-labelledby="pq3">'+choiceBtns(DISC,p.disc,"data-disc")+'</div>';}
+  if(i===4){h+='<h3 class="q" id="pq4">Does your work also sit in another field?</h3>'+explain("Pick one if your work spans two fields. The Contributions step then adds a worked example that spans the same two.")+'<div class="choices" role="radiogroup" aria-labelledby="pq4"><button type="button" class="choice wide" role="radio" aria-checked="'+(p.disc2==="none")+'" data-disc2="none"><span class="tick" aria-hidden="true">✓</span><b>No, just this one</b></button>'+choiceBtns(DISC.filter(function(d){return d.v!==p.disc;}),p.disc2,"data-disc2")+'</div>';}
+  if(i===5){h+='<h3 class="q" id="pq5">How does your work usually happen? Choose any that apply.</h3>'+explain("Many researchers work in more than one way, so choose every one that fits. Your answer chooses the role and outcome prompts and the worked example you see.")+'<div class="choices" role="group" aria-labelledby="pq5">'+choiceBtns(MODES,p.modes,"data-mode",true)+'</div>';}
+  if(i===0&&p.agency)h+='<p class="feedback revealed">'+agencyFeedback()+'</p>';
+  return h+'</section>';}
+
+R.contrib=function(){
+  var p=D.p, two=p.disc2&&p.disc2!=="none";
+  var h=tailored()+'<div class="step-head"><h2>'+secName("contrib")+'</h2><p>Describe up to 10 contributions or experiences that relate to your application. Choose the ones most relevant to this funding opportunity, which may differ from your most recent work. A contribution can be a single output or a collection of related work presented together, such as a cluster of papers, a program or a partnership. A short list of well-explained contributions is stronger than a long list. The fields below break each one into parts; in the finished CV they read as one paragraph. The example shows what that looks like, and the guide sets out <a href="'+GUIDE+'#three" target="_blank" rel="noopener">what counts as a contribution</a>.</p></div>';
+  var ex=[["finished","See a finished example"]];if(two)ex.push(["two","See an example across two fields"]);ex.push(["jobs","How the six jobs sound in your field"]);
+  h+=exRow(ex);
+  h+='<div id="cards">'+D.contribs.map(function(c,i){return c.folded?foldRow(c,i):cardHTML(c,i);}).join("")+'</div>';
+  if(D.contribs.length<10)h+='<button type="button" class="add" data-act="addc">+ Add a contribution</button>';
+  h+='<div class="nav"><p class="note">'+ico("info")+'<span>You will put these in order in Review, after the personal statement.</span></p><button type="button" class="btn primary" data-go="mentor">Mentorship →</button></div>';
+  return h;
+};
+function foldRow(c,i){var jobs=JOB_ORDER.map(function(j){var k={stakes:"stakes",role:"role",activities:"did",outputs:"outputs",outcomes:"changed",impact:"could"}[j];var on=cHas(c,k);return '<i style="'+(on?'background:var(--j-'+j+')':'')+'" title="'+JOBS[j]+(on?'':' (empty)')+'">'+(on?'✓':'')+'</i>';}).join("");
+  return '<button type="button" class="fold revealed" data-unfold="'+i+'" aria-label="Contribution '+(i+1)+', '+esc(c.h||"no headline")+', '+cCount(c)+' of 9 answered. Select to open."><span class="t"><span style="color:var(--burgundy)">Contribution '+(i+1)+'</span> · '+esc(c.h||"No headline yet")+'</span><span class="jobs" aria-hidden="true">'+jobs+'</span><span class="meta">'+(c.ev.length?c.ev.length+" evidence":"No evidence")+'</span><span class="op" aria-hidden="true">Open ▾</span></button>';}
+function dots(n,t){var s='<span class="dots" aria-hidden="true">';for(var i=0;i<t;i++)s+='<i class="'+(i<n?'on':'')+'"></i>';return s+'</span>';}
+function cardHTML(c,i){
+  var n=cCount(c), evOn=!!UI.ev[i];
+  var h='<section class="card revealed" data-card="'+i+'" aria-labelledby="ct'+i+'"><div class="card-h"><h3 class="card-t" id="ct'+i+'" style="margin:0"><span class="num">Contribution '+(i+1)+'</span><span data-ch="'+i+'">'+(c.h?' · '+esc(c.h):'')+'</span></h3><span class="card-side"><span data-cc="'+i+'">'+n+' of 9 answered</span>'+dots(n,9)+'<button type="button" class="icon-btn" aria-label="Fold contribution '+(i+1)+'" data-fold="'+i+'">▴</button></span></div>';
+  if(!evOn){
+    h+='<div class="fields">'+CF.map(function(f){var open=UI.active&&UI.active.s==="c"&&UI.active.i===i&&UI.active.k===f.k;return fieldHTML("c",i,f,c[f.k],cHas(c,f.k),open,c);}).join("")+
+      '<div class="f-ev-row"><span class="f-k"><span class="jd" aria-hidden="true"></span>Evidence</span>'+(c.ev.length?'<span class="s">'+c.ev.length+' item'+(c.ev.length>1?'s':'')+': '+c.ev.map(function(e,j){return String.fromCharCode(97+j);}).join(", ")+'</span><button type="button" class="btn small" data-evon="'+i+'">Edit evidence</button>':'<button type="button" class="btn small" data-evon="'+i+'">+ Add evidence</button>')+'</div></div>';
+    h+=stripHTML(c,i,false);
+  } else {
+    h+=stripHTML(c,i,true)+evidenceHTML(c,i);
+  }
+  return h+'</section>';}
+function assembled(c){var parts=[],add=function(k,txt,join){if(String(txt||"").trim())parts.push((join?'<span class="join" title="A suggested join; it does not appear in your draft">'+join+'</span> ':'')+'<span data-seg="'+k+'">'+esc(txt)+'</span>');};
+  add("stakes",c.stakes);add("did",c.did,c.stakes?"to address this →":"");add("outputs",c.outputs);add("changed",c.changed,"as a result →");add("moment",c.moment);add("could",c.could);
+  var ev=c.ev.length?' ('+c.ev.map(function(e,j){return String.fromCharCode(97+j);}).join(", ")+')':'';
+  return {html:parts.join(" ")+ev,role:[lab(LEVELS,c.level),c.role].filter(Boolean).join(". ")};}
+function stripHTML(c,i,isTop){var a=assembled(c),gaps=[];
+  if(!c.stakes&&(c.did||c.outputs))gaps.push("Stakes is empty, so the paragraph starts without the problem.");
+  if(!c.changed&&!c.could&&c.outputs)gaps.push("What already changed and What could change are both empty, so the paragraph ends on what resulted.");
+  return '<div class="strip" data-strip="'+i+'"'+(isTop?' role="region" aria-label="What you wrote"':'')+'><div class="strip-h"><b>'+(isTop?'What you wrote':'Your paragraph so far')+'</b>'+(isTop?'<button type="button" class="btn small" data-evoff="'+i+'">Edit</button>':'')+'</div>'+
+    (a.role?'<p class="role">'+esc(a.role)+'</p>':'')+'<p>'+(a.html||'<span class="empty">Your sentences gather here as you answer, in the order a reviewer reads them.</span>')+'</p>'+gaps.map(function(g){return '<span class="gap">'+g+'</span>';}).join("")+'</div>';}
+function evidenceHTML(c,i){var d=UI.evDraft||{type:"",text:"",why:""};
+  var h='<div class="ev-area"><div class="f is-open" style="margin-top:12px"><div class="f-k">Evidence</div><span class="q" id="evq'+i+'">What backs up this contribution?</span>'+
+    explain("Evidence backs up what you have just described. Add the items a reviewer could check: a paper, a policy or program that adopted your work, coverage, a dataset, an award. Add as many as you need. Each item gets a letter, and the letters follow the contribution in your draft. <a href=\""+GUIDE+"#difference\" target=\"_blank\" rel=\"noopener\">More kinds of evidence that count</a>")+
+    '<div class="ev-items">'+c.ev.map(function(e,j){return '<div class="ev-item"><span class="badge" aria-hidden="true">'+String.fromCharCode(97+j)+'</span><div><span class="ty">'+esc(e.type)+'</span><div>'+esc(e.text)+'</div>'+(e.why?'<div class="why">'+esc(e.why)+'</div>':'')+'</div></div>';}).join("")+'</div>';
+  if(UI.evDraft){var L=String.fromCharCode(97+c.ev.length);
+    h+='<div class="ev-item revealed" style="display:block;padding:12px 14px"><p class="field-label" id="evk'+i+'"><span class="badge" aria-hidden="true" style="margin-right:6px">'+L+'</span>Kind of evidence</p><div class="kinds" role="radiogroup" aria-labelledby="evk'+i+'">'+EV_KINDS.map(function(k){return '<button type="button" class="kind" role="radio" aria-checked="'+(d.type===k[0])+'" data-kind="'+esc(k[0])+'"><b>'+esc(k[0])+'</b><small>'+esc(k[1])+'</small></button>';}).join("")+'</div>'+
+      '<div class="one"><label class="field-label" for="evt'+i+'">The item</label><input class="input" id="evt'+i+'" placeholder="Name it so a reviewer can find it: a reference, a policy, a dataset or an award" value="'+esc(d.text)+'"></div>'+
+      '<div><label class="field-label" for="evw'+i+'">Why it matters <span class="opt">(two lines, optional)</span></label><textarea class="box two" id="evw'+i+'" placeholder="What it found, or why it was useful, so a reviewer has the point without opening the source">'+esc(d.why)+'</textarea></div></div>';}
+  h+='<button type="button" class="add" style="margin:12px 0 0" data-act="addev">+ Add '+(c.ev.length||UI.evDraft?'another item':'an item')+'</button></div></div>';
+  return h;}
+
+R.mentor=function(){
+  var t=D.m.tot, ts=totSum(), ds=described();
+  var h=tailored()+'<div class="step-head"><h2>'+secName("mentor")+'</h2><p>Who you trained, and how you mentor. The most persuasive thing in this section is one person you trained and where they went. Formal supervision counts here, and so does informal mentoring. <a href="'+GUIDE+'#three" target="_blank" rel="noopener">What counts as mentorship activity</a></p></div>';
+  if(D.p.stage==="early")h+='<div class="early revealed"><strong>Early in your career? </strong>Describe any informal support, training or inclusive practices in your research environment. Reviewers are trained to read this section with career stage in mind.</div>';
+  h+=exRow([["mentor","See a finished example"]]);
+  h+='<section class="dash" aria-labelledby="tot-t"><div class="dash-h"><h3 class="h3" id="tot-t">People you have trained</h3><span class="counter" id="tot-sum" aria-live="polite">'+(ts?ts+' in total':'Type a number in each box that applies')+'</span></div><div class="tiles">'+
+    [["doc","Doctoral"],["ma","Master's"],["pd","Postdoctoral"],["ug","Undergraduate research"]].map(function(x){return '<div class="tile"><label for="t-'+x[0]+'">'+x[1]+'</label><input id="t-'+x[0]+'" type="number" inputmode="numeric" min="0" placeholder="0" data-tot="'+x[0]+'" value="'+esc(t[x[0]])+'"></div>';}).join("")+'</div></section>';
+  h+='<div class="section-t"><h3 class="h3">A few of the people you trained, and where they went.</h3><span class="counter" id="pcounter" aria-live="polite">'+peopleCounter()+'</span></div>';
+  h+=D.m.people.map(function(p,i){return p.folded?personFold(p,i):personCard(p,i);}).join("");
+  h+='<button type="button" class="add" data-act="addp">+ Add a person</button>';
+  var pn=PF.filter(function(f){return !!D.m[f.k];}).length;
+  h+='<section class="card" aria-labelledby="hm-t"><div class="card-h"><h3 class="card-t" id="hm-t" style="margin:0">How you mentor</h3><span class="card-side"><span data-mc>'+pn+' of 3 answered</span>'+dots(pn,3)+'</span></div><div class="fields">'+
+    PF.map(function(f){var open=UI.active&&UI.active.s==="m"&&UI.active.k===f.k;return fieldHTML("m",0,f,D.m[f.k],!!D.m[f.k],open);}).join("")+'</div></section>';
+  h+='<div class="nav"><button type="button" class="btn ghost" data-go="contrib">← Contributions</button><button type="button" class="btn primary" data-go="ps">'+railPs()+' →</button></div>';
+  return h;};
+function peopleCounter(){var ts=totSum(),ds=described();if(ts)return ds+' of '+ts+' described';if(!ds)return 'No one described yet';return ds+(ds===1?' person':' people')+' described';}
+function personHead(p,i){var bits=[];if(p.stage)bits.push(p.stage==="other"?(p.stageOther||"Other"):lab(M_STAGES,p.stage));var where=[p.org,p.unit].filter(Boolean).join(", ");if(!where&&p.sector)where=lab(M_SECTORS,p.sector);
+  return 'Person '+(i+1)+(bits.length?' · '+esc(bits[0]):'')+(where?' → '+esc(where):'');}
+function personFold(p,i){return '<button type="button" class="fold revealed" data-pfold="'+i+'"><span class="t">'+personHead(p,i).replace(/^Person (\d+)/,'<span style="color:var(--burgundy)">Person $1</span>')+'</span><span class="meta">'+(p.prizes?'Prize noted':'')+'</span><span class="op" aria-hidden="true">Open ▾</span></button>';}
+function personCard(p,i){var uni=p.sector==="university";
+  var h='<section class="card revealed" aria-labelledby="ph'+i+'"><div class="card-h"><h4 class="card-t" id="ph'+i+'" data-ph="'+i+'" style="margin:0">'+personHead(p,i).replace(/^Person (\d+)/,'<span class="num">Person $1</span>')+'</h4><span class="card-side"><button type="button" class="icon-btn" aria-label="Remove person '+(i+1)+'" data-act="toast" data-msg="Removes this person after a confirmation.">×</button></span></div>'+
+    '<div class="pair"><div><label class="field-label" for="ps'+i+'">When you trained them</label><select class="select" id="ps'+i+'" data-pp="'+i+'|stage"><option value="">Choose…</option>'+M_STAGES.map(function(s){return '<option value="'+s[0]+'"'+(p.stage===s[0]?' selected':'')+'>'+s[1]+'</option>';}).join("")+'</select></div>'+
+    '<div><label class="field-label" for="pw'+i+'">Where are they now?</label><select class="select" id="pw'+i+'" data-pp="'+i+'|sector"><option value="">Choose…</option>'+M_SECTORS.map(function(s){return '<option value="'+s[0]+'"'+(p.sector===s[0]?' selected':'')+'>'+s[1]+'</option>';}).join("")+'</select></div></div>';
+  if(p.stage==="other")h+='<div class="one revealed"><label class="field-label" for="po'+i+'">Describe the stage</label><input class="input" id="po'+i+'" data-pp="'+i+'|stageOther" value="'+esc(p.stageOther)+'"></div>';
+  if(p.sector)h+='<div class="pair revealed"><div><label class="field-label" for="pg'+i+'">'+(uni?'University':'Organization')+'</label><input class="input" id="pg'+i+'" data-pp="'+i+'|org" value="'+esc(p.org)+'"></div><div><label class="field-label" for="pu'+i+'">'+(uni?'Department or discipline':'Unit or subdivision')+'</label><input class="input" id="pu'+i+'" data-pp="'+i+'|unit" value="'+esc(p.unit)+'"></div></div>';
+  h+='<div class="one"><label class="field-label" for="pz'+i+'">Prizes or scholarships <span class="opt">(optional)</span></label><input class="input" id="pz'+i+'" data-pp="'+i+'|prizes" value="'+esc(p.prizes)+'"></div>'+
+     '<div><label class="field-label" for="py'+i+'">Why this example matters <span class="opt">(optional)</span></label><input class="input" id="py'+i+'" data-pp="'+i+'|why" value="'+esc(p.why)+'"></div>';
+  return h+'</section>';}
+
+R.ps=function(){
+  var pc=psCount();
+  var h=tailored()+'<div class="step-head"><h2>'+secName("ps")+'</h2><p>Who you are, and the thread through your work. '+(UI.frq?'It asks for your expertise relative to this specific opportunity or project, your fit with the program\'s objectives and how your work complements the team. ':'')+'It appears first in the finished CV and is the last thing you write, because it gathers what you wrote in your contributions. <a href="'+GUIDE+'#compare" target="_blank" rel="noopener">What the first section asks for, TCV and CV-FRQ</a></p></div>';
+  h+=exRow([["psx","See a finished example"]]);
+  h+='<section class="card" aria-labelledby="ys-t"><div class="card-h"><h3 class="card-t" id="ys-t" style="margin:0">Your statement</h3><span class="card-side"><span data-psc>'+pc[0]+' of '+pc[1]+' answered</span>'+dots(pc[0],pc[1])+'</span></div><p class="card-sub">If a prompt feels hard, the answer is usually already in one of your contributions.</p><div class="fields">'+
+    SF().map(function(f){var open=UI.active&&UI.active.s==="ps"&&UI.active.k===f.k;return fieldHTML("ps",0,f,D.ps[f.k],psHas(f.k),open);}).join("")+'</div>'+(UI.strip?psStrip():'')+'</section>';
+  h+='<div class="nav"><button type="button" class="btn ghost" data-go="mentor">← Mentorship</button><button type="button" class="btn primary" data-go="review">Review your CV →</button></div>';
+  return h;};
+function psStrip(){var parts=[];var a=anchorText();if(a)parts.push(esc(a));SF().forEach(function(f){if(f.k!=="anchor"&&D.ps[f.k])parts.push(esc(D.ps[f.k]));});
+  return '<div class="strip" id="ps-strip"><div class="strip-h"><b>Your statement so far</b></div><p>'+(parts.join(" ")||'<span class="empty">Your sentences gather here as you answer, starting with your first sentence.</span>')+'</p></div>';}
+
+function draftHTML(){var p=D.p, tnr=!(p.agency==="sshrc"), h='';
+  var ps=[anchorText()];SF().forEach(function(f){if(f.k!=="anchor"&&D.ps[f.k])ps.push(D.ps[f.k]);});
+  h+='<h4>'+secName("ps")+'</h4><p>'+esc(ps.filter(Boolean).join(" "))+'</p>';
+  h+='<h4>'+secName("contrib")+'</h4>';
+  D.contribs.forEach(function(c,i){if(!cLive(c))return;var a=assembled(c);var text=[c.stakes,c.did,c.outputs,c.changed,c.moment,c.could].filter(Boolean).join(" ");
+    h+='<p><b>'+(i+1)+'. '+esc(c.h)+'</b><br><span class="r">'+esc(a.role)+'</span> '+esc(text)+(c.ev.length?' ('+c.ev.map(function(e,j){return String.fromCharCode(97+j);}).join(", ")+')':'')+'</p>';
+    if(c.ev.length)h+='<div class="refs">'+c.ev.map(function(e,j){return String.fromCharCode(97+j)+'. '+esc(e.text);}).join("<br>")+'</div>';});
+  var t=D.m.tot,tl=[];if(t.doc)tl.push(t.doc+" doctoral");if(t.ma)tl.push(t.ma+" master's");if(t.pd)tl.push(t.pd+" postdoctoral");if(t.ug)tl.push(t.ug+" undergraduate research");
+  h+='<h4>'+secName("mentor")+'</h4>'+(tl.length?'<p>Totals: '+tl.join(", ")+'.</p>':'');
+  D.m.people.forEach(function(x){if(x.stage||x.org)h+='<p>'+esc(lab(M_STAGES,x.stage))+' → '+esc([x.org,x.unit].filter(Boolean).join(", "))+(x.why?'. '+esc(x.why):'')+'</p>';});
+  var pr=[D.m.phil,D.m.edi,D.m.cross].filter(Boolean).join(" ");if(pr)h+='<p>'+esc(pr)+'</p>';
+  return {html:h,tnr:tnr};}
+function missing(){var out=[];D.contribs.forEach(function(c,i){if(!cLive(c))return;CF.forEach(function(f){if(!f.optional&&!cHas(c,f.k))out.push(["contrib",i,f.k,"Contribution "+(i+1)+": "+(f.label||JOBS[f.job])]);});if(!c.ev.length)out.push(["contrib",i,"ev","Contribution "+(i+1)+": Evidence"]);});
+  PF.forEach(function(f){if(!D.m[f.k])out.push(["mentor",0,f.k,"Mentorship: "+f.label]);});
+  SF().forEach(function(f){if(!psHas(f.k))out.push(["ps",0,f.k,railPs()+": "+f.label]);});return out;}
+R.review=function(){
+  var d=draftHTML(), comp=D.p.undecided||!D.p.comp?"":D.p.comp, live=D.contribs.map(function(c,i){return [c,i];}).filter(function(x){return cLive(x[0]);});
+  var h='<div class="step-head"><h2>Review your CV</h2><p>Read your working draft, put your contributions in the order a reviewer should read them, then see what is still missing.</p></div>';
+  h+='<section class="card" aria-labelledby="wd-t"><div class="card-h"><h3 class="card-t" id="wd-t" style="margin:0">Your working draft</h3><span class="card-side"><button type="button" class="btn small" data-act="draft" aria-expanded="'+UI.draftOpen+'" aria-controls="draftbody">'+(UI.draftOpen?'Shrink':'Show')+'</button></span></div>'+
+    '<div class="draft'+(UI.draftOpen?'':' is-shut')+'"><div class="draft-body'+(d.tnr?' tnr':'')+'" id="draftbody" tabindex="0" role="region" aria-label="Working draft, read only">'+d.html+'</div></div>'+(UI.draftOpen?'':'<p class="quiet" style="margin-top:8px">The draft is shrunk. Show it to read it again; it follows the order below.</p>')+'</section>';
+  h+='<section aria-labelledby="oc-t" style="margin-bottom:24px"><div class="section-t" style="margin-top:8px"><h3 class="h3" id="oc-t">Order of contributions</h3><span class="counter">The numbers in Contributions follow this order.</span></div><div id="order">'+orderHTML(live,comp)+'</div></section>';
+  var miss=missing(), w=draftWords();
+  h+='<section class="dash" aria-labelledby="ag-t"><div class="dash-h"><h3 class="h3" id="ag-t">At a glance</h3></div><div class="glance"><div class="tile"><span class="tile-k">Still missing</span>'+
+    (miss.length?'<ul>'+miss.map(function(m){return '<li><a href="#" data-jump="'+m[0]+'|'+m[1]+'|'+m[2]+'">'+esc(m[3])+'</a></li>';}).join("")+'</ul>':'<p class="ok">'+ico("check")+'Nothing missing.</p>')+'</div>'+
+    '<div class="tile"><span class="tile-k">Length</span><span class="big">'+pagesRange(w).replace("roughly ","")+'</span><span class="quiet">of 5 pages, roughly · about '+fmtNum(Math.round(w/10)*10)+' words</span><div class="pages" aria-hidden="true"><i style="width:'+Math.min(100,w/2500*100)+'%"></i><s style="left:20%"></s><s style="left:40%"></s><s style="left:60%"></s><s style="left:80%"></s></div><div class="pages-scale" aria-hidden="true"><span>0</span><span>5 pages</span></div><p class="quiet" style="font-size:.78rem;margin-top:6px">About 500 words fill a page at 12 points. The real length depends on the template.</p></div></div></section>';
+  var sc=[["ownership","Ownership: each contribution makes my own role clear, even where the work was a team's."],["specificity","Specificity: my claims name outcomes, organizations and numbers, and leave out journal-based metrics."],["significance","Significance: each contribution says what changed, and keeps what already changed apart from what could change."],["coherence","Coherence: my "+(isFrq()?"background and skills section":"personal statement")+" frames the whole and ends pointed forward."],["selection","Selection: each contribution relates to this application, and I chose them for this funding opportunity."],["mentorship","Mentorship: my supervision and mentorship section names at least one person I trained and where they went."],["format","Format: I will paste this into the current version of my agency's template and keep within the page limit."]];
+  h+='<section class="card selfcheck" aria-labelledby="sc-t"><h3 class="h3" id="sc-t">Self-check before you export</h3>'+sc.map(function(x){return '<label><input type="checkbox" data-sc="'+x[0]+'"'+(D.checks[x[0]]?' checked':'')+'>'+esc(x[1])+'</label>';}).join("")+
+    '<p class="closing">Prepare your CV in the current version of the template your agency provides, and keep the formatting it sets. Do not exceed the page limit: 5 pages in English, 6 pages in French.</p></section>';
+  h+='<div class="nav"><button type="button" class="btn ghost" data-go="ps">← '+railPs()+'</button><button type="button" class="btn primary" data-go="export">Export →</button></div>';
+  return h;};
+function orderHTML(live,comp){if(live.length<2)return '<p class="quiet">You have one contribution, so the order is already set. <button type="button" class="linkbtn" data-go="contrib">+ Add a contribution</button></p>';
+  var h='';live.forEach(function(x,pos){var c=x[0],i=x[1];
+    if(pos===0)h+='<p class="slot"><b>First:</b> the contribution that runs across most of your work. It opens the section and frames the others.</p>';
+    else if(pos===live.length-1)h+='<p class="slot"><b>Last:</b> the one that leads most directly into '+(comp?'<b>'+esc(comp)+'</b>':'the project you are applying for')+'. It closes the section.</p>';
+    else if(pos===1)h+='<p class="slot">The ones in between follow the thread from the first to the last.</p>';
+    h+='<div class="ocard" data-oc="'+i+'"><span class="n" aria-hidden="true">'+(pos+1)+'</span><div><div class="t">'+esc(c.h)+'</div><div class="g">'+esc(c.stakes||c.did)+'</div></div><div class="mv"><button type="button" class="btn" aria-label="Move '+esc(c.h)+' up" data-mv="'+i+'|-1"'+(pos===0?' disabled':'')+'>↑</button><button type="button" class="btn" aria-label="Move '+esc(c.h)+' down" data-mv="'+i+'|1"'+(pos===live.length-1?' disabled':'')+'>↓</button></div></div>';});
+  return h;}
+
+R.export=function(){
+  var a=agencyOf(D.p.agency), unsure=!a||a.v==="other", d=draftHTML();
+  var setup=unsure?'<span class="k">Set up for:</span> Agency not chosen · Tri-agency CV layout · 12-point Times New Roman':'<span class="k">Set up for:</span> '+a.a+' · '+(a.f==="cv-frq"?"CV-FRQ":"Tri-agency CV")+' · '+FONT[a.v];
+  var h='<div class="step-head"><h2>Export your draft</h2><p>You can take your draft out of the tool as a file, as sections to paste into the template, or as a saved draft file you can open here again later.</p></div>';
+  h+='<p class="setup-line">'+setup+' · <button type="button" class="linkbtn" data-go="profile">Change</button></p>';
+  h+='<section class="card" aria-labelledby="pv-t"><div class="card-h"><h3 class="card-t" id="pv-t" style="margin:0">Your draft</h3><span class="card-side">Read only</span></div><div class="draft"><div class="draft-body preview'+(d.tnr?' tnr':'')+'" tabindex="0" role="region" aria-label="Draft preview, read only">'+d.html+'</div></div></section>';
+  h+='<section class="card" aria-labelledby="dl-t"><h3 class="h3" id="dl-t">Download or print</h3><div class="fmt" role="radiogroup" aria-labelledby="dl-t">'+
+    '<button type="button" class="choice" role="radio" aria-checked="'+(UI.fmt==="doc")+'" data-fmt="doc"><span class="tick" aria-hidden="true">✓</span><b>Word (.doc)<span class="rec">Recommended</span></b><small>Set in '+(unsure?'12-point Times New Roman':FONT[a.v])+' on a Letter page with 2 cm margins, with your agency\'s section names.</small></button>'+
+    '<button type="button" class="choice" role="radio" aria-checked="'+(UI.fmt==="txt")+'" data-fmt="txt"><span class="tick" aria-hidden="true">✓</span><b>Plain text (.txt)</b><small>The same draft without formatting, for pasting anywhere.</small></button></div>'+
+    '<div class="actions"><button type="button" class="btn primary" data-act="download">'+ico("down")+'Download '+(UI.fmt==="doc"?"Word file":"text file")+'</button><button type="button" class="btn ghost" data-act="toast" data-msg="Opens the draft in a print view, set in your agency\'s font.">Print view</button><button type="button" class="btn ghost" data-act="copy" data-what="draft">Copy draft</button><span class="copied" data-copied="draft" aria-live="polite"></span></div></section>';
+  h+='<section class="card" aria-labelledby="pt-t"><h3 class="h3" id="pt-t">Paste into the template, one section at a time</h3><div class="copy-row">'+["ps","contrib","mentor"].map(function(k){return '<div><button type="button" class="btn" data-act="copy" data-what="'+k+'">Copy '+secName(k)+'</button><span class="copied" data-copied="'+k+'" aria-live="polite"></span></div>';}).join("")+'</div>'+
+    '<div class="fmt-note"><p class="must">You must use the agency\'s template.</p><p>'+(unsure?'Prepare your CV in the current version of the template your agency provides, and keep the formatting it sets. Do not exceed the page limit: 5 pages in English, 6 pages in French. Not sure whether you need the TCV or the CV-FRQ? Check the program\'s application guide.':'Prepare your TCV in the current version of the template '+a.a+' provides, and keep the formatting it sets. Do not exceed the page limit: 5 pages in English, 6 pages in French.')+'</p>'+
+    (unsure?'':'<dl><dt>Font</dt><dd>12-point Arial in black type. You can use different fonts and sizes in tables, figures and legends, as long as the text is readable when the page is viewed at 100%.</dd><dt>Links</dt><dd>Not permitted: the CV must be self-contained. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it. Reviewers are not guaranteed to open it.</dd></dl>')+'</div></section>';
+  h+='<section class="card" aria-labelledby="kw-t"><h3 class="h3" id="kw-t">Keep your work</h3><p style="margin:0 0 12px;font-size:.92rem;max-width:72ch">This saves your whole draft as a small file on your computer. Keep it somewhere safe. Later, choose Continue draft on the start page and open the file to carry on. It is not a Word file. Clearing your browser data erases the draft stored in the tool, so a saved file is your backup.</p><button type="button" class="btn" data-act="save">'+ico("save")+'Save a draft file</button></section>';
+  h+='<p style="font-size:.92rem;margin:24px 0 0">If you have questions about your narrative CV, please contact the Pathways to Impact team at <a href="#" data-act="email">impact@concordia.ca</a>.</p>';
+  h+='<div class="nudge"><p>If you have a few minutes, you can send a short note to impact@concordia.ca about your experience with the tool and what would make it better.</p><span class="addr"><button type="button" class="btn" data-act="email">'+ico("mail")+'Email us</button><code>impact@concordia.ca</code></span></div>';
+  h+='<div class="nav"><button type="button" class="btn ghost" data-go="review">← Review</button><span></span></div>';
+  return h;};
+
+/* ═══ Render ═══ */
+function render(keepFocus){
+  var fid=null,sel=null;if(keepFocus&&document.activeElement&&document.activeElement.id){fid=document.activeElement.id;try{sel=document.activeElement.selectionStart;}catch(e){}}
+  document.body.classList.toggle("phone",W==="phone");
+  renderHead();renderRail();
+  document.getElementById("main").innerHTML=R[SCREEN]();
+  document.querySelectorAll("#main .f").forEach(function(f){updateChecks(f);});
+  if(fid){var n=document.getElementById(fid);if(n){n.focus({preventScroll:true});try{if(sel!=null)n.setSelectionRange(sel,sel);}catch(e){}}}
+  renderMock();
+}
+function go(screen,stateKey){SCREEN=screen;var list=STATES[screen];var st=stateKey||list[0][0];var hit=list.filter(function(x){return x[0]===st;})[0]||list[0];STATE=hit[0];resetUI();hit[2]();if(screen!=="start")D.visited[screen]=true;render();writeHash();window.scrollTo(0,0);}
+function navTo(screen){ // product navigation: keep the data, change screen
+  SCREEN=screen;STATE="";if(screen!=="start")D.visited[screen]=true;UI.active=null;UI.ex=null;
+  if(screen==="contrib"&&!D.contribs.length){D.contribs=[emptyC()];UI.active={s:"c",i:0,k:"h"};}
+  if(screen==="mentor"&&!D.m.people.length)D.m.people=[emptyP()];
+  if(screen==="ps"&&!psHas("anchor"))UI.active={s:"ps",k:"anchor"};
+  render();window.scrollTo(0,0);var m=document.getElementById("main");m.focus({preventScroll:true});}
+
+/* ═══ Field open / shrink with scroll anchoring ═══ */
+function fieldHas(f){var b=f.getAttribute("data-f").split("|");if(b[0]==="c")return cHas(D.contribs[+b[1]],b[2]);if(b[0]==="m")return !!D.m[b[2]];return psHas(b[2]);}
+function keepAnchor(el,top,ms){var t0=performance.now();(function step(){var d=el.getBoundingClientRect().top-top;if(Math.abs(d)>.5)window.scrollBy(0,d);if(performance.now()-t0<ms)requestAnimationFrame(step);})();}
+function openField(f){
+  if(f.classList.contains("is-open"))return;
+  var prev=Array.prototype.slice.call(document.querySelectorAll("#main .f.is-open")).filter(function(x){return x!==f&&x.hasAttribute("data-f");});
+  var top=f.getBoundingClientRect().top;
+  f.classList.remove("is-empty","is-filled");f.classList.add("is-open");
+  var b=f.getAttribute("data-f").split("|");UI.active={s:b[0]==="c"?"c":b[0],i:+b[1],k:b[2]};
+  setTimeout(function(){prev.forEach(function(p){p.classList.remove("is-open");p.classList.add(fieldHas(p)?"is-filled":"is-empty");refreshAns(p);});},motionMs(140));
+  keepAnchor(f,top,motionMs(140)+motionMs(200)+60);
+  if(b[2]==="challenge"||b[2]==="streams"){render(true);} // the cross-contribution note sits beside these two
+}
+function refreshAns(f){var b=f.getAttribute("data-f").split("|"),v;if(b[0]==="c"){var c=D.contribs[+b[1]];v=b[2]==="role"?[lab(LEVELS,c.level),c.role].filter(Boolean).join(" · "):c[b[2]];}else if(b[0]==="m")v=D.m[b[2]];else v=b[2]==="anchor"?anchorText():D.ps[b[2]];
+  var a=f.querySelector(".ans-v");if(a){a.textContent=v||"";a.classList.toggle("is-long",String(v||"").length>220);}var st=f.querySelector("[id$='-st']");if(st)st.textContent=fieldHas(f)?"Answered.":"Not answered yet.";}
+function updateChecks(f){var b=(f.getAttribute("data-f")||"").split("|");if(b[0]!=="c")return;var c=D.contribs[+b[1]],t=String(c[b[2]]||""),out=[];if(!t||b[2]==="h")return setChecks(f,"");
+  var we=(t.match(/\b(we|our)\b/gi)||[]).length;if(we&&!/\bI\b/.test(t))out.push('<span class="fl">“we” or “our” appears '+we+(we===1?' time':' times')+' with no “I …” nearby. If every sentence says “we”, reviewers cannot tell what you did.</span>');
+  var nums=(t.match(/\b\d[\d,]*\b/g)||[]).length;if(nums)out.push('<span class="st">'+nums+' specific number'+(nums>1?'s':'')+'</span>');
+  if(b[2]==="changed"){var hd=t.match(/\b(may|might|could|potentially)\b/gi);if(hd)out.push('<span class="fl">“'+hd[0]+'” — this field is for what has happened; what might follow belongs under What could change.</span>');}
+  if(out.some(function(x){return x.indexOf('class="fl"')>0;})&&!UI.firstCheckSeen){out.push('<span class="first">The checks under each field are suggestions. They leave you free to continue, carry no score and stay here with your draft.</span>');}
+  setChecks(f,out.join(""));}
+function setChecks(f,h){var n=f.querySelector(".f-checks");if(n&&n.innerHTML!==h)n.innerHTML=h;}
+
+/* ═══ Events ═══ */
+document.addEventListener("focusin",function(e){
+  var f=e.target.closest&&e.target.closest("#main .f[data-f]");
+  if(f&&(e.target.classList.contains("box")))openField(f);
+});
+document.addEventListener("click",function(e){
+  var t=e.target.closest("button,a,[data-open]");if(!t)return;
+  var A=function(n){return t.getAttribute(n);};
+  if(A("data-mock")){mockClick(t);return;}
+  if(t.closest(".mock"))return;
+  if(A("data-go")){e.preventDefault();navTo(A("data-go"));return;}
+  if(A("data-open")){var box=document.getElementById(A("data-open"))||t.closest(".f").querySelector(".box");if(box){box.focus();}return;}
+  var act=A("data-act");
+  if(act==="new"){D.p.started=true;navTo("profile");return;}
+  if(act==="toast"){e.preventDefault();toast(A("data-msg"));return;}
+  if(act==="email"){e.preventDefault();toast("Opens an email to impact@concordia.ca with the subject “Narrative CV tool: my experience”.");return;}
+  if(act==="save"){toast("Saves the whole draft as a small file on your computer.");return;}
+  if(act==="built"){UI.built=!UI.built;t.setAttribute("aria-checked",UI.built);document.getElementById("exbox").classList.toggle("built",UI.built);renderMock();return;}
+  if(act==="undecided"){D.p.undecided=!D.p.undecided;if(D.p.undecided)D.p.comp="";UI.profEdit=1;render();return;}
+  if(act==="addc"){D.contribs.forEach(function(c){c.folded=true;});D.contribs.push(emptyC());var i=D.contribs.length-1;UI.active={s:"c",i:i,k:"h"};render();var n=document.getElementById("c-"+i+"-h");if(n){n.scrollIntoView({block:"center",behavior:motionMs(1)?"smooth":"auto"});n.focus({preventScroll:true});}announce("Contribution "+(i+1)+" added.");return;}
+  if(act==="addp"){D.m.people.forEach(function(p){p.folded=true;});D.m.people.push(emptyP());render();var k=D.m.people.length-1,s=document.getElementById("ps"+k);if(s){s.focus();}announce("Person "+(k+1)+" added.");return;}
+  if(act==="addev"){var ci=+document.querySelector("[data-card]").getAttribute("data-card");var ce=D.contribs[ci];if(UI.evDraft&&(UI.evDraft.type||UI.evDraft.text)){ce.ev.push(UI.evDraft);}UI.evDraft={type:"",text:"",why:""};render();announce("Evidence item "+String.fromCharCode(97+ce.ev.length)+" added.");return;}
+  if(act==="draft"){UI.draftOpen=!UI.draftOpen;render(true);return;}
+  if(act==="download"){D.exported=true;renderRail();toast("Downloads "+(UI.fmt==="doc"?"a Word file (.doc)":"a text file (.txt)")+".");return;}
+  if(act==="copy"){D.exported=true;renderRail();var w=A("data-what");document.querySelectorAll("[data-copied]").forEach(function(x){x.textContent="";});var c=document.querySelector('[data-copied="'+w+'"]');if(c)c.textContent="Copied";return;}
+  if(A("data-agency")){D.p.agency=A("data-agency");UI.profEdit=null;render();focusQ();announce("Agency: "+agencyOf(D.p.agency).a+". Next question: competition.");return;}
+  if(A("data-year")){D.p.year=D.p.year===A("data-year")?"":A("data-year");UI.profEdit=(D.p.comp||D.p.undecided)?null:1;render();return;}
+  if(A("data-stage")){D.p.stage=A("data-stage");UI.profEdit=null;render();focusQ();return;}
+  if(A("data-disc")){D.p.disc=A("data-disc");if(D.p.disc2===D.p.disc)D.p.disc2="";UI.profEdit=null;render();focusQ();return;}
+  if(A("data-disc2")){D.p.disc2=A("data-disc2");UI.profEdit=null;render();focusQ();return;}
+  if(A("data-mode")){var v=A("data-mode"),m=D.p.modes,ix=m.indexOf(v);if(ix>=0)m.splice(ix,1);else m.push(v);UI.profEdit=5;render();return;}
+  if(A("data-pedit")){UI.profEdit=+A("data-pedit");render();var q=document.querySelector('[data-pq="'+UI.profEdit+'"] button,[data-pq="'+UI.profEdit+'"] input');if(q)q.focus();return;}
+  if(A("data-ex")){var x=A("data-ex");UI.ex=UI.ex===x?null:x;render(true);return;}
+  if(A("data-level")){var lv=A("data-level").split("|");D.contribs[+lv[0]].level=lv[1];t.parentNode.querySelectorAll(".mini").forEach(function(b){b.setAttribute("aria-checked",b===t);});liveCard(+lv[0]);return;}
+  if(A("data-evon")){UI.ev[+A("data-evon")]=true;UI.active=null;if(!UI.evDraft&&!D.contribs[+A("data-evon")].ev.length)UI.evDraft={type:"",text:"",why:""};render();var area=document.querySelector(".ev-area");if(area)area.scrollIntoView({block:"start",behavior:"auto"});return;}
+  if(A("data-evoff")){UI.ev[+A("data-evoff")]=false;UI.evDraft=null;render();return;}
+  if(A("data-kind")){if(!UI.evDraft)UI.evDraft={type:"",text:"",why:""};UI.evDraft.type=A("data-kind");t.parentNode.querySelectorAll(".kind").forEach(function(b){b.setAttribute("aria-checked",b===t);});return;}
+  if(A("data-fold")){D.contribs[+A("data-fold")].folded=true;UI.active=null;render();return;}
+  if(A("data-unfold")){var ui=+A("data-unfold");D.contribs.forEach(function(c,j){c.folded=j!==ui;});UI.active=null;render();return;}
+  if(A("data-pfold")){var pi=+A("data-pfold");D.m.people.forEach(function(p,j){p.folded=j!==pi;});render();return;}
+  if(A("data-fmt")){UI.fmt=A("data-fmt");render(true);return;}
+  if(A("data-mv")){var mv=A("data-mv").split("|");moveContrib(+mv[0],+mv[1]);return;}
+  if(A("data-jump")){e.preventDefault();var j=A("data-jump").split("|");navTo(j[0]);if(j[0]==="contrib"){D.contribs.forEach(function(c,k){c.folded=k!==+j[1];});if(j[2]==="ev"){UI.ev[+j[1]]=true;UI.evDraft={type:"",text:"",why:""};}else UI.active={s:"c",i:+j[1],k:j[2]};}else UI.active={s:j[0]==="mentor"?"m":"ps",i:0,k:j[2]};render();var target=document.querySelector("#main .f.is-open .box")||document.querySelector(".ev-area");if(target){target.scrollIntoView({block:"center"});if(target.focus)target.focus({preventScroll:true});}return;}
+});
+document.addEventListener("input",function(e){
+  var t=e.target, b=t.getAttribute("data-b");
+  if(b){var p=b.split("|");if(p[0]==="c"){D.contribs[+p[1]][p[2]]=t.value;liveCard(+p[1]);updateChecks(t.closest(".f"));}else if(p[0]==="m"){D.m[p[2]]=t.value;liveMentor();}else{D.ps[p[2]]=t.value;livePs();}renderRail();return;}
+  if(t.getAttribute("data-ps")){D.ps[t.getAttribute("data-ps")]=t.value;var art=document.querySelector("[data-art]");if(art)art.textContent=article(D.ps.role);livePs();renderRail();return;}
+  if(t.getAttribute("data-pf")==="comp"){var was=!!D.p.comp;D.p.comp=t.value;UI.profEdit=1;if(was!==!!D.p.comp)render(true);else{renderRail();}return;}
+  if(t.getAttribute("data-tot")){D.m.tot[t.getAttribute("data-tot")]=t.value;var s=totSum();document.getElementById("tot-sum").textContent=s?s+" in total":"Type a number in each box that applies";document.getElementById("pcounter").textContent=peopleCounter();renderRail();return;}
+  if(t.getAttribute("data-pp")){var q=t.getAttribute("data-pp").split("|");D.m.people[+q[0]][q[1]]=t.value;if(q[1]==="stage"||q[1]==="sector"){render(true);announce(q[1]==="sector"?"Two more fields appeared below.":"");}else{var hd=document.querySelector('[data-ph="'+q[0]+'"]');if(hd)hd.innerHTML=personHead(D.m.people[+q[0]],+q[0]).replace(/^Person (\d+)/,'<span class="num">Person $1</span>');document.getElementById("pcounter").textContent=peopleCounter();}renderRail();return;}
+  if(t.id&&/^ev[tw]/.test(t.id)){if(!UI.evDraft)UI.evDraft={type:"",text:"",why:""};UI.evDraft[t.id.charAt(2)==="t"?"text":"why"]=t.value;return;}
+});
+document.addEventListener("change",function(e){var t=e.target;if(t.getAttribute("data-sc")){D.checks[t.getAttribute("data-sc")]=t.checked;}});
+var lastCount={};
+function liveCard(i){var c=D.contribs[i],n=cCount(c);var hd=document.querySelector('[data-ch="'+i+'"]');if(hd)hd.textContent=c.h?" · "+c.h:"";var cc=document.querySelector('[data-cc="'+i+'"]');if(cc){cc.textContent=n+" of 9 answered";var d=cc.parentNode.querySelectorAll(".dots i");d.forEach(function(x,j){x.classList.toggle("on",j<n);});}
+  if(lastCount["c"+i]!=null&&lastCount["c"+i]!==n)announce(n+" of 9 answered");lastCount["c"+i]=n;
+  var s=document.querySelector('[data-strip="'+i+'"]');if(s){var tmp=document.createElement("div");tmp.innerHTML=stripHTML(c,i,!!UI.ev[i]);s.replaceWith(tmp.firstChild);}}
+function liveMentor(){var n=PF.filter(function(f){return !!D.m[f.k];}).length,m=document.querySelector("[data-mc]");if(m){m.textContent=n+" of 3 answered";m.parentNode.querySelectorAll(".dots i").forEach(function(x,j){x.classList.toggle("on",j<n);});}}
+function livePs(){var pc=psCount(),m=document.querySelector("[data-psc]");if(m){m.textContent=pc[0]+" of "+pc[1]+" answered";m.parentNode.querySelectorAll(".dots i").forEach(function(x,j){x.classList.toggle("on",j<pc[0]);});}var s=document.getElementById("ps-strip");if(s){var tmp=document.createElement("div");tmp.innerHTML=psStrip();s.replaceWith(tmp.firstChild);}}
+
+function focusQ(){var q=document.querySelectorAll(".qblock");var last=q[q.length-1];if(!last)return;var c=last.querySelector("input,button");if(c)c.focus({preventScroll:true});}
+/* order: ↑ ↓ with a short slide (FLIP) */
+function moveContrib(i,dir){var live=D.contribs.map(function(c,k){return k;}).filter(function(k){return cLive(D.contribs[k]);});var pos=live.indexOf(i),to=pos+dir;if(to<0||to>=live.length)return;
+  var rects={};document.querySelectorAll("[data-oc]").forEach(function(n){rects[n.querySelector(".t").textContent]=n.getBoundingClientRect().top;});
+  var a=live[pos],b=live[to],tmp=D.contribs[a];D.contribs[a]=D.contribs[b];D.contribs[b]=tmp;
+  var comp=D.p.undecided||!D.p.comp?"":D.p.comp,lv=D.contribs.map(function(c,k){return [c,k];}).filter(function(x){return cLive(x[0]);});
+  document.getElementById("order").innerHTML=orderHTML(lv,comp);
+  var db=document.getElementById("draftbody");if(db)db.innerHTML=draftHTML().html;
+  var ms=motionMs(260);
+  document.querySelectorAll("[data-oc]").forEach(function(n){var key=n.querySelector(".t").textContent,old=rects[key];if(old==null)return;var dy=old-n.getBoundingClientRect().top;if(!dy||!ms)return;n.style.transition="none";n.style.transform="translateY("+dy+"px)";n.getBoundingClientRect();n.style.transition="";n.style.transform="";if(key===tmp.h)n.classList.add("moved");setTimeout(function(){n.classList.remove("moved");},600);});
+  var moved=document.querySelector('[data-mv="'+b+'|'+dir+'"]')||document.querySelector('[data-mv="'+b+'|'+(-dir)+'"]');if(moved&&!moved.disabled)moved.focus();else{var alt=document.querySelector('[data-oc="'+b+'"] .mv .btn:not([disabled])');if(alt)alt.focus();}
+  announce("“"+tmp.h+"” moved to position "+(to+1)+" of "+live.length+".");}
+
+/* ═══ Mock-up controls ═══ */
+function mb(label,on,attr){return '<button type="button" data-mock="'+attr+'" aria-pressed="'+!!on+'">'+label+'</button>';}
+function renderMock(){
+  document.getElementById("m-screens").innerHTML=SCREENS.map(function(s){return mb(s[1],SCREEN===s[0],"s:"+s[0]);}).join("");
+  document.getElementById("m-states").innerHTML=(STATES[SCREEN]||[]).map(function(s){return mb(s[1],STATE===s[0],"st:"+s[0]);}).join("");
+  document.getElementById("m-opts").innerHTML=(OPTS[SCREEN]||[]).map(function(o,i){return mb(o[0],o[1](),"o:"+i);}).join("")||'<span style="color:#777;width:auto;text-transform:none">none for this screen</span>';
+  document.getElementById("m-rail").innerHTML=RAILS.map(function(r){return mb(r[1],SCREEN===r[2]&&STATE===r[3],"r:"+r[0]);}).join("");
+  document.getElementById("m-width").innerHTML=mb("Desktop",W==="desktop","w:desktop")+mb("Phone 375",W==="phone","w:phone");
+  var rm=document.body.classList.contains("rm");document.getElementById("m-motion").innerHTML=mb("Normal",!rm,"m:on")+mb("Reduced",rm,"m:off");
+}
+function mockClick(t){var v=t.getAttribute("data-mock"),k=v.split(":")[0],x=v.split(":")[1];
+  if(v==="min"){var m=document.getElementById("mock");m.classList.toggle("is-min");t.textContent=m.classList.contains("is-min")?"Show controls":"Hide controls";return;}
+  if(k==="s")go(x);if(k==="st")go(SCREEN,x);
+  if(k==="o"){OPTS[SCREEN][+x][2]();render(true);}
+  if(k==="r"){var r=RAILS.filter(function(z){return z[0]===x;})[0];go(r[2],r[3]);}
+  if(k==="w"){W=x;render(true);}
+  if(k==="m"){document.body.classList.toggle("rm",x==="off");renderMock();}
+  writeHash();}
+function writeHash(){try{history.replaceState(null,"","#s="+SCREEN+"&st="+STATE+"&w="+W+(document.body.classList.contains("clean")?"&clean=1":""));}catch(e){}}
+function readHash(){var q={};location.hash.replace(/^#/,"").split("&").forEach(function(kv){var p=kv.split("=");if(p[0])q[p[0]]=decodeURIComponent(p[1]||"");});return q;}
+var q=readHash();
+if(q.clean)document.body.classList.add("clean");
+if(q.w)W=q.w;
+if(q.rm)document.body.classList.add("rm");
+go(q.s&&STATES[q.s]?q.s:"start",q.st);
+if(q.opt){q.opt.split(",").forEach(function(i){OPTS[SCREEN][+i][2]();});render();}
+})();
+</script>
+</body>
+</html>

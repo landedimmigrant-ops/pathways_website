@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V6 narrative CV tool — flow map</title>
+<style>
+  :root { --bg:#fbfaf8; --ink:#222; --muted:#666; --line:#d9d4cb; --accent:#912338; --panel:#fff; --note:#e0a800; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); display: flex; flex-direction: column; }
+  header { padding: 10px 16px 6px; border-bottom: 1px solid var(--line); background: #fff; }
+  h1 { font-size: 17px; margin: 0; }
+  header p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+  .row { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; padding: 6px 16px; border-bottom: 1px solid var(--line); background: #fff; }
+  .row .lab { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-right: 2px; min-width: 62px; }
+  button, input, select, textarea { font: inherit; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bbb; background: #fff; border-radius: 999px; padding: 2px 10px 2px 8px; cursor: pointer; font-size: 12.5px; }
+  .chip svg { width: 30px; height: 10px; flex: none; }
+  .chip[aria-pressed="false"] { opacity: .45; background: #f1efeb; text-decoration: line-through; text-decoration-thickness: 1px; }
+  .chip:focus-visible, .tab:focus-visible, .btn:focus-visible, .stepbtn:focus-visible { outline: 2px solid #1f5fbf; outline-offset: 2px; }
+  .tab { border: 1px solid #bbb; background: #f6f4ef; border-radius: 6px 6px 0 0; padding: 3px 12px; cursor: pointer; font-size: 12.5px; }
+  .tab[aria-selected="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn { border: 1px solid #aaa; background: #fff; border-radius: 6px; padding: 3px 10px; cursor: pointer; font-size: 12.5px; }
+  .btn:hover { background: #f1efeb; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  #q { border: 1px solid #aaa; border-radius: 6px; padding: 3px 8px; width: 190px; font-size: 12.5px; }
+  #qres { position: absolute; z-index: 20; background: #fff; border: 1px solid #aaa; border-radius: 6px; box-shadow: 0 4px 14px rgba(0,0,0,.15); max-width: 360px; display: none; }
+  #qres button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 5px 10px; cursor: pointer; font-size: 12.5px; }
+  #qres button:hover, #qres button:focus { background: #f1efeb; }
+  .stepbtn { border: 1px solid #1f5fbf; color: #1f5fbf; background: #fff; border-radius: 50%; width: 26px; height: 26px; font-size: 12px; cursor: pointer; padding: 0; }
+  .stepbtn[aria-current="step"] { background: #1f5fbf; color: #fff; }
+  main { flex: 1; display: flex; min-height: 0; position: relative; }
+  #stage { flex: 1; min-width: 0; position: relative; overflow: hidden; background: #fff; touch-action: none; cursor: grab; }
+  #stage.dragging { cursor: grabbing; }
+  svg#map { width: 100%; height: 100%; display: block; user-select: none; }
+  #panel { width: 400px; max-width: 60vw; border-left: 1px solid var(--line); background: var(--panel); overflow: auto; padding: 12px 14px 40px; transition: width .15s; }
+  #panel.wide { width: 760px; max-width: 75vw; }
+  #panel h2 { font-size: 16px; margin: 0 0 2px; }
+  #panel h3 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 14px 0 4px; }
+  #panel .sum { font-weight: 600; margin: 4px 0 6px; }
+  #panel code { background: #f1efeb; padding: 0 4px; border-radius: 3px; font-size: 12.5px; word-break: break-all; }
+  #panel ul { margin: 0; padding-left: 18px; }
+  #panel li { margin: 2px 0; }
+  .tag { display: inline-block; font-size: 11px; border: 1px solid #999; border-radius: 4px; padding: 0 6px; margin-right: 4px; color: #444; }
+  .qflag { background: #fdecea; border: 1px solid #c0392b; border-radius: 6px; padding: 6px 8px; margin: 8px 0; font-size: 13px; }
+  .nbr, .steplink, .jump { background: none; border: 0; padding: 0; color: #1f5fbf; text-decoration: underline; cursor: pointer; font-size: inherit; text-align: left; }
+  .etype { font-size: 11px; color: #555; }
+  textarea.note { width: 100%; min-height: 84px; border: 1px solid #aaa; border-radius: 6px; padding: 6px 8px; resize: vertical; }
+  .noteflag { font-size: 11.5px; color: #8a6a00; }
+  .shots { display: flex; flex-wrap: wrap; gap: 8px; }
+  .shotthumb { border: 1px solid #999; border-radius: 4px; padding: 2px; background: #fff; cursor: pointer; }
+  .shotthumb img { display: block; max-width: 168px; max-height: 120px; object-fit: cover; object-position: top; }
+  .shotthumb.phone img { max-width: 70px; max-height: 120px; }
+  .shotthumb span { display: block; font-size: 11px; text-align: center; color: #555; }
+  .viewer img { max-width: 100%; border: 1px solid #bbb; display: block; }
+  .viewerbox { max-height: calc(100vh - 380px); min-height: 240px; overflow: auto; border: 1px solid #ccc; background: #f6f4ef; padding: 4px; }
+  .demo { background: #fff8e1; border: 1px solid #f0c400; border-radius: 6px; padding: 5px 8px; font-size: 12.5px; margin: 6px 0; }
+  .allnotes li { margin: 8px 0; }
+  .allnotes q { color: #444; }
+  #hint { position: absolute; left: 10px; bottom: 8px; font-size: 11.5px; color: #777; background: rgba(255,255,255,.85); padding: 2px 6px; border-radius: 4px; pointer-events: none; }
+  #zoombox { position: absolute; right: 10px; top: 8px; display: flex; gap: 4px; }
+  .hide { display: none !important; }
+  @media (max-width: 800px) { #panel { position: absolute; right: 0; top: 0; bottom: 0; width: 88vw; max-width: none; box-shadow: -4px 0 14px rgba(0,0,0,.2); } #panel.wide { width: 96vw; max-width: none; } }
+  @media print { header, .row, #panel, #zoombox, #hint { display: none; } body { display: block; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>V6 narrative CV tool — flow map</h1>
+  <p id="sub"></p>
+</header>
+
+<div class="row" id="presets" role="tablist" aria-label="Presets"><span class="lab">Presets</span></div>
+<div class="row" id="layerchips"><span class="lab">Layers</span></div>
+<div class="row" id="typechips"><span class="lab">Edges</span></div>
+<div class="row" id="tools">
+  <span class="lab">Tools</span>
+  <input id="q" type="search" placeholder="Find a node…" aria-label="Find a node by name" autocomplete="off">
+  <div id="qres" role="listbox"></div>
+  <button class="btn" id="collapseAll">Collapse all</button>
+  <button class="btn" id="expandAll">Expand all</button>
+  <button class="btn" id="fit">Fit to window</button>
+  <label style="font-size:12.5px"><input type="checkbox" id="edgeLabels"> Edge labels</label>
+  <button class="btn" id="allNotes">All notes <span id="noteCount"></span></button>
+  <button class="btn" id="generalNote">Map note</button>
+</div>
+<div class="row" id="steps"><span class="lab">Steps</span></div>
+
+<main>
+  <div id="stage">
+    <svg id="map" role="img" aria-label="Flow map of the V6 narrative CV tool"></svg>
+    <div id="zoombox"><button class="btn" id="zin" aria-label="Zoom in">+</button><button class="btn" id="zout" aria-label="Zoom out">−</button></div>
+    <div id="hint">Drag to pan · wheel or +/− to zoom · click a node for details</div>
+  </div>
+  <aside id="panel" aria-live="polite"></aside>
+</main>
+
+<script>
+(function () {
+"use strict";
+
+/* ─────────────────────────── DATA: the shots ─────────────────────────── */
+// Filled in by build.js. Shape: { <shotId>: { title, node, desktop:{src,w,h}, phone:{src,w,h} } }
+const SHOTDATA = /*SHOTDATA*/null;
+
+/* ─────────────────────────── DATA: the map ─────────────────────────── */
+const META = {
+  file: "narrative-cv-prototype-v6.html",
+  commit: "b14c55d",
+  lines: 3471,
+  built: "/*BUILTAT*/"
+};
+const LANES = ["User", "Screens", "Logic / State", "Data", "External services and ops"];
+const LAYERS = {
+  user:     { label: "User actions", lane: 0, badge: "U", icon: "pill" },
+  screen:   { label: "Screens",      lane: 1, badge: "S", icon: "rect" },
+  logic:    { label: "Logic",        lane: 2, badge: "ƒ", icon: "hex" },
+  data:     { label: "Data",         lane: 3, badge: "D", icon: "cyl" },
+  external: { label: "External",     lane: 4, badge: "X", icon: "dash" },
+  ops:      { label: "Ops",          lane: 4, badge: "O", icon: "para" }
+};
+const ETYPES = {
+  flow:  { label: "flow",  note: "the user's path, step to step",     color: "#1f5fbf", dash: "",          w: 2.4, sym: "→" },
+  shows: { label: "shows", note: "a screen displays this data",       color: "#2e8b57", dash: "2 4",       w: 2,   sym: "◎" },
+  logic: { label: "logic", note: "one piece of code calls another",   color: "#7a5aa6", dash: "",          w: 1.4, sym: "ƒ" },
+  read:  { label: "read",  note: "pulls from storage",                color: "#d17a00", dash: "9 3 2 3",   w: 1.9, sym: "◂" },
+  write: { label: "write", note: "pushes to storage",                 color: "#c0392b", dash: "7 4",       w: 2,   sym: "▸" },
+  net:   { label: "net",   note: "network request or outside link",   color: "#0e8c9c", dash: "14 5",      w: 2,   sym: "⇄" },
+  ops:   { label: "ops",   note: "deploy, release, backup, admin",    color: "#7f6a4d", dash: "1 5",       w: 3,   sym: "⚙" }
+};
+const SRC = "narrative-cv-prototype-v6.html";
+const f = (...r) => r.map(x => SRC + " " + x);
+
+// id, label, layer, summary, detail, files[], optional: parent, shot, q (the "?" reason)
+const N = [
+ // ── User ──
+ { id:"u_open", label:"Open the page", layer:"user", sum:"The page loads and a saved draft, if there is one, reopens where it was left.",
+   det:"Boot runs loadState, updates the Note for the team count and renders the last step. If the saved draft is past Setup, a welcome-back banner shows once. Only the shared stylesheet is requested.", files:f("3463-3467") },
+ { id:"u_setup", label:"Choose path and context", layer:"user", sum:"Pick Start fresh or I already have a draft, then agency, discipline, career stage.",
+   det:"Choosing an agency sets the format (TCV for SSHRC, NSERC, CIHR and Other; CV-FRQ for FRQ). Optional: a second discipline, a field not listed, a competition name. Start drafting moves on.", files:f("1956-1988","1646-1678") },
+ { id:"u_paste", label:"Paste an existing draft", layer:"user", sum:"Draft path only: paste text, or load the sample, and run the structural read.",
+   det:"The tool splits the text into paragraphs, runs the same checks on each and lists which moves of the format it detects. Nothing is sent anywhere.", files:f("2061-2131") },
+ { id:"u_write", label:"Write contributions", layer:"user", sum:"Fill in up to 10 contribution cards, field by field, with live checks.",
+   det:"Per card: headline, how involved, role line, stakes, what you did, outputs, what already changed, what could change, an optional moment, evidence rows, and a ✓ ✗ ? mark on each field. Assemble shows the material as one block.", files:f("2134-2324") },
+ { id:"u_mentor", label:"Describe trainees and mentoring", layer:"user", sum:"Four counts, trainee rows (no names), three prompts.",
+   det:"Each trainee row holds stage, sector, organization, department or unit, prizes or scholarships, and an optional why line. Names are not asked for (Eli's item 6, V6-1).", files:f("2450-2546") },
+ { id:"u_ps", label:"Write the personal statement", layer:"user", sum:"Finish 'I am a … at …', then answer the prompts. Written last, shown first.",
+   det:"Seven prompts (eight in the CV-FRQ). A short read across the contributions may suggest one that belongs in the statement.", files:f("2548-2611") },
+ { id:"u_order", label:"Put contributions in order", layer:"user", sum:"Move contributions up or down so the section reads as one account.",
+   det:"Two questions guide the order: which runs across most of the work (first), and which leads into the project applied for (last). 'This order works' also counts as done.", files:f("2619-2675") },
+ { id:"u_review", label:"Review and export", layer:"user", sum:"Read coverage, tick the self-check, then download, copy or print.",
+   det:"Buttons: draft .txt, Word .doc, advisor packet .txt, print view, copy draft, and one copy button per template section.", files:f("2724-2914") },
+ { id:"u_feedback", label:"Answer feedback and send", layer:"user", sum:"Twelve optional questions, session notes, a summary opt-in; Send, download or copy.",
+   det:"Only what is written on this step is sent, with the notes and, if ticked, a counts-only summary. The draft text is never part of it.", files:f("3247-3397") },
+ { id:"u_note", label:"Note for the team", layer:"user", sum:"Any step: open the note panel and save a note tagged with the step.",
+   det:"Notes stay in the draft on this device until the researcher sends them from the Feedback step.", files:f("3399-3451") },
+ { id:"u_reset", label:"Reset draft", layer:"user", sum:"Clears the draft, notes and feedback answers after a confirmation.",
+   det:"A browser confirm() asks first. On yes, the saved draft is removed and the tool returns to Setup.", files:f("3453-3461") },
+ { id:"u_nav", label:"Click a step, Back, Continue", layer:"user", sum:"Move between steps from the rail or the buttons.",
+   det:"Every step change calls renderStage, which also logs a visit and the time spent.", files:f("1530-1557","1918-1933") },
+ { id:"u_lens", label:"Change these answers", layer:"user", sum:"Edit agency, discipline, stage and the rest without leaving the step.",
+   det:"Opens the same fields as Setup in a panel under the 'Tailored for' bar. The draft stays where it is.", files:f("1680-1706") },
+
+ // ── Screens ──
+ { id:"s_shell", label:"Page shell", layer:"screen", shot:"shell", sum:"Banner, privacy line, guide link, Steps rail.",
+   det:"The banner holds 'Note for the team' and 'Reset draft'. A save-failed warning appears here if localStorage cannot be written. The Steps rail lists Setup, Structural read (draft path only), Contributions, Mentorship, Personal statement or Background and skills, Order of contributions, Review, Feedback; done steps are marked.", files:f("216-233","1530-1557") },
+ { id:"s_setup", label:"Setup", layer:"screen", shot:"setup", sum:"Choose a path and set the context.",
+   det:"Two path cards, chip rows for agency, discipline, optional second discipline, career stage, a field-not-listed box and a competition box, and a collapsed agency format note.", files:f("1956-1988") },
+ { id:"s_xray", label:"Structural read", layer:"screen", shot:"xray", sum:"Draft path only: paste box, coverage list, paragraph cards.",
+   det:"Eight coverage checks ('Opens with I am a…', numbers present, trainee destinations, and others), then one card per paragraph with strengths, flags and a read-back of the flagged words.", files:f("2061-2131","2023-2059") },
+ { id:"s_contrib", label:"Contributions", layer:"screen", shot:"contrib", sum:"Worked examples and up to 10 contribution cards.",
+   det:"Tailored-for bar, work-mode chips, a worked example picked for the researcher's field, mode and stage, a second example when two fields are set, shape hints, then the cards. A line says the order is set later.", files:f("2134-2243","2245-2324") },
+ { id:"s_weave", label:"Assembled paragraph", layer:"screen", shot:"weave", parent:"s_contrib", sum:"A contribution's material joined in one block, with evidence.",
+   det:"Suggested joins ('to address this →') sit between the fields. Gaps are named. Evidence prints as a, b, c with the two-line note under each item.", files:f("2415-2447") },
+ { id:"s_lens", label:"Change-answers panel", layer:"screen", shot:"lens", parent:"s_shell", sum:"Inline copy of the Setup fields.",
+   det:"Appears under the Tailored-for bar on every step except Setup when 'Change these answers' is open.", files:f("1680-1706") },
+ { id:"s_notes", label:"Note panel", layer:"screen", shot:"notes", parent:"s_shell", sum:"'A note for the Pathways team' drop-down.",
+   det:"Text box, Save note, Close. Ctrl or Cmd+Enter saves; Escape closes. Shows how many notes are saved so far.", files:f("3411-3451") },
+ { id:"s_reentry", label:"Welcome-back banner", layer:"screen", shot:"reentry", parent:"s_shell", sum:"Shown once when a saved draft reopens past Setup.",
+   det:"Names the step and the count of fields still marked ✗ or ?.", files:f("1573-1580") },
+ { id:"s_mentor", label:"Mentorship", layer:"screen", shot:"mentor", sum:"Worked example, totals, trainee rows, three prompts.",
+   det:"Trainee rows have a sector choice (University, Industry, Community agency, Government, Other); labels change with the sector.", files:f("2450-2546") },
+ { id:"s_ps", label:"Personal statement", layer:"screen", shot:"ps", sum:"Cross-contribution read, example, anchor line, prompts.",
+   det:"Called 'Background and skills' in the CV-FRQ, which adds a team-fit prompt. The read across contributions counts repeated words on this device.", files:f("2548-2611","2704-2721") },
+ { id:"s_order", label:"Order of contributions", layer:"screen", shot:"order", sum:"List with ↑ ↓ buttons and 'This order works'.",
+   det:"First and last rows are tagged 'Opens the section' and 'Closes the section'. With fewer than two contributions it explains what to do instead.", files:f("2619-2675") },
+ { id:"s_review", label:"Review and export", layer:"screen", shot:"review", sum:"Coverage, format note, length, flags, self-check, exports.",
+   det:"Coverage rows are grouped by section. The length line gives rough pages at 12 points against the 5-page English limit. A nudge points to Feedback until feedback is sent.", files:f("2724-2914") },
+ { id:"s_print", label:"Print view", layer:"screen", shot:"print", parent:"s_review", sum:"A new window with the draft in the agency's font.",
+   det:"Opened with window.open; a note at the top (not printed) says it is not the template.", files:f("3089-3092") },
+ { id:"s_feedback", label:"Feedback", layer:"screen", shot:"feedback", sum:"Questions, notes, summary opt-in, send.",
+   det:"Twelve questions, all optional. The summary is shown in full on request. Send posts to the project sheet; download and copy need no connection.", files:f("3247-3397") },
+
+ // ── Logic ──
+ { id:"l_boot", label:"Boot sequence", layer:"logic", sum:"loadState, updateNoteBtn, renderStage.",
+   det:"Also sets the re-entry flag when the saved draft is past Setup, and wires the Reset link.", files:f("3453-3467") },
+ { id:"l_state", label:"State store (ns)", layer:"logic", sum:"The in-memory draft plus load, save and migration.",
+   det:"defaultState builds the shape. loadState merges what was saved, maps old FRQ codes and normalizes trainee rows (the old name field is dropped; the free-text destination moves to organization). saveState writes the whole object and raises the save-failed warning if the browser refuses.", files:f("1264-1351","1275-1289") },
+ { id:"l_router", label:"Step router", layer:"logic", sum:"stages(), stageDone(), renderShell, renderStage, navRow.",
+   det:"Builds the step list (Structural read only in draft mode), renders the rail and the active step, scrolls, counts visits and time, and saves.", files:f("1468-1494","1530-1586","1918-1933") },
+ { id:"l_session", label:"Session log", layer:"logic", sum:"Counts visits, active time and button use; builds the summary.",
+   det:"Counts and choices only; no draft text. Idle stretches are capped at 30 minutes.", files:f("1504-1517","3165-3211") },
+ { id:"l_prompts", label:"Prompt block", layer:"logic", sum:"Question, help, textarea, live checks, ✓ ✗ ? mark with note.",
+   det:"Used by the contribution, mentorship and statement fields. Marks with ✗ or ? flow into the advisor packet.", files:f("1846-1916") },
+ { id:"l_lens", label:"Lens resolver", layer:"logic", parent:"l_prompts", sum:"Chooses question and help text for the agency, field, stage and mode.",
+   det:"activeTokens, resolveQ, resolveHelp, interpolate, secName and isFrq.", files:f("1353-1380") },
+ { id:"l_lint", label:"Checks (lint)", layer:"logic", parent:"l_prompts", sum:"Fixed-rule field checks: ownership, vague, weak, prestige, hedge, link, passive, numbers.",
+   det:"lintField returns strengths, flags and the hits to mark; renderChecks shows them; renderReadback marks the words in the researcher's own sentence. No AI.", files:f("1143-1262","1770-1787","1712-1756") },
+ { id:"l_exemplar", label:"Worked-example picker", layer:"logic", sum:"Picks the example for field × work mode × stage; draws the example box.",
+   det:"60 single-field cells and 10 two-field cells. Falls back to defaults when a lens answer is missing.", files:f("1017-1040","1798-1843") },
+ { id:"l_analyze", label:"Structural-read analysis", layer:"logic", sum:"Splits a pasted draft into paragraphs and checks each.",
+   det:"headingLabel decides what counts as a heading; analyzeDraft returns eight coverage checks and a lint result per paragraph.", files:f("2003-2059") },
+ { id:"l_weave", label:"Assembly builder", layer:"logic", sum:"buildWeave: joins fields, lettered evidence and gap notes.",
+   det:"Shared by the assembled view, the text export, the section copy and the print and Word views.", files:f("2396-2413") },
+ { id:"l_order", label:"Order logic", layer:"logic", sum:"liveContributions and the swap that reorders the list.",
+   det:"A move rearranges ns.contributions itself, so numbering and every export follow the new order.", files:f("2618-2675") },
+ { id:"l_cross", label:"Cross-contribution read", layer:"logic", sum:"Counts words that recur across contributions.",
+   det:"crossTerms drops common words; crossCuttingRead lists up to eight recurring words and any contribution that shares words with every other. A suggestion, counted on the device.", files:f("2680-2721") },
+ { id:"l_coverage", label:"Coverage and length", layer:"logic", sum:"Review rows, flag list, word count and rough page length.",
+   det:"draftWords counts the words that would appear in the draft; the length line compares with the 5-page English limit.", files:f("2724-2789","2917-2931") },
+ { id:"l_formatnote", label:"Agency format note", layer:"logic", sum:"Template, page limit, font, links, language, section names.",
+   det:"Reads the funder-rule tables for the chosen agency; compact on Setup, full on Review.", files:f("1602-1642") },
+ { id:"l_export", label:"Text builders", layer:"logic", sum:"Draft text, one section at a time, and the advisor packet.",
+   det:"buildExportText, sectionText and buildAdvisorPacket. The packet adds the researcher's questions, their marks and a lint summary.", files:f("2947-3034","3104-3131") },
+ { id:"l_html", label:"Print and Word builder", layer:"logic", parent:"l_export", sum:"buildDraftHtml for the print view and the Word file.",
+   det:"One HTML document; the Word version adds Word page setup and a first paragraph to delete, and is downloaded as a .doc.", files:f("3036-3100"),
+   q:"Word's handling of an HTML file saved as .doc is documented behaviour, but the file was not opened in Word." },
+ { id:"l_feedback", label:"Feedback builder and sender", layer:"logic", sum:"Builds the text and posts the row to the project sheet.",
+   det:"postFeedback sends one POST. If the request throws (a cross-origin failure can hide a write that landed), it asks the sheet for its rows and looks for the row id.", files:f("3136-3245") },
+ { id:"l_notes", label:"Team notes", layer:"logic", sum:"Note panel logic and the notes list.",
+   det:"Notes are appended to ns.teamNotes with the current step and a timestamp.", files:f("3399-3451") },
+
+ // ── Data ──
+ { id:"d_ls", label:"localStorage 'ncv-v6'", layer:"data", sum:"The whole draft, saved on this device.",
+   det:"One JSON object: mode, step, lens, contributions with evidence, trainee rows, statement, notes, marks, feedback answers and the session log. Cleared by Reset. Clearing browser data clears it too.", files:f("1264","1335-1351") },
+ { id:"d_const", label:"Built-in content tables", layer:"data", sum:"Prompts, examples, hints, feedback questions, word lists.",
+   det:"PROMPTS (1399), 60 worked examples (387), 10 interdisciplinary examples (924), shape hints (326), statement and mentorship examples, the structural-read sample, feedback questions, lint word lists. Edited in the source file.", files:f("326","387","924","1045","1064","1399","1991") },
+ { id:"d_rules", label:"Funder-rule tables", layer:"data", sum:"Agencies, section names, font, link, language and page rules.",
+   det:"AGENCIES, SECTION_NAMES, FONT_RULES, LINK_RULES, LANGUAGE_RULES and the page limit. They follow the corrected guide.", files:f("252-293") },
+ { id:"d_files", label:"Downloaded files", layer:"data", sum:"Draft .txt, advisor packet .txt, Word .doc, feedback .txt.",
+   det:"Created in the browser (Blob and a temporary link) when a button is clicked. Nothing is uploaded.", files:f("2853-2866","3095-3100","3376-3382") },
+ { id:"d_clip", label:"Clipboard", layer:"data", sum:"Copy draft, copy one section, copy feedback.", det:"navigator.clipboard.writeText on click.", files:f("2871-2893","3383-3387") },
+ { id:"d_printwin", label:"Print window", layer:"data", sum:"The new window's document.", det:"window.open then document.write of the print HTML.", files:f("3089-3092") },
+
+ // ── External and ops ──
+ { id:"x_sheet", label:"Project feedback sheet", layer:"external", sum:"Google Apps Script web app that appends feedback rows.",
+   det:"POST body: action review_comment, page ncv-tool-v6, one row. Rows land in the Guide review tab. The script itself is not in this repository.", files:f("299-303","3233-3245"),
+   q:"Its code is outside the repository. What it does is read only from the calls the tool makes." },
+ { id:"x_guide", label:"Guide pages", layer:"external", sum:"ncv-guide-review/, opened in a new tab by guide links.",
+   det:"A separate page of the site. Links carry a section anchor. Not mapped further here.", files:f("259-263","1521-1527"),
+   q:"A link target only; its inside was not read for this map." },
+ { id:"x_css", label:"styles.css", layer:"external", sum:"The shared site stylesheet.", det:"The only file the page requests when it loads.", files:f("7") },
+ { id:"x_mail", label:"impact@concordia.ca", layer:"external", sum:"Mail links on Review and Feedback.", det:"mailto links; the tool sends no mail itself.", files:f("2897-2902","3390-3395") },
+ { id:"o_pages", label:"GitHub Pages deploy", layer:"ops", sum:"Pushing the integration-prototype branch publishes the site.",
+   det:"The live address is https://landedimmigrant-ops.github.io/pathways_website/ncv_tool_v6/. A push is the release; the build takes a minute or two.", files:["ncv_tool_v6/README.md"],
+   q:"The Pages setting lives outside the repository; known from the project notes and from pushes made while building V6." },
+ { id:"o_alias", label:"/ncv_tool_v6/ alias", layer:"ops", parent:"o_pages", sum:"A thin redirect page to the tool.", det:"ncv_tool_v6/index.html redirects (meta refresh and script) to the tool file, keeping the query string and hash.", files:["ncv_tool_v6/index.html"] },
+ { id:"o_checker", label:"Example checker", layer:"ops", sum:"scripts/ncv-v5-examples.js: lint, register, review.",
+   det:"Reads the example tables out of the tool file and runs the tool's own field checks and the register rules over them. --file narrative-cv-prototype-v6.html checks V6 (70 cells); with no flag it checks V5.", files:["scripts/ncv-v5-examples.js"] },
+ { id:"o_logs", label:"V6 decisions log", layer:"ops", sum:"narrative-cv-v6-decisions.md: every reading marked INFERRED, overrides, merge notes.",
+   det:"Records what each of Eli's six items became, what the guide said, and what must be carried into V5x portfolio when V6 is merged in.", files:["narrative-cv-v6-decisions.md"] },
+ { id:"o_backup", label:"Pre-change backup", layer:"ops", parent:"o_logs", sum:"backups/v6-pre-eli-rest-2026-10-23/", det:"A copy of V6 and its log from before items 2 to 5 were added. Not committed.", files:["backups/v6-pre-eli-rest-2026-10-23/"] },
+ { id:"o_sheetread", label:"Read feedback rows", layer:"ops", parent:"x_sheet", sum:"The team reads rows with ?action=review_list&page=ncv-tool-v6.",
+   det:"The same call the tool uses for its read-back after a failed POST. How the team views the rows is outside the repository.", files:f("296-298"),
+   q:"Known from a code comment; the sheet side was not seen." }
+];
+
+// from, to, label, type
+const E = [
+ // flow: user → screen
+ ["u_open","s_shell","page loads","flow"], ["u_open","s_reentry","saved draft is past Setup","flow"],
+ ["u_setup","s_setup","lands on","flow"], ["u_paste","s_xray","lands on","flow"], ["u_write","s_contrib","lands on","flow"],
+ ["u_mentor","s_mentor","lands on","flow"], ["u_ps","s_ps","lands on","flow"], ["u_order","s_order","lands on","flow"],
+ ["u_review","s_review","lands on","flow"], ["u_feedback","s_feedback","lands on","flow"],
+ ["u_note","s_notes","opens","flow"], ["u_nav","s_shell","Steps rail, Back, Continue","flow"], ["u_lens","s_lens","opens","flow"],
+ ["u_reset","l_state","confirm, then clear the draft","flow"],
+ // flow: screen → screen
+ ["s_setup","s_contrib","Start drafting (Start fresh)","flow"], ["s_setup","s_xray","To the structural read","flow"],
+ ["s_xray","s_contrib","Continue","flow"], ["s_contrib","s_mentor","Continue","flow"], ["s_mentor","s_ps","Continue","flow"],
+ ["s_ps","s_order","Now put your contributions in order","flow"], ["s_order","s_review","Now review","flow"],
+ ["s_review","s_feedback","Give feedback","flow"], ["s_contrib","s_weave","Assemble toggle","flow"],
+ // shows
+ ["s_setup","d_rules","agency format note","shows"], ["s_setup","d_ls","saved choices","shows"],
+ ["s_xray","d_const","sample draft","shows"], ["s_xray","d_ls","pasted text","shows"],
+ ["s_contrib","d_const","worked examples, prompts, shape hints","shows"], ["s_contrib","d_ls","contribution cards","shows"],
+ ["s_weave","d_ls","fields and evidence","shows"], ["s_mentor","d_const","mentorship example","shows"], ["s_mentor","d_ls","counts and trainee rows","shows"],
+ ["s_ps","d_const","statement example, prompts","shows"], ["s_ps","d_ls","statement fields","shows"], ["s_order","d_ls","contributions in order","shows"],
+ ["s_review","d_rules","format rules, section names","shows"], ["s_review","d_ls","coverage, flags, draft preview","shows"],
+ ["s_feedback","d_const","twelve questions","shows"], ["s_feedback","d_ls","answers, notes","shows"], ["s_print","d_printwin","is this document","shows"],
+ // logic
+ ["l_boot","l_state","loadState","logic"], ["l_boot","l_router","renderStage","logic"], ["l_boot","l_notes","updateNoteBtn","logic"],
+ ["l_router","l_state","saveState on each render","logic"], ["l_router","l_session","visits and time","logic"],
+ ["s_shell","l_router","Steps rail from stages()","logic"], ["s_lens","l_state","edits ns.lens","logic"],
+ ["s_contrib","l_prompts","promptBlock","logic"], ["s_mentor","l_prompts","promptBlock","logic"], ["s_ps","l_prompts","promptBlock","logic"],
+ ["s_contrib","l_exemplar","renderExemplarBox","logic"], ["s_mentor","l_exemplar","renderExemplarBox","logic"], ["s_ps","l_exemplar","renderExemplarBox","logic"],
+ ["s_xray","l_analyze","analyzeDraft","logic"], ["s_weave","l_weave","buildWeave","logic"], ["s_ps","l_cross","renderCrossRead","logic"],
+ ["s_order","l_order","swap","logic"], ["s_review","l_coverage","coverage rows","logic"], ["s_review","l_export","preview and buttons","logic"],
+ ["s_review","l_html","print and Word buttons","logic"], ["s_review","l_formatnote","format note","logic"], ["s_setup","l_formatnote","compact note","logic"],
+ ["s_feedback","l_feedback","build and send","logic"], ["s_feedback","l_session","sessionSummary","logic"], ["s_notes","l_notes","save note","logic"],
+ ["l_prompts","l_state","setVal, saveState","logic"], ["l_prompts","l_lens","resolveQ, resolveHelp","logic"], ["l_prompts","l_lint","renderChecks","logic"],
+ ["l_analyze","l_lint","lintField per paragraph","logic"], ["l_session","l_lint","counts flags for the summary","logic"],
+ ["l_export","l_weave","buildWeave","logic"], ["l_html","l_weave","buildWeave","logic"], ["l_html","l_export","psParts","logic"],
+ ["l_cross","l_order","liveContributions","logic"], ["l_coverage","l_export","draftWords, preview text","logic"],
+ ["l_feedback","l_session","sessionSummary","logic"], ["l_feedback","l_state","answers, notes, sent[]","logic"],
+ ["l_exemplar","l_state","reads ns.lens","logic"], ["l_order","l_state","reorders contributions","logic"], ["l_weave","l_state","reads contribution","logic"],
+ ["l_export","l_state","reads ns","logic"], ["l_html","l_state","reads ns","logic"], ["l_coverage","l_state","reads ns","logic"],
+ ["l_notes","l_state","ns.teamNotes","logic"], ["l_session","l_state","ns.session","logic"],
+ // read
+ ["l_state","d_ls","loadState","read"], ["l_prompts","d_const","PROMPTS","read"], ["l_lint","d_const","word lists, length ranges","read"],
+ ["l_exemplar","d_const","60 + 10 examples","read"], ["l_feedback","d_const","FB_QUESTIONS","read"], ["l_cross","d_const","common-word list","read"],
+ ["l_formatnote","d_rules","agency rules","read"], ["l_export","d_rules","section names, format reminder","read"], ["l_html","d_rules","font, page limit","read"],
+ // write
+ ["l_state","d_ls","saveState, removeItem on Reset","write"], ["l_export","d_files","draft and packet .txt","write"], ["l_html","d_files","Word .doc","write"],
+ ["l_html","d_printwin","document.write","write"], ["l_export","d_clip","copy draft, copy section","write"],
+ ["l_feedback","d_files","feedback .txt","write"], ["l_feedback","d_clip","copy feedback","write"],
+ // net
+ ["l_feedback","x_sheet","POST row; GET read-back if the POST throws","net"], ["s_shell","x_guide","guide links, new tab","net"],
+ ["s_contrib","x_guide","guide links, new tab","net"], ["s_review","x_guide","guide links, new tab","net"],
+ ["s_shell","x_css","stylesheet","net"], ["s_review","x_mail","contact link","net"], ["s_feedback","x_mail","email fallback","net"],
+ // ops
+ ["o_pages","o_alias","serves","ops"], ["o_alias","s_shell","redirects to the page","ops"], ["o_checker","d_const","lint and register read the examples","ops"],
+ ["o_logs","o_checker","names the check commands","ops"], ["o_logs","o_backup","points to the pre-change copy","ops"],
+ ["o_sheetread","x_sheet","review_list","ops"]
+];
+
+// The user journey. Each step lights up its nodes and the edges between them.
+const STEPS = [
+ { t:"Open the page", text:"A saved draft is read from the browser and the last step is shown. A welcome-back banner appears if the draft was past Setup.", nodes:["u_open","l_boot","l_state","d_ls","l_router","s_shell","s_reentry","x_css"], open:"s_shell" },
+ { t:"Setup", text:"Choose a path, an agency (which sets TCV or CV-FRQ), a discipline, optionally a second one, a stage and a competition. The format note comes from the funder-rule tables.", nodes:["u_setup","s_setup","l_formatnote","d_rules","l_state","d_ls"], open:"s_setup" },
+ { t:"Paste a draft (draft path only)", text:"The structural read splits the text into paragraphs, runs the same checks on each and lists which moves of the format it detects.", nodes:["u_paste","s_xray","l_analyze","l_lint","d_const"], open:"s_xray" },
+ { t:"Contributions", text:"Each field has a prompt picked for the lens, live checks, and a ✓ ✗ ? mark. A worked example is picked for the field, mode and stage. Every keystroke saves.", nodes:["u_write","s_contrib","s_weave","l_prompts","l_lens","l_lint","l_exemplar","l_weave","l_state","d_const","d_ls"], open:"s_contrib" },
+ { t:"Mentorship", text:"Four counts and trainee rows by stage, sector, organization, unit and prizes. No names.", nodes:["u_mentor","s_mentor","l_prompts","l_exemplar","l_state","d_ls"], open:"s_mentor" },
+ { t:"Personal statement", text:"Written last, shown first. A read across the contributions may point to one that belongs in the statement.", nodes:["u_ps","s_ps","l_cross","l_order","l_prompts","l_state","d_ls"], open:"s_ps" },
+ { t:"Order of contributions", text:"Move contributions up or down. The new order is the order in every export.", nodes:["u_order","s_order","l_order","l_state","d_ls"], open:"s_order" },
+ { t:"Review and export", text:"Coverage, length, self-check, then draft .txt, Word, advisor packet, print view, copy. Everything is built in the browser.", nodes:["u_review","s_review","s_print","l_coverage","l_export","l_html","l_weave","l_formatnote","d_rules","d_files","d_clip","d_printwin","x_mail"], open:"s_review" },
+ { t:"Feedback", text:"Twelve optional questions. Send posts one row to the project sheet. Download and copy need no connection.", nodes:["u_feedback","s_feedback","l_feedback","l_session","l_state","x_sheet","o_sheetread","d_files","d_clip","x_mail"], open:"s_feedback" }
+];
+
+const PRESETS = [
+ { id:"journey", label:"User journey only", layers:["user","screen"], types:["flow"] },
+ { id:"data", label:"Data in/out", layers:["logic","data","external"], types:["read","write","net"] },
+ { id:"arch", label:"Architecture", layers:["screen","logic","data","external"], types:["logic","read","write","net","shows"] },
+ { id:"exports", label:"Exports and files", layers:["user","screen","logic","data","external"], types:["flow","logic","read","write","shows"],
+   focus:["u_review","s_review","s_print","l_coverage","l_export","l_html","l_weave","l_formatnote","d_rules","d_files","d_clip","d_printwin","l_state","d_ls"] },
+ { id:"feedback", label:"Feedback path", layers:["user","screen","logic","data","external","ops"], types:["flow","logic","read","write","net","ops","shows"],
+   focus:["u_feedback","u_note","s_feedback","s_notes","l_feedback","l_session","l_notes","l_state","d_ls","d_const","d_files","d_clip","x_sheet","o_sheetread","x_mail"] },
+ { id:"ops", label:"Ops and checks", layers:["screen","data","external","ops"], types:["ops","net"],
+   focus:["o_pages","o_alias","o_checker","o_logs","o_backup","x_sheet","o_sheetread","s_shell","d_const"] },
+ { id:"all", label:"Everything", layers:Object.keys(LAYERS), types:Object.keys(ETYPES) }
+];
+
+/* ─────────────────────────── helpers ─────────────────────────── */
+const $ = (id) => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+const svgEl = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in (attrs || {})) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const h = (tag, attrs, kids) => { const e = document.createElement(tag); for (const k in (attrs || {})) { if (k === "text") e.textContent = attrs[k]; else if (k === "html") e.innerHTML = attrs[k]; else e.setAttribute(k, attrs[k]); } (kids || []).forEach(c => e.appendChild(c)); return e; };
+const byId = {}; N.forEach(n => { byId[n.id] = n; });
+const kids = {}; N.forEach(n => { if (n.parent) (kids[n.parent] = kids[n.parent] || []).push(n.id); });
+const descendants = (id) => (kids[id] || []).reduce((a, k) => a.concat(k, descendants(k)), []);
+const safeStore = (() => { try { const k = "__t"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return localStorage; } catch (_) { return null; } })();
+const memStore = {};
+const store = { get: (k) => { try { return safeStore ? safeStore.getItem(k) : (memStore[k] || null); } catch (_) { return memStore[k] || null; } },
+                set: (k, v) => { try { if (safeStore) safeStore.setItem(k, v); else memStore[k] = v; } catch (_) { memStore[k] = v; } } };
+
+/* ─────────────────────────── state ─────────────────────────── */
+const S = {
+  layerOn: {}, typeOn: {}, focus: null, preset: "all",
+  collapsed: new Set(), selected: null, hover: null, step: -1, labels: false, query: "",
+  view: { k: 0.8, x: 10, y: 30 }, fitted: false,
+  panelMode: "empty", shot: null, wide: false
+};
+Object.keys(LAYERS).forEach(k => S.layerOn[k] = true); Object.keys(ETYPES).forEach(k => S.typeOn[k] = true);
+
+/* ─────────────────────────── notes ─────────────────────────── */
+const NOTES_KEY = "ncv-v6-flowmap-notes-v1";
+let NOTES = { general: "", items: {} };
+(function loadNotes() { try { const j = JSON.parse(store.get(NOTES_KEY) || "null"); if (j && typeof j === "object") NOTES = { general: j.general || "", items: j.items || {} }; } catch (_) {} })();
+const saveNotes = () => { store.set(NOTES_KEY, JSON.stringify(NOTES)); updateNoteCount(); applyMarks(); };
+const noteOf = (key) => key === "general" ? NOTES.general : ((NOTES.items[key] || {}).text || "");
+function setNote(key, text) {
+  if (key === "general") NOTES.general = text;
+  else if (text.trim()) NOTES.items[key] = { text, at: Date.now() }; else delete NOTES.items[key];
+  saveNotes();
+}
+const noteKeys = () => (NOTES.general.trim() ? ["general"] : []).concat(Object.keys(NOTES.items));
+function updateNoteCount() { const n = noteKeys().length; $("noteCount").textContent = n ? "(" + n + ")" : ""; }
+function hasNoteFor(nodeId) {
+  if (noteOf("node:" + nodeId).trim()) return true;
+  const sid = byId[nodeId] && byId[nodeId].shot;
+  return !!sid && Object.keys(NOTES.items).some(k => k.indexOf("shot:" + sid + ":") === 0);
+}
+function labelForKey(key) {
+  if (key === "general") return "Whole map";
+  const p = key.split(":");
+  if (p[0] === "node") return (byId[p[1]] ? byId[p[1]].label : p[1]);
+  if (p[0] === "shot") { const s = SHOTDATA && SHOTDATA[p[1]]; return "Screen: " + (s ? s.title : p[1]) + " (" + p[2] + ")"; }
+  return key;
+}
+function noteBox(key, placeholder) {
+  const wrap = h("div");
+  const ta = h("textarea", { class: "note", "aria-label": "Note: " + labelForKey(key), placeholder: placeholder || "Write a note for the review…" });
+  ta.value = noteOf(key);
+  let t = null;
+  ta.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => setNote(key, ta.value), 250); });
+  ta.addEventListener("blur", () => { clearTimeout(t); setNote(key, ta.value); });
+  wrap.appendChild(ta);
+  wrap.appendChild(h("div", { class: "noteflag", text: "Saved in this browser as you type." }));
+  return wrap;
+}
+
+/* ─────────────────────────── layout and drawing ─────────────────────────── */
+const NW = 192, NH = 50, PITCH = 64, LANE_X = [24, 330, 636, 942, 1248], TOP = 54;
+const pos = {};       // current animated positions { id: {x,y} }
+let target = {};      // layout targets
+let svg, vp, gLanes, gEdges, gNodes;
+const nodeEls = {}; const edgeEls = [];
+
+function topCollapsedAncestor(id) { let cur = id, res = id; while (byId[cur] && byId[cur].parent) { cur = byId[cur].parent; if (S.collapsed.has(cur)) res = cur; } return res; }
+function layerVisible(id) { const n = byId[id]; if (!S.layerOn[n.layer]) return false; if (S.focus && !S.focus.has(id)) return false; return true; }
+function visibleIds() { const out = []; N.forEach(n => { if (topCollapsedAncestor(n.id) === n.id && layerVisible(n.id)) out.push(n.id); }); return out; }
+function computeEdges() {
+  const seen = new Map(), list = [];
+  const vis = new Set(visibleIds());
+  E.forEach(([a, b, label, type]) => {
+    if (!S.typeOn[type]) return;
+    const A = topCollapsedAncestor(a), B = topCollapsedAncestor(b);
+    if (A === B || !vis.has(A) || !vis.has(B)) return;
+    const key = A + "|" + B + "|" + type;
+    if (seen.has(key)) { seen.get(key).labels.push(label); return; }
+    const e = { from: A, to: B, type, labels: [label], rawFrom: a, rawTo: b }; seen.set(key, e); list.push(e);
+  });
+  return list;
+}
+function layout() {
+  const ids = visibleIds(); const laneCount = {}; target = {};
+  ids.forEach(id => { const lane = LAYERS[byId[id].layer].lane; const i = laneCount[lane] = (laneCount[lane] || 0); laneCount[lane]++; target[id] = { x: LANE_X[lane], y: TOP + i * PITCH }; });
+  return ids;
+}
+function wrapText(s, max) {
+  const words = s.split(" "), lines = []; let cur = "";
+  words.forEach(w => { if ((cur + " " + w).trim().length > max && cur) { lines.push(cur); cur = w; } else cur = (cur + " " + w).trim(); });
+  if (cur) lines.push(cur); if (lines.length > 2) { lines.length = 2; lines[1] = lines[1].replace(/.{0,2}$/, "…"); }
+  return lines;
+}
+function shapeFor(layer) {
+  const w = NW, hh = NH;
+  switch (LAYERS[layer].icon) {
+    case "pill": return { tag: "rect", a: { x: 0, y: 0, width: w, height: hh, rx: 25 }, fill: "#e8f0fe", stroke: "#1f5fbf", sw: 1.6 };
+    case "rect": return { tag: "rect", a: { x: 0, y: 0, width: w, height: hh, rx: 3 }, fill: "#ffffff", stroke: "#333", sw: 1.6, bar: true };
+    case "hex": return { tag: "polygon", a: { points: "10,0 " + (w - 10) + ",0 " + w + ",10 " + w + "," + (hh - 10) + " " + (w - 10) + "," + hh + " 10," + hh + " 0," + (hh - 10) + " 0,10" }, fill: "#f3ecfa", stroke: "#7a5aa6", sw: 1.6 };
+    case "cyl": return { tag: "path", a: { d: "M0,8 Q0,0 " + w / 2 + ",0 Q" + w + ",0 " + w + ",8 L" + w + "," + (hh - 8) + " Q" + w + "," + hh + " " + w / 2 + "," + hh + " Q0," + hh + " 0," + (hh - 8) + " Z" }, fill: "#fff4e0", stroke: "#d17a00", sw: 1.6, cyl: true };
+    case "dash": return { tag: "rect", a: { x: 0, y: 0, width: w, height: hh, rx: 10 }, fill: "#e6f6f8", stroke: "#0e8c9c", sw: 1.8, dash: "6 3" };
+    case "para": return { tag: "polygon", a: { points: "14,0 " + w + ",0 " + (w - 14) + "," + hh + " 0," + hh }, fill: "#f3eee4", stroke: "#7f6a4d", sw: 1.6 };
+  }
+}
+function buildSvg() {
+  svg = $("map"); while (svg.firstChild) svg.removeChild(svg.firstChild);
+  const defs = svgEl("defs", {}, svg);
+  Object.keys(ETYPES).forEach(t => {
+    const m = svgEl("marker", { id: "arr-" + t, viewBox: "0 0 10 10", refX: "9", refY: "5", markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse" }, defs);
+    svgEl("path", { d: "M0,0 L10,5 L0,10 z", fill: ETYPES[t].color }, m);
+  });
+  vp = svgEl("g", { id: "vp" }, svg);
+  gLanes = svgEl("g", {}, vp); gEdges = svgEl("g", {}, vp); gNodes = svgEl("g", {}, vp);
+  N.forEach(n => {
+    const g = svgEl("g", { class: "node", "data-id": n.id, tabindex: "0", role: "button", "aria-label": n.label + ". " + LAYERS[n.layer].label + ". " + n.sum }, gNodes);
+    g.style.cursor = "pointer";
+    const sh = shapeFor(n.layer);
+    const halo = svgEl("rect", { x: -4, y: -4, width: NW + 8, height: NH + 8, rx: 14, fill: "none", stroke: "#e0a800", "stroke-width": 4, class: "notehalo", opacity: 0 }, g);
+    const body = svgEl(sh.tag, Object.assign({ fill: sh.fill, stroke: sh.stroke, "stroke-width": sh.sw }, sh.a), g);
+    if (sh.dash) body.setAttribute("stroke-dasharray", sh.dash);
+    if (sh.bar) svgEl("rect", { x: 0, y: 0, width: NW, height: 9, fill: "#333", rx: 3 }, g);
+    if (sh.cyl) svgEl("path", { d: "M0,8 Q0," + 16 + " " + NW / 2 + "," + 16 + " Q" + NW + "," + 16 + " " + NW + ",8", fill: "none", stroke: sh.stroke, "stroke-width": 1 }, g);
+    // badge: a letter, so the layer is never shown by colour alone
+    svgEl("circle", { cx: 16, cy: sh.bar ? 29 : 25, r: 9, fill: sh.stroke }, g);
+    const bt = svgEl("text", { x: 16, y: (sh.bar ? 29 : 25) + 4, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: "#fff" }, g); bt.textContent = LAYERS[n.layer].badge;
+    const lines = wrapText(n.label, 24);
+    const t = svgEl("text", { x: 32, y: (lines.length === 1 ? 29 : 23) + (sh.bar ? 3 : 0), "font-size": 12.5, fill: "#222" }, g);
+    lines.forEach((ln, i) => { const ts = svgEl("tspan", { x: 32, dy: i === 0 ? 0 : 14 }, t); ts.textContent = ln; });
+    if (n.q) { svgEl("circle", { cx: NW - 8, cy: 8, r: 8, fill: "#c0392b" }, g); const q = svgEl("text", { x: NW - 8, y: 12, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: "#fff" }, g); q.textContent = "?"; }
+    if (kids[n.id]) {
+      const tg = svgEl("g", { class: "fold", transform: "translate(" + (NW - 4) + "," + (NH - 4) + ")" }, g);
+      svgEl("circle", { r: 9, fill: "#fff", stroke: "#555" }, tg);
+      const tt = svgEl("text", { y: 4, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: "#333" }, tg); tt.textContent = "−"; tg.__t = tt;
+      tg.setAttribute("role", "button"); tg.setAttribute("aria-label", "Fold or unfold " + n.label);
+      tg.addEventListener("click", (ev) => { ev.stopPropagation(); toggleFold(n.id); });
+      tg.addEventListener("pointerdown", (ev) => ev.stopPropagation());
+    }
+    g.addEventListener("click", () => { if (!dragMoved) toggleNode(n.id); });
+    g.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggleNode(n.id); } });
+    g.addEventListener("mouseenter", () => { S.hover = n.id; applyHighlight(); });
+    g.addEventListener("mouseleave", () => { S.hover = null; applyHighlight(); });
+    g.addEventListener("focus", () => { S.hover = n.id; applyHighlight(); });
+    g.addEventListener("blur", () => { S.hover = null; applyHighlight(); });
+    nodeEls[n.id] = g; pos[n.id] = { x: 0, y: 0, init: false };
+  });
+}
+let edgesNow = [];
+function pathFor(e) {
+  const a = pos[e.from], b = pos[e.to]; const la = LAYERS[byId[e.from].layer].lane, lb = LAYERS[byId[e.to].layer].lane;
+  const ay = a.y + NH / 2, by = b.y + NH / 2;
+  if (la < lb) { const sx = a.x + NW, tx = b.x, dx = Math.max(50, (tx - sx) / 2); return { d: "M" + sx + "," + ay + " C" + (sx + dx) + "," + ay + " " + (tx - dx) + "," + by + " " + tx + "," + by, mx: (sx + tx) / 2, my: (ay + by) / 2 }; }
+  if (la > lb) { const sx = a.x, tx = b.x + NW, dx = Math.max(50, (sx - tx) / 2); return { d: "M" + sx + "," + ay + " C" + (sx - dx) + "," + ay + " " + (tx + dx) + "," + by + " " + tx + "," + by, mx: (sx + tx) / 2, my: (ay + by) / 2 }; }
+  // same lane: loop out on the right edge
+  const sx = a.x + NW, dist = Math.abs(by - ay), out = 26 + Math.min(60, dist / 7);
+  return { d: "M" + sx + "," + ay + " C" + (sx + out) + "," + ay + " " + (sx + out) + "," + by + " " + sx + "," + by, mx: sx + out * 0.75, my: (ay + by) / 2 };
+}
+function drawEdges() {
+  while (gEdges.firstChild) gEdges.removeChild(gEdges.firstChild); edgeEls.length = 0;
+  edgesNow.forEach((e, i) => {
+    const T = ETYPES[e.type]; const p = pathFor(e);
+    const g = svgEl("g", { class: "edge" }, gEdges);
+    const path = svgEl("path", { d: p.d, fill: "none", stroke: T.color, "stroke-width": T.w, "stroke-linecap": e.type === "ops" ? "round" : "butt", "marker-end": "url(#arr-" + e.type + ")" }, g);
+    if (T.dash) path.setAttribute("stroke-dasharray", T.dash);
+    const title = svgEl("title", {}, g); title.textContent = byId[e.rawFrom].label + " → " + byId[e.rawTo].label + " [" + T.label + "]: " + e.labels.join("; ");
+    const hit = svgEl("path", { d: p.d, fill: "none", stroke: "transparent", "stroke-width": 10 }, g);
+    if (S.labels) { const tx = svgEl("text", { x: p.mx, y: p.my - 3, "text-anchor": "middle", "font-size": 10.5, fill: T.color, stroke: "#fff", "stroke-width": 3, "paint-order": "stroke" }, g); tx.textContent = e.labels.length > 1 ? e.labels[0] + " +" + (e.labels.length - 1) : e.labels[0]; }
+    edgeEls.push({ g, e });
+  });
+  applyHighlight();
+}
+function drawLanes(ids) {
+  while (gLanes.firstChild) gLanes.removeChild(gLanes.firstChild);
+  let maxY = 0; ids.forEach(id => { maxY = Math.max(maxY, target[id].y + NH); });
+  LANES.forEach((name, i) => {
+    svgEl("rect", { x: LANE_X[i] - 14, y: 0, width: NW + 28, height: maxY + 40, rx: 10, fill: i % 2 ? "#f8f6f1" : "#f3f1ec" }, gLanes);
+    const t = svgEl("text", { x: LANE_X[i] + NW / 2, y: 28, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: "#555", "letter-spacing": ".04em" }, gLanes); t.textContent = name.toUpperCase();
+  });
+}
+let tween = null;
+function redraw(animate) {
+  const ids = layout(); const idset = new Set(ids);
+  edgesNow = computeEdges();
+  drawLanes(ids);
+  N.forEach(n => { const g = nodeEls[n.id]; const vis = idset.has(n.id); g.style.display = vis ? "" : "none"; const tg = g.querySelector(".fold"); if (tg) tg.__t.textContent = S.collapsed.has(n.id) ? "+" : "−"; });
+  ids.forEach(id => { if (!pos[id].init) { pos[id].x = target[id].x; pos[id].y = target[id].y; pos[id].init = true; } });
+  const from = {}; ids.forEach(id => from[id] = { x: pos[id].x, y: pos[id].y });
+  cancelAnimationFrame(tween);
+  const t0 = performance.now(), dur = animate === false ? 0 : 240;
+  const step = (now) => {
+    const k = dur ? Math.min(1, (now - t0) / dur) : 1, ez = 1 - Math.pow(1 - k, 3);
+    ids.forEach(id => { pos[id].x = from[id].x + (target[id].x - from[id].x) * ez; pos[id].y = from[id].y + (target[id].y - from[id].y) * ez; nodeEls[id].setAttribute("transform", "translate(" + pos[id].x + "," + pos[id].y + ")"); });
+    drawEdges();
+    if (k < 1) tween = requestAnimationFrame(step);
+  };
+  tween = requestAnimationFrame(step);
+  applyMarks();
+}
+function applyMarks() { N.forEach(n => { const hl = nodeEls[n.id] && nodeEls[n.id].querySelector(".notehalo"); if (hl) hl.setAttribute("opacity", hasNoteFor(n.id) ? 1 : 0); }); }
+function stepSets() { if (S.step < 0) return null; const ns = new Set(STEPS[S.step].nodes.map(topCollapsedAncestor)); return ns; }
+function applyHighlight() {
+  const stepNodes = stepSets(); const sel = S.selected, hov = sel || S.hover; // a clicked node stays lit; hover only counts when nothing is clicked
+  const neighbours = new Set();
+  if (hov) { neighbours.add(hov); edgesNow.forEach(e => { if (e.from === hov) neighbours.add(e.to); if (e.to === hov) neighbours.add(e.from); }); }
+  N.forEach(n => {
+    const g = nodeEls[n.id]; let op = 1;
+    if (stepNodes) op = stepNodes.has(n.id) ? 1 : 0.18;
+    if (hov) op = neighbours.has(n.id) ? 1 : Math.min(op, 0.25);
+    g.style.opacity = op;
+    const body = g.children[1]; if (body) body.setAttribute("stroke-width", (n.id === sel ? 3.6 : (stepNodes && stepNodes.has(n.id) ? 3 : 1.6)));
+  });
+  edgeEls.forEach(({ g, e }) => {
+    let op = 0.9;
+    if (stepNodes) op = (stepNodes.has(e.from) && stepNodes.has(e.to)) ? 1 : 0.06;
+    if (hov) op = (e.from === hov || e.to === hov) ? 1 : 0.07;
+    else if (!stepNodes && sel && !(e.from === sel || e.to === sel)) op = 0.35;
+    g.style.opacity = op;
+  });
+}
+function applyView() { vp.setAttribute("transform", "translate(" + S.view.x + "," + S.view.y + ") scale(" + S.view.k + ")"); }
+function fit() {
+  const ids = visibleIds(); if (!ids.length) return; let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+  ids.forEach(id => { const t = target[id] || pos[id]; minX = Math.min(minX, t.x); maxX = Math.max(maxX, t.x + NW); minY = Math.min(minY, 0); maxY = Math.max(maxY, t.y + NH + 20); });
+  const r = $("stage").getBoundingClientRect(); const k = Math.min((r.width - 20) / (maxX - minX + 40), (r.height - 20) / (maxY - minY + 20), 1.4);
+  S.view.k = k; S.view.x = (r.width - (maxX - minX) * k) / 2 - minX * k; S.view.y = 8 - minY * k; applyView();
+}
+function zoomAt(cx, cy, f2) { const k0 = S.view.k, k1 = Math.max(0.2, Math.min(3, k0 * f2)); S.view.x = cx - (cx - S.view.x) * (k1 / k0); S.view.y = cy - (cy - S.view.y) * (k1 / k0); S.view.k = k1; applyView(); }
+function centreOn(id) {
+  const t = target[id]; if (!t) return; const r = $("stage").getBoundingClientRect();
+  S.view.x = r.width / 2 - (t.x + NW / 2) * S.view.k; S.view.y = r.height / 2 - (t.y + NH / 2) * S.view.k; applyView();
+}
+// pan and zoom
+let dragMoved = false;
+(function pan() {
+  const st = $("stage"); let down = null;
+  st.addEventListener("pointerdown", (ev) => { if (ev.target.closest(".btn")) return; down = { x: ev.clientX, y: ev.clientY, vx: S.view.x, vy: S.view.y }; dragMoved = false; });
+  window.addEventListener("pointermove", (ev) => { if (!down) return; const dx = ev.clientX - down.x, dy = ev.clientY - down.y; if (Math.abs(dx) + Math.abs(dy) > 4) { dragMoved = true; st.classList.add("dragging"); } if (dragMoved) { S.view.x = down.vx + dx; S.view.y = down.vy + dy; applyView(); } });
+  window.addEventListener("pointerup", () => { down = null; st.classList.remove("dragging"); setTimeout(() => { dragMoved = false; }, 0); });
+  st.addEventListener("wheel", (ev) => { ev.preventDefault(); const r = st.getBoundingClientRect(); zoomAt(ev.clientX - r.left, ev.clientY - r.top, ev.deltaY < 0 ? 1.12 : 1 / 1.12); }, { passive: false });
+  $("zin").addEventListener("click", () => { const r = st.getBoundingClientRect(); zoomAt(r.width / 2, r.height / 2, 1.2); });
+  $("zout").addEventListener("click", () => { const r = st.getBoundingClientRect(); zoomAt(r.width / 2, r.height / 2, 1 / 1.2); });
+})();
+
+/* ─────────────────────────── filters, presets, folding ─────────────────────────── */
+function swatch(t) { const s = svgEl("svg", { viewBox: "0 0 30 10" }); const T = ETYPES[t]; const p = svgEl("path", { d: "M1,5 L24,5", stroke: T.color, "stroke-width": Math.min(T.w, 3), fill: "none" }, s); if (T.dash) p.setAttribute("stroke-dasharray", T.dash); svgEl("path", { d: "M22,1 L29,5 L22,9 z", fill: T.color }, s); return s; }
+function layerSwatch(l) { const s = svgEl("svg", { viewBox: "0 0 30 10" }); const sh = shapeFor(l); const c = svgEl("rect", { x: 1, y: 1, width: 28, height: 8, rx: LAYERS[l].icon === "pill" ? 4 : 1, fill: sh.fill, stroke: sh.stroke, "stroke-width": 1.3 }, s); if (sh.dash) c.setAttribute("stroke-dasharray", "3 2"); return s; }
+function buildChips() {
+  const lc = $("layerchips"), tc = $("typechips"), pr = $("presets");
+  PRESETS.forEach(p => { const b = h("button", { class: "tab", role: "tab", "data-p": p.id, text: p.label }); b.addEventListener("click", () => applyPreset(p.id)); pr.appendChild(b); });
+  Object.keys(LAYERS).forEach(l => {
+    const b = h("button", { class: "chip", "aria-pressed": "true", "data-layer": l, title: "Show or hide " + LAYERS[l].label });
+    b.appendChild(layerSwatch(l)); b.appendChild(document.createTextNode(LAYERS[l].badge + " · " + LAYERS[l].label));
+    b.addEventListener("click", () => { S.layerOn[l] = !S.layerOn[l]; S.preset = ""; S.focus = null; syncChips(); redraw(); }); lc.appendChild(b);
+  });
+  Object.keys(ETYPES).forEach(t => {
+    const T = ETYPES[t]; const b = h("button", { class: "chip", "aria-pressed": "true", "data-type": t, title: T.label + ": " + T.note });
+    b.appendChild(swatch(t)); b.appendChild(document.createTextNode(T.sym + " " + T.label + " — " + T.note));
+    b.addEventListener("click", () => { S.typeOn[t] = !S.typeOn[t]; S.preset = ""; syncChips(); redraw(); }); tc.appendChild(b);
+  });
+}
+function syncChips() {
+  document.querySelectorAll("[data-layer]").forEach(b => b.setAttribute("aria-pressed", S.layerOn[b.getAttribute("data-layer")] ? "true" : "false"));
+  document.querySelectorAll("[data-type]").forEach(b => b.setAttribute("aria-pressed", S.typeOn[b.getAttribute("data-type")] ? "true" : "false"));
+  document.querySelectorAll("[data-p]").forEach(b => b.setAttribute("aria-selected", b.getAttribute("data-p") === S.preset ? "true" : "false"));
+}
+function applyPreset(id) {
+  const p = PRESETS.find(x => x.id === id); S.preset = id;
+  Object.keys(LAYERS).forEach(l => S.layerOn[l] = p.layers.indexOf(l) !== -1);
+  Object.keys(ETYPES).forEach(t => S.typeOn[t] = p.types.indexOf(t) !== -1);
+  S.focus = p.focus ? new Set(p.focus) : null;
+  // a preset shows everything it names, so open any folded parent of a focused node
+  if (S.focus) S.focus.forEach(id2 => { let c = byId[id2]; while (c && c.parent) { S.collapsed.delete(c.parent); c = byId[c.parent]; } });
+  S.step = -1; renderStepsBar(); syncChips(); redraw();
+}
+function toggleFold(id) { if (S.collapsed.has(id)) S.collapsed.delete(id); else S.collapsed.add(id); redraw(); }
+$("collapseAll").addEventListener("click", () => { Object.keys(kids).forEach(k => S.collapsed.add(k)); redraw(); });
+$("expandAll").addEventListener("click", () => { S.collapsed.clear(); redraw(); });
+$("fit").addEventListener("click", fit);
+$("edgeLabels").addEventListener("change", (e) => { S.labels = e.target.checked; drawEdges(); });
+
+/* ─────────────────────────── selection, panel ─────────────────────────── */
+function ensureVisible(id) {
+  let c = byId[id]; while (c && c.parent) { S.collapsed.delete(c.parent); c = byId[c.parent]; }
+  const n = byId[id]; let changed = false;
+  if (!S.layerOn[n.layer]) { S.layerOn[n.layer] = true; changed = true; }
+  if (S.focus && !S.focus.has(id)) { S.focus = null; changed = true; }
+  if (changed) { S.preset = ""; syncChips(); }
+}
+function selectNode(id) {
+  ensureVisible(id); S.selected = id; S.panelMode = "node"; S.shot = null; redraw(); setTimeout(() => centreOn(id), 30); renderPanel();
+}
+function toggleNode(id) {
+  if (S.selected === id) { S.selected = null; S.panelMode = "empty"; applyHighlight(); renderPanel(); return; }
+  selectNode(id);
+}
+const EDGE_GROUPS_OUT = { flow: "Leads to", shows: "Shows", logic: "Calls", read: "Reads from", write: "Writes to", net: "Calls out to", ops: "Ops links to" };
+const EDGE_GROUPS_IN = { flow: "Reached from", shows: "Shown on", logic: "Called by", read: "Read by", write: "Written by", net: "Called from", ops: "Ops links from" };
+function nbrLink(id, label, type, dirArrow) {
+  const li = h("li"); const b = h("button", { class: "nbr", text: byId[id].label }); b.addEventListener("click", () => selectNode(id));
+  li.appendChild(b); li.appendChild(h("span", { class: "etype", text: "  " + dirArrow + " " + label })); return li;
+}
+function renderPanel() {
+  const p = $("panel"); p.className = S.wide ? "wide" : ""; p.innerHTML = "";
+  if (S.panelMode === "notes") return renderAllNotes(p);
+  if (S.panelMode === "general") return renderGeneral(p);
+  if (S.panelMode === "shot") return renderShot(p);
+  if (S.panelMode === "step") return renderStepPanel(p);
+  if (S.panelMode === "node" && S.selected) return renderNode(p, byId[S.selected]);
+  p.appendChild(h("h2", { text: "How to read this map" }));
+  p.appendChild(h("p", { html: "Lanes run left to right: <b>User</b> → <b>Screens</b> → <b>Logic / State</b> → <b>Data</b> → <b>External services and ops</b>. Every node comes from <code>" + META.file + "</code> (commit " + META.commit + ") or the files around it." }));
+  p.appendChild(h("ul", {}, [
+    h("li", { html: "<b>Click a node</b> for its summary, source lines, what it reads and writes, and a note box." }),
+    h("li", { html: "<b>Hover</b> a node to light up its edges. <b>Click</b> it to keep it lit while you move the mouse; click it again to let go. The − / + on a node folds its branch." }),
+    h("li", { html: "A red <b>?</b> on a node means it is a guess or could not be traced; the panel says why." }),
+    h("li", { html: "A gold outline means the node has a note. <b>All notes</b> lists them." }),
+    h("li", { html: "<b>Steps</b> walks the main user journey, step by step." })
+  ]));
+  p.appendChild(h("p", { class: "demo", text: "Screens: the thumbnails on screen nodes come from an invented demo draft, not from any real person." }));
+  p.appendChild(h("p", { text: "Shape and letter show the layer: U pill (user), S box with a bar (screen), ƒ hexagon (logic), D cylinder (data), X dashed box (external), O slanted box (ops)." }));
+}
+function renderNode(p, n) {
+  p.appendChild(h("h2", { text: n.label }));
+  const tags = h("div"); tags.appendChild(h("span", { class: "tag", text: LAYERS[n.layer].badge + " · " + LAYERS[n.layer].label })); tags.appendChild(h("span", { class: "tag", text: "id " + n.id })); if (n.parent) { const pb = h("button", { class: "tag nbr", text: "inside: " + byId[n.parent].label }); pb.addEventListener("click", () => selectNode(n.parent)); tags.appendChild(pb); } p.appendChild(tags);
+  p.appendChild(h("div", { class: "sum", text: n.sum }));
+  p.appendChild(h("p", { text: n.det }));
+  if (n.q) p.appendChild(h("div", { class: "qflag", html: "<b>? Not certain.</b> " + n.q.replace(/</g, "&lt;") }));
+  if (kids[n.id]) {
+    const fb = h("button", { class: "btn", text: S.collapsed.has(n.id) ? "Unfold " + kids[n.id].length + " inside" : "Fold " + kids[n.id].length + " inside" }); fb.addEventListener("click", () => { toggleFold(n.id); renderPanel(); }); p.appendChild(fb);
+  }
+  p.appendChild(h("h3", { text: "Source" }));
+  const ul = h("ul"); n.files.forEach(x => { const li = h("li"); li.appendChild(h("code", { text: x })); ul.appendChild(li); }); p.appendChild(ul);
+  // neighbours, from the full edge list so folding never hides them
+  const out = {}, inn = {};
+  E.forEach(([a, b, label, type]) => {
+    if (a === n.id) (out[type] = out[type] || []).push([b, label]);
+    if (b === n.id) (inn[type] = inn[type] || []).push([a, label]);
+  });
+  const groups = [["read", out], ["write", out], ["net", out], ["shows", out], ["logic", out], ["flow", out], ["ops", out]];
+  groups.forEach(([t, src]) => { if (src[t]) { p.appendChild(h("h3", { text: EDGE_GROUPS_OUT[t] })); const u = h("ul"); src[t].forEach(([id, lb]) => u.appendChild(nbrLink(id, lb, t, "→"))); p.appendChild(u); } });
+  ["read", "write", "net", "shows", "logic", "flow", "ops"].forEach(t => { if (inn[t]) { p.appendChild(h("h3", { text: EDGE_GROUPS_IN[t] })); const u = h("ul"); inn[t].forEach(([id, lb]) => u.appendChild(nbrLink(id, lb, t, "←"))); p.appendChild(u); } });
+  if (n.shot) {
+    p.appendChild(h("h3", { text: "Frozen screens" }));
+    const sd = SHOTDATA && SHOTDATA[n.shot];
+    if (!sd) p.appendChild(h("p", { text: "No screenshot embedded for this screen." }));
+    else {
+      p.appendChild(h("p", { class: "demo", text: "Demo data: an invented draft typed in for this capture, in a throwaway browser profile. It is not a real person's draft." }));
+      const row = h("div", { class: "shots" });
+      ["desktop", "phone"].forEach(dev => { if (!sd[dev]) return; const b = h("button", { class: "shotthumb " + dev, "aria-label": "Open the " + dev + " screenshot of " + sd.title }); const im = h("img", { src: sd[dev].src, alt: sd.title + " (" + dev + ")" }); b.appendChild(im); b.appendChild(h("span", { text: dev })); b.addEventListener("click", () => openShot(n.shot, dev)); row.appendChild(b); });
+      p.appendChild(row);
+    }
+  }
+  p.appendChild(h("h3", { text: "Note on this node" }));
+  p.appendChild(noteBox("node:" + n.id));
+}
+function openShot(id, dev) { S.panelMode = "shot"; S.shot = { id, dev }; renderPanel(); }
+function renderShot(p) {
+  const sd = SHOTDATA[S.shot.id]; const dev = S.shot.dev; const img = sd[dev];
+  const top = h("div", { style: "display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:6px" });
+  const back = h("button", { class: "btn", text: "← Back" }); back.addEventListener("click", () => { S.panelMode = "node"; S.shot = null; S.wide = false; renderPanel(); });
+  const wide = h("button", { class: "btn", "aria-pressed": S.wide ? "true" : "false", text: S.wide ? "Narrower panel" : "Wider panel" }); wide.addEventListener("click", () => { S.wide = !S.wide; renderPanel(); });
+  top.appendChild(back); top.appendChild(wide);
+  ["desktop", "phone"].forEach(d => { if (sd[d] && d !== dev) { const b = h("button", { class: "btn", text: "Show " + d }); b.addEventListener("click", () => openShot(S.shot.id, d)); top.appendChild(b); } });
+  p.appendChild(top);
+  p.appendChild(h("h2", { text: sd.title + " — " + dev }));
+  p.appendChild(h("p", { class: "demo", text: "Demo data: an invented draft, not a real person's. Captured with headless Chrome at " + (dev === "phone" ? "phone width (390 px)" : "desktop width (1200 px)") + "." }));
+  const box = h("div", { class: "viewerbox viewer" }); box.appendChild(h("img", { src: img.src, alt: sd.title + " (" + dev + ")" })); p.appendChild(box);
+  p.appendChild(h("h3", { text: "Note on this screen (" + dev + ")" }));
+  p.appendChild(noteBox("shot:" + S.shot.id + ":" + dev, "Write a note about this screen…"));
+}
+function renderGeneral(p) {
+  p.appendChild(h("h2", { text: "Note for the whole map" }));
+  p.appendChild(h("p", { text: "General comments: structure, missing pieces, things to decide together." }));
+  p.appendChild(noteBox("general", "Write a general note…"));
+}
+function renderAllNotes(p) {
+  p.appendChild(h("h2", { text: "All notes" }));
+  const bar = h("div", { style: "display:flex;gap:6px;flex-wrap:wrap;margin:6px 0" });
+  const mk = (t, fn) => { const b = h("button", { class: "btn", text: t }); b.addEventListener("click", fn); bar.appendChild(b); };
+  mk("Export Markdown", () => download("ncv-v6-flow-map-notes.md", notesMarkdown(), "text/markdown"));
+  mk("Export JSON", () => download("ncv-v6-flow-map-notes.json", JSON.stringify(notesJson(), null, 1), "application/json"));
+  const file = h("input", { type: "file", accept: ".json,.md,.markdown,text/markdown,application/json", class: "hide", id: "importFile" });
+  file.addEventListener("change", () => importNotes(file.files[0]));
+  mk("Import…", () => file.click()); bar.appendChild(file); p.appendChild(bar);
+  const keys = noteKeys();
+  if (!keys.length) { p.appendChild(h("p", { text: "No notes yet. Click a node or a screen and write one." })); return; }
+  const ul = h("ul", { class: "allnotes" });
+  keys.forEach(k => {
+    const li = h("li"); const b = h("button", { class: "jump", text: labelForKey(k) }); b.addEventListener("click", () => jumpToKey(k)); li.appendChild(b);
+    const txt = noteOf(k).trim(); li.appendChild(h("div", {}, [h("q", { text: txt.length > 220 ? txt.slice(0, 217) + "…" : txt })])); ul.appendChild(li);
+  });
+  p.appendChild(ul);
+}
+function jumpToKey(k) {
+  if (k === "general") { S.panelMode = "general"; renderPanel(); return; }
+  const parts = k.split(":");
+  if (parts[0] === "node") selectNode(parts[1]);
+  else if (parts[0] === "shot") { const node = N.find(n => n.shot === parts[1]); if (node) { selectNode(node.id); openShot(parts[1], parts[2]); } }
+}
+function download(name, text, mime) { const a = h("a", { href: URL.createObjectURL(new Blob([text], { type: mime + ";charset=utf-8" })), download: name }); document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+function notesJson() { return { tool: "ncv-v6-flow-map", version: 1, exported: new Date().toISOString(), general: NOTES.general, items: NOTES.items }; }
+function notesMarkdown() {
+  const out = ["# V6 flow map — review notes", "", "Exported " + new Date().toISOString() + ". Each heading ends with the note's key in backticks so the file can be imported back.", ""];
+  if (NOTES.general.trim()) out.push("## Whole map (`general`)", "", NOTES.general.trim(), "");
+  Object.keys(NOTES.items).forEach(k => out.push("## " + labelForKey(k) + " (`" + k + "`)", "", NOTES.items[k].text.trim(), ""));
+  return out.join("\n");
+}
+function importNotes(file) {
+  if (!file) return; const r = new FileReader();
+  r.onload = () => {
+    let general = null, items = {};
+    try {
+      const text = String(r.result);
+      if (/^\s*\{/.test(text)) { const j = JSON.parse(text); general = j.general || ""; items = j.items || {}; }
+      else {
+        let cur = null, buf = [];
+        const flush = () => { if (cur) { const t = buf.join("\n").trim(); if (cur === "general") general = t; else if (t) items[cur] = { text: t, at: Date.now() }; } buf = []; };
+        text.split(/\r?\n/).forEach(line => { const m = line.match(/^## .*\(`([^`]+)`\)\s*$/); if (m) { flush(); cur = m[1]; } else if (cur) buf.push(line); });
+        flush();
+      }
+    } catch (e) { alert("That file could not be read as notes."); return; }
+    const clash = Object.keys(items).filter(k => NOTES.items[k] && NOTES.items[k].text !== items[k].text).length + (general && NOTES.general && NOTES.general !== general ? 1 : 0);
+    if (clash && !confirm(clash + " note(s) in the file differ from notes you already have. OK replaces them; Cancel keeps yours and adds only the new ones.")) {
+      Object.keys(items).forEach(k => { if (NOTES.items[k]) delete items[k]; }); if (NOTES.general) general = null;
+    }
+    Object.keys(items).forEach(k => { NOTES.items[k] = { text: items[k].text || String(items[k]), at: items[k].at || Date.now() }; });
+    if (general) NOTES.general = general;
+    saveNotes(); renderPanel();
+  };
+  r.readAsText(file);
+}
+$("allNotes").addEventListener("click", () => { S.panelMode = "notes"; S.shot = null; renderPanel(); });
+$("generalNote").addEventListener("click", () => { S.panelMode = "general"; S.shot = null; renderPanel(); });
+
+/* ─────────────────────────── steps ─────────────────────────── */
+function renderStepsBar() {
+  const row = $("steps"); row.querySelectorAll(".stepbtn, .btn, .steptitle").forEach(x => x.remove());
+  STEPS.forEach((s, i) => { const b = h("button", { class: "stepbtn", title: s.t, "aria-label": "Step " + (i + 1) + ": " + s.t, text: String(i + 1) }); if (i === S.step) b.setAttribute("aria-current", "step"); b.addEventListener("click", () => gotoStep(i)); row.appendChild(b); });
+  const prev = h("button", { class: "btn", text: "← Prev" }); prev.addEventListener("click", () => gotoStep(Math.max(0, S.step - 1)));
+  const next = h("button", { class: "btn", text: "Next →" }); next.addEventListener("click", () => gotoStep(Math.min(STEPS.length - 1, S.step + 1)));
+  const clr = h("button", { class: "btn", text: "Clear" }); clr.addEventListener("click", () => { S.step = -1; renderStepsBar(); applyHighlight(); S.panelMode = S.selected ? "node" : "empty"; renderPanel(); });
+  row.appendChild(prev); row.appendChild(next); row.appendChild(clr);
+  row.appendChild(h("span", { class: "steptitle", style: "font-size:12.5px;color:#444", text: S.step >= 0 ? (S.step + 1) + ". " + STEPS[S.step].t : "The main user journey, step by step" }));
+}
+function gotoStep(i) {
+  S.step = i; const st = STEPS[i];
+  // show everything the step names
+  const hidden = st.nodes.some(id => !layerVisible(id) || topCollapsedAncestor(id) !== id);
+  if (hidden) { st.nodes.forEach(id => { let c = byId[id]; while (c && c.parent) { S.collapsed.delete(c.parent); c = byId[c.parent]; } }); PRESETS.find(p => p.id === "all"); S.preset = "all"; Object.keys(LAYERS).forEach(l => S.layerOn[l] = true); Object.keys(ETYPES).forEach(t => S.typeOn[t] = true); S.focus = null; syncChips(); }
+  S.selected = null; S.panelMode = "step"; renderStepsBar(); redraw(); setTimeout(() => { const t = target[st.open]; if (t) centreOn(st.open); }, 30); renderPanel();
+}
+function renderStepPanel(p) {
+  const st = STEPS[S.step];
+  p.appendChild(h("h2", { text: "Step " + (S.step + 1) + " of " + STEPS.length + ": " + st.t })); p.appendChild(h("p", { text: st.text }));
+  p.appendChild(h("h3", { text: "Nodes in this step" })); const ul = h("ul");
+  st.nodes.forEach(id => { const li = h("li"); const b = h("button", { class: "steplink", text: byId[id].label }); b.addEventListener("click", () => { selectNode(id); }); li.appendChild(b); li.appendChild(h("span", { class: "etype", text: "  " + LAYERS[byId[id].layer].label })); ul.appendChild(li); });
+  p.appendChild(ul);
+}
+
+/* ─────────────────────────── search ─────────────────────────── */
+(function search() {
+  const q = $("q"), res = $("qres");
+  const place = () => { const r = q.getBoundingClientRect(); res.style.left = r.left + "px"; res.style.top = (r.bottom + 2) + "px"; };
+  const show = () => {
+    const v = q.value.trim().toLowerCase(); res.innerHTML = ""; if (!v) { res.style.display = "none"; return; }
+    const hits = N.filter(n => (n.label + " " + n.id + " " + n.sum).toLowerCase().indexOf(v) !== -1).slice(0, 9);
+    if (!hits.length) { res.appendChild(h("button", { text: "No node matches", disabled: "disabled" })); }
+    hits.forEach(n => { const b = h("button", { text: n.label + "  ·  " + LAYERS[n.layer].label }); b.addEventListener("click", () => { selectNode(n.id); res.style.display = "none"; q.value = ""; }); res.appendChild(b); });
+    place(); res.style.display = "block";
+  };
+  q.addEventListener("input", show);
+  q.addEventListener("keydown", (e) => { if (e.key === "Enter") { const first = res.querySelector("button:not([disabled])"); if (first) first.click(); } if (e.key === "Escape") { res.style.display = "none"; } });
+  document.addEventListener("click", (e) => { if (!e.target.closest("#qres") && e.target !== q) res.style.display = "none"; });
+})();
+
+/* ─────────────────────────── boot ─────────────────────────── */
+$("sub").textContent = "Built from " + META.file + " (commit " + META.commit + ", " + META.lines.toLocaleString("en-CA") + " lines). " + N.length + " nodes, " + E.length + " edges. Offline: no network needed.";
+buildChips(); buildSvg(); renderStepsBar(); updateNoteCount();
+window.__flowmap = { N, E, S, selectNode, applyPreset, gotoStep, openShot, noteKeys: () => noteKeys(), notesMarkdown, SHOTDATA: () => SHOTDATA };
+applyPreset("all");
+renderPanel();
+applyView();
+window.addEventListener("resize", () => {});
+setTimeout(fit, 300);
+})();
+</script>
+</body>
+</html>
