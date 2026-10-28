@@ -201,7 +201,7 @@
 
     /* ── V7 components (ported from ncv-v7-design/ncv-v7-mockups.html; DESIGN-NOTES.md §2 to §4) ── */
     :root { --v7-explain: #f3f3f3; --v7-field: #949494; --v7-rule: #ececec; --v7-faint: #6b6b6b; --v7-track: #e3e3e3;
-      --v7-card: #fafafa; --v7-card-b: #e0e0e0; --v7-done: #2a6e2a; --v7-tint: #f9ebed; --v7-tint2: #f9f3f4; --v7-ease: cubic-bezier(.2,0,0,1);
+      --v7-card: #fafafa; --v7-card-b: #e0e0e0; --v7-done: #2a6e2a; --v7-tint: #f9ebed; --v7-tint2: #f9f3f4; --v7-open: #fcf7f8; --v7-ease: cubic-bezier(.2,0,0,1);
       --j-stakes: #e5a712; --j-role: #912338; --j-activities: #0072a8; --j-outputs: #508212; --j-outcomes: #da3a16; --j-impact: #573996;
       --jt-stakes: #f7e5b8; --jt-role: #e7cfd3; --jt-activities: #bfdce9; --jt-outputs: #d3e0c4; --jt-outcomes: #f7d4cc; --jt-impact: #ddd7ea; }
     .v7-ico { width: 1.05em; height: 1.05em; fill: currentColor; flex-shrink: 0; margin-top: 2px; }
@@ -237,7 +237,7 @@
     .v7-qcount { font-size: 0.75rem; color: var(--muted); text-align: right; margin: 0 0 8px; }
     .v7-prof-list { display: flex; flex-direction: column; gap: 12px; margin: 0 0 12px; }
     .v7-qblock { background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 14px 22px 20px; }
-    .v7-qblock.is-current { border-top: 4px solid #912338; }
+    .v7-qblock.is-current { background: var(--v7-open); border: 1.5px solid #912338; }
     .v7-q { font-size: 1rem; font-weight: 600; margin: 2px 0 8px; line-height: 1.35; display: block; color: var(--text); }
     .v7-q-lg { font-size: 1.05rem; }
     .v7-choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 12px; }
@@ -316,19 +316,21 @@
     .v7-jd-outputs { background: var(--j-outputs); } .v7-jd-outcomes { background: var(--j-outcomes); } .v7-jd-impact { background: var(--j-impact); }
     .v7-f-more { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 200ms var(--v7-ease), opacity 200ms; }
     .v7-f-more > div { overflow: hidden; min-height: 0; }
-    .v7-f.is-open { background: #fff; border: 1px solid var(--v7-card-b); border-top: 4px solid #912338; padding: 12px 16px 14px; }
+    .v7-f.is-open { background: var(--v7-open); border: 1.5px solid #912338; padding: 12px 16px 14px; }
     .v7-f.is-open .v7-f-more { grid-template-rows: 1fr; opacity: 1; }
     .v7-f.is-open .v7-f-k { color: #912338; }
     .v7-box { display: block; width: 100%; box-sizing: border-box; border: 1px solid var(--v7-field); border-radius: 6px; background: #fff; padding: 8px 10px; font: inherit; font-size: 0.92rem; line-height: 1.5; resize: none; overflow: auto; }
-    textarea.v7-box { height: calc(8 * 1.5em + 18px); }
+    textarea.v7-box { height: calc(3 * 1.5em + 18px); max-height: 60vh; }
+    .v7-f > .v7-q { font-size: 0.95rem; margin: 0 0 8px; }
+    .v7-f.is-filled > .v7-q { display: none; }
+    .v7-f-more .v7-explain { background: none; padding: 0; margin: 8px 0 0; color: var(--muted); }
+    .v7-f-more .v7-levels { margin: 10px 0 0; }
     .v7-f.is-empty textarea.v7-box { height: calc(1.5em + 18px); overflow: hidden; }
     .v7-f.is-filled .v7-box { height: 1px; min-height: 1px; padding: 0; border-color: transparent; opacity: 0; overflow: hidden; clip-path: inset(50%); }
     .v7-f.is-filled .v7-anchor-line { height: 1px; overflow: hidden; opacity: 0; clip-path: inset(50%); }
-    .v7-f.is-filled > .v7-f-k { display: none; }
     .v7-ans { display: none; }
-    .v7-f.is-filled .v7-ans { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: start; width: 100%; text-align: left; background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 9px 12px; cursor: pointer; font: inherit; color: var(--text); position: relative; overflow: hidden; }
+    .v7-f.is-filled .v7-ans { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; width: 100%; text-align: left; background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 9px 12px; cursor: pointer; font: inherit; color: var(--text); position: relative; overflow: hidden; }
     .v7-f.is-filled .v7-ans:hover { border-color: #b9b9b9; }
-    .v7-f.is-filled .v7-ans::after { content: "Change"; grid-column: 2; grid-row: 1 / span 2; font-size: 0.8rem; color: #912338; text-decoration: underline; text-underline-offset: 2px; align-self: center; }
     .v7-ans-k { font-size: 0.75rem; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 6px; }
     .v7-ans-v { grid-column: 1; font-size: 0.9rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-wrap; }
     .v7-f-checks { font-size: 0.8rem; line-height: 1.5; margin-top: 8px; }
@@ -1929,28 +1931,28 @@
         horizon: { q: "Where is this heading next?", help: "Name the direction of the work. The statement should end by pointing forward." }
       },
       contrib: {
-        title: { q: "Give this contribution a headline.", help: "Short, plain and memorable — a reviewer should be able to repeat it back from memory. Name what the work was for; the paper's title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." } },
-        stakes: { q: "Start with the problem. What was at stake, and for whom?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true },
+        title: { q: "What one line would let a reviewer recall this work?", help: "Short, plain and memorable — a reviewer should be able to repeat it back from memory. Name what the work was for; the paper's title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." } },
+        stakes: { q: "What problem did this work address, and who had it?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true },
         roleLine: {
           q: "In one line, what did you do that wouldn't exist without you?",
           help: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the protocol.”",
           variants: { team: "In one line, what was your unique contribution within the team?" }
         },
-        activities: { q: "What did you do?", help: "The specific work — what you designed, ran, built, negotiated or wrote. Include the scale: how many sites, how long, how many people.", variants: { creative: "What was the work, and what was your part in making it?" } },
+        activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.", variants: { creative: "What did making the work involve, and which part was yours?" } },
         outputs: {
-          q: "What concrete things resulted?", help: "Name them — papers, datasets, tools, methods, protocols, partnerships, programs — and say how many where you can. List the things themselves; their effects belong in the next field.",
-          variants: { creative: "What works resulted — exhibitions, films, performances, published creative works?", humanities: "What resulted — books, editions, exhibitions, public works, collections?" }
+          q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "List the things themselves; their effects belong in the next field.",
+          variants: { creative: "Which exhibitions, films, performances or published works came out of it?", humanities: "Which books, editions, exhibitions, public works or collections came out of it?" }
         },
         outcomes: {
-          q: "What already changed because of this?", help: "Who used it and what shifted — concretely. If there is no change to report yet, leave this blank and put what you expect under What could change.",
+          q: "Who has used this work so far, and what is different for them now?", help: "If there is no change to report yet, leave this blank and put what you expect under What could change.",
           variants: {
-            community: "Who in the community or sector has used this, and what concretely changed for them?",
-            health: "What changed in practice, care or policy — and for whom?",
+            community: "Which groups in the community or sector have used this, and what is different for them now?",
+            health: "Where has practice, care or policy shifted because of this work, and for whom?",
             social: "Who took this up — scholars, practitioners, communities, the public or policy makers — and what shifted?"
           }
         },
-        impact: { q: "What could change at the scale of a field, sector or population?", help: "Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems get framed.", academicTag: true },
-        translational: { q: "What is one moment when this work reached someone?", help: "One scene, two sentences — a person, a clinic, a classroom, a community meeting, a committee that used it. One concrete instance of What already changed, told as a scene. Optional.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
+        impact: { q: "If the work is taken up more widely, which field, sector or population could it affect, and how?", help: "Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems get framed.", academicTag: true },
+        translational: { q: "Which one occasion shows the work reaching a specific person or group?", help: "One scene, two sentences — a person, a clinic, a classroom, a community meeting, a committee that used it. One concrete instance of What already changed, told as a scene. Optional.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
         evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter — a, b, c — and the letter appears in your draft beside the sentence it backs up. Under each item there is room for two lines on what it found, or why the dataset or tool was useful, so a reviewer has the point without opening the source." }
       },
       mentor: {
@@ -2819,9 +2821,11 @@
     });
 
     // ── V7-20: the card field (one component for every writing step) ───────
-    // Open: question, explanation, an eight-line static box, the checks. Left: shrinks to its
-    // label and answer (three lines, the box kept in the page). Not reached: kicker and a one-line
-    // box. A field shrinks only when focus moves into another field (D-13, D-17).
+    // Every state shows the label and the question, so opening a field only grows it downward,
+    // below the line being written (Prem, 2026-10-28). Open: the box starts at three lines and grows
+    // with the text; the controls and the i-note sit under it. Left: the answer takes the box's place
+    // (the box kept in the page). Not reached: a one-line box. A field shrinks only when focus moves
+    // into another field (D-13, D-17).
     function cardField(o) {
       const id = o.id, has = !!o.has();
       const open = UI.active === id;
@@ -2832,14 +2836,13 @@
       if (o.job) { const d = el("span", "v7-jd v7-jd-" + o.job); d.setAttribute("aria-hidden", "true"); kick.appendChild(d); }
       kick.appendChild(document.createTextNode(o.label));
       f.appendChild(kick);
+      const q = el("span", "v7-q", o.q); q.id = id + "-q";
+      f.appendChild(q);
       const more = el("div", "v7-f-more");
       const inner = el("div");
-      const q = el("span", "v7-q", o.q); q.id = id + "-q";
-      inner.appendChild(q);
-      if (o.help) inner.appendChild(explainBox(o.help));
       if (o.before) o.before(inner);
+      if (o.help) inner.appendChild(explainBox(o.help));
       more.appendChild(inner);
-      f.appendChild(more);
       let box;
       if (o.anchor) box = o.anchor(f);
       else {
@@ -2855,6 +2858,7 @@
       }
       const checks = el("div", "v7-f-checks"); checks.setAttribute("aria-live", "polite");
       f.appendChild(checks);
+      f.appendChild(more);
       const runChecks = () => {
         if (!o.lintKind) return;
         renderChecks(checks, o.get(), o.lintKind);
@@ -2867,10 +2871,6 @@
       runChecks();
       const ans = el("button", "v7-ans");
       ans.type = "button"; ans.tabIndex = -1; ans.setAttribute("aria-hidden", "true");
-      const ansK = el("span", "v7-ans-k");
-      if (o.job) ansK.appendChild(el("span", "v7-jd v7-jd-" + o.job));
-      ansK.appendChild(document.createTextNode(o.label));
-      ans.appendChild(ansK);
       const ansV = el("span", "v7-ans-v");
       const setAns = () => { const v = o.shown ? o.shown() : (o.get() || ""); ansV.textContent = v; ansV.classList.toggle("is-long", v.length > 220); };
       setAns();
@@ -2884,13 +2884,24 @@
       f.addEventListener("input", (e) => {
         if (!e.target.classList.contains("v7-box")) return;
         if (!o.anchor) o.set(e.target.value);
-        saveState(); runChecks(); f._refresh();
+        saveState(); runChecks(); f._refresh(); fitBox(f);
         if (o.onChange) o.onChange();
         refreshRail();
       });
+      if (open) requestAnimationFrame(() => fitBox(f));
       return f;
     }
-    // Keep the field you clicked under the pointer while the one above it shrinks.
+    // The open box starts at three lines and grows with the text (to 60% of the screen, then scrolls).
+    // A closed field drops the inline height so its CSS height applies.
+    function fitBox(f) {
+      const b = f.querySelector("textarea.v7-box");
+      if (!b) return;
+      if (!f.classList.contains("is-open")) { b.style.height = ""; return; }
+      b.style.height = "auto";
+      const min = 3 * parseFloat(getComputedStyle(b).lineHeight) + 18;
+      b.style.height = Math.max(min, b.scrollHeight + 2) + "px";
+    }
+    // Keep the line being written where the eye already is while the field above it shrinks.
     function keepAnchor(node, top, ms) {
       const t0 = performance.now();
       (function step() {
@@ -2902,18 +2913,23 @@
     function openField(f) {
       if (f.classList.contains("is-open")) return;
       const prev = [...root.querySelectorAll(".v7-f.is-open")].filter(x => x !== f);
-      const top = f.getBoundingClientRect().top;
+      // The line under the eye: the answer of a filled field, otherwise its box. The box opens in
+      // that same place, and the field above shrinks in the same moment (one movement, not two).
+      const watch = f.classList.contains("is-filled") ? f.querySelector(".v7-ans") : f.querySelector(".v7-box");
+      const top = watch ? watch.getBoundingClientRect().top : f.getBoundingClientRect().top;
       f.classList.remove("is-empty", "is-filled"); f.classList.add("is-open");
       UI.active = f.dataset.f;
-      setTimeout(() => prev.forEach(p => {
+      prev.forEach(p => {
         p.classList.remove("is-open");
         const b = p.querySelector(".v7-box");
         const filled = p._has ? !!p._has() : [...p.querySelectorAll(".v7-box")].some(x => (x.value || "").trim());
         p.classList.add(filled ? "is-filled" : "is-empty");
         if (p._refresh) p._refresh();
+        fitBox(p);
         if (b) b.scrollTop = 0;
-      }), motionMs(140));
-      keepAnchor(f, top, motionMs(140) + motionMs(200) + 60);
+      });
+      fitBox(f);
+      keepAnchor(f.querySelector(".v7-box") || f, top, motionMs(200) + 300);
     }
     // focusout with relatedTarget: a field opens when focus moves into its box, and the one left
     // shrinks then. Focus going nowhere (a click on blank page, a window switch) changes nothing.

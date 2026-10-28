@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Field motion mock-up</title>
+<style>
+  :root { --b: #912338; --open: #fcf7f8; --cb: #e0e0e0; --ease: cubic-bezier(.2,0,0,1); }
+  body { font-family: Arial, Helvetica, sans-serif; color: #222; background: #fff; margin: 0; padding: 24px 16px 70vh; }
+  main { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.2rem; margin: 0 0 6px; } .lede { color: #555; font-size: .9rem; margin: 0 0 8px; line-height: 1.5; }
+  .tabs { display: flex; gap: 8px; margin: 18px 0 6px; position: sticky; top: 0; background: #fff; padding: 8px 0; z-index: 2; }
+  .tabs button { font: inherit; font-size: .9rem; padding: 7px 14px; border-radius: 18px; border: 1px solid #949494; background: #fff; cursor: pointer; }
+  .tabs button[aria-pressed="true"] { background: var(--b); border-color: var(--b); color: #fff; font-weight: 700; }
+  .meter { font-size: .85rem; color: #555; margin: 0 0 14px; min-height: 1.3em; } .meter b { color: var(--b); }
+  .how { font-size: .85rem; color: #555; margin: 0 0 12px; line-height: 1.5; }
+  .above { height: 70vh; border: 1px dashed #ccc; border-radius: 10px; margin: 0 0 16px; padding: 14px; font-size: .85rem; color: #888; box-sizing: border-box; }
+  .card { background: #fafafa; border: 1px solid var(--cb); border-radius: 10px; padding: 16px 22px 22px; }
+  .card-t { font-weight: 600; font-size: .95rem; color: #333; margin: 0 0 12px; }
+  .fields { display: flex; flex-direction: column; gap: 8px; }
+  .f { border-radius: 8px; border: 1.5px solid transparent; padding: 0; transition: background 220ms, border-color 220ms, padding 220ms var(--ease); }
+  .f.open { background: var(--open); border-color: var(--b); padding: 12px 16px 14px; }
+  .k { font-size: .75rem; font-weight: 700; color: #777; display: flex; gap: 6px; align-items: center; margin: 0 0 4px; }
+  .f.open .k { color: var(--b); }
+  .jd { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+  .q { font-weight: 600; font-size: .95rem; margin: 0 0 8px; line-height: 1.35; }
+  .hint { background: #f0f0f0; border-radius: 8px; padding: 8px 12px; font-size: .82rem; color: #555; margin: 0 0 8px; line-height: 1.5; }
+  .col { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 220ms var(--ease), opacity 220ms; }
+  .col > div { overflow: hidden; min-height: 0; }
+  .f.open .col { grid-template-rows: 1fr; opacity: 1; }
+  .box { display: block; width: 100%; box-sizing: border-box; border: 1px solid #949494; border-radius: 6px; background: #fff; padding: 8px 10px; font: inherit; font-size: .92rem; line-height: 1.5; resize: none; overflow: hidden; height: 38px; transition: height 220ms var(--ease); }
+  .box:focus { outline: none; border-color: var(--b); box-shadow: 0 0 0 2px rgba(145,35,56,.18); }
+  .ans { display: none; width: 100%; text-align: left; background: #fff; border: 1px solid var(--cb); border-radius: 8px; padding: 9px 12px; font: inherit; font-size: .9rem; cursor: pointer; color: #222; }
+  .ans:hover { border-color: #b9b9b9; }
+  .f.filled:not(.open) .ans { display: block; }
+  .f.filled:not(.open) .box { height: 1px; padding: 0; border-color: transparent; opacity: 0; }
+
+  /* Today: question and hint hidden until the box opens; they open ABOVE the writing area. */
+  .now .qa { order: 0; } .now .qb { display: none; }
+  .now .f.open .box { height: 204px; }
+  .now .f .stat { display: none; }
+  /* Proposed: question always shows, so opening only grows the writing area downward; hint moves below. */
+  .new .qa { display: none; } .new .stat { display: block; }
+  .new .hint { background: none; padding: 0; margin: 8px 0 0; display: flex; gap: 8px; align-items: flex-start; color: #666; }
+  .new .hint svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; fill: #6b6b6b; }
+</style></head>
+<body><main>
+<h1>Moving between fields: today and proposed</h1>
+<p class="lede">Click into each field in turn, or press Tab. Watch the line you clicked on. The counter shows how far that line moved on screen when the field opened.</p>
+
+<div class="tabs" role="group" aria-label="Version">
+  <button type="button" data-m="now" aria-pressed="false">Today</button>
+  <button type="button" data-m="new" aria-pressed="true">Proposed</button>
+</div>
+<p class="meter" id="meter">Click a field to see how far your line moves.</p>
+<p class="how" id="how"></p>
+<div class="above">The step's heading, instructions and examples sit here, as in the tool.</div>
+<div id="slot"></div>
+</main>
+<script>
+const FIELDS = [
+  { k: "Why it mattered", c: "#e5a712", q: "What problem or question did this answer?", h: "Name who had the problem and why it mattered at the time.", a: "Rural clinics had no shared intake method." },
+  { k: "Your role", c: "#912338", q: "What was your part?", h: "Say whether you led, shared or supported the work.", a: "I led the design with two clinic directors." },
+  { k: "What you did", c: "#0072a8", q: "What did you do, and how?", h: "A sentence or two on the method is enough.", a: "" },
+  { k: "What resulted", c: "#508212", q: "What came out of it?", h: "For example tools, papers, data or training.", a: "" },
+  { k: "What already changed", c: "#da3a16", q: "Who took this up, and what shifted?", h: "If there is no change yet, leave this blank and put what you expect under What could change.", a: "" },
+  { k: "What could change", c: "#573996", q: "What could change next?", h: "Say for whom, and over what time.", a: "" },
+];
+const INFO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-1-5h2v2h-2zm0-8h2v6h-2z" transform="rotate(180 12 12)"/></svg>';
+const HOW = {
+  now: "Today: the question and hint appear above the writing area when it opens, the old field shrinks 140 ms later, and the tool holds the top of the new field still.",
+  new: "Proposed: the question is always shown, so opening only grows the writing area downward. The old field shrinks at the same moment. The tool holds your writing line still. The area starts at three lines and grows as you type."
+};
+let mode = "new";
+const ms = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 1;
+function build() {
+  const slot = document.getElementById("slot"); slot.innerHTML = "";
+  document.getElementById("how").textContent = HOW[mode];
+  const card = document.createElement("div"); card.className = "card " + mode;
+  card.innerHTML = '<p class="card-t">Contribution 1 · Community legal clinics study</p><div class="fields"></div>';
+  const list = card.querySelector(".fields");
+  FIELDS.forEach((d, i) => {
+    const f = document.createElement("div"); f.className = "f" + (d.a ? " filled" : "");
+    f.innerHTML =
+      '<p class="k"><i class="jd" style="background:' + d.c + '"></i>' + d.k + '</p>' +
+      '<div class="stat"><p class="q">' + d.q + '</p></div>' +
+      '<div class="col qa"><div><p class="q">' + d.q + '</p><p class="hint">' + d.h + '</p></div></div>' +
+      '<button type="button" class="ans">' + d.a + '</button>' +
+      '<textarea class="box" aria-label="' + d.k + '">' + d.a + '</textarea>' +
+      '<div class="col qb"><div><p class="hint">' + INFO + '<span>' + d.h + '</span></p></div></div>';
+    list.appendChild(f);
+  });
+  slot.appendChild(card);
+  list.addEventListener("focusin", e => { if (e.target.classList.contains("box")) openField(e.target.closest(".f")); });
+  list.addEventListener("click", e => {
+    if (e.target.closest(".ans")) e.target.closest(".f").querySelector(".box").focus({ preventScroll: true });
+    const nx = e.target.closest(".next");
+    if (nx) {
+      const nf = nx.closest(".f").nextElementSibling, b = nf.querySelector(".box");
+      if (mode === "new") { b.focus({ preventScroll: true }); setTimeout(() => window.scrollTo({ top: window.scrollY + nf.getBoundingClientRect().top - innerHeight / 3, behavior: ms ? "smooth" : "auto" }), 240 * ms); }
+      else b.focus();
+    }
+  });
+  list.addEventListener("input", e => { if (mode === "new" && e.target.classList.contains("box")) grow(e.target); });
+}
+function grow(b) { b.style.height = "auto"; const h = Math.max(b.scrollHeight + 2, 84); b.style.height = h + "px"; }
+function hold(node, top, dur, done) {
+  const t0 = performance.now(); let max = 0;
+  (function step() {
+    const d = node.getBoundingClientRect().top - top;
+    max = Math.max(max, Math.abs(d));
+    if (Math.abs(d) > 0.5) window.scrollBy(0, d);
+    if (performance.now() - t0 < dur) requestAnimationFrame(step); else done(max);
+  })();
+}
+function openField(f) {
+  if (f.classList.contains("open")) return;
+  const card = f.closest(".card");
+  const prev = [...card.querySelectorAll(".f.open")];
+  const box = f.querySelector(".box");
+  const watch = box.offsetHeight > 2 ? box : f.querySelector(".ans");
+  const lineTop = watch.getBoundingClientRect().top;
+  const shrink = () => prev.forEach(p => { p.classList.remove("open"); const pb = p.querySelector(".box"); pb.style.height = ""; p.classList.toggle("filled", !!pb.value.trim()); if (p.classList.contains("filled")) p.querySelector(".ans").textContent = pb.value.trim(); });
+  f.classList.add("open");
+  let maxLine = 0;
+  const t0 = performance.now();
+  (function track() { maxLine = Math.max(maxLine, Math.abs(box.getBoundingClientRect().top - lineTop)); if (performance.now() - t0 < 600) requestAnimationFrame(track); else report(maxLine); })();
+  if (mode === "now") {
+    setTimeout(shrink, 140 * ms);
+    hold(f, f.getBoundingClientRect().top, 140 * ms + 200 * ms + 60, () => {});
+  } else {
+    shrink();
+    grow(box);
+    hold(box, lineTop, 220 * ms + 300, () => {});
+  }
+}
+function report(px) {
+  document.getElementById("meter").innerHTML = "Your line moved <b>" + Math.round(px) + " px</b> on screen when that field opened.";
+}
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => {
+  mode = b.dataset.m;
+  document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  document.getElementById("meter").textContent = "Click a field to see how far your line moves.";
+  window.scrollTo(0, 0); build();
+}));
+build();
+</script>
+</body></html>

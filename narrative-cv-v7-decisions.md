@@ -406,6 +406,32 @@ under `v7-` names. Every step now matches the approved mock-ups and Prem's mock-
   unreachable.
 - Not done in this run: the flow map redrawn for V7 (V7-37). It waits until Prem has reviewed V7.
 
+### After review, 2026-10-28
+
+- **DECIDED (Prem, 2026-10-28): the box you are in has a full outline and a light shade, with no coloured line on top.** The open writing field (`.v7-f.is-open`) and the current profile question (`.v7-qblock.is-current`) now have a 1.5 px burgundy border all round and a very light burgundy background (`--v7-open: #fcf7f8`). The writing box inside stays white. The three options shown are kept in `ncv-v7-design/active-box-options.html`. The boxes with a top line that mark a section (Tailored for, the example box, the Continue draft card) keep it.
+
+- **DECIDED (Prem, 2026-10-28): moving between fields keeps the eye line still.** Mock-up: `ncv-v7-design/field-motion-mockup.html` (Today and Proposed). Built into `cardField` and `openField`:
+  - Every field shows its label and question in every state, so opening a field only grows it downward, below the line being written. Before, the question and hint opened above the box and pushed the line down by about 117 px.
+  - The field left behind shrinks in the same moment the new one opens (the 140 ms delay is gone), so the change is one movement.
+  - The tool holds the line being written still (the box, or the answer of a filled field), where before it held the top of the field.
+  - The open box starts at three lines and grows with the text, up to 60% of the screen, then scrolls. It replaces the fixed eight-line box.
+  - The hint sits under the box as a short line with the ⓘ icon, with no grey panel. The role-level choice and the Personal statement cross-reference also sit under the box.
+  - The "Change" link on a filled answer is gone; clicking the answer opens it, and its border darkens on hover.
+  - The outcomes hint no longer repeats its question: it now reads only "If there is no change to report yet, leave this blank and put what you expect under What could change."
+  - Test: two new checks in `ncv_tool_v7/test-v7.js` (the line moves 2 px or less; the box grows with the text). 50 checks pass.
+  - INFERRED: the other hints were left as written. Most add funder guidance the question does not carry; Prem may want a pass on any that still feel repetitive.
+
+- **DECIDED (Prem, 2026-10-28): an answered field shows only its label and answer; the question shows before you write and while the field is open.** CSS `.v7-f.is-filled > .v7-q`. When an answered field reopens, its question appears above the box and the tool holds the writing line still (test check added; 51 checks pass).
+- **DECIDED (Prem, 2026-10-28): each Contributions question asks something more specific than its label.** The wording below is INFERRED, for Prem to confirm:
+  - Headline: "What one line would let a reviewer recall this work?" (was "Give this contribution a headline.")
+  - Stakes: "What problem did this work address, and who had it?" (was "Start with the problem. What was at stake, and for whom?")
+  - What you did: "Which methods, sites or partners did the work involve, and at what scale?"; creative: "What did making the work involve, and which part was yours?" The hint is now only "Count where you can: how many sites, how long, how many people."
+  - What resulted: "Which papers, datasets, tools, protocols or programs came out of it, and how many?"; creative and humanities variants follow the same pattern. The hint is now only "List the things themselves; their effects belong in the next field."
+  - What already changed: "Who has used this work so far, and what is different for them now?"; community and health variants reworded; the social variant is unchanged.
+  - What could change: "If the work is taken up more widely, which field, sector or population could it affect, and how?"
+  - One moment: "Which one occasion shows the work reaching a specific person or group?"
+  - Your role is unchanged; its question was already specific.
+
 ## Overrides (Prem)
 
 (empty)
