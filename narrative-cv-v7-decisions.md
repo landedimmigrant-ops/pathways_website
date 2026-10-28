@@ -444,6 +444,10 @@ under `v7-` names. Every step now matches the approved mock-ups and Prem's mock-
 - **DECIDED (Prem, 2026-10-28): start page cards say what each one does, with the same arrow.** The main card reads "Start your draft" with a line explaining the action; the second card reads "Load your draft" (was "Continue draft"). Both cards carry one arrow at the bottom right; the arrow is no longer part of the main card's title. The Export step's save note now says "choose Load your draft".
   - INFERRED: when a draft is already saved in the browser, the main card reads "Continue your draft" (was "Back to your draft"), so it does not offer to start over a draft that exists.
 
+- **DECIDED (Prem, 2026-10-28): Review and Export stay ghosted until there is enough to review.** On the rail they show in light grey with faded markers and do nothing when clicked (`aria-disabled`). The caption under them reads "Review and Export open once one contribution has a headline, your role and two more answered fields." The "Review your CV →" button at the end of the last section is disabled with the same line beside it. A saved draft or file that lands on Review or Export below the minimum opens on Contributions instead. Replaces the V7 "Fills in as you add contributions." caption.
+  - INFERRED, for Prem to set: the minimum is one contribution with a headline, Your role (a line or a role level) and at least two of Stakes, What you did, What resulted, What already changed and What could change. Mentorship and the personal statement do not count toward it. One constant, `REVIEW_MIN_JOBS`, holds the job list.
+  - Test: two new checks (ghosted and closed below the minimum; open once it is met). 53 checks pass.
+
 ## Overrides (Prem)
 
 (empty)

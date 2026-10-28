@@ -109,6 +109,13 @@ async function seed(state, extra) {
     a.checks=q('[data-f$="-stakes"] .v7-f-checks').innerText;
     setv(s,'A made-up line.\\nA second.\\nA third.\\nA fourth.\\nA fifth.\\nA sixth.'); await w(60); a.h1=s.offsetHeight; setv(s,'We think we helped many patients.'); await w(60);
     const xb=q('.v7-ex-btn.is-primary'); xb.focus(); xb.click(); await w(60); a.exOpen=!!q('#v7-exbox'); a.exFocus=document.activeElement.id; q('.v7-switch').click(); a.built=q('#v7-exbox').classList.contains('built');
+    xb.click(); await w(300);
+    a.ghost=qa('.v7-ri.is-ghost').map(b=>b.innerText.split('\\n')[0]); a.cap=q('.v7-rail-cap')?.innerText;
+    qa('.v7-ri').find(b=>/^Review/.test(b.innerText)).click(); await w(150); a.stayed=/Most significant/.test(q('.narrative-stage-header h2').innerText);
+    const rl=q('[data-f$="-roleLine"] .v7-box'); rl.focus(); setv(rl,'I designed the protocol.'); await w(60);
+    a.ghost3=qa('.v7-ri.is-ghost').length;
+    const ou=q('[data-f$="-outputs"] .v7-box'); ou.focus(); setv(ou,'A made-up protocol and two papers.'); await w(400);
+    a.ghostAfter=qa('.v7-ri.is-ghost').length; a.capAfter=!!q('.v7-rail-cap');
     return a;`);
   check("official heading, finished example is the primary control, closed on arrival", /Most significant/.test(r.h) && /See a finished example/.test(r.primary) && r.exClosed, r);
   check("arrives with the headline open and the rest one line", r.states[0] === "is-open" && r.states.slice(1).every(x => x === "is-empty"), r.states);
@@ -117,6 +124,8 @@ async function seed(state, extra) {
   check("closed fields show their question; the writing line holds still when the next field opens", r.qClosed && Math.abs(r.lineMove) <= 2, r);
   check("an answered field hides its question; reopening shows it and holds the line", r.qFilled === 0 && r.qReopen && Math.abs(r.reopenMove) <= 2, r);
   check("the open box starts at three lines and grows with the text", r.h0 < 100 && r.h1 > r.h0, r);
+  check("Review and Export stay ghosted and closed below the minimum", r.ghost.join("|") === "Review|Export" && /headline, your role and two more/.test(r.cap || "") && r.stayed && r.ghost3 === 2, r);
+  check("they open once one card has a headline, role and two job fields", r.ghostAfter === 0 && !r.capAfter, r);
   check("header and counter build as you type", /Made-up headline/.test(r.header) && r.count === "1 of 9 answered", r);
   check("wording checks fire in the open field, with the suggestions note", /we|our/i.test(r.checks) && /suggestions/.test(r.checks), r.checks);
   check("example opens and See how it's built colours it", r.exOpen && r.built, r);

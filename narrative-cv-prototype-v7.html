@@ -528,7 +528,8 @@
     .v7-ri .narrative-stage-dot { margin-top: 4px; }
     .v7-ri.v7-sq .narrative-stage-dot { border-radius: 2px; }
     .v7-ri .v7-mt { grid-column: 2; font-size: 0.75rem; color: var(--muted); font-weight: 400; margin-top: 1px; }
-    .v7-ri.is-quiet { color: #6b6b6b; }
+    .v7-ri.is-ghost { color: #9a9a9a; cursor: default; }
+    .v7-ri.is-ghost .narrative-stage-dot { opacity: 0.45; }
     .v7-rail-cap { font-size: 0.75rem; color: #6b6b6b; margin: -8px 0 14px 20px; line-height: 1.4; }
     .v7-tally { border-top: 1px solid #e2e2e2; padding-top: 10px; margin: 4px 0 0; font-size: 0.75rem; color: var(--muted); }
     .v7-tally b { display: block; color: #333; font-size: 0.78rem; margin-bottom: 2px; }
@@ -1996,6 +1997,15 @@
     // V7-5: a step turns green once it has been opened and something entered in it (no funder sets
     // a minimum for any section). Review turns green once opened.
     const liveContribCount = () => ns.contributions.filter(c => CONTRIB_TEXT_KEYS.some(k => (c[k] || "").trim())).length;
+    // Minimum to review (Prem, 2026-10-28): Review and Export stay ghosted until one contribution
+    // has a headline, your role and at least two of the five job fields.
+    const REVIEW_MIN_JOBS = ["stakes", "activities", "outputs", "outcomes", "impact"];
+    const REVIEW_MIN_NOTE = "Review and Export open once one contribution has a headline, your role and two more answered fields.";
+    const reviewReady = () => ns.contributions.some(c => {
+      const t = (k) => !!(c[k] || "").trim();
+      return t("title") && (t("roleLine") || !!c.roleMode) && REVIEW_MIN_JOBS.filter(t).length >= 2;
+    });
+    const isLockedStage = (key) => (key === "review" || key === "export") && !reviewReady();
     const PS_ANSWER_KEYS = () => ["challenge", "streams", "pivot", "standing", "programFit"].concat(isFrq() ? ["teamFit"] : [], ["horizon"]);
     const psAnswered = () => {
       const p = ns.ps;
@@ -2098,13 +2108,14 @@
         home.addEventListener("click", () => goStage("start"));
         panel.appendChild(home);
       }
-      const hasDraft = liveContribCount() > 0;
+      const ready = reviewReady();
       const item = (st, square) => {
         const isActive = st.key === ns.stageKey, done = stageDone(st.key);
-        const quiet = square && !hasDraft && !isActive;
+        const ghost = square && !ready && !isActive;
         const li = el("li");
-        const b = el("button", "narrative-stage-item v7-ri" + (square ? " v7-sq" : "") + (isActive ? " is-active" : "") + (done ? " is-done" : "") + (quiet ? " is-quiet" : ""));
+        const b = el("button", "narrative-stage-item v7-ri" + (square ? " v7-sq" : "") + (isActive ? " is-active" : "") + (done ? " is-done" : "") + (ghost ? " is-ghost" : ""));
         b.type = "button";
+        if (ghost) b.setAttribute("aria-disabled", "true");
         b.appendChild(el("span", "narrative-stage-dot"));
         const lb = el("span", null, st.short);
         if (done || isActive) lb.appendChild(el("span", "v7-sr", (done ? ", started" : "") + (isActive ? ", current step" : "")));
@@ -2112,7 +2123,7 @@
         const mt = railMetric(st.key);
         if (mt) b.appendChild(el("span", "v7-mt", mt));
         if (isActive) b.setAttribute("aria-current", "step");
-        b.addEventListener("click", () => goStage(st.key));
+        b.addEventListener("click", () => { if (!isLockedStage(st.key)) goStage(st.key); });
         li.appendChild(b);
         return li;
       };
@@ -2128,8 +2139,8 @@
         ul.setAttribute("aria-labelledby", gid);
         all.filter(st => st.group === g).forEach(st => ul.appendChild(item(st, g === "draft")));
         panel.appendChild(ul);
-        if (g === "draft" && !hasDraft) {
-          const cap = el("p", "v7-rail-cap", "Fills in as you add contributions.");
+        if (g === "draft" && !ready) {
+          const cap = el("p", "v7-rail-cap", REVIEW_MIN_NOTE);
           cap.id = "v7-rail-cap"; ul.setAttribute("aria-describedby", cap.id);
           panel.appendChild(cap);
         }
@@ -2171,6 +2182,7 @@
       try { caret = focusId ? act.selectionStart : null; } catch (_) { caret = null; }
       if (!stages().some(s => s.key === ns.stageKey)) ns.stageKey = "start";
       if (!ns.mode) ns.stageKey = "start";
+      if (isLockedStage(ns.stageKey)) ns.stageKey = "contrib";
       const stageChanged = ns.stageKey !== lastStageKey;
       if (stageChanged) resetUI();
       if (stageChanged) {
@@ -2484,7 +2496,13 @@
       if (opts.note) nav.appendChild(el("p", "v4-help v7-nav-note", opts.note));
       if (nxt) {
         const next = el("button", "btn btn-primary", opts.nextLabel || (nxt.key === "review" ? "Review your CV →" : nxt.short + " →"));
-        next.addEventListener("click", () => { ns.stageKey = list[idx + 1].key; renderStage(); });
+        next.addEventListener("click", () => { if (!isLockedStage(nxt.key)) { ns.stageKey = nxt.key; renderStage(); } });
+        if (isLockedStage(nxt.key)) {
+          next.disabled = true;
+          const why = el("p", "v4-help v7-nav-note", REVIEW_MIN_NOTE); why.id = "v7-next-why";
+          next.setAttribute("aria-describedby", why.id);
+          nav.appendChild(why);
+        }
         nav.appendChild(next);
       } else nav.appendChild(el("span"));
       parent.appendChild(nav);
