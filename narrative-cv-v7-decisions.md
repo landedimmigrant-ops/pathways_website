@@ -432,6 +432,15 @@ under `v7-` names. Every step now matches the approved mock-ups and Prem's mock-
   - One moment: "Which one occasion shows the work reaching a specific person or group?"
   - Your role is unchanged; its question was already specific.
 
+- **DECIDED (Prem, 2026-10-28): one box language across the tool.** A resting box has a 1.5px grey hairline on white. An active or selected box has a 1.5px burgundy hairline on the `--v7-open` shade. No box carries a top or left accent bar.
+  - Start page: "Back to your draft" or "Start" is now the shaded box with a burgundy hairline and burgundy heading, in place of the solid burgundy card with a 4px top bar. "Continue draft" is a resting box.
+  - Profile choices, contribution kinds and the open example button take the same selected shade as an open field. Their borders went from 2px to 1.5px.
+  - The Tailored for bar and the example box lose their 4px top bar.
+  - INFERRED: the format note, the early-career note and the closing note on Export lose their burgundy left bar. Each becomes a light grey box with a grey hairline, since it is information, not something selected. The dashed Add button is 1.5px.
+  - Kept as they are: keyboard focus rings (needed for accessibility), the filled burgundy buttons, the coloured job bars in the read-through view, and the team-note panel (feedback is off).
+  - The writing area inside an open field no longer adds its own glow on focus; the field's hairline and shade mark it. Inputs outside a field keep their focus ring.
+  - Scope (DECIDED, Prem, 2026-10-28): V7 only. The website is not changed.
+
 ## Overrides (Prem)
 
 (empty)
