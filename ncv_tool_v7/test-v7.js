@@ -70,9 +70,9 @@ async function seed(state, extra) {
 
   console.log("Start page");
   await seed(null);
-  let r = await js(H + "return {intro:!q('#v7-start-intro').hidden, cards:qa('.v7-path').length, title:q('.v7-path-new h3').innerText, done:qa('.v7-ri.is-done').length, caption:!!q('.v7-rail-cap')};");
+  let r = await js(H + "return {intro:!q('#v7-start-intro').hidden, cards:qa('.v7-path').length, title:q('.v7-path-new h3').innerText, load:q('.v7-path-cont h3').innerText, arrows:qa('.v7-path > .v7-arrow').length, done:qa('.v7-ri.is-done').length, caption:!!q('.v7-rail-cap')};");
   check("intro shows, two path cards", r.intro && r.cards === 2, r);
-  check("New draft card leads with Start a new draft", r.title === "Start a new draft →", r.title);
+  check("cards read Start your draft and Load your draft, one arrow each", r.title === "Start your draft" && r.load === "Load your draft" && r.arrows === 2, r);
   check("rail empty, Draft caption shown", r.done === 0 && r.caption, r);
 
   console.log("Profile");

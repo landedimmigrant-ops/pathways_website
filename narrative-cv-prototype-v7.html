@@ -514,7 +514,7 @@
     .v7-path-cont:hover { border-color: #912338; }
     .v7-path-cont h3 { font-size: 1rem; margin: 0 0 4px; color: var(--text); }
     .v7-path-cont p { margin: 0; font-size: 0.82rem; color: var(--muted); line-height: 1.45; }
-    .v7-path-cont .v7-arrow { margin-top: auto; align-self: flex-end; color: #912338; font-size: 1.1rem; padding-top: 10px; }
+    .v7-path .v7-arrow { margin-top: auto; align-self: flex-end; color: #912338; font-size: 1.1rem; padding-top: 10px; }
     .v7-path:focus-visible { outline: 2px solid #912338; outline-offset: 3px; }
     .v7-rail-home { display: block; font-size: 0.8rem; color: #912338; background: none; border: 0; padding: 0; margin: 0 0 14px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; font-family: inherit; }
     .v7-rail-task { margin: 0 0 16px; }
@@ -2533,10 +2533,14 @@
       const started = !!ns.mode && draftHasContent(ns);
       const nw = el("button", "v7-path v7-path-new");
       nw.type = "button";
-      nw.appendChild(el("h3", null, started ? "Back to your draft →" : "Start a new draft →"));
-      nw.appendChild(el("p", null, started
+      const nwText = el("span");
+      nwText.appendChild(el("h3", null, started ? "Continue your draft" : "Start your draft"));
+      nwText.appendChild(el("p", null, started
         ? "Your draft is saved in this browser. You pick up where you left off."
         : "You answer a series of prompts, one section at a time. At the end, you review your draft and set the order of your contributions."));
+      nw.appendChild(nwText);
+      const nwArrow = el("span", "v7-arrow", "→"); nwArrow.setAttribute("aria-hidden", "true");
+      nw.appendChild(nwArrow);
       nw.addEventListener("click", () => {
         if (!ns.mode) { ns.mode = "compose"; ns.ui.profileNote = true; }
         goStage(started && ns.ui.lastStep && ns.ui.lastStep !== "start" ? ns.ui.lastStep : "setup");
@@ -2544,7 +2548,7 @@
       const ct = el("button", "v7-path v7-path-cont");
       ct.type = "button";
       const ctText = el("span");
-      ctText.appendChild(el("h3", null, "Continue draft"));
+      ctText.appendChild(el("h3", null, "Load your draft"));
       ctText.appendChild(el("p", null, "Open a draft file you saved from this tool."));
       ct.appendChild(ctText);
       const arrow = el("span", "v7-arrow", "→"); arrow.setAttribute("aria-hidden", "true");
@@ -3964,7 +3968,7 @@
 
       const kw = el("section", "v7-card"); kw.setAttribute("aria-labelledby", "v7-kw-t");
       const kwt = el("h3", "v7-h3", "Keep your work"); kwt.id = "v7-kw-t"; kw.appendChild(kwt);
-      kw.appendChild(el("p", "v7-body", "This saves your whole draft as a small file on your computer. Keep it somewhere safe. Later, choose Continue draft on the start page and open the file to carry on. It is not a Word file. Clearing your browser data erases the draft stored in the tool, so a saved file is your backup."));
+      kw.appendChild(el("p", "v7-body", "This saves your whole draft as a small file on your computer. Keep it somewhere safe. Later, choose Load your draft on the start page and open the file to carry on. It is not a Word file. Clearing your browser data erases the draft stored in the tool, so a saved file is your backup."));
       const sv = el("button", "btn btn-outline", "Save a draft file"); sv.type = "button";
       const svs = el("span", "v7-copied"); svs.setAttribute("aria-live", "polite");
       sv.addEventListener("click", () => { saveDraftFile(); done("Saved to your downloads.", svs); });

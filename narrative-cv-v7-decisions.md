@@ -441,6 +441,9 @@ under `v7-` names. Every step now matches the approved mock-ups and Prem's mock-
   - The writing area inside an open field no longer adds its own glow on focus; the field's hairline and shade mark it. Inputs outside a field keep their focus ring.
   - Scope (DECIDED, Prem, 2026-10-28): V7 only. The website is not changed.
 
+- **DECIDED (Prem, 2026-10-28): start page cards say what each one does, with the same arrow.** The main card reads "Start your draft" with a line explaining the action; the second card reads "Load your draft" (was "Continue draft"). Both cards carry one arrow at the bottom right; the arrow is no longer part of the main card's title. The Export step's save note now says "choose Load your draft".
+  - INFERRED: when a draft is already saved in the browser, the main card reads "Continue your draft" (was "Back to your draft"), so it does not offer to start over a draft that exists.
+
 ## Overrides (Prem)
 
 (empty)
