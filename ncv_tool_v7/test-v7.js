@@ -4,7 +4,8 @@
  *   node ncv_tool_v7/test-v7.js
  * Serves the repo on a local port, drives narrative-cv-prototype-v7.html through headless Chrome over
  * the DevTools protocol and checks each flow: start page, profile, the card pattern, evidence,
- * mentorship, statement, review order, the At a glance links, every export, saving and reopening a
+ * mentorship, statement, review order, the At a glance links, the What your draft contains visuals,
+ * the Change panel, the rail before and after Confirm profile, every export, saving and reopening a
  * draft file, the V6 draft offer, step migrations, phone width, reduced motion, and that the page
  * makes no network request beyond its own files. All draft content in here is invented.
  */
@@ -70,31 +71,36 @@ async function seed(state, extra) {
 
   console.log("Start page");
   await seed(null);
-  let r = await js(H + "return {intro:!q('#v7-start-intro').hidden, cards:qa('.v7-path').length, title:q('.v7-path-new h3').innerText, load:q('.v7-path-cont h3').innerText, arrows:qa('.v7-path > .v7-arrow').length, done:qa('.v7-ri.is-done').length, caption:!!q('.v7-rail-cap')};");
+  let r = await js(H + "return {intro:!q('#v7-start-intro').hidden, cards:qa('.v7-path').length, title:q('.v7-path-new h3').innerText, load:q('.v7-path-cont h3').innerText, arrows:qa('.v7-path > .v7-arrow').length, rail:!!q('.narrative-progress-panel')};");
   check("intro shows, two path cards", r.intro && r.cards === 2, r);
   check("cards read Start your draft and Load your draft, one arrow each", r.title === "Start your draft" && r.load === "Load your draft" && r.arrows === 2, r);
-  check("rail empty, Draft caption shown", r.done === 0 && r.caption, r);
+  check("no rail on the start page", !r.rail, r);
 
   console.log("Profile");
   r = await js(H + `q('.v7-path-new').click(); await w(150);
-    const a={h:q('.narrative-stage-header h2').innerText, blocks:qa('.v7-qblock').length};
+    const a={h:q('.narrative-stage-header h2').innerText, blocks:qa('.v7-qblock').length, railIn:!!q('.narrative-progress-panel.v7-rail-in'), done:qa('.v7-ri.is-done').length, caption:!!q('.v7-rail-cap'), rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]), groups:qa('.v7-rail-group').length, wc:!!q('.v7-rail-wc'), resetTop:!!q('#v4-reset'), resetRail:!!q('.v7-reset')};
+    a.dots0=qa('.v7-qcount .v7-dots i').length; a.on0=qa('.v7-qcount .v7-dots i.on').length;
     q('#ag-frq').click(); await w(60); a.fb=q('.v7-feedback').innerText; a.stay=q('#ag-frq').getAttribute('aria-checked');
     a.b2=qa('.v7-qblock').length;
     setv(q('#v7-comp'),'Made-up Team Grants'); await w(60); a.b3=qa('.v7-qblock').length;
     q('#v7-year-' + (new Date().getFullYear()+1)).click(); await w(60);
     q('#st-mid').click(); await w(60); q('#di-health').click(); await w(60); q('#d2-none').click(); await w(60);
     q('#wm-team').click(); await w(60);
-    a.count=q('.v7-qcount').innerText; a.next=!!nav(/Contributions/); a.folded=qa('.v7-ans').length;
+    a.count=q('.v7-qcount .v7-sr').textContent; a.dots=qa('.v7-qcount .v7-dots i').length; a.on=qa('.v7-qcount .v7-dots i.on').length; a.vis=q('.v7-qcount').innerText; a.next=!!nav(/Confirm profile/); a.nextC=!!nav(/Contributions/); a.folded=qa('.v7-ans').length;
     setv(q('#v7-comp'),''); await w(60); a.afterClear=qa('.v7-qblock').length; setv(q('#v7-comp'),'Made-up Team Grants'); await w(60);
     return a;`);
+  check("rail fades in once Start is chosen, empty, and holds only Set up your profile before confirming", r.railIn && r.done === 0 && r.rail.join("|") === "Set up your profile" && r.groups === 0 && !r.caption && !r.wc, r);
+  check("no Reset link in the top bar and no Reset button in the phone rail", !r.resetTop && !r.resetRail, r);
+  check("Setup progress is squares: none filled at the start", r.dots0 === 6 && r.on0 === 0, r);
   check("one question at a time", r.blocks === 1 && r.b2 === 2 && r.b3 === 3, r);
   check("choice stays selected in place, format feedback", r.stay === "true" && /CV-FRQ/.test(r.fb), r);
-  check("all six answered, Contributions button, nothing folds", r.count === "6 of 6 answered" && r.next && r.folded === 0, r);
+  check("all six answered: Confirm profile button (no Contributions button), nothing folds", /^6 of 6 answered$/.test(r.count) && r.next && !r.nextC && r.folded === 0, r);
+  check("progress squares: six, all filled, the count is hidden text only", r.dots === 6 && r.on === 6, r);
   check("clearing an answer keeps the questions below it on screen", r.afterClear === 6, r.afterClear);
 
   console.log("Contributions: card pattern");
-  r = await js(H + `nav(/Contributions/).click(); await w(150);
-    const a={h:q('.narrative-stage-header h2').innerText, primary:q('.v7-ex-btn.is-primary').innerText.replace(/\\n/g,' '), exClosed:!q('#v7-exbox'), states:qa('.v7-card .v7-f').map(f=>f.className.split(' ')[1])};
+  r = await js(H + `const sr0=getComputedStyle(q('.v7-qcount .v7-sr')).position; nav(/Confirm profile/).click(); await w(150);
+    const a={sr0, h:q('.narrative-stage-header h2').innerText, kick:q('.v4-kicker').innerText, startline:q('.v7-startline')?.innerText, rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]), groups:qa('.v7-rail-group').map(x=>x.innerText.split('\\n')[0]), saved:JSON.parse(localStorage.getItem('ncv-v7')).profileConfirmed, back:getComputedStyle(qa('.narrative-nav .btn')[0]).visibility, primary:q('.v7-ex-btn.is-primary').innerText.replace(/\\n/g,' '), exArrive:!!q('#v7-exbox'), sw:!!q('.v7-switch'), tri:!!q('.v7-ex-btn.is-primary .v7-tri'), built:q('#v7-exbox')?.classList.contains('built'), swatches:qa('#v7-exbox .v7-exbox, #v7-exbox [class*=seg]').length, six:/six parts/.test(document.body.innerText), jobs:/six jobs/i.test(document.body.innerText), states:qa('.v7-card .v7-f').map(f=>f.className.split(' ')[1])};
     a.marks=qa('.v4-flag-btn').length; a.tailored=!!q('.v7-tailored .btn');
     const h=q('[data-f$="-title"] .v7-box'); h.focus(); setv(h,'Made-up headline about a clinic protocol');
     const s=q('[data-f$="-stakes"] .v7-box'); a.qClosed=q('[data-f$="-stakes"] .v7-q').offsetHeight>0; s.scrollIntoView({block:'center'}); await w(60); const y0=s.getBoundingClientRect().top; s.focus({preventScroll:true}); await w(700);
@@ -104,12 +110,12 @@ async function seed(state, extra) {
     const ta=q('[data-f$="-title"] .v7-ans'), y1=ta.getBoundingClientRect().top; q('[data-f$="-title"] .v7-box').focus({preventScroll:true}); await w(700);
     a.reopenMove=Math.round(q('[data-f$="-title"] .v7-box').getBoundingClientRect().top-y1); a.qReopen=q('[data-f$="-title"] .v7-q').offsetHeight>0;
     s.focus({preventScroll:true}); await w(700);
-    a.header=q('.v7-card-t').innerText; a.count=q('.v7-card-side span').innerText;
+    a.header=q('.v7-card-t').innerText; a.count=q('.v7-card-side .v7-sr').textContent; a.cdots=qa('.v7-card-side .v7-dots i').length; a.con=qa('.v7-card-side .v7-dots i.on').length;
     setv(s,'We think we helped many patients.'); await w(60);
     a.checks=q('[data-f$="-stakes"] .v7-f-checks').innerText;
     setv(s,'A made-up line.\\nA second.\\nA third.\\nA fourth.\\nA fifth.\\nA sixth.'); await w(60); a.h1=s.offsetHeight; setv(s,'We think we helped many patients.'); await w(60);
-    const xb=q('.v7-ex-btn.is-primary'); xb.focus(); xb.click(); await w(60); a.exOpen=!!q('#v7-exbox'); a.exFocus=document.activeElement.id; q('.v7-switch').click(); a.built=q('#v7-exbox').classList.contains('built');
-    xb.click(); await w(300);
+    a.exStill=!!q('#v7-exbox'); let xb=q('.v7-ex-btn.is-primary'); if(q('#v7-exbox')){xb.click(); await w(60); a.exClosedBtn=!q('#v7-exbox'); xb=q('.v7-ex-btn.is-primary');} xb.focus(); xb.click(); await w(60); a.exOpen=!!q('#v7-exbox'); a.exFocus=document.activeElement.id; a.built2=q('#v7-exbox').classList.contains('built'); a.sw2=!!q('.v7-switch'); a.triOpen=getComputedStyle(q('.v7-ex-btn.is-primary .v7-tri')).transform;
+    xb=q('.v7-ex-btn.is-primary'); xb.click(); await w(300);
     a.ghost=qa('.v7-ri.is-ghost').map(b=>b.innerText.split('\\n')[0]); a.cap=q('.v7-rail-cap')?.innerText;
     qa('.v7-ri').find(b=>/^Review/.test(b.innerText)).click(); await w(150); a.stayed=/Most significant/.test(q('.narrative-stage-header h2').innerText);
     const rl=q('[data-f$="-roleLine"] .v7-box'); rl.focus(); setv(rl,'I designed the protocol.'); await w(60);
@@ -117,7 +123,12 @@ async function seed(state, extra) {
     const ou=q('[data-f$="-outputs"] .v7-box'); ou.focus(); setv(ou,'A made-up protocol and two papers.'); await w(400);
     a.ghostAfter=qa('.v7-ri.is-ghost').length; a.capAfter=!!q('.v7-rail-cap');
     return a;`);
-  check("official heading, finished example is the primary control, closed on arrival", /Most significant/.test(r.h) && /See a finished example/.test(r.primary) && r.exClosed, r);
+  check("Confirm profile lands on Contributions under My narrative CV with the start line", /Most significant/.test(r.h) && r.kick === "MY NARRATIVE CV" && r.startline === "You start with your contributions." && r.saved === true && r.back === "hidden", r);
+  check("rail after confirming: My narrative CV group (Contributions, Mentorship, the statement) and Draft group (Review, Export)", r.rail.length === 5 && r.rail[0] === "Contributions" && r.rail[1] === "Mentorship" && r.rail[3] === "Review" && r.rail[4] === "Export" && r.rail.indexOf("Set up your profile") === -1 && r.groups.join("|") === "MY NARRATIVE CV|DRAFT", r);
+  check("finished example is the primary control and arrives open on an empty step, with a triangle", /See a finished example/.test(r.primary) && r.exArrive && r.tri, r);
+  check("the See how it's built switch is gone; examples are always coloured", !r.sw && !r.sw2 && r.built === true && r.built2 === true && r.exClosedBtn === true && r.exStill === true, r);
+  check("visible text says six parts, never six jobs", r.six && !r.jobs, r);
+  check("the progress count is hidden text beside squares, not visible words", r.sr0 === "absolute", r.sr0);
   check("arrives with the headline open and the rest one line", r.states[0] === "is-open" && r.states.slice(1).every(x => x === "is-empty"), r.states);
   check("no self-assessment marks; Tailored for has a Change button", r.marks === 0 && r.tailored, r);
   check("leaving a field shrinks it to its answer", r.after[0] === "is-filled" && r.after[1] === "is-open", r.after);
@@ -126,9 +137,9 @@ async function seed(state, extra) {
   check("the open box starts at three lines and grows with the text", r.h0 < 100 && r.h1 > r.h0, r);
   check("Review and Export stay ghosted and closed below the minimum", r.ghost.join("|") === "Review|Export" && /headline, your role and two more/.test(r.cap || "") && r.stayed && r.ghost3 === 2, r);
   check("they open once one card has a headline, role and two job fields", r.ghostAfter === 0 && !r.capAfter, r);
-  check("header and counter build as you type", /Made-up headline/.test(r.header) && r.count === "1 of 9 answered", r);
+  check("header and counter build as you type", /Made-up headline/.test(r.header) && r.count === "1 of 9 answered" && r.cdots === 9 && r.con === 1, r);
   check("wording checks fire in the open field, with the suggestions note", /we|our/i.test(r.checks) && /suggestions/.test(r.checks), r.checks);
-  check("example opens and See how it's built colours it", r.exOpen && r.built, r);
+  check("example reopens from its button, coloured", r.exOpen && r.built2, r);
   check("focus stays on the example button after it opens", r.exFocus === "v7-ex-finished", r.exFocus);
 
   console.log("Contributions: evidence and a second card");
@@ -178,11 +189,22 @@ async function seed(state, extra) {
     q('[id$="-dn"]:not([disabled])').click(); await w(150);
     a.after=qa('.v7-ot').map(x=>x.innerText); a.focusOk=/^mv-/.test(document.activeElement.id); a.first=q('.v7-draft-body b').innerText;
     a.missing=qa('.v7-glance a').length;
+    a.gvHead=q('#v7-gv-t')?.innerText; a.gv=qa('.v7-gv-box').map(f=>f.dataset.gv); a.gvDl=qa('.v7-gv-box .v7-gv-dl').map(b=>b.innerText);
+    a.gvAria=qa('.v7-gv-box svg').map(s=>s.getAttribute('role')+'|'+s.getAttribute('aria-label')); a.gvText=q('.v7-gv')?.innerText||'';
+    a.gvBelow=!!(q('.v7-draft-body') && q('#v7-gv-t') && (q('.v7-draft-body').compareDocumentPosition(q('#v7-gv-t')) & Node.DOCUMENT_POSITION_FOLLOWING));
+    const gn=[], gt=[]; const oc2=URL.createObjectURL; URL.createObjectURL=(b)=>{gt.push(b.type);return oc2(b);};
+    const ocl2=HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click=function(){gn.push(this.download);};
+    q('.v7-gv-dl').click(); await w(500);
+    HTMLAnchorElement.prototype.click=ocl2; URL.createObjectURL=oc2; a.gvNames=gn;
     const link=qa('.v7-glance a').find(x=>/What you did/.test(x.innerText)); a.link=link.innerText; link.click(); await w(300);
     a.jump={h:q('.narrative-stage-header h2').innerText, focus:document.activeElement.closest('.v7-f')?.dataset.f, open:q('.v7-f.is-open')?.dataset.f};
     return a;`);
   check("Order is part of Review, not the rail", r.rail.indexOf("Order of contributions") === -1 && r.rail.indexOf("Export") !== -1, r.rail);
   check("↑ ↓ reorder, the draft follows, focus stays on the moved card", r.after[0] === r.order[1] && r.first.indexOf(r.order[1]) !== -1 && r.focusOk, r);
+  check("Review has a What your draft contains section below the draft, with a Download image button on each visual", r.gvHead === "What your draft contains" && r.gvBelow && r.gv.length >= 3 && r.gvDl.length === r.gv.length && r.gvDl.every(x => /Download image/.test(x)), r);
+  check("visuals drawn from the draft: evidence, parts, trained and length; each an SVG image whose label carries numbers", r.gv.join(",") === "evidence,parts,trained,length" && r.gvAria.every(x => /^img\|.+\d/.test(x)) && /Policy \/ practice uptake 1/.test(r.gvAria[0]) && /Doctoral 2, Postdoctoral 1/.test(r.gvAria[2]), r.gvAria);
+  check("the parts visual names contributions, and the word job does not appear in the section", /Contribution 3 has/.test(r.gvAria[1]) && !/\bjobs?\b/i.test(r.gvText + r.gvAria.join(" ")), r.gvAria[1]);
+  check("Download image runs without a request (file name set)", /^narrative-cv-.+\.png$/.test(r.gvNames[0] || ""), r.gvNames);
   check("At a glance links open the right card and field with focus", r.missing > 0 && /Most significant/.test(r.jump.h) && r.jump.focus === r.jump.open && /-activities$/.test(r.jump.focus || ""), r);
 
   console.log("Export");
@@ -208,9 +230,11 @@ async function seed(state, extra) {
   const file = JSON.parse(r.file);
   check("draft file has its format, version and no team notes", file.format === "pathways-narrative-cv-draft" && file.version === 1 && !("teamNotes" in file.draft) && !("feedback" in file.draft), Object.keys(file.draft));
   check("Export turns green once something is downloaded", r.exportGreen, r);
+  const fileText = r.file;
+  r = await js(H + `rail('Export').click(); await w(150); const b=q('#v7-gv-all'); return {btn:b&&b.innerText, cls:!!q('.v7-gv-exp'), inCard:!!(b&&b.closest('.v7-card'))};`);
+  check("Export has a Download all visuals button in its own section", r.btn === "Download all visuals" && r.cls && !r.inCard, r);
 
   console.log("Draft file round trip");
-  const fileText = r.file;
   r = await js(H + `localStorage.removeItem('ncv-v7'); window.confirm=()=>true; window.alert=(m)=>{window.__a=m;};
     const ic=HTMLInputElement.prototype.click;
     HTMLInputElement.prototype.click=function(){ if(this.type==='file'){const dt=new DataTransfer(); dt.items.add(new File([${JSON.stringify(fileText)}],'d.json',{type:'application/json'})); this.files=dt.files; this.dispatchEvent(new Event('change'));} };
@@ -218,7 +242,20 @@ async function seed(state, extra) {
     HTMLInputElement.prototype.click=ic;
     const st=JSON.parse(localStorage.getItem('ncv-v7'));
     return {h:q('.narrative-stage-header h2').innerText, n:st.contributions.length, comp:st.lens.program, alert:window.__a||''};`);
-  check("Continue draft reopens the file on its saved step", r.n === 3 && r.comp === "Made-up Team Grants" && /Export your draft/.test(r.h) && !r.alert, r);
+  check("Load your draft reopens the file on its saved step", r.n === 3 && r.comp === "Made-up Team Grants" && /Export your draft/.test(r.h) && !r.alert, r);
+
+  r = await js(H + `window.confirm=()=>true; document.getElementById('v7-home').click(); await w(150);
+    const a={title:q('.v7-path-new h3').innerText, tag:q('.v7-path-new').tagName, btns:qa('.v7-path-new button').length, rs:!!q('.v7-path-reset')};
+    q('.v7-path-reset').click(); await w(150);
+    a.warn=q('.v7-path-new .v7-warn p, .v7-warn p')?.innerText; a.warnBtns=qa('.v7-warn .btn').map(b=>b.innerText);
+    a.keptWhileWarned=(JSON.parse(localStorage.getItem('ncv-v7')||'{}').contributions||[]).some(c=>(c.title||'').trim());
+    let cmsg=''; window.confirm=(m)=>{cmsg=m;return true;};
+    qa('.v7-warn .btn').find(b=>/Clear my draft/.test(b.innerText)).click(); await w(250); a.cmsg=cmsg;
+    a.after=q('.v7-path-new h3')?.innerText; a.noReset=!q('.v7-path-reset'); a.saved=(JSON.parse(localStorage.getItem('ncv-v7')||'{}').contributions||[]).some(c=>(c.title||'').trim());
+    return a;`);
+  check("a saved draft puts Continue and Reset draft in one card", r.title === "Continue your draft" && r.tag === "DIV" && r.btns === 2 && r.rs, r);
+  check("Reset draft opens an inline warning first, Cancel and Clear my draft, and nothing is cleared yet", r.warn === "Reset your work in progress and start a new draft?" && r.warnBtns.join("|") === "Cancel|Clear my draft" && r.keptWhileWarned, r);
+  check("Clear my draft asks window.confirm, then clears; the card reads Start your draft", /Are you sure/.test(r.cmsg) && r.after === "Start your draft" && r.noReset && !r.saved, r);
 
   console.log("V6 draft and migrations");
   await seed(null, "localStorage.setItem('ncv-v6'," + JSON.stringify(JSON.stringify(fixture)) + ");");
@@ -230,6 +267,10 @@ async function seed(state, extra) {
     return a;`);
   check("V6 draft offered and opened; V6 copy unchanged", r.offer && r.v6, r);
   check("saved Order step opens on Review", /Review your CV/.test(r.h), r.h);
+  // The V6 draft opens on Review; the fixture has data for four visuals.
+  const gvs = await js("return [...document.querySelectorAll('.v7-gv-box')].map(f=>f.dataset.gv).join(',');");
+  check("V6 draft: the visuals that have data, and no others", gvs === "evidence,parts,trained,length", gvs);
+
   check("trainee stages become choices; Other keeps the text", r.mentees.join(",") === "doctoral/,other/visiting researcher,masters/", r.mentees);
   check("blank evidence rows dropped; first card open, rest folded; stable ids", r.ev.join(",") === "1,0" && r.folded.join(",") === "false,true" && r.cids, r);
   for (const [k, want] of [["feedback", "Export your draft"], ["xray", "Most significant"]]) {
@@ -238,12 +279,69 @@ async function seed(state, extra) {
     check("saved step " + k + " opens on " + want, h.indexOf(want) !== -1, h);
   }
 
+  console.log("Confirmed profile: rail, metrics, Continue, Load, migration");
+  await seed(Object.assign({}, fixture, { stageKey: "contrib", mode: "compose" }));
+  r = await js(H + `const a={rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]), mt:qa('.v7-ri').map(b=>(b.querySelector('.v7-mt')||{}).innerText||''), sub:qa('.v7-rsub').map(x=>x.innerText.replace(/\\n/g,' ')),
+      wc:(q('.v7-rail-wc')||{}).innerText, done:qa('.v7-ri.is-done').length, cur:qa('.v7-ri.is-active').map(b=>b.innerText.split('\\n')[0])};
+    const cur=q('.v7-ri.is-active'); a.tri=getComputedStyle(cur.querySelector('.narrative-stage-dot')).borderLeftWidth; a.bold=parseInt(getComputedStyle(cur).fontWeight)>=600||parseInt(getComputedStyle(cur.querySelector('.v7-rl, span')||cur).fontWeight)>=600;
+    a.doneOther=qa('.v7-ri.is-done:not(.is-active)').length; const dn=q('.v7-ri.is-done:not(.is-active) .narrative-stage-dot'); if(dn){const m=getComputedStyle(dn).backgroundColor.match(/\\d+/g).map(Number); a.green=m[1]>m[0]&&m[1]>m[2];}
+    a.srWc=q('.v7-rail-wc .v7-sr')?.textContent||'';
+    return a;`);
+  check("rail metrics: a plain number beside Contributions and Mentorship, Evidence and People sub-rows", /^\d+$/.test(r.mt[0]) && /^\d+$/.test(r.mt[1]) && r.sub.some(x => /^Evidence \d+$/.test(x)) && r.sub.some(x => /^People \d+$/.test(x)), r);
+  check("Draft group shows the word count and page range", /^[\d,]+ w/.test(r.wc || "") && /Draft so far: [\d,]+ words/.test(r.srWc), r);
+  check("current step has a triangle and bold label; a finished step has a green circle", r.cur.join() === "Contributions" && r.tri === "10px" && r.bold && r.doneOther > 0 && r.green === true, r);
+
+  // Continue and Load land on Contributions for a confirmed profile (no saved application step).
+  await seed(Object.assign({}, fixture, { stageKey: "setup", mode: "compose" }));
+  r = await js(H + `const a={conf:JSON.parse(localStorage.getItem('ncv-v7')).profileConfirmed, h0:q('.narrative-stage-header h2')?.innerText, rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]).length};
+    document.getElementById('v7-home').click(); await w(150); a.card=q('.v7-path-new h3').innerText; a.welcome=!!q('.v7-welcome, .v7-back-banner');
+    q('.v7-path-go').click(); await w(200); a.h=q('.narrative-stage-header h2').innerText; return a;`);
+  check("an old draft with application content migrates to a confirmed profile, rail shows the application", r.conf === true && /Most significant/.test(r.h0) && r.rail === 5, r);
+  check("Continue resumes to Contributions for a confirmed profile", r.card === "Continue your draft" && /Most significant/.test(r.h), r);
+  const loadFile = JSON.stringify({ format: "pathways-narrative-cv-draft", version: 1, draft: Object.assign({}, fixture, { profileConfirmed: true, stageKey: "setup", mode: "compose" }) });
+  r = await js(H + `localStorage.removeItem('ncv-v7'); window.confirm=()=>true; window.alert=(m)=>{window.__a=m;};
+    document.getElementById('v7-home').click(); await w(100);
+    const ic=HTMLInputElement.prototype.click;
+    HTMLInputElement.prototype.click=function(){ if(this.type==='file'){const dt=new DataTransfer(); dt.items.add(new File([${JSON.stringify(loadFile)}],'d.json',{type:'application/json'})); this.files=dt.files; this.dispatchEvent(new Event('change'));} };
+    q('.v7-path-cont').click(); await w(300); HTMLInputElement.prototype.click=ic;
+    return {h:q('.narrative-stage-header h2').innerText, alert:window.__a||''};`);
+  check("Load your draft resumes to Contributions for a confirmed profile", /Most significant/.test(r.h) && !r.alert, r);
+  await seed({ mode: "compose", stageKey: "contrib", profileConfirmed: false, lens: { agency: "sshrc" }, contributions: [{ title: "x" }] });
+  r = await js(H + "return {h:q('.narrative-stage-header h2')?.innerText, rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]).join('|')};");
+  check("an unconfirmed profile is kept on Set up your profile, even with application content", /Set up your profile/.test(r.h) && r.rail === "Set up your profile", r);
+
+  console.log("Change panel");
+  await seed(Object.assign({}, fixture, { stageKey: "contrib", mode: "compose" }));
+  r = await js(H + `const agency=()=>JSON.parse(localStorage.getItem('ncv-v7')).lens.agency; const a={ag0:agency()};
+    const ch=q('#v7-chg'); a.exp0=ch.getAttribute('aria-expanded'); a.ctl=ch.getAttribute('aria-controls'); ch.click(); await w(100);
+    a.exp1=ch.getAttribute('aria-expanded'); a.panel=!!q('#v7-chg-panel'); a.focusIn=q('#v7-chg-panel').contains(document.activeElement);
+    a.ids=['ag','st','di','d2','yr'].map(k=>!!q('#v7-chg-'+k)); a.comp=!!q('#v7-chg-comp'); a.pills=qa('#v7-chg-panel [aria-pressed]').length;
+    const other=[...q('#v7-chg-ag').options].map(o=>o.value).find(v=>v&&v!==a.ag0&&v!=='other'); a.other=other;
+    setsel(q('#v7-chg-ag'),other); await w(50); a.stillSaved=agency()===a.ag0;
+    document.activeElement.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); await w(100);
+    a.esc={panel:!!q('#v7-chg-panel'), focus:document.activeElement.id, ag:agency(), exp:q('#v7-chg').getAttribute('aria-expanded')};
+    q('#v7-chg').click(); await w(100); setsel(q('#v7-chg-ag'),other); await w(50);
+    qa('#v7-chg-panel .btn').find(b=>b.innerText==='Confirm').click(); await w(200);
+    a.ok={panel:!!q('#v7-chg-panel'), focus:document.activeElement.id, ag:agency(), pills:q('.v7-tailored-pills').innerText};
+    q('#v7-chg').click(); await w(100); qa('#v7-chg-panel .btn').find(b=>b.innerText==='Reset draft').click(); await w(100);
+    a.warn=q('#v7-chg-panel .v7-warn p')?.innerText; a.warnBtns=qa('#v7-chg-panel .v7-warn .btn').map(b=>b.innerText); a.kept=JSON.parse(localStorage.getItem('ncv-v7')).contributions.length>0;
+    qa('#v7-chg-panel .v7-warn .btn').find(b=>b.innerText==='Cancel').click(); await w(100); a.warnGone=!q('.v7-warn'); a.kept2=JSON.parse(localStorage.getItem('ncv-v7')).contributions.length>0;
+    return a;`);
+  check("Change is a disclosure: aria-expanded flips, it controls the panel, and focus moves in", r.exp0 === "false" && r.exp1 === "true" && r.ctl === "v7-chg-panel" && r.panel && r.focusIn, r);
+  check("the panel holds the six answers: agency, stage, field, second field, year, competition, work-mode pills", r.ids.every(Boolean) && r.comp && r.pills >= 4, r);
+  check("Escape discards the edit, closes the panel and returns focus to Change", r.stillSaved && !r.esc.panel && r.esc.focus === "v7-chg" && r.esc.ag === r.ag0 && r.esc.exp === "false", r);
+  check("Confirm applies the new answers, closes the panel and returns focus to Change", !r.ok.panel && r.ok.focus === "v7-chg" && r.ok.ag === r.other && r.ok.ag !== r.ag0, r);
+  check("Reset draft inside the panel shows a warning with Cancel and Clear my draft; Cancel keeps the work", /^Reset your work in progress\?$/.test(r.warn || "") && r.warnBtns.indexOf("Cancel") !== -1 && r.kept && r.warnGone && r.kept2, r);
+
+
   console.log("Phone width and reduced motion");
   await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
   await seed(Object.assign({}, fixture, { stageKey: "contrib", mode: "compose" }));
-  r = await js(H + `const out={}; for (const t of ['Set up your profile','Contributions','Mentorship','Personal statement','Review','Export']) { rail(t).click(); await w(120); out[t]=document.documentElement.scrollWidth; if (t==='Review') out.mv=Math.round(q('.v7-mv .btn')?.getBoundingClientRect().height||0); } rail('Contributions').click(); await w(100); out.reset=getComputedStyle(q('.v7-reset')).display; return out;`);
-  check("no sideways scroll on any step at 375 px", ["Set up your profile", "Contributions", "Mentorship", "Personal statement", "Review", "Export"].every(k => r[k] <= 375), r);
-  check("order buttons are at least 44 px (D-14); Reset beside Save (D-3)", r.mv >= 44 && r.reset !== "none", r);
+  r = await js(H + `const out={}; const names=qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]); out.names=names; for (const t of names) { rail(t).click(); await w(120); out[t]=document.documentElement.scrollWidth; if (t==='Review') out.mv=Math.round(q('.v7-mv .btn')?.getBoundingClientRect().height||0); } rail('Contributions').click(); await w(100); out.reset=!!q('.v7-reset'); out.setup=names.indexOf('Set up your profile'); return out;`);
+  check("no sideways scroll on any step at 375 px", r.names.length === 5 && r.names.every(k => r[k] <= 375), r);
+  check("order buttons are at least 44 px (D-14); the phone rail has no Reset and no Set up your profile after confirming", r.mv >= 44 && !r.reset && r.setup === -1, r);
+  r = await js(H + `rail('Contributions').click(); await w(100); window.scrollTo(0,0); q('#v7-chg').click(); await w(150); const o={sw:document.documentElement.scrollWidth, open:!!q('#v7-chg-panel'), right:Math.round(q('#v7-chg-panel').getBoundingClientRect().right)}; q('#v7-chg').click(); await w(60); return o;`);
+  check("no sideways scroll at 375 px with the Change panel open", r.open && r.sw <= 375 && r.right <= 375, r);
   await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
   r = await js("return getComputedStyle(document.querySelector('.v7-f')).transitionDuration;");
   check("reduced motion turns field transitions off", /^0s/.test(r), r);

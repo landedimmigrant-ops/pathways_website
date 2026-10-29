@@ -233,9 +233,26 @@
     .v7-tailored-k { font-weight: 700; color: #333; }
     .v7-tailored-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 auto; min-width: 0; }
     .v7-pill { display: inline-block; background: var(--v7-tint); color: #912338; border-radius: 12px; padding: 2px 10px; font-size: 0.8rem; }
+    /* Pass B: the Change panel opens inside the bar */
+    .v7-tailored.is-open { flex-wrap: wrap; border-color: #912338; }
+    .v7-chg { flex: 1 1 100%; border-top: 1px solid var(--v7-card-b); padding-top: 12px; margin-top: 2px; }
+    .v7-chg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px 14px; }
+    .v7-chg-f.wide { grid-column: 1 / -1; }
+    .v7-chg .v7-field-label { font-size: 0.8rem; }
+    .v7-select { width: 100%; box-sizing: border-box; font: inherit; font-size: 0.88rem; padding: 6px 8px; border: 1px solid var(--v7-field); border-radius: 6px; background: #fff; min-height: 36px; color: var(--text); }
+    .v7-chg-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .v7-chg-row .v7-input { flex: 1 1 220px; width: auto; min-height: 36px; padding: 6px 10px; font-size: 0.88rem; }
+    .v7-chg-row .v7-select { flex: 0 0 auto; width: auto; }
+    .v7-chg-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .v7-startline { font-size: 1.05rem; font-weight: 600; margin: -4px 0 8px; }
 
     /* Profile */
-    .v7-qcount { font-size: 0.75rem; color: var(--muted); text-align: right; margin: 0 0 8px; }
+    .v7-qcount { display: flex; justify-content: flex-end; margin: 0 0 8px; }
+    .v7-prog { display: inline-flex; align-items: center; }
+    .v7-warn { border: 1px solid #912338; border-radius: 6px; background: #fff; padding: 10px 14px; margin: 12px 0 0; font-size: 0.9rem; }
+    .v7-warn p { margin: 0 0 8px; }
+    .v7-warn-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .v7-warn:focus { outline: 2px solid #912338; outline-offset: 2px; }
     .v7-prof-list { display: flex; flex-direction: column; gap: 12px; margin: 0 0 12px; }
     .v7-qblock { background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 14px 22px 20px; }
     .v7-qblock.is-current { background: var(--v7-open); border: 1.5px solid #912338; }
@@ -261,10 +278,11 @@
     .v7-ex-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
     .v7-ex-btn { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--v7-field); border-radius: 20px; padding: 6px 14px; font: inherit; font-size: 0.86rem; cursor: pointer; color: var(--text); min-height: 36px; }
     .v7-ex-btn:hover { border-color: #912338; color: #912338; }
-    .v7-ex-btn .v7-pm { font-weight: 700; color: #912338; width: 10px; text-align: center; }
+    .v7-ex-btn .v7-tri { display: inline-block; color: #912338; width: 10px; text-align: center; font-size: 1.05em; line-height: 1; transition: transform 160ms var(--v7-ease); }
+    .v7-ex-btn[aria-expanded="true"] .v7-tri { transform: rotate(90deg); }
     .v7-ex-btn[aria-expanded="true"] { border-color: #912338; background: var(--v7-open); }
     .v7-ex-btn.is-primary { background: #912338; border-color: #912338; color: #fff; font-weight: 700; font-size: 0.92rem; padding: 8px 18px; min-height: 40px; }
-    .v7-ex-btn.is-primary .v7-pm { color: #fff; }
+    .v7-ex-btn.is-primary .v7-tri { color: #fff; }
     .v7-ex-btn.is-primary:hover { background: #7a1d2f; color: #fff; }
     .v7-ex-btn.is-primary[aria-expanded="true"] { background: #7a1d2f; }
     .v7-exbox { background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 10px; padding: 16px 22px; margin: -4px 0 22px; animation: v7reveal 260ms var(--v7-ease); }
@@ -286,12 +304,6 @@
     .v7-exfoot { font-size: 0.78rem; color: var(--muted); margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--v7-rule); }
     .v7-hints { margin: 0; padding-left: 0; list-style: none; font-size: 0.88rem; }
     .v7-hints li { margin: 0 0 4px; display: flex; gap: 6px; align-items: baseline; }
-    .v7-switch { display: inline-flex; align-items: center; gap: 10px; background: none; border: 0; padding: 4px 0; cursor: pointer; font: inherit; font-size: 0.9rem; font-weight: 600; color: var(--text); }
-    .v7-switch .v7-tr { position: relative; width: 38px; height: 22px; border-radius: 11px; background: #8a8a8a; transition: background 200ms var(--v7-ease); flex-shrink: 0; }
-    .v7-switch .v7-tr::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 200ms var(--v7-ease); box-shadow: 0 1px 2px rgba(0,0,0,.25); }
-    .v7-switch[aria-checked="true"] .v7-tr { background: #912338; }
-    .v7-switch[aria-checked="true"] .v7-tr::after { transform: translateX(16px); }
-    .v7-switch:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
 
     /* Card (one card for contributions, people, How you mentor, Your statement, review, export) */
     .v7-card { background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 16px 22px 22px; margin: 0 0 16px; }
@@ -301,7 +313,7 @@
     .v7-card-side { display: flex; align-items: center; gap: 10px; flex-shrink: 0; font-size: 0.8rem; color: var(--muted); }
     .v7-card-sub { font-size: 0.85rem; color: var(--muted); margin: -4px 0 12px; }
     .v7-dots { display: inline-flex; gap: 3px; }
-    .v7-dots i { width: 6px; height: 6px; border-radius: 50%; background: #d4d4d4; }
+    .v7-dots i { width: 8px; height: 8px; border-radius: 2px; background: #d4d4d4; }
     .v7-dots i.on { background: var(--v7-done); }
     .v7-icon-btn { width: 30px; height: 30px; border: 1px solid #ddd; border-radius: 4px; background: #fff; color: #777; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; }
     .v7-icon-btn:hover { color: #912338; border-color: #912338; }
@@ -458,6 +470,11 @@
     .v7-addr code { font-family: inherit; font-weight: 600; user-select: all; }
 
     .narrative-module-shell > .narrative-stage-content, .narrative-module-shell > .narrative-progress-panel { min-width: 0; }
+    .narrative-module-shell.is-start { grid-template-columns: minmax(0, 1fr); }
+    .narrative-module-shell.is-start .v7-paths { max-width: 720px; }
+    .v7-rail-in { animation: v7-rail-in 400ms ease-out both; }
+    @keyframes v7-rail-in { from { opacity: 0; } to { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .v7-rail-in { animation: none; } }
     @media (max-width: 768px) {
       .narrative-module-shell { grid-template-columns: minmax(0, 1fr); }
       .v7-tailored-pills { flex-wrap: nowrap; overflow: hidden; white-space: nowrap; }
@@ -467,15 +484,14 @@
       .v7-tiles { grid-template-columns: 1fr 1fr; }
       .v7-card-t { white-space: normal; }
       .v7-card-h { align-items: flex-start; }
-      .v7-card-side .v7-dots { display: none; }
       .v7-f.is-open { padding: 10px 12px 12px; }
       .v7-jobs, .v7-fold-meta { display: none; }
       .v7-ocard { grid-template-columns: 28px minmax(0, 1fr); }
       .v7-ocard .v7-mv { grid-column: 1 / -1; justify-content: flex-end; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .revealed, .v7-exbox { animation: none; }
-      .v7-f, .v7-f-more, .v7-switch .v7-tr, .v7-switch .v7-tr::after, .v7-seg, .v7-choice { transition: none; }
+      .revealed, .v7-exbox, .v7-rail-grow { animation: none; }
+      .v7-f, .v7-f-more, .v7-seg, .v7-choice, .v7-tri { transition: none; }
     }
 
     /* Design check, 2026-10-27 */
@@ -506,14 +522,21 @@
     .v7-paths { display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 16px; align-items: stretch; margin: 0 0 1.5rem; }
     .v7-path { display: flex; flex-direction: column; align-items: flex-start; text-align: left; cursor: pointer; border-radius: 10px; padding: 24px; font: inherit; transition: box-shadow 120ms, border-color 120ms, transform 120ms; }
     /* One box language (2026-10-28): resting = 1.5px grey hairline on white; active or selected = 1.5px burgundy hairline on --v7-open. No accent bars. */
-    .v7-path-new { background: var(--v7-open); color: var(--text); border: 1.5px solid #912338; }
-    .v7-path-new:hover { background: var(--v7-tint2); }
-    .v7-path-new h3 { font-size: 1.3rem; margin: 0 0 10px; line-height: 1.25; color: #912338; }
+    .v7-path-new { background: #fff; color: var(--text); border: 1.5px solid var(--v7-card-b); padding: 32px 28px; }
+    .v7-path-new:hover, .v7-path-new:focus-within { border-color: #912338; background: var(--v7-open); }
+    .v7-path-new h3 { font-size: 1.6rem; margin: 0 0 10px; line-height: 1.25; color: #912338; }
     .v7-path-new p { margin: 0; font-size: 0.95rem; line-height: 1.55; color: var(--text); max-width: 58ch; }
     .v7-path-cont { background: #fff; border: 1.5px solid var(--v7-card-b); color: var(--text); padding: 18px 18px 16px; }
-    .v7-path-cont:hover { border-color: #912338; }
+    .v7-path-cont:hover, .v7-path-cont:focus-visible { border-color: #912338; background: var(--v7-open); }
     .v7-path-cont h3 { font-size: 1rem; margin: 0 0 4px; color: var(--text); }
     .v7-path-cont p { margin: 0; font-size: 0.82rem; color: var(--muted); line-height: 1.45; }
+    .v7-path-new.is-started { cursor: default; padding: 0; }
+        .v7-path-go { display: flex; flex-direction: column; align-items: flex-start; text-align: left; width: 100%; flex: 1 1 auto; background: none; border: 0; border-radius: 10px 10px 0 0; padding: 32px 28px 12px; font: inherit; color: inherit; cursor: pointer; }
+    .v7-path-go:focus-visible { outline: 2px solid #912338; outline-offset: -2px; }
+    .v7-path-go .v7-arrow { margin-top: 0; align-self: flex-end; }
+    .v7-path-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; width: 100%; padding: 12px 28px 16px; border-top: 1px solid var(--v7-card-b); }
+    .v7-path-foot .btn { padding: 4px 12px; font-size: 0.85rem; min-height: 32px; }
+    .v7-path-foot-note { font-size: 0.78rem; color: var(--muted); }
     .v7-path .v7-arrow { margin-top: auto; align-self: flex-end; color: #912338; font-size: 1.1rem; padding-top: 10px; }
     .v7-path:focus-visible { outline: 2px solid #912338; outline-offset: 3px; }
     .v7-rail-home { display: block; font-size: 0.8rem; color: #912338; background: none; border: 0; padding: 0; margin: 0 0 14px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; font-family: inherit; }
@@ -524,32 +547,50 @@
     .v7-ri:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
     .narrative-stage-list li { list-style: none; }
     .v7-intro a { color: #912338; }
-    .v7-ri { display: grid !important; grid-template-columns: 10px minmax(0, 1fr); column-gap: 10px; align-items: start; }
+    .v7-ri { display: grid !important; grid-template-columns: 10px minmax(0, 1fr) auto; column-gap: 10px; align-items: start; }
     .v7-ri .narrative-stage-dot { margin-top: 4px; }
     .v7-ri.v7-sq .narrative-stage-dot { border-radius: 2px; }
-    .v7-ri .v7-mt { grid-column: 2; font-size: 0.75rem; color: var(--muted); font-weight: 400; margin-top: 1px; }
+    .v7-ri .v7-mt, .v7-rsub .v7-mt { grid-column: 3; grid-row: 1; align-self: center; text-align: right; white-space: nowrap; font-size: 0.8rem; color: #444; font-weight: 400; font-variant-numeric: tabular-nums; }
+    /* Pass B rail: finished = green circle; current = triangle pointing at a bold label; sub-rows hang off an L line */
+    .narrative-progress-panel .v7-ri.is-done:not(.is-active) .narrative-stage-dot { background: var(--v7-done); border-color: var(--v7-done); }
+    .narrative-progress-panel .v7-ri.is-active { color: #912338; font-weight: 700; }
+    .narrative-progress-panel .v7-ri.is-active .narrative-stage-dot { width: 0; height: 0; border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent currentColor; border-radius: 0; background: none; margin-top: 3px; }
+    .narrative-progress-panel .narrative-stage-list li { position: relative; }
+    .v7-rsub { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; margin: -4px 0 4px; padding: 0 0 2px 20px; font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
+    .v7-rsub .v7-mt { grid-column: 2; }
+    .v7-rsub::before { content: ""; position: absolute; left: 4px; top: -9px; width: 10px; height: 17px; border-left: 1.5px solid #c4c4c4; border-bottom: 1.5px solid #c4c4c4; border-bottom-left-radius: 3px; }
+    .v7-rail-grouprow { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 0 0 4px; }
+    .v7-rail-grouprow .v7-rail-group { margin: 0; }
+    .v7-rail-wc { font-size: 0.75rem; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .v7-rail-grow { animation: v7-rail-grow 420ms var(--v7-ease) both; }
+    @keyframes v7-rail-grow { from { opacity: 0; transform: translateY(-8px); clip-path: inset(0 0 100% 0); } to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); } }
     .v7-ri.is-ghost { color: #9a9a9a; cursor: default; }
     .v7-ri.is-ghost .narrative-stage-dot { opacity: 0.45; }
     .v7-rail-cap { font-size: 0.75rem; color: #6b6b6b; margin: -8px 0 14px 20px; line-height: 1.4; }
-    .v7-tally { border-top: 1px solid #e2e2e2; padding-top: 10px; margin: 4px 0 0; font-size: 0.75rem; color: var(--muted); }
-    .v7-tally b { display: block; color: #333; font-size: 0.78rem; margin-bottom: 2px; }
-    .v7-lenbar { height: 6px; background: #e3e3e3; border-radius: 3px; margin: 6px 0 4px; overflow: hidden; }
-    .v7-lenbar i { display: block; height: 100%; background: #7a7a7a; border-radius: 3px; }
     .v7-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    /* At a glance visuals (Prem, 2026-10-29): descriptive only, neutral palette. */
+    .v7-gv { margin: 0 0 22px; }
+    .v7-gv .v7-h3 { margin: 0 0 4px; }
+    .v7-gv-lede { margin: 0 0 12px; }
+    .v7-gv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+    .v7-gv-box { margin: 0; background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 8px; padding: 12px 14px 10px; min-width: 0; }
+    .v7-gv-cap { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+    .v7-gv-art svg { display: block; width: 100%; height: auto; max-width: 100%; }
+    .v7-gv-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--v7-rule); font-size: 0.85rem; }
+    .v7-gv-exp { background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 10px; padding: 16px 22px 18px; margin: 0 0 16px; }
+    @media (max-width: 768px) {
+      .v7-gv-grid { grid-template-columns: minmax(0, 1fr); }
+      .v7-gv-exp { padding: 14px 14px 16px; }
+    }
     .narrative-stage-header .v4-kicker { color: #912338; letter-spacing: 0.06em; font-weight: 600; }
-    .v7-rail-foot .v7-reset { display: none; }
     .narrative-nav .v7-nav-note { flex: 1 1 240px; margin: 0 12px; align-self: center; }
     @media (max-width: 768px) {
       .v7-paths { grid-template-columns: 1fr; }
       .v7-path-cont { flex-direction: row; align-items: center; gap: 12px; }
       .v7-path-cont .v7-arrow { margin: 0 0 0 auto; padding: 0; align-self: center; }
-      .v7-ri { grid-template-columns: 10px minmax(0, 1fr) auto; }
-      .v7-ri .v7-mt { grid-column: 3; grid-row: 1; align-self: center; margin: 0; text-align: right; white-space: nowrap; }
       .narrative-progress-panel .v7-rail-foot { flex-direction: row; flex-wrap: wrap; gap: 4px 18px; align-items: center; }
-      .narrative-progress-panel .v7-rail-foot .v7-reset { display: inline-block; }
       .narrative-progress-panel .v7-rail-foot button { width: auto; text-align: left; }
       .v7-rail-foot .v7-rail-saved { flex-basis: 100%; }
-      .proto-banner #v4-reset { display: none; }
       .narrative-module-shell.is-start .narrative-stage-content { order: -1; }
       .narrative-module-shell.is-start { display: flex; flex-direction: column; }
     }
@@ -582,7 +623,6 @@
     <span class="v4-banner-actions">
       <button type="button" class="v4-note-open" id="v4-note-open" aria-expanded="false" aria-controls="v4-note-panel" hidden>Note for the team</button>
       <a class="v4-note-open" id="v4-email-us" href="mailto:impact@concordia.ca?subject=Narrative%20CV%20tool%3A%20my%20experience">Email us</a>
-      <a href="#" id="v4-reset" title="Clear V7 beta draft">Reset draft</a>
     </span>
   </div>
   <div class="v4-note-panel" id="v4-note-panel" hidden></div>
@@ -1684,7 +1724,7 @@
     // One line per trainee for the text export; the print view escapes the same pieces.
     const menteeParts = (m) => ({ label: menteeStageLabel(m) || "Trainee", where: menteeWhere(m), recog: (m.recognition || "").trim(), why: (m.why || "").trim() });
     const defaultState = () => ({
-      mode: "", stageKey: "setup",
+      mode: "", stageKey: "setup", profileConfirmed: false,
       lens: { agency: "", format: "", program: "", undecided: false, year: "", discipline: "", discipline2: "", otherField: "", careerStage: "", workMode: [] },
       ui: {},
       xray: { text: "" },
@@ -1741,6 +1781,10 @@
           if (ns.contributions.some(c => CONTRIB_TEXT_KEYS.some(k => (c[k] || "").trim()))) ns.visited.contrib = 1;
           if (ns.mentees.some(menteeHasContent) || MENTOR_TEXT_KEYS.some(k => (ns[k] || "").trim()) || Object.values(ns.mentorCounts).some(v => String(v).trim())) ns.visited.mentor = 1;
           if (Object.values(ns.ps).some(v => (v || "").trim())) ns.visited.ps = 1;
+          // Pass B: a draft saved before Confirm profile existed counts as confirmed once it holds
+          // application content (with or without all six profile answers), so the researcher
+          // returns to their work and not to Setup.
+          if (typeof saved.profileConfirmed !== "boolean") ns.profileConfirmed = appHasContent(ns);
           remapStageKey();
     };
     const loadState = () => {
@@ -1772,6 +1816,14 @@
         if (d6 && draftHasContent(d6)) v6Offer = d6;
       }
     } catch (_) { v6Offer = null; }
+    // Pass B: any writing in the three application steps (contributions, mentorship, statement).
+    function appHasContent(d) {
+      const t = (v) => typeof v === "string" && v.trim();
+      return !!((d.contributions || []).some(c => c && (CONTRIB_TEXT_KEYS.some(k => t(c[k])) || (c.evidence || []).some(e => e && t(e.text)))) ||
+        Object.values(d.ps || {}).some(t) || MENTOR_TEXT_KEYS.some(k => t(d[k])) ||
+        Object.values(d.mentorCounts || {}).some(v => String(v || "").trim()) ||
+        (d.mentees || []).some(m => m && menteeHasContent(m)));
+    }
     function draftHasContent(d) {
       const t = (v) => typeof v === "string" && v.trim();
       return !!((d.contributions || []).some(c => CONTRIB_TEXT_KEYS.some(k => t(c && c[k]))) ||
@@ -1831,6 +1883,7 @@
           const err = readDraftFile(String(r.result || ""));
           if (err) { alert(err); return; }
           countEvent("draftFileOpened");
+          ns.stageKey = resumeStep();
           renderStage();
         };
         r.readAsText(f);
@@ -1972,7 +2025,8 @@
 
     // ── Stages (dynamic: structural-read stage only in draft mode; PS comes LAST) ──
     // V7-4: the start page sits outside the steps. Set up your profile is a task of its own above
-    // the groups; My application holds the three sections; Draft holds the tool's own steps.
+    // the groups; My narrative CV holds the three sections; Draft holds the tool's own steps.
+    // Pass B: before Confirm profile the rail shows only Set up your profile; after it, only the groups.
     // `group` drives the rail and the small caps kicker over each step heading (D-18).
     const stages = () => {
       const s = [{ key: "start", short: "Start page", group: "none" }];
@@ -1985,7 +2039,7 @@
       if (FEEDBACK_ON) s.push({ key: "feedback", short: "Feedback", group: "draft" });
       return s;
     };
-    const GROUP_LABEL = { app: "My application", draft: "Draft" };
+    const GROUP_LABEL = { app: "My narrative CV", draft: "Draft" };
     // Trials Prem decides on before the researcher test (V7-6 rail metrics, V7-26 paragraph strip).
     const V7_TRIALS = { railMetrics: true, paragraphStrip: true };
     const RENDERERS = {
@@ -2025,19 +2079,40 @@
       if (key === "feedback") return ns.feedback.sent.length > 0;
       return false;
     };
-    // V7-6 (trial): a short metric under each rail item.
+    // V7-6, pass B: a plain number beside a rail item and an optional sub-row joined by an L line.
+    // Nothing shows when there is nothing to count. `sr` is the spoken form, read with the step name.
     const railMetric = (key) => {
-      if (!V7_TRIALS.railMetrics) return "";
-      if (key === "setup") {
-        if (!ns.lens.agency) return "";
-        const parts = [ns.lens.agency === "other" ? "Agency not chosen" : labelOf(AGENCIES, ns.lens.agency)];
-        if (ns.lens.careerStage) parts.push(labelOf(CAREER_STAGES, ns.lens.careerStage));
-        return parts.join(" · ");
+      if (!V7_TRIALS.railMetrics) return null;
+      const plural = (n, one, many) => n + " " + (n === 1 ? one : many);
+      if (key === "contrib") {
+        const n = liveContribCount(), ev = ns.contributions.reduce((k, c) => k + liveEvidence(c).length, 0);
+        if (!n && !ev) return null;
+        return { n: n || "", sub: ev ? ["Evidence", ev] : null,
+          sr: [n ? plural(n, "contribution", "contributions") : "", ev ? plural(ev, "evidence item", "evidence items") : ""].filter(Boolean).join(", ") };
       }
-      if (key === "contrib") { const n = liveContribCount(); return n ? n + " of 10" : ""; }
-      if (key === "mentor") { const t = mentorTotal(), d = menteesDescribed(); return t ? t + " trained" : (d ? d + (d === 1 ? " person" : " people") + " described" : ""); }
-      if (key === "ps") { const a = psAnswered(); return a[0] ? a[0] + " of " + a[1] + " answered" : ""; }
-      return "";
+      if (key === "mentor") {
+        const t = mentorTotal(), d = menteesDescribed();
+        if (!t && !d) return null;
+        return { n: t || "", sub: d ? ["People", d] : null,
+          sr: [t ? plural(t, "person trained", "people trained") : "", d ? plural(d, "person described", "people described") : ""].filter(Boolean).join(", ") };
+      }
+      return null;
+    };
+    // Pass B: the word and page count beside the Draft group label, abbreviated ("1,240 w · 2–3 pp").
+    const pagesShort = (w) => {
+      const f = (n) => (Math.round(n * 2) / 2).toString();
+      const lo = f(w / 600), hi = f(w / WORDS_PER_PAGE);
+      if (w / WORDS_PER_PAGE < 0.5) return "";
+      return (lo === hi ? lo : lo + "–" + hi) + (hi === "1" ? " p" : " pp");
+    };
+    // Pass B: the example that arrives open on each writing step while the step holds no writing.
+    // Decided on arrival only, so the page does not shift while the researcher is writing.
+    const EX_DEFAULT = { contrib: "finished", mentor: "mentor", ps: "psx" };
+    const stepEmpty = (key) => {
+      if (key === "contrib") return !ns.contributions.some(c => CONTRIB_TEXT_KEYS.some(k => (c[k] || "").trim()) || (c.evidence || []).some(e => (e.text || "").trim()));
+      if (key === "mentor") return !(mentorTotal() || menteesDescribed() || MENTOR_TEXT_KEYS.some(k => (ns[k] || "").trim()));
+      if (key === "ps") return !Object.values(ns.ps).some(v => (v || "").trim());
+      return false;
     };
     const openFlagCount = () =>
       ns.contributions.reduce((n, c) => n + Object.values(c.flags || {}).filter(v => v === "work" || v === "unsure").length, 0);
@@ -2074,26 +2149,44 @@
     }
 
     // ── Shell ───────────────────────────────────────────────────────────────
+    // Pass B: where Continue your draft and Load your draft land. With a confirmed profile, the last
+    // application or draft step (or Contributions); without one, Set up your profile.
+    const resumeStep = () => {
+      if (!ns.profileConfirmed) return "setup";
+      const l = ns.ui.lastStep, st = stages().find(x => x.key === l);
+      return st && (st.group === "app" || st.group === "draft") && !isLockedStage(l) ? l : "contrib";
+    };
+    const confirmProfile = () => {
+      ns.profileConfirmed = true;
+      railGrow = true;
+      countEvent("profileConfirmed");
+      goStage("contrib");
+      announce("Profile confirmed.");
+    };
     const goStage = (key) => {
       if (key !== "start" && !ns.mode) ns.mode = "compose";
       ns.stageKey = key; renderStage();
     };
-    const renderShell = () => {
+    // The start page shows no rail; it fades in once the researcher picks Start, Continue or Load.
+    const renderShell = (fromStart) => {
       clear(root);
       const isStart = ns.stageKey === "start";
       document.getElementById("v7-start-intro").hidden = !isStart;
       const shell = el("div", "narrative-module-shell" + (isStart ? " is-start" : ""));
-      const panel = el("nav", "narrative-progress-panel");
-      panel.setAttribute("aria-label", "Steps");
-      fillRail(panel);
+      if (!isStart) {
+        const panel = el("nav", "narrative-progress-panel" + (fromStart ? " v7-rail-in" : ""));
+        panel.setAttribute("aria-label", "Steps");
+        fillRail(panel);
+        shell.appendChild(panel);
+      }
       const content = el("div", "narrative-stage-content");
       content.id = "v4-stage-content";
-      shell.appendChild(panel);
       shell.appendChild(content);
       root.appendChild(shell);
     };
     // The rail is rebuilt on its own while the researcher types, so the step content never redraws.
     let railTimer = 0;
+    let railGrow = false;
     const refreshRail = () => {
       clearTimeout(railTimer);
       railTimer = setTimeout(() => { const p = root.querySelector(".narrative-progress-panel"); if (p) fillRail(p); }, 250);
@@ -2117,45 +2210,57 @@
         b.type = "button";
         if (ghost) b.setAttribute("aria-disabled", "true");
         b.appendChild(el("span", "narrative-stage-dot"));
-        const lb = el("span", null, st.short);
-        if (done || isActive) lb.appendChild(el("span", "v7-sr", (done ? ", started" : "") + (isActive ? ", current step" : "")));
-        b.appendChild(lb);
         const mt = railMetric(st.key);
-        if (mt) b.appendChild(el("span", "v7-mt", mt));
+        const lb = el("span", "v7-ri-l", st.short);
+        const sr = [mt ? mt.sr : "", done ? "started" : "", isActive ? "current step" : ""].filter(Boolean);
+        if (sr.length) lb.appendChild(el("span", "v7-sr", ", " + sr.join(", ")));
+        b.appendChild(lb);
+        if (mt && mt.n !== "") { const n = el("span", "v7-mt", String(mt.n)); n.setAttribute("aria-hidden", "true"); b.appendChild(n); }
         if (isActive) b.setAttribute("aria-current", "step");
         b.addEventListener("click", () => { if (!isLockedStage(st.key)) goStage(st.key); });
         li.appendChild(b);
+        if (mt && mt.sub) {
+          const sub = el("div", "v7-rsub"); sub.setAttribute("aria-hidden", "true");
+          sub.appendChild(el("span", "v7-rsub-l", mt.sub[0]));
+          sub.appendChild(el("span", "v7-mt", String(mt.sub[1])));
+          li.appendChild(sub);
+        }
         return li;
       };
       const all = stages();
-      const task = el("ul", "narrative-stage-list v7-rail-task");
-      all.filter(st => st.group === "task").forEach(st => task.appendChild(item(st, false)));
-      panel.appendChild(task);
-      ["app", "draft"].forEach(g => {
-        const gid = "v7-rg-" + g;
-        const lab = el("p", "v7-rail-group", GROUP_LABEL[g]); lab.id = gid;
-        panel.appendChild(lab);
-        const ul = el("ul", "narrative-stage-list");
-        ul.setAttribute("aria-labelledby", gid);
-        all.filter(st => st.group === g).forEach(st => ul.appendChild(item(st, g === "draft")));
-        panel.appendChild(ul);
-        if (g === "draft" && !ready) {
-          const cap = el("p", "v7-rail-cap", REVIEW_MIN_NOTE);
-          cap.id = "v7-rail-cap"; ul.setAttribute("aria-describedby", cap.id);
-          panel.appendChild(cap);
-        }
-      });
-      const w = draftWords();
-      if (V7_TRIALS.railMetrics && w >= 200) {
-        const t = el("div", "v7-tally");
-        t.setAttribute("role", "group"); t.setAttribute("aria-label", "Draft so far");
-        t.appendChild(el("b", null, "Draft so far"));
-        t.appendChild(el("span", null, "about " + (Math.round(w / 10) * 10).toLocaleString("en-CA") + " words"));
-        const bar = el("div", "v7-lenbar"); bar.setAttribute("aria-hidden", "true");
-        const fill = el("i"); fill.style.width = (Math.min(1, w / (WORDS_PER_PAGE * PAGE_LIMIT_EN)) * 100).toFixed(1) + "%";
-        bar.appendChild(fill); t.appendChild(bar);
-        t.appendChild(el("span", null, (w / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(w)) + " of " + PAGE_LIMIT_EN + " pages"));
-        panel.appendChild(t);
+      if (!ns.profileConfirmed) {
+        const task = el("ul", "narrative-stage-list v7-rail-task");
+        all.filter(st => st.group === "task").forEach(st => task.appendChild(item(st, false)));
+        panel.appendChild(task);
+      } else {
+        // The groups grow in below the start link once the profile is confirmed (railGrow, one render only).
+        const groups = el("div", "v7-rail-groups" + (railGrow ? " v7-rail-grow" : ""));
+        ["app", "draft"].forEach(g => {
+          const gid = "v7-rg-" + g;
+          const row = el("div", "v7-rail-grouprow");
+          const lab = el("p", "v7-rail-group", GROUP_LABEL[g]); lab.id = gid;
+          row.appendChild(lab);
+          const w = g === "draft" && V7_TRIALS.railMetrics ? draftWords() : 0;
+          if (w) {
+            const pp = pagesShort(w);
+            const wc = el("span", "v7-rail-wc");
+            const vis = el("span", null, w.toLocaleString("en-CA") + " w" + (pp ? " · " + pp : "")); vis.setAttribute("aria-hidden", "true");
+            wc.appendChild(vis);
+            wc.appendChild(el("span", "v7-sr", "Draft so far: " + w.toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (pp ? ", " + pagesRange(w) + " pages" : "")));
+            row.appendChild(wc);
+          }
+          groups.appendChild(row);
+          const ul = el("ul", "narrative-stage-list");
+          ul.setAttribute("aria-labelledby", gid);
+          all.filter(st => st.group === g).forEach(st => ul.appendChild(item(st, g === "draft")));
+          groups.appendChild(ul);
+          if (g === "draft" && !ready) {
+            const cap = el("p", "v7-rail-cap", REVIEW_MIN_NOTE);
+            cap.id = "v7-rail-cap"; ul.setAttribute("aria-describedby", cap.id);
+            groups.appendChild(cap);
+          }
+        });
+        panel.appendChild(groups);
       }
       // V7-6 / V7-29: Save draft works from any step; the file is how a draft moves between browsers.
       const foot = el("div", "v7-rail-foot");
@@ -2166,11 +2271,6 @@
       savedNote.setAttribute("aria-live", "polite");
       save.addEventListener("click", () => { saveDraftFile(); savedNote.textContent = "Saved to your downloads."; });
       foot.appendChild(save);
-      // D-3: Reset draft beside Save draft on a phone, where the banner hides it.
-      const reset = el("button", "v7-reset", "Reset draft");
-      reset.type = "button";
-      reset.addEventListener("click", resetDraft);
-      foot.appendChild(reset);
       foot.appendChild(savedNote);
       panel.appendChild(foot);
     }
@@ -2182,9 +2282,14 @@
       try { caret = focusId ? act.selectionStart : null; } catch (_) { caret = null; }
       if (!stages().some(s => s.key === ns.stageKey)) ns.stageKey = "start";
       if (!ns.mode) ns.stageKey = "start";
+      // Pass B: Setup belongs to the time before Confirm profile; the application to the time after.
+      if (ns.stageKey !== "start") {
+        if (ns.profileConfirmed && ns.stageKey === "setup") ns.stageKey = "contrib";
+        else if (!ns.profileConfirmed && ns.stageKey !== "setup") ns.stageKey = "setup";
+      }
       if (isLockedStage(ns.stageKey)) ns.stageKey = "contrib";
       const stageChanged = ns.stageKey !== lastStageKey;
-      if (stageChanged) resetUI();
+      if (stageChanged) { resetUI(); UI.ex = EX_DEFAULT[ns.stageKey] && stepEmpty(ns.stageKey) ? EX_DEFAULT[ns.stageKey] : ""; }
       if (stageChanged) {
         tickStageTime();
         if (!ns.session.startedAt) ns.session.startedAt = Date.now();
@@ -2193,7 +2298,8 @@
         if (ns.stageKey !== "start") ns.ui.lastStep = ns.stageKey;
         stageEnteredAt = document.hidden ? 0 : Date.now();
       }
-      renderShell();
+      renderShell(stageChanged && lastStageKey === "start");
+      railGrow = false;
       const c = document.getElementById("v4-stage-content");
       clear(c);
       if (reentryPending && ns.stageKey !== "start") {
@@ -2488,7 +2594,9 @@
       const idx = list.findIndex(s => s.key === ns.stageKey);
       const nav = el("div", "narrative-nav");
       // V7-7: Back and forward name the step they go to; the start page is not a step to go back to.
-      const prev = idx > 1 ? list[idx - 1] : null, nxt = idx < list.length - 1 ? list[idx + 1] : null;
+      let prev = idx > 1 ? list[idx - 1] : null;
+      const nxt = idx < list.length - 1 ? list[idx + 1] : null;
+      if (prev && prev.key === "setup" && ns.profileConfirmed) prev = null;
       const back = el("button", "btn btn-outline", prev ? "← " + prev.short : "← Back");
       if (!prev) back.style.visibility = "hidden";
       back.addEventListener("click", () => { if (prev) goStage(prev.key); });
@@ -2496,8 +2604,11 @@
       if (opts.note) nav.appendChild(el("p", "v4-help v7-nav-note", opts.note));
       if (nxt) {
         const next = el("button", "btn btn-primary", opts.nextLabel || (nxt.key === "review" ? "Review your CV →" : nxt.short + " →"));
-        next.addEventListener("click", () => { if (!isLockedStage(nxt.key)) { ns.stageKey = nxt.key; renderStage(); } });
-        if (isLockedStage(nxt.key)) {
+        next.addEventListener("click", () => {
+          if (opts.onNext) { opts.onNext(); return; }
+          if (!isLockedStage(nxt.key)) { ns.stageKey = nxt.key; renderStage(); }
+        });
+        if (!opts.onNext && isLockedStage(nxt.key)) {
           next.disabled = true;
           const why = el("p", "v4-help v7-nav-note", REVIEW_MIN_NOTE); why.id = "v7-next-why";
           next.setAttribute("aria-describedby", why.id);
@@ -2549,20 +2660,32 @@
       }
       const paths = el("div", "v7-paths");
       const started = !!ns.mode && draftHasContent(ns);
-      const nw = el("button", "v7-path v7-path-new");
-      nw.type = "button";
+      // With a saved draft the card holds two buttons (Continue, Reset draft), so the card itself is a div.
+      const nw = el(started ? "div" : "button", "v7-path v7-path-new" + (started ? " is-started" : ""));
+      if (!started) nw.type = "button";
+      const go = started ? el("button", "v7-path-go") : nw;
+      if (started) go.type = "button";
       const nwText = el("span");
       nwText.appendChild(el("h3", null, started ? "Continue your draft" : "Start your draft"));
       nwText.appendChild(el("p", null, started
         ? "Your draft is saved in this browser. You pick up where you left off."
         : "You answer a series of prompts, one section at a time. At the end, you review your draft and set the order of your contributions."));
-      nw.appendChild(nwText);
+      go.appendChild(nwText);
       const nwArrow = el("span", "v7-arrow", "→"); nwArrow.setAttribute("aria-hidden", "true");
-      nw.appendChild(nwArrow);
-      nw.addEventListener("click", () => {
+      go.appendChild(nwArrow);
+      go.addEventListener("click", () => {
         if (!ns.mode) { ns.mode = "compose"; ns.ui.profileNote = true; }
-        goStage(started && ns.ui.lastStep && ns.ui.lastStep !== "start" ? ns.ui.lastStep : "setup");
+        goStage(started ? resumeStep() : "setup");
       });
+      if (started) {
+        nw.appendChild(go);
+        const foot = el("div", "v7-path-foot");
+        const rs = el("button", "btn btn-outline v7-path-reset", "Reset draft"); rs.type = "button";
+        rs.addEventListener("click", () => resetWarning(foot, "Reset your work in progress and start a new draft?", rs));
+        foot.appendChild(rs);
+        foot.appendChild(el("span", "v7-path-foot-note", "Clears the draft saved in this browser and starts again."));
+        nw.appendChild(foot);
+      }
       const ct = el("button", "v7-path v7-path-cont");
       ct.type = "button";
       const ctText = el("span");
@@ -2723,8 +2846,8 @@
     // ── V7 shared pieces ────────────────────────────────────────────────────
     // Screen state that is not part of the draft: the open field, the open example, the evidence
     // view. Reset when the step changes, so every step arrives in the same quiet state.
-    const UI = { active: "", ex: "", built: false, evCard: -1, moved: "" };
-    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.built = false; UI.evCard = -1; UI.moved = ""; };
+    const UI = { active: "", ex: "", evCard: -1, moved: "", chg: null };
+    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; };
     const motionMs = (ms) => (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) ? 0 : ms;
     const announceEl = () => {
       let l = document.getElementById("v7-live");
@@ -2752,10 +2875,17 @@
       b.appendChild(d);
       return b;
     }
+    // One progress indicator for every response page: small squares plus a spoken count.
     function dots(n, t) {
       const s = el("span", "v7-dots"); s.setAttribute("aria-hidden", "true");
       for (let i = 0; i < t; i++) s.appendChild(el("i", i < n ? "on" : null));
       return s;
+    }
+    function progress(n, t) {
+      const w = el("span", "v7-prog");
+      w.appendChild(dots(n, t));
+      w.appendChild(el("span", "v7-sr", n + " of " + t + " answered"));
+      return w;
     }
     const letter = (j) => String.fromCharCode(97 + j);
     const liveEvidence = (c) => (c.evidence || []).filter(e => (e.text || "").trim());
@@ -2763,8 +2893,11 @@
     const competitionName = () => (ns.lens.undecided ? "" : (ns.lens.program || "").trim());
 
     // V7-19 (updated): the Tailored for bar, with a real Change button. D-18: accent line on top.
+    // Pass B: Change opens a small panel inside the bar, on the same page. The panel edits a copy of
+    // the six answers; Confirm applies them and redraws the step, so prompts and examples follow.
+    // Escape or Change again closes it and leaves the profile as it was.
     function tailoredBar(parent) {
-      const L = ns.lens, bar = el("div", "v7-tailored");
+      const L = ns.lens, bar = el("div", "v7-tailored" + (UI.chg ? " is-open" : ""));
       bar.appendChild(el("span", "v7-tailored-k", "Tailored for:"));
       const pills = el("span", "v7-tailored-pills");
       const add = (t) => pills.appendChild(el("span", "v7-pill", t));
@@ -2777,15 +2910,128 @@
       if (!pills.childNodes.length) add("Profile not set yet");
       bar.appendChild(pills);
       const ch = el("button", "btn btn-outline v7-btn-small", "Change");
-      ch.type = "button";
+      ch.type = "button"; ch.id = "v7-chg";
       ch.setAttribute("aria-label", "Change your profile answers");
-      ch.addEventListener("click", () => goStage("setup"));
+      ch.setAttribute("aria-controls", "v7-chg-panel");
+      ch.setAttribute("aria-expanded", UI.chg ? "true" : "false");
+      const close = () => {
+        UI.chg = null;
+        const pn = bar.querySelector(".v7-chg"); if (pn) pn.remove();
+        bar.classList.remove("is-open");
+        ch.setAttribute("aria-expanded", "false");
+        ch.focus();
+      };
+      ch.addEventListener("click", () => {
+        if (UI.chg) { close(); return; }
+        UI.chg = { lens: JSON.parse(JSON.stringify(ns.lens)) };
+        bar.classList.add("is-open");
+        ch.setAttribute("aria-expanded", "true");
+        const pn = changePanel(close);
+        bar.appendChild(pn);
+        const first = pn.querySelector("select, input, button");
+        if (first) first.focus();
+      });
       bar.appendChild(ch);
+      if (UI.chg) bar.appendChild(changePanel(close));
       parent.appendChild(bar);
+    }
+    // The six answers as compact controls: field names only, no questions or notes. The four
+    // single choices share one row; the competition and the work modes take a row each.
+    function changePanel(close) {
+      const d = UI.chg.lens;
+      if (!Array.isArray(d.workMode)) d.workMode = [];
+      const p = el("div", "v7-chg revealed"); p.id = "v7-chg-panel";
+      p.setAttribute("role", "group"); p.setAttribute("aria-label", "Your profile answers");
+      const grid = el("div", "v7-chg-grid");
+      const field = (label, id, cls) => {
+        const f = el("div", "v7-chg-f" + (cls ? " " + cls : ""));
+        const lab = el(id ? "label" : "span", "v7-field-label", label);
+        if (id) lab.htmlFor = id; else lab.id = "v7-chg-l-" + label.replace(/\W+/g, "").toLowerCase();
+        f.appendChild(lab); grid.appendChild(f);
+        return [f, lab];
+      };
+      const select = (id, opts, val, onCh) => {
+        const s = el("select", "v7-select"); s.id = id;
+        opts.forEach(([v, l]) => { const o = el("option", null, l); o.value = v; s.appendChild(o); });
+        s.value = val || "";
+        s.addEventListener("change", () => onCh(s.value));
+        return s;
+      };
+      const blank = (v, t) => v ? [] : [["", t || "Not answered"]];
+      // Agency
+      field("Agency", "v7-chg-ag")[0].appendChild(select("v7-chg-ag",
+        blank(d.agency).concat(AGENCIES.map(a => [a.v, a.v === "other" ? "Not sure yet" : a.l])), d.agency,
+        v => { d.agency = v; const a = AGENCIES.find(x => x.v === v); d.format = a ? a.fmt : ""; }));
+      // Career stage, field, another field
+      field("Career stage", "v7-chg-st")[0].appendChild(select("v7-chg-st",
+        blank(d.careerStage).concat(CAREER_STAGES.map(x => [x.v, x.l])), d.careerStage, v => { d.careerStage = v; }));
+      const d2opts = () => blank(d.discipline2).concat([["none", "No, just this one"]], DISCIPLINES.filter(x => x.v !== d.discipline).map(x => [x.v, x.l]));
+      let d2 = null;
+      field("Field", "v7-chg-di")[0].appendChild(select("v7-chg-di",
+        blank(d.discipline).concat(DISCIPLINES.map(x => [x.v, x.l])), d.discipline, v => {
+          d.discipline = v; if (d.discipline2 === v) d.discipline2 = "";
+          const nd2 = select("v7-chg-d2", d2opts(), d.discipline2, d2change); d2.replaceWith(nd2); d2 = nd2;
+        }));
+      const d2change = (v) => { d.discipline2 = v; };
+      d2 = select("v7-chg-d2", d2opts(), d.discipline2, d2change);
+      field("Another field", "v7-chg-d2")[0].appendChild(d2);
+      // Competition, with Undecided and the optional year
+      const [cf] = field("Competition", "v7-chg-comp", "wide");
+      const crow = el("div", "v7-chg-row");
+      const inp = el("input", "v7-input"); inp.id = "v7-chg-comp"; inp.type = "text";
+      inp.value = d.program || ""; inp.disabled = !!d.undecided;
+      inp.addEventListener("input", () => { d.program = inp.value; });
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
+      const und = el("button", "v7-mini", "Undecided"); und.type = "button";
+      und.setAttribute("aria-pressed", d.undecided ? "true" : "false");
+      und.addEventListener("click", () => {
+        d.undecided = !d.undecided; if (d.undecided) { d.program = ""; inp.value = ""; }
+        inp.disabled = d.undecided; und.setAttribute("aria-pressed", d.undecided ? "true" : "false");
+      });
+      const yr = select("v7-chg-yr", [["", "Year (optional)"]].concat(YEARS.map(y => [y, y])), d.year, v => { d.year = v; });
+      yr.setAttribute("aria-label", "Year you plan to apply (optional)");
+      crow.appendChild(inp); crow.appendChild(und); crow.appendChild(yr);
+      cf.appendChild(crow);
+      // How your work happens: several can apply, so a small pill group
+      const [wf, wl] = field("How your work happens", "", "wide");
+      const pillsW = el("div", "v7-minis"); pillsW.setAttribute("role", "group"); pillsW.setAttribute("aria-labelledby", wl.id);
+      WORK_MODES.forEach(m => {
+        const b = el("button", "v7-mini", m.l); b.type = "button";
+        b.setAttribute("aria-pressed", d.workMode.indexOf(m.v) !== -1 ? "true" : "false");
+        b.addEventListener("click", () => {
+          const ix = d.workMode.indexOf(m.v);
+          if (ix >= 0) d.workMode.splice(ix, 1); else d.workMode.push(m.v);
+          b.setAttribute("aria-pressed", ix >= 0 ? "false" : "true");
+        });
+        pillsW.appendChild(b);
+      });
+      wf.appendChild(pillsW);
+      p.appendChild(grid);
+      const acts = el("div", "v7-chg-actions");
+      const ok = el("button", "btn btn-primary v7-btn-small", "Confirm"); ok.type = "button";
+      ok.addEventListener("click", () => {
+        const nl = UI.chg.lens;
+        if (nl.undecided) nl.program = "";
+        if (nl.discipline2 && nl.discipline2 === nl.discipline) nl.discipline2 = "";
+        Object.assign(ns.lens, nl);
+        UI.chg = null;
+        countEvent("profileChanged");
+        renderStage();
+        const b = document.getElementById("v7-chg"); if (b) b.focus();
+        announce("Profile updated.");
+      });
+      const rs = el("button", "btn btn-outline v7-btn-small", "Reset draft"); rs.type = "button";
+      rs.addEventListener("click", () => resetWarning(p, "Reset your work in progress?", rs));
+      acts.appendChild(ok); acts.appendChild(rs);
+      p.appendChild(acts);
+      p.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.preventDefault(); close(); } });
+      return p;
     }
 
     // V7-22 (updated): example controls. "See a finished example" is the primary control; the
-    // others sit beside it in a quieter style. One example open at a time, all closed on arrival.
+    // others sit beside it in a quieter style. One example open at a time. Pass B: a disclosure
+    // triangle (pointing right when closed, down when open); the first example arrives open while
+    // the step is empty (set in renderStage on arrival, see EX_DEFAULT).
     function exampleRow(parent, list, renderBox) {
       const row = el("div", "v7-ex-row");
       list.forEach(([key, label], idx) => {
@@ -2794,7 +3040,7 @@
         b.type = "button"; b.id = "v7-ex-" + key;
         b.setAttribute("aria-expanded", on ? "true" : "false");
         b.setAttribute("aria-controls", "v7-exbox");
-        b.appendChild(el("span", "v7-pm", on ? "−" : "+")).setAttribute("aria-hidden", "true");
+        b.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
         b.appendChild(document.createTextNode(label));
         b.addEventListener("click", () => { UI.ex = on ? "" : key; if (!on) countEvent("example:" + key); renderStage(); });
         row.appendChild(b);
@@ -2802,24 +3048,13 @@
       parent.appendChild(row);
       if (UI.ex) { const box = renderBox(UI.ex); if (box) parent.appendChild(box); }
     }
-    // The example box: fiction tag, the See how it's built switch, the passage, the legend, a footer.
+    // The example box: fiction tag, the passage coloured by part, the legend, a footer.
     // `segs` are {t, job, keys}; job is one of the six SEG_META keys, or "" for an untinted segment.
     function exampleBox(o) {
-      const box = el("div", "v7-exbox" + (UI.built ? " built" : ""));
+      const box = el("div", "v7-exbox built");
       box.id = "v7-exbox";
       const top = el("div", "v7-exbox-top");
       top.appendChild(el("span", "v4-fiction-tag", "Fictional example"));
-      const sw = el("button", "v7-switch");
-      sw.type = "button"; sw.setAttribute("role", "switch"); sw.setAttribute("aria-checked", UI.built ? "true" : "false");
-      sw.appendChild(el("span", "v7-tr")).setAttribute("aria-hidden", "true");
-      sw.appendChild(document.createTextNode("See how it's built"));
-      sw.addEventListener("click", () => {
-        UI.built = !UI.built;
-        sw.setAttribute("aria-checked", UI.built ? "true" : "false");
-        box.classList.toggle("built", UI.built);
-        if (UI.built) countEvent("skeleton");
-      });
-      top.appendChild(sw);
       box.appendChild(top);
       box.appendChild(el("h4", null, o.title));
       if (o.match) box.appendChild(el("p", "v7-match", o.match));
@@ -3009,16 +3244,17 @@
     }
     function renderSetup(c) {
       stageHead(c, "", "Set up your profile",
-        "Six short questions about the competition and your field. Your answers choose the worked examples, prompts and format notes you see in the steps that follow.", false);
+        "Your answers set the prompts in each step, the fictional examples you see and the format template for your CV.", false);
       if (ns.ui.profileNote) {
         const n = el("p", "v7-note");
         n.insertAdjacentHTML("afterbegin", INFO_SVG);
-        n.appendChild(el("span", null, "You can change these answers at any time: select Set up your profile in the steps list."));
+        n.appendChild(el("span", null, "You can change these answers later with the Change button at the top of each step."));
         c.appendChild(n);
       }
       const L = ns.lens, qs = profileQs();
       const n = qs.filter(q => q.has).length;
-      const count = el("p", "v7-qcount", n + " of 6 answered");
+      const count = el("p", "v7-qcount");
+      count.appendChild(progress(n, 6));
       c.appendChild(count);
       announceCount(n + " of 6 answered");
       const list = el("div", "v7-prof-list");
@@ -3037,12 +3273,12 @@
         const h = (t) => { const x = el("h3", "v7-q v7-q-lg", t); x.id = "pq" + i; blk.appendChild(x); };
         if (i === 0) {
           h("Choose the agency you are applying to.");
-          blk.appendChild(explainBox("This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec (FRQ), which now requires it for all grant applications in its three sectors. It also sets the format notes you see, since font rules differ between agencies. If you are not sure, check the program's application guide, or choose Not sure yet for now; you can change it later."));
+          blk.appendChild(explainBox("This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec (FRQ), which now requires it for all grant applications in its three sectors. It also sets the format notes you see, since font rules differ between agencies. If you are not sure which applies, the program's application guide names the format."));
           blk.appendChild(choiceGrid(AGENCIES.map(a => ({ v: a.v, l: a.v === "other" ? "Not sure yet" : a.l, n: agencyFull[a.v] })), v => L.agency === v,
             v => pick(() => { L.agency = v; const a = AGENCIES.find(x => x.v === v); L.format = a ? a.fmt : ""; }, 0), { labelledby: "pq0", idp: "ag" }));
           if (L.agency) {
             const fb = el("p", "v7-feedback");
-            fb.textContent = "✓ " + (L.agency === "frq" ? "Format: the CV-FRQ. The FRQ requires the CV-FRQ for all grant applications."
+            fb.textContent = "✓ " + (L.agency === "frq" ? "Format: the CV-FRQ."
               : L.agency === "other" ? "Format: the Tri-agency CV layout for now. The format notes show every agency's font rule until you choose."
               : "Format: the Tri-agency CV (TCV), with " + labelOf(AGENCIES, L.agency) + "'s font rules.");
             blk.appendChild(fb);
@@ -3050,7 +3286,7 @@
         }
         if (i === 1) {
           h("Name the competition or funding you are applying for.");
-          blk.appendChild(explainBox("A narrative CV is written for a specific competition. If you name the competition here, the personal statement prompt will ask about that competition by name. If you have not chosen one yet, choose Undecided."));
+          blk.appendChild(explainBox("A narrative CV is written for a specific competition. If you name the competition here, the personal statement prompt will ask about that competition by name."));
           const row = el("div", "v7-comp-row");
           const wrap = el("div");
           const lab = el("label", "v7-field-label", "Competition"); lab.htmlFor = "v7-comp";
@@ -3090,7 +3326,7 @@
         }
         if (i === 3) {
           h("Which field is your work closest to?");
-          blk.appendChild(explainBox("Your answer chooses the worked examples and discipline notes you see, so they come from work like yours. Pick the closest fit. You can change it later, and your draft stays as it is."));
+          blk.appendChild(explainBox("Your answer chooses the worked examples and discipline notes you see, so they come from work like yours. Changing it later leaves your draft as it is."));
           blk.appendChild(choiceGrid(DISCIPLINES, v => L.discipline === v, v => pick(() => { L.discipline = v; if (L.discipline2 === v) L.discipline2 = ""; }, 3), { labelledby: "pq3", idp: "di" }));
           // D-2: one line for a researcher whose field is missing.
           const miss = el("p", "v7-quiet");
@@ -3101,13 +3337,13 @@
         }
         if (i === 4) {
           h("Does your work also sit in another field?");
-          blk.appendChild(explainBox("Pick one if your work spans two fields. The Contributions step then adds a worked example that spans the same two."));
+          blk.appendChild(explainBox("With a second field, the Contributions step adds a worked example that spans both."));
           const opts = [{ v: "none", l: "No, just this one", wide: true }].concat(DISCIPLINES.filter(d => d.v !== L.discipline));
           blk.appendChild(choiceGrid(opts, v => L.discipline2 === v, v => pick(() => { L.discipline2 = v; }, 4), { labelledby: "pq4", idp: "d2" }));
         }
         if (i === 5) {
           h("How does your work usually happen? Choose any that apply.");
-          blk.appendChild(explainBox("Many researchers work in more than one way, so choose every one that fits. Your answer chooses the role and outcome prompts and the worked example you see."));
+          blk.appendChild(explainBox("Many researchers work in more than one way. Your answer chooses the role and outcome prompts and the worked example you see."));
           blk.appendChild(choiceGrid(WORK_MODES, v => (L.workMode || []).indexOf(v) !== -1, v => {
             const m = L.workMode || (L.workMode = []); const ix = m.indexOf(v);
             if (ix >= 0) m.splice(ix, 1); else m.push(v);
@@ -3118,10 +3354,11 @@
       }
       profileShown = Math.max(profileShown, reveal + 1);
       c.appendChild(list);
-      if (n === 6) navRow(c, { note: "You can change any of these answers later: select Set up your profile in the steps list." });
+      if (n === 6) navRow(c, { nextLabel: "Confirm profile", onNext: confirmProfile,
+        note: ns.ui.profileNote ? "" : "You can change these answers later with the Change button at the top of each step." });
       else {
         const nav = el("div", "narrative-nav v7-nav-quiet");
-        nav.appendChild(el("p", "v4-help v7-nav-note", "The next question opens when you answer this one. You can also go straight to a step in the steps list."));
+        nav.appendChild(el("p", "v4-help v7-nav-note", "The next question opens when you answer this one."));
         c.appendChild(nav);
       }
     }
@@ -3148,7 +3385,8 @@
       head.appendChild(el("p", "v4-kicker", GROUP_LABEL.app));
       head.appendChild(el("h2", null, secName("contrib")));
       c.appendChild(head);
-      const lede = el("p", "narrative-intro-text v7-lede", "Describe up to 10 contributions or experiences that relate to your application. Choose the ones most relevant to this funding opportunity, which may differ from your most recent work. A contribution can be a single output or a collection of related work presented together, such as a cluster of papers, a program or a partnership. A short list of well-explained contributions is stronger than a long list. The fields below break each one into parts; in the finished CV they read as one paragraph. The example shows what that looks like, and the guide sets out ");
+      c.appendChild(el("p", "v7-startline", "You start with your contributions."));
+      const lede = el("p", "narrative-intro-text v7-lede", "Describe up to 10 contributions that relate to this funding opportunity; they may differ from your most recent work. A contribution can be a single output or a group of related work, such as a cluster of papers, a program or a partnership. A few well-explained contributions are stronger than a long list. In the finished CV, each one reads as a single paragraph. The guide sets out ");
       lede.appendChild(guideLink("what counts as a contribution", "three"));
       lede.appendChild(document.createTextNode("."));
       c.appendChild(lede);
@@ -3156,7 +3394,7 @@
       const L = ns.lens, inter = INTERDISCIPLINARY_LIBRARY[interKey(L.discipline, L.discipline2)];
       const ex = [["finished", "See a finished example"]];
       if (inter) ex.push(["two", "See an example across two fields"]);
-      ex.push(["jobs", "How the six jobs sound in your field"]);
+      ex.push(["jobs", "How each part sounds in your field"]);
       exampleRow(c, ex, (key) => {
         const disc = L.discipline || "stem";
         if (key === "finished") {
@@ -3166,17 +3404,17 @@
           if (!L.discipline) match += " Choose your field in your profile and it changes to match.";
           return exampleBox({ title: "What a finished contribution reads like — " + (labelOf(DISCIPLINES, pick.disc) || "STEM / engineering"), match,
             segs: pick.cell.segments.map(sg => ({ t: sg.t, keys: sg.keys, job: sg.r })), legend: SIX_LEGEND,
-            foot: "The content is fictional: the researcher, the project and the numbers are invented. In the finished CV these sentences run together as one paragraph, and each one still does one of the six jobs." });
+            foot: "The content is fictional: the researcher, the project and the numbers are invented. In the finished CV these sentences run together as one paragraph, and each one still does one of the six parts." });
         }
         if (key === "two" && inter) {
           const pair = disciplineLabel(L).replace(" + ", " and ");
           return exampleBox({ title: "A contribution across two fields — " + pair, match: "Shown because you chose a second field.",
             segs: inter.segments.map(sg => ({ t: sg.t, keys: sg.keys, job: sg.r })), legend: SIX_LEGEND,
-            foot: "When work spans two fields, each of the six jobs can say what the work meant in each field: the role in both, outputs in both kinds of venue, outcomes for both audiences. The content is fictional." });
+            foot: "When work spans two fields, each of the six parts can say what the work meant in each field: the role in both, outputs in both kinds of venue, outcomes for both audiences. The content is fictional." });
         }
         if (key === "jobs" && SHAPE_HINTS[disc]) {
           const box = el("div", "v7-exbox"); box.id = "v7-exbox";
-          const hh = el("h4", null, "In " + (labelOf(DISCIPLINES, disc) || "") + ", the six jobs usually sound like this.");
+          const hh = el("h4", null, "In " + (labelOf(DISCIPLINES, disc) || "") + ", the six parts usually sound like this.");
           box.appendChild(hh);
           const ul = el("ul", "v7-hints");
           SHAPE_HINTS[disc].forEach(x => {
@@ -3187,7 +3425,7 @@
             ul.appendChild(li);
           });
           box.appendChild(ul);
-          box.appendChild(el("p", "v7-exfoot", "These are examples. Skip any job your record does not include; a contribution can be complete without all six."));
+          box.appendChild(el("p", "v7-exfoot", "These are examples. Skip any part your record does not include; a contribution can be complete without all six."));
           return box;
         }
         return null;
@@ -3249,9 +3487,7 @@
       title.appendChild(tt);
       head.appendChild(title);
       const side = el("span", "v7-card-side");
-      const cnt = el("span", null, cCount(contrib) + " of 9 answered");
-      side.appendChild(cnt);
-      let dt = dots(cCount(contrib), 9); side.appendChild(dt);
+      let dt = progress(cCount(contrib), 9); side.appendChild(dt);
       if (ns.contributions.length > 1) {
         const fold = el("button", "v7-icon-btn", "▴"); fold.type = "button"; fold.id = "fold-" + contrib.cid;
         fold.setAttribute("aria-label", "Fold contribution " + (i + 1));
@@ -3270,8 +3506,7 @@
       card.appendChild(head);
       const update = () => {
         tt.textContent = contrib.title ? " · " + contrib.title : "";
-        cnt.textContent = cCount(contrib) + " of 9 answered";
-        const nd = dots(cCount(contrib), 9); side.replaceChild(nd, dt); dt = nd;
+        const nd = progress(cCount(contrib), 9); side.replaceChild(nd, dt); dt = nd;
         announceCount(cCount(contrib) + " of 9 answered");
         if (strip) { const ns2 = contribStrip(contrib, UI.evCard === i, i); card.replaceChild(ns2, strip); strip = ns2; }
       };
@@ -3531,15 +3766,14 @@
       ch.appendChild(ct);
       const side = el("span", "v7-card-side");
       const pn = () => PF().filter(f => (ns[f.k] || "").trim()).length;
-      const cnt = el("span", null, pn() + " of 3 answered"); side.appendChild(cnt);
-      let dd = dots(pn(), 3); side.appendChild(dd);
+      let dd = progress(pn(), 3); side.appendChild(dd);
       ch.appendChild(side); card.appendChild(ch);
       const fields = el("div", "v7-fields");
       if (!UI.active || UI.active.indexOf("m-") !== 0) { const first = PF().find(f => !(ns[f.k] || "").trim()); UI.active = "m-" + (first ? first.k : "mentorPhilosophy"); }
       PF().forEach(f => fields.appendChild(cardField({
         id: "m-" + f.k, label: f.label, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose",
         get: () => ns[f.k], set: (v) => { ns[f.k] = v; }, has: () => !!(ns[f.k] || "").trim(),
-        onChange: () => { cnt.textContent = pn() + " of 3 answered"; const nd = dots(pn(), 3); side.replaceChild(nd, dd); dd = nd; announceCount(pn() + " of 3 answered"); }
+        onChange: () => { const nd = progress(pn(), 3); side.replaceChild(nd, dd); dd = nd; announceCount(pn() + " of 3 answered"); }
       })));
       card.appendChild(fields);
       c.appendChild(card);
@@ -3670,15 +3904,13 @@
       ch.appendChild(ct);
       const side = el("span", "v7-card-side");
       const pc = () => { const f = SF(); return [f.filter(x => psHas(x.k)).length, f.length]; };
-      const cnt = el("span", null, pc()[0] + " of " + pc()[1] + " answered"); side.appendChild(cnt);
-      let dd = dots(pc()[0], pc()[1]); side.appendChild(dd);
+      let dd = progress(pc()[0], pc()[1]); side.appendChild(dd);
       ch.appendChild(side); card.appendChild(ch);
       card.appendChild(el("p", "v7-card-sub", "If a prompt feels hard, the answer is usually already in one of your contributions."));
       if (!UI.active || UI.active.indexOf("ps-") !== 0) { const first = SF().find(f => !psHas(f.k)); UI.active = "ps-" + (first ? first.k : "anchor"); }
       let strip = null;
       const update = () => {
-        cnt.textContent = pc()[0] + " of " + pc()[1] + " answered";
-        const nd = dots(pc()[0], pc()[1]); side.replaceChild(nd, dd); dd = nd;
+        const nd = progress(pc()[0], pc()[1]); side.replaceChild(nd, dd); dd = nd;
         announceCount(pc()[0] + " of " + pc()[1] + " answered");
         if (strip) { const n2 = psStrip(); card.replaceChild(n2, strip); strip = n2; }
       };
@@ -3812,6 +4044,7 @@
       wd.appendChild(dp);
       if (shut) wd.appendChild(el("p", "v7-quiet", "The draft is shrunk. Show it to read it again; it follows the order below."));
       c.appendChild(wd);
+      renderGlance(c, { title: "What your draft contains" });
 
       // V7-31: the order of contributions, with ↑ ↓.
       const os = el("section", "v7-order"); os.setAttribute("aria-labelledby", "v7-oc-t");
@@ -3907,6 +4140,285 @@
       navRow(c);
     }
 
+    // ── At a glance visuals (Prem, 2026-10-29) ─────────────────────────────
+    // Five descriptive visuals on Review, drawn from data the tool already holds in `ns`. Each is an
+    // inline SVG string so it can also be saved as a PNG (canvas, offline, no library). No scores,
+    // no ratings, no good/bad colours: burgundy for counts, the six SEG_META tints for the parts.
+    const GV_FONT = "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+    const GV_INK = "#222222", GV_MUTED = "#6b6b6b", GV_TRACK = "#ececec", GV_HAIR = "#d0d0d0", GV_BAR = "#912338";
+    const GV_W = 520;
+    const gvEsc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    const gvNum = (n) => Number(n).toLocaleString("en-CA");
+    const gvCut = (s, n) => { s = (s || "").trim().replace(/\s+/g, " "); return s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : s; };
+    const gvText = (x, y, s, o) => {
+      o = o || {};
+      return '<text x="' + x + '" y="' + y + '" font-family="' + GV_FONT + '" font-size="' + (o.size || 13) + '"' +
+        (o.weight ? ' font-weight="' + o.weight + '"' : "") + ' fill="' + (o.fill || GV_INK) + '"' +
+        (o.anchor ? ' text-anchor="' + o.anchor + '"' : "") + ">" + gvEsc(s) + "</text>";
+    };
+    const gvRect = (x, y, w, h, fill, extra) => '<rect x="' + x + '" y="' + y + '" width="' + Math.max(0, w) + '" height="' + h + '" fill="' + fill + '"' + (extra || "") + "/>";
+    // The outer SVG: explicit width and height so the PNG renders at the same size, a white ground,
+    // role="img" and an aria-label that carries the numbers.
+    function gvSvg(h, label, body) {
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + GV_W + " " + h + '" width="' + GV_W + '" height="' + h + '" role="img" aria-label="' + gvEsc(label) + '">' +
+        "<title>" + gvEsc(label) + "</title>" + gvRect(0, 0, GV_W, h, "#ffffff") + body + "</svg>";
+    }
+    // Rows of labelled horizontal bars: [[label, count], …]; `max` sets the scale.
+    function gvBarRows(rows, y0, max) {
+      const lx = 16, bx = 196, bw = GV_W - bx - 56, rh = 26;
+      let out = "";
+      rows.forEach(([label, n], i) => {
+        const y = y0 + i * rh;
+        out += gvText(lx, y + 13, gvCut(label, 28), { size: 12.5 });
+        out += gvRect(bx, y + 2, bw, 14, GV_TRACK, ' rx="2"');
+        if (n > 0) out += gvRect(bx, y + 2, Math.max(3, bw * n / max), 14, GV_BAR, ' rx="2"');
+        out += gvText(bx + bw + 10, y + 14, gvNum(n), { size: 12.5, weight: 600 });
+      });
+      return { svg: out, h: rows.length * rh };
+    }
+    const gvSummary = (title, rows) => title + ": " + rows.filter(r => r[1] > 0).map(r => r[0] + " " + r[1]).join(", ");
+
+    // 1. Evidence by type, across all contributions' live evidence items.
+    function glanceEvidence() {
+      const counts = EVIDENCE_TYPES.map(t => [t, 0]); let untyped = 0;
+      ns.contributions.forEach(c => liveEvidence(c).forEach(e => {
+        const row = counts.find(r => r[0] === e.type);
+        if (row) row[1]++; else untyped++;
+      }));
+      if (untyped) counts.push(["Kind not chosen", untyped]);
+      const total = counts.reduce((n, r) => n + r[1], 0);
+      if (!total) return null;
+      const title = "Evidence by type";
+      const sub = gvText(16, 26, total + (total === 1 ? " evidence item" : " evidence items") + " across your contributions", { size: 12, fill: GV_MUTED });
+      const bars = gvBarRows(counts, 42, Math.max(...counts.map(r => r[1])));
+      return { key: "evidence", title, summary: gvSummary(title, counts), svg: gvSvg(42 + bars.h + 10, gvSummary(title, counts), sub + bars.svg) };
+    }
+
+    // 2. The six parts across contributions: one row per contribution, one column per part.
+    function glanceParts() {
+      const live = liveContributions();
+      if (!live.length) return null;
+      const parts = CF().filter(f => f.job).map(f => ({ k: f.k, job: f.job, meta: SEG_META.find(m => m[0] === f.job) }));
+      const title = "The six parts across your contributions";
+      const lx = 16, gx = 184, cw = (GV_W - gx - 8) / parts.length, sq = 18, headH = 54, rh = 34;
+      let body = "";
+      // Column heads wrapped at about nine characters a line, bottom-aligned above the squares.
+      parts.forEach((p, j) => {
+        const lines = [], cx = gx + j * cw + cw / 2;
+        p.meta[1].split(" ").forEach(wd => { const last = lines.length - 1; if (last >= 0 && (lines[last] + " " + wd).length <= 9) lines[last] += " " + wd; else lines.push(wd); });
+        lines.forEach((ln, k) => { body += gvText(cx, headH - 10 - (lines.length - 1 - k) * 12, ln, { size: 10.5, fill: GV_MUTED, anchor: "middle" }); });
+      });
+      const said = [];
+      live.forEach(({ c }, pos) => {
+        const y = headH + pos * rh;
+        if (pos) body += '<line x1="' + lx + '" y1="' + (y - 4) + '" x2="' + (GV_W - 12) + '" y2="' + (y - 4) + '" stroke="' + GV_TRACK + '" stroke-width="1"/>';
+        body += gvText(lx, y + 12, "Contribution " + (pos + 1), { size: 12, weight: 600 });
+        body += gvText(lx, y + 26, gvCut(c.title || "No headline yet", 27), { size: 11, fill: GV_MUTED });
+        const have = [];
+        parts.forEach((p, j) => {
+          const on = cHas(c, p.k), x = gx + j * cw + (cw - sq) / 2;
+          body += on ? gvRect(x, y + 4, sq, sq, p.meta[2], ' rx="3" stroke="#8a8a8a" stroke-width="1"')
+            : gvRect(x + 0.75, y + 4.75, sq - 1.5, sq - 1.5, "#ffffff", ' rx="3" stroke="' + GV_HAIR + '" stroke-width="1.5"');
+          if (on) have.push(p.meta[1]);
+        });
+        said.push("Contribution " + (pos + 1) + " has " + have.length + " of " + parts.length + (have.length ? " (" + have.join(", ") + ")" : ""));
+      });
+      const label = title + ". " + said.join("; ") + ".";
+      return { key: "parts", title, summary: label, svg: gvSvg(headH + live.length * rh + 6, label, body) };
+    }
+
+    // 3. Your role: led, co-led, contributed a part, across live contributions.
+    const GV_ROLE = { led: "Led", coled: "Co-led", part: "Contributed a specific part" };
+    function glanceRole() {
+      const live = liveContributions();
+      const rows = ROLE_LEVELS.map(([v]) => [GV_ROLE[v] || v, live.filter(({ c }) => c.roleMode === v).length]);
+      const chosen = rows.reduce((n, r) => n + r[1], 0);
+      if (!chosen) return null;
+      const title = "Your role";
+      const sub = gvText(16, 26, "Across " + live.length + (live.length === 1 ? " contribution" : " contributions") +
+        (chosen < live.length ? ", " + chosen + " with a role chosen" : ""), { size: 12, fill: GV_MUTED });
+      const bars = gvBarRows(rows, 42, Math.max(live.length, 1));
+      return { key: "role", title, summary: gvSummary(title, rows), svg: gvSvg(42 + bars.h + 10, gvSummary(title, rows), sub + bars.svg) };
+    }
+
+    // 4. People trained (counts by level) and where the trainees you described are now.
+    function glanceTrained() {
+      const levels = MENTOR_COUNT_LABELS.map(([k, l]) => [l, Math.max(0, parseInt(ns.mentorCounts[k], 10) || 0)]);
+      const withContent = ns.mentees.filter(menteeHasContent);
+      const kinds = MENTEE_KINDS.map(([k, l]) => [l, withContent.filter(m => m.kind === k).length]);
+      const nL = levels.reduce((n, r) => n + r[1], 0), nK = kinds.reduce((n, r) => n + r[1], 0);
+      if (!nL && !nK) return null;
+      const title = "People trained and where they went";
+      let body = "", y = 8;
+      const parts = [];
+      if (nL) {
+        body += gvText(16, y + 18, "By level (" + nL + " in total)", { size: 12.5, weight: 600 });
+        const b = gvBarRows(levels.filter(r => r[1] > 0), y + 30, Math.max(...levels.map(r => r[1])));
+        body += b.svg; y += 30 + b.h + 8;
+        parts.push("by level, " + levels.filter(r => r[1] > 0).map(r => r[0] + " " + r[1]).join(", "));
+      }
+      if (nK) {
+        body += gvText(16, y + 18, "Where the trainees you described are now (" + nK + ")", { size: 12.5, weight: 600 });
+        const b = gvBarRows(kinds.filter(r => r[1] > 0), y + 30, Math.max(...kinds.map(r => r[1])));
+        body += b.svg; y += 30 + b.h + 8;
+        parts.push("where they are now, " + kinds.filter(r => r[1] > 0).map(r => r[0] + " " + r[1]).join(", "));
+      }
+      const label = title + ": " + parts.join("; ");
+      return { key: "trained", title, summary: label, svg: gvSvg(y + 4, label, body) };
+    }
+
+    // 5. Length against the page limit. The three groups mirror draftWords() exactly, so they add
+    // up to the same total the Length tile shows.
+    const gvCount = (parts) => { const t = parts.filter(Boolean).join(" ").trim(); return t ? t.split(/\s+/).length : 0; };
+    function glanceWordSplit() {
+      const p = ns.ps, ps = [];
+      if (p.role || p.institution || p.field) ps.push("I am a", p.role, "at", p.institution, "My work is in", p.field);
+      ps.push(p.challenge, p.streams, p.pivot, p.standing, p.programFit, isFrq() ? p.teamFit : "", p.horizon);
+      const co = [];
+      ns.contributions.forEach(c2 => {
+        co.push(c2.title, c2.roleLine, c2.stakes, c2.activities, c2.outputs, c2.outcomes, c2.translational, c2.impact);
+        (c2.evidence || []).forEach(e => co.push(e.text, e.note));
+      });
+      const me = [];
+      ns.mentees.forEach(m => { const q = menteeParts(m); me.push(m.stage, q.where, q.recog, q.why); });
+      me.push(ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage);
+      return { contrib: gvCount(co), mentor: gvCount(me), ps: gvCount(ps) };
+    }
+    const GV_LEN_TONES = { contrib: "#912338", mentor: "#c27a88", ps: "#e7cfd3" };
+    function glanceLength() {
+      const s = glanceWordSplit(), total = s.contrib + s.mentor + s.ps;
+      if (!total) return null;
+      const title = "Length against the page limit";
+      const cap = WORDS_PER_PAGE * PAGE_LIMIT_EN, scale = Math.max(cap, total);
+      const bx = 16, bw = GV_W - 32, by = 50, bh = 26;
+      const segs = [["contrib", "Contributions"], ["mentor", "Mentorship"], ["ps", secName("ps")]].map(([k, l]) => ({ k, l, n: s[k] }));
+      let body = gvText(16, 26, "About " + gvNum(Math.round(total / 10) * 10) + " words, " + (total / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(total).replace("roughly ", "")) + " of " + PAGE_LIMIT_EN + " pages, roughly", { size: 12.5 });
+      body += gvRect(bx, by, bw, bh, GV_TRACK, ' rx="3"');
+      let x = bx;
+      segs.forEach(g => { if (!g.n) return; const w = bw * g.n / scale; body += gvRect(x, by, w, bh, GV_LEN_TONES[g.k], ' stroke="#ffffff" stroke-width="1"'); x += w; });
+      // Page ticks and the limit line.
+      for (let pg = 1; pg <= Math.floor(scale / WORDS_PER_PAGE); pg++) {
+        const tx = bx + bw * (pg * WORDS_PER_PAGE) / scale;
+        body += '<line x1="' + tx + '" y1="' + (by + bh) + '" x2="' + tx + '" y2="' + (by + bh + 5) + '" stroke="' + GV_MUTED + '" stroke-width="1"/>';
+        if (pg === PAGE_LIMIT_EN || pg === 1) body += gvText(tx, by + bh + 17, pg === PAGE_LIMIT_EN ? PAGE_LIMIT_EN + " pages (limit)" : "1 page", { size: 10.5, fill: GV_MUTED, anchor: pg === PAGE_LIMIT_EN && tx > GV_W - 60 ? "end" : "middle" });
+      }
+      const lim = bx + bw * cap / scale;
+      body += '<line x1="' + lim + '" y1="' + (by - 6) + '" x2="' + lim + '" y2="' + (by + bh + 5) + '" stroke="' + GV_INK + '" stroke-width="1.5" stroke-dasharray="3 2"/>';
+      // Legend, one line per section so long section names fit.
+      const ly0 = by + bh + 40;
+      segs.forEach((g, i) => {
+        const ly = ly0 + i * 20;
+        body += gvRect(16, ly - 10, 12, 12, GV_LEN_TONES[g.k], ' rx="2"' + (g.k === "ps" ? ' stroke="#b9a0a5" stroke-width="1"' : ""));
+        body += gvText(34, ly, g.l, { size: 12 });
+        body += gvText(GV_W - 16, ly, gvNum(g.n) + " words", { size: 12, weight: 600, anchor: "end" });
+      });
+      const ly = ly0 + segs.length * 20 - 20;
+      body += gvText(16, ly + 24, "At about " + WORDS_PER_PAGE + " words a page. The template sets the real length.", { size: 11, fill: GV_MUTED });
+      const label = title + ": about " + total + " words against " + PAGE_LIMIT_EN + " pages; contributions " + s.contrib + ", mentorship " + s.mentor + ", " + secName("ps").toLowerCase() + " " + s.ps + ".";
+      return { key: "length", title, summary: label, svg: gvSvg(ly + 36, label, body) };
+    }
+
+    // The saved image carries its own title band, since the page shows the title outside the SVG.
+    function gvForPng(v) {
+      const m = v.svg.match(/^(<svg[^>]*viewBox="0 0 (\d+) )(\d+)("[^>]*height=")(\d+)("[^>]*>)(<title>.*?<\/title>)([\s\S]*)<\/svg>$/);
+      if (!m) return v.svg;
+      const h = +m[3] + 30;
+      return m[1] + h + m[4] + h + m[6] + m[7] + gvRect(0, 0, GV_W, h, "#ffffff") + gvText(16, 24, v.title, { size: 15, weight: 700 }) +
+        '<g transform="translate(0 30)">' + m[8] + "</g></svg>";
+    }
+    // Every visual that has data, in a fixed order.
+    // [{key, title, summary, svg (string, for the page), png (string, for the saved image)}]
+    function glanceSvgs() {
+      return [glanceEvidence, glanceParts, glanceRole, glanceTrained, glanceLength].map(f => f()).filter(Boolean)
+        .map(v => Object.assign(v, { png: gvForPng(v) }));
+    }
+
+    // Renders an SVG (element or string) to a 2x canvas on white and downloads it as a PNG.
+    // A data: URL keeps it offline and leaves the canvas untainted.
+    function downloadPng(svg, filename) {
+      return new Promise((resolve) => {
+        const src = typeof svg === "string" ? svg : new XMLSerializer().serializeToString(svg);
+        const vb = (src.match(/viewBox="([\d.\s-]+)"/) || [])[1];
+        const dims = vb ? vb.trim().split(/\s+/).map(Number) : [GV_W, 300];
+        const w = dims[2] || GV_W, h = dims[3] || 300, scale = 2;
+        const img = new Image();
+        img.onload = () => {
+          const cv = document.createElement("canvas"); cv.width = Math.round(w * scale); cv.height = Math.round(h * scale);
+          const cx = cv.getContext("2d");
+          cx.fillStyle = "#ffffff"; cx.fillRect(0, 0, cv.width, cv.height);
+          cx.drawImage(img, 0, 0, cv.width, cv.height);
+          const fire = (href, revoke) => {
+            const a = el("a"); a.href = href; a.download = filename;
+            document.body.appendChild(a); a.click(); a.remove();
+            if (revoke) setTimeout(() => URL.revokeObjectURL(href), 1000);
+            resolve(true);
+          };
+          if (cv.toBlob) cv.toBlob(b => b ? fire(URL.createObjectURL(b), true) : fire(cv.toDataURL("image/png"), false), "image/png");
+          else fire(cv.toDataURL("image/png"), false);
+        };
+        img.onerror = () => resolve(false);
+        img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(src);
+      });
+    }
+    const gvFile = (key) => "narrative-cv-" + key + ".png";
+
+    // Review: the At a glance section. Renders nothing when no visual has data.
+    function renderGlance(parent, opts) {
+      opts = opts || {};
+      const list = glanceSvgs();
+      if (!list.length) return null;
+      const sec = el("section", "v7-gv"); sec.setAttribute("aria-labelledby", "v7-gv-t");
+      const h = el("h3", "v7-h3", opts.title || "At a glance"); h.id = "v7-gv-t"; sec.appendChild(h);
+      sec.appendChild(el("p", "v7-quiet v7-gv-lede", "Drawn from the details you entered, beyond the prose."));
+      const grid = el("div", "v7-gv-grid");
+      list.forEach(v => {
+        const fig = el("figure", "v7-gv-box"); fig.dataset.gv = v.key;
+        const cap = el("figcaption", "v7-gv-cap", v.title); fig.appendChild(cap);
+        const art = el("div", "v7-gv-art"); art.innerHTML = v.svg; fig.appendChild(art);
+        const foot = el("div", "v7-gv-foot");
+        const b = el("button", "v7-linkbtn v7-gv-dl", "Download image"); b.type = "button";
+        b.setAttribute("aria-label", "Download image: " + v.title);
+        const st = el("span", "v7-copied"); st.setAttribute("aria-live", "polite");
+        b.addEventListener("click", async () => {
+          countEvent("glancePng");
+          const ok = await downloadPng(v.png, gvFile(v.key));
+          st.textContent = ok ? "Downloaded." : "The image could not be made in this browser.";
+          setTimeout(() => { st.textContent = ""; }, 2500);
+        });
+        foot.appendChild(b); foot.appendChild(st); fig.appendChild(foot);
+        grid.appendChild(fig);
+      });
+      sec.appendChild(grid);
+      parent.appendChild(sec);
+      return sec;
+    }
+
+    // Export: one button that downloads each available visual as its own PNG, a little apart so
+    // the browser accepts several downloads.
+    function renderGlanceExport(parent) {
+      const list = glanceSvgs();
+      if (!list.length) return null;
+      const sec = el("section", "v7-gv-exp"); sec.setAttribute("aria-labelledby", "v7-gvx-t");
+      const h = el("h3", "v7-h3", "Visuals from your draft"); h.id = "v7-gvx-t"; sec.appendChild(h);
+      sec.appendChild(el("p", "v7-quiet v7-gap-b", "The " + (list.length === 1 ? "visual" : list.length + " visuals") + " from At a glance on the Review page, each saved as a separate PNG image: " + list.map(v => v.title.toLowerCase()).join("; ") + "."));
+      const b = el("button", "btn btn-outline", list.length === 1 ? "Download the visual" : "Download all visuals"); b.type = "button"; b.id = "v7-gv-all";
+      const st = el("span", "v7-copied"); st.setAttribute("aria-live", "polite");
+      b.addEventListener("click", async () => {
+        countEvent("glancePngAll");
+        b.disabled = true; let n = 0;
+        for (let i = 0; i < list.length; i++) {
+          if (i) await new Promise(r => setTimeout(r, 350));
+          if (await downloadPng(list[i].png, gvFile(list[i].key))) n++;
+        }
+        b.disabled = false;
+        st.textContent = n === list.length ? "Downloaded " + n + (n === 1 ? " image." : " images.") : n + " of " + list.length + " images downloaded.";
+        setTimeout(() => { st.textContent = ""; }, 3000);
+      });
+      const row = el("div", "v7-actions"); row.appendChild(b); row.appendChild(st); sec.appendChild(row);
+      parent.appendChild(sec);
+      return sec;
+    }
+
     // ── Stage: Export (V7-33) ──────────────────────────────────────────────
     function renderExport(c) {
       stageHead(c, "", "Export your draft",
@@ -3983,6 +4495,7 @@
       pt2.appendChild(row);
       renderFormatNote(pt2, false);
       c.appendChild(pt2);
+      renderGlanceExport(c);
 
       const kw = el("section", "v7-card"); kw.setAttribute("aria-labelledby", "v7-kw-t");
       const kwt = el("h3", "v7-h3", "Keep your work"); kwt.id = "v7-kw-t"; kw.appendChild(kwt);
@@ -4604,21 +5117,43 @@
     noteBtn.addEventListener("click", () => { if (notePanel.hidden) openNotePanel(); else closeNotePanel(); });
 
     // ── Reset & boot ────────────────────────────────────────────────────────
+    // Reset, step two: the browser confirm, then the clear. Step one is resetWarning().
     function resetDraft(e) {
       if (e) e.preventDefault();
-      if (!confirm("Clear your V7 beta draft from this browser? A draft file you saved stays where you saved it. This cannot be undone.")) return;
+      if (!confirm("Are you sure? This clears your draft from this browser. A draft file you saved stays where you saved it.")) return false;
       try { localStorage.removeItem(NCV_KEY); } catch (_) {}
       ns = defaultState();
+      resetUI();
       updateNoteBtn();
       renderStage();
+      return true;
     }
-    document.getElementById("v4-reset").addEventListener("click", resetDraft);
+    // Reset, step one: an inline warning inside `container`. Focus moves to the warning; Cancel
+    // removes it and returns focus to `trigger` (the Reset button). `question` is worded per context.
+    function resetWarning(container, question, trigger) {
+      const old = container.querySelector(".v7-warn");
+      if (old) { old.focus(); return old; }
+      const w = el("div", "v7-warn"); w.setAttribute("role", "group"); w.tabIndex = -1;
+      const q = el("p", null, question); q.id = "v7-warn-q"; w.setAttribute("aria-labelledby", "v7-warn-q");
+      w.appendChild(q);
+      const acts = el("div", "v7-warn-actions");
+      const cancel = el("button", "btn btn-outline", "Cancel"); cancel.type = "button";
+      cancel.addEventListener("click", () => { w.remove(); if (trigger) trigger.focus(); });
+      const go = el("button", "btn btn-primary", "Clear my draft"); go.type = "button";
+      go.addEventListener("click", () => { resetDraft(); });
+      acts.appendChild(cancel); acts.appendChild(go);
+      w.appendChild(acts);
+      w.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.stopPropagation(); cancel.click(); } });
+      container.appendChild(w);
+      w.focus();
+      return w;
+    }
     document.getElementById("v7-home").addEventListener("click", (e) => { e.preventDefault(); goStage("start"); });
 
     document.getElementById("v4-guide-top").href = GUIDE_URL;
     loadState();
     updateNoteBtn();
-    if (ns.mode && ns.stageKey !== "start" && ns.stageKey !== "setup") reentryPending = true;
+    if (ns.mode && ns.profileConfirmed && ns.stageKey !== "start" && ns.stageKey !== "setup") reentryPending = true;
     renderStage();
   })();
   </script>

@@ -448,6 +448,126 @@ under `v7-` names. Every step now matches the approved mock-ups and Prem's mock-
   - INFERRED, for Prem to set: the minimum is one contribution with a headline, Your role (a line or a role level) and at least two of Stakes, What you did, What resulted, What already changed and What could change. Mentorship and the personal statement do not count toward it. One constant, `REVIEW_MIN_JOBS`, holds the job list.
   - Test: two new checks (ghosted and closed below the minimum; open once it is met). 53 checks pass.
 
+- **DECIDED (Prem, 2026-10-29): a saved draft puts a Reset draft button inside the main start card.** "Continue your draft" appears whenever this browser holds saved work (V7 saves as you type in `localStorage` key `ncv-v7`); it does not come from the site. When work is saved, the card holds two buttons: the Continue area (title, line, arrow) and, at the bottom behind a thin rule, a small "Reset draft" button with the note "Clears the draft saved in this browser and starts again." Reset asks for confirmation, clears the draft and returns to the start page, where the card reads "Start your draft". With nothing saved the card is the single "Start your draft" button, as before. The top-bar "Reset draft" link stays. Prem: "we could continue working on the design, but for now, that's good."
+
+- **DECIDED (Prem, 2026-10-29): the start cards carry no shade at rest; emphasis comes from size.** Burgundy outline plus shade means "open or selected right now" everywhere else in V7, so a shaded primary card on the start page teaches the wrong meaning and sets the wrong precedent for the design language. At rest both cards take the grey hairline on white. The primary card stays much wider with a larger burgundy heading (1.6rem, more padding); width and heading colour carry the emphasis. On hover or keyboard focus both cards take the burgundy outline and shade, which is the interaction state and matches the rest of the tool. The in-card rule above the Reset button is grey. Resizing the cards on hover was considered and rejected: the layout moves under the pointer, touch and keyboard users never see it, and text that matters belongs on the card all the time (Opus's reasoning, accepted by Prem as the way to go). Overrides: _none yet_.
+
+- **DECIDED (Prem, 2026-10-29): the start page shows no rail; the rail fades in once the researcher picks a card.** Prem: the rail is "too distracting when you haven't started the process", so it should "only fade up once you confirm your choice". The start page now holds the intro and the two cards alone. Choosing Start your draft, Continue your draft or Load your draft opens the step with the rail fading in. A reload on a later step shows the rail at once, without the fade.
+  - INFERRED: the fade is opacity only, 400 ms, ease-out, and it runs only on the move from the start page; it is off under reduced motion. The rail's progress counts (for example "Contributions 2 of 10") no longer show on the start page, since the rail is gone there; Continue your draft still names that the draft is saved.
+  - INFERRED: without the rail the start page runs one column, and the two cards are capped at 720px so they line up with the intro text instead of running the full page width.
+  - Test: the start-page check now asserts no rail; a new check asserts the rail fades in, empty and with the Draft caption, after Start your draft (55 checks).
+  - Overrides: _none yet_.
+  - INFERRED: the button label is "Reset draft" (matches the top bar), the card is a `div` holding two real buttons (no button inside a button), and the card's hover shade now sits on the Continue area only.
+  - Test: one new check (two buttons in the card; Reset clears the draft and the card reads Start your draft). 54 checks pass.
+
 ## Overrides (Prem)
 
 (empty)
+
+## Queued notes, not built (Prem, 2026-10-29): Set up your profile
+
+- **Rule (Prem):** if people can see it on the page, the text does not say it.
+- **Lede:** drop "Six short questions…". Say what the answers change: the prompt questions, the fictional examples and the format template. Proposed: "Your answers set the prompts in each step, the fictional examples you see and the format template for your CV."
+- **Progress:** replace "6 of 6 answered" with the standard row of squares, one per question, turning green as each is answered. Standardize on the response pages (Setup, Contributions cards, Mentorship, Personal statement). Screen readers keep the spoken count. Prem confirmed: the "standard square" is the existing row of round dots on the contribution cards, redrawn as small squares.
+- **Sticky banner:** no sticky element for now. Prem: revisit once there is a production version.
+- **Question vs info panel:** each panel adds context and the consequence of the choice only, never a restatement of the question or of a visible option. Repeats found:
+  - Agency: "choose Not sure yet" and "you can change it later" (both visible elsewhere); the ✓ line after choosing FRQ repeats the panel's "requires the CV-FRQ for all grant applications".
+  - Competition: "If you have not chosen one yet, choose Undecided" (the button is visible).
+  - Field: "Pick the closest fit" (the question says "closest", and the line below says "choose the closest one").
+  - Second field: "Pick one if your work spans two fields" (restates the question).
+  - Work mode: "choose every one that fits" (the question says "Choose any that apply").
+  - Career stage: no repeat found.
+- BUILT (2026-10-29, pass A): `renderSetup` lede replaced; info panels trimmed (agency, competition, field, work mode; second field reworded to "With a second field, the Contributions step adds a worked example that spans both."); FRQ ✓ line now "✓ Format: the CV-FRQ."; "N of 6 answered" replaced by `progress(n, 6)` inside `.v7-qcount`. New helper `progress(n, t)` (wrapper `.v7-prog`, squares `.v7-dots i` 8px / radius 2px, hidden `.v7-sr` "n of t answered") also used in `contribCard`, How you mentor and Your statement headers; visible count text and the phone rule hiding the squares removed; `announceCount` calls kept.
+- INFERRED: agency panel's last sentence became "If you are not sure which applies, the program's application guide names the format." (the Not sure yet button and "change it later" note stay visible elsewhere).
+- INFERRED: field panel now ends "Changing it later leaves your draft as it is." (consequence only).
+- BUILT (2026-10-29, pass B): the two notes that pointed to "Set up your profile in the steps list" now read "You can change these answers later with the Change button at the top of each step." The navRow note shows only when the top note (new drafts) does not, so the page carries it once. The waiting note under an unanswered question drops "You can also go straight to a step in the steps list" (the rail holds only Set up your profile before confirming).
+- Overrides: _none yet_.
+
+## Queued notes, not built (Prem, 2026-10-29): from profile into the application
+
+- **Confirm step:** the end of Set up your profile has a confirm button in place of the plain "Contributions" button. Confirming moves the researcher into "Your application" with a proper header saying they start with their contributions.
+- **Rail grows:** after confirming, the rail extends downward to show the application steps (Contributions, Mentorship, Personal statement) and the Draft steps.
+- **Profile leaves the rail:** inside the application the rail drops "Set up your profile" and shows only the application. The profile appears as the top bar on each application page (the existing "Tailored for:" bar), with a clear Change button.
+- **Continuing a draft:** with a confirmed profile, Continue your draft goes straight to the application, never to Setup.
+- **Naming (Prem):** it is the researcher's narrative CV, not their application. The rail group "My application" and the application header become "My narrative CV". The confirm button needs a shorter label. Proposed: "Confirm profile".
+- **Change edits in place (Prem):** the researcher stays on the page. Change expands the Tailored for bar downward into a minimal panel: the six answers as compact controls, with no question text or info panels, since the researcher already knows each field. A confirm button closes it and they continue; the page's prompts and examples update.
+- **Reset in the Change panel (Prem):** the expanded panel also holds a reset button. Prem: it resets the whole draft and needs a double confirmation.
+  - INFERRED: step one, Reset draft opens an inline warning in the panel ("This clears your whole draft from this browser: profile, contributions, mentorship and statement. A draft file you saved stays where you saved it.") with a Cancel button. Step two, the warning's own button "Clear my draft" asks the browser's confirm before clearing.
+  - **DECIDED (Prem): two Reset draft buttons only, both with double confirmation, each worded for its context.** Keep the start card's and the Change panel's; remove the top-bar link and the phone-rail button. Every reset clears the whole draft.
+    - Start card, step one: "Reset your work in progress and start a new draft?" Step two: "Are you sure? This clears your draft from this browser. A draft file you saved stays where you saved it."
+    - Change panel, step one: "Reset your work in progress?" Step two: the same "Are you sure?" line.
+    - INFERRED: step one is an inline warning with Cancel and a confirm button; step two is the browser's confirm box. Wording is proposed, from Prem's phrasing.
+- INFERRED: Review and Export appear in the grown rail, ghosted until the review minimum is met, per the earlier DECIDED review-minimum rule.
+- BUILT (2026-10-29, pass A): reset only. Top-bar `#v4-reset` link and the phone-rail `.v7-reset` button removed with their CSS. Start card "Reset draft" now calls `resetWarning(foot, "Reset your work in progress and start a new draft?", rs)` (inline `.v7-warn` with Cancel and "Clear my draft"; focus moves to the warning, Cancel and Escape return focus to the Reset button). "Clear my draft" calls `resetDraft()`, which shows the confirm "Are you sure? This clears your draft from this browser. A draft file you saved stays where you saved it." and clears. The Change panel is not built; it can call `resetWarning(panelEl, "Reset your work in progress?", resetBtn)`.
+- INFERRED: Escape inside the warning cancels it; `resetDraft()` returns true or false.
+- BUILT (2026-10-29, pass B): **Confirm profile.** With all six answered, Setup's forward button reads "Confirm profile" (`navRow` gained `opts.onNext`). `confirmProfile()` sets `ns.profileConfirmed = true` (in `defaultState`, saved with the rest of the state and in the draft file, since `buildDraftFile` copies every key outside DRAFT_SKIP), counts the event `profileConfirmed`, and goes to Contributions.
+- BUILT (pass B): **Rail before and after.** `fillRail` shows only Set up your profile until the profile is confirmed; after it, only the groups "My narrative CV" (Contributions, Mentorship, Personal statement) and Draft (Review, Export, ghosted below the review minimum as before). On the confirming render the groups sit in `.v7-rail-groups.v7-rail-grow` (420 ms fade, slide and clip from the top; off under prefers-reduced-motion). `GROUP_LABEL.app` is "My narrative CV", which also sets the kickers.
+- BUILT (pass B): **Setup and the application are kept apart.** `renderStage` sends a confirmed profile from `setup` to Contributions, and an unconfirmed one from any application or draft step to Setup. On Contributions, Back to Set up your profile is hidden once confirmed.
+- BUILT (pass B): **Change in place.** `tailoredBar` Change (`#v7-chg`, `aria-expanded`, `aria-controls="v7-chg-panel"`) opens `changePanel()` inside the bar: Agency, Career stage, Field, Another field as selects; Competition as a text box with an Undecided toggle and a Year select; How your work happens as a pill group (`aria-pressed`). Field labels only, no questions or info panels. Focus moves to the first control; Escape or Change again closes and returns focus to Change. "Confirm" applies the answers, redraws the step (prompts, examples, section names follow) and returns focus to Change, with "Profile updated." spoken. "Reset draft" calls `resetWarning(panel, "Reset your work in progress?", btn)` then `resetDraft()`. `UI.chg` holds the open panel across redraws; `resetUI()` clears it.
+- BUILT (pass B): **Continue and Load.** `resumeStep()`: with a confirmed profile, `ns.ui.lastStep` when it is an application or draft step (and not locked), else Contributions; without one, Setup. The start card's Continue and Load your draft both use it. The "Welcome back" banner shows only for a confirmed profile.
+- INFERRED: migration. A saved draft or draft file with no `profileConfirmed` key counts as confirmed when it holds any application content (`appHasContent`: contribution text or evidence, statement, mentorship text, counts or people), with or without all six profile answers. Widened from the brief's "all six answers and content" so a researcher with work in progress (for example a V6 draft without a second-field answer) returns to their work; missing answers can be set in the Change panel. A draft without application content starts unconfirmed.
+- INFERRED: the Change panel edits a copy. Confirm applies it; Escape or Change closes the panel and leaves the profile as it was (no half-applied profile behind a stale page).
+- INFERRED: the panel puts the four single choices on one row and the competition and work modes on a row each, for a shorter panel; the work-mode label is "How your work happens". An unanswered select shows "Not answered"; the year select reads "Year (optional)".
+- INFERRED: Save draft stays in the rail before confirming. Set up your profile shows no rail metric (the page has the progress squares).
+- INFERRED: an open example stays open after Confirm and shows the example for the new answers.
+- Overrides: _none yet_.
+
+## Queued notes, not built (Prem, 2026-10-29): Contributions header and counts
+
+- **Header:** after Confirm profile, the Contributions page opens under the kicker "My narrative CV" with a line saying the researcher is starting to build their contributions.
+- **Card progress:** dots (squares) only in the working card; no "1 of 9 answered" text. Same as the Setup progress note.
+- **Rail count:** next to Contributions, a plain number that rises as contributions are added, in place of "1 of 10". It shows one colour below the minimum and turns green once the minimum is met. Prem: "1 of 9" in the card and "1 of 10" in the rail read as the same kind of count and confuse.
+- **Prem, follow-up:** no colour change; the number alone is enough.
+- **Rail sub-rows:** under Contributions, a sub-row joined by an L-shaped connector line, holding the evidence count. The same number pattern applies to every rail step except Personal statement (Prem: "I assume").
+- **Progress while drafting:** after Personal statement and before the Draft group, something like a "Review my draft so far" point. While filling in the CV, the researcher sees clear numbers, such as a running word count, so the work feels like it is progressing.
+- **Rail state:** finished steps take one colour and the current step another; or the current step's circle becomes a triangle pointing at it.
+- **Answers (Prem):**
+  - Evidence sub-row shows the total across all contributions; the point is to see progress.
+  - Personal statement: nothing shows when there is nothing to show.
+  - The word count sits next to the Draft group label, kept simple: words and pages, abbreviated (for example "1,240 w · 2–3 pp").
+  - Finished steps get a green circle; the current step gets a triangle and a bold label.
+  - Mentorship: the main number is people trained; an L sub-row counts the people written up in "A few of the people you trained, and where they went", shown only from the first one. Label DECIDED (Prem): "People", which matches the page's "Person 1" cards and "+ Add a person". "Career" alone was rejected because it clashes with the profile's career stage.
+- BUILT (2026-10-29, pass B): **Header.** Contributions opens under the kicker "My narrative CV" with the line "You start with your contributions." (`.v7-startline`) above the trimmed lede.
+- BUILT (pass B): **Rail metrics** (`railMetric` now returns `{n, sub, sr}` or null). Contributions: a plain number, contributions with content (`liveContribCount`), no colour change; sub-row "Evidence N" (live evidence across all contributions) when N > 0. Mentorship: number = `mentorTotal()`; sub-row "People N" = `menteesDescribed()` when > 0. Personal statement: nothing. The number sits right-aligned on the label's row (`.v7-mt`, grid column 3); the sub-row (`.v7-rsub`) hangs off an L-shaped line drawn from the step's circle. Both are hidden from screen readers; the step's button says the same in words ("Contributions, 2 contributions, 1 evidence item, started").
+- BUILT (pass B): **Draft count.** Beside the Draft group label: "1,240 w · 2–3 pp" (`.v7-rail-wc`, from `draftWords()`, pages from the same 600 and `WORDS_PER_PAGE` bounds as `pagesRange`, rounded to half pages), shown from the first word. Screen readers hear "Draft so far: 1,240 words, roughly 2 to 3 pages". The old "Draft so far" tally box and its length bar are removed with their CSS. The REVIEW_MIN_NOTE caption stays while Review is locked.
+- BUILT (pass B): **Rail state.** A finished step has a filled green circle; the current step has a CSS triangle (pointing right at the label) in place of its circle and a bold burgundy label. Draft items keep their square when not current.
+- INFERRED: below half a page the count shows words only ("69 w"); "p" for exactly one page, "pp" otherwise.
+- INFERRED: Mentorship with people described but no totals shows the People sub-row without a main number.
+- INFERRED: the current step's triangle and label are burgundy even when the step is also finished.
+- Overrides: _none yet_.
+
+## Queued notes, not built (Prem, 2026-10-29): Contributions lede and examples
+
+- **Header:** already queued (kicker "My narrative CV", line on starting the contributions).
+- **Lede:** simplify under the rule (no text about what is visible). Drop "The fields below break each one into parts" and "The example shows what that looks like". Proposed: "Describe up to 10 contributions that relate to this funding opportunity; they may differ from your most recent work. A contribution can be a single output or a group of related work, such as a cluster of papers, a program or a partnership. A few well-explained contributions are stronger than a long list. In the finished CV, each one reads as a single paragraph. The guide sets out what counts as a contribution." (Note: an earlier round kept this instruction "as Prem likes it"; this trims it, so Prem confirms.)
+- **Example buttons:** "See a finished example" does not read as a button. Prem's options: a triangle that folds the example down, or the example open by default with the colour view on and a switch to turn it off (and whether that switch is needed at all).
+- **Answers (Prem):**
+  - Trimmed lede confirmed. Prem wanted room for the My narrative CV opening and no extra reading time.
+  - Examples fold with a triangle (▸ to ▾), coloured when open. Prem: "I really want people to see the example." Proposed: open by default while the researcher has no contributions written, folded once they start.
+  - Remove the colour on/off switch in the next build: the example is always coloured. No name is then needed for the colour mode.
+  - "Six jobs" sounds odd. Proposed: "the six parts" throughout (button "How each part sounds in your field", legend, example footers).
+- BUILT (2026-10-29, pass A): `renderContributions` lede replaced with the trimmed version (guideLink kept); "six jobs" became "six parts" in the example button ("How each part sounds in your field"), the shape-hints heading, both example footers and the hints footer ("Skip any part your record does not include"). Identifiers (`job:`, `SIX_LEGEND`, `REVIEW_MIN_JOBS`, the `jobs` example key) unchanged. Not built here: example triangles and removal of the colour switch.
+- BUILT (2026-10-29, pass B): the +/− marker on the example buttons is a disclosure triangle (`.v7-tri`, ▸ rotated to point down when open; no transition under reduced motion). The See how it's built switch is removed with its CSS and `UI.built`; every example box is drawn coloured with its legend (`.v7-exbox.built`).
+- BUILT (pass B): "See a finished example" arrives open on Contributions while no contribution holds text or evidence (`EX_DEFAULT`, `stepEmpty()` in `renderStage`).
+- INFERRED: the same default applies to Mentorship and Personal statement: their example arrives open while the step holds nothing.
+- INFERRED: the open-or-folded default is set on arrival at the step, so the example does not fold under the researcher while they type; once they have written something it arrives folded on the next visit. Closing or opening it by hand holds for the visit.
+- Overrides: _none yet_.
+
+## Queued idea, not built (Prem, 2026-10-29): "At a glance" visuals on the Review page
+
+- **Prem:** on the Review page, below the draft, a quick visual overview of what the researcher added beyond the prose, built from the data the tool already collects. Meant as a small reward.
+- Proposed visuals, all from data already in the draft (plain HTML and CSS, offline, no chart library):
+  1. **Evidence by type:** a bar per evidence type (Peer-reviewed, Media / public, Policy / practice uptake, Dataset / tool, Award / recognition, Funding, Replication / citation, Other), counted across all contributions.
+  2. **Six parts across contributions:** a small grid, one row per contribution and one column per part, with filled squares where the part is written. Shows balance at a glance (for example, impact thin across the board).
+  3. **Your role:** contributions led, co-led and contributed to.
+  4. **People trained, and where they went:** counts by level (PhD, master's, undergraduate, postdoc), and the "where are they now" split (university, industry, community agency, government).
+  5. **Length against the page limit:** one bar split into contributions, mentorship and statement, against the agency's page limit.
+- Proposed rule: descriptive only, with no scores, ratings or "good/bad" colours.
+- **DECIDED (Prem):** build all five in the next pass.
+- BUILT (2026-10-29, pass C, merged by the lead): `renderGlance` below the draft on Review and `renderGlanceExport` on Export ("Download all visuals"); five SVG visuals, each with "Download image" (PNG via canvas from a data: URL, 2x, no network call).
+  - INFERRED (lead): the line under that heading reads "Drawn from the details you entered, beyond the prose." The first draft repeated the heading, which breaks the visible-text rule.
+  - INFERRED: the section is titled "What your draft contains", since Review already has an "At a glance" heading (the Still missing and Length tiles).
+  - INFERRED: the length visual stays although it overlaps the Length tile; it adds the split by section (contributions, mentorship, statement) against the page limit.
+  - INFERRED (pass C): evidence with text but no type gets its own "Kind not chosen" bar; the evidence visual shows all eight types (zeros as empty bars); Your role counts only contributions with a role level chosen; the six-parts grid fills written parts with the part's colour and leaves unwritten ones as outlined white squares; each PNG carries its own title band; files are named narrative-cv-{evidence|parts|role|trained|length}.png; "Download all visuals" saves them 350 ms apart.
+- **Export (Prem):** researchers can download the visuals as images. INFERRED: draw each visual as SVG so it can be saved as a PNG image in the browser (canvas), offline, with no network call; one "Download image" link per visual on Review, plus a "Download all visuals" option on Export.
+- Overrides: _none yet_.
