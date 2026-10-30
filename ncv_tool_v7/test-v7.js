@@ -130,7 +130,7 @@ async function seed(state, extra) {
   check("visible text says six parts, never six jobs", r.six && !r.jobs, r);
   check("the progress count is hidden text beside squares, not visible words", r.sr0 === "absolute", r.sr0);
   check("arrives with the headline open and the rest one line", r.states[0] === "is-open" && r.states.slice(1).every(x => x === "is-empty"), r.states);
-  check("no self-assessment marks; Tailored for has a Change button", r.marks === 0 && r.tailored, r);
+  check("no self-assessment marks; the Profile bar has a Change button", r.marks === 0 && r.tailored, r);
   check("leaving a field shrinks it to its answer", r.after[0] === "is-filled" && r.after[1] === "is-open", r.after);
   check("closed fields show their question; the writing line holds still when the next field opens", r.qClosed && Math.abs(r.lineMove) <= 2, r);
   check("an answered field hides its question; reopening shows it and holds the line", r.qFilled === 0 && r.qReopen && Math.abs(r.reopenMove) <= 2, r);
@@ -291,6 +291,50 @@ async function seed(state, extra) {
   check("Draft group shows the word count and page range", /^[\d,]+ w/.test(r.wc || "") && /Draft so far: [\d,]+ words/.test(r.srWc), r);
   check("current step has a triangle and bold label; a finished step has a green circle", r.cur.join() === "Contributions" && r.tri === "10px" && r.bold && r.doneOther > 0 && r.green === true, r);
 
+  // Pass D: rail connector under the circle's centre; a finished row is green throughout.
+  r = await js(H + `const green=(c)=>{const m=c.match(/\\d+/g).map(Number); return m[1]>m[0]&&m[1]>m[2];};
+    const a={subs:qa('.v7-rsub').map(s=>{const li=s.parentElement, d=li.querySelector('.narrative-stage-dot').getBoundingClientRect(), sr=s.getBoundingClientRect(), cs=getComputedStyle(s,'::before'); return {dx:Math.abs((sr.left+parseFloat(cs.left)+parseFloat(cs.borderLeftWidth)/2)-(d.left+d.width/2)), dy:Math.round(sr.top+parseFloat(cs.top)-d.bottom)};})};
+    const dn=q('.v7-ri.is-done:not(.is-active)'); a.label=green(getComputedStyle(dn.querySelector('.v7-ri-l')).color); a.num=green(getComputedStyle(dn.querySelector('.v7-mt')).color);
+    const ds=dn.parentElement.querySelector('.v7-rsub'); a.sub=ds?{l:green(getComputedStyle(ds).color), n:green(getComputedStyle(ds.querySelector('.v7-mt')).color), line:green(getComputedStyle(ds,'::before').borderLeftColor)}:null;
+    const cs=q('.v7-ri.is-active').parentElement.querySelector('.v7-rsub'); a.curSubGreen=cs?green(getComputedStyle(cs).color):null;
+    return a;`);
+  check("rail L line starts under the centre of the step's circle (within 1 px), at its lower edge", r.subs.length >= 2 && r.subs.every(x => x.dx <= 1 && Math.abs(x.dy) <= 1), r);
+  check("a finished step's row is green: label, number, and its sub-row label, number and line", r.label && r.num && r.sub && r.sub.l && r.sub.n && r.sub.line && r.curSubGreen === false, r);
+
+  console.log("Pass D: example buttons, Profile bar, card column");
+  r = await js(H + `window.scrollTo(0,0); const bg=(b)=>getComputedStyle(b).backgroundColor, white=(c)=>c==='rgb(255, 255, 255)';
+    const a={}; if(q('#v7-exbox')){q('.v7-ex-btn[aria-expanded=true]').click(); await w(60);}
+    a.rest=qa('.v7-ex-btn').map(b=>({exp:b.getAttribute('aria-expanded'), white:white(bg(b)), border:getComputedStyle(b).borderTopColor}));
+    const p=q('.v7-ex-btn.is-primary'); a.pFont=parseFloat(getComputedStyle(p).fontSize)>parseFloat(getComputedStyle(qa('.v7-ex-btn')[1]).fontSize); a.pBold=parseInt(getComputedStyle(p).fontWeight)>=700; a.pColor=getComputedStyle(p).color;
+    p.click(); await w(60); qa('.v7-ex-btn')[1].click(); await w(300);
+    a.after=qa('.v7-ex-btn').map(b=>({exp:b.getAttribute('aria-expanded'), white:white(bg(b)), border:getComputedStyle(b).borderTopColor, tri:getComputedStyle(b.querySelector('.v7-tri')).transform}));
+    a.prof=q('.v7-tailored-k').innerText; a.tailored=/Tailored for/.test(document.body.innerText);
+    const ch=q('#v7-chg'), t=ch.querySelector('.v7-tri'); a.chg0={exp:ch.getAttribute('aria-expanded'), tri:getComputedStyle(t).transform, white:white(bg(ch))};
+    ch.click(); await w(300); a.chg1={exp:ch.getAttribute('aria-expanded'), tri:getComputedStyle(ch.querySelector('.v7-tri')).transform, shade:bg(ch)};
+    ch.click(); await w(300); a.chg2={exp:ch.getAttribute('aria-expanded'), tri:getComputedStyle(ch.querySelector('.v7-tri')).transform};
+    return a;`);
+  check("no example button has a fill at rest; the first is larger with a bold burgundy label", r.rest.every(x => x.exp === "false" && x.white) && r.pFont && r.pBold && r.pColor === "rgb(145, 35, 56)", r);
+  check("opening a second example leaves only that one expanded, outlined and shaded, triangle down", r.after[0].exp === "false" && r.after[0].white && r.after[0].border !== "rgb(145, 35, 56)" && r.after[1].exp === "true" && !r.after[1].white && r.after[1].border === "rgb(145, 35, 56)" && /matrix\(0(\.0\d*)?, 1/.test(r.after[1].tri) && r.after[0].tri === "none", r);
+  check("the bar reads Profile:, and Change carries a triangle that turns with aria-expanded, no fill at rest", r.prof === "Profile:" && !r.tailored && r.chg0.exp === "false" && r.chg0.tri === "none" && r.chg0.white && r.chg1.exp === "true" && /matrix\(0(\.0\d*)?, 1/.test(r.chg1.tri) && r.chg1.shade !== "rgb(255, 255, 255)" && r.chg2.exp === "false" && r.chg2.tri === "none", r);
+  r = await js(H + `const card=q('.v7-card-col'), col=card.querySelector('nav.v7-fcol'), b=()=>qa('.v7-card-col .v7-fsq');
+    const a={label:col.getAttribute('aria-label'), n:b().length, fields:card.querySelectorAll('.v7-f').length, on:b().filter(x=>x.classList.contains('is-on')).length, sr:card.querySelector('.v7-card-side .v7-sr').textContent, names:b().map(x=>x.getAttribute('aria-label'))};
+    a.written=[...card.querySelectorAll('.v7-f')].filter(f=>f._has()).length + (/item/.test(card.querySelector('.v7-ev-s')?.innerText||'')?1:0);
+    a.greenOk=b().filter(x=>x.classList.contains('is-on')&&!x.classList.contains('is-cur')).every(x=>getComputedStyle(x.querySelector('i')).backgroundColor==='rgb(42, 110, 42)');
+    a.greyOk=b().filter(x=>!x.classList.contains('is-on')&&!x.classList.contains('is-cur')).every(x=>getComputedStyle(x.querySelector('i')).backgroundColor==='rgb(255, 255, 255)');
+    const cr=col.getBoundingClientRect(), fr=card.querySelector('.v7-fields').getBoundingClientRect(); a.clear=cr.left>=fr.right; a.inCard=cr.right<=card.getBoundingClientRect().right;
+    const tgt=b()[5]; tgt.click(); await w(700);
+    a.open=q('.v7-f.is-open')?.dataset.f; a.want=tgt.dataset.for; a.focus=document.activeElement.id; a.cur=qa('.v7-card-col .v7-fsq[aria-current]').map(x=>x.dataset.for); a.tri=getComputedStyle(tgt.querySelector('i')).borderRightWidth; a.inView=(()=>{const r=q('.v7-f.is-open').getBoundingClientRect(); return r.top>=0&&r.top<innerHeight;})();
+    window.scrollTo(0, card.getBoundingClientRect().top+scrollY+300); await w(100); a.sticky=Math.round(col.getBoundingClientRect().top)-q('.proto-banner').offsetHeight; a.pos=getComputedStyle(col).position;
+    return a;`);
+  check("desktop card column: a labelled nav with one button per field, named with its state; the spoken count stays", r.label === "Fields in contribution 1" && r.n === 9 && r.fields === 8 && /^Headline, (written|not written yet)$/.test(r.names[0]) && /^Evidence, /.test(r.names[8]) && /of 9 answered/.test(r.sr), r);
+  check("green squares match the written fields; unwritten squares are grey outlines; the column sits clear of the writing", r.on === r.written && r.greenOk && r.greyOk && r.clear && r.inCard, r);
+  check("clicking a square opens and focuses that field; it shows the triangle and aria-current", r.open === r.want && r.focus === r.want && r.cur.join() === r.want && r.tri === "10px" && r.inView, r);
+  check("the column is sticky below the top bar while the card is on screen", r.pos === "sticky" && r.sticky >= 0 && r.sticky <= 24, r);
+  r = await js(H + `rail('Mentorship').click(); await w(150); const m=q('.v7-card-col nav')?.getAttribute('aria-label'), mn=qa('.v7-card-col .v7-fsq').length, mc=qa('.v7-card-col .v7-fsq[aria-current]').length;
+    rail('Personal statement').click(); await w(150); const p=q('.v7-card-col nav')?.getAttribute('aria-label'), pn=qa('.v7-card-col .v7-fsq').length;
+    rail('Contributions').click(); await w(150); return {m, mn, mc, p, pn};`);
+  check("How you mentor and Your statement carry the same column", r.m === "Fields in How you mentor" && r.mn === 3 && r.mc === 1 && r.p === "Fields in Your statement" && r.pn >= 7, r);
+
   // Continue and Load land on Contributions for a confirmed profile (no saved application step).
   await seed(Object.assign({}, fixture, { stageKey: "setup", mode: "compose" }));
   r = await js(H + `const a={conf:JSON.parse(localStorage.getItem('ncv-v7')).profileConfirmed, h0:q('.narrative-stage-header h2')?.innerText, rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]).length};
@@ -342,6 +386,10 @@ async function seed(state, extra) {
   check("order buttons are at least 44 px (D-14); the phone rail has no Reset and no Set up your profile after confirming", r.mv >= 44 && !r.reset && r.setup === -1, r);
   r = await js(H + `rail('Contributions').click(); await w(100); window.scrollTo(0,0); q('#v7-chg').click(); await w(150); const o={sw:document.documentElement.scrollWidth, open:!!q('#v7-chg-panel'), right:Math.round(q('#v7-chg-panel').getBoundingClientRect().right)}; q('#v7-chg').click(); await w(60); return o;`);
   check("no sideways scroll at 375 px with the Change panel open", r.open && r.sw <= 375 && r.right <= 375, r);
+  r = await js(H + `rail('Contributions').click(); await w(150); const card=q('.v7-card-col'), h=card.querySelector('.v7-card-h');
+    window.scrollTo(0, card.getBoundingClientRect().top+scrollY+300); await w(150);
+    return {col:getComputedStyle(card.querySelector('.v7-fcol')).display, pos:getComputedStyle(h).position, top:Math.round(h.getBoundingClientRect().top), bar:q('.proto-banner').offsetHeight, dots:h.querySelectorAll('.v7-dots i').length, sw:document.documentElement.scrollWidth, right:Math.round(h.getBoundingClientRect().right)};`);
+  check("phone: the card header row (title and squares) sticks under the top bar, no column, no sideways scroll", r.col === "none" && r.pos === "sticky" && Math.abs(r.top - r.bar) <= 1 && r.dots === 9 && r.sw <= 375 && r.right <= 375, r);
   await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
   r = await js("return getComputedStyle(document.querySelector('.v7-f')).transitionDuration;");
   check("reduced motion turns field transitions off", /^0s/.test(r), r);

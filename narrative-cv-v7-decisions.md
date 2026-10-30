@@ -571,3 +571,54 @@ under `v7-` names. Every step now matches the approved mock-ups and Prem's mock-
   - INFERRED (pass C): evidence with text but no type gets its own "Kind not chosen" bar; the evidence visual shows all eight types (zeros as empty bars); Your role counts only contributions with a role level chosen; the six-parts grid fills written parts with the part's colour and leaves unwritten ones as outlined white squares; each PNG carries its own title band; files are named narrative-cv-{evidence|parts|role|trained|length}.png; "Download all visuals" saves them 350 ms apart.
 - **Export (Prem):** researchers can download the visuals as images. INFERRED: draw each visual as SVG so it can be saved as a PNG image in the browser (canvas), offline, with no network call; one "Download image" link per visual on Review, plus a "Download all visuals" option on Export.
 - Overrides: _none yet_.
+
+## Queued notes, not built (Prem, 2026-10-29, after f605b53): example buttons
+
+- **Bug (Prem):** "See a finished example" stays filled burgundy after "See an example across two fields" is opened, so it reads as the selected one. Cause: the first button carries a permanent filled `is-primary` style (pass B's answer to "not obvious as a button"), separate from the open state.
+- Proposed: no fill on any example button. Emphasis by size, as on the start cards: the first button is larger with a bold burgundy label. Open state as everywhere else: burgundy outline and shade, triangle turned down. Only the open button carries the outline and shade.
+- BUILT (2026-10-29, pass D): `exampleRow` / `.v7-ex-btn`: no fill on any example button. Resting = white with a 1.5px grey hairline; the first (`.is-primary`) is larger (0.98rem, 42px tall) with a bold burgundy label; only `[aria-expanded="true"]` carries the burgundy outline and `--v7-open` shade, triangle turned down. The filled `is-primary` rules (and their hover and open variants) are deleted, which fixes the reported bug: opening another example leaves the first plain.
+- BUILT (pass D): the triangle is now one shared rule (`.v7-tri`, `[aria-expanded="true"] > .v7-tri` turns it down; `.v7-tri.is-down` for a fixed open marker), so every disclosure uses the same mark.
+- **DECIDED (Prem, 2026-10-29): the Profile bar.** In `tailoredBar` the label "Tailored for:" now reads "Profile:", and Change (`#v7-chg`) carries the same disclosure triangle (▸ closed, turned down while the Change panel is open, driven by `aria-expanded`). Change has no fill at rest (white, grey hairline, burgundy label, class `.v7-disc`) and takes the burgundy outline and shade only while open.
+- INFERRED: the resting example-button border stays the darker field grey (`--v7-field`, 3:1 against white) at 1.5px, since a lighter card grey would not read as a control.
+- Test: "no example button has a fill at rest…", "opening a second example leaves only that one expanded…", "the bar reads Profile:, and Change carries a triangle…".
+- Overrides: _none yet_.
+
+## Queued idea, not built (Prem, 2026-10-29): card progress stays in view while scrolling
+
+- **Prem:** the card's progress squares scroll away with the card header; keep them visible as the researcher scrolls, perhaps on the right side. (Revisits the earlier "no sticky element for now".)
+- Options discussed: (A) the card header row (title and squares) sticks to the top while that card is on screen; (B) a vertical column of squares pinned to the card's right edge, one per field, sticky while the card is on screen, each square a link to its field, the current field marked with the triangle; (C) the same column in the page's right margin, outside the card.
+- Recommended: B on desktop, A on phones (no room for a side column under 768px).
+- **DECIDED (Prem):** B, the vertical column of squares on the card's right edge (clickable, current field marked with the triangle), sticky while the card is on screen; A (sticky header row) on phones.
+- BUILT (2026-10-29, pass D): `fieldCol(card, name, items, isCur, onPick)` adds a `nav.v7-fcol` ("Fields in contribution N", "Fields in How you mentor", "Fields in Your statement") holding an ordered list of buttons, one per field in field order (Contributions: the eight fields plus Evidence, matching the 9 squares of `cCount`). Each button is named "{field label}, written" or "{field label}, not written yet", has the label as a tooltip, and the open field has `aria-current="true"`. Written = green square, unwritten = grey outline on white, open = the rail's CSS triangle in burgundy. Desktop (≥ 769px): the card becomes a two-column grid; the column sits in its own 24px track to the right of the fields (it never covers the writing) and is `position: sticky` at the top bar's height + 16px, so it stays in view while the card is on screen. The header's horizontal squares are hidden on desktop; the screen-reader count ("n of t answered") stays in the header.
+- BUILT (pass D): clicking a square opens that field through `openField(f, true)` (new `noAnchor` flag: the field opens without holding the old writing line), focuses its box, then scrolls it to the centre after the fields settle; smooth only when reduced motion is off (`motionMs`). From the evidence editor, a field square closes the editor the way its Edit button does and opens the field; the Evidence square opens the editor as "+ Add evidence" does. The column refreshes on any input or click in the tool and whenever a field opens (`syncCols`).
+- BUILT (pass D): phones (≤ 768px): the column is hidden and the card's header row (title and squares) is `position: sticky` under the top bar while that card is on screen, with the card's background behind it. The top bar's height is measured into `--v7-bar` on load and on resize.
+- INFERRED: the column starts beside the first field rather than the card title, so it lines up with the fields it lists.
+- INFERRED: the open field's triangle points left, toward the field, and replaces that field's square (as the rail's triangle replaces the circle); it stays burgundy when the field is written, matching the rail rule. The field's written state is still in its button name.
+- INFERRED: Evidence counts as the ninth square on Contributions, since the card's count already includes it.
+- INFERRED: on phones the sticky header keeps the title to one line with an ellipsis (a long headline otherwise made a five-line header that hid the writing). The full headline is in the Headline field.
+- INFERRED: Set up your profile gets no column. Its questions are revealed one at a time and the page is short, so the row of squares above the questions stays as it is.
+- Test: five new checks (column structure and names; green count = written fields; click opens, focuses, triangle and aria-current; sticky below the top bar; same column on How you mentor and Your statement) and one phone check (sticky header under the top bar, no column, no sideways scroll at 375px).
+- Overrides: _none yet_.
+
+## Queued notes, not built (Prem, 2026-10-29): rail sub-row line and finished colour
+
+- **L connector:** the vertical line starts directly under the centre of the step's circle and runs down to the sub-row (now it sits slightly off the circle).
+- **Finished colour:** when a step is finished, the whole row is green: circle, label and the number. INFERRED: the sub-row (Evidence, People) label, number and connector line turn green with it.
+- BUILT (2026-10-29, pass D): the L line (`.v7-rsub::before`) now sits at left 4.25px with a 1.5px border, so its centre falls on the circle's centre (5px into the 10px circle), and starts at the circle's lower edge (top −7px, height 15px).
+- BUILT (pass D): a finished step that is not current is green across the row: circle (as before), label and number (`.v7-ri.is-done:not(.is-active):not(.is-ghost)` and its `.v7-mt`). Its sub-row gets `.is-done` in `fillRail`, which turns the sub-row label, number and connector line green. The current step stays burgundy, and its sub-row stays grey.
+- INFERRED: a ghosted Draft step never shows the green row, even if it would count as finished.
+- Test: "rail L line starts under the centre of the step's circle (within 1 px)…" and "a finished step's row is green…".
+- Overrides: _none yet_.
+
+## Sweep (pass D), 2026-10-29
+
+The same rules applied across V7 (start page, Setup, Contributions, Mentorship, Personal statement, Review with What your draft contains, Export, Change panel, phone layout):
+
+- **Disclosure triangle:** "Show / Shrink" on Review's working draft (`#v7-draft-toggle`, already `aria-expanded`) now carries the triangle and the same no-fill-at-rest style as Change (`.v7-disc`; outline and shade while expanded). Folded contribution and person rows (`.v7-fold`) start with the triangle ▸ and carry `aria-expanded="false"`; "Open ▾" became "Open". The fold buttons on an open contribution or person card (▴) now show the triangle turned down.
+- **Progress squares:** the folded contribution row's six part-coloured ticks (`.v7-jobs`) are replaced by the standard squares, 9 per contribution, green when written (still hidden on phones).
+- **Permanent fills that read as selected:** the Review order numbers (`.v7-n`) went from a filled burgundy disc to a grey-hairline circle with a bold burgundy number. "What you wrote" above the evidence editor (`.v7-strip.is-top`) lost its burgundy tint and is a white box with a grey hairline. Selected small pills (`.v7-mini`: role level, Undecided, work modes in the Change panel) use the same `--v7-open` shade as other selected boxes (one older rule still filled them solid burgundy underneath the override; it now matches).
+- **Open state:** the evidence editor (`.v7-ev-area`), which is the box being written in, takes the burgundy outline and `--v7-open` shade in place of a burgundy tint with no outline. The Profile bar with the Change panel open adds the `--v7-open` shade to its existing burgundy outline.
+- **Connectors:** the rail's L line is the only connector in the tool; nothing else changed.
+- Reviewed and left as they are: the profile pills in the Profile bar (tags showing the chosen answers, not controls); the "Recommended" badge on Export; the grey hint panels and the early-career note (grey, not selected-looking); the Setup choice cards and their tick (selected state only); "N of T described" on Mentorship (a count of people against a total that can run past 30, not a field-progress count, so squares would not fit); the six-parts grid in What your draft contains (it fills by part colour as data, with the legend).
+- INFERRED: the order-number circle stays round and keeps the number bold burgundy; it is a position marker, not a control.
+- Test count after pass D: 95 (84 before).

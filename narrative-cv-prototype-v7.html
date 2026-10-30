@@ -234,7 +234,7 @@
     .v7-tailored-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 auto; min-width: 0; }
     .v7-pill { display: inline-block; background: var(--v7-tint); color: #912338; border-radius: 12px; padding: 2px 10px; font-size: 0.8rem; }
     /* Pass B: the Change panel opens inside the bar */
-    .v7-tailored.is-open { flex-wrap: wrap; border-color: #912338; }
+    .v7-tailored.is-open { flex-wrap: wrap; border-color: #912338; background: var(--v7-open); }
     .v7-chg { flex: 1 1 100%; border-top: 1px solid var(--v7-card-b); padding-top: 12px; margin-top: 2px; }
     .v7-chg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px 14px; }
     .v7-chg-f.wide { grid-column: 1 / -1; }
@@ -269,22 +269,26 @@
     .v7-choice.wide { grid-column: 1 / -1; min-height: 0; flex-direction: row; gap: 8px; align-items: center; }
     .v7-minis { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
     .v7-mini { border: 1px solid var(--v7-field); background: #fff; border-radius: 16px; padding: 5px 12px; font: inherit; font-size: 0.86rem; cursor: pointer; min-height: 32px; color: var(--text); }
-    .v7-mini[aria-checked="true"], .v7-mini[aria-pressed="true"] { background: #912338; border-color: #912338; color: #fff; }
+    .v7-mini[aria-checked="true"], .v7-mini[aria-pressed="true"] { background: var(--v7-open); border-color: #912338; color: #912338; }
     .v7-comp-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: end; margin-bottom: 16px; }
     .v7-feedback { font-size: 0.85rem; color: var(--v7-done); margin: 10px 0 0; }
     .v7-nav-quiet { justify-content: flex-start; }
 
     /* Example controls and box (V7-22, with Prem's update: the finished example is the primary control) */
     .v7-ex-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
-    .v7-ex-btn { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--v7-field); border-radius: 20px; padding: 6px 14px; font: inherit; font-size: 0.86rem; cursor: pointer; color: var(--text); min-height: 36px; }
+    /* Pass D: no fill on any example button. The first is emphasised by size and a bold burgundy label;
+       only the open button (aria-expanded="true") carries the burgundy outline and shade. */
+    .v7-ex-btn { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid var(--v7-field); border-radius: 20px; padding: 6px 14px; font: inherit; font-size: 0.86rem; cursor: pointer; color: var(--text); min-height: 36px; }
     .v7-ex-btn:hover { border-color: #912338; color: #912338; }
-    .v7-ex-btn .v7-tri { display: inline-block; color: #912338; width: 10px; text-align: center; font-size: 1.05em; line-height: 1; transition: transform 160ms var(--v7-ease); }
-    .v7-ex-btn[aria-expanded="true"] .v7-tri { transform: rotate(90deg); }
+    .v7-ex-btn.is-primary { color: #912338; font-weight: 700; font-size: 0.98rem; padding: 8px 18px; min-height: 42px; }
     .v7-ex-btn[aria-expanded="true"] { border-color: #912338; background: var(--v7-open); }
-    .v7-ex-btn.is-primary { background: #912338; border-color: #912338; color: #fff; font-weight: 700; font-size: 0.92rem; padding: 8px 18px; min-height: 40px; }
-    .v7-ex-btn.is-primary .v7-tri { color: #fff; }
-    .v7-ex-btn.is-primary:hover { background: #7a1d2f; color: #fff; }
-    .v7-ex-btn.is-primary[aria-expanded="true"] { background: #7a1d2f; }
+    /* Disclosure triangle (examples, Change, the working draft, folded cards): ▸ closed, turned down when open. */
+    .v7-tri { display: inline-block; color: #912338; width: 10px; text-align: center; font-size: 1.05em; line-height: 1; transition: transform 160ms var(--v7-ease); }
+    [aria-expanded="true"] > .v7-tri, .v7-tri.is-down { transform: rotate(90deg); }
+    /* Pass D: disclosure buttons outside the example row (Change, Show/Shrink the draft): no fill at rest. */
+    .btn.v7-disc, .btn.v7-disc:hover { background: #fff; color: #912338; border: 1.5px solid var(--v7-field); gap: 6px; }
+    .btn.v7-disc:hover { border-color: #912338; }
+    .btn.v7-disc[aria-expanded="true"] { border-color: #912338; background: var(--v7-open); }
     .v7-exbox { background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 10px; padding: 16px 22px; margin: -4px 0 22px; animation: v7reveal 260ms var(--v7-ease); }
     .v7-exbox-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
     .v7-exbox h4 { margin: 0 0 4px; font-size: 0.98rem; }
@@ -315,6 +319,26 @@
     .v7-dots { display: inline-flex; gap: 3px; }
     .v7-dots i { width: 8px; height: 8px; border-radius: 2px; background: #d4d4d4; }
     .v7-dots i.on { background: var(--v7-done); }
+    /* Pass D: card progress column (desktop, option B); sticky header row on phones (option A). */
+    .v7-fcol ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+    .v7-fsq { width: 24px; height: 24px; padding: 0; margin: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+    .v7-fsq i { display: block; width: 10px; height: 10px; box-sizing: border-box; border-radius: 2px; border: 1.5px solid var(--v7-field); background: #fff; }
+    .v7-fsq.is-on i { background: var(--v7-done); border-color: var(--v7-done); }
+    .v7-fsq.is-cur i { width: 0; height: 0; border-radius: 0; background: none; border-style: solid; border-width: 6px 10px 6px 0; border-color: transparent #912338 transparent transparent; }
+    .v7-fsq:not(.is-cur):not(.is-on):hover i { border-color: #912338; }
+    .v7-fsq:focus-visible { outline: 2px solid #912338; outline-offset: 1px; }
+    @media (min-width: 769px) {
+      .v7-card.v7-card-col { display: grid; grid-template-columns: minmax(0, 1fr) 24px; column-gap: 12px; padding-right: 12px; }
+      .v7-card.v7-card-col > * { grid-column: 1; }
+      .v7-card.v7-card-col > .v7-fcol { grid-column: 2; grid-row: 2 / span 30; align-self: start; position: sticky; top: calc(var(--v7-bar, 43px) + 16px); }
+      .v7-card.v7-card-col > .v7-card-h .v7-dots { display: none; }
+    }
+    @media (max-width: 768px) {
+      .v7-fcol { display: none; }
+      .v7-card.v7-card-col > .v7-card-h { position: sticky; top: var(--v7-bar, 43px); z-index: 5; background: var(--v7-card); margin: -14px -14px 12px; padding: 12px 14px 8px; border-radius: 10px 10px 0 0; }
+      .v7-card.v7-card-col > .v7-card-h { align-items: center; }
+      .v7-card.v7-card-col > .v7-card-h .v7-card-t { white-space: nowrap; }
+    }
     .v7-icon-btn { width: 30px; height: 30px; border: 1px solid #ddd; border-radius: 4px; background: #fff; color: #777; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; }
     .v7-icon-btn:hover { color: #912338; border-color: #912338; }
     .v7-fields { display: flex; flex-direction: column; gap: 8px; }
@@ -361,7 +385,7 @@
 
     /* The strip: Your paragraph so far / What you wrote / Your statement so far (one element, D-7) */
     .v7-strip { background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 12px 16px; margin-top: 12px; }
-    .v7-strip.is-top { background: var(--v7-tint2); border-color: transparent; margin: 0 0 12px; }
+    .v7-strip.is-top { margin: 0 0 12px; }
     .v7-strip-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 0 6px; }
     .v7-strip-h b { font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
     .v7-strip p { margin: 0; font-size: 0.9rem; line-height: 1.7; }
@@ -370,7 +394,7 @@
     .v7-empty { color: var(--muted); font-style: italic; }
 
     /* Evidence (D-5, D-7: a tint and small cards, not boxes in boxes) */
-    .v7-ev-area { background: var(--v7-tint2); border-radius: 8px; padding: 12px 14px; }
+    .v7-ev-area { background: var(--v7-open); border: 1.5px solid #912338; border-radius: 8px; padding: 12px 14px; }
     .v7-ev-items { display: flex; flex-direction: column; gap: 10px; margin: 0 0 12px; }
     .v7-ev-item { position: relative; background: #fff; border-radius: 8px; padding: 12px 14px; }
     .v7-ev-item .v4-key-badge { margin-right: 4px; }
@@ -389,8 +413,7 @@
     .v7-fold { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 12px 16px; margin: 0 0 12px; cursor: pointer; font: inherit; color: var(--text); }
     .v7-fold:hover { border-color: #bdbdbd; }
     .v7-fold-t { flex: 1; min-width: 0; font-weight: 600; font-size: 0.92rem; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .v7-jobs { display: inline-flex; gap: 3px; }
-    .v7-jobs i { width: 14px; height: 14px; border-radius: 3px; background: #e4e4e4; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 9px; font-style: normal; }
+    .v7-fold > .v7-tri { flex-shrink: 0; }
     .v7-fold-meta { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
     .v7-fold-op { font-size: 0.8rem; color: #912338; white-space: nowrap; }
 
@@ -429,7 +452,7 @@
     .v7-slot b { color: var(--text); }
     .v7-ocard { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 12px 14px; margin: 0 0 8px; }
     .v7-ocard.moved { box-shadow: 0 0 0 2px rgba(145,35,56,.25); }
-    .v7-n { width: 26px; height: 26px; border-radius: 50%; background: #912338; color: #fff; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
+    .v7-n { width: 26px; height: 26px; box-sizing: border-box; border-radius: 50%; background: #fff; border: 1.5px solid var(--v7-field); color: #912338; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
     .v7-ot { font-weight: 600; font-size: 0.92rem; line-height: 1.35; }
     .v7-og { font-size: 0.82rem; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
     .v7-mv { display: flex; gap: 6px; }
@@ -502,7 +525,7 @@
     .v4-privacy { max-width: 70ch; display: flex; gap: 6px; align-items: flex-start; }
     .narrative-nav .btn, .v7-actions .btn, .v7-card .btn:not(.v7-btn-small), .v7-nudge .btn { font-size: 14px; min-height: 40px; padding: 9px 16px; line-height: 1.2; }
     .v7-choices { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-    .v7-mini[aria-checked="true"], .v7-mini[aria-pressed="true"] { background: var(--v7-tint2); border-color: #912338; color: #912338; font-weight: 600; }
+    .v7-mini[aria-checked="true"], .v7-mini[aria-pressed="true"] { background: var(--v7-open); border-color: #912338; color: #912338; font-weight: 600; }
     .v7-glance { align-items: start; }
     .v7-anchor-line { display: block; line-height: 2.6; }
     .v7-anchor-line .v7-input { display: inline-block; width: 16ch; max-width: 100%; vertical-align: middle; }
@@ -558,7 +581,13 @@
     .narrative-progress-panel .narrative-stage-list li { position: relative; }
     .v7-rsub { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; margin: -4px 0 4px; padding: 0 0 2px 20px; font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
     .v7-rsub .v7-mt { grid-column: 2; }
-    .v7-rsub::before { content: ""; position: absolute; left: 4px; top: -9px; width: 10px; height: 17px; border-left: 1.5px solid #c4c4c4; border-bottom: 1.5px solid #c4c4c4; border-bottom-left-radius: 3px; }
+    /* Pass D: the L line starts directly under the centre of the step's circle (circle 10px wide, so its centre is 5px in;
+       the 1.5px line is centred on that) and at the circle's lower edge. */
+    .v7-rsub::before { content: ""; position: absolute; left: 4.25px; top: -7px; width: 10px; height: 15px; box-sizing: border-box; border-left: 1.5px solid #c4c4c4; border-bottom: 1.5px solid #c4c4c4; border-bottom-left-radius: 3px; }
+    /* Pass D: a finished step (not current) is green across the row: circle, label, number, and its sub-row with the line. */
+    .narrative-progress-panel .v7-ri.is-done:not(.is-active):not(.is-ghost), .narrative-progress-panel .v7-ri.is-done:not(.is-active):not(.is-ghost) .v7-mt { color: var(--v7-done); }
+    .v7-rsub.is-done, .v7-rsub.is-done .v7-mt { color: var(--v7-done); }
+    .v7-rsub.is-done::before { border-color: var(--v7-done); }
     .v7-rail-grouprow { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 0 0 4px; }
     .v7-rail-grouprow .v7-rail-group { margin: 0; }
     .v7-rail-wc { font-size: 0.75rem; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -652,6 +681,9 @@
     };
     const clear = (n) => { while (n.firstChild) n.removeChild(n.firstChild); };
     const root = document.getElementById("ncv-v4-root");
+    // Pass D: the height of the sticky top bar, for the sticky card column and the phone card header.
+    const setBar = () => { const b = document.querySelector(".proto-banner"); if (b) document.documentElement.style.setProperty("--v7-bar", b.offsetHeight + "px"); };
+    setBar(); window.addEventListener("resize", setBar);
 
     // ── Vocabularies ────────────────────────────────────────────────────────
     // Guide sync 2026-09-25: one FRQ since June 1, 2024 (FRQNT, FRQS and FRQSC are now its three
@@ -2220,7 +2252,7 @@
         b.addEventListener("click", () => { if (!isLockedStage(st.key)) goStage(st.key); });
         li.appendChild(b);
         if (mt && mt.sub) {
-          const sub = el("div", "v7-rsub"); sub.setAttribute("aria-hidden", "true");
+          const sub = el("div", "v7-rsub" + (done && !isActive && !ghost ? " is-done" : "")); sub.setAttribute("aria-hidden", "true");
           sub.appendChild(el("span", "v7-rsub-l", mt.sub[0]));
           sub.appendChild(el("span", "v7-mt", String(mt.sub[1])));
           li.appendChild(sub);
@@ -2887,18 +2919,58 @@
       w.appendChild(el("span", "v7-sr", n + " of " + t + " answered"));
       return w;
     }
+    // Pass D (Prem, option B): the card's progress as a column of squares on its right edge, one per
+    // field in field order, sticky while the card is on screen (desktop). Each square opens its field;
+    // a written field is green, an unwritten one a grey outline, the open one the rail's triangle.
+    // Phones hide the column and keep the header row (title and squares) sticky instead (option A).
+    function fieldCol(card, name, items, isCur, onPick) {
+      card.classList.add("v7-card-col");
+      const nav = el("nav", "v7-fcol"); nav.setAttribute("aria-label", "Fields in " + name);
+      const ol = el("ol");
+      const btns = items.map(it => {
+        const li = el("li"), b = el("button", "v7-fsq");
+        b.type = "button"; b.dataset.for = it.id; b.title = it.label;
+        b.appendChild(el("i")).setAttribute("aria-hidden", "true");
+        b.addEventListener("click", () => onPick(it.id));
+        li.appendChild(b); ol.appendChild(li);
+        return [b, it];
+      });
+      nav.appendChild(ol);
+      card._colSync = () => btns.forEach(([b, it]) => {
+        const on = !!it.has(), cur = !!isCur(it.id);
+        b.classList.toggle("is-on", on); b.classList.toggle("is-cur", cur);
+        b.setAttribute("aria-label", it.label + ", " + (on ? "written" : "not written yet"));
+        if (cur) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+      });
+      card._colSync();
+      return nav;
+    }
+    const syncCols = () => root.querySelectorAll(".v7-card-col").forEach(c => { if (c._colSync) c._colSync(); });
+    root.addEventListener("input", () => requestAnimationFrame(syncCols));
+    root.addEventListener("click", () => requestAnimationFrame(syncCols));
+    // A square in the column opens its field: the field opens in place (no anchoring to the old line),
+    // then the page scrolls to it once the fields have settled. No smooth scrolling under reduced motion.
+    function jumpToField(id) {
+      const f = root.querySelector('.v7-f[data-f="' + id + '"]');
+      if (!f) return;
+      openField(f, true);
+      const b = document.getElementById(id) || f.querySelector(".v7-box");
+      if (b) b.focus({ preventScroll: true });
+      const ms = motionMs(210);
+      setTimeout(() => f.scrollIntoView({ block: "center", behavior: ms ? "smooth" : "auto" }), ms);
+    }
     const letter = (j) => String.fromCharCode(97 + j);
     const liveEvidence = (c) => (c.evidence || []).filter(e => (e.text || "").trim());
     const agencyFull = { sshrc: "Social Sciences and Humanities Research Council", nserc: "Natural Sciences and Engineering Research Council", cihr: "Canadian Institutes of Health Research", frq: "Fonds de recherche du Québec", other: "You can change it later" };
     const competitionName = () => (ns.lens.undecided ? "" : (ns.lens.program || "").trim());
 
-    // V7-19 (updated): the Tailored for bar, with a real Change button. D-18: accent line on top.
+    // V7-19 (updated): the Profile bar (was "Tailored for"), with a real Change button. D-18: accent line on top.
     // Pass B: Change opens a small panel inside the bar, on the same page. The panel edits a copy of
     // the six answers; Confirm applies them and redraws the step, so prompts and examples follow.
     // Escape or Change again closes it and leaves the profile as it was.
     function tailoredBar(parent) {
       const L = ns.lens, bar = el("div", "v7-tailored" + (UI.chg ? " is-open" : ""));
-      bar.appendChild(el("span", "v7-tailored-k", "Tailored for:"));
+      bar.appendChild(el("span", "v7-tailored-k", "Profile:"));
       const pills = el("span", "v7-tailored-pills");
       const add = (t) => pills.appendChild(el("span", "v7-pill", t));
       if (L.agency) add(L.agency === "other" ? "Agency not chosen" : labelOf(AGENCIES, L.agency) + " · " + (isFrq() ? "CV-FRQ" : "TCV"));
@@ -2909,7 +2981,10 @@
       (L.workMode || []).forEach(w => add(labelOf(WORK_MODES, w)));
       if (!pills.childNodes.length) add("Profile not set yet");
       bar.appendChild(pills);
-      const ch = el("button", "btn btn-outline v7-btn-small", "Change");
+      // Pass D (Prem): Change is a disclosure like the example buttons: a triangle, no fill at rest.
+      const ch = el("button", "btn btn-outline v7-btn-small v7-disc");
+      ch.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
+      ch.appendChild(document.createTextNode("Change"));
       ch.type = "button"; ch.id = "v7-chg";
       ch.setAttribute("aria-label", "Change your profile answers");
       ch.setAttribute("aria-controls", "v7-chg-panel");
@@ -3028,8 +3103,9 @@
       return p;
     }
 
-    // V7-22 (updated): example controls. "See a finished example" is the primary control; the
-    // others sit beside it in a quieter style. One example open at a time. Pass B: a disclosure
+    // V7-22 (updated): example controls. "See a finished example" is the primary control, larger
+    // with a bold burgundy label (pass D: no fill on any example button); only the open one is
+    // outlined and shaded. One example open at a time. Pass B: a disclosure
     // triangle (pointing right when closed, down when open); the first example arrives open while
     // the step is empty (set in renderStage on arrival, see EX_DEFAULT).
     function exampleRow(parent, list, renderBox) {
@@ -3169,7 +3245,7 @@
         if (performance.now() - t0 < ms) requestAnimationFrame(step);
       })();
     }
-    function openField(f) {
+    function openField(f, noAnchor) {
       if (f.classList.contains("is-open")) return;
       const prev = [...root.querySelectorAll(".v7-f.is-open")].filter(x => x !== f);
       // The line under the eye: the answer of a filled field, otherwise its box. The box opens in
@@ -3188,7 +3264,8 @@
         if (b) b.scrollTop = 0;
       });
       fitBox(f);
-      keepAnchor(f.querySelector(".v7-box") || f, top, motionMs(200) + 300);
+      syncCols();
+      if (!noAnchor) keepAnchor(f.querySelector(".v7-box") || f, top, motionMs(200) + 300);
     }
     // focusout with relatedTarget: a field opens when focus moves into its box, and the one left
     // shrinks then. Focus going nowhere (a click on blank page, a window switch) changes nothing.
@@ -3454,20 +3531,18 @@
       const b = el("button", "v7-fold");
       b.type = "button"; b.id = "fold-" + contrib.cid;
       b.setAttribute("aria-label", "Contribution " + (i + 1) + ", " + (contrib.title || "no headline") + ", " + cCount(contrib) + " of 9 answered. Select to open.");
+      b.setAttribute("aria-expanded", "false");
+      b.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
       const t = el("span", "v7-fold-t");
       t.appendChild(el("span", "v7-num", "Contribution " + (i + 1)));
       t.appendChild(document.createTextNode(" · " + (contrib.title || "No headline yet")));
       b.appendChild(t);
-      const jobs = el("span", "v7-jobs"); jobs.setAttribute("aria-hidden", "true");
-      [["stakes", "stakes"], ["role", "roleLine"], ["activities", "activities"], ["outputs", "outputs"], ["outcomes", "outcomes"], ["impact", "impact"]].forEach(([job, k]) => {
-        const on = cHas(contrib, k);
-        const sq = el("i", on ? "v7-jd-" + job : null, on ? "✓" : ""); sq.title = BEAT_LABEL[job] + (on ? "" : " (empty)");
-        jobs.appendChild(sq);
-      });
+      // Pass D: the folded row uses the standard progress squares (one per field, green when written).
+      const jobs = dots(cCount(contrib), 9); jobs.classList.add("v7-jobs");
       b.appendChild(jobs);
       const ne = liveEvidence(contrib).length;
       b.appendChild(el("span", "v7-fold-meta", ne ? ne + " evidence" : "No evidence"));
-      b.appendChild(el("span", "v7-fold-op", "Open ▾")).setAttribute("aria-hidden", "true");
+      b.appendChild(el("span", "v7-fold-op", "Open")).setAttribute("aria-hidden", "true");
       b.addEventListener("click", () => {
         ns.contributions.forEach((x, j) => { x.folded = j !== i; });
         const first = CF().find(f => !cHas(contrib, f.k));
@@ -3489,7 +3564,8 @@
       const side = el("span", "v7-card-side");
       let dt = progress(cCount(contrib), 9); side.appendChild(dt);
       if (ns.contributions.length > 1) {
-        const fold = el("button", "v7-icon-btn", "▴"); fold.type = "button"; fold.id = "fold-" + contrib.cid;
+        const fold = el("button", "v7-icon-btn"); fold.type = "button"; fold.id = "fold-" + contrib.cid;
+        fold.appendChild(el("span", "v7-tri is-down", "▸")).setAttribute("aria-hidden", "true");
         fold.setAttribute("aria-label", "Fold contribution " + (i + 1));
         fold.addEventListener("click", () => { contrib.folded = true; saveState(); renderStage(); });
         side.appendChild(fold);
@@ -3504,6 +3580,29 @@
       }
       head.appendChild(side);
       card.appendChild(head);
+      const colItems = CF().map(f => ({ id: "c" + contrib.cid + "-" + f.k, label: f.label || BEAT_LABEL[f.job], has: () => cHas(contrib, f.k) }))
+        .concat([{ id: "ev", label: "Evidence", has: () => liveEvidence(contrib).length > 0 }]);
+      card.appendChild(fieldCol(card, "contribution " + (i + 1), colItems,
+        (id) => id === "ev" ? UI.evCard === i : (UI.evCard !== i && UI.active === id),
+        (id) => {
+          if (id === "ev") {
+            if (UI.evCard !== i) {
+              UI.evCard = i; UI.active = "";
+              if (!liveEvidence(contrib).length) contrib.evidence = [{ text: "", type: "", note: "" }];
+              saveState(); renderStage(); countEvent("evidenceOpen");
+            }
+            const a = root.querySelector(".v7-ev-area"), t0 = a && a.querySelector("textarea, input");
+            if (t0) t0.focus({ preventScroll: true });
+            if (a) a.scrollIntoView({ block: "start", behavior: motionMs(1) ? "smooth" : "auto" });
+            return;
+          }
+          if (UI.evCard === i) {
+            UI.evCard = -1; UI.active = id;
+            contrib.evidence = (contrib.evidence || []).filter(e => (e.text || "").trim() || (e.note || "").trim() || e.type);
+            saveState(); renderStage(); focusField(id); return;
+          }
+          jumpToField(id);
+        }));
       const update = () => {
         tt.textContent = contrib.title ? " · " + contrib.title : "";
         const nd = progress(cCount(contrib), 9); side.replaceChild(nd, dt); dt = nd;
@@ -3560,6 +3659,7 @@
         strip = contribStrip(contrib, true, i); card.appendChild(strip);
         card.appendChild(evidenceArea(contrib, i));
       }
+      card._colSync();
       return card;
     }
     // V7-26: one element. "Your paragraph so far" while writing; "What you wrote" over the evidence.
@@ -3768,6 +3868,8 @@
       const pn = () => PF().filter(f => (ns[f.k] || "").trim()).length;
       let dd = progress(pn(), 3); side.appendChild(dd);
       ch.appendChild(side); card.appendChild(ch);
+      card.appendChild(fieldCol(card, "How you mentor", PF().map(f => ({ id: "m-" + f.k, label: f.label, has: () => !!(ns[f.k] || "").trim() })),
+        (id) => UI.active === id, jumpToField));
       const fields = el("div", "v7-fields");
       if (!UI.active || UI.active.indexOf("m-") !== 0) { const first = PF().find(f => !(ns[f.k] || "").trim()); UI.active = "m-" + (first ? first.k : "mentorPhilosophy"); }
       PF().forEach(f => fields.appendChild(cardField({
@@ -3776,16 +3878,19 @@
         onChange: () => { const nd = progress(pn(), 3); side.replaceChild(nd, dd); dd = nd; announceCount(pn() + " of 3 answered"); }
       })));
       card.appendChild(fields);
+      card._colSync();
       c.appendChild(card);
       navRow(c);
     }
     function personFold(m, i) {
       const b = el("button", "v7-fold"); b.type = "button"; b.id = "pfold-" + i;
       const h = menteeHead(m, i);
+      b.setAttribute("aria-expanded", "false");
+      b.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
       const t = el("span", "v7-fold-t"); t.appendChild(el("span", "v7-num", h.num)); t.appendChild(document.createTextNode(h.rest || " · not described yet"));
       b.appendChild(t);
       b.appendChild(el("span", "v7-fold-meta", (m.recognition || "").trim() ? "Prize noted" : ""));
-      b.appendChild(el("span", "v7-fold-op", "Open ▾")).setAttribute("aria-hidden", "true");
+      b.appendChild(el("span", "v7-fold-op", "Open")).setAttribute("aria-hidden", "true");
       b.addEventListener("click", () => { ns.mentees.forEach((x, j) => { x.folded = j !== i; }); saveState(); renderStage(); const s = document.getElementById("v7-ps" + i); if (s) s.focus(); });
       return b;
     }
@@ -3799,7 +3904,8 @@
       setHead(); t.appendChild(num); t.appendChild(rest); head.appendChild(t);
       const side = el("span", "v7-card-side");
       if (ns.mentees.length > 1) {
-        const fold = el("button", "v7-icon-btn", "▴"); fold.type = "button"; fold.id = "pfold-" + i; fold.setAttribute("aria-label", "Fold person " + (i + 1));
+        const fold = el("button", "v7-icon-btn"); fold.type = "button"; fold.id = "pfold-" + i;
+        fold.appendChild(el("span", "v7-tri is-down", "▸")).setAttribute("aria-hidden", "true"); fold.setAttribute("aria-label", "Fold person " + (i + 1));
         fold.addEventListener("click", () => { m.folded = true; saveState(); renderStage(); });
         side.appendChild(fold);
       }
@@ -3906,6 +4012,8 @@
       const pc = () => { const f = SF(); return [f.filter(x => psHas(x.k)).length, f.length]; };
       let dd = progress(pc()[0], pc()[1]); side.appendChild(dd);
       ch.appendChild(side); card.appendChild(ch);
+      card.appendChild(fieldCol(card, "Your statement", SF().map(f => ({ id: "ps-" + f.k, label: f.label, has: () => psHas(f.k) })),
+        (id) => UI.active === id, jumpToField));
       card.appendChild(el("p", "v7-card-sub", "If a prompt feels hard, the answer is usually already in one of your contributions."));
       if (!UI.active || UI.active.indexOf("ps-") !== 0) { const first = SF().find(f => !psHas(f.k)); UI.active = "ps-" + (first ? first.k : "anchor"); }
       let strip = null;
@@ -3952,6 +4060,7 @@
       });
       card.appendChild(fields);
       if (V7_TRIALS.paragraphStrip) { strip = psStrip(); card.appendChild(strip); }
+      card._colSync();
       c.appendChild(card);
       navRow(c);
     }
@@ -4034,7 +4143,9 @@
       const wd = el("section", "v7-card"); wd.setAttribute("aria-labelledby", "v7-wd-t");
       const wh = el("div", "v7-card-h");
       const wt = el("h3", "v7-card-t", "Your working draft"); wt.id = "v7-wd-t"; wh.appendChild(wt);
-      const tg = el("button", "btn btn-outline v7-btn-small", shut ? "Show" : "Shrink"); tg.type = "button"; tg.id = "v7-draft-toggle";
+      const tg = el("button", "btn btn-outline v7-btn-small v7-disc"); tg.type = "button"; tg.id = "v7-draft-toggle";
+      tg.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
+      tg.appendChild(document.createTextNode(shut ? "Show" : "Shrink"));
       tg.setAttribute("aria-expanded", shut ? "false" : "true");
       tg.addEventListener("click", () => { ns.ui.draftShut = !shut; saveState(); renderStage(); });
       const side = el("span", "v7-card-side"); side.appendChild(tg); wh.appendChild(side);
