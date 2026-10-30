@@ -80,6 +80,8 @@ async function seed(state, extra) {
   r = await js(H + `q('.v7-path-new').click(); await w(150);
     const a={h:q('.narrative-stage-header h2').innerText, blocks:qa('.v7-qblock').length, railIn:!!q('.narrative-progress-panel.v7-rail-in'), done:qa('.v7-ri.is-done').length, caption:!!q('.v7-rail-cap'), rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]), groups:qa('.v7-rail-group').length, wc:!!q('.v7-rail-wc'), resetTop:!!q('#v4-reset'), resetRail:!!q('.v7-reset')};
     a.dots0=qa('.v7-qcount .v7-dots i').length; a.on0=qa('.v7-qcount .v7-dots i.on').length;
+    const sq0=qa('.v7-prof-col nav.v7-fcol .v7-fsq'); a.col0={label:q('.v7-prof-col nav.v7-fcol')?.getAttribute('aria-label'), n:sq0.length, dis:sq0.filter(b=>b.disabled&&b.getAttribute('aria-disabled')==='true').map(b=>b.dataset.for), cur:qa('.v7-prof-col .v7-fsq[aria-current]').map(b=>b.dataset.for), tri:getComputedStyle(sq0[0].querySelector('i')).borderRightWidth, rowVis:getComputedStyle(q('.v7-qcount .v7-dots')).display, name0:sq0[0].getAttribute('aria-label'), name5:sq0[5].getAttribute('aria-label')};
+    sq0[3].click(); await w(80); a.col0.lockedClick=qa('.v7-qblock').length;
     q('#ag-frq').click(); await w(60); a.fb=q('.v7-feedback').innerText; a.stay=q('#ag-frq').getAttribute('aria-checked');
     a.b2=qa('.v7-qblock').length;
     setv(q('#v7-comp'),'Made-up Team Grants'); await w(60); a.b3=qa('.v7-qblock').length;
@@ -92,11 +94,34 @@ async function seed(state, extra) {
   check("rail fades in once Start is chosen, empty, and holds only Set up your profile before confirming", r.railIn && r.done === 0 && r.rail.join("|") === "Set up your profile" && r.groups === 0 && !r.caption && !r.wc, r);
   check("no Reset link in the top bar and no Reset button in the phone rail", !r.resetTop && !r.resetRail, r);
   check("Setup progress is squares: none filled at the start", r.dots0 === 6 && r.on0 === 0, r);
+  check("desktop Setup column: a labelled nav with six squares, the top row hidden, triangle and aria-current on the first question", r.col0.label === "Questions in your profile" && r.col0.n === 6 && r.col0.cur.join() === "pq-0" && r.col0.tri === "10px" && r.col0.rowVis === "none" && /, not answered yet$/.test(r.col0.name0), r.col0);
+  check("unrevealed questions are grey, disabled and aria-disabled, and clicking one does nothing", r.col0.dis.join() === "pq-1,pq-2,pq-3,pq-4,pq-5" && /, not open yet$/.test(r.col0.name5) && r.col0.lockedClick === 1, r.col0);
   check("one question at a time", r.blocks === 1 && r.b2 === 2 && r.b3 === 3, r);
   check("choice stays selected in place, format feedback", r.stay === "true" && /CV-FRQ/.test(r.fb), r);
   check("all six answered: Confirm profile button (no Contributions button), nothing folds", /^6 of 6 answered$/.test(r.count) && r.next && !r.nextC && r.folded === 0, r);
   check("progress squares: six, all filled, the count is hidden text only", r.dots === 6 && r.on === 6, r);
   check("clearing an answer keeps the questions below it on screen", r.afterClear === 6, r.afterClear);
+  r = await js(H + `setv(q('#v7-comp'),''); await w(80); const b=()=>qa('.v7-prof-col .v7-fsq');
+    const a={n:b().length, dis:b().filter(x=>x.disabled).length, on:b().filter(x=>x.classList.contains('is-on')).length, sr:q('.v7-qcount .v7-sr').textContent, cur:qa('.v7-prof-col .v7-fsq[aria-current]').map(x=>x.dataset.for), curBlk:q('.v7-qblock.is-current')?.dataset.pq, tri:getComputedStyle(q('.v7-prof-col .v7-fsq.is-cur i')).borderRightWidth};
+    a.greenOk=b().filter(x=>x.classList.contains('is-on')).every(x=>getComputedStyle(x.querySelector('i')).backgroundColor==='rgb(42, 110, 42)');
+    const col=q('.v7-prof-col nav.v7-fcol'), lr=q('.v7-prof-list').getBoundingClientRect(); a.clear=col.getBoundingClientRect().left>=lr.right;
+    window.scrollTo(0,0); await w(60); b()[3].click(); await w(700);
+    a.focus=document.activeElement.id; a.inView=(()=>{const r=q('#pq3').getBoundingClientRect(); return r.top>=0&&r.bottom<=innerHeight;})();
+    window.scrollTo(0, q('.v7-prof-list').getBoundingClientRect().top+scrollY+400); await w(100); a.pos=getComputedStyle(col).position; a.sticky=Math.round(col.getBoundingClientRect().top)-q('.proto-banner').offsetHeight;
+    setv(q('#v7-comp'),'Made-up Team Grants'); await w(60); window.scrollTo(0,0);
+    return a;`);
+  check("Setup column: green squares match the answers, the triangle sits on the current question, the spoken count stays", r.n === 6 && r.dis === 0 && r.on === 5 && r.greenOk && /^5 of 6 answered$/.test(r.sr) && r.cur.join() === "pq-1" && r.curBlk === "1" && r.tri === "10px" && r.clear, r);
+  check("clicking an answered square scrolls to and focuses its question; the column is sticky below the top bar", r.focus === "pq3" && r.inView && r.pos === "sticky" && r.sticky >= 0 && r.sticky <= 24, r);
+  // Keyword or question, never both (Prem, 2026-10-30).
+  r = await js(H + `const seen=e=>!!e&&e.getBoundingClientRect().width>2; const blk=i=>q('.v7-qblock[data-pq="'+i+'"]');
+    document.activeElement.blur(); await w(60);
+    const a={kw0:seen(blk(0).querySelector('.v7-f-k')), q0:seen(q('#pq0')), kwText:blk(0).querySelector('.v7-f-k').textContent, qText:q('#pq0').textContent, both:qa('.v7-qblock').filter(b=>seen(b.querySelector('.v7-f-k'))&&seen(b.querySelector('.v7-q'))).length};
+    blk(0).querySelector('.choice-btn, button[role=radio], button').focus(); await w(60); a.kwF=seen(blk(0).querySelector('.v7-f-k')); a.qF=seen(q('#pq0'));
+    document.activeElement.blur(); setv(q('#v7-comp'),''); await w(80); document.activeElement.blur(); await w(40);
+    a.kw1=seen(blk(1).querySelector('.v7-f-k')); a.q1=seen(q('#pq1'));
+    setv(q('#v7-comp'),'Made-up Team Grants'); await w(60); document.activeElement.blur(); window.scrollTo(0,0);
+    return a;`);
+  check("Setup: an answered question shows its keyword only; focus inside it shows the question only; an unanswered one shows the question only; both stay in the text", r.kw0 && !r.q0 && r.both === 0 && !r.kwF && r.qF && !r.kw1 && r.q1 && r.kwText === "Agency" && /agency/.test(r.qText), r);
 
   console.log("Contributions: card pattern");
   r = await js(H + `const sr0=getComputedStyle(q('.v7-qcount .v7-sr')).position; nav(/Confirm profile/).click(); await w(150);
@@ -334,6 +359,11 @@ async function seed(state, extra) {
     rail('Personal statement').click(); await w(150); const p=q('.v7-card-col nav')?.getAttribute('aria-label'), pn=qa('.v7-card-col .v7-fsq').length;
     rail('Contributions').click(); await w(150); return {m, mn, mc, p, pn};`);
   check("How you mentor and Your statement carry the same column", r.m === "Fields in How you mentor" && r.mn === 3 && r.mc === 1 && r.p === "Fields in Your statement" && r.pn >= 7, r);
+  r = await js(H + `const seen=e=>!!e&&e.getBoundingClientRect().width>2; const fs=qa('.v7-card .v7-f');
+    const st=f=>({c:f.className.split(' ')[1], k:seen(f.querySelector('.v7-f-k')), q:seen(f.querySelector(':scope > .v7-q'))});
+    const all=fs.map(st); const job=fs.find(f=>!f.classList.contains('is-filled')&&f.querySelector('.v7-q-dot'));
+    return {all, both:all.filter(x=>x.k&&x.q).length, filledOk:all.filter(x=>x.c==='is-filled').every(x=>x.k&&!x.q), otherOk:all.filter(x=>x.c!=='is-filled').every(x=>x.q&&!x.k), nf:all.filter(x=>x.c==='is-filled').length, dot:job?seen(job.querySelector('.v7-q-dot')):null, kwSr:fs.every(f=>f.querySelector('.v7-f-k').textContent.trim().length>0)};`);
+  check("cards: an answered field shows its keyword only, an open or empty field its question only (job square beside it); the keyword stays in the text", r.both === 0 && r.filledOk && r.otherOk && r.nf > 0 && r.dot !== false && r.kwSr, r);
 
   // Continue and Load land on Contributions for a confirmed profile (no saved application step).
   await seed(Object.assign({}, fixture, { stageKey: "setup", mode: "compose" }));
@@ -390,6 +420,12 @@ async function seed(state, extra) {
     window.scrollTo(0, card.getBoundingClientRect().top+scrollY+300); await w(150);
     return {col:getComputedStyle(card.querySelector('.v7-fcol')).display, pos:getComputedStyle(h).position, top:Math.round(h.getBoundingClientRect().top), bar:q('.proto-banner').offsetHeight, dots:h.querySelectorAll('.v7-dots i').length, sw:document.documentElement.scrollWidth, right:Math.round(h.getBoundingClientRect().right)};`);
   check("phone: the card header row (title and squares) sticks under the top bar, no column, no sideways scroll", r.col === "none" && r.pos === "sticky" && Math.abs(r.top - r.bar) <= 1 && r.dots === 9 && r.sw <= 375 && r.right <= 375, r);
+  await seed(null);
+  r = await js(H + `q('.v7-path-new').click(); await w(150); q('#ag-frq').click(); await w(60); setv(q('#v7-comp'),'Made-up Team Grants'); await w(60); q('#st-mid').click(); await w(60); q('#di-health').click(); await w(60);
+    const row=q('.v7-qcount'); window.scrollTo(0, q('.v7-prof-list').getBoundingClientRect().top+scrollY+500); await w(150);
+    return {pos:getComputedStyle(row).position, top:Math.round(row.getBoundingClientRect().top), bar:q('.proto-banner').offsetHeight, dots:row.querySelectorAll('.v7-dots i').length, on:row.querySelectorAll('.v7-dots i.on').length, col:getComputedStyle(q('.v7-prof-col .v7-fcol')).display, sw:document.documentElement.scrollWidth, right:Math.round(row.getBoundingClientRect().right)};`);
+  check("phone Setup: the row of six squares sticks under the top bar, no column, no sideways scroll", r.pos === "sticky" && Math.abs(r.top - r.bar) <= 1 && r.dots === 6 && r.on === 4 && r.col === "none" && r.sw <= 375 && r.right <= 375, r);
+  await seed(Object.assign({}, fixture, { stageKey: "contrib", mode: "compose" }));
   await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
   r = await js("return getComputedStyle(document.querySelector('.v7-f')).transitionDuration;");
   check("reduced motion turns field transitions off", /^0s/.test(r), r);

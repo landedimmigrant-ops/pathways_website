@@ -248,6 +248,20 @@
 
     /* Profile */
     .v7-qcount { display: flex; justify-content: flex-end; margin: 0 0 8px; }
+    /* Pass E: Setup's squares as the cards' column (desktop); the row stays, sticky, on phones. */
+    .v7-q[tabindex="-1"]:focus { outline: none; }
+    .v7-q[tabindex="-1"]:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
+    @media (min-width: 769px) {
+      .v7-qcount { margin: 0; }
+      .v7-qcount .v7-dots { display: none; }
+      .v7-prof-col { display: grid; grid-template-columns: minmax(0, 1fr) 24px; column-gap: 12px; }
+      .v7-prof-col > .v7-prof-list { grid-column: 1; grid-row: 1; }
+      .v7-prof-col > .v7-fcol { grid-column: 2; grid-row: 1; align-self: start; position: sticky; top: calc(var(--v7-bar, 43px) + 16px); }
+      .v7-fsq:disabled { cursor: default; }
+    }
+    @media (max-width: 768px) {
+      .v7-qcount { position: sticky; top: var(--v7-bar, 43px); z-index: 5; background: #fff; padding: 8px 0; margin: 0 0 4px; }
+    }
     .v7-prog { display: inline-flex; align-items: center; }
     .v7-warn { border: 1px solid #912338; border-radius: 6px; background: #fff; padding: 10px 14px; margin: 12px 0 0; font-size: 0.9rem; }
     .v7-warn p { margin: 0 0 8px; }
@@ -325,7 +339,7 @@
     .v7-fsq i { display: block; width: 10px; height: 10px; box-sizing: border-box; border-radius: 2px; border: 1.5px solid var(--v7-field); background: #fff; }
     .v7-fsq.is-on i { background: var(--v7-done); border-color: var(--v7-done); }
     .v7-fsq.is-cur i { width: 0; height: 0; border-radius: 0; background: none; border-style: solid; border-width: 6px 10px 6px 0; border-color: transparent #912338 transparent transparent; }
-    .v7-fsq:not(.is-cur):not(.is-on):hover i { border-color: #912338; }
+    .v7-fsq:not(.is-cur):not(.is-on):not(:disabled):hover i { border-color: #912338; }
     .v7-fsq:focus-visible { outline: 2px solid #912338; outline-offset: 1px; }
     @media (min-width: 769px) {
       .v7-card.v7-card-col { display: grid; grid-template-columns: minmax(0, 1fr) 24px; column-gap: 12px; padding-right: 12px; }
@@ -360,6 +374,15 @@
     textarea.v7-box { height: calc(3 * 1.5em + 18px); max-height: 60vh; }
     .v7-f > .v7-q { font-size: 0.95rem; margin: 0 0 8px; }
     .v7-f.is-filled > .v7-q { display: none; }
+    /* Keyword or question, never both (Prem, 2026-10-30). The question shows while a field is
+       unanswered or open; once answered, the keyword labels the answer. Screen readers keep both. */
+    .v7-f:not(.is-filled) > .v7-f-k, .v7-ev-area > .v7-f-k,
+    .v7-qblock:not(.is-answered) > .v7-f-k, .v7-qblock.is-answered:focus-within > .v7-f-k,
+    .v7-qblock.is-answered:not(:focus-within) > .v7-q {
+      position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
+    .v7-qblock { position: relative; }
+    .v7-qblock.is-answered > .v7-f-k { font-size: 0.85rem; margin-bottom: 8px; }
+    .v7-q-dot { margin-right: 7px; vertical-align: 0.1em; }
     .v7-f-more .v7-explain { background: none; padding: 0; margin: 8px 0 0; color: var(--muted); }
     .v7-f-more .v7-levels { margin: 10px 0 0; }
     .v7-f.is-empty textarea.v7-box { height: calc(1.5em + 18px); overflow: hidden; }
@@ -2923,9 +2946,13 @@
     // field in field order, sticky while the card is on screen (desktop). Each square opens its field;
     // a written field is green, an unwritten one a grey outline, the open one the rail's triangle.
     // Phones hide the column and keep the header row (title and squares) sticky instead (option A).
-    function fieldCol(card, name, items, isCur, onPick) {
+    // Pass E: Set up your profile reuses the column (opts: a nav label, the state words, and items
+    // that are locked until their question is revealed: grey, disabled, not clickable).
+    function fieldCol(card, name, items, isCur, onPick, opts) {
+      opts = opts || {};
+      const onW = opts.on || "written", offW = opts.off || "not written yet";
       card.classList.add("v7-card-col");
-      const nav = el("nav", "v7-fcol"); nav.setAttribute("aria-label", "Fields in " + name);
+      const nav = el("nav", "v7-fcol"); nav.setAttribute("aria-label", opts.label || ("Fields in " + name));
       const ol = el("ol");
       const btns = items.map(it => {
         const li = el("li"), b = el("button", "v7-fsq");
@@ -2937,9 +2964,10 @@
       });
       nav.appendChild(ol);
       card._colSync = () => btns.forEach(([b, it]) => {
-        const on = !!it.has(), cur = !!isCur(it.id);
+        const on = !!it.has(), cur = !!isCur(it.id), lock = !!(it.locked && it.locked());
         b.classList.toggle("is-on", on); b.classList.toggle("is-cur", cur);
-        b.setAttribute("aria-label", it.label + ", " + (on ? "written" : "not written yet"));
+        b.disabled = lock; if (lock) b.setAttribute("aria-disabled", "true"); else b.removeAttribute("aria-disabled");
+        b.setAttribute("aria-label", it.label + ", " + (lock ? (opts.lockW || "not open yet") : on ? onW : offW));
         if (cur) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
       });
       card._colSync();
@@ -3171,7 +3199,10 @@
       if (o.job) { const d = el("span", "v7-jd v7-jd-" + o.job); d.setAttribute("aria-hidden", "true"); kick.appendChild(d); }
       kick.appendChild(document.createTextNode(o.label));
       f.appendChild(kick);
-      const q = el("span", "v7-q", o.q); q.id = id + "-q";
+      const q = el("span", "v7-q"); q.id = id + "-q";
+      // The colour square moves to the question while the keyword is hidden.
+      if (o.job) { const d = el("span", "v7-jd v7-q-dot v7-jd-" + o.job); d.setAttribute("aria-hidden", "true"); q.appendChild(d); }
+      q.appendChild(document.createTextNode(o.q));
       f.appendChild(q);
       const more = el("div", "v7-f-more");
       const inner = el("div");
@@ -3339,10 +3370,24 @@
       if (reveal < 0) reveal = 5;
       // Clearing an answer never hides the questions already shown below it.
       reveal = Math.min(5, Math.max(reveal, profileShown - 1));
+      // Pass E: the six squares sit in a sticky column on the list's right edge (desktop), as on the
+      // answer cards. Unrevealed questions are grey and locked; the others scroll to their question.
+      const curQ = qs.findIndex(x => !x.has);
+      const wrap = el("div", "v7-prof-col");
+      wrap.appendChild(list);
+      const jumpQ = (id) => {
+        const blk = root.querySelector('.v7-qblock[data-pq="' + id.slice(3) + '"]');
+        if (!blk) return;
+        const hq = blk.querySelector(".v7-q");
+        if (hq) { hq.tabIndex = -1; hq.focus({ preventScroll: true }); }
+        blk.scrollIntoView({ block: "center", behavior: motionMs(1) ? "smooth" : "auto" });
+      };
+      wrap.appendChild(fieldCol(wrap, "", qs.map((q, i) => ({ id: "pq-" + i, label: q.label, has: () => !!q.has, locked: () => i > reveal })),
+        id => +id.slice(3) === curQ, jumpQ, { label: "Questions in your profile", on: "answered", off: "not answered yet", lockW: "not open yet" }));
       const pick = (fn, i) => { fn(); saveState(); renderStage(); const nx = root.querySelector('[data-pq="' + (i + 1) + '"]'); if (nx && i + 1 >= profileShown - 1) announce("Next question: " + qs[i + 1 >= 6 ? 5 : i + 1].label + "."); };
       for (let i = 0; i <= reveal; i++) {
         const isNew = i >= profileShown;
-        const blk = el("section", "v7-qblock" + (isNew && profileShown ? " revealed" : "") + (!qs[i].has && i === qs.findIndex(x => !x.has) ? " is-current" : ""));
+        const blk = el("section", "v7-qblock" + (isNew && profileShown ? " revealed" : "") + (!qs[i].has && i === qs.findIndex(x => !x.has) ? " is-current" : "") + (qs[i].has ? " is-answered" : ""));
         blk.dataset.pq = String(i);
         blk.setAttribute("aria-labelledby", "pq" + i);
         const k = el("div", "v7-f-k is-q", qs[i].label);
@@ -3430,7 +3475,7 @@
         list.appendChild(blk);
       }
       profileShown = Math.max(profileShown, reveal + 1);
-      c.appendChild(list);
+      c.appendChild(wrap);
       if (n === 6) navRow(c, { nextLabel: "Confirm profile", onNext: confirmProfile,
         note: ns.ui.profileNote ? "" : "You can change these answers later with the Change button at the top of each step." });
       else {

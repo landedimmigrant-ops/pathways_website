@@ -622,3 +622,20 @@ The same rules applied across V7 (start page, Setup, Contributions, Mentorship, 
 - Reviewed and left as they are: the profile pills in the Profile bar (tags showing the chosen answers, not controls); the "Recommended" badge on Export; the grey hint panels and the early-career note (grey, not selected-looking); the Setup choice cards and their tick (selected state only); "N of T described" on Mentorship (a count of people against a total that can run past 30, not a field-progress count, so squares would not fit); the six-parts grid in What your draft contains (it fills by part colour as data, with the legend).
 - INFERRED: the order-number circle stays round and keeps the number bold burgundy; it is a position marker, not a control.
 - Test count after pass D: 95 (84 before).
+
+## Queued notes, not built (Prem, 2026-10-30): Setup progress on the side
+
+- **Prem:** the six Setup squares still sit in a row at the top; they should be on the side, as decided for the answer cards. Overrides pass D's INFERRED "Set up your profile gets no column".
+- **Standing rule (Prem, 2026-10-30):** one design language across the tool. An approved pattern applies everywhere it fits unless Prem says otherwise; no screen is left out by inference.
+- DECIDED (Prem): build it. Proposed: the same sticky column on Setup's right edge, six squares, green when answered, triangle on the current question. Questions not yet revealed show as grey squares and are not clickable; answered ones jump to their question. Phones keep the row, sticky under the top bar.
+- BUILT (2026-10-30, pass E): `renderSetup` wraps the question list with `fieldCol()` (now taking an opts argument: nav label "Questions in your profile", states "answered" / "not answered yet", and locked items shown grey, disabled, "not open yet"). Clicking an answered or revealed square focuses its question and scrolls to it. Desktop hides the top row; phones keep it, sticky under the top bar. Test count: 100.
+- Overrides: _none yet_.
+
+## Note (Prem, 2026-10-30): keyword and question read as one thing twice
+
+- **Prem:** the burgundy keyword above each question ("Agency") and the question under it ("Choose the agency you are applying to.") feel redundant; Prem likes the keyword, but the question is the priority. Applies across the tool (Setup, Contributions, Mentorship, Personal statement).
+- Proposed (one design language): the keyword and the question never show at the same time. While a field is unanswered or open, only the question shows. Once answered, the question hides (as it already does on the cards) and the keyword labels the answer. The keyword also names the field in the side column (the square's label). Screen readers keep both.
+- DECIDED: Prem, "Build it" (2026-10-30).
+- BUILT (2026-10-30): one CSS rule covers every place the pair appears. Cards (Contributions, Mentorship, Personal statement): an open or empty field shows the question only, with the job's colour square moved beside it; an answered field shows the keyword above its answer. Evidence view: question only (the folded Evidence row keeps its keyword). Setup: an unanswered question shows the question only; an answered one shows the keyword above its choices, and the question returns while focus is inside that block. The Change panel already shows keywords only. Both stay in the page for screen readers (visually hidden, not removed). Side-column squares keep the keyword as their name. Tests: 102 of 102.
+- INFERRED: Setup treats "focus inside the block" as open, so revisiting an answered question shows the question again.
+- Overrides: _none yet_.
