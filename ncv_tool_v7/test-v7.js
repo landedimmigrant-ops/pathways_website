@@ -82,8 +82,9 @@ async function seed(state, extra) {
     a.dots0=qa('.v7-qcount .v7-dots i').length; a.on0=qa('.v7-qcount .v7-dots i.on').length;
     const sq0=qa('.v7-prof-col nav.v7-fcol .v7-fsq'); a.col0={label:q('.v7-prof-col nav.v7-fcol')?.getAttribute('aria-label'), n:sq0.length, dis:sq0.filter(b=>b.disabled&&b.getAttribute('aria-disabled')==='true').map(b=>b.dataset.for), cur:qa('.v7-prof-col .v7-fsq[aria-current]').map(b=>b.dataset.for), tri:getComputedStyle(sq0[0].querySelector('i')).borderRightWidth, rowVis:getComputedStyle(q('.v7-qcount .v7-dots')).display, name0:sq0[0].getAttribute('aria-label'), name5:sq0[5].getAttribute('aria-label')};
     sq0[3].click(); await w(80); a.col0.lockedClick=qa('.v7-qblock').length;
-    q('#ag-frq').click(); await w(60); a.fb=q('.v7-feedback').innerText; a.stay=q('#ag-frq').getAttribute('aria-checked');
+    window.scrollTo(0,0); q('#ag-frq').click(); await w(500); a.fb=q('.v7-feedback').innerText; a.stay=q('#ag-frq').getAttribute('aria-checked');
     a.b2=qa('.v7-qblock').length;
+    { const sq=q('.v7-prof-col .v7-fsq[data-for="pq-1"]'), bk=q('.v7-qblock[data-pq="1"]'); a.lvl={y:Math.round(scrollY), d:Math.round(bk.getBoundingClientRect().top-sq.getBoundingClientRect().top), cur:q('.v7-prof-col .v7-fsq.is-cur')?.dataset.for}; }
     setv(q('#v7-comp'),'Made-up Team Grants'); await w(60); a.b3=qa('.v7-qblock').length;
     q('#v7-year-' + (new Date().getFullYear()+1)).click(); await w(60);
     q('#st-mid').click(); await w(60); q('#di-health').click(); await w(60); q('#d2-none').click(); await w(60);
@@ -98,19 +99,20 @@ async function seed(state, extra) {
   check("unrevealed questions are grey, disabled and aria-disabled, and clicking one does nothing", r.col0.dis.join() === "pq-1,pq-2,pq-3,pq-4,pq-5" && /, not open yet$/.test(r.col0.name5) && r.col0.lockedClick === 1, r.col0);
   check("one question at a time", r.blocks === 1 && r.b2 === 2 && r.b3 === 3, r);
   check("choice stays selected in place, format feedback", r.stay === "true" && /CV-FRQ/.test(r.fb), r);
+  check("after an answer the next question scrolls up level with its square, which carries the triangle", r.lvl.y > 0 && Math.abs(r.lvl.d) <= 8 && r.lvl.cur === "pq-1", r.lvl);
   check("all six answered: Confirm profile button (no Contributions button), nothing folds", /^6 of 6 answered$/.test(r.count) && r.next && !r.nextC && r.folded === 0, r);
   check("progress squares: six, all filled, the count is hidden text only", r.dots === 6 && r.on === 6, r);
   check("clearing an answer keeps the questions below it on screen", r.afterClear === 6, r.afterClear);
   r = await js(H + `setv(q('#v7-comp'),''); await w(80); const b=()=>qa('.v7-prof-col .v7-fsq');
     const a={n:b().length, dis:b().filter(x=>x.disabled).length, on:b().filter(x=>x.classList.contains('is-on')).length, sr:q('.v7-qcount .v7-sr').textContent, cur:qa('.v7-prof-col .v7-fsq[aria-current]').map(x=>x.dataset.for), curBlk:q('.v7-qblock.is-current')?.dataset.pq, tri:getComputedStyle(q('.v7-prof-col .v7-fsq.is-cur i')).borderRightWidth};
-    a.greenOk=b().filter(x=>x.classList.contains('is-on')).every(x=>getComputedStyle(x.querySelector('i')).backgroundColor==='rgb(42, 110, 42)');
+    a.greenOk=b().filter(x=>x.classList.contains('is-on')&&!x.classList.contains('is-cur')).every(x=>getComputedStyle(x.querySelector('i')).backgroundColor==='rgb(42, 110, 42)');
     const col=q('.v7-prof-col nav.v7-fcol'), lr=q('.v7-prof-list').getBoundingClientRect(); a.clear=col.getBoundingClientRect().left>=lr.right;
     window.scrollTo(0,0); await w(60); b()[3].click(); await w(700);
     a.focus=document.activeElement.id; a.inView=(()=>{const r=q('#pq3').getBoundingClientRect(); return r.top>=0&&r.bottom<=innerHeight;})();
     window.scrollTo(0, q('.v7-prof-list').getBoundingClientRect().top+scrollY+400); await w(100); a.pos=getComputedStyle(col).position; a.sticky=Math.round(col.getBoundingClientRect().top)-q('.proto-banner').offsetHeight;
     setv(q('#v7-comp'),'Made-up Team Grants'); await w(60); window.scrollTo(0,0);
     return a;`);
-  check("Setup column: green squares match the answers, the triangle sits on the current question, the spoken count stays", r.n === 6 && r.dis === 0 && r.on === 5 && r.greenOk && /^5 of 6 answered$/.test(r.sr) && r.cur.join() === "pq-1" && r.curBlk === "1" && r.tri === "10px" && r.clear, r);
+  check("Setup column: green squares match the answers, one triangle, the current question outlined, the spoken count stays", r.n === 6 && r.dis === 0 && r.on === 5 && r.greenOk && /^5 of 6 answered$/.test(r.sr) &&  r.cur.length === 1 && r.curBlk === "1" && r.tri === "10px" && r.clear, r);
   check("clicking an answered square scrolls to and focuses its question; the column is sticky below the top bar", r.focus === "pq3" && r.inView && r.pos === "sticky" && r.sticky >= 0 && r.sticky <= 24, r);
   // Keyword or question, never both (Prem, 2026-10-30).
   r = await js(H + `const seen=e=>!!e&&e.getBoundingClientRect().width>2; const blk=i=>q('.v7-qblock[data-pq="'+i+'"]');
@@ -122,6 +124,14 @@ async function seed(state, extra) {
     setv(q('#v7-comp'),'Made-up Team Grants'); await w(60); document.activeElement.blur(); window.scrollTo(0,0);
     return a;`);
   check("Setup: an answered question shows its keyword only; focus inside it shows the question only; an unanswered one shows the question only; both stay in the text", r.kw0 && !r.q0 && r.both === 0 && !r.kwF && r.qF && !r.kw1 && r.q1 && r.kwText === "Agency" && /agency/.test(r.qText), r);
+  r = await js(H + `const wr=q('.v7-prof-col'), sq=i=>q('.v7-prof-col .v7-fsq[data-for="pq-'+i+'"]'), bk=i=>q('.v7-qblock[data-pq="'+i+'"]');
+    window.scrollTo(0,0); await w(150); const a={top:q('.v7-prof-col .v7-fsq.is-cur')?.dataset.for};
+    wr._level('pq-2'); await w(600);
+    a.mid=q('.v7-prof-col .v7-fsq.is-cur')?.dataset.for; a.navTop=Math.round(q('.v7-prof-col nav').getBoundingClientRect().top)-q('.proto-banner').offsetHeight;
+    sq(4).click(); await w(700); a.click=q('.v7-prof-col .v7-fsq.is-cur')?.dataset.for; a.d=Math.round(bk(4).getBoundingClientRect().top-sq(4).getBoundingClientRect().top);
+    a.on=qa('.v7-prof-col .v7-fsq.is-on').length; window.scrollTo(0,0); await w(100);
+    return a;`);
+  check("scrolling moves the triangle to the question level with its square; the column stays put; a square click brings its question level", r.mid === "pq-2" && r.navTop >= 0 && r.navTop <= 24 && r.click === "pq-4" && Math.abs(r.d) <= 8 && r.on === 6, r);
 
   console.log("Contributions: card pattern");
   r = await js(H + `const sr0=getComputedStyle(q('.v7-qcount .v7-sr')).position; nav(/Confirm profile/).click(); await w(150);
@@ -355,6 +365,11 @@ async function seed(state, extra) {
   check("green squares match the written fields; unwritten squares are grey outlines; the column sits clear of the writing", r.on === r.written && r.greenOk && r.greyOk && r.clear && r.inCard, r);
   check("clicking a square opens and focuses that field; it shows the triangle and aria-current", r.open === r.want && r.focus === r.want && r.cur.join() === r.want && r.tri === "10px" && r.inView, r);
   check("the column is sticky below the top bar while the card is on screen", r.pos === "sticky" && r.sticky >= 0 && r.sticky <= 24, r);
+  r = await js(H + `const card=q('.v7-card.v7-card-col'), sq=()=>qa('.v7-card-col .v7-fsq', card); await w(900);
+    const id=sq()[4].dataset.for; card._level(id); await w(600);
+    const a={id, cur:card.querySelector('.v7-fsq.is-cur')?.dataset.for, open:q('.v7-f.is-open')?.dataset.f, d:Math.round(q('.v7-f[data-f="'+id+'"]').getBoundingClientRect().top-sq()[4].getBoundingClientRect().top)};
+    window.scrollTo(0,0); await w(100); return a;`);
+  check("cards: scrolling a field level with its square moves the triangle there; the open field keeps its outline", r.cur === r.id && r.open !== r.id && Math.abs(r.d) <= 8, r);
   r = await js(H + `rail('Mentorship').click(); await w(150); const m=q('.v7-card-col nav')?.getAttribute('aria-label'), mn=qa('.v7-card-col .v7-fsq').length, mc=qa('.v7-card-col .v7-fsq[aria-current]').length;
     rail('Personal statement').click(); await w(150); const p=q('.v7-card-col nav')?.getAttribute('aria-label'), pn=qa('.v7-card-col .v7-fsq').length;
     rail('Contributions').click(); await w(150); return {m, mn, mc, p, pn};`);

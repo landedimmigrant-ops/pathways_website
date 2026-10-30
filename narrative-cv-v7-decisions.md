@@ -639,3 +639,18 @@ The same rules applied across V7 (start page, Setup, Contributions, Mentorship, 
 - BUILT (2026-10-30): one CSS rule covers every place the pair appears. Cards (Contributions, Mentorship, Personal statement): an open or empty field shows the question only, with the job's colour square moved beside it; an answered field shows the keyword above its answer. Evidence view: question only (the folded Evidence row keeps its keyword). Setup: an unanswered question shows the question only; an answered one shows the keyword above its choices, and the question returns while focus is inside that block. The Change panel already shows keywords only. Both stay in the page for screen readers (visually hidden, not removed). Side-column squares keep the keyword as their name. Tests: 102 of 102.
 - INFERRED: Setup treats "focus inside the block" as open, so revisiting an answered question shows the question again.
 - Overrides: _none yet_.
+
+## Note (Prem, 2026-10-30): the triangle sits beside the card already answered
+
+- **Prem:** the side column is right, but the triangle (on the next question) sits level with the card just answered, because the column stays at the top while the list grows below. Prem wants the next card to come up level with its triangle, and scrolling with the wheel to move between cards, with the column staying in place.
+- Proposed:
+  1. After an answer, the page scrolls up smoothly so the next card sits level with its square and triangle (reduced motion: no animation).
+  2. While scrolling, the triangle follows the card level with the column (scroll-spy), and green still means answered.
+  3. The column itself stays put (sticky); only the triangle moves.
+- One design language: the same on the Contributions, Mentorship and Statement cards (the triangle follows the field in view, and opening a field brings it level).
+- DECIDED: Prem, "Column stays, triangle moves" (2026-10-30). The column stays sticky; only the triangle moves.
+- INFERRED (one design language): the writing cards behave the same way, with the triangle following the field in view and an opened field scrolling level with its square.
+- DECIDED: Prem, "Build it" (2026-10-30).
+- BUILT (2026-10-30): the column stays sticky; the triangle marks the item whose top has risen level with its own square (scroll-spy). After a Setup answer, the next open question glides up level with its square (300 ms eased, a jump under reduced motion). A square click brings its question or field level with it (Setup and every writing card, Evidence included). A field opened by focus keeps the triangle for a moment, so the page's own anchoring scroll does not move it. At the foot of the page, where the last items cannot rise, the triangle marks the current question or open field. Setup ends with blank room (desktop only, hidden from screen readers) so the last questions can rise. Phones are unchanged (sticky header row). Tests: 105 of 105.
+- INFERRED: the blank room at the foot of Setup (about one screen less 320 px); the glide speed; the 12 px tolerance for "level".
+- Overrides: _none yet_.

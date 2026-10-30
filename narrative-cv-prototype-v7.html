@@ -381,6 +381,9 @@
     .v7-qblock.is-answered:not(:focus-within) > .v7-q {
       position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
     .v7-qblock { position: relative; }
+    /* Room at the foot of Setup, so any question can rise level with its square. */
+    .v7-prof-room { display: none; }
+    @media (min-width: 769px) { .v7-prof-room { display: block; height: calc(100vh - 320px); } }
     .v7-qblock.is-answered > .v7-f-k { font-size: 0.85rem; margin-bottom: 8px; }
     .v7-q-dot { margin-right: 7px; vertical-align: 0.1em; }
     .v7-f-more .v7-explain { background: none; padding: 0; margin: 8px 0 0; color: var(--muted); }
@@ -2963,8 +2966,34 @@
         return [b, it];
       });
       nav.appendChild(ol);
+      // The column stays put; the triangle follows the item level with its own square as the page
+      // scrolls (Prem, 2026-10-30). Before any scroll, and just after a field opens, it marks isCur.
+      const target = opts.target || (id => card.querySelector('.v7-f[data-f="' + id + '"]') || (id === "ev" ? card.querySelector(".v7-ev-row, .v7-ev-area") : null));
+      card._spy = null;
+      card._spyCalc = () => {
+        if (!nav.offsetParent || performance.now() < spyHold) return;
+        let spy = null;
+        // At the foot of the page the last items cannot rise to their squares: the triangle marks isCur.
+        const atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+        btns.forEach(([b, it]) => {
+          if (b.disabled) return;
+          const t = target(it.id);
+          if (t && t.getBoundingClientRect().top <= b.getBoundingClientRect().top + 12) spy = it.id;
+        });
+        if (atEnd && window.scrollY > 0) spy = null;
+        if (spy !== card._spy) { card._spy = spy; card._colSync(); }
+      };
+      // Scroll so an item sits level with its square, the column held at its sticky top.
+      card._level = (id) => {
+        const t = target(id), pair = btns.find(([, it]) => it.id === id);
+        if (!t || !pair || !nav.offsetParent) return false;
+        const stick = parseFloat(getComputedStyle(nav).top) || 59;
+        const dy = t.getBoundingClientRect().top - (stick + (pair[0].getBoundingClientRect().top - nav.getBoundingClientRect().top));
+        glide(dy);
+        return true;
+      };
       card._colSync = () => btns.forEach(([b, it]) => {
-        const on = !!it.has(), cur = !!isCur(it.id), lock = !!(it.locked && it.locked());
+        const on = !!it.has(), cur = card._spy ? it.id === card._spy : !!isCur(it.id), lock = !!(it.locked && it.locked());
         b.classList.toggle("is-on", on); b.classList.toggle("is-cur", cur);
         b.disabled = lock; if (lock) b.setAttribute("aria-disabled", "true"); else b.removeAttribute("aria-disabled");
         b.setAttribute("aria-label", it.label + ", " + (lock ? (opts.lockW || "not open yet") : on ? onW : offW));
@@ -2974,6 +3003,26 @@
       return nav;
     }
     const syncCols = () => root.querySelectorAll(".v7-card-col").forEach(c => { if (c._colSync) c._colSync(); });
+    let spyHold = 0, spyFrame = 0, glideId = 0;
+    // An eased scroll by dy pixels (300 ms); a jump under reduced motion.
+    function glide(dy) {
+      const from = window.scrollY, max = document.documentElement.scrollHeight - window.innerHeight;
+      const to = Math.max(0, Math.min(max, from + dy)), ms = motionMs(300), id = ++glideId;
+      if (!ms || Math.abs(to - from) < 2) { window.scrollTo(0, to); return; }
+      const t0 = performance.now();
+      (function step(now) {
+        if (id !== glideId) return;
+        const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+        window.scrollTo(0, from + (to - from) * e);
+        if (k < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+    window.addEventListener("scroll", () => {
+      if (spyFrame) return;
+      spyFrame = requestAnimationFrame(() => { spyFrame = 0; root.querySelectorAll(".v7-card-col").forEach(c => { if (c._spyCalc) c._spyCalc(); }); });
+    }, { passive: true });
+    // A field opened by focus takes the triangle; the page's own anchoring scroll does not move it.
+    const holdSpy = () => { spyHold = performance.now() + motionMs(200) + 700; root.querySelectorAll(".v7-card-col").forEach(c => { c._spy = null; }); };
     root.addEventListener("input", () => requestAnimationFrame(syncCols));
     root.addEventListener("click", () => requestAnimationFrame(syncCols));
     // A square in the column opens its field: the field opens in place (no anchoring to the old line),
@@ -2985,7 +3034,7 @@
       const b = document.getElementById(id) || f.querySelector(".v7-box");
       if (b) b.focus({ preventScroll: true });
       const ms = motionMs(210);
-      setTimeout(() => f.scrollIntoView({ block: "center", behavior: ms ? "smooth" : "auto" }), ms);
+      setTimeout(() => { const c = f.closest(".v7-card-col"); spyHold = 0; if (!(c && c._level && c._level(id))) f.scrollIntoView({ block: "center", behavior: ms ? "smooth" : "auto" }); }, ms);
     }
     const letter = (j) => String.fromCharCode(97 + j);
     const liveEvidence = (c) => (c.evidence || []).filter(e => (e.text || "").trim());
@@ -3285,6 +3334,7 @@
       const top = watch ? watch.getBoundingClientRect().top : f.getBoundingClientRect().top;
       f.classList.remove("is-empty", "is-filled"); f.classList.add("is-open");
       UI.active = f.dataset.f;
+      holdSpy();
       prev.forEach(p => {
         p.classList.remove("is-open");
         const b = p.querySelector(".v7-box");
@@ -3380,11 +3430,18 @@
         if (!blk) return;
         const hq = blk.querySelector(".v7-q");
         if (hq) { hq.tabIndex = -1; hq.focus({ preventScroll: true }); }
-        blk.scrollIntoView({ block: "center", behavior: motionMs(1) ? "smooth" : "auto" });
+        if (!wrap._level(id)) blk.scrollIntoView({ block: "center", behavior: motionMs(1) ? "smooth" : "auto" });
       };
       wrap.appendChild(fieldCol(wrap, "", qs.map((q, i) => ({ id: "pq-" + i, label: q.label, has: () => !!q.has, locked: () => i > reveal })),
-        id => +id.slice(3) === curQ, jumpQ, { label: "Questions in your profile", on: "answered", off: "not answered yet", lockW: "not open yet" }));
-      const pick = (fn, i) => { fn(); saveState(); renderStage(); const nx = root.querySelector('[data-pq="' + (i + 1) + '"]'); if (nx && i + 1 >= profileShown - 1) announce("Next question: " + qs[i + 1 >= 6 ? 5 : i + 1].label + "."); };
+        id => +id.slice(3) === curQ, jumpQ, { label: "Questions in your profile", on: "answered", off: "not answered yet", lockW: "not open yet",
+          target: id => list.querySelector('.v7-qblock[data-pq="' + id.slice(3) + '"]') }));
+      // After an answer, the next open question scrolls up level with its square (Prem, 2026-10-30).
+      const pick = (fn, i) => {
+        fn(); saveState(); renderStage();
+        const nx = root.querySelector('[data-pq="' + (i + 1) + '"]'); if (nx && i + 1 >= profileShown - 1) announce("Next question: " + qs[i + 1 >= 6 ? 5 : i + 1].label + ".");
+        const nq = profileQs().findIndex(x => !x.has), pc = root.querySelector(".v7-prof-col");
+        if (nq > i && pc && pc._level) requestAnimationFrame(() => pc._level("pq-" + nq));
+      };
       for (let i = 0; i <= reveal; i++) {
         const isNew = i >= profileShown;
         const blk = el("section", "v7-qblock" + (isNew && profileShown ? " revealed" : "") + (!qs[i].has && i === qs.findIndex(x => !x.has) ? " is-current" : "") + (qs[i].has ? " is-answered" : ""));
@@ -3483,6 +3540,7 @@
         nav.appendChild(el("p", "v4-help v7-nav-note", "The next question opens when you answer this one."));
         c.appendChild(nav);
       }
+      c.appendChild(el("div", "v7-prof-room")).setAttribute("aria-hidden", "true");
     }
 
     // ── Stage: Contributions (V7-20 to V7-26) ──────────────────────────────
@@ -3638,7 +3696,8 @@
             }
             const a = root.querySelector(".v7-ev-area"), t0 = a && a.querySelector("textarea, input");
             if (t0) t0.focus({ preventScroll: true });
-            if (a) a.scrollIntoView({ block: "start", behavior: motionMs(1) ? "smooth" : "auto" });
+            const cc = a && a.closest(".v7-card-col");
+            if (a && !(cc && cc._level && cc._level("ev"))) a.scrollIntoView({ block: "start", behavior: motionMs(1) ? "smooth" : "auto" });
             return;
           }
           if (UI.evCard === i) {
