@@ -168,7 +168,7 @@ body.clean .frame{box-shadow:none}
 .ans-edit{grid-column:2;grid-row:1/span 2;font-size:.8rem;color:var(--burgundy);text-decoration:underline;text-underline-offset:2px;white-space:nowrap;align-self:center}
 .prof-list{display:flex;flex-direction:column;gap:var(--sp-2);margin:0 0 var(--sp-3)}
 
-/* ── Card (one card for contributions, people, How you mentor, Your statement, order, export) ── */
+/* ── Card (one card for contributions, people, Mentorship style, Your statement, order, export) ── */
 .card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-lg);padding:var(--sp-4) var(--sp-5) var(--sp-5);margin:0 0 var(--sp-4)}
 .card-h{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-3);margin:0 0 var(--sp-3);min-height:28px}
 .card-t{font-weight:600;font-size:.95rem;color:#333;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -508,7 +508,7 @@ var CF = [ // contribution card fields, in the funder's order
   {k:"could",job:"impact",q:"What could change at the scale of a field, sector or population?",help:"Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems get framed."},
   {k:"moment",label:"One moment (optional)",q:"What is one moment when this work reached someone?",help:"One scene, two sentences — a person, a clinic, a classroom, a community meeting, a committee that used it. One concrete instance of What already changed, told as a scene. Optional.",optional:true}
 ];
-var PF = [ // practice questions (How you mentor)
+var PF = [ // practice questions (Mentorship style)
   {k:"phil",label:"One thing you do",q:"What is one concrete thing you do that shows how you mentor?",help:"One practice you follow, described concretely. How you run a first meeting, how you decide authorship, how you hand a project over when someone is ready for it."},
   {k:"edi",label:"Who gets in",q:"Who do your community partnerships bring into research, and what did you change to make that possible?",help:"One change you made: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so what you changed carries further than what you believe."},
   {k:"cross",label:"Who else you mentor",q:"Beyond your own students — who else do you mentor? Take one person and say what you did.",help:"Informal mentoring counts here, and the format says so: early-career colleagues, postdocs you don't supervise, visiting scholars, peers, community researchers. One concrete example — a grant you read, an introduction you made, a room you got someone into — says more than a list of names."}
@@ -599,7 +599,7 @@ var STATES = {
   mentor:[
     ["arrival","Arrival",function(){D=fullData();D.m={tot:{doc:"",ma:"",pd:"",ug:""},people:[emptyP()],phil:"",edi:"",cross:""};D.visited.mentor=false;}],
     ["filled","Totals + people",function(){D=fullData();var p=D.m.people[1];p.folded=false;p.org="";p.unit="";D.m.phil="";UI.active=null;}],
-    ["practice","How you mentor",function(){D=fullData();UI.active={s:"m",k:"edi"};}]
+    ["practice","Mentorship style",function(){D=fullData();UI.active={s:"m",k:"edi"};}]
   ],
   ps:[
     ["arrival","Arrival",function(){D=fullData();D.ps={role:"",inst:"",field:"",challenge:"",streams:"",pivot:"",standing:"",programFit:"",teamFit:"",horizon:""};D.visited.ps=false;UI.active={s:"ps",k:"anchor"};}],
@@ -710,7 +710,7 @@ function exRow(list){var h='<div class="ex-row">';list.forEach(function(x){var o
 var EX_MENTOR={title:"What a finished mentorship section reads like — Social sciences",match:"One example for now, written for Social sciences.",segs:[["stakes","Since 2018 I have supervised four PhD students, nine master's students, two postdocs and 11 undergraduate research assistants."],["activities","One PhD student now leads evaluation at a national non-profit, and the role is built on methods I developed with that student. A master's student moved to a provincial statistics unit and still co-authors with the group."],["outputs","Every project in my group begins with a written agreement on authorship, data and ownership, revisited at the midpoint."],["outcomes","Three years ago I removed the prior-experience requirement from my assistantship postings and began paying from the first week."],["impact","I also mentor two early-career colleagues in other departments and run a monthly writing group that anyone in the faculty can join."]]};
 var EX_PS={title:"What a finished personal statement reads like — Social sciences",match:"One example for now, written for Social sciences.",segs:[["role","I am an associate professor at a mid-sized Canadian university. My work is in the sociology of work and economic insecurity."],["stakes","For 15 years my research has addressed a single question, why unpredictable work scheduling imposes the greatest costs on the workers least able to absorb them."],["activities","Three strands of work address it: an ethnography of shift assignment in retail and warehousing, a repeated survey of household income volatility and a partnership with a workers' centre."],["outcomes","I hold two consecutive operating grants and have built a longitudinal dataset that four other research teams now use."],["impact","The next phase follows the same households into care work, where scheduling volatility is growing fastest and longitudinal data are scarce."]]};
 
-/* the card field (open / filled / empty), shared by contributions, How you mentor, Your statement */
+/* the card field (open / filled / empty), shared by contributions, Mentorship style, Your statement */
 function fieldHTML(scope,i,f,value,has,isOpen,extra){
   var id=scope+"-"+i+"-"+f.k, st=isOpen?"is-open":(has?"is-filled":"is-empty"), label=f.label||JOBS[f.job]||f.k;
   var dot='<span class="jd" style="--jc:'+(f.job?'var(--j-'+f.job+')':'#bdbdbd')+'" aria-hidden="true"></span>';
@@ -840,19 +840,19 @@ R.mentor=function(){
   h+=D.m.people.map(function(p,i){return p.folded?personFold(p,i):personCard(p,i);}).join("");
   h+='<button type="button" class="add" data-act="addp">+ Add a person</button>';
   var pn=PF.filter(function(f){return !!D.m[f.k];}).length;
-  h+='<section class="card" aria-labelledby="hm-t"><div class="card-h"><h3 class="card-t" id="hm-t" style="margin:0">How you mentor</h3><span class="card-side"><span data-mc>'+pn+' of 3 answered</span>'+dots(pn,3)+'</span></div><div class="fields">'+
+  h+='<section class="card" aria-labelledby="hm-t"><div class="card-h"><h3 class="card-t" id="hm-t" style="margin:0">Mentorship style</h3><span class="card-side"><span data-mc>'+pn+' of 3 answered</span>'+dots(pn,3)+'</span></div><div class="fields">'+
     PF.map(function(f){var open=UI.active&&UI.active.s==="m"&&UI.active.k===f.k;return fieldHTML("m",0,f,D.m[f.k],!!D.m[f.k],open);}).join("")+'</div></section>';
   h+='<div class="nav"><button type="button" class="btn ghost" data-go="contrib">← Contributions</button><button type="button" class="btn primary" data-go="ps">'+railPs()+' →</button></div>';
   return h;};
 function peopleCounter(){var ts=totSum(),ds=described();if(ts)return ds+' of '+ts+' described';if(!ds)return 'No one described yet';return ds+(ds===1?' person':' people')+' described';}
 function personHead(p,i){var bits=[];if(p.stage)bits.push(p.stage==="other"?(p.stageOther||"Other"):lab(M_STAGES,p.stage));var where=[p.org,p.unit].filter(Boolean).join(", ");if(!where&&p.sector)where=lab(M_SECTORS,p.sector);
-  return 'Person '+(i+1)+(bits.length?' · '+esc(bits[0]):'')+(where?' → '+esc(where):'');}
-function personFold(p,i){return '<button type="button" class="fold revealed" data-pfold="'+i+'"><span class="t">'+personHead(p,i).replace(/^Person (\d+)/,'<span style="color:var(--burgundy)">Person $1</span>')+'</span><span class="meta">'+(p.prizes?'Prize noted':'')+'</span><span class="op" aria-hidden="true">Open ▾</span></button>';}
+  return 'Person '+String.fromCharCode(65+i)+(bits.length?' · '+esc(bits[0]):'')+(where?' → '+esc(where):'');}
+function personFold(p,i){return '<button type="button" class="fold revealed" data-pfold="'+i+'"><span class="t">'+personHead(p,i).replace(/^Person ([A-Z])/,'<span style="color:var(--burgundy)">Person $1</span>')+'</span><span class="meta">'+(p.prizes?'Prize noted':'')+'</span><span class="op" aria-hidden="true">Open ▾</span></button>';}
 function personCard(p,i){var uni=p.sector==="university";
-  var h='<section class="card revealed" aria-labelledby="ph'+i+'"><div class="card-h"><h4 class="card-t" id="ph'+i+'" data-ph="'+i+'" style="margin:0">'+personHead(p,i).replace(/^Person (\d+)/,'<span class="num">Person $1</span>')+'</h4><span class="card-side"><button type="button" class="icon-btn" aria-label="Remove person '+(i+1)+'" data-act="toast" data-msg="Removes this person after a confirmation.">×</button></span></div>'+
-    '<div class="pair"><div><label class="field-label" for="ps'+i+'">When you trained them</label><select class="select" id="ps'+i+'" data-pp="'+i+'|stage"><option value="">Choose…</option>'+M_STAGES.map(function(s){return '<option value="'+s[0]+'"'+(p.stage===s[0]?' selected':'')+'>'+s[1]+'</option>';}).join("")+'</select></div>'+
+  var h='<section class="card revealed" aria-labelledby="ph'+i+'"><div class="card-h"><h4 class="card-t" id="ph'+i+'" data-ph="'+i+'" style="margin:0">'+personHead(p,i).replace(/^Person ([A-Z])/,'<span class="num">Person $1</span>')+'</h4><span class="card-side"><button type="button" class="icon-btn" aria-label="Remove person '+String.fromCharCode(65+i)+'" data-act="toast" data-msg="Removes this person after a confirmation.">×</button></span></div>'+
+    '<div class="pair"><div><label class="field-label" for="ps'+i+'">Level</label><select class="select" id="ps'+i+'" data-pp="'+i+'|stage"><option value="">Choose…</option>'+M_STAGES.map(function(s){return '<option value="'+s[0]+'"'+(p.stage===s[0]?' selected':'')+'>'+s[1]+'</option>';}).join("")+'</select></div>'+
     '<div><label class="field-label" for="pw'+i+'">Where are they now?</label><select class="select" id="pw'+i+'" data-pp="'+i+'|sector"><option value="">Choose…</option>'+M_SECTORS.map(function(s){return '<option value="'+s[0]+'"'+(p.sector===s[0]?' selected':'')+'>'+s[1]+'</option>';}).join("")+'</select></div></div>';
-  if(p.stage==="other")h+='<div class="one revealed"><label class="field-label" for="po'+i+'">Describe the stage</label><input class="input" id="po'+i+'" data-pp="'+i+'|stageOther" value="'+esc(p.stageOther)+'"></div>';
+  if(p.stage==="other")h+='<div class="one revealed"><label class="field-label" for="po'+i+'">Describe their level</label><input class="input" id="po'+i+'" data-pp="'+i+'|stageOther" value="'+esc(p.stageOther)+'"></div>';
   if(p.sector)h+='<div class="pair revealed"><div><label class="field-label" for="pg'+i+'">'+(uni?'University':'Organization')+'</label><input class="input" id="pg'+i+'" data-pp="'+i+'|org" value="'+esc(p.org)+'"></div><div><label class="field-label" for="pu'+i+'">'+(uni?'Department or discipline':'Unit or subdivision')+'</label><input class="input" id="pu'+i+'" data-pp="'+i+'|unit" value="'+esc(p.unit)+'"></div></div>';
   h+='<div class="one"><label class="field-label" for="pz'+i+'">Prizes or scholarships <span class="opt">(optional)</span></label><input class="input" id="pz'+i+'" data-pp="'+i+'|prizes" value="'+esc(p.prizes)+'"></div>'+
      '<div><label class="field-label" for="py'+i+'">Why this example matters <span class="opt">(optional)</span></label><input class="input" id="py'+i+'" data-pp="'+i+'|why" value="'+esc(p.why)+'"></div>';
@@ -987,7 +987,7 @@ document.addEventListener("click",function(e){
   if(act==="built"){UI.built=!UI.built;t.setAttribute("aria-checked",UI.built);document.getElementById("exbox").classList.toggle("built",UI.built);renderMock();return;}
   if(act==="undecided"){D.p.undecided=!D.p.undecided;if(D.p.undecided)D.p.comp="";UI.profEdit=1;render();return;}
   if(act==="addc"){D.contribs.forEach(function(c){c.folded=true;});D.contribs.push(emptyC());var i=D.contribs.length-1;UI.active={s:"c",i:i,k:"h"};render();var n=document.getElementById("c-"+i+"-h");if(n){n.scrollIntoView({block:"center",behavior:motionMs(1)?"smooth":"auto"});n.focus({preventScroll:true});}announce("Contribution "+(i+1)+" added.");return;}
-  if(act==="addp"){D.m.people.forEach(function(p){p.folded=true;});D.m.people.push(emptyP());render();var k=D.m.people.length-1,s=document.getElementById("ps"+k);if(s){s.focus();}announce("Person "+(k+1)+" added.");return;}
+  if(act==="addp"){D.m.people.forEach(function(p){p.folded=true;});D.m.people.push(emptyP());render();var k=D.m.people.length-1,s=document.getElementById("ps"+k);if(s){s.focus();}announce("Person "+String.fromCharCode(65+k)+" added.");return;}
   if(act==="addev"){var ci=+document.querySelector("[data-card]").getAttribute("data-card");var ce=D.contribs[ci];if(UI.evDraft&&(UI.evDraft.type||UI.evDraft.text)){ce.ev.push(UI.evDraft);}UI.evDraft={type:"",text:"",why:""};render();announce("Evidence item "+String.fromCharCode(97+ce.ev.length)+" added.");return;}
   if(act==="draft"){UI.draftOpen=!UI.draftOpen;render(true);return;}
   if(act==="download"){D.exported=true;renderRail();toast("Downloads "+(UI.fmt==="doc"?"a Word file (.doc)":"a text file (.txt)")+".");return;}
@@ -1017,7 +1017,7 @@ document.addEventListener("input",function(e){
   if(t.getAttribute("data-ps")){D.ps[t.getAttribute("data-ps")]=t.value;var art=document.querySelector("[data-art]");if(art)art.textContent=article(D.ps.role);livePs();renderRail();return;}
   if(t.getAttribute("data-pf")==="comp"){var was=!!D.p.comp;D.p.comp=t.value;UI.profEdit=1;if(was!==!!D.p.comp)render(true);else{renderRail();}return;}
   if(t.getAttribute("data-tot")){D.m.tot[t.getAttribute("data-tot")]=t.value;var s=totSum();document.getElementById("tot-sum").textContent=s?s+" in total":"Type a number in each box that applies";document.getElementById("pcounter").textContent=peopleCounter();renderRail();return;}
-  if(t.getAttribute("data-pp")){var q=t.getAttribute("data-pp").split("|");D.m.people[+q[0]][q[1]]=t.value;if(q[1]==="stage"||q[1]==="sector"){render(true);announce(q[1]==="sector"?"Two more fields appeared below.":"");}else{var hd=document.querySelector('[data-ph="'+q[0]+'"]');if(hd)hd.innerHTML=personHead(D.m.people[+q[0]],+q[0]).replace(/^Person (\d+)/,'<span class="num">Person $1</span>');document.getElementById("pcounter").textContent=peopleCounter();}renderRail();return;}
+  if(t.getAttribute("data-pp")){var q=t.getAttribute("data-pp").split("|");D.m.people[+q[0]][q[1]]=t.value;if(q[1]==="stage"||q[1]==="sector"){render(true);announce(q[1]==="sector"?"Two more fields appeared below.":"");}else{var hd=document.querySelector('[data-ph="'+q[0]+'"]');if(hd)hd.innerHTML=personHead(D.m.people[+q[0]],+q[0]).replace(/^Person ([A-Z])/,'<span class="num">Person $1</span>');document.getElementById("pcounter").textContent=peopleCounter();}renderRail();return;}
   if(t.id&&/^ev[tw]/.test(t.id)){if(!UI.evDraft)UI.evDraft={type:"",text:"",why:""};UI.evDraft[t.id.charAt(2)==="t"?"text":"why"]=t.value;return;}
 });
 document.addEventListener("change",function(e){var t=e.target;if(t.getAttribute("data-sc")){D.checks[t.getAttribute("data-sc")]=t.checked;}});

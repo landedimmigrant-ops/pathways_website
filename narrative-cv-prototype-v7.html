@@ -323,7 +323,7 @@
     .v7-hints { margin: 0; padding-left: 0; list-style: none; font-size: 0.88rem; }
     .v7-hints li { margin: 0 0 4px; display: flex; gap: 6px; align-items: baseline; }
 
-    /* Card (one card for contributions, people, How you mentor, Your statement, review, export) */
+    /* Card (one card for contributions, people, Mentorship style, Your statement, review, export) */
     .v7-card { background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 16px 22px 22px; margin: 0 0 16px; }
     .v7-card-h { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0 0 12px; min-height: 28px; }
     .v7-card-t { font-weight: 600; font-size: 0.95rem; color: #333; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
@@ -2951,6 +2951,8 @@
     // Phones hide the column and keep the header row (title and squares) sticky instead (option A).
     // Pass E: Set up your profile reuses the column (opts: a nav label, the state words, and items
     // that are locked until their question is revealed: grey, disabled, not clickable).
+    // Only cards long enough to scroll past the screen carry it (Contributions, Your statement); the
+    // short Mentorship cards keep their header squares (Prem, 2026-10-30).
     function fieldCol(card, name, items, isCur, onPick, opts) {
       opts = opts || {};
       const onW = opts.on || "written", offW = opts.off || "not written yet";
@@ -3904,7 +3906,7 @@
     const menteeHead = (m, i) => {
       const st = m.stageKind ? menteeStageLabel(m) : "";
       const where = [(m.org || "").trim(), (m.unit || "").trim()].filter(Boolean).join(", ") || (m.kind ? menteeKindLabel(m.kind) : "");
-      return { num: "Person " + (i + 1), rest: (st ? " · " + st : "") + (where ? " → " + where : "") };
+      return { num: "Person " + letter(i).toUpperCase(), rest: (st ? " · " + st : "") + (where ? " → " + where : "") };
     };
     function renderMentorship(c) {
       tailoredBar(c);
@@ -3951,7 +3953,7 @@
       const pc = el("span", "v7-counter"); pc.setAttribute("aria-live", "polite");
       const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? d + " of " + t + " described" : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); };
       setPc(); sh.appendChild(pc); c.appendChild(sh);
-      c.appendChild(el("p", "v7-quiet v7-people-help", "Describe each person by their stage and where they went; names are left out. Add any best-paper prizes or prestigious scholarships they held or went on to win."));
+      c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers will read your CV, so leave out names to protect the privacy of the people you trained. Describe each person by their level and where they went, and add any best-paper prizes or prestigious scholarships they held or went on to win."));
       ns.mentees.forEach((m, i) => c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)));
       const addP = el("button", "v7-add", "+ Add a person"); addP.type = "button";
       addP.addEventListener("click", () => {
@@ -3959,21 +3961,20 @@
         ns.mentees.push(blankMentee()); saveState(); renderStage();
         const k = ns.mentees.length - 1, s = document.getElementById("v7-ps" + k);
         if (s) { s.focus(); s.scrollIntoView({ block: "center" }); }
-        announce("Person " + (k + 1) + " added.");
+        announce("Person " + letter(k).toUpperCase() + " added.");
       });
       c.appendChild(addP);
 
-      // "How you mentor" in the card pattern (D-4: arrives with its first unanswered field open).
+      // "Mentorship style" in the card pattern (D-4: arrives with its first unanswered field open).
+      // No side column: three fields fit on one screen, so the header's squares stay (Prem, 2026-10-30).
       const card = el("section", "v7-card"); card.setAttribute("aria-labelledby", "v7-hm-t");
       const ch = el("div", "v7-card-h");
-      const ct = el("h3", "v7-card-t", "How you mentor"); ct.id = "v7-hm-t";
+      const ct = el("h3", "v7-card-t", "Mentorship style"); ct.id = "v7-hm-t";
       ch.appendChild(ct);
       const side = el("span", "v7-card-side");
       const pn = () => PF().filter(f => (ns[f.k] || "").trim()).length;
       let dd = progress(pn(), 3); side.appendChild(dd);
       ch.appendChild(side); card.appendChild(ch);
-      card.appendChild(fieldCol(card, "How you mentor", PF().map(f => ({ id: "m-" + f.k, label: f.label, has: () => !!(ns[f.k] || "").trim() })),
-        (id) => UI.active === id, jumpToField));
       const fields = el("div", "v7-fields");
       if (!UI.active || UI.active.indexOf("m-") !== 0) { const first = PF().find(f => !(ns[f.k] || "").trim()); UI.active = "m-" + (first ? first.k : "mentorPhilosophy"); }
       PF().forEach(f => fields.appendChild(cardField({
@@ -3982,7 +3983,6 @@
         onChange: () => { const nd = progress(pn(), 3); side.replaceChild(nd, dd); dd = nd; announceCount(pn() + " of 3 answered"); }
       })));
       card.appendChild(fields);
-      card._colSync();
       c.appendChild(card);
       navRow(c);
     }
@@ -4009,13 +4009,13 @@
       const side = el("span", "v7-card-side");
       if (ns.mentees.length > 1) {
         const fold = el("button", "v7-icon-btn"); fold.type = "button"; fold.id = "pfold-" + i;
-        fold.appendChild(el("span", "v7-tri is-down", "▸")).setAttribute("aria-hidden", "true"); fold.setAttribute("aria-label", "Fold person " + (i + 1));
+        fold.appendChild(el("span", "v7-tri is-down", "▸")).setAttribute("aria-hidden", "true"); fold.setAttribute("aria-label", "Fold person " + letter(i).toUpperCase());
         fold.addEventListener("click", () => { m.folded = true; saveState(); renderStage(); });
         side.appendChild(fold);
       }
-      const rm = el("button", "v7-icon-btn", "×"); rm.type = "button"; rm.setAttribute("aria-label", "Remove person " + (i + 1));
+      const rm = el("button", "v7-icon-btn", "×"); rm.type = "button"; rm.setAttribute("aria-label", "Remove person " + letter(i).toUpperCase());
       rm.addEventListener("click", () => {
-        if (menteeHasContent(m) && !confirm("Remove person " + (i + 1) + "?")) return;
+        if (menteeHasContent(m) && !confirm("Remove person " + letter(i).toUpperCase() + "?")) return;
         ns.mentees.splice(i, 1); if (!ns.mentees.length) ns.mentees.push(blankMentee());
         if (!ns.mentees.some(x => !x.folded)) ns.mentees[ns.mentees.length - 1].folded = false;
         saveState(); renderStage();
@@ -4040,10 +4040,10 @@
         w.appendChild(l); w.appendChild(inp); return w;
       };
       const pair = el("div", "v7-pair");
-      pair.appendChild(select("v7-ps" + i, "When you trained them", MENTEE_STAGES, m.stageKind, v => { m.stageKind = v; m.stage = v === "other" ? (m.stageOther || "") : (MENTEE_STAGES.find(x => x[0] === v) || [, ""])[1]; changed(); renderStage(); }));
+      pair.appendChild(select("v7-ps" + i, "Level", MENTEE_STAGES, m.stageKind, v => { m.stageKind = v; m.stage = v === "other" ? (m.stageOther || "") : (MENTEE_STAGES.find(x => x[0] === v) || [, ""])[1]; changed(); renderStage(); }));
       pair.appendChild(select("v7-pw" + i, "Where are they now?", MENTEE_KINDS, m.kind, v => { m.kind = v; changed(); renderStage(); }));
       card.appendChild(pair);
-      if (m.stageKind === "other") card.appendChild(input("v7-po" + i, "Describe the stage", false, m.stageOther, v => { m.stageOther = v; m.stage = v; changed(); }));
+      if (m.stageKind === "other") card.appendChild(input("v7-po" + i, "Describe their level", false, m.stageOther, v => { m.stageOther = v; m.stage = v; changed(); }));
       if (m.kind) {
         const uni = m.kind === "university";
         const p2 = el("div", "v7-pair");

@@ -199,12 +199,13 @@ async function seed(state, extra) {
     setv(q('#v7-t-phd'),'2'); setv(q('#v7-t-postdoc'),'1'); a.sum=q('.v7-dash .v7-counter').innerText;
     setsel(q('#v7-ps0'),'postdoc'); await w(60); setsel(q('#v7-pw0'),'government'); await w(60);
     a.labels=qa('.v7-card label').map(l=>l.innerText).slice(2,4);
-    setv(q('#v7-pg0'),'A made-up ministry'); a.head=q('#v7-ph0').innerText;
+    setv(q('#v7-pg0'),'A made-up ministry'); a.head=q('#v7-ph0').innerText; a.help=q('.v7-people-help').innerText; a.rm=q('[aria-label^="Remove person"]')?.getAttribute('aria-label');
     a.hm=qa('[data-f^="m-"]').map(f=>f.className.split(' ')[1]);
     return a;`);
   check("totals tiles keep the five-year wording (D-1) and add up", /five years/.test(r.tot) && r.sum === "3 in total", r);
   check("labels follow the sector; header builds", r.labels.join("|") === "Organization|Unit or subdivision" && /Postdoctoral → A made-up ministry/.test(r.head), r);
-  check("How you mentor arrives with one field open (D-4)", r.hm[0] === "is-open", r.hm);
+  check("people are lettered like evidence (Person A); the help says why names are left out", /^Person A\b/.test(r.head) && r.rm === "Remove person A" && /privacy/.test(r.help) && /leave out names/.test(r.help), r);
+  check("Mentorship style arrives with one field open (D-4)", r.hm[0] === "is-open", r.hm);
 
   console.log("Background and skills (CV-FRQ)");
   r = await js(H + `nav(/Background and skills/).click(); await w(150);
@@ -370,10 +371,10 @@ async function seed(state, extra) {
     const a={id, cur:card.querySelector('.v7-fsq.is-cur')?.dataset.for, open:q('.v7-f.is-open')?.dataset.f, d:Math.round(q('.v7-f[data-f="'+id+'"]').getBoundingClientRect().top-sq()[4].getBoundingClientRect().top)};
     window.scrollTo(0,0); await w(100); return a;`);
   check("cards: scrolling a field level with its square moves the triangle there; the open field keeps its outline", r.cur === r.id && r.open !== r.id && Math.abs(r.d) <= 8, r);
-  r = await js(H + `rail('Mentorship').click(); await w(150); const m=q('.v7-card-col nav')?.getAttribute('aria-label'), mn=qa('.v7-card-col .v7-fsq').length, mc=qa('.v7-card-col .v7-fsq[aria-current]').length;
+  r = await js(H + `rail('Mentorship').click(); await w(150); const m=qa('.v7-card-col').length, hm=q('#v7-hm-t')?.innerText, hd=q('#v7-hm-t').closest('.v7-card').querySelector('.v7-card-h .v7-dots'), mn=hd?hd.children.length:0, mv=!!hd&&hd.getBoundingClientRect().width>2;
     rail('Personal statement').click(); await w(150); const p=q('.v7-card-col nav')?.getAttribute('aria-label'), pn=qa('.v7-card-col .v7-fsq').length;
-    rail('Contributions').click(); await w(150); return {m, mn, mc, p, pn};`);
-  check("How you mentor and Your statement carry the same column", r.m === "Fields in How you mentor" && r.mn === 3 && r.mc === 1 && r.p === "Fields in Your statement" && r.pn >= 7, r);
+    rail('Contributions').click(); await w(150); return {m, hm, mn, mv, p, pn};`);
+  check("only long cards carry the column: Your statement has it; Mentorship style and the person cards keep their header squares", r.m === 0 && r.hm === "Mentorship style" && r.mn === 3 && r.mv && r.p === "Fields in Your statement" && r.pn >= 7, r);
   r = await js(H + `const seen=e=>!!e&&e.getBoundingClientRect().width>2; const fs=qa('.v7-card .v7-f');
     const st=f=>({c:f.className.split(' ')[1], k:seen(f.querySelector('.v7-f-k')), q:seen(f.querySelector(':scope > .v7-q'))});
     const all=fs.map(st); const job=fs.find(f=>!f.classList.contains('is-filled')&&f.querySelector('.v7-q-dot'));
