@@ -220,8 +220,8 @@
     .v7-explain p { margin: 0; }
     .v7-field-label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin: 0 0 4px; }
     .v7-input { width: 100%; box-sizing: border-box; border: 1px solid var(--v7-field); border-radius: 6px; padding: 9px 10px; background: #fff; font: inherit; font-size: 0.92rem; min-height: 40px; }
-    .v7-input:focus, .v7-box:focus { outline: none; border-color: #912338; box-shadow: 0 0 0 2px rgba(145,35,56,.18); }
-    .v7-f.is-open .v7-box:focus { box-shadow: none; }
+    /* r10-b-12: a focused field shows a solid 2 px ring (its 1 px border plus a 1 px shadow in the same colour). */
+    .v7-input:focus, .v7-box:focus { outline: none; border-color: #912338; box-shadow: 0 0 0 1px #912338; }
     .v7-select { appearance: auto; }
     textarea.v7-two { height: calc(2 * 1.5em + 18px); resize: none; line-height: 1.5; }
     textarea.v7-grow { resize: none; overflow: hidden; line-height: 1.5; display: block; }
@@ -263,8 +263,11 @@
     .v7-focus-h:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
     .v7-skip { position: absolute; left: 8px; top: -60px; z-index: 1000; background: #fff; color: #912338; border: 2px solid #912338; border-radius: 4px; padding: 8px 14px; font-weight: 700; text-decoration: underline; }
     /* r1-b-9: fixed below the top bar, which sat over most of the link. */
+    /* r10-b-11: text the shared styles fix in px follows the browser's text size here. */
+    .v7-skip { font-size: 1rem; }
+    #ncv-v4-root .narrative-intro-text { font-size: 1.125rem; }
     .v7-skip:focus { position: fixed; top: calc(var(--v7-bar, 43px) + 8px); z-index: 1001; }
-    @media (min-width: 48.0625em) {
+    @media (width > 48em) {
       .v7-qcount { margin: 0; }
       .v7-qcount .v7-dots { display: none; }
       .v7-prof-col { display: grid; grid-template-columns: minmax(0, 1fr) 24px; column-gap: 12px; }
@@ -272,7 +275,7 @@
       .v7-prof-col > .v7-fcol { grid-column: 2; grid-row: 1; align-self: start; position: sticky; top: calc(var(--v7-bar, 43px) + 16px); }
       .v7-fsq:disabled { cursor: default; }
     }
-    @media (max-width: 48em) {
+    @media (width <= 48em) {
       .v7-qcount { position: sticky; top: var(--v7-bar, 43px); z-index: 5; background: #fff; padding: 8px 0; margin: 0 0 4px; }
     }
     .v7-prog { display: inline-flex; align-items: center; }
@@ -291,10 +294,10 @@
     .v7-choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 12px; }
     .v7-choice { position: relative; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; text-align: left; background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 10px; padding: 12px 14px; cursor: pointer; min-height: 64px; font: inherit; color: var(--text); transition: border-color 120ms, background 120ms; }
     .v7-choice:hover { border-color: #912338; }
-    .v7-choice b { font-size: 1rem; line-height: 1.25; padding-right: 18px; }
+    .v7-choice b { font-size: 1rem; line-height: 1.25; padding-right: 1.4rem; overflow-wrap: anywhere; hyphens: auto; }
     .v7-choice small { display: block; font-size: 0.74rem; color: var(--muted); line-height: 1.35; margin-top: 3px; }
     .v7-choice[aria-pressed="true"], .v7-choice[aria-checked="true"] { border-color: #912338; background: var(--v7-open); }
-    .v7-tick { position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; border-radius: 50%; background: #912338; color: #fff; display: none; align-items: center; justify-content: center; font-size: 0.75rem; }
+    .v7-tick { position: absolute; top: 8px; right: 8px; width: 1.15rem; height: 1.15rem; border-radius: 50%; background: #912338; color: #fff; display: none; align-items: center; justify-content: center; font-size: 0.75rem; }
     .v7-choice[aria-pressed="true"] .v7-tick, .v7-choice[aria-checked="true"] .v7-tick { display: flex; }
     .v7-choice.wide { grid-column: 1 / -1; min-height: 0; flex-direction: row; gap: 8px; align-items: center; }
     .v7-minis { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
@@ -358,13 +361,13 @@
     .v7-fsq.is-cur i { width: 0; height: 0; border-radius: 0; background: none; border-style: solid; border-width: 6px 10px 6px 0; border-color: transparent #912338 transparent transparent; }
     .v7-fsq:not(.is-cur):not(.is-on):not(:disabled):hover i { border-color: #912338; }
     .v7-fsq:focus-visible { outline: 2px solid #912338; outline-offset: 1px; }
-    @media (min-width: 48.0625em) {
+    @media (width > 48em) {
       .v7-card.v7-card-col { display: grid; grid-template-columns: minmax(0, 1fr) 24px; column-gap: 12px; padding-right: 12px; }
       .v7-card.v7-card-col > * { grid-column: 1; }
       .v7-card.v7-card-col > .v7-fcol { grid-column: 2; grid-row: 2 / span 30; align-self: start; position: sticky; top: calc(var(--v7-bar, 43px) + 16px); }
       .v7-card.v7-card-col > .v7-card-h .v7-dots { display: none; }
     }
-    @media (max-width: 48em) {
+    @media (width <= 48em) {
       .v7-fcol { display: none; }
       .v7-card.v7-card-col > .v7-card-h { position: sticky; top: var(--v7-bar, 43px); z-index: 5; background: var(--v7-card); margin: -14px -14px 12px; padding: 12px 14px 8px; border-radius: 10px 10px 0 0; }
       .v7-card.v7-card-col > .v7-card-h { align-items: center; }
@@ -487,6 +490,8 @@
     .v7-counter { font-size: 0.85rem; color: var(--muted); }
     .v7-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5em), 1fr)); gap: 12px; }
     .v7-lv-note { margin: 6px 0 0; font-size: 0.8rem; }
+    .v7-lv-clear { display: inline-flex; align-items: center; margin: 6px 0 0; font-size: 0.85rem; min-height: 32px; }
+    .v7-lv-clear[hidden] { display: none; }
     .v7-tile { background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
     .v7-tile label { font-size: 0.78rem; color: var(--muted); font-weight: 600; order: 2; overflow-wrap: anywhere; hyphens: auto; }
     .v7-tile input { order: 1; border: 0; border-bottom: 2px solid #d0d0d0; border-radius: 0; padding: 0 0 2px; font: inherit; font-size: 1.9rem; font-weight: 700; line-height: 1.15; width: 100%; background: transparent; color: var(--text); -moz-appearance: textfield; }
@@ -495,6 +500,9 @@
     .v7-tile input:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
     .v7-tile input::placeholder { color: #b5b5b5; font-weight: 400; }
     .v7-people-help { margin: -6px 0 12px; }
+    .v7-person-preview { margin: 10px 0 0; font-size: 0.85rem; }
+    .v7-person-preview:empty { display: none; }
+    .v7-pz-help { margin: 4px 0 0; font-size: 0.8rem; }
     .v7-early { background: #fafafa; border: 1.5px solid var(--v7-card-b); border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; color: #444; margin: 0 0 16px; }
     .v7-cross { background: #f8f8f8; border: 1px dashed #cfcfcf; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #444; line-height: 1.5; margin: 0 0 12px; }
     .v7-cross-t { display: block; font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: #912338; margin-bottom: 4px; }
@@ -514,7 +522,7 @@
     .v7-ref-note { display: inline-block; padding-left: 1.4em; color: #555; }
     .v7-draft.is-shut .v7-draft-body { height: 0; padding-top: 0; padding-bottom: 0; visibility: hidden; }
     /* r2-a-7: a phone scrolls the page; a box that scrolls inside it showed a tenth of the draft. */
-    @media (max-width: 48em) { .v7-draft:not(.is-shut) .v7-draft-body { height: auto; overflow: visible; } }
+    @media (width <= 48em) { .v7-draft:not(.is-shut) .v7-draft-body { height: auto; overflow: visible; } }
     .v7-order { margin: 0 0 24px; }
     .v7-slot { font-size: 0.8rem; color: var(--muted); margin: 12px 0 6px; padding-left: 2px; max-width: 70ch; }
     .v7-slot b { color: var(--text); }
@@ -545,7 +553,7 @@
     .v7-pages s { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; }
     .v7-pages-scale { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); }
     .v7-selfcheck label { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; font-size: 0.9rem; color: #333; cursor: pointer; }
-    .v7-selfcheck input { margin-top: 4px; width: 16px; height: 16px; accent-color: #912338; flex-shrink: 0; }
+    .v7-selfcheck input { margin-top: 0.25em; width: 1.1em; height: 1.1em; accent-color: #912338; flex-shrink: 0; } /* r10-b-11 */
     .v7-closing { margin: 12px 0 0; padding: 10px 14px; border: 1.5px solid var(--v7-card-b); background: #fafafa; font-size: 0.88rem; border-radius: 8px; }
 
     /* Export */
@@ -572,13 +580,13 @@
     /* N-5: the rail column grows with the text size (220 px at 100%), so its labels keep whole words.
        R-2: the breakpoints are in em, so a larger browser text size gets the one-column layout sooner;
        the cap keeps the content column usable when only the page's own text size is raised. */
-    @media (min-width: 48.0625em) { .narrative-module-shell:not(.is-start) { grid-template-columns: min(13.75rem, 30vw) minmax(0, 1fr); } }
-    @media (max-width: 48em) { #ncv-v4-root .narrative-progress-panel { position: static; } }
+    @media (width > 48em) { .narrative-module-shell:not(.is-start) { grid-template-columns: min(13.75rem, 30vw) minmax(0, 1fr); } }
+    @media (width <= 48em) { #ncv-v4-root .narrative-progress-panel { position: static; } }
     .narrative-module-shell.is-start .v7-paths { max-width: 720px; }
     .v7-rail-in { animation: v7-rail-in 400ms ease-out both; }
     @keyframes v7-rail-in { from { opacity: 0; } to { opacity: 1; } }
     @media (prefers-reduced-motion: reduce) { .v7-rail-in { animation: none; } }
-    @media (max-width: 48em) {
+    @media (width <= 48em) {
       .narrative-module-shell { grid-template-columns: minmax(0, 1fr); }
       .v7-tailored-pills { flex-wrap: nowrap; overflow: hidden; white-space: nowrap; }
       .v7-qblock, .v7-card, .v7-dash { padding: 14px 14px 16px; }
@@ -600,9 +608,9 @@
     /* Design check, 2026-10-27 */
     /* r4-b-1: the top bar's height plus, at 768 px and below, the sticky card header or Setup's count row. */
     html { scroll-padding-top: calc(var(--v7-bar, 43px) + 13px); }
-    @media (max-width: 48em) { html { scroll-padding-top: calc(var(--v7-bar, 43px) + var(--v7-stick, 0px) + 12px); } }
+    @media (width <= 48em) { html { scroll-padding-top: calc(var(--v7-bar, 43px) + var(--v7-stick, 0px) + 12px); } }
     /* A short screen keeps the card header in the flow, so the sticky stack does not fill it. */
-    @media (max-width: 48em) and (max-height: 32.5em) {
+    @media (width <= 48em) and (height <= 32.5em) {
       .v7-card.v7-card-col > .v7-card-h, .v7-qcount { position: static !important; }
       html { scroll-padding-top: calc(var(--v7-bar, 43px) + 12px); }
     }
@@ -611,12 +619,12 @@
     .v7-lede { font-size: 1rem; line-height: 1.6; }
     .v4-privacy { max-width: 70ch; display: flex; gap: 6px; align-items: flex-start; }
     .narrative-nav .btn, .v7-actions .btn, .v7-card .btn:not(.v7-btn-small), .v7-nudge .btn { font-size: 0.875rem; min-height: 40px; padding: 9px 16px; line-height: 1.2; }
-    .v7-choices { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .v7-choices { grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); } /* r10-b-3: tiles grow with the text size */
     .v7-mini[aria-checked="true"], .v7-mini[aria-pressed="true"] { background: var(--v7-open); border-color: #912338; color: #912338; font-weight: 600; }
     .v7-glance { align-items: start; }
     .v7-anchor-line { display: block; line-height: 2.6; }
     .v7-anchor-line .v7-input { display: inline-block; max-width: 100%; vertical-align: middle; }
-    @media (max-width: 48em) {
+    @media (width <= 48em) {
       .narrative-nav { flex-wrap: wrap; gap: 10px; }
       .narrative-nav .v7-nav-note { flex-basis: 100%; order: -1; margin: 0; }
       .narrative-nav .btn { white-space: nowrap; }
@@ -703,14 +711,14 @@
     .v7-gv-art svg { display: block; width: 100%; height: auto; max-width: 100%; }
     .v7-gv-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--v7-rule); font-size: 0.85rem; }
     .v7-gv-exp { background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 10px; padding: 16px 22px 18px; margin: 0 0 16px; }
-    @media (max-width: 48em) {
+    @media (width <= 48em) {
       .v7-gv-grid { grid-template-columns: minmax(0, 1fr); }
       .v7-gv-exp { padding: 14px 14px 16px; }
     }
     .narrative-stage-header .v4-kicker { color: #912338; letter-spacing: 0.06em; font-weight: 600; }
     .narrative-nav .v7-nav-note { flex: 1 1 240px; margin: 0 12px; align-self: center; }
     #ncv-v4-root .narrative-nav { flex-wrap: wrap; gap: 10px; } /* R-2: the step buttons wrap at large text instead of running off the page */
-    @media (max-width: 48em) {
+    @media (width <= 48em) {
       .v7-paths { grid-template-columns: 1fr; }
       .v7-path-cont { flex-direction: row; align-items: center; gap: 12px; }
       .v7-path-cont .v7-arrow { margin: 0 0 0 auto; padding: 0; align-self: center; }
@@ -719,7 +727,7 @@
       .v7-rail-foot .v7-rail-saved { flex-basis: 100%; }
       .narrative-module-shell.is-start .narrative-stage-content { order: -1; }
       #ncv-v4-root .narrative-progress-panel { position: static; padding: 0; max-height: none; overflow: visible; }
-      .v7-rail-toggle { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 48px; padding: 0 16px; background: none; border: 0; font: inherit; font-weight: 700; color: #912338; cursor: pointer; text-align: left; }
+      .v7-rail-toggle { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 48px; padding: 0 16px; background: none; border: 0; font: inherit; font-size: 1rem; font-weight: 700; color: #912338; cursor: pointer; text-align: left; }
       .v7-rail-toggle .v7-tri { transition: transform 150ms; }
       .v7-rail-toggle .v7-tri.is-down { transform: rotate(90deg); }
       .narrative-progress-panel:not(.is-open) > .v7-rail-body { display: none; }
@@ -727,10 +735,10 @@
       .narrative-module-shell.is-start { display: flex; flex-direction: column; }
     }
     /* r8-a-1 (inferred): a phone held sideways is wide but short; it gets one column and the folded rail. */
-    @media (min-width: 48.0625em) and (max-height: 32.5em) and (pointer: coarse) {
+    @media (width > 48em) and (height <= 32.5em) and (pointer: coarse) {
       #ncv-v4-root .narrative-module-shell { grid-template-columns: minmax(0, 1fr); }
       #ncv-v4-root .narrative-progress-panel { position: static; padding: 0; max-height: none; overflow: visible; }
-      .v7-rail-toggle { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 48px; padding: 0 16px; background: none; border: 0; font: inherit; font-weight: 700; color: #912338; cursor: pointer; text-align: left; }
+      .v7-rail-toggle { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 48px; padding: 0 16px; background: none; border: 0; font: inherit; font-size: 1rem; font-weight: 700; color: #912338; cursor: pointer; text-align: left; }
       .v7-rail-toggle .v7-tri { transition: transform 150ms; }
       .v7-rail-toggle .v7-tri.is-down { transform: rotate(90deg); }
       .narrative-progress-panel:not(.is-open) > .v7-rail-body { display: none; }
@@ -741,12 +749,12 @@
     .v7-rail-foot button { font: inherit; font-size: 0.85rem; text-align: left; background: none; border: 0; padding: 4px 0; color: #912338; text-decoration: underline; cursor: pointer; min-height: 32px; }
     .v7-rail-foot .v7-rail-saved { font-size: 0.75rem; color: var(--muted); margin: 0; }
     /* W-53, W-55: phone sizes. 16 px fields stop the iOS zoom on focus; 44 px targets (D-14); charts keep a readable size and scroll sideways inside their figure. */
-    @media (max-width: 48em) {
-      .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: 16px; }
+    @media (width <= 48em) {
+      .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: max(16px, 0.92rem); } /* r10-b-1: the 16 px floor, scaled above it */
       .v7-select, .v7-input, .v7-chg-row .v7-input, .v7-chg-row .v7-select, .v7-tile input, .v7-rail-foot button { min-height: 44px; }
       .v7-icon-btn { width: 44px; height: 44px; }
       .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
-      .v7-tile input.v7-tile-name { font-size: 16px; min-height: 44px; }
+      .v7-tile input.v7-tile-name { font-size: max(16px, 0.92rem); min-height: 44px; }
       .v7-glance li a { display: inline-block; padding: 12px 0; }
       .proto-banner a { display: inline-flex; align-items: center; min-height: 44px; }
       .v7-gv-art { overflow-x: auto; }
@@ -754,18 +762,18 @@
     }
     /* r1-b-3 (audit 2026-10-31): a touch screen wider than a phone (a tablet) takes the phone's
        16 px fields and 44 px targets; the layout stays the desktop one. */
-    @media (pointer: coarse) and (min-width: 48.0625em) {
-      .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: 16px; }
+    @media (pointer: coarse) and (width > 48em) {
+      .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: max(16px, 0.92rem); } /* r10-b-1: the 16 px floor, scaled above it */
       .v7-select, .v7-input, .v7-chg-row .v7-input, .v7-chg-row .v7-select, .v7-tile input, .v7-rail-foot button,
       .v7-mini, .v7-btn-small, .v7-ri, .v7-linkbtn, .v7-ex-btn { min-height: 44px; }
       .v7-icon-btn { width: 44px; height: 44px; }
       .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
-      .v7-tile input.v7-tile-name { font-size: 16px; min-height: 44px; }
+      .v7-tile input.v7-tile-name { font-size: max(16px, 0.92rem); min-height: 44px; }
     }
     /* r1-b-4: below about 1100 px two charts side by side shrink their labels to 5 px; one per row. */
     /* r6-a-6 (inferred): one chart per row at every width, so their text is not scaled down to 8 px. */
     .v7-gv-grid { grid-template-columns: minmax(0, 1fr); }
-    .v7-gv-art svg { max-width: 640px; }
+    .v7-gv-art svg { max-width: 40rem; } /* r10-b-4: 640 px at 16 px; larger with a larger text size */
     .v4-note-panel { position: sticky; top: 34px; z-index: 999; max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
     .v4-note-panel-inner { background: #fff; border: 2px solid #1a1a1a; border-radius: 0 0 8px 8px; padding: 0.9rem 1rem; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
     .v4-note-panel textarea { width: 100%; box-sizing: border-box; min-height: 70px; padding: 0.5rem; font: inherit; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 6px; }
@@ -1756,7 +1764,7 @@
         ownRe = [new RegExp(pre + "\\bI\\b(?:\\s+\\S+){0,3}?\\s*\\b" + verbAlt),
           // r8-b-1: "I am the principal investigator", "I am responsible for", "I was in charge of".
           // R-6: after "the", "a" or "an", a role word must follow within three words ("I was a child" does not count).
-          new RegExp(pre + "\\bI\\s+(?:am|was)\\s+(?:(?:the|a|an)\\s+(?:[\\w-]+\\s+){0,2}?(?:investigator|lead|leader|author|supervisor|director|chair|coordinator|manager|founder|editor|curator|designer|developer|head|principal|co-\\w+|first|senior|sole|PI|choreographer|composer|producer|architect)|responsible|in\\s+charge|co-?lead|lead|principal|senior|first|sole)\\b"),
+          new RegExp(pre + "\\bI\\s+(?:am|was)\\s+(?:(?:the|a|an)\\s+(?:[\\w-]+\\s+){0,2}?(?:investigator|lead|leader|author|supervisor|director|chair|coordinator|manager|founder|editor|curator|designer|developer|head|principal|co-\\w+|first|senior|sole|PI|choreographer|composer|producer|architect)|responsible|in\\s+charge|co-?lead|lead|principal|senior|first|sole)\\b", "i"), // S-1: titles in capitals count
           new RegExp(pre + "\\bI\\s+(?!am\\b|was\\b|were\\b|have\\b|had\\b|will\\b|would\\b|could\\b|should\\b|might\\b|may\\b|can\\b|do\\b|did\\b|think\\b|believe\\b|hope\\b|feel\\b|also\\b|and\\b|or\\b)[a-z]{3,}\\b")];
       }
       return { iVerb: ownRe.some(re => re.test(t)), myWord: MY_ROLE_NOUN.test(t) };
@@ -1790,7 +1798,7 @@
       // marker. H1: the `my` half used to accept any "my <word>", so "My research focuses…" read as
       // a role claim and let a nearby "we partnered / our findings" pass. The verb half is
       // unchanged. Prefer under-flagging: a missed vague sentence costs less than nagging a clear one.
-      const weMatches = [...t.matchAll(/\b(we|us|our)\b/gi)].map(m => ({ text: m[0], index: m.index }));
+      const weMatches = [...t.matchAll(/\b(we|our)\b/gi)] // r10-a-5: "us" is usually general ("the records let us say").map(m => ({ text: m[0], index: m.index }));
       const weCount = weMatches.length;
       const own = ownershipIn(t), iVerb = own.iVerb, myWord = own.myWord;
       const ownership = iVerb || myWord;
@@ -1799,7 +1807,7 @@
       if (ownership && weCount) out.strengths.push("Team voice and your own role are both visible.");
       else if (iVerb) out.strengths.push("Your own role is named."); // r6-b-6: "my team ran it" names the team
       if (weCount && !ownership && !ctx.roleNamed && kind !== "stakes" && kind !== "outputs") { // r8-b-2
-        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " and no sentence names your own part. Name it beside the team’s or the partners’, for example " + (ctx.discipline === "creative" ? "“I direct and choreograph; the dancers co-create the movement material.”" : ctx.community ? "“The partners lead the program and hold the data; I support the evaluation design.”" : "“I co-lead the methods; the partner communities hold the data.”") + "");
+        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " and no sentence names your own part. Name it beside the team’s or the partners’, for example " + (ctx.discipline === "creative" ? "“I direct and choreograph; the dancers co-create the movement material.”" : ctx.discipline === "stem" && !ctx.community ? "“I led the sensor design; the partner’s engineers set the alert thresholds.”" : ctx.community ? "“The partners lead the program and hold the data; I support the evaluation design.”" : "“I co-lead the methods; the partner communities hold the data.”") + "");
         weMatches.forEach(m => out.hits.push({ text: m.text, rule: "ownership" }));
       }
       if (!ownership && !weCount && PASSIVE_KINDS.indexOf(kind) !== -1) {
@@ -1810,9 +1818,9 @@
           const tail = t.slice(pm.index + pm[0].length - pm[1].length).toLowerCase();
           // r9-b-2: a passive with its agent named ("were taught … by the Authority's nurses") says who did the work.
           const after = t.slice(pm.index + pm[0].length);
-          const byAgent = /^(?:\s+[^\s.;:!?]+){0,6}?\s+by\s+(?!hand\b|email\b|e-mail\b|phone\b|video\b|mail\b|post\b|\d)/i.test(after)
+          const byAgent = /^(?:\s+[^\s.;:!?]+){0,6}?\s+by\s+(?!hand\b|email\b|e-mail\b|phone\b|video\b|mail\b|post\b|\d|(?:the\s+)?(?:end|time|beginning|start|middle|close|then|now|late|early|mid|next|last|spring|summer|fall|autumn|winter|january|february|march|april|may|june|july|august|september|october|november|december)\b)/i.test(after)
             // r9-a-11: "developed in workshops with the crew" credits the people who did it.
-            || /^(?:\s+[^\s.;:!?]+){0,5}?\s+with\s+(?:the\s+|our\s+|my\s+|their\s+|\d+\s+)?(?:[\w’'-]+\s+){0,2}?(?:crew|team|dancers?|performers?|partners?|communit(?:y|ies)|members|workers|students|artists?|participants|residents|Elders|nurses|staff|colleagues|collaborators|people|musicians|actors|youth|families)\b/i.test(after);
+            || /^(?:\s+[^\s.;:!?]+){0,5}?\s+with\s+(?:the\s+|our\s+|my\s+|their\s+|\d+\s+)?(?:[\w’'-]+\s+){0,2}?(?:crew|team|dancers?|performers?|partners?|communit(?:y|ies)|members|workers|artists?|Elders|nurses|staff|colleagues|collaborators|musicians|actors)\b/i.test(after);
           if (!byAgent && !PASSIVE_SKIP.some(s => tail.indexOf(s) === 0)) passives.push(pm[0]);
           if (PASSIVE_RE.lastIndex === pm.index) PASSIVE_RE.lastIndex++;
         }
@@ -1903,13 +1911,13 @@
           // outside What could change, where hedges are asked for.
           .replace(kind === "impact" ? /$^/ : /\b(?:may|can)(?=\s+(?:withdraw|decline|refuse|veto|request)\b)|\b(?:would|will)(?=\s+(?:require|need)\b)/gi, mask)
           // r9-b-10: "could" inside a reported question or a purpose clause reports what was asked or intended.
-          .replace(kind === "impact" ? /$^/ : /\b(how|whether|so that|in order that)\b([^.;:!?]{0,60}?)\bcould\b/gi, (m0, a, b) => a + b + "#####")
+          .replace(kind === "impact" ? /$^/ : /\b(how|whether|so that|in order that)\b([^.;:!?]{0,60}?)\b(could|might|may|would|should)\b/gi, (m0, a, b, c) => a + b + "#".repeat(c.length))
           // r9-a-1: The problem or question may be written as a question, which can use "might" or "could".
           .replace(kind === "stakes" ? /[^.!?]*\?/g : /$^/, mask);
         const hedges = [];
         HEDGES.forEach(h => { const ms = allMatches(hedgeText, h); if (ms.length) { hedges.push(h); ms.forEach(m => out.hits.push({ text: m.text, rule: "hedge", index: m.index })); } });
         if (kind === "impact") {
-          if (hedges.length) { out.strengths.push("Hedged, as suits this field."); out.score++; }
+          if (hedges.length) { out.strengths.push("Hedged, as this part expects."); out.score++; }
         } else if (kind === "generic") {
           if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " is a hedge" : " are hedges") + ". A hedge suits a sentence about what might follow; state what happened plainly.");
           else out.score++;
@@ -2343,6 +2351,8 @@
       // W-31: largely solo work done with a community has partners, not a team.
       // r5-b-3 (inferred): community-engaged work asks for your part and who led the other parts, with a team or without.
       if (wm.includes("community") && def.variants && def.variants.partners) return interpolate(def.variants.partners);
+      // r10-a-6: largely solo work with a partner (and no team) asks for your part and the partner.
+      if (wm.includes("solo") && !wm.includes("team") && wm.includes("industry")) return "In one line, what was your own part in this work, and who was the partner?";
       // r9-a-10: an ensemble or a collaboration credits its makers; "unique contribution" reads oddly there.
       if (ns.lens.discipline === "creative" && def.variants && def.variants.creative) return interpolate(def.variants.creative);
       if (hasTeamMode && def.variants && def.variants.team) return interpolate(def.variants.team);
@@ -2380,6 +2390,7 @@
           help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual's work. The citation count for a single article or book can support what you say about it.",
           isNew: true,
           variants: { creative: "List your strongest signals of standing, such as work shown, performed or published, residencies, commissions, grants or awards.",
+            humanities: "List your strongest signals of standing, such as books and articles, editions, fellowships, awards or an archive or collection you built.", // r10-a-10
             early: "List your strongest signals so far, such as key papers, fellowships, awards or the scale of a dataset or collaboration. Name what you have." },
           // r9-a-6, r9-b-7: the signals follow the field and the work mode.
           helpVariants: {
@@ -2401,7 +2412,8 @@
       },
       contrib: {
         title: { q: "What one line would let a reviewer recall this work?", help: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the paper's title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
-          helpVariants: { creative: "Short, plain and memorable. Name what the work was for; the title of the exhibition or work belongs in the evidence list." } },
+          helpVariants: { creative: "Short, plain and memorable. Name what the work was for; the title of the exhibition or work belongs in the evidence list.",
+            humanities: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the title of the book or article belongs in the evidence list." } },
         // Q-18 (Prem, 2026-11-01): one part, "The problem or question", whose question follows the field.
         // The main field decides; community-engaged wording applies where the field has none of its own.
         stakes: { q: "What problem did this work address, and who had it?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true,
@@ -2421,18 +2433,21 @@
           q: "In one line, what was your own part in this work?",
           help: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the protocol.”",
           variants: { team: "In one line, what was your unique contribution within the team?", partners: "In one line, what was your part in this work, and who led the other parts?", creative: "In one line, what was your part in this work, and who made the other parts?" },
-          helpVariants: { community: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Name the partners’ leadership and your own part in the same line: “The Nation’s education department directs the program; I lead the evaluation design with its Elders’ council.”" }
+          helpVariants: { stem: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the method.”", // r10-b-10
+            humanities: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the people who worked with you and still make your own part clear: “I prepared the edition with two research assistants.”", // r10-a-7
+            community: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Name the partners’ leadership and your own part in the same line: “The Nation’s education department directs the program; I lead the evaluation design with its Elders’ council.”" }
         },
         activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.",
           variants: { creative: "What did making the work involve, and which part was yours?", humanities: "Which sources, archives, methods or partners did the work involve, and at what scale?",
             community: "Which methods, communities or partners did the work involve, and over what period?" },
-          helpVariants: { creative: "Count where you can: how many venues, performers or collaborators, and how long.", humanities: "Count where you can: how many sources or collections, how long, how many people.",
+          helpVariants: { creative: "Count where you can: how many venues, performers or collaborators, and how long.", stem: "Count where you can: how many sites, structures or sensors, how long, how many people.", humanities: "Count where you can: how many sources or collections, how long, how many people.",
             community: "Count where you can: how many communities took part, for how long, and how many people worked on it." } },
         outputs: {
           q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "Write a sentence that names what the work produced, such as “The study produced a protocol and three papers.” Its effects belong in the next field.",
           // r9-a-3, r9-b-4: the example follows the field; in community-engaged work, say who holds each output.
           helpVariants: {
             creative: "Write a sentence that names what the work produced, such as “The cycle produced three staged works, a film and a public archive of scores.” Its effects belong in the next field.",
+            stem: "Write a sentence that names what the work produced, such as “The project produced a tool, a method and three papers.” Its effects belong in the next field.", // r10-b-10
             humanities: "Write a sentence that names what the work produced, such as “The project produced a critical edition and two articles.” Its effects belong in the next field.",
             social: "Write a sentence that names what the work produced, such as “The study produced a survey instrument, a public report and three papers.” Its effects belong in the next field.",
             community: "Write a sentence that names what the work produced and who holds it, such as “The program produced a nursing protocol and a dataset the health authority holds.” Its effects belong in the next field."
@@ -2462,6 +2477,7 @@
           } },
         translational: { q: "Which one occasion shows the work reaching a specific person or group?", variants: { community: "Which one occasion shows the work in use by a specific person or group?" }, help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
           helpVariants: {
+            stem: "One scene in two sentences, such as a control room, a field site, an inspection or a standards committee where the work was used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.", // r10-b-10
             humanities: "One scene in two sentences, such as a reader, a classroom, an archive, a museum or a community meeting that used the work. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
             creative: "One scene in two sentences, such as an audience, a venue, a classroom or a community meeting where the work was seen or used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement."
           },
@@ -2476,7 +2492,9 @@
           // B-30/B-31: the "Equity in practice —" label is dropped (the abstract noun summoned
           // boilerplate); the question underneath already asks for a structure, not a statement.
           q: "Who gets into your group, and what have you changed about how they get there?", help: "One change you made: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so describe what you changed.",
-          variants: { community: "Who joins the research team, who decides, and what changed so that they could?" },
+          variants: { community: "Who joins the research team, who decides, and what changed so that they could?",
+            humanities: "How do students come to work with you, and what have you changed about how they get there?", // r10-a-8
+            solo: "How do students come to work with you, and what have you changed about how they get there?" },
           // r5-b-9: in community-led work the partners often choose who joins.
           helpVariants: { community: "One change you made, such as a role the partners defined, a requirement you dropped or a way of paying community researchers from the start. Where the partners choose who joins, say so, and say what you changed to make that possible." }
         },
@@ -2561,7 +2579,7 @@
         const t = mentorTotal(), d = menteesDescribed();
         if (!t && !d) return null;
         return { n: t ? t.toLocaleString("en-CA") : "", sub: d ? ["People", d] : null,
-          sr: [t ? plural(t, "person trained", "people trained") : "", d ? plural(d, "person described", "people described") : ""].filter(Boolean).join(", ") };
+          sr: [t ? plural(t, "person " + trainedWord(), "people " + trainedWord()) : "", d ? plural(d, "person described", "people described") : ""].filter(Boolean).join(", ") };
       }
       return null;
     };
@@ -2875,7 +2893,8 @@
       setBar(); // J-6: the sticky stack of this step, before the heading is scrolled into view
       if (stageChanged && !firstRender) {
         const h = stepHeading();
-        if (h) { h.focus({ preventScroll: true }); if (h.getBoundingClientRect().bottom > window.innerHeight - 24) (h.closest(".narrative-stage-header") || h).scrollIntoView({ block: "start" }); }
+        // r10-b-7: a heading in the lower part of the screen (large text, a short window) is brought to the top too.
+        if (h) { h.focus({ preventScroll: true }); const hr = h.getBoundingClientRect(); if (hr.top < 0 || hr.top > window.innerHeight * 0.4 || hr.bottom > window.innerHeight - 24) (h.closest(".narrative-stage-header") || h).scrollIntoView({ block: "start" }); }
       }
       lastStageKey = ns.stageKey;
       // W-47 (inferred, option A): each step is a history entry with its own address (#contributions),
@@ -4053,6 +4072,16 @@
       fitBox(f);
       syncCols();
       if (!noAnchor) keepAnchor(f.querySelector(".v7-box") || f, top, motionMs(200) + 300);
+      // r10-a-11: a field reached by Tab near the foot of the screen grows below it once it opens; when the
+      // anchoring is done, the box is brought into view (above the on-screen keyboard where there is one).
+      setTimeout(() => {
+        if (!f.isConnected || !f.classList.contains("is-open") || !f.contains(document.activeElement)) return;
+        const box = f.querySelector(".v7-box") || f, r = box.getBoundingClientRect();
+        const topLimit = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 56;
+        const bottom = (window.visualViewport ? window.visualViewport.height : window.innerHeight) - 12;
+        if (r.bottom > bottom) glide(Math.min(r.bottom - bottom, r.top - topLimit));
+        else if (r.top < topLimit) glide(r.top - topLimit);
+      }, (noAnchor ? 0 : motionMs(200) + 300) + 40);
     }
     // r1-b-1 (audit 2026-10-31): an answered Setup question shows its question while focus is inside
     // it (.has-focus, was :focus-within). Leaving it shows the shorter keyword, which lifted the
@@ -4125,6 +4154,7 @@
       });
       // Groups that do not redraw on a click (the role levels) move their Tab stop here.
       g.addEventListener("click", sync);
+      g._sync = sync; // S-3: a group cleared from outside moves its Tab stop back to the first option
       sync();
       return g;
     }
@@ -4469,7 +4499,8 @@
           // W-04: focus goes to the card now in this place (else the one before), and the removal is spoken.
           const nc = ns.contributions[i] || ns.contributions[i - 1];
           const n = nc && (nc.folded ? document.getElementById("fold-" + nc.cid) : focusable(document.getElementById("ct" + nc.cid)));
-          (n || document.getElementById("v7-add-contrib") || stepHeading()).focus();
+          // r10-b-6: with Undo on offer, focus goes to it, so it is on screen and one key away for its ten seconds.
+          ((UI.cUndo && document.getElementById("c-undo")) || n || document.getElementById("v7-add-contrib") || stepHeading()).focus();
           announce("Contribution " + (i + 1) + " removed." + (only ? " A blank Contribution 1 is ready." : "") + (UI.cUndo ? " Undo is available for ten seconds." : ""));
         };
         // W-45 (inferred, option A): the inline warning, under the card's header.
@@ -4538,7 +4569,8 @@
             else if (asksQuestion && ["stem", "health"].includes(d2)) q += " If it answered a practical problem, name the problem too.";
           }
           fields.appendChild(cardField({
-            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: resolveHelp(f.def), line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
+            // The role help's community-engaged example (partners lead) comes before a field's own example.
+            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: f.role && isCommunity() && f.def.helpVariants && f.def.helpVariants.community ? interpolate(f.def.helpVariants.community) : resolveHelp(f.def), line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
             lintKind: f.lint, get: () => contrib[f.k], set: (v) => { contrib[f.k] = v; },
             // r1-b-2: a role line that names your part covers the card, so "we" elsewhere in it is the team.
             // r1-b-2, r5-b-2: a chosen level or a written role line names your part for the whole card.
@@ -4554,16 +4586,27 @@
               ROLE_LEVELS.forEach(([v, l]) => {
                 const b = el("button", "v7-mini v7-box-sib", l); b.type = "button";
                 b.setAttribute("role", "radio"); b.setAttribute("aria-checked", contrib.roleMode === v ? "true" : "false");
-                b.addEventListener("click", (e) => {
-                  if (contrib.roleMode === v && e.detail === 0) return; // r9-b-13: a key press on the chosen level keeps it, as a radio does
-                  contrib.roleMode = contrib.roleMode === v ? "" : v; saveState();
-                  if (!contrib.roleMode) announce("Role level cleared.");
-                  minis.querySelectorAll(".v7-mini").forEach(x => x.setAttribute("aria-checked", x === b && contrib.roleMode ? "true" : "false"));
-                  const ff = b.closest(".v7-f"); if (ff && ff._refresh) ff._refresh(); update(); refreshRail(); recheckCard(contrib.cid);
+                b.addEventListener("click", () => {
+                  // r9-b-13, S-3: a level behaves as a radio (a second press keeps it); "Clear the level" removes it.
+                  if (contrib.roleMode === v) return;
+                  contrib.roleMode = v; saveState(); setLevel();
                 });
                 minis.appendChild(b);
               });
+              const clr = el("button", "v7-linkbtn v7-lv-clear", "Clear the level"); clr.type = "button";
+              const setLevel = (said) => {
+                minis.querySelectorAll(".v7-mini").forEach((x, k) => x.setAttribute("aria-checked", ROLE_LEVELS[k][0] === contrib.roleMode ? "true" : "false"));
+                clr.hidden = !contrib.roleMode;
+                if (said) announce(said);
+                const ff = minis.closest(".v7-f"); if (ff && ff._refresh) ff._refresh(); update(); refreshRail(); recheckCard(contrib.cid);
+              };
+              clr.hidden = !contrib.roleMode;
+              clr.addEventListener("click", () => {
+                contrib.roleMode = ""; saveState(); setLevel("Role level cleared."); if (minis._sync) minis._sync();
+                const first = minis.querySelector(".v7-mini"); if (first) first.focus();
+              });
               lv.appendChild(radioKeys(minis));
+              lv.appendChild(clr);
               lv.appendChild(el("p", "v4-help v7-lv-note", "The level guides your line; the draft prints your line."));
               inner.appendChild(lv);
             } : null
@@ -4639,12 +4682,23 @@
       "Replication / citation": "a study that repeated or cited your work, scholarship that built on it, or a work restaged or adapted", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Community document": "a letter, resolution, agreement, report or plan a community holds",
       "Other": "anything else a reviewer could check"
     };
+    // r10-b-8: a few kind hints follow the field.
+    const EV_KIND_HINT_STEM = { "Peer-reviewed": "a journal article or conference paper", "Dataset / tool": "data or software, with its version and who holds it",
+      "Replication / citation": "a study that repeated or cited your work, or a standard, code or guideline that cites it", "Other": "a patent, a licence, a technical report, or anything else a reviewer could check" };
+    const evKindHint = (t) => (ns.lens.discipline === "stem" && EV_KIND_HINT_STEM[t]) || EV_KIND_HINT[t];
+    const EV_INTRO_ITEMS = {
+      stem: "a journal article or conference paper, a patent or licence, a standard or guideline that cites your work, a software or data release, a technical report, coverage, an award",
+      health: "an article, a guideline or program that adopted your work, a dataset, coverage, an award",
+      social: "an article, a report, a policy or program that adopted your work, a dataset, coverage, an award",
+      humanities: "a book or article, an edition or collection, a review, coverage, an award",
+      creative: "a performance, exhibition or commission, a critical review, a published work, coverage, an award"
+    };
     function evidenceArea(contrib, i) {
       const area = el("div", "v7-ev-area");
       area.appendChild(el("div", "v7-f-k is-q", "Evidence"));
       const q = el("span", "v7-q", "What backs up this contribution?"); q.id = "evq" + contrib.cid;
       area.appendChild(q);
-      area.appendChild(explainBox("Evidence backs up what you have just described. Add the items a reviewer could check: a paper, an edition or collection, a performance, exhibition or commission, a critical review, a policy or program that adopted your work, coverage, a dataset, an award, a document a community holds. Add as many as you need. Each item gets a letter, and the letters follow the contribution in your draft. Name a community, an organization or a person only with their agreement.", guideLink("More kinds of evidence that count", "difference")));
+      area.appendChild(explainBox("Evidence backs up what you have just described. Add the items a reviewer could check: " + (EV_INTRO_ITEMS[ns.lens.discipline] ? EV_INTRO_ITEMS[ns.lens.discipline] + (isCommunity() ? ", a document a community holds" : "") : "a paper, an edition or collection, a performance, exhibition or commission, a critical review, a policy or program that adopted your work, coverage, a dataset, an award, a document a community holds") + ". Add as many as you need. Each item gets a letter, and the letters follow the contribution in your draft. Name a community, an organization or a person only with their agreement.", guideLink("More kinds of evidence that count", "difference")));
       const items = el("div", "v7-ev-items");
       (contrib.evidence || []).forEach((ev, j) => {
         const it = el("div", "v7-ev-item");
@@ -4690,7 +4744,7 @@
           (ns.lens.discipline === "creative" ? ["Exhibition, performance or screening"].concat(EVIDENCE_TYPES.filter(x => x !== "Exhibition, performance or screening")) : EVIDENCE_TYPES).forEach(t => {
             const b = el("button", "v7-kind"); b.type = "button"; b.id = "evkind-" + kKey + "-" + t.replace(/\W+/g, "");
             b.setAttribute("role", "radio"); b.setAttribute("aria-checked", ev.type === t ? "true" : "false");
-            b.appendChild(el("b", null, t)); b.appendChild(el("small", null, EV_KIND_HINT[t]));
+            b.appendChild(el("b", null, t)); b.appendChild(el("small", null, evKindHint(t)));
             b.addEventListener("click", () => {
               // r3-a-1: an arrow key moves through the kinds and keeps the chooser open; a click, Enter
               // or Space chooses, folds it to one line and moves on to The item.
@@ -4718,8 +4772,8 @@
         const ti = el("textarea", "v7-input v7-grow"); ti.id = tl.htmlFor; ti.rows = 1;
         ti.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
         // r7-b-10: what to write for each kind of item.
-        const ITEM_HINT = { "Peer-reviewed": "The reference: authors, year, title and venue", "Media / public": "The outlet, the date and the title", "Policy / practice uptake": "The policy or program, who adopted it and when",
-          "Dataset / tool": "Name, version, who holds it and how access is granted (a licence, a DOI or a data agreement), in words", "Award / recognition": "The award, who gave it and the year", "Funding": "The funder, the program, the amount and the years",
+        const ITEM_HINT = { "Peer-reviewed": "The reference: authors, year, title and venue", "Media / public": "The outlet or platform, the title and the date; for your own series, its audience", "Policy / practice uptake": "The policy or program, who adopted it and when",
+          "Dataset / tool": "Name, version, who holds it and how access is granted (a licence, a DOI, a data agreement or an archive's terms of use), in words", "Award / recognition": "The award, who gave it and the year", "Funding": "The funder, the program, the amount and the years",
           "Replication / citation": "The study that repeated, cited or built on your work", "Exhibition, performance or screening": "The work, the venue, the city and the dates", "Community document": "What it is (a letter, resolution, agreement, report or plan), who holds it and its date" };
         ti.placeholder = ITEM_HINT[ev.type] || "Name it so a reviewer can find it, or say who holds it: a reference, a performance, a policy, a dataset, an award or a letter"; ti.value = ev.text || "";
         const ln = el("p", "v4-ev-note"); ln.id = "evln" + contrib.cid + "-" + j; ti.setAttribute("aria-describedby", ln.id);
@@ -4742,8 +4796,9 @@
         wl.appendChild(document.createTextNode("Why it matters ")); wl.appendChild(el("span", "v7-opt", "(two lines, optional)"));
         const wt = el("textarea", "v7-input v7-two v7-grow"); wt.id = wl.htmlFor;
         // r9-a-7: the note's prompt follows the kind.
-        const NOTE_HINT = { "Exhibition, performance or screening": "What the work did or showed, and how it bears on your question", "Media / public": "What the piece says about the work",
-          "Community document": "What it records or agrees, and whom it serves", "Dataset / tool": "What it holds, who uses it, or why it was useful" };
+        const NOTE_HINT = { "Exhibition, performance or screening": "What the work did or showed, and how it bears on your question", "Media / public": "What the piece says about the work, or whom it reached",
+          "Community document": "What it records or agrees, and whom it serves", "Dataset / tool": "What it holds, who uses it, or why it was useful",
+          "Policy / practice uptake": "Who adopted it, when, and what changed in practice" };
         wt.placeholder = NOTE_HINT[ev.type] || "What it found, or why it was useful, so a reviewer has the point without opening the source"; wt.value = ev.note || "";
         const wn = el("span", "v4-meta v7-ev-wc"); wn.id = wt.id + "-wc"; wt.setAttribute("aria-describedby", wn.id);
         const setWn = () => { const n = countWords(ev.note); wn.textContent = n ? n + (n === 1 ? " word" : " words") + " · up to about 40 is comfortable here" : ""; };
@@ -4795,6 +4850,8 @@
     // ── Weave: the contribution's material in reading order, with suggested joins ──
     // r9-a-5, r9-b-4: after a question, or a need a partner raised, the work comes "in response".
     const connectiveFor = (k) => k === "activities" && (["humanities", "creative"].includes(ns.lens.discipline) || isCommunity()) ? "in response →" : CONNECTIVES[k];
+    // S-6: one context for the checks on screen, in the advisor packet and in the feedback summary.
+    const lintCtxFor = (c) => ({ format: ns.lens.format, roleNamed: !!c.roleMode || ownershipIn(c.roleLine).iVerb, community: isCommunity(), discipline: ns.lens.discipline });
     // r9-b-12: a role line or level names your part for the whole card, so the other fields re-read it.
     const recheckCard = (cid) => document.querySelectorAll('.v7-f[data-f^="c' + cid + '-"]').forEach(x => { if (x._recheck && !/-roleLine$/.test(x.dataset.f)) x._recheck(); });
     const CONNECTIVES = { activities: "to address this →", outputs: "this produced →", outcomes: "so far →", translational: "in one case →", impact: "looking ahead →" };
@@ -4862,19 +4919,27 @@
       row.appendChild(ub);
       c.insertBefore(row, c.children[un.i] || null); // r8-a-6: in the removed card's place
     }
+    const lcArticle = (t) => String(t || "").replace(/^(A|An|The)(?=\s)/, a => a.toLowerCase());
     function menteeSentence(m) {
       // G-3: a level typed under Other keeps its capitals ("MD-PhD trainee"); only a leading capital is lowered.
       const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) || "trainee";
       // r3-a-7: the unit or position follows the organization in brackets ("at a robotics firm (process engineer)").
-      const org = one(m.org) && one(m.unit) ? one(m.org) + (/[()]/.test(one(m.unit)) ? ", " + one(m.unit) : " (" + one(m.unit) + ")") : one(m.org) || one(m.unit);
-      const where = !org && !m.kind ? "" : m.kind === "industry" ? "now works in industry" + (org ? " at " + org : "")
+      // r10-a-3: a phone's capital article mid-sentence ("at The provincial ministry") is lowered.
+      const orgName = lcArticle(one(m.org)), unit = one(m.unit), bracket = (u) => /[()]/.test(u) ? ", " + u : " (" + u + ")";
+      const org = orgName && unit ? orgName + bracket(unit) : orgName;
+      let where = !org && !m.kind ? "" : m.kind === "industry" ? "now works in industry" + (org ? " at " + org : "")
         : m.kind === "government" ? "now works in government" + (org ? " at " + org : "")
         : m.kind === "community" ? "now works at a community agency" + (org ? ", " + org : "")
         : m.kind === "arts" ? (org && /museum|gallery|theat|\barts?\b|danc|dans|ballet|compan|ensemble|studio|collective|troupe|\bfilm|cinema|music|musique|choir|opera|presenter|festival|orchestra|cultur|librar/i.test(org) ? "now works at " + org : "now works at an arts, cultural or heritage organization" + (org ? ", " + org : ""))
         : m.kind === "indigenous" ? (org ? "now works at " + org : "now works with a First Nations, Inuit or Métis government or organization")
         : m.kind === "health" ? (org && /health|hospital|clinic|medical|care\b/i.test(org) ? "now works at " + org : "now works in the health system" + (org ? " at " + org : ""))
         : org ? "is now at " + org : "";
-      const recog = one(m.recognition), why = one(m.why);
+      // r10-a-1: a unit with no organization follows the sector in brackets ("is now at a university (History)").
+      if (!orgName && unit) where = !m.kind || m.kind === "other" ? "is now at " + unit : m.kind === "university" ? "is now at a university" + bracket(unit) : where + bracket(unit);
+      const recog = lcArticle(one(m.recognition));
+      // r10-a-4: "Now a lecturer…" reads as "is now a lecturer…"; "Teaching history…" as "is teaching history…".
+      let why = one(m.why).replace(/^now\s+(?=(?:a|an|the)\b)/i, "Is now ");
+      if (/^[A-Za-z]+ing\s+[a-z]/.test(why) && !/^(?:during|nothing|something|everything|morning|evening|being|bringing)\b/i.test(why)) why = "Is " + why.charAt(0).toLowerCase() + why.slice(1);
       // N-1: a capitalised first word joins only when it is a listed verb ("Joined", "Led"); the -s/-ed guess
       // applies only to an answer typed in lower case, so "James…", "Statistics Canada…" or French stay whole.
       const w0raw = (why.match(/^(?:(?:now|also|then|later|since)\s+)?([A-Za-zÀ-ÿ'-]+)/i) || [])[1] || "", w0 = w0raw.toLowerCase();
@@ -4886,15 +4951,19 @@
       // ("James now leads…", "Rose now runs…", "Charles runs…").
       const w1 = ((why.match(/^(?:(?:now|also|then|later|since)\s+)?[A-Za-zÀ-ÿ'-]+\s+([^\s]+)/i) || [])[1] || "").toLowerCase();
       const first = (why.match(/^[A-Za-zÀ-ÿ'-]+/) || [""])[0];
-      const nameShape = /^[A-ZÀ-Ý]/.test(first) && !/^(?:now|also|then|later|since|is|has|was)$/i.test(first) && /^[A-Za-zÀ-ÿ'-]+\s+(?:now|also|then|later|since|has|is|was)\b/i.test(why);
-      const AFTER_VERB = /^(?:a|an|the|at|in|on|for|with|as|to|from|into|his|her|their|its|two|three|four|five|six|seven|eight|nine|ten|several|\d)/i;
+      // S-4: two capitalised words open a name ("Veterans Affairs Canada…", "Charles Adams now…").
+      const nameShape = /^[A-ZÀ-Ý]/.test(first) && !/^(?:now|also|then|later|since|is|has|was)$/i.test(first) && (/^[A-Za-zÀ-ÿ'-]+\s+(?:now|also|then|later|since|has|is|was)\b/i.test(why) || /^[A-ZÀ-Ý][\wÀ-ÿ'-]*\s+[A-ZÀ-Ý]/.test(why));
+      const AFTER_VERB = /^(?:a|an|the|at|in|on|for|with|as|to|from|into|his|her|their|its|two|three|four|five|six|seven|eight|nine|ten|several|\d+)\b/i; // S-4: whole words
       const verbFirst = !!why && !NOT_VERB.test(w0) && !nameShape && (listed || (/(?:ed|s)$/.test(w0) && (lowerStart || AFTER_VERB.test(w1))));
       // One sentence with its predicates joined: "…now works at X, received Y and now leads Z."
       const preds = [];
-      if (where) preds.push(where);
+      // r10-a-4: an answer that names its own place ("Works at the provincial archives") replaces the sector clause.
+      const ownPlace = verbFirst && /^(?:now\s+)?works?\s+(?:at|in|for|with|as)\b/i.test(why);
+      if (where && !ownPlace) preds.push(where);
       if (recog) preds.push("received " + recog);
-      // r9-a-13: "now works at X and now makes…" drops the second "now".
-      if (verbFirst) preds.push(why.replace(/^([A-Z])(?=[a-z])/, ch => ch.toLowerCase()).replace(/[.!?]+$/, "").replace(/^now\s+/i, where && /^now\b|\bnow\b/.test(where) ? "" : "$&"));
+      // r9-a-13, r10-a-4: "now works at X and now makes…" or "… and is now a…" drops the second "now".
+      const nowSaid = !!where && !ownPlace && /\bnow\b/.test(where);
+      if (verbFirst) preds.push((ownPlace && !/^now\b/i.test(why) ? "now " : "") + why.replace(/^([A-Z])(?=[a-z])/, ch => ch.toLowerCase()).replace(/[.!?]+$/, "").replace(/^now\s+/i, nowSaid ? "" : "$&").replace(/^(is|has)\s+now\s+/i, nowSaid ? "$1 " : "$&"));
       let t = articleFor(noun).replace(/^a/, "A") + " " + noun + (m.stageKind === "other" && isCommunity() ? " I mentored" : " I trained") + (preds.length ? " " + (preds.length > 1 ? preds.slice(0, -1).join(", ") + " and " + preds[preds.length - 1] : preds[0]) : "");
       t = asSentence(t.replace(/[;,\s]+$/, "")); // N-7: one end-of-sentence rule
       if (why && !verbFirst) t += " " + asSentence(why.replace(/^./, ch => ch.toUpperCase()));
@@ -4960,7 +5029,7 @@
         tiles.appendChild(tile);
       });
       dash.appendChild(tiles);
-      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Count community researchers and other trainees who are not students under Other, and name the group in its box. The instructions for your funding opportunity set the period for these totals; if a leave fell inside it, say so with its dates in one of the prompts below."));
+      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Count " + ({ stem: "technicians, industry-embedded trainees", health: "research staff, community researchers", creative: "apprentices, assistant artists", humanities: "research assistants, archive interns" }[ns.lens.discipline] || "community researchers") + " and other trainees who are not students under Other, and name the group in its box. The instructions for your funding opportunity set the period for these totals; if a leave fell inside it, say so with its dates in one of the prompts below."));
       c.appendChild(dash);
 
       const sh = el("div", "v7-section-t");
@@ -5082,24 +5151,41 @@
         p2.appendChild(a); p2.appendChild(b); card.appendChild(p2);
       }
       card.appendChild(input("v7-pz" + i, "Prizes or scholarships", true, m.recognition, v => { m.recognition = v; changed(); }));
-      { const pz = card.querySelector("#v7-pz" + i); if (pz) pz.placeholder = "Appears after the word “received”, such as " + (ns.lens.discipline === "creative" ? "“a production grant from a city arts council (2025)”" : "“a provincial graduate scholarship (2022)”"); } // r5-b-10
+      { // r5-b-10, r10-a-12: the instruction is a help line, so it stays once typing starts; the box takes no phone capital.
+        const pz = card.querySelector("#v7-pz" + i);
+        if (pz) {
+          pz.placeholder = ns.lens.discipline === "creative" ? "such as “a production grant from a city arts council (2025)”" : "such as “a provincial graduate scholarship (2022)”";
+          pz.setAttribute("autocapitalize", "none");
+          const ph = el("p", "v4-help v7-pz-help", "Prints after the word “received”."); ph.id = "v7-pz" + i + "-h"; pz.setAttribute("aria-describedby", ph.id); pz.parentNode.appendChild(ph);
+        }
+        const pg = card.querySelector("#v7-pg" + i); if (pg) pg.setAttribute("autocapitalize", "none");
+      }
       const why = input("v7-py" + i, "What this person did or went on to do", true, m.why, v => { m.why = v; changed(); });
       // r4-a-8: the sentence prints after where they are now, so it starts with the person's action.
       { // r7-b-12: one growing box, so a long sentence stays in view (Enter adds no line).
         const old = why.querySelector("input"), ta = el("textarea", "v7-input v7-grow"); ta.id = old.id; ta.rows = 1; ta.value = m.why || "";
-        ta.placeholder = m.stageKind === "other" && isCommunity() ? "Continues the sentence “A community researcher I mentored…”, such as “now leads the health centre’s research program”" : ns.lens.discipline === "creative" ? "Continues the sentence “A master’s student I trained…”, such as “now directs a dance company”" : "Continues the sentence “A doctoral student I trained…”, such as “now leads a hospital program”";
+        ta.placeholder = m.stageKind === "other" && isCommunity() ? "Continues the sentence “A community researcher I mentored…”, such as “now leads the health centre’s research program”" : ns.lens.discipline === "creative" ? "Continues the sentence “A master’s student I trained…”, such as “now directs a dance company”" : ns.lens.discipline === "humanities" ? "Continues the sentence “A doctoral student I trained…”, such as “now teaches at a CEGEP”" : ns.lens.discipline === "stem" ? "Continues the sentence “A doctoral student I trained…”, such as “now leads a monitoring group at an engineering firm”" : "Continues the sentence “A doctoral student I trained…”, such as “now leads a hospital program”";
         ta.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
         ta.addEventListener("input", e => { m.why = e.target.value; changed(); growBox(ta, 1); });
         old.replaceWith(ta); requestAnimationFrame(() => growBox(ta, 1));
       }
       why.className = ""; card.appendChild(why);
+      // r10-a-4: the sentence as it will print, under the boxes that build it.
+      const pv = el("p", "v7-quiet v7-person-preview");
+      const setPv = () => { pv.textContent = menteeHasContent(m) ? "Prints as: " + menteeSentence(m) : ""; };
+      card.addEventListener("input", setPv); card.addEventListener("change", setPv); setPv();
+      card.appendChild(pv);
       return card;
     }
 
     // ── Stage: Personal statement (V7-28) ──────────────────────────────────
     // The statement's first sentence; every output builds it here.
     const psAnchorText = () => {
-      const r = one(ns.ps.role), inst = one(ns.ps.institution), fld = one(ns.ps.field);
+      // r10-a-2: a phone's capitals mid-sentence: a leading article is lowered, and so is a common role word
+      // when nothing else in the role is capitalised ("Postdoctoral fellow"; "Canada Research Chair" stays).
+      const role0 = one(ns.ps.role);
+      const r = /^(?:Postdoctoral|Assistant|Associate|Full|Adjunct|Senior|Junior|Doctoral|Research|Visiting|Clinical|Professor|Lecturer|Instructor|Scientist|Researcher|Fellow|Independent|Early-career|Tenured)\b/.test(role0) && !/\s[A-ZÀ-Ý]/.test(role0) ? role0.charAt(0).toLowerCase() + role0.slice(1) : role0;
+      const inst = lcArticle(one(ns.ps.institution)), fld = lcArticle(one(ns.ps.field));
       if (!(r || inst || fld)) return "";
       return "I am " + articleFor(r) + " " + (r || "___") + " at " + (inst || "___") + ". My work is in " + (fld || "___").replace(/[.\s]+$/, "") + ".";
     };
@@ -5110,7 +5196,7 @@
         { k: "challenge", label: PS_KICKER.challenge, def: PROMPTS.ps.challenge, cross: true, job: JOB_KEYS[0] },
         { k: "streams", label: PS_KICKER.streams, def: PROMPTS.ps.streams, job: JOB_KEYS[1] },
         { k: "pivot", label: PS_KICKER.pivot, def: PROMPTS.ps.pivot, job: JOB_KEYS[2] },
-        { k: "standing", label: PS_KICKER.standing, def: PROMPTS.ps.standing, job: JOB_KEYS[3], placeholder: ns.lens.discipline === "creative" ? "Works shown, commissions, residencies, awards, reviews. List them first, then gather them into one paragraph." : "Grants, scale of output, recognition, reach. List them first, then gather them into one paragraph." },
+        { k: "standing", label: PS_KICKER.standing, def: PROMPTS.ps.standing, job: JOB_KEYS[3], placeholder: ns.lens.discipline === "creative" ? "Works shown, commissions, residencies, awards, reviews. List them first, then gather them into one paragraph." : ns.lens.discipline === "humanities" ? "Books, articles, fellowships, collections built, reach. List them first, then gather them into one paragraph." : "Grants, scale of output, recognition, reach. List them first, then gather them into one paragraph." },
         { k: "programFit", label: PS_KICKER.programFit, def: PROMPTS.ps.programFit, job: JOB_KEYS[4] },
         { k: "horizon", label: PS_KICKER.horizon, def: PROMPTS.ps.horizon, job: JOB_KEYS[5] }
       ];
@@ -5181,7 +5267,7 @@
               const art = el("span", null, articleFor(ns.ps.role)); line.appendChild(art);
               line.appendChild(document.createTextNode(" "));
               const mk = (key, ph, lab) => {
-                const i2 = el("input", "v7-box v7-input"); i2.type = "text"; i2.id = "ps-anchor-" + key; i2.placeholder = ph; i2.value = ns.ps[key] || "";
+                const i2 = el("input", "v7-box v7-input"); i2.type = "text"; i2.id = "ps-anchor-" + key; i2.placeholder = ph; i2.value = ns.ps[key] || ""; i2.setAttribute("autocapitalize", "none"); // r10-a-2: mid-sentence words
                 i2.setAttribute("aria-label", lab);
                 i2.addEventListener("input", e => { ns.ps[key] = e.target.value; if (key === "role") art.textContent = articleFor(e.target.value); fitInline(i2); });
                 requestAnimationFrame(() => fitInline(i2));
@@ -6019,7 +6105,7 @@
       ns.contributions.forEach((c2, i) => {
         if (!c2.title && !c2.activities) return;
         const fields = ["stakes", "activities", "outputs", "outcomes", "impact"];
-        const lctx = { format: ns.lens.format };
+        const lctx = lintCtxFor(c2); // S-6: the same context as the screen
         const flagTotal = fields.reduce((n, k) => n + lintField(c2[k], k, lctx).flags.length, 0);
         lines.push("Contribution " + (i + 1) + (c2.title ? " (" + c2.title + ")" : "") + ": " + flagTotal + " open auto-flag" + (flagTotal === 1 ? "" : "s"));
         fields.forEach(k => {
@@ -6182,7 +6268,7 @@
       const byRule = {};
       let flagCount = 0, numberFlags = 0;
       started.forEach(c2 => fields.concat(["roleLine"]).forEach(k => {
-        const r = lintField(c2[k], k, { format: L.format });
+        const r = lintField(c2[k], k, lintCtxFor(c2));
         flagCount += r.flags.length;
         if (r.flags.some(f => /^No numbers/.test(f))) numberFlags++;
         new Set(r.hits.map(h => h.rule)).forEach(rule => { byRule[rule] = (byRule[rule] || 0) + 1; });

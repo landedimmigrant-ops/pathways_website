@@ -1,0 +1,45 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: SSHRC · Tri-agency CV · SSHRC Insight Development Grant · Early career · Humanities · Largely solo · Partnered with industry, government or health systems]
+Before you submit: paste this into the current version of SSHRC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Arial in black type.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am a postdoctoral fellow at a Québec university. My work is in the history of medicine and nursing.
+
+Who did the daily work of caring for the sick in Quebec, and what do the surviving records say about how that work was done and how it changed? I work in three strands: the digitized casebooks of provincial asylums, the history of nursing in Quebec hospitals and public history in podcast form. The thread is the question of who gave care and how the records show it. I trained as a nurse before graduate school, and the nurses’ night reports I found in an archive in my first year turned my thesis toward their work. A digitized collection of 212 casebooks used by 14 scholars, two peer-reviewed articles, a book under contract with a university press and a podcast with 61,000 downloads. The Insight Development Grant funds early-stage work, and I am applying to link the casebooks to hospital registers, which is the next step of my research and not yet funded. The next step links the casebooks to hospital registers so historians can follow patients from admission to discharge.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Opening the 19th-century casebooks of a provincial asylum to researchers
+   Nineteenth-century asylum casebooks hold the only first-hand record of how patients were admitted and treated, but they sat in boxes at the provincial archives that few historians could read, and the oldest were crumbling. I led the project, worked out the transcription method and wrote the access policy. Over four years I worked with the archive’s conservators to digitize 212 casebooks (about 38,000 pages) from three asylums, trained 11 volunteer transcribers and ran 9 workshops with archivists. The project produced an open, searchable collection of the casebooks and a transcription guide. Fourteen scholars from six universities have used the collection, and the archive's reading-room requests for the casebooks fell by about two thirds. At the archive’s open day, a retired nurse found her grandmother's admission record in the collection and told the room she had never been shown it. Linked to hospital registers, the collection could let historians of medicine across Canada compare how patients were admitted and treated. (a, b)
+   a. Casebooks of the Provincial Asylums, 1842 to 1901, an open collection held and hosted by the provincial archives under a Creative Commons licence.  [Dataset / tool]
+      Holds 212 digitized casebooks with searchable transcriptions, used by historians, genealogists and the archive’s reading room.
+   b. Lemaire, C. (2024). Reading the casebooks at scale: admission patterns in three provincial asylums, 1850 to 1890. Canadian Bulletin of Medical History, 41(2), 211 to 240.  [Peer-reviewed]
+      Uses the full transcribed collection to compare admission by sex and trade.
+
+2. A history of nursing in Quebec hospitals, 1880 to 1960
+   Histories of Quebec hospitals tell the story of physicians and religious orders, and nurses, who did most of the daily care, appear only in passing. I am the sole author of the book. I read the records of seven hospitals and two nursing schools, and interviewed 23 retired nurses over three years. The project produced a book manuscript under contract and two articles. Two of the chapters have been taken up in graduate seminars at three universities. A retired nurse told me at an interview that no one had ever asked her to describe a night shift. The book could change how historians of Canadian medicine treat nursing work in hospital histories. (a, b)
+   a. Lemaire, C. (under contract). Night duty: nursing work in Quebec hospitals, 1880 to 1960. Contract signed with a university press in 2026; manuscript due in spring 2027.  [Peer-reviewed]
+      The press’s editorial board has approved the proposal after two external readers’ reports.
+   b. Lemaire, C. (2025). Night duty and the making of the hospital nurse in Montréal, 1900 to 1930. Histoire sociale / Social History, 58(1), 45 to 78.  [Peer-reviewed]
+
+3. A podcast that brings the history of care to the public
+   Few Canadians have heard how care for the sick was organized before medicare, and the sources that show it are held in archives the public rarely visits. I created the podcast, write each episode and host it. Over two years I produced 24 episodes of about 30 minutes each, using records from five archives and interviews with 15 historians, nurses and archivists. The podcast produced 24 episodes with transcripts and a teaching guide for high school history classes. The episodes have been downloaded 61,000 times in 40 countries, and 140 teachers have downloaded the guide. A listener from a small town wrote that her mother’s ward appeared in episode 9, and she took her family to the archive to see the ledger. Public history work of this kind could bring more people into archives and show funders why the records need care. (a, b)
+   a. Behind the Ledger, a public history podcast, 24 episodes from March 2024 to June 2026, with 61,000 downloads in 40 countries.  [Media / public]
+      Ranked in the top five Canadian history podcasts on one listening app in 2025.
+   b. The teaching guide for the podcast was adopted by a regional school service centre for its Secondary 4 history course in 2025.  [Policy / practice uptake]
+      Shows how the guide reached classrooms beyond the teachers who download it.
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 1 doctoral student, 3 master's students, 4 undergraduate researchers, 5 research assistants
+A master's student I trained now teaches at a CEGEP.
+A master's student I trained is now at a Québec university (History), received a provincial graduate scholarship (2022) and published two articles from her thesis.
+An undergraduate researcher I trained now works at an arts, cultural or heritage organization and works at the provincial archives.
+[One thing you do] I read one primary source with each student in our first meeting and ask them what the document leaves out, so they learn to question the archive before they read the literature.
+[Who gets in] I do not run a group, so I ask each student to tell me in the first meeting how they like to work and what they need from me.
+[Who else you mentor (optional)] I read a colleague’s first SSHRC application, a postdoctoral fellow in another department, and introduced her to the archive’s director, who then agreed to host her fieldwork.

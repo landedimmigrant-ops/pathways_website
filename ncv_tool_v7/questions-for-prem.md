@@ -10,7 +10,7 @@ One list of everything that waits on Prem or Eli, kept by Claude during the audi
 - Meanwhile the tool runs on Claude's recommended option, marked INFERRED in the loop log, so nothing stalls while a question waits.
 - Answer in any order, in chat or in the Answer column. An answered item moves to the end with the date.
 
-Last updated: 2026-11-01, after round 9.
+Last updated: 2026-11-01, after round 10.
 
 ## Critical
 
@@ -18,7 +18,7 @@ Last updated: 2026-11-01, after round 9.
 |---|---|---|---|---|
 | Q-2 | **For Eli:** do the five-year totals in Mentorship keep the label "last five years" for a researcher whose window is extended by a leave? (D-1) | Send to Eli. The label stays as it is until Eli answers. | `narrative-cv-v7-decisions.md` (D-1); `r6-findings.md` (r6-b-2) | |
 | Q-3 | **For Eli:** is the guidance on career interruptions in How you got here and under the totals correct? It says where a leave goes and points to the funding opportunity's instructions; it states no agency rule. | Send to Eli before the tool goes to real researchers. | `r6-findings.md` (r6-b-1) | |
-| Q-4 | **For Eli:** two proposed lines name funder rules. P-24 gives a reason for the TCV no-links rule ("reviewers read only the CV"); P-50 rewrites the FRQ format line. Are both correct? | Send to Eli. Neither is applied. | `r8-plain-language-rewrites.md` (P-24, P-50) | |
+| Q-4 | **For Eli:** two proposed lines name funder rules. P-24 gives a reason for the TCV no-links rule ("reviewers read only the CV"); P-50 rewrites the FRQ format line. Are both correct? And may a DOI be written as plain text in the TCV (r10-b-9)? | Send to Eli. Neither is applied. | `r8-plain-language-rewrites.md` (P-24, P-50) | |
 | Q-5 | Open one exported .doc in Word. Does it open in Print Layout at Letter size with 2 cm margins? The headless browser cannot check this. | A two-minute check on your machine before researchers use the Word export. | `r7-findings.md` (r7-a-9) | |
 
 ## Copy (your words, so Claude does not change them alone)
@@ -48,8 +48,8 @@ Last updated: 2026-11-01, after round 9.
 | Q-15 | On a phone the folded rail row does not stay at the top, so Save draft is out of reach mid-step. Add Save draft to each step's bottom buttons? | Yes. Keeps one sticky row. | `r4-findings.md` (r4-b-6) | |
 | Q-16 | On Setup, Tab reaches Confirm only after the six answer buttons in the column. Move Confirm earlier? | Keep it. Setup's column layout was decided in pass E. | `r3-a-findings.md` (r3-a-5) | |
 | Q-17 | Heading levels skip (h1 to h3 on the start page). Fixing them touches the shared site styles. Go ahead? | Yes, in a later round, with a check that the site's own pages look unchanged. | `r3-a-findings.md` (r3-a-9) | |
-| Q-20 | Role levels: add one for partner-led work ("The partners led it, and I took part") and one for co-created work ("I made it with others")? Both were asked for in round 9. They change the saved data and the Your role chart. | Yes to both, shown only for community-engaged and creative profiles. | `r9-findings.md` (r9-b-3, r9-a-16) | |
-| Q-21 | Mentorship destinations: add "Independent or self-employed artist"? | Yes, for every field; it prints as "now works as an independent artist". | `r9-findings.md` (r9-a-14) | |
+| Q-20 | Role levels: add one for partner-led work ("The partners led it, and I took part"), one for co-created work ("I made it with others") and one for work done alone ("I did it on my own")? All three were asked for in rounds 9 and 10. They change the saved data and the Your role chart. | Yes; partner-led for community-engaged profiles, co-created for creative ones, alone for largely solo ones. | `r9-findings.md` (r9-b-3, r9-a-16); `r10-findings.md` (r10-a-7) | |
+| Q-21 | Mentorship destinations: add "Independent or self-employed artist" and "College, CEGEP or school"? | Yes to both, for every field. | `r9-findings.md` (r9-a-14); `r10-findings.md` (r10-a-9) | |
 | Q-22 | Where the main field has its own wording, it comes before the community-engaged wording (a social scientist doing community-engaged work sees the social sciences question). Should community-engaged wording win instead for The problem or question and the statement? | Keep the main field first; the community help line still names the partners. | `r9-findings.md`; Q-18 | |
 
 ## Calls Claude made for you (override any)

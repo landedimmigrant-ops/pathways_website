@@ -241,3 +241,26 @@ _none yet_
 
 **Tests:** 234 of 234 (221 + 13).
 
+### Round 10 · Fable's review of round 9, an early-career historian on a phone, a low-vision engineer with large browser text (2026-11-01)
+
+**Who walked it** (the round 10 snapshot = commit `61c6742`), all findings in [r10-findings.md](audit-loop-2026-10-31/r10-findings.md)
+- **Fable review** of round 9: 1 major · 6 minor (a capitalised title no longer named your part, a gap between the em breakpoints, the role-level clear, organization names in trainee sentences, over-broad passive exemptions, the advisor packet's checks, the rail's Mentorship line).
+- **r10-a** Early-career historian of medicine, SSHRC Insight Development, the whole walk on a phone with its automatic capitals: 3 major · 6 minor · 3 polish ([draft](audit-loop-2026-10-31/r10-a-draft.txt)).
+- **r10-b** Senior civil engineer with low vision, NSERC Discovery, the browser's text size at 28, 24 and 20 px, mouse and keyboard: 3 major · 6 minor · 3 polish ([draft](audit-loop-2026-10-31/r10-b-draft.txt)).
+
+**What they wrote**
+- r10-a: opening asylum casebooks to researchers, a history of nursing in Quebec hospitals, a public history podcast; 1,165 words.
+- r10-b: a bridge-monitoring sensor network used by a transport ministry, an open vibration dataset, a damage-detection method; 65 trainees; 1,093 words. No sideways scroll at any text size.
+
+**Fixed this round**
+- **Review (S-1 to S-7):** titles in capitals name your part; range-syntax breakpoints with no gap; "Clear the level" for the role levels; organization and two-word names stay whole; passives with a date after "by" or "with participants" are flagged; one check context for screen, advisor packet and feedback; the rail's Mentorship line; every modal in a reported question.
+- **Phone capitals and trainee sentences (r10-a):** the statement's first sentence, organizations and prizes lose a phone's capital article; "is now at a university (History)"; "Now a…", "Teaching…" and "Works at…" answers print as sentences; each person card shows "Prints as: …"; the prize instruction is a help line; a field reached by Tab is brought into view once it opens.
+- **Large text (r10-b):** typed text scales above 16 px; Setup tiles, charts, introductions, the rail toggle, the skip link and the self-check boxes follow the text size; a solid focus ring on fields; focus on Undo after a removal; a low step heading is brought to the top.
+- **Field fit:** humanities wording (role example, Mentorship, headline, Standing, trainee placeholder); STEM wording (evidence introduction and hints, What resulted, One moment, the role and "we" examples, totals, What you did); "us" is not read as "we"; largely solo work with a partner.
+
+**INFERRED this round (for Prem to override):** "Clear the level" in place of click-to-clear; lowering a phone's capital article and common role word; "Prints as" under each person; the solid focus ring; focus on Undo after a removal; the new humanities and STEM wording (part of Q-19).
+
+**Open for Prem from this round:** a role level for work done alone (Q-20); a "College, CEGEP or school" destination (Q-21); for Eli, whether a DOI may be written as plain text in the TCV (Q-4).
+
+**Tests:** 249 of 249 (234 + 15).
+
