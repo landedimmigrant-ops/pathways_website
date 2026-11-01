@@ -1,0 +1,8 @@
+# r1-b summary (NSERC chemistry professor, tablet 820 x 1180, touch)
+- Persona: full professor, large group, renewing an NSERC Discovery Grant; Senior, STEM, Team-based + Industry-partnered; wanted the shortest path.
+- Wrote four contributions (facility for national NMR; nickel catalyst for amide bonds; solvent-free hydrogenation licensed to Verano; open-source KineticsKit), each with role line, six parts, one moment and two evidence items (8 items).
+- Mentorship: totals 14 / 9 / 6 / 20 (49), four people (doctoral to industry with NSERC PGS, master's to industry, postdoc to professor with Banting, doctoral to government lab) and three style answers; statement written in six fields (skipped "How did you get here?", so Still missing lists one item).
+- Draft length: 1,011 words, about 1.5 to 2 pages (715 contributions, 150 mentorship, 146 statement); exported text is 8 KB.
+- Did: Change panel NSERC to CIHR and back (nothing lost), reordered facility to first, removed and re-added the nickel catalyst, exported Word, Print view, .txt, Copy draft, three section copies and five PNGs; all text outputs follow the Review order with the right letters.
+- Would take it forward: yes, into NSERC's template via the Word file or section copies, after editing the role-first sentence order and the "(Annual report)" tags (W-14, W-17).
+- Top three obstacles: (1) first click on Confirm profile lost on a mouse; (2) desktop-size controls (24 to 36 px) and 5 px chart labels on a touch tablet; (3) the "we" warning on every team-style "What you did", plus about 550 px per evidence item and no undo after removing a contribution.

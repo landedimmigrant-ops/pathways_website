@@ -672,3 +672,52 @@ The same rules applied across V7 (start page, Setup, Contributions, Mentorship, 
 - INFERRED: capital letters (Person A), while evidence items keep their lower-case badges (a, b, c); "Person a" reads as a typo.
 - INFERRED: contributions keep their numbers (contribution 1, 2), since the CV asks for them as a numbered list.
 - Overrides: _none yet_.
+
+## Walkthrough fixes, batch 1 (2026-10-30): focus and announcements
+
+- BUILT (2026-10-30, W-01): on every step change focus moves to the step's heading (the `h2`; the page title on the start page), focusable by script only (`tabindex="-1"`, no scroll). Same-step redraws keep the restore-by-id path. Callers that place focus themselves afterwards (At a glance links, Still missing) still win.
+- BUILT (2026-10-30, W-02): the "What you wrote" strip's Edit button has its own id (`ev-edit-<cid>`) and the name "Edit the writing for contribution N"; it returns focus to the open field. "+ Add evidence" / "Edit evidence" and the Evidence square share one helper: focus goes to item a's first kind card (or The item once a kind is chosen), and the view comes up level with the Evidence square (to the top on a phone).
+- BUILT (2026-10-30, W-03): "+ Add another item" focuses the new item's first kind card and scrolls the item to the top.
+- BUILT (2026-10-30, W-04): removing a contribution or a person focuses the card now in that place (its folded row, or its heading), else the one before, else the Add button, and announces "Contribution N removed." / "Person X removed."; removing an evidence item announces "Evidence item x removed." (focus stays on "+ Add another item"). The confirm dialogs are unchanged (W-45 waits on Prem).
+- BUILT (2026-10-30, W-05): a closed field's controls are `visibility: hidden` once its 200 ms collapse has run (immediately under reduced motion), so the role levels leave the Tab order; the focusin opener also opens a field when a role level takes focus.
+- BUILT (2026-10-30, W-06): after a Setup answer focus moves to the next question's heading at every width. Desktop keeps the glide (DECIDED 2026-10-30); on a phone the next question scrolls up to sit under the sticky row of squares.
+- BUILT (2026-10-30, W-07): `#v7-live` is in the page from the start; it empties on every step change (pending messages and counts are dropped). The top bar is no longer a status region. The welcome-back banner has `role="status"`. Messages sent in the same moment are read as one ("1 of 6 answered. Next question: Competition.") where the second used to replace the first.
+- BUILT (2026-10-30, W-08): a count that changes inside the two-second window is spoken at the end of it (the latest count, once).
+- BUILT (2026-10-30, W-09): one helper, `radioKeys()`, for every single-choice group (Setup choice cards, year pills, role levels, evidence kinds, export format): one Tab stop (the checked option, or the first), arrow keys, Home and End move focus and choose.
+- BUILT (2026-10-30, W-10): on the Contributions and Your statement cards the side column comes after the fields and the strip in the markup (the grid still places it on the right), so Tab reaches the Headline box before the nine squares. Setup is unchanged.
+- BUILT (2026-10-30, W-11): "Download all visuals" uses `aria-disabled` and an in-flight guard while the images download, so focus stays on it.
+- BUILT (2026-10-30, W-12): a "Skip to this step" link is the first focusable element, hidden until focused, and moves focus to the step heading.
+- BUILT (2026-10-30, W-13): the mentorship count boxes take the 2 px burgundy ring on `:focus-visible` (the underline stays); one `:focus-visible` rule gives the same ring to `.btn`, choice cards, kinds, pills, icon buttons, link buttons, folded rows, Add buttons, example buttons, the Start page link and the rail's Save draft.
+- INFERRED (W-06): focus follows the next question, as the DECIDED glide implies for keyboard users. When an earlier answer is changed, focus goes to the first unanswered question, the same place the glide already went.
+- INFERRED (W-06): the blank room at the foot of Setup now applies on phones as well (it was desktop only), since without it the last questions cannot rise to the row of squares.
+- INFERRED (W-07): on a reload the browser may restore the scroll position, so the welcome-back text also goes into the live region and focus is not moved on the first render of the page.
+- INFERRED (W-09): the radio semantics stay (they match a single choice). Year keeps its toggle-off on a click. A choice made with the arrow keys in Setup keeps focus in the group and does not glide; Tab moves on.
+- INFERRED (W-10): the column is a navigation aid, read after the content it indexes.
+- INFERRED (W-12): on the start page (no step heading) the skip link and the step-change focus go to the page title.
+- New test checks (17): the live region at load; the skip link; the step heading after Start, Confirm profile, a rail click and Load; the next question's heading after a Setup answer (desktop and phone); arrow keys in a choice grid; the column after the fields; no focusable control in a closed field; the deferred count; "+ Add evidence" and the Edit id; "+ Add another item" and the removal announcement; the strip's Edit; removing a contribution and a person; "Download all visuals" keeping focus. Tests: 123 of 123.
+- Overrides: _none yet_.
+
+## Walkthrough fixes, batch 2 (2026-10-30): phone layout and CSS
+
+- BUILT (2026-10-30, W-27): `overflow-wrap: anywhere` on `.v7-strip p`, `.v7-ans-v`, `.v7-draft-body`, `.v7-fold-t` and `.v7-og`, so a long unbroken string (a URL) wraps inside its box and the page keeps its width at 375 px.
+- BUILT (2026-10-30, W-28): on phones the sticky card title is a flex row. The number keeps its width (`flex-shrink: 0`) and the headline span takes the ellipsis, so the row reads "Contribution 2 · A records…".
+- BUILT (2026-10-30, W-50): the rail's green-circle rule now excludes `.is-ghost`, so a locked Review keeps the faded grey circle after the gate closes again.
+- BUILT (2026-10-30, W-53): at 768 px and below each chart's figure scrolls sideways (`overflow-x: auto`) and its drawing keeps a minimum width of 440 px; the PNG exports are unchanged.
+- BUILT (2026-10-30, W-55): at 768 px and below text boxes, inputs and selects are 16 px (no iOS zoom on focus); selects, inputs, the totals boxes, the rail-foot buttons and the Start page link are at least 44 px tall and icon buttons are 44 × 44. `.v7-quiet-btn` takes burgundy text on hover and focus (it was white on white). The Change panel follows Setup's order (Agency, Competition, Career stage, Field, Another field, then work mode) and labels the pills "How your work usually happens".
+- BUILT (2026-10-30, W-13, CSS part): `.v7-select:focus-visible` joins the burgundy ring rule, since the native blue outline still showed on the Change panel's selects.
+- INFERRED (W-55): the single-line `.v7-input` (40 px) also goes to 44 px on phones; the log lists selects and icon buttons, and D-14 sets 44 px for every tap target.
+- INFERRED (W-28/W-55): with 44 px icon buttons the title, nine squares and two buttons no longer fit on one phone line (the title shrank to about 90 px). On the sticky card header the squares wrap to a second line when they do not fit; a card with no buttons keeps title and squares on one line. The header grows by about 14 px on cards with two or more contributions.
+- INFERRED (W-53): the scrolling figure has no keyboard stop (it needs a `tabindex`, which would add a Tab stop at every width); the charts' text is also in the draft above them.
+- INFERRED (W-55): in the Change panel the Agency select now sits alone on the first row on desktop, because Competition (a full row) follows it in Setup's order.
+- Test count: 132 passed (123 after batch 1, 9 new checks: Change panel order, desktop selects stay 14 px, unbroken word, sticky header number and ellipsis, 16 px fields, 44 px targets, charts scroll, locked Review no green, quiet buttons on hover).
+- Overrides: _none yet_.
+
+## Audit loop (2026-10-31): rounds of persona walks and fixes
+
+Prem asked for a full audit, persona tests of researchers writing a narrative CV, and a 20-round loop of fixes. Each round's personas, drafts, findings, fixes and INFERRED items are in `ncv_tool_v7/audit-loop-2026-10-31.md` (reports and drafts in `ncv_tool_v7/audit-loop-2026-10-31/`); the walkthrough log marks the W- items each round closes. Only the summary is repeated here.
+
+- BUILT (round 1): a validating loader (`normalizeDraft`), a recovery copy when a stored draft cannot be read, two-tab sync, the V6 offer kept until declined, and nine other fixes from the Fable code audit (F-1 to F-9); the walkthrough's open FIX items W-15, W-18, W-21, W-22, W-24, W-25, W-26, W-29, W-35, W-36, W-37, W-41, W-49, W-51 and FIX-INFERRED items W-30 to W-34, W-38, W-43, W-46, W-48; persona fixes r1-a-1 to r1-a-4, r1-a-6, r1-b-1 to r1-b-4, r1-b-7 to r1-b-11. Tests: 148 of 148.
+- INFERRED (round 1): listed under Round 1 in the loop log (two-tab behaviour, the recovery copy, Export's Change, the opened-on banner, the outside-clear rule, bare DOIs, tablet sizing, grouped Still missing).
+- Overrides: _none yet_.
+- BUILT (round 2): one assembly for every output (W-14, W-16, W-17, W-19, W-20), inline confirmations everywhere (W-45), Cancel and a foot Reset in the Change panel (W-44), a fifth totals tile (W-23), the W-57 register sweep, and the fixes from personas r2-a (CIHR, phone) and r2-b (FRQ, research-creation). Tests: 160 of 160.
+- INFERRED (round 2): the PREM items above built on option A; the folded kind row; health-system and arts destinations; "Go to where you were"; the creative link exception by kind; the ninth kind "Exhibition / performance"; the optional third mentorship prompt early in a career. Detail under Round 2 in the loop log.

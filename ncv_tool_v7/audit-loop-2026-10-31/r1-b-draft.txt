@@ -1,0 +1,59 @@
+NARRATIVE CV — WORKING DRAFT (V7 beta)
+Context (for tailoring only — not for submission): NSERC · TCV · NSERC Discovery Grant renewal · Senior · STEM / engineering
+Before you submit: paste this into the current version of NSERC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  (appears first; you wrote it last)
+============================================================
+I am a professor of chemistry at a research-intensive Canadian university. My work is in catalysis and process chemistry.
+
+For 18 years my group has worked on one problem: how to make the chemistry of fine chemicals cheaper and cleaner without asking industry to rebuild its plants. Four streams of work address it: a new amide-forming catalyst, a solvent-free hydrogenation process, an open kinetics package and a national NMR facility. Each one is used by people outside my group. I hold a Discovery Grant and two Alliance grants, direct a team of 25 and lead a national facility that serves 38 universities. This renewal funds the catalyst and kinetics streams, which depend on a stable group of senior students and a long-term partner. Over the next five years I plan to extend the catalyst to hindered substrates and hand day-to-day facility leadership to a deputy director.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A national facility that gives Canadian chemists access to high-field NMR
+   [role] I am the scientific director: I led the funding case, hired the facility team and set the access policy.
+   Most Canadian chemistry groups have no access to high-field NMR, so students at smaller universities send samples abroad or leave analysis out of their work. We commissioned two 800 MHz instruments, hired four staff scientists and run a shared-access scheme that serves 38 universities. One operating national facility, 450 training hours delivered each year and an open booking system. Over 1,200 users have run samples since 2022, and 14 universities that had no access now publish NMR data from their own groups. In 2024 a first-year master’s student at a small northern college collected her full dataset in one visit and presented it at a national meeting. Environmental and materials laboratories could use the facility for routine trace analysis without buying instruments. [a,b]
+   Evidence:
+     a. Canada Foundation for Innovation major science grant, $18 million, 2020 award  (Funding)
+        Funded both instruments and the first five years of operation.
+     b. Facility user statistics, annual report 2025  (Annual report)
+
+2. A general nickel catalyst that makes amide bonds from unactivated esters
+   [role] I designed the catalyst, supervised the three students who ran the screening and wrote the paper.
+   Amide bonds sit in most pharmaceuticals, and the standard routes use coupling reagents that produce stoichiometric waste and fail on hindered substrates. We screened 240 ligands against 60 substrates with the Aubert Lab and ran kinetic studies on the 12 best catalysts. One paper in the Journal of Made-up Catalysis, an open dataset of 3,100 reactions and one patent filing. Four groups have reproduced the method, and two pharmaceutical process teams now use it for scale-up. At a 2024 process-chemistry meeting a partner chemist ran the reaction on a 5 kg batch the following week. Fine-chemical makers could replace coupling reagents in amide synthesis and cut solvent waste at production scale. [a,b]
+   Evidence:
+     a. Made-up Catalysis Journal 2024, 12(3): nickel-catalysed amidation of unactivated esters  (Peer-reviewed)
+        Reproduced by four independent groups; the substrate table is used as a benchmark.
+     b. Open dataset of 3,100 amidation reactions, Made-up Data Repository, doi 10.0000/amide.2024  (Dataset / tool)
+        Used as training data by two other groups.
+
+3. A solvent-free hydrogenation process, licensed to a mid-sized chemical manufacturer
+   [role] I invented the process, led the partnership with Verano Chemicals for six years and negotiated the licence with the university.
+   Batch hydrogenation of fine chemicals uses large volumes of solvent and a noble-metal catalyst that is lost in each run, which raises cost and waste for small-volume producers. My group built a fixed-bed reactor, ran 400 hours of continuous trials at pilot scale and trained six Verano technicians on site. One licensed process, two patents and a 20 L pilot unit that Verano now operates. Verano runs the process on two product lines, and its solvent purchases for those lines fell by about 70 percent. In 2025 a Verano plant operator ran a changeover on the pilot unit alone, using the checklist my student wrote. Other small-volume producers of fine chemicals could adopt fixed-bed hydrogenation without building new plants. [a,b]
+   Evidence:
+     a. Licence agreement, University and Verano Chemicals, signed 2023, process IP-2021-114  (Policy / practice uptake)
+        Covers two product lines and runs for ten years.
+     b. Alliance Grant with Verano Chemicals, $640,000 over three years, 2021 to 2024  (Funding)
+
+4. An open-source package for modelling reaction kinetics from raw spectra
+   [role] I designed the software, wrote the first 15,000 lines and now direct the five developers in my group who maintain it.
+   Kinetic analysis of spectroscopic data is done by hand in most labs, so published rate constants cannot be reproduced and fitting choices stay hidden. We built and tested fitting routines on 80 public datasets and ran a user study with 25 chemists in six labs. One package released under an open licence, 140 documented functions and a tutorial series of 12 notebooks. The package has 9,000 downloads, and 31 published studies cite it as their analysis method. In 2025 a graduate student at another university used the package to correct a rate constant in her thesis, and the corrected value was accepted by her committee. Instrument makers could build the fitting routines into their own control software and give users reproducible analyses. [a,b]
+   Evidence:
+     a. KineticsKit v3.2, open-source release, 9,000 downloads, repository at made-up-labs.example/kineticskit  (Dataset / tool)
+        Used by 31 published studies.
+     b. Rate-constant corrections in three theses and one review, 2025  (Replication / citation)
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 14 doctoral students, 9 master's students, 6 postdoctoral fellows, 20 undergraduate researchers
+Where the people I trained went:
+   - Doctoral → Industry, Aldersgate Pharma Process Development, Catalysis group. Recognition: NSERC Postgraduate Scholarship (2019). She now leads a catalysis team at a pharmaceutical process-development company and hires from our group.
+   - Master's → Industry, Verano Chemicals. He runs the pilot unit built in my group.
+   - Postdoctoral → Made-up University, Department of Chemistry. Recognition: Banting Postdoctoral Fellowship (2018). She is now an assistant professor and holds her own Discovery Grant.
+   - Doctoral → Government, National Research Laboratories of Canada (made up). He leads a reference-materials program that uses methods from his thesis.
+How I mentor: Every new student writes a one-page plan for their first paper with me in the first month, and we revisit it at each group meeting until the paper is submitted.
+Who gets in, and what I changed: I removed the prior-lab-experience requirement from my postings, and 11 of my last 20 hires came from colleges and smaller universities.
+Who else I mentor: I mentor two early-career faculty at other universities and review their grant drafts twice a year.

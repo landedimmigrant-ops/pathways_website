@@ -1,0 +1,47 @@
+NARRATIVE CV — WORKING DRAFT (V7 beta)
+Context (for tailoring only — not for submission): FRQ · CV-FRQ · Soutien à la recherche-création, FRQSC (équipe) · Early career · Creative / fine arts + Humanities
+Before you submit: paste this into the current version of the FRQ's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman, with margins of at least 2 cm, your name in the header and the document title in the footer.
+
+============================================================
+THE CANDIDATE'S BACKGROUND AND SKILLS / PARCOURS ET COMPÉTENCES DE LA PERSONNE CANDIDATE  (appears first; you wrote it last)
+============================================================
+I am a research-creation artist at a Montréal university. My work is in sound and media art.
+
+How can the everyday sounds of a neighbourhood be kept, shared and heard in places where residents are not usually invited to listen? My work asks what a community loses when its sounds leave no record, and how an artwork can keep them in residents’ hands. Three strands of work address this question: an installation based on recordings made by residents, a performance created with a neighbourhood, and a printed artist’s book that carries sound to readers. In all three, residents choose what is kept, and I compose the final form. I trained in sound composition, then moved to research-creation after a residency in a community radio station in 2019, where residents asked me to record their lane rather than a stage. I have toured one installation in seven venues, directed a performance with 42 residents and published an artist’s book held by four libraries, supported by two grants from the Conseil des arts et des lettres du Québec. The program funds research-creation developed with partners outside the university. All three works were made with residents, and the program’s objective to open creation to communities is where my record is strongest. In this team I bring the field recordings, the composition and the relationship with the neighbourhood organizations in Hochelaga-Maisonneuve. The other members bring the performance direction, the community research and the publication design that I lack. Over the next three years I will take the installation to six boroughs in 2,5 times as many venues and test whether residents can run the recording sessions without me.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES / CONTRIBUTIONS ET EXPÉRIENCES LES PLUS IMPORTANTES
+============================================================
+1. A touring sound installation on the vanishing back lanes of Montréal
+   [role] I conceived, composed and toured the installation myself, with 11 residents of the neighbourhood who recorded their own lanes.
+   Montréal’s ruelles are being paved, fenced or redeveloped, and the sound of lane life has no record in public archives or in art history. Residents of Hochelaga and Saint-Henri had no way to keep it. Over 2,5 years I recorded 140 hours of lane sound in nine lanes, composed an eight-channel piece from the material residents chose to keep and built a 6 m installation that I installed myself in each venue. The installation « Voix de ruelle », shown in seven venues in Québec between 2024 and 2026, and an open online archive of the recordings. Two boroughs, Le Sud-Ouest and Verdun, cited the recordings in their lane-greening consultations, and about 3 200 visitors attended, 40 % of them for the first time at a contemporary art venue. The archive could become a regular source of information for consultations on public space in Québec and in other cities. [a,b]
+   Evidence:
+     a. « Voix de ruelle », installation video, Fonderie Darling, Montréal, 2025. https://vimeo.com/987654321  (Video documentation)
+        Shows the eight-channel installation as visitors hear it.
+     b. Élise Tremblay, « Les ruelles sonores de Montréal », Le Devoir, 14 mars 2025. https://www.ledevoir.com/culture/arts-visuels/123456/ruelles-sonores  (Media / public)
+        Review of the Montréal opening.
+
+2. A community performance co-created with the residents of Hochelaga-Maisonneuve
+   [role] I co-led the project with the community organization Les Voisins du parc, and I directed the staging.
+   Neighbourhood residents rarely take part in the making of contemporary performance, and the stories of the 1970s housing struggles in Hochelaga-Maisonneuve were told by outsiders. Over 14 months I led 30 workshops with 42 residents, then directed a 60-minute performance created from their texts, songs and objects, which we presented in a church hall and in two parks. The performance « Les Voisins du parc », given 12 times between 2023 and 2025 to about 1 800 spectators, and a documentation booklet that the residents wrote. The organization has run the workshops every winter since 2024, and a municipal library now lends the booklet. The method could be adopted by other neighbourhoods that want to make their own history public. [a,b]
+   Evidence:
+     a. « Les Voisins du parc », performance, Église Saint-Nom-de-Jésus, Montréal, 12 performances, 2023-2025.  (Performance)
+        The residents chose the texts and objects that were staged.
+     b. Collectif des Voisins du parc, Nos rues, nos voix, Montréal, Les Voisins du parc, 2024, 48 p.  (Booklet)
+
+3. A published artist’s book on the soundscape of a Québec village
+   [role] I wrote, scored and designed the book on my own, with a printer from Trois-Rivières.
+   Villages along the Saint-Laurent are losing the daily sounds of church bells, ferries and markets, and no print form existed to carry sound to readers who cannot visit an exhibition. Over 18 months I recorded the village in four seasons, transcribed the sounds as graphic scores and designed a 96-page book of 1,5 kg with a QR code that opens each recording. The artist’s book « Le village à l’oreille », 500 copies, published by Les Éditions du Ressac in 2025. Three university libraries and the Bibliothèque et Archives nationales du Québec hold the book, and a school in the village uses it in its music classes. The book could help other villages record their soundscapes in print. [a]
+   Evidence:
+     a. « Le village à l’oreille », livre d’artiste, Montréal, Les Éditions du Ressac, 2025, ISBN 978-2-0000-0000-0.  (Artist’s book)
+        Held by four libraries.
+
+============================================================
+SUPERVISORY AND MENTORING ACTIVITIES / ACTIVITÉS DE SUPERVISION ET DE MENTORAT
+============================================================
+Totals (last five years): 2 undergraduate researchers
+Where the people I trained went:
+   - Undergraduate research → Centre d’artistes Le Collectif Écho, Programmation et médiation. Assisted with the recordings of Voix de ruelle and now coordinates its public programme, first in her cohort to be hired by an arts centre.
+   - Undergraduate research → Université du Québec à Montréal, Maîtrise en arts visuels et médiatiques. Recognition: Bourse d’excellence de l’UQAM
+How I mentor: I give each assistant one lane or one recording session to lead from the second week, and we listen back together before any decision on the piece. They learn the work by making a part of it that is credited.
+Who gets in, and what I changed: Les ruelles belong to residents who rarely enter art institutions. I hire assistants from the neighbourhoods where we record and I pay for the first week of training.

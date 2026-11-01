@@ -223,7 +223,10 @@
     .v7-f.is-open .v7-box:focus { box-shadow: none; }
     .v7-select { appearance: auto; }
     textarea.v7-two { height: calc(2 * 1.5em + 18px); resize: none; line-height: 1.5; }
+    textarea.v7-grow { resize: none; overflow: hidden; line-height: 1.5; display: block; }
+    .v7-ev-wc { display: block; font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
     .v7-one { margin: 0 0 12px; }
+    .v7-pair > div > .v7-one { margin: 10px 0 0; }
     .v7-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 12px; }
     .revealed { animation: v7reveal 260ms var(--v7-ease); }
     @keyframes v7reveal { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
@@ -232,6 +235,7 @@
     .v7-tailored { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 8px; padding: 10px 14px; margin: 0 0 18px; font-size: 0.85rem; }
     .v7-tailored-k { font-weight: 700; color: #333; }
     .v7-tailored-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 auto; min-width: 0; }
+    .v7-tailored-pills.v7-tailored-text { display: block; color: #333; font-size: 0.88rem; }
     .v7-pill { display: inline-block; background: var(--v7-tint); color: #912338; border-radius: 12px; padding: 2px 10px; font-size: 0.8rem; }
     /* Pass B: the Change panel opens inside the bar */
     .v7-tailored.is-open { flex-wrap: wrap; border-color: #912338; background: var(--v7-open); }
@@ -243,6 +247,7 @@
     .v7-chg-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .v7-chg-row .v7-input { flex: 1 1 220px; width: auto; min-height: 36px; padding: 6px 10px; font-size: 0.88rem; }
     .v7-chg-row .v7-select { flex: 0 0 auto; width: auto; }
+    .v7-chg-note { margin: 6px 0 0; font-size: 0.82rem; color: #7a4b00; }
     .v7-chg-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
     .v7-startline { font-size: 1.05rem; font-weight: 600; margin: -4px 0 8px; }
 
@@ -251,6 +256,12 @@
     /* Pass E: Setup's squares as the cards' column (desktop); the row stays, sticky, on phones. */
     .v7-q[tabindex="-1"]:focus { outline: none; }
     .v7-q[tabindex="-1"]:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
+    /* W-01, W-04, W-12: headings that take focus (a step change, the skip link, a removed card). */
+    .v7-focus-h:focus { outline: none; }
+    .v7-focus-h:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
+    .v7-skip { position: absolute; left: 8px; top: -60px; z-index: 1000; background: #fff; color: #912338; border: 2px solid #912338; border-radius: 4px; padding: 8px 14px; font-weight: 700; text-decoration: underline; }
+    /* r1-b-9: fixed below the top bar, which sat over most of the link. */
+    .v7-skip:focus { position: fixed; top: calc(var(--v7-bar, 43px) + 8px); z-index: 1001; }
     @media (min-width: 769px) {
       .v7-qcount { margin: 0; }
       .v7-qcount .v7-dots { display: none; }
@@ -266,6 +277,9 @@
     .v7-warn { border: 1px solid #912338; border-radius: 6px; background: #fff; padding: 10px 14px; margin: 12px 0 0; font-size: 0.9rem; }
     .v7-warn p { margin: 0 0 8px; }
     .v7-warn-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .v7-paths > .v7-warn { grid-column: 1 / -1; margin: 0; }
+    .v7-load-err { margin: -0.75rem 0 1.25rem; }
+    .v7-chg-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--v7-card-b); }
     .v7-warn:focus { outline: 2px solid #912338; outline-offset: 2px; }
     .v7-prof-list { display: flex; flex-direction: column; gap: 12px; margin: 0 0 12px; }
     .v7-qblock { background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 14px 22px 20px; }
@@ -321,7 +335,8 @@
     .v7-legend span { font-size: 0.74rem; font-weight: 600; border-radius: 10px; padding: 2px 9px; color: #333; }
     .v7-exfoot { font-size: 0.78rem; color: var(--muted); margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--v7-rule); }
     .v7-hints { margin: 0; padding-left: 0; list-style: none; font-size: 0.88rem; }
-    .v7-hints li { margin: 0 0 4px; display: flex; gap: 6px; align-items: baseline; }
+    .v7-hints li { margin: 0 0 4px; }
+    .v7-hints li > .v7-jd { margin-right: 6px; vertical-align: baseline; }
 
     /* Card (one card for contributions, people, Mentorship style, Your statement, review, export) */
     .v7-card { background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 16px 22px 22px; margin: 0 0 16px; }
@@ -351,7 +366,14 @@
       .v7-fcol { display: none; }
       .v7-card.v7-card-col > .v7-card-h { position: sticky; top: var(--v7-bar, 43px); z-index: 5; background: var(--v7-card); margin: -14px -14px 12px; padding: 12px 14px 8px; border-radius: 10px 10px 0 0; }
       .v7-card.v7-card-col > .v7-card-h { align-items: center; }
-      .v7-card.v7-card-col > .v7-card-h .v7-card-t { white-space: nowrap; }
+      /* W-28: the number keeps its width and the headline takes the ellipsis, so the row reads "Contribution 2 · A records…". */
+      .v7-card.v7-card-col > .v7-card-h .v7-card-t { white-space: nowrap; display: flex; flex: 1 1 9em; }
+      /* With the 44 px buttons (W-55) the title, the nine squares and both buttons no longer fit on one line: the squares drop to a second line when they do not fit. */
+      .v7-card.v7-card-col > .v7-card-h { flex-wrap: wrap; gap: 4px 12px; }
+      .v7-card.v7-card-col > .v7-card-h > .v7-card-side { display: contents; }
+      .v7-card.v7-card-col > .v7-card-h .v7-prog { order: 3; }
+      .v7-card.v7-card-col > .v7-card-h .v7-card-t > .v7-num { flex-shrink: 0; }
+      .v7-card.v7-card-col > .v7-card-h .v7-card-t > span:not(.v7-num) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: pre; }
     }
     .v7-icon-btn { width: 30px; height: 30px; border: 1px solid #ddd; border-radius: 4px; background: #fff; color: #777; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; }
     .v7-icon-btn:hover { color: #912338; border-color: #912338; }
@@ -365,25 +387,27 @@
     .v7-jd { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; display: inline-block; }
     .v7-jd-stakes { background: var(--j-stakes); } .v7-jd-role { background: var(--j-role); } .v7-jd-activities { background: var(--j-activities); }
     .v7-jd-outputs { background: var(--j-outputs); } .v7-jd-outcomes { background: var(--j-outcomes); } .v7-jd-impact { background: var(--j-impact); }
-    .v7-f-more { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 200ms var(--v7-ease), opacity 200ms; }
+    /* W-05: a closed field's controls leave the Tab order (visibility), after the collapse has run. */
+    .v7-f-more { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows 200ms var(--v7-ease), opacity 200ms, visibility 0s linear 200ms; }
     .v7-f-more > div { overflow: hidden; min-height: 0; }
     .v7-f.is-open { background: var(--v7-open); border: 1.5px solid #912338; padding: 12px 16px 14px; }
-    .v7-f.is-open .v7-f-more { grid-template-rows: 1fr; opacity: 1; }
+    .v7-f.is-open .v7-f-more { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition: grid-template-rows 200ms var(--v7-ease), opacity 200ms, visibility 0s; }
     .v7-f.is-open .v7-f-k { color: #912338; }
     .v7-box { display: block; width: 100%; box-sizing: border-box; border: 1px solid var(--v7-field); border-radius: 6px; background: #fff; padding: 8px 10px; font: inherit; font-size: 0.92rem; line-height: 1.5; resize: none; overflow: auto; }
     textarea.v7-box { height: calc(3 * 1.5em + 18px); max-height: 60vh; }
+    textarea.v7-box.v7-line { height: calc(1.5em + 18px); overflow: hidden; }
     .v7-f > .v7-q { font-size: 0.95rem; margin: 0 0 8px; }
     .v7-f.is-filled > .v7-q { display: none; }
     /* Keyword or question, never both (Prem, 2026-10-30). The question shows while a field is
        unanswered or open; once answered, the keyword labels the answer. Screen readers keep both. */
     .v7-f:not(.is-filled) > .v7-f-k, .v7-ev-area > .v7-f-k,
-    .v7-qblock:not(.is-answered) > .v7-f-k, .v7-qblock.is-answered:focus-within > .v7-f-k,
-    .v7-qblock.is-answered:not(:focus-within) > .v7-q {
+    .v7-qblock:not(.is-answered) > .v7-f-k, .v7-qblock.is-answered.has-focus > .v7-f-k,
+    .v7-qblock.is-answered:not(.has-focus) > .v7-q {
       position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
     .v7-qblock { position: relative; }
-    /* Room at the foot of Setup, so any question can rise level with its square. */
-    .v7-prof-room { display: none; }
-    @media (min-width: 769px) { .v7-prof-room { display: block; height: calc(100vh - 320px); } }
+    /* Room at the foot of Setup, so any question can rise level with its square (desktop) or to the
+       row of squares (phone, W-06). */
+    .v7-prof-room { height: calc(100vh - 320px); }
     .v7-qblock.is-answered > .v7-f-k { font-size: 0.85rem; margin-bottom: 8px; }
     .v7-q-dot { margin-right: 7px; vertical-align: 0.1em; }
     .v7-f-more .v7-explain { background: none; padding: 0; margin: 8px 0 0; color: var(--muted); }
@@ -395,7 +419,7 @@
     .v7-f.is-filled .v7-ans { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; width: 100%; text-align: left; background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 9px 12px; cursor: pointer; font: inherit; color: var(--text); position: relative; overflow: hidden; }
     .v7-f.is-filled .v7-ans:hover { border-color: #b9b9b9; }
     .v7-ans-k { font-size: 0.75rem; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-    .v7-ans-v { grid-column: 1; font-size: 0.9rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-wrap; }
+    .v7-ans-v { overflow-wrap: anywhere; grid-column: 1; font-size: 0.9rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-wrap; }
     .v7-f-checks { font-size: 0.8rem; line-height: 1.5; margin-top: 8px; }
     .v7-f:not(.is-open) .v7-f-checks { display: none; }
     .v7-f-checks:empty { display: none; }
@@ -414,7 +438,7 @@
     .v7-strip.is-top { margin: 0 0 12px; }
     .v7-strip-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 0 6px; }
     .v7-strip-h b { font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
-    .v7-strip p { margin: 0; font-size: 0.9rem; line-height: 1.7; }
+    .v7-strip p { overflow-wrap: anywhere; margin: 0; font-size: 0.9rem; line-height: 1.7; }
     .v7-strip .v7-strip-role { font-style: italic; color: var(--muted); font-size: 0.85rem; margin-bottom: 4px; }
     .v7-strip .v4-gap { display: block; font-size: 0.8rem; margin-top: 6px; }
     .v7-empty { color: var(--muted); font-style: italic; }
@@ -426,6 +450,7 @@
     .v7-ev-item .v4-key-badge { margin-right: 4px; }
     .v7-ev-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0 0 6px; }
     .v7-ev-head .v7-field-label { margin: 0; }
+    .v7-kind-row { margin: 0 0 12px; font-size: 0.9rem; }
     .v7-kinds { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 8px; margin: 0 0 14px; }
     .v7-kind { display: flex; flex-direction: column; align-items: flex-start; text-align: left; background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 8px; padding: 8px 10px; cursor: pointer; font: inherit; color: var(--text); }
     .v7-kind:hover { border-color: #912338; }
@@ -438,7 +463,7 @@
     .v7-add:hover { border-color: #912338; color: #912338; }
     .v7-fold { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 12px 16px; margin: 0 0 12px; cursor: pointer; font: inherit; color: var(--text); }
     .v7-fold:hover { border-color: #bdbdbd; }
-    .v7-fold-t { flex: 1; min-width: 0; font-weight: 600; font-size: 0.92rem; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .v7-fold-t { overflow-wrap: anywhere; flex: 1; min-width: 0; font-weight: 600; font-size: 0.92rem; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .v7-fold > .v7-tri { flex-shrink: 0; }
     .v7-fold-meta { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
     .v7-fold-op { font-size: 0.8rem; color: #912338; white-space: nowrap; }
@@ -448,12 +473,14 @@
     .v7-dash-h, .v7-section-t { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
     .v7-dash-h .v7-h3, .v7-section-t .v7-h3 { margin: 0; }
     .v7-counter { font-size: 0.85rem; color: var(--muted); }
-    .v7-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .v7-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .v7-lv-note { margin: 6px 0 0; font-size: 0.8rem; }
     .v7-tile { background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
     .v7-tile label { font-size: 0.78rem; color: var(--muted); font-weight: 600; order: 2; }
     .v7-tile input { order: 1; border: 0; border-bottom: 2px solid #d0d0d0; border-radius: 0; padding: 0 0 2px; font: inherit; font-size: 1.9rem; font-weight: 700; line-height: 1.15; width: 100%; background: transparent; color: var(--text); -moz-appearance: textfield; }
     .v7-tile input::-webkit-outer-spin-button, .v7-tile input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .v7-tile input:focus { outline: none; border-bottom-color: #912338; }
+    .v7-tile input:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
     .v7-tile input::placeholder { color: #b5b5b5; font-weight: 400; }
     .v7-people-help { margin: -6px 0 12px; }
     .v7-early { background: #fafafa; border: 1.5px solid var(--v7-card-b); border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; color: #444; margin: 0 0 16px; }
@@ -464,7 +491,7 @@
 
     /* Review */
     .v7-draft { background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; overflow: hidden; }
-    .v7-draft-body { height: calc(14 * 1.6em + 28px); overflow: auto; padding: 14px 18px; font-family: Arial, Helvetica, sans-serif; font-size: 0.88rem; line-height: 1.6; box-sizing: border-box; }
+    .v7-draft-body { overflow-wrap: anywhere; height: calc(14 * 1.6em + 28px); overflow: auto; padding: 14px 18px; font-family: Arial, Helvetica, sans-serif; font-size: 0.88rem; line-height: 1.6; box-sizing: border-box; }
     .v7-draft-body.tnr { font-family: "Times New Roman", Times, serif; font-size: 0.95rem; }
     .v7-draft-body.v7-preview { height: calc(10 * 1.6em + 28px); }
     .v7-draft-body h4 { font-size: 0.92rem; margin: 0 0 4px; color: #222; }
@@ -472,7 +499,10 @@
     .v7-draft-body p { margin: 0 0 8px; }
     .v7-draft-body .v7-r { font-style: italic; color: #444; }
     .v7-refs { font-size: 0.82rem; color: #444; margin: 0 0 10px; padding-left: 1em; }
+    .v7-ref-note { display: inline-block; padding-left: 1.4em; color: #555; }
     .v7-draft.is-shut .v7-draft-body { height: 0; padding-top: 0; padding-bottom: 0; }
+    /* r2-a-7: a phone scrolls the page; a box that scrolls inside it showed a tenth of the draft. */
+    @media (max-width: 768px) { .v7-draft:not(.is-shut) .v7-draft-body { height: auto; overflow: visible; } }
     .v7-order { margin: 0 0 24px; }
     .v7-slot { font-size: 0.8rem; color: var(--muted); margin: 12px 0 6px; padding-left: 2px; max-width: 70ch; }
     .v7-slot b { color: var(--text); }
@@ -480,7 +510,7 @@
     .v7-ocard.moved { box-shadow: 0 0 0 2px rgba(145,35,56,.25); }
     .v7-n { width: 26px; height: 26px; box-sizing: border-box; border-radius: 50%; background: #fff; border: 1.5px solid var(--v7-field); color: #912338; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
     .v7-ot { font-weight: 600; font-size: 0.92rem; line-height: 1.35; }
-    .v7-og { font-size: 0.82rem; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
+    .v7-og { overflow-wrap: anywhere; font-size: 0.82rem; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
     .v7-mv { display: flex; gap: 6px; }
     .v7-mv .btn { min-width: 44px; min-height: 44px; padding: 4px 10px; font-size: 15px; }
     .v7-mv .btn:disabled { opacity: .3; cursor: default; }
@@ -490,6 +520,9 @@
     .v7-glance li { padding: 4px 0; border-bottom: 1px solid var(--v7-rule); }
     .v7-glance li:last-child { border-bottom: 0; }
     .v7-ok { color: var(--v7-done); font-weight: 600; font-size: 0.9rem; margin: 6px 0 0; }
+    .v7-tile-k2 { margin-top: 12px; }
+    .v7-links-note { display: block; border: 1px solid #e0b252; background: #fff8e1; border-radius: 6px; padding: 10px 14px; margin: 0 0 18px; }
+    .v7-links-note p { margin: 0 0 4px; } .v7-links-note ul { margin: 0; padding-left: 1.2em; }
     .v7-tile-k { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
     .v7-big { font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
     .v7-pages { position: relative; height: 10px; background: var(--v7-track); border-radius: 5px; margin: 10px 0 4px; overflow: hidden; }
@@ -508,6 +541,7 @@
     .v7-rec { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--v7-done); background: #e9f3e9; border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: 2px; }
     .v7-actions { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
     .v7-quiet-btn { border-color: transparent !important; background: none !important; text-decoration: underline; text-underline-offset: 2px; }
+    .v7-quiet-btn:hover, .v7-quiet-btn:focus-visible { color: #912338 !important; }
     .v7-copy-row { display: flex; flex-direction: column; gap: 8px; margin: 0 0 16px; }
     .v7-copy-row .btn { text-align: left; max-width: 520px; }
     .v7-copied { font-size: 0.8rem; color: var(--v7-done); margin-left: 8px; }
@@ -594,6 +628,11 @@
     .narrative-progress-panel .narrative-stage-list { margin-bottom: 14px; }
     .v7-ri { width: 100%; background: none; border: 0; padding: 6px 0; margin: 0; font: inherit; font-size: 0.88rem; line-height: 1.35; text-align: left; cursor: pointer; color: #555; border-radius: 4px; }
     .v7-ri:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
+    /* W-13: one focus ring, burgundy, for every control the tool draws. */
+    .btn:focus-visible, .v7-choice:focus-visible, .v7-kind:focus-visible, .v7-mini:focus-visible, .v7-icon-btn:focus-visible,
+    .v7-linkbtn:focus-visible, .v7-fold:focus-visible, .v7-add:focus-visible, .v7-ex-btn:focus-visible, .v7-rail-home:focus-visible,
+    .v7-rail-foot button:focus-visible, .v7-select:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
+    .btn[aria-disabled="true"] { opacity: 0.6; cursor: progress; }
     .narrative-stage-list li { list-style: none; }
     .v7-intro a { color: #912338; }
     .v7-ri { display: grid !important; grid-template-columns: 10px minmax(0, 1fr) auto; column-gap: 10px; align-items: start; }
@@ -601,7 +640,7 @@
     .v7-ri.v7-sq .narrative-stage-dot { border-radius: 2px; }
     .v7-ri .v7-mt, .v7-rsub .v7-mt { grid-column: 3; grid-row: 1; align-self: center; text-align: right; white-space: nowrap; font-size: 0.8rem; color: #444; font-weight: 400; font-variant-numeric: tabular-nums; }
     /* Pass B rail: finished = green circle; current = triangle pointing at a bold label; sub-rows hang off an L line */
-    .narrative-progress-panel .v7-ri.is-done:not(.is-active) .narrative-stage-dot { background: var(--v7-done); border-color: var(--v7-done); }
+    .narrative-progress-panel .v7-ri.is-done:not(.is-active):not(.is-ghost) .narrative-stage-dot { background: var(--v7-done); border-color: var(--v7-done); }
     .narrative-progress-panel .v7-ri.is-active { color: #912338; font-weight: 700; }
     .narrative-progress-panel .v7-ri.is-active .narrative-stage-dot { width: 0; height: 0; border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent currentColor; border-radius: 0; background: none; margin-top: 3px; }
     .narrative-progress-panel .narrative-stage-list li { position: relative; }
@@ -653,6 +692,28 @@
     .v7-rail-foot { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
     .v7-rail-foot button { font: inherit; font-size: 0.85rem; text-align: left; background: none; border: 0; padding: 4px 0; color: #912338; text-decoration: underline; cursor: pointer; min-height: 32px; }
     .v7-rail-foot .v7-rail-saved { font-size: 0.75rem; color: var(--muted); margin: 0; }
+    /* W-53, W-55: phone sizes. 16 px fields stop the iOS zoom on focus; 44 px targets (D-14); charts keep a readable size and scroll sideways inside their figure. */
+    @media (max-width: 768px) {
+      .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: 16px; }
+      .v7-select, .v7-input, .v7-chg-row .v7-input, .v7-chg-row .v7-select, .v7-tile input, .v7-rail-foot button { min-height: 44px; }
+      .v7-icon-btn { width: 44px; height: 44px; }
+      .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
+      .v7-glance li a { display: inline-block; padding: 12px 0; }
+      .proto-banner a { display: inline-flex; align-items: center; min-height: 44px; }
+      .v7-gv-art { overflow-x: auto; }
+      .v7-gv-art svg { min-width: 440px; }
+    }
+    /* r1-b-3 (audit 2026-10-31): a touch screen wider than a phone (a tablet) takes the phone's
+       16 px fields and 44 px targets; the layout stays the desktop one. */
+    @media (pointer: coarse) and (min-width: 769px) {
+      .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: 16px; }
+      .v7-select, .v7-input, .v7-chg-row .v7-input, .v7-chg-row .v7-select, .v7-tile input, .v7-rail-foot button,
+      .v7-mini, .v7-btn-small, .v7-ri, .v7-linkbtn, .v7-ex-btn { min-height: 44px; }
+      .v7-icon-btn { width: 44px; height: 44px; }
+      .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
+    }
+    /* r1-b-4: below about 1100 px two charts side by side shrink their labels to 5 px; one per row. */
+    @media (max-width: 1100px) { .v7-gv-grid { grid-template-columns: minmax(0, 1fr); } }
     .v4-note-panel { position: sticky; top: 34px; z-index: 999; max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
     .v4-note-panel-inner { background: #fff; border: 2px solid #1a1a1a; border-radius: 0 0 8px 8px; padding: 0.9rem 1rem; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
     .v4-note-panel textarea { width: 100%; box-sizing: border-box; min-height: 70px; padding: 0.5rem; font: inherit; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 6px; }
@@ -673,7 +734,8 @@
 </head>
 <body>
   <!-- storage key: ncv-v7 -->
-  <div class="proto-banner" role="status" aria-live="polite">
+  <a class="v7-skip" id="v7-skip" href="#v4-stage-content">Skip to this step</a>
+  <div class="proto-banner">
     <span><strong>PROTOTYPE · V7 BETA</strong></span>
     <span class="v4-banner-actions">
       <button type="button" class="v4-note-open" id="v4-note-open" aria-expanded="false" aria-controls="v4-note-panel" hidden>Note for the team</button>
@@ -689,10 +751,11 @@
       <p class="v7-intro">This tool helps you get familiar with how a narrative CV asks you to think about your work and describe it. You build a first outline in your own words: your contributions, your mentorship record and a personal statement. A full first draft can take a day or more, so allow time before your deadline. English only for now.</p>
       <p class="v7-intro">We recommend reading the <a id="v4-guide-top" href="https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html" target="_blank" rel="noopener">narrative CV guide</a> before you start, and consulting it as you go.</p>
     </div>
-    <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own: it stays here, on this device. Clearing your browser data clears the draft too. The checks are fixed rules. It leaves this device only if you email it.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
-    <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Copy your draft out (Review → Copy draft) before you close this tab.</p>
+    <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The checks are fixed rules. It leaves this device only if you email it.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
+    <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Use Save draft to keep a draft file, or copy your draft on the Export page, before you close this tab.</p>
     <div id="ncv-v4-root"></div>
   </div>
+  <div id="v7-live" class="v7-sr" aria-live="polite" aria-atomic="true"></div>
 
   <script>
   (function () {
@@ -726,6 +789,8 @@
     // compare, difference, concerns, reviewers) were checked live on 2026-10-27.
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     const TOOL_VERSION = "V7 beta, 2026-10-27 (forked from V6)";
+    // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
+    const TOOL_LABEL = "V7 beta";
 
     // Official section names (guide P-9, P-41). The CV-FRQ's first section has its own name and a
     // wider focus (P-48); its English names are the FRQ's own, the French ones are the template's.
@@ -783,7 +848,9 @@
     ];
     const EVIDENCE_TYPES = [
       "Peer-reviewed", "Media / public", "Policy / practice uptake",
-      "Dataset / tool", "Award / recognition", "Funding", "Replication / citation", "Other"
+      "Dataset / tool", "Award / recognition", "Funding", "Replication / citation",
+      // Q13 / r2-b-6 (inferred): a kind for work shown to an audience, for every field.
+      "Exhibition / performance", "Other"
     ];
     const labelOf = (list, v) => { const m = list.find(x => x.v === v); return m ? m.l : ""; };
 
@@ -1528,7 +1595,9 @@
     // Guide sync (P-25): master's and doctoral are graduate supervision; postdoctoral is its own line.
     // [state key, label in the grid, label in the exports]
     const MENTOR_COUNT_LABELS = [["phd", "Doctoral", "doctoral students"], ["masters", "Master's", "master's students"],
-      ["postdoc", "Postdoctoral", "postdoctoral fellows"], ["undergrad", "Undergraduate research", "undergraduate researchers"]];
+      ["postdoc", "Postdoctoral", "postdoctoral fellows"], ["undergrad", "Undergraduate research", "undergraduate researchers"],
+      // W-23 (inferred, option A): trainees at level Other (community trainees, clinical fellows) count too.
+      ["other", "Other", "other trainees"]];
     // "1 postdoctoral fellow", "3 postdoctoral fellows".
     const countNoun = (n, plural) => String(n).trim() === "1" ? plural.replace(/s$/, "") : plural;
     const MENTOR_EXAMPLE = {
@@ -1544,7 +1613,9 @@
 
     // ── T1 lint engine (restored from the V1/V2 prototype; ownership rule ──
     //    recalibrated per narrative-cv-process-review.md §4, then again per B-18) ──
-    const ACTION_VERBS = ["led","designed","built","developed","co-led","co-designed","founded","supervised","secured","established","negotiated","authored","ran","validated","launched","deployed","chaired","created","initiated","directed","convened","curated","staged","organized","composed","piloted","co-created","direct","lead"];
+    const ACTION_VERBS = ["led","designed","built","developed","co-led","co-designed","founded","supervised","secured","established","negotiated","authored","ran","validated","launched","deployed","chaired","created","initiated","directed","convened","curated","staged","organized","composed","piloted","co-created","direct","lead",
+      // W-25: present-tense verbs common in Mentorship and the statement ("I mentor…", "I read every draft").
+      "mentor","teach","supervise","advise","run","chair","meet","host","coach","train","review","read","write","build","design","organize","invite","introduce","fund","hire","pair","share","work"];
     // B-18: common irregular pasts, so "I wrote / built / led …" register as ownership even though
     // they aren't in ACTION_VERBS. Any regular -ed word (>=4 letters) also counts — see verbAlt below.
     const IRREGULAR_PAST = ["wrote","built","ran","led","taught","took","made","gave","set","began","brought","chose","found","held","kept","met","put","saw","sent","spent","won","drew","grew","threw","oversaw","undertook","co-wrote"];
@@ -1614,8 +1685,12 @@
       ctx = ctx || {};
       const out = { flags: [], strengths: [], score: 0, words: 0, hits: [] };
       const t = (text || "").trim();
-      out.words = t ? t.split(/\s+/).length : 0;
+      // r1-a-3, r2-b-2: one word count for the tool (countWords).
+      out.words = countWords(t);
       if (!t) return out;
+      // r1-a-1 (audit 2026-10-31): a pasted list prints as one run-on paragraph, so it is flagged.
+      const listLines = (t.match(/^\s*(?:[•·\-*–]|\d+[.)])\s+\S/gm) || []).length;
+      if (listLines >= 2) out.flags.push("This reads as a list. Each part of the CV prints as one paragraph, so the items run together. Write them as sentences, or join them with semicolons.");
       const isProse = kind === "prose"; // H12: light checks only — no numbers, hedges untouched.
       LINK_RE.lastIndex = 0; // matchAll starts from the shared regex's lastIndex
       const links = [...t.matchAll(LINK_RE)].map(m => ({ text: m[0].replace(/[.,;:]+$/, ""), index: m.index }));
@@ -1635,8 +1710,8 @@
       WEAK_PHRASES.forEach(p => { const ms = allMatches(t, p); if (ms.length) { weak.push(p); ms.forEach(m => out.hits.push({ text: m.text, rule: "weak" })); } });
       if (ownership && weCount) out.strengths.push("Team voice and your own role are both visible.");
       else if (ownership) out.strengths.push("Your own role is named.");
-      if (weCount && !ownership) {
-        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " with no “I …” nearby. If every sentence says “we”, reviewers cannot tell what you did.");
+      if (weCount && !ownership && !ctx.roleNamed) {
+        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " with no sentence that names your own part. If every sentence says “we”, reviewers cannot tell what you did.");
         weMatches.forEach(m => out.hits.push({ text: m.text, rule: "ownership" }));
       }
       if (!ownership && !weCount && PASSIVE_KINDS.indexOf(kind) !== -1) {
@@ -1653,7 +1728,7 @@
           passives.forEach(p => out.hits.push({ text: p, rule: "passive" }));
         }
       }
-      weak.forEach(p => out.flags.push("“" + p + "” doesn't say what you did — name the specific action."));
+      weak.forEach(p => out.flags.push("“" + p + "” does not say what you did. Name the specific action."));
       if (ownership && !weak.length) out.score++;
 
       // H5: matched once, used twice — to name the metrics in the flag below, and to keep their
@@ -1665,7 +1740,8 @@
       if (!isProse) {
         // H5: the prestige metrics' own numbers are removed from this working copy first — they are
         // the very numbers the prestige flag asks you to cut. Numbers elsewhere still count.
-        let forNums = t.replace(/^\s*\d+[.)]\s+/, "");
+        // r1-a-3: list markers on every line, DOIs and years are not specific numbers.
+        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
         metricHits.forEach(m => { forNums = forNums.split(m.text).join(" "); });
         links.forEach(l => { forNums = forNums.split(l.text).join(" "); });
         const nums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
@@ -1673,17 +1749,19 @@
         else if (kind === "activities" || kind === "outcomes") {
           // B-19 (amended): dropped off "outputs" — a list of things without numbers is a correct
           // answer there. The check now fires only where the prompt actually asked for a quantity.
-          out.flags.push("No numbers or dates in this one — is that right for this field?");
+          out.flags.push("No numbers or dates in this field. Is that right for this one?");
         } else out.score++;
       }
 
       // Vague language (closed list)
       const vague = [];
-      VAGUE_LIST.forEach(p => { const ms = allMatches(t, p); if (ms.length) { vague.push(p); ms.forEach(m => out.hits.push({ text: m.text, rule: "vague" })); } });
+      // r2-b-12: "2,5 times as many" is a quantity.
+      const vagueText = t.replace(/(\d[\d.,]*\s*(?:times\s+)?as\s+)(many|much)\b/gi, "$1QTY_SENTINEL");
+      VAGUE_LIST.forEach(p => { const ms = allMatches(vagueText, p); if (ms.length) { vague.push(p); ms.forEach(m => out.hits.push({ text: m.text, rule: "vague" })); } });
       const bare = t.match(/\b(significant|important|major)\b(?=\s*(?:[.,;]|and\b|$))/i);
       if (bare) { vague.push(bare[1]); out.hits.push({ text: bare[1], rule: "vague" }); }
       if (vague.length) vague.forEach(p => out.flags.push(
-        VAGUE_QUANTITY.includes(p) ? "“" + p + "” — how many?" : "“" + p + "” — swap it for the specific thing you can name."
+        VAGUE_QUANTITY.includes(p) ? "“" + p + "”: how many?" : "“" + p + "” is vague. Name the specific thing."
       ));
       else out.score++;
 
@@ -1702,29 +1780,33 @@
       // different reasons, so they are named in separate flags.
       const journalTerms = prestige.filter(p => !AUTHOR_METRIC_RE.test(p));
       const authorTerms = prestige.filter(p => AUTHOR_METRIC_RE.test(p));
-      if (journalTerms.length) out.flags.push(journalTerms.map(p => "“" + p + "”").join(", ") + " — reviewers of Tri-agency applications are asked to disregard the Journal Impact Factor and other journal-based metrics. Say what the work changed.");
-      if (authorTerms.length) out.flags.push(authorTerms.map(p => "“" + p + "”").join(", ") + " — DORA treats the h-index as an unreliable measure of an individual's work. The citation count for a single article or book can support what you say about that work.");
+      if (journalTerms.length) out.flags.push(journalTerms.map(p => "“" + p + "”").join(", ") + ". Reviewers of Tri-agency applications are asked to disregard the Journal Impact Factor and other journal-based metrics. Say what the work changed.");
+      if (authorTerms.length) out.flags.push(authorTerms.map(p => "“" + p + "”").join(", ") + ". DORA treats the h-index as an unreliable measure of an individual's work. The citation count for a single article or book can support what you say about that work.");
 
       // Guide sync (P-17, P-31): links, by format. Evidence rows get their own note (see renderEvidence).
       if (links.length && ctx.format) {
         links.forEach(l => out.hits.push({ text: l.text, rule: "link" }));
         if (ctx.format === "tcv") out.flags.push("Links are not permitted in the TCV, which must be self-contained. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it.");
-        else if (ctx.format === "cv-frq") out.flags.push("In the CV-FRQ, links belong with your references, tied to a contribution. Move this one to the evidence list and keep the information itself in your sentence.");
+        // r2-b-4: the statement and Mentorship have no evidence list of their own.
+        else if (ctx.format === "cv-frq") out.flags.push(kind === "prose" ? "In the CV-FRQ, links belong with your references. Add this link to the evidence list of the contribution it supports, or give the reference in words."
+          : "In the CV-FRQ, links belong with your references, tied to a contribution. Move this one to the evidence list and keep the information itself in your sentence.");
       }
 
       // Hedging — field-aware; H7: capitalised "May" before a year/day is the month, not a hedge.
       // Skipped for "prose" (neither flagged nor praised).
       if (!isProse) {
-        const hedgeText = t.replace(/\bMay\b(?=\s+(?:\d{4}|\d{1,2})\b)/g, "MAYMONTH_SENTINEL");
+        // W-30: "could not" and "would not" describe a past inability (what Stakes asks for), not a hedge.
+        const hedgeText = t.replace(/\bMay\b(?=\s+(?:\d{4}|\d{1,2})\b)/g, "MAYMONTH_SENTINEL")
+          .replace(/\b(could|would|should|might|may)(?=\s+not\b)/gi, "NEGMODAL_SENTINEL");
         const hedges = [];
         HEDGES.forEach(h => { const ms = allMatches(hedgeText, h); if (ms.length) { hedges.push(h); ms.forEach(m => out.hits.push({ text: m.text, rule: "hedge" })); } });
         if (kind === "impact") {
           if (hedges.length) { out.strengths.push("Hedged, as suits this field."); out.score++; }
         } else if (kind === "generic") {
-          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + " — right when you are saying what might follow, loose when you are saying what happened.");
+          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " is a hedge" : " are hedges") + ". A hedge suits a sentence about what might follow; state what happened plainly.");
           else out.score++;
         } else {
-          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + " — this field is for what has happened; what might follow belongs under What could change.");
+          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " is a hedge" : " are hedges") + ". This field describes what happened; what might follow belongs under What could change.");
           else out.score++;
         }
       }
@@ -1747,7 +1829,8 @@
     // `kind` is the sector; `org` the university or organization; `unit` the department or
     // discipline (university) or the subdivision (everything else).
     const blankMentee = () => ({ stage: "", stageKind: "", stageOther: "", kind: "", org: "", unit: "", recognition: "", why: "", folded: false });
-    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["other", "Other"]];
+    // r2-b-6 (inferred): arts and cultural organizations are a destination of their own.
+    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["health", "Health system (hospital or health authority)"], ["arts", "Arts or cultural organization"], ["other", "Other"]];
     const menteeKindLabel = (k) => { const m = MENTEE_KINDS.find(x => x[0] === k); return m ? m[1] : ""; };
     // Drafts saved before this change held `who` (dropped on purpose) and a free-text
     // `destination` (kept, moved to `org`).
@@ -1775,19 +1858,26 @@
       const s = MENTEE_STAGES.find(x => x[0] === m.stageKind);
       return s ? s[1] : (m.stage || "").trim();
     };
-    const menteeWhere = (m) => [(m.kind && m.kind !== "university" && m.kind !== "other") ? menteeKindLabel(m.kind) : "", (m.org || "").trim(), (m.unit || "").trim()].filter(Boolean).join(", ");
+    // W-18: a part of the CV is one paragraph; line breaks typed inside a field become spaces in every output.
+    const one = (t) => String(t || "").replace(/\s*[\r\n]+\s*/g, " ").trim();
+    // r2-b-2: a word is a token with a letter or a digit, so a lone « or » (set off by a non-breaking
+    // space) or a dash is not one; list markers count only at a line start. Digit groups joined by a
+    // non-breaking or thin space ("3 200") are one number.
+    const joinDigits = (t) => String(t || "").replace(/(\d)[\u00a0\u202f](?=\d{3}\b)/g, "$1");
+    const countWords = (t) => { const x = joinDigits(t).replace(/^\s*(?:[•·\-*–—]|\d+[.)])\s+/gm, "").trim(); return x ? x.split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length : 0; };
+    const menteeWhere = (m) => [(m.kind && m.kind !== "university" && m.kind !== "other") ? menteeKindLabel(m.kind) : "", one(m.org), one(m.unit)].filter(Boolean).join(", ");
     const menteeHasPlace = (m) => !!(m.kind || (m.org || "").trim() || (m.unit || "").trim());
     const menteeHasContent = (m) => menteeHasPlace(m) || !!m.stageKind || !!((m.stage || "").trim() || (m.recognition || "").trim() || (m.why || "").trim());
     const menteeComplete = (m) => !!((m.org || "").trim() && (m.unit || "").trim());
     // One line per trainee for the text export; the print view escapes the same pieces.
-    const menteeParts = (m) => ({ label: menteeStageLabel(m) || "Trainee", where: menteeWhere(m), recog: (m.recognition || "").trim(), why: (m.why || "").trim() });
+    const menteeParts = (m) => ({ label: one(menteeStageLabel(m)) || "Trainee", where: menteeWhere(m), recog: one(m.recognition), why: one(m.why) });
     const defaultState = () => ({
       mode: "", stageKey: "setup", profileConfirmed: false,
       lens: { agency: "", format: "", program: "", undecided: false, year: "", discipline: "", discipline2: "", otherField: "", careerStage: "", workMode: [] },
       ui: {},
       xray: { text: "" },
       contributions: [blankContribution()],
-      mentorCounts: { phd: "", masters: "", undergrad: "", postdoc: "" },
+      mentorCounts: { phd: "", masters: "", undergrad: "", postdoc: "", other: "" },
       mentees: [blankMentee()],
       mentorPhilosophy: "", mentorEDI: "", mentorCrossStage: "",
       ps: { role: "", institution: "", field: "", challenge: "", streams: "", pivot: "", standing: "", programFit: "", teamFit: "", horizon: "" },
@@ -1800,9 +1890,50 @@
     });
 
     let ns = defaultState();
+    // F-1, F-9 (audit 2026-10-31): a saved draft is checked before it is used. Text fields become
+    // strings, list items that are not objects are dropped, and choices the tool does not know
+    // (an agency code from a hand-edited file) are cleared, so one bad entry cannot stop a load.
+    const isObj = (v) => !!v && typeof v === "object" && !Array.isArray(v);
+    const str = (v) => typeof v === "string" ? v : (typeof v === "number" && isFinite(v) ? String(v) : "");
+    const strKeys = (o, keys) => keys.forEach(k => { if (k in o) o[k] = str(o[k]); });
+    const inList = (v, list) => list.some(x => (x.v || x[0]) === v);
+    function normalizeDraft(raw) {
+      if (!isObj(raw)) throw new Error("not a draft");
+      const d = JSON.parse(JSON.stringify(raw));
+      ["mode", "stageKey", "consultQuestions"].concat(MENTOR_TEXT_KEYS).forEach(k => { if (k in d) d[k] = str(d[k]); });
+      ["ui", "ps", "mentorCounts", "visited", "selfCheck", "xray", "feedback", "session"].forEach(k => { if (k in d && !isObj(d[k])) delete d[k]; });
+      if ("lens" in d && !isObj(d.lens)) delete d.lens;
+      const L = d.lens || {};
+      strKeys(L, ["agency", "format", "program", "year", "discipline", "discipline2", "otherField", "careerStage"]);
+      if ("undecided" in L) L.undecided = !!L.undecided;
+      if (L.agency && !inList(L.agency, AGENCIES) && OLD_FRQ_CODES.indexOf(L.agency) === -1) { L.agency = ""; L.format = ""; }
+      if (L.format && L.format !== "tcv" && L.format !== "cv-frq") L.format = "";
+      if (L.careerStage && !inList(L.careerStage, CAREER_STAGES)) L.careerStage = "";
+      if (L.discipline && !inList(L.discipline, DISCIPLINES)) L.discipline = "";
+      if (L.discipline2 && L.discipline2 !== "none" && !inList(L.discipline2, DISCIPLINES)) L.discipline2 = "";
+      if (Array.isArray(L.workMode)) L.workMode = L.workMode.filter(w => inList(w, WORK_MODES));
+      else if ("workMode" in L) L.workMode = inList(L.workMode, WORK_MODES) ? [L.workMode] : [];
+      if (d.ps) strKeys(d.ps, Object.keys(d.ps));
+      if (d.mentorCounts) strKeys(d.mentorCounts, Object.keys(d.mentorCounts));
+      if ("contributions" in d) d.contributions = (Array.isArray(d.contributions) ? d.contributions : []).filter(isObj).map(c => {
+        strKeys(c, CONTRIB_TEXT_KEYS.concat(["cid"]));
+        c.roleMode = inList(c.roleMode, ROLE_LEVELS) ? c.roleMode : "";
+        if ("folded" in c && typeof c.folded !== "boolean") c.folded = !!c.folded;
+        if (!isObj(c.flags)) c.flags = {};
+        if (!isObj(c.notes)) c.notes = {};
+        c.evidence = (Array.isArray(c.evidence) ? c.evidence : []).filter(isObj).map(e => { strKeys(e, ["text", "type", "note", "otherLabel"]); return e; });
+        return c;
+      });
+      if ("mentees" in d) d.mentees = (Array.isArray(d.mentees) ? d.mentees : []).filter(isObj).map(m => { strKeys(m, ["stage", "stageKind", "stageOther", "kind", "org", "unit", "recognition", "why", "destination"]); return m; });
+      if (d.ui && "exportFmt" in d.ui) d.ui.exportFmt = str(d.ui.exportFmt);
+      return d;
+    }
     // V7-38: every load path (browser storage, a V6 draft, a draft file) goes through applySaved,
-    // so old drafts are migrated the same way whichever door they come in by.
-    const applySaved = (saved) => {
+    // so old drafts are migrated the same way whichever door they come in by. F-1: the draft in use
+    // stays as it was if the saved one cannot be read.
+    const applySaved = (raw) => {
+      const saved = normalizeDraft(raw), prev = ns;
+      try {
           ns = Object.assign(defaultState(), saved);
           ns.lens = Object.assign(defaultState().lens, saved.lens || {});
           ns.ui = Object.assign(defaultState().ui, saved.ui || {});
@@ -1844,13 +1975,35 @@
           // returns to their work and not to Setup.
           if (typeof saved.profileConfirmed !== "boolean") ns.profileConfirmed = appHasContent(ns);
           remapStageKey();
+      } catch (e) { ns = prev; throw e; }
     };
+    // F-2 (audit 2026-10-31): a stored draft that cannot be opened is copied to a recovery key and is
+    // not saved over until the researcher starts again, opens a file or resets; a line says so and
+    // offers the copy as a file.
+    let loadFailed = false;
     const loadState = () => {
+      let raw = null;
       try {
-        const raw = localStorage.getItem(NCV_KEY);
+        raw = localStorage.getItem(NCV_KEY);
         if (raw) applySaved(JSON.parse(raw));
-      } catch (_) { ns = defaultState(); }
+      } catch (_) {
+        ns = defaultState(); loadFailed = true;
+        try { localStorage.setItem(NCV_KEY + "-recovery", JSON.stringify({ keptAt: new Date().toISOString(), raw })); } catch (_) {}
+      }
     };
+    function showLoadFailed() {
+      const w = document.getElementById("v4-save-warning");
+      if (!w || !loadFailed) return;
+      w.textContent = "The draft saved in this browser could not be opened, so the tool has kept a copy and starts empty. Download the copy to keep it, then email it to impact@concordia.ca if you need help with it. ";
+      const b = el("button", "btn btn-outline v7-btn-small", "Download the saved copy"); b.type = "button";
+      b.addEventListener("click", () => {
+        let raw = "";
+        try { raw = (JSON.parse(localStorage.getItem(NCV_KEY + "-recovery") || "{}").raw) || ""; } catch (_) {}
+        const a = el("a"); a.href = URL.createObjectURL(new Blob([raw], { type: "application/json" }));
+        a.download = "narrative-cv-saved-copy.json"; document.body.appendChild(a); a.click(); a.remove();
+      });
+      w.appendChild(b); w.hidden = false;
+    }
     const CONTRIB_TEXT_KEYS = ["title", "stakes", "roleLine", "activities", "outputs", "outcomes", "impact", "translational"];
     const MENTOR_TEXT_KEYS = ["mentorPhilosophy", "mentorEDI", "mentorCrossStage"];
     // V7-38: a saved step V7 no longer has is sent to the step that took over its job. A target
@@ -1868,7 +2021,10 @@
     const V6_KEY = "ncv-v6";
     let v6Offer = null;
     try {
-      if (!localStorage.getItem(NCV_KEY)) {
+      // F-4: a V7 visit with nothing written does not use up the offer; "Start without it" does.
+      const raw7 = localStorage.getItem(NCV_KEY); let d7 = null;
+      try { d7 = raw7 ? JSON.parse(raw7) : null; } catch (_) { d7 = null; }
+      if (!raw7 || (isObj(d7) && !draftHasContent(d7) && !(isObj(d7.ui) && d7.ui.v6Declined))) {
         const raw6 = localStorage.getItem(V6_KEY);
         const d6 = raw6 ? JSON.parse(raw6) : null;
         if (d6 && draftHasContent(d6)) v6Offer = d6;
@@ -1925,21 +2081,41 @@
       } else if (obj && Array.isArray(obj.contributions) && obj.lens) draft = obj;
       if (!draft || typeof draft !== "object") return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft.";
       const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session };
-      applySaved(draft);
+      // W-46: the step it opens on says which draft it opened.
+      const when = obj && obj.savedAt && !isNaN(Date.parse(obj.savedAt)) ? new Date(obj.savedAt).toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" }) : "";
+      try { applySaved(draft); } catch (_) { return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft."; }
+      openedPending = when ? "Opened your draft saved on " + when + "." : "Opened your draft.";
       Object.assign(ns, keep);
+      resumeStore();
       saveState();
       return "";
     }
-    function openDraftFile() {
+    let openedPending = "";
+    // W-45: opening over a draft asks first, inline under the Load card; a file that is not a draft
+    // gets a line there (was alert()).
+    function openDraftFile(e) {
+      const trigger = e && e.currentTarget, host = trigger && trigger.closest(".v7-paths");
+      const oldErr = document.getElementById("v7-load-err"); if (oldErr) oldErr.remove();
+      if (draftHasContent(ns) && host) {
+        inlineConfirm(host, "Opening a file replaces the draft in this browser. Save a draft file first if you want to keep it.", trigger, "Choose a file", pickDraftFile, { cls: "v7-warn-wide" });
+        return;
+      }
+      pickDraftFile();
+    }
+    function showLoadError(msg) {
+      const host = document.querySelector(".v7-paths");
+      const p = el("p", "v4-save-warning v7-load-err", msg); p.id = "v7-load-err"; p.setAttribute("role", "alert");
+      if (host) host.after(p); else announce(msg);
+    }
+    function pickDraftFile() {
       const inp = el("input"); inp.type = "file"; inp.accept = ".json,application/json";
       inp.addEventListener("change", () => {
         const f = inp.files && inp.files[0];
         if (!f) return;
-        if (draftHasContent(ns) && !confirm("Opening this file replaces the draft in this browser. Save a draft file first if you want to keep it. Open the file?")) return;
         const r = new FileReader();
         r.onload = () => {
           const err = readDraftFile(String(r.result || ""));
-          if (err) { alert(err); return; }
+          if (err) { showLoadError(err); return; }
           countEvent("draftFileOpened");
           ns.stageKey = resumeStep();
           renderStage();
@@ -1949,10 +2125,27 @@
       inp.click();
     }
     let saveFailed = false;
+    // W-48 (inferred): once the draft has been saved here, a missing key means the browser data was
+    // cleared from outside; the tool then stops writing it back and says so.
+    let storeSeen = false, storeCleared = false, saveMuted = false;
+    // Opening a draft file or resetting is a fresh start, so saving resumes.
+    const resumeStore = () => {
+      storeSeen = false; profileShown = 0;
+      if (loadFailed) { loadFailed = false; const w = document.getElementById("v4-save-warning"); if (w) w.hidden = true; }
+      if (storeCleared) { storeCleared = false; const w = document.getElementById("v4-save-warning"); if (w) w.hidden = true; }
+    };
     const saveState = () => {
       ns.lastSavedAt = Date.now();
+      if (storeCleared || loadFailed || saveMuted) return;
       try {
+        if (storeSeen && localStorage.getItem(NCV_KEY) === null) {
+          storeCleared = true;
+          const w = document.getElementById("v4-save-warning");
+          if (w) { w.textContent = "Your browser data was cleared, so this draft is no longer saved here. Save a draft file now to keep it, or reload the page to start again."; w.hidden = false; }
+          return;
+        }
         localStorage.setItem(NCV_KEY, JSON.stringify(ns));
+        storeSeen = true;
         if (saveFailed) {
           saveFailed = false;
           const w = document.getElementById("v4-save-warning");
@@ -1962,7 +2155,7 @@
         if (!saveFailed) {
           saveFailed = true;
           const w = document.getElementById("v4-save-warning");
-          if (w) w.hidden = false;
+          if (w) { w.textContent = "Saving has stopped working in this browser, so your latest changes are at risk. Use Save draft to keep a draft file, or copy your draft on the Export page, before you close this tab."; w.hidden = false; }
         }
       }
     };
@@ -1977,11 +2170,20 @@
       if (L.format) t.push(L.format);
       return t;
     };
-    const interpolate = (s) => s
-      .replace(/\{program\}/g, ns.lens.program || "this competition")
-      .replace(/\{agency\}/g, labelOf(AGENCIES, ns.lens.agency) || "your agency");
+    // W-36/W-37: every reader of the competition name goes through competitionName() (trimmed, empty
+    // while Undecided is on); the bracketed agency prints only when the agency is known.
+    // r1-b-7, r1-b-11: the agencies a competition name mentions ("NSERC Discovery Grant" → ["nserc"]).
+    const agenciesNamed = (t) => AGENCIES.filter(a => a.v !== "other" && new RegExp("\\b" + a.l + (a.v === "frq" ? "(?:SC|NT|S)?" : "") + "\\b", "i").test(t || "")).map(a => a.v);
+    const interpolate = (s) => {
+      const ag = ns.lens.agency && ns.lens.agency !== "other" ? labelOf(AGENCIES, ns.lens.agency) : "";
+      // The bracket names the agency only when the competition name does not name one itself.
+      const bracket = ag && !agenciesNamed(competitionName()).length;
+      return s.replace(/ \(\{agency\}\)/g, bracket ? " (" + ag + ")" : "")
+        .replace(/\{program\}/g, competitionName() || "this competition")
+        .replace(/\{agency\}/g, ag || "your agency");
+    };
     const resolveQ = (def) => {
-      if (def.noProgramQ && !ns.lens.program) return def.noProgramQ;
+      if (def.noProgramQ && !competitionName()) return def.noProgramQ;
       if (def.variants) {
         for (const tok of activeTokens()) if (def.variants[tok]) return interpolate(def.variants[tok]);
       }
@@ -2000,6 +2202,8 @@
       const wm = ns.lens.workMode || [];
       const def = PROMPTS.contrib.roleLine;
       const hasTeamMode = wm.some(w => w === "team" || w === "community" || w === "industry");
+      // W-31: largely solo work done with a community has partners, not a team.
+      if (wm.includes("solo") && wm.includes("community") && !wm.some(w => w === "team" || w === "industry") && def.variants && def.variants.partners) return interpolate(def.variants.partners);
       if (hasTeamMode && def.variants && def.variants.team) return interpolate(def.variants.team);
       return interpolate(def.q);
     };
@@ -2009,7 +2213,7 @@
       if (!r) return "a";
       if (/^(uni|use|uti|eu|one)/.test(r)) return "a";
       if (/^(hon|hour)/.test(r)) return "an";
-      return /^[aeiou]/.test(r) ? "an" : "a";
+      return /^[aeiou]/.test(r.normalize("NFD").replace(/[\u0300-\u036f]/g, "")) ? "an" : "a";
     };
 
     // ── Prompt library (carried from V3, trimmed to the lighter lens) ──────
@@ -2017,7 +2221,7 @@
       ps: {
         challenge: {
           q: "What is the problem your whole research program keeps returning to?",
-          help: "One or two sentences — a throughline that runs across your projects.",
+          help: "One or two sentences on the throughline that runs across your projects.",
           variants: {
             humanities: "What is the central question your work keeps asking?",
             creative: "What question does your body of work keep asking?",
@@ -2025,32 +2229,34 @@
           }
         },
         streams: { q: "Name two to four strands of your work. What single thread connects them?", help: "A reviewer should see one coherent program." },
-        pivot: { q: "How did you get here?", help: "Many strong statements name a turning point — a field you came from, a pivot, a defining collaboration. It explains why your work looks the way it does.", isNew: true },
+        pivot: { q: "How did you get here?", help: "Many strong statements name a turning point, such as a field you came from, a pivot or a defining collaboration. It explains why your work looks the way it does.", isNew: true },
         standing: {
           q: "List your strongest signals of standing.",
           help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual's work. The citation count for a single article or book can support what you say about it.",
           isNew: true,
-          variants: { early: "List your strongest signals so far — key papers, fellowships, awards, the scale of a dataset or collaboration. Name what you have." }
+          variants: { creative: "List your strongest signals of standing, such as work shown, performed or published, residencies, commissions, grants or awards.",
+            early: "List your strongest signals so far, such as key papers, fellowships, awards or the scale of a dataset or collaboration. Name what you have." }
         },
         // Approved fix: with no competition named in Setup, ask about the competition itself
         // instead of interpolating empty placeholders. noProgramQ is checked in resolveQ()
         // before the normal variants/interpolate path runs.
         // Guide sync (P-48): the TCV's first section focuses on your expertise relative to this
         // opportunity; the CV-FRQ's adds fit with the program's objectives (and the team, below).
-        programFit: { q: "You're aiming at {program} ({agency}). Why is this the right competition for where you are?", noProgramQ: "Which competition do you have in mind, and why does it fit where you are?",
+        programFit: { q: "You are aiming at {program} ({agency}). Why is this the right competition for where you are?", noProgramQ: "Which competition do you have in mind, and why does it fit where you are?",
           help: "The TCV asks this section to show your expertise relative to this specific opportunity or project. Name what the competition funds and the expertise you bring to it.",
           helpVariants: { "cv-frq": "The CV-FRQ asks this section to show your expertise relative to this specific opportunity or project and your fit with the program's objectives. Name the objectives and where your work meets them." },
           isNew: true },
         teamFit: { q: "How does your work complement the rest of the team on this application?", help: "The CV-FRQ asks for this in its first section. Name what you bring to the team: a method, a site, a population, a partnership or a stage of the work. If you are applying on your own, say how your work serves the program's objectives." },
-        horizon: { q: "Where is this heading next?", help: "Name the direction of the work. The statement should end by pointing forward." }
+        horizon: { q: "Where is this heading next?", help: "Name the direction of the work in the final sentence." }
       },
       contrib: {
-        title: { q: "What one line would let a reviewer recall this work?", help: "Short, plain and memorable — a reviewer should be able to repeat it back from memory. Name what the work was for; the paper's title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." } },
+        title: { q: "What one line would let a reviewer recall this work?", help: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the paper's title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
+          helpVariants: { creative: "Short, plain and memorable. Name what the work was for; the title of the exhibition or work belongs in the evidence list." } },
         stakes: { q: "What problem did this work address, and who had it?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true },
         roleLine: {
           q: "In one line, what did you do that wouldn't exist without you?",
           help: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the protocol.”",
-          variants: { team: "In one line, what was your unique contribution within the team?" }
+          variants: { team: "In one line, what was your unique contribution within the team?", partners: "In one line, what was your part in this work, and who else took part?" }
         },
         activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.", variants: { creative: "What did making the work involve, and which part was yours?" } },
         outputs: {
@@ -2062,22 +2268,22 @@
           variants: {
             community: "Which groups in the community or sector have used this, and what is different for them now?",
             health: "Where has practice, care or policy shifted because of this work, and for whom?",
-            social: "Who took this up — scholars, practitioners, communities, the public or policy makers — and what shifted?"
+            social: "Who took this up, whether scholars, practitioners, communities, the public or policy makers, and what shifted?"
           }
         },
         impact: { q: "If the work is taken up more widely, which field, sector or population could it affect, and how?", help: "Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems get framed.", academicTag: true },
-        translational: { q: "Which one occasion shows the work reaching a specific person or group?", help: "One scene, two sentences — a person, a clinic, a classroom, a community meeting, a committee that used it. One concrete instance of What already changed, told as a scene. Optional.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
-        evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter — a, b, c — and the letter appears in your draft beside the sentence it backs up. Under each item there is room for two lines on what it found, or why the dataset or tool was useful, so a reviewer has the point without opening the source." }
+        translational: { q: "Which one occasion shows the work reaching a specific person or group?", help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
+        evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter (a, b, c), and the letter appears in your draft beside the sentence it backs up. Under each item there is room for two lines on what it found, or why the dataset or tool was useful, so a reviewer has the point without opening the source." }
       },
       mentor: {
         philosophy: { q: "What is one concrete thing you do that shows how you mentor?", help: "One practice you follow, described concretely. How you run a first meeting, how you decide authorship, how you hand a project over when someone is ready for it." },
         edi: {
           // B-30/B-31: the "Equity in practice —" label is dropped (the abstract noun summoned
           // boilerplate); the question underneath already asks for a structure, not a statement.
-          q: "Who gets into your group, and what have you changed about how they get there?", help: "One change you made: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so what you changed carries further than what you believe.",
+          q: "Who gets into your group, and what have you changed about how they get there?", help: "One change you made: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so describe what you changed.",
           variants: { community: "Who do your community partnerships bring into research, and what did you change to make that possible?" }
         },
-        crossStage: { q: "Beyond your own students — who else do you mentor? Take one person and say what you did.", help: "Informal mentoring counts here, and the format says so: early-career colleagues, postdocs you don't supervise, visiting scholars, peers, community researchers. One concrete example — a grant you read, an introduction you made, a room you got someone into — says more than a list of names." }
+        crossStage: { q: "Who else do you mentor beyond your own students? Take one person and say what you did.", help: "Informal mentoring counts here, and the format says so: early-career colleagues, postdocs you don't supervise, visiting scholars, peers, community researchers. One concrete example — a grant you read, an introduction you made, a room you got someone into — says more than a list of names." }
       }
     };
 
@@ -2124,7 +2330,11 @@
       const anchor = (p.role || p.institution || p.field || "").trim() ? 1 : 0;
       return [anchor + PS_ANSWER_KEYS().filter(k => (p[k] || "").trim()).length, PS_ANSWER_KEYS().length + 1];
     };
-    const mentorTotal = () => Object.values(ns.mentorCounts).reduce((n, v) => n + (parseInt(v, 10) || 0), 0);
+    // W-22: a count is a whole number from 0 to 999, kept as a string ("" when empty).
+    const cleanCount = (v) => { const d = String(v == null ? "" : v).split(/[.,eE]/)[0].replace(/\D/g, ""); return d ? String(Math.min(999, parseInt(d, 10))) : ""; };
+    const mentorTotal = () => Object.values(ns.mentorCounts).reduce((n, v) => n + (parseInt(cleanCount(v), 10) || 0), 0);
+    // "14 doctoral students, 1 master's student": the totals line every output prints.
+    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), out]).filter(([n]) => +n > 0).map(([n, out]) => n + " " + countNoun(n, out));
     const menteesDescribed = () => ns.mentees.filter(menteeHasContent).length;
     const stageDone = (key) => {
       const v = !!ns.visited[key];
@@ -2161,7 +2371,7 @@
       const f = (n) => (Math.round(n * 2) / 2).toString();
       const lo = f(w / 600), hi = f(w / WORDS_PER_PAGE);
       if (w / WORDS_PER_PAGE < 0.5) return "";
-      return (lo === hi ? lo : lo + "–" + hi) + (hi === "1" ? " p" : " pp");
+      return (lo === hi ? lo : lo + "–" + hi) + (+hi <= 1 ? " p" : " pp");
     };
     // Pass B: the example that arrives open on each writing step while the step holds no writing.
     // Decided on arrival only, so the page does not shift while the researcher is writing.
@@ -2191,9 +2401,32 @@
       stageEnteredAt = now;
     }
     const countEvent = (name) => { ns.session.events[name] = (ns.session.events[name] || 0) + 1; saveState(); };
+    // F-3 (audit 2026-10-31, inferred): with the tool open in two tabs, a save in one tab is taken up
+    // by the other (at once if it is in view, otherwise when it comes back into view), so the other
+    // tab never writes its older copy back over the newer one. Taking it up writes nothing.
+    let otherTab = undefined;
+    function takeUpOtherTab(spoken) {
+      if (otherTab === undefined) return;
+      const raw = otherTab; otherTab = undefined;
+      const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session, stageKey: ns.stageKey };
+      saveMuted = true;
+      try {
+        if (raw === null) { ns = defaultState(); resetUI(); resumeStore(); ns.stageKey = "start"; }
+        else { applySaved(JSON.parse(raw)); Object.assign(ns, { teamNotes: keep.teamNotes, feedback: keep.feedback, session: keep.session }); storeSeen = true; }
+        if (raw !== null && ns.stageKey !== keep.stageKey && stages().some(x => x.key === keep.stageKey) && !isLockedStage(keep.stageKey)) ns.stageKey = keep.stageKey;
+        renderStage();
+      } catch (_) { /* a copy this tab cannot read: keep the tab as it is */ }
+      saveMuted = false;
+      if (spoken) announce(raw === null ? "The draft was cleared in another tab." : "This tab now shows the changes made in another tab.");
+    }
+    window.addEventListener("storage", (e) => {
+      if (e.key !== NCV_KEY && e.key !== null) return;
+      otherTab = e.key === null ? null : e.newValue;
+      if (!document.hidden) takeUpOtherTab(false);
+    });
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) { tickStageTime(); stageEnteredAt = 0; saveState(); }
-      else stageEnteredAt = Date.now();
+      else { stageEnteredAt = Date.now(); takeUpOtherTab(true); }
     });
 
     // B-36: one link to the guide per stage, plus one in the shell. Guide sync: the links open the
@@ -2239,6 +2472,7 @@
       }
       const content = el("div", "narrative-stage-content");
       content.id = "v4-stage-content";
+      content.setAttribute("role", "main"); // r2-a-13: the step's content is the page's main landmark.
       shell.appendChild(content);
       root.appendChild(shell);
     };
@@ -2304,7 +2538,7 @@
             const wc = el("span", "v7-rail-wc");
             const vis = el("span", null, w.toLocaleString("en-CA") + " w" + (pp ? " · " + pp : "")); vis.setAttribute("aria-hidden", "true");
             wc.appendChild(vis);
-            wc.appendChild(el("span", "v7-sr", "Draft so far: " + w.toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (pp ? ", " + pagesRange(w) + " pages" : "")));
+            wc.appendChild(el("span", "v7-sr", "Draft so far: " + w.toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (pp ? ", " + pagesRange(w) + (+(Math.round(w / WORDS_PER_PAGE * 2) / 2) <= 1 ? " page" : " pages") : "")));
             row.appendChild(wc);
           }
           groups.appendChild(row);
@@ -2346,7 +2580,9 @@
         else if (!ns.profileConfirmed && ns.stageKey !== "setup") ns.stageKey = "setup";
       }
       if (isLockedStage(ns.stageKey)) ns.stageKey = "contrib";
-      const stageChanged = ns.stageKey !== lastStageKey;
+      const stageChanged = ns.stageKey !== lastStageKey, firstRender = lastStageKey === null;
+      // W-07: a new step starts with an empty live region (no "Person C added." from the last one).
+      if (stageChanged) clearLive();
       if (stageChanged) { resetUI(); UI.ex = EX_DEFAULT[ns.stageKey] && stepEmpty(ns.stageKey) ? EX_DEFAULT[ns.stageKey] : ""; }
       if (stageChanged) {
         tickStageTime();
@@ -2364,9 +2600,25 @@
         // V7-11: the greeting stays; the flag count went with the marks (V7-24, V7-30).
         const banner = el("div", "narrative-session-banner",
           "Welcome back. You were on “" + (stages().find(s => s.key === ns.stageKey) || {}).short + "”.");
+        // W-07 (inferred): the browser may restore the scroll position, so the greeting is also spoken.
+        banner.setAttribute("role", "status");
         c.appendChild(banner);
+        announce(banner.textContent);
         reentryPending = false;
+        // r2-a-9 (inferred): on a writing step, one button goes to the first part still to write.
+        const nextUp = missingList().find(m => m.step === ns.stageKey && m.field);
+        if (nextUp) {
+          const go = el("button", "v7-linkbtn v7-banner-go", "Go to where you were"); go.type = "button";
+          go.addEventListener("click", () => jumpTo(nextUp));
+          banner.appendChild(document.createTextNode(" ")); banner.appendChild(go);
+        }
+      } else if (openedPending && ns.stageKey !== "start") {
+        const banner = el("div", "narrative-session-banner", openedPending);
+        banner.setAttribute("role", "status");
+        c.appendChild(banner);
+        announce(openedPending);
       }
+      openedPending = "";
       RENDERERS[ns.stageKey](c);
       if (stageChanged) window.scrollTo(0, 0);
       else window.scrollTo(0, scrollY);
@@ -2374,10 +2626,20 @@
         const n = document.getElementById(focusId);
         if (n) { n.focus({ preventScroll: true }); try { if (caret != null) n.setSelectionRange(caret, caret); } catch (_) {} }
       }
+      // W-01: on a step change focus moves to the step's heading (not on the first render of the page).
+      if (stageChanged && !firstRender) { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); }
       lastStageKey = ns.stageKey;
       saveState();
     };
 
+    // W-01, W-12: the step's heading, or the page title on the start page; focusable by script only.
+    const focusable = (n) => { if (n) { n.tabIndex = -1; n.classList.add("v7-focus-h"); } return n; };
+    const stepHeading = () => focusable(document.querySelector("#v4-stage-content .narrative-stage-header h2") || document.querySelector(".proto-title"));
+    document.getElementById("v7-skip").addEventListener("click", (e) => {
+      e.preventDefault();
+      const h = stepHeading();
+      if (h) { h.focus({ preventScroll: true }); h.scrollIntoView({ block: "start" }); }
+    });
     const stageHead = (parent, kicker, title, lede, guideText, anchor) => {
       const h = el("header", "narrative-stage-header");
       const grp = (stages().find(s => s.key === ns.stageKey) || {}).group;
@@ -2420,7 +2682,7 @@
       row("Section names", isFrq()
         ? s.ps + " (" + s.psFr + ") · " + s.contrib + " (" + s.contribFr + ") · " + s.mentor + " (" + s.mentorFr + ")"
         : s.ps + " · " + s.contrib + " · " + s.mentor);
-      const foot = el("p", "v4-format-foot", "None of the agencies accept condensed fonts, and each sets its own file-size limit. The instructions for your funding opportunity take precedence. ");
+      const foot = el("p", "v4-format-foot", "The agencies do not accept condensed fonts, and each sets its own file-size limit. The instructions for your funding opportunity take precedence. ");
       foot.appendChild(guideLink("TCV vs CV-FRQ, in the guide", "compare"));
       if (compact) {
         const det = el("details");
@@ -2504,11 +2766,11 @@
       clear(host);
       const t = (text || "").trim();
       if (!t) return;
-      const res = lintField(t, kind, { format: ns.lens.format });
+      const res = lintField(t, kind, { format: ns.lens.format, roleNamed: !!opts.roleNamed });
       const range = LENGTH_RANGES[kind];
       res.strengths.forEach(s => host.appendChild(el("span", "v4-strength", "✓ " + s)));
       res.flags.forEach(f => host.appendChild(el("span", "v4-flag", "⚠ " + f)));
-      let meta = res.words + " words";
+      let meta = res.words + (res.words === 1 ? " word" : " words");
       if (range) meta += " · " + range[0] + " to " + range[1] + " is a comfortable range here.";
       host.appendChild(el("span", "v4-meta", meta));
       if (res.flags.length && res.hits && res.hits.length && (!conditional || readbackAddsInfo(res))) {
@@ -2609,7 +2871,7 @@
         const row = el("div", "v4-flag-row");
         row.setAttribute("role", "group");
         row.setAttribute("aria-label", callLabelText);
-        const states = [["ok", "✓ Fine", "is-ok", "Looks right"], ["work", "✗ Needs work", "is-work", "Needs work"], ["unsure", "? Ask advisor", "is-unsure", "Unsure — ask my advisor"]];
+        const states = [["ok", "✓ Fine", "is-ok", "Looks right"], ["work", "✗ Needs work", "is-work", "Needs work"], ["unsure", "? Ask advisor", "is-unsure", "Unsure, ask my advisor"]];
         const noteWrap = el("div", "v4-note-input");
         const renderNote = () => {
           clear(noteWrap);
@@ -2708,10 +2970,11 @@
         const no = el("button", "btn btn-outline", "Start without it");
         open.addEventListener("click", () => {
           const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session };
-          applySaved(v6Offer); Object.assign(ns, keep);
+          try { applySaved(v6Offer); } catch (_) { v6Offer = null; announce("The V6 draft could not be opened."); renderStage(); return; }
+          Object.assign(ns, keep); resumeStore();
           v6Offer = null; countEvent("v6DraftOpened"); renderStage();
         });
-        no.addEventListener("click", () => { v6Offer = null; renderStage(); });
+        no.addEventListener("click", () => { v6Offer = null; ns.ui.v6Declined = true; saveState(); renderStage(); });
         row.appendChild(open); row.appendChild(no);
         box.appendChild(row);
         c.appendChild(box);
@@ -2733,6 +2996,7 @@
       go.appendChild(nwArrow);
       go.addEventListener("click", () => {
         if (!ns.mode) { ns.mode = "compose"; ns.ui.profileNote = true; }
+        if (loadFailed) resumeStore();
         goStage(started ? resumeStep() : "setup");
       });
       if (started) {
@@ -2907,20 +3171,33 @@
     const UI = { active: "", ex: "", evCard: -1, moved: "", chg: null };
     const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; };
     const motionMs = (ms) => (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) ? 0 : ms;
+    // W-07: the live region is in the page from the start (#v7-live); this only rebuilds a lost one.
     const announceEl = () => {
       let l = document.getElementById("v7-live");
       if (!l) { l = el("div", "v7-sr"); l.id = "v7-live"; l.setAttribute("aria-live", "polite"); l.setAttribute("aria-atomic", "true"); document.body.appendChild(l); }
       return l;
     };
-    function announce(t) { const l = announceEl(); l.textContent = ""; setTimeout(() => { l.textContent = t; }, 40); }
-    // D-15: counters speak only when the number changes, and at most every two seconds.
-    let lastSpoken = 0, lastCount = "";
+    // Messages sent in the same moment are read as one ("1 of 6 answered. Next question: …").
+    let liveTimer = 0, livePending = "";
+    function announce(t) {
+      const l = announceEl();
+      livePending = livePending ? livePending.replace(/([^.!?])$/, "$1.") + " " + t : t;
+      clearTimeout(liveTimer); l.textContent = "";
+      liveTimer = setTimeout(() => { l.textContent = livePending; livePending = ""; }, 40);
+    }
+    // D-15: counters speak only when the number changes, and at most every two seconds. W-08: a
+    // change inside the two seconds waits for the end of them, and the latest count is spoken then.
+    let lastSpoken = 0, lastCount = "", spokenCount = "", countTimer = 0;
     function announceCount(t) {
       if (t === lastCount) return;
-      lastCount = t;
-      const now = Date.now();
-      if (now - lastSpoken < 2000) return;
-      lastSpoken = now; announce(t);
+      lastCount = t; clearTimeout(countTimer);
+      const say = () => { lastSpoken = Date.now(); if (lastCount !== spokenCount) { spokenCount = lastCount; announce(lastCount); } };
+      const wait = 2000 - (Date.now() - lastSpoken);
+      if (wait > 0) countTimer = setTimeout(say, wait); else say();
+    }
+    function clearLive() {
+      clearTimeout(liveTimer); clearTimeout(countTimer); livePending = "";
+      const l = document.getElementById("v7-live"); if (l) l.textContent = "";
     }
     const INFO_SVG = '<svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/></svg>';
     function explainBox(text, extra) {
@@ -2982,7 +3259,13 @@
           const t = target(it.id);
           if (t && t.getBoundingClientRect().top <= b.getBoundingClientRect().top + 12) spy = it.id;
         });
-        if (atEnd && window.scrollY > 0) spy = null;
+        // W-29: at the foot, isCur wins only while its own item is on screen; otherwise the triangle
+        // stays on the last item that reached its square (a complete card's isCur is the Headline).
+        if (atEnd && window.scrollY > 0) {
+          const cur = btns.find(([b, it]) => !b.disabled && isCur(it.id)), ct = cur && target(cur[1].id);
+          const r = ct && ct.getBoundingClientRect();
+          if (!spy || (r && r.bottom > 0 && r.top < window.innerHeight)) spy = null;
+        }
         if (spy !== card._spy) { card._spy = spy; card._colSync(); }
       };
       // Scroll so an item sits level with its square, the column held at its sticky top.
@@ -3047,18 +3330,29 @@
     // Pass B: Change opens a small panel inside the bar, on the same page. The panel edits a copy of
     // the six answers; Confirm applies them and redraws the step, so prompts and examples follow.
     // Escape or Change again closes it and leaves the profile as it was.
-    function tailoredBar(parent) {
+    // W-43 (inferred): Export passes its own lead and line ("Set up for: SSHRC · …", V7-33) and gets
+    // the same Change disclosure, so the panel opens in place there too.
+    // The profile as the Profile bar's pills; the .txt's profile line uses the same words (W-19).
+    function profilePills() {
+      const L = ns.lens, out = [];
+      if (L.agency) out.push(L.agency === "other" ? "Agency not chosen" : labelOf(AGENCIES, L.agency) + " · " + (isFrq() ? "CV-FRQ" : "TCV"));
+      if (competitionName()) out.push(competitionName() + (L.year ? " " + L.year : ""));
+      else if (L.undecided) out.push("Competition undecided");
+      if (L.careerStage) out.push(labelOf(CAREER_STAGES, L.careerStage));
+      if (L.discipline) out.push(disciplineLabel(L));
+      (L.workMode || []).forEach(w => out.push(labelOf(WORK_MODES, w)));
+      return out;
+    }
+    function tailoredBar(parent, opts) {
+      opts = opts || {};
       const L = ns.lens, bar = el("div", "v7-tailored" + (UI.chg ? " is-open" : ""));
-      bar.appendChild(el("span", "v7-tailored-k", "Profile:"));
-      const pills = el("span", "v7-tailored-pills");
-      const add = (t) => pills.appendChild(el("span", "v7-pill", t));
-      if (L.agency) add(L.agency === "other" ? "Agency not chosen" : labelOf(AGENCIES, L.agency) + " · " + (isFrq() ? "CV-FRQ" : "TCV"));
-      if (competitionName()) add(competitionName() + (L.year ? " " + L.year : ""));
-      else if (L.undecided) add("Competition undecided");
-      if (L.careerStage) add(labelOf(CAREER_STAGES, L.careerStage));
-      if (L.discipline) add(disciplineLabel(L));
-      (L.workMode || []).forEach(w => add(labelOf(WORK_MODES, w)));
-      if (!pills.childNodes.length) add("Profile not set yet");
+      bar.appendChild(el("span", "v7-tailored-k", opts.lead || "Profile:"));
+      const pills = el("span", "v7-tailored-pills" + (opts.text ? " v7-tailored-text" : ""));
+      if (opts.text) pills.textContent = opts.text;
+      else {
+        profilePills().forEach(t => pills.appendChild(el("span", "v7-pill", t)));
+        if (!pills.childNodes.length) pills.appendChild(el("span", "v7-pill", "Profile not set yet"));
+      }
       bar.appendChild(pills);
       // Pass D (Prem): Change is a disclosure like the example buttons: a triangle, no fill at rest.
       const ch = el("button", "btn btn-outline v7-btn-small v7-disc");
@@ -3115,8 +3409,34 @@
       // Agency
       field("Agency", "v7-chg-ag")[0].appendChild(select("v7-chg-ag",
         blank(d.agency).concat(AGENCIES.map(a => [a.v, a.v === "other" ? "Not sure yet" : a.l])), d.agency,
-        v => { d.agency = v; const a = AGENCIES.find(x => x.v === v); d.format = a ? a.fmt : ""; }));
-      // Career stage, field, another field
+        v => { d.agency = v; const a = AGENCIES.find(x => x.v === v); d.format = a ? a.fmt : ""; if (UI.chg && UI.chg.setAgNote) UI.chg.setAgNote(); }));
+      // Competition, with Undecided and the optional year
+      const [cf] = field("Competition", "v7-chg-comp", "wide");
+      const crow = el("div", "v7-chg-row");
+      const inp = el("input", "v7-input"); inp.id = "v7-chg-comp"; inp.type = "text";
+      inp.value = d.program || ""; inp.disabled = !!d.undecided;
+      const agNote = el("p", "v4-help v7-chg-note"); agNote.id = "v7-chg-comp-note"; inp.setAttribute("aria-describedby", agNote.id);
+      // r1-b-7: a name that mentions another agency is pointed out, since the prompts quote it.
+      const setAgNote = () => {
+        const other = agenciesNamed(d.program).filter(v => v !== d.agency);
+        agNote.textContent = !d.undecided && d.agency && d.agency !== "other" && other.length ? "This name mentions " + other.map(v => labelOf(AGENCIES, v)).join(" and ") + ". Update it if it no longer applies." : "";
+        agNote.hidden = !agNote.textContent;
+      };
+      UI.chg.setAgNote = setAgNote;
+      inp.addEventListener("input", () => { d.program = inp.value; setAgNote(); });
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
+      const und = el("button", "v7-mini", "Undecided"); und.type = "button";
+      und.setAttribute("aria-pressed", d.undecided ? "true" : "false");
+      und.addEventListener("click", () => {
+        d.undecided = !d.undecided;
+        inp.disabled = d.undecided; und.setAttribute("aria-pressed", d.undecided ? "true" : "false"); setAgNote();
+      });
+      const yr = select("v7-chg-yr", [["", "Year (optional)"]].concat(YEARS.map(y => [y, y])), d.year, v => { d.year = v; });
+      yr.setAttribute("aria-label", "Year you plan to apply (optional)");
+      crow.appendChild(inp); crow.appendChild(und); crow.appendChild(yr);
+      cf.appendChild(crow);
+      cf.appendChild(agNote); setAgNote();
+      // Career stage, field, another field (Setup's order: agency, competition, stage, field, another field, work)
       field("Career stage", "v7-chg-st")[0].appendChild(select("v7-chg-st",
         blank(d.careerStage).concat(CAREER_STAGES.map(x => [x.v, x.l])), d.careerStage, v => { d.careerStage = v; }));
       const d2opts = () => blank(d.discipline2).concat([["none", "No, just this one"]], DISCIPLINES.filter(x => x.v !== d.discipline).map(x => [x.v, x.l]));
@@ -3129,25 +3449,8 @@
       const d2change = (v) => { d.discipline2 = v; };
       d2 = select("v7-chg-d2", d2opts(), d.discipline2, d2change);
       field("Another field", "v7-chg-d2")[0].appendChild(d2);
-      // Competition, with Undecided and the optional year
-      const [cf] = field("Competition", "v7-chg-comp", "wide");
-      const crow = el("div", "v7-chg-row");
-      const inp = el("input", "v7-input"); inp.id = "v7-chg-comp"; inp.type = "text";
-      inp.value = d.program || ""; inp.disabled = !!d.undecided;
-      inp.addEventListener("input", () => { d.program = inp.value; });
-      inp.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
-      const und = el("button", "v7-mini", "Undecided"); und.type = "button";
-      und.setAttribute("aria-pressed", d.undecided ? "true" : "false");
-      und.addEventListener("click", () => {
-        d.undecided = !d.undecided; if (d.undecided) { d.program = ""; inp.value = ""; }
-        inp.disabled = d.undecided; und.setAttribute("aria-pressed", d.undecided ? "true" : "false");
-      });
-      const yr = select("v7-chg-yr", [["", "Year (optional)"]].concat(YEARS.map(y => [y, y])), d.year, v => { d.year = v; });
-      yr.setAttribute("aria-label", "Year you plan to apply (optional)");
-      crow.appendChild(inp); crow.appendChild(und); crow.appendChild(yr);
-      cf.appendChild(crow);
-      // How your work happens: several can apply, so a small pill group
-      const [wf, wl] = field("How your work happens", "", "wide");
+      // How your work usually happens: several can apply, so a small pill group
+      const [wf, wl] = field("How your work usually happens", "", "wide");
       const pillsW = el("div", "v7-minis"); pillsW.setAttribute("role", "group"); pillsW.setAttribute("aria-labelledby", wl.id);
       WORK_MODES.forEach(m => {
         const b = el("button", "v7-mini", m.l); b.type = "button";
@@ -3165,7 +3468,7 @@
       const ok = el("button", "btn btn-primary v7-btn-small", "Confirm"); ok.type = "button";
       ok.addEventListener("click", () => {
         const nl = UI.chg.lens;
-        if (nl.undecided) nl.program = "";
+        nl.program = (nl.program || "").trim();
         if (nl.discipline2 && nl.discipline2 === nl.discipline) nl.discipline2 = "";
         Object.assign(ns.lens, nl);
         UI.chg = null;
@@ -3174,10 +3477,17 @@
         const b = document.getElementById("v7-chg"); if (b) b.focus();
         announce("Profile updated.");
       });
-      const rs = el("button", "btn btn-outline v7-btn-small", "Reset draft"); rs.type = "button";
-      rs.addEventListener("click", () => resetWarning(p, "Reset your work in progress?", rs));
-      acts.appendChild(ok); acts.appendChild(rs);
+      // W-44 (inferred, option A): Cancel beside Confirm; Reset draft at the panel's foot, as on the start card.
+      const cn = el("button", "btn btn-outline v7-btn-small", "Cancel"); cn.type = "button";
+      cn.addEventListener("click", () => { close(); announce("Profile unchanged."); });
+      acts.appendChild(ok); acts.appendChild(cn);
       p.appendChild(acts);
+      const foot = el("div", "v7-chg-foot");
+      const rs = el("button", "btn btn-outline v7-btn-small", "Reset draft"); rs.type = "button";
+      rs.addEventListener("click", () => resetWarning(foot, "", rs));
+      foot.appendChild(rs);
+      foot.appendChild(el("span", "v7-path-foot-note", "Clears the draft saved in this browser and starts again."));
+      p.appendChild(foot);
       p.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.preventDefault(); close(); } });
       return p;
     }
@@ -3263,22 +3573,41 @@
       let box;
       if (o.anchor) box = o.anchor(f);
       else {
-        box = o.line ? el("input", "v7-box v7-input") : el("textarea", "v7-box");
-        if (o.line) box.type = "text";
+        // r2-a-12: a one-line answer is a one-row box that grows with its text (Enter adds no line), so
+        // a long headline stays in view on a phone.
+        box = el("textarea", "v7-box" + (o.line ? " v7-input v7-line" : ""));
+        if (o.line) box.rows = 1;
         box.id = id;
         box.value = o.get() || "";
         if (o.placeholder) box.placeholder = o.placeholder;
         box.setAttribute("aria-labelledby", id + "-k " + id + "-q");
         box.setAttribute("aria-describedby", id + "-st");
-        if (o.line) box.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
+        // W-18: the role line is one sentence, so Enter adds no line break (the box still wraps).
+        if (o.line || o.noEnter) box.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
+        // W-35: a one-line answer loses its leading and trailing spaces when the box is left.
+        if (o.line) box.addEventListener("blur", () => {
+          const t = box.value.trim(); if (t === box.value) return;
+          box.value = t; o.set(t); saveState(); f._refresh(); if (o.onChange) o.onChange();
+        });
         f.appendChild(box);
       }
-      const checks = el("div", "v7-f-checks"); checks.setAttribute("aria-live", "polite");
+      // F-8 (audit 2026-10-31): the checks are not a live region (it was rebuilt on every keystroke);
+      // a change in the number of suggestions is spoken once, after a pause in typing.
+      const checks = el("div", "v7-f-checks");
       f.appendChild(checks);
       f.appendChild(more);
-      const runChecks = () => {
+      let flagsSaid = -1, flagsTimer = 0;
+      const runChecks = (typed) => {
         if (!o.lintKind) return;
-        renderChecks(checks, o.get(), o.lintKind);
+        renderChecks(checks, o.get(), o.lintKind, { roleNamed: o.roleNamed ? o.roleNamed() : false });
+        const nf = checks.querySelectorAll(".v4-flag").length;
+        if (flagsSaid < 0) flagsSaid = nf;
+        clearTimeout(flagsTimer);
+        if (typed && nf !== flagsSaid) flagsTimer = setTimeout(() => {
+          if (!f.isConnected) return;
+          flagsSaid = nf;
+          announce(nf ? nf + (nf === 1 ? " suggestion" : " suggestions") + " under this field." : "No suggestions under this field.");
+        }, 1500);
         // V7-23: the note that checks are suggestions, the first time a check fires, once per draft.
         if (checks.querySelector(".v4-flag") && (!ns.ui.checksNoteSeen || ns.ui.checksNoteField === id)) {
           ns.ui.checksNoteSeen = true; ns.ui.checksNoteField = id;
@@ -3301,7 +3630,7 @@
       f.addEventListener("input", (e) => {
         if (!e.target.classList.contains("v7-box")) return;
         if (!o.anchor) o.set(e.target.value);
-        saveState(); runChecks(); f._refresh(); fitBox(f);
+        saveState(); runChecks(true); f._refresh(); fitBox(f);
         if (o.onChange) o.onChange();
         refreshRail();
       });
@@ -3310,12 +3639,19 @@
     }
     // The open box starts at three lines and grows with the text (to 60% of the screen, then scrolls).
     // A closed field drops the inline height so its CSS height applies.
+    // W-34: a box at least `lines` lines high that grows to its text.
+    function growBox(b, lines) {
+      if (!b || !b.isConnected) return;
+      b.style.height = "auto";
+      const cs = getComputedStyle(b), lh = parseFloat(cs.lineHeight) || 20, pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 2;
+      b.style.height = Math.max(lines * lh + pad, b.scrollHeight + 2) + "px";
+    }
     function fitBox(f) {
       const b = f.querySelector("textarea.v7-box");
       if (!b) return;
       if (!f.classList.contains("is-open")) { b.style.height = ""; return; }
       b.style.height = "auto";
-      const min = 3 * parseFloat(getComputedStyle(b).lineHeight) + 18;
+      const min = (b.classList.contains("v7-line") ? 1 : 3) * parseFloat(getComputedStyle(b).lineHeight) + 18;
       b.style.height = Math.max(min, b.scrollHeight + 2) + "px";
     }
     // Keep the line being written where the eye already is while the field above it shrinks.
@@ -3350,11 +3686,24 @@
       syncCols();
       if (!noAnchor) keepAnchor(f.querySelector(".v7-box") || f, top, motionMs(200) + 300);
     }
+    // r1-b-1 (audit 2026-10-31): an answered Setup question shows its question while focus is inside
+    // it (.has-focus, was :focus-within). Leaving it shows the shorter keyword, which lifted the
+    // Confirm profile button 44 px between mouse-down and mouse-up and lost the click. While a
+    // pointer is down the swap waits until the click has landed.
+    let pointerHeld = false;
+    const qbFocus = () => root.querySelectorAll(".v7-qblock").forEach(b => b.classList.toggle("has-focus", b.contains(document.activeElement)));
+    document.addEventListener("pointerdown", () => { pointerHeld = true; }, true);
+    const pointerDone = () => { if (!pointerHeld) return; pointerHeld = false; setTimeout(qbFocus, 0); };
+    document.addEventListener("pointerup", pointerDone, true);
+    document.addEventListener("pointercancel", pointerDone, true);
+    root.addEventListener("focusin", (e) => { const b = e.target.closest && e.target.closest(".v7-qblock"); if (b) b.classList.add("has-focus"); if (!pointerHeld) qbFocus(); });
+    root.addEventListener("focusout", () => { if (!pointerHeld) setTimeout(qbFocus, 0); });
     // focusout with relatedTarget: a field opens when focus moves into its box, and the one left
     // shrinks then. Focus going nowhere (a click on blank page, a window switch) changes nothing.
     root.addEventListener("focusin", (e) => {
       const t = e.target;
-      if (!t.classList || !t.classList.contains("v7-box")) return;
+      // W-05: the role levels (.v7-box-sib) open their field as the box does.
+      if (!t.classList || !(t.classList.contains("v7-box") || t.classList.contains("v7-box-sib"))) return;
       const f = t.closest(".v7-f");
       if (f) openField(f);
     });
@@ -3381,6 +3730,32 @@
         { label: "How your work usually happens", has: (L.workMode || []).length > 0 }
       ];
     }
+    // W-09 (inferred): one behaviour for every single-choice group in the tool. The checked option
+    // (or the first, while none is checked) is the group's one Tab stop; the arrow keys, Home and End
+    // move focus and choose, as in a native radio group. A choice made by arrow key keeps focus in
+    // the group (Setup does not move on to the next question until Tab).
+    let arrowPick = false;
+    function radioKeys(g) {
+      const opts = () => [...g.querySelectorAll('[role="radio"]')];
+      const sync = () => { const o = opts(), on = o.find(b => b.getAttribute("aria-checked") === "true") || o[0]; o.forEach(b => { b.tabIndex = b === on ? 0 : -1; }); };
+      g.addEventListener("keydown", (e) => {
+        const o = opts(), i = o.indexOf(document.activeElement);
+        if (i < 0 || e.altKey || e.ctrlKey || e.metaKey) return;
+        const k = e.key;
+        const n = k === "ArrowDown" || k === "ArrowRight" ? (i + 1) % o.length : k === "ArrowUp" || k === "ArrowLeft" ? (i - 1 + o.length) % o.length
+          : k === "Home" ? 0 : k === "End" ? o.length - 1 : -1;
+        if (n < 0 || n === i) return;
+        e.preventDefault();
+        o[n].focus();
+        arrowPick = true;
+        try { o[n].click(); } finally { arrowPick = false; }
+        sync();
+      });
+      // Groups that do not redraw on a click (the role levels) move their Tab stop here.
+      g.addEventListener("click", sync);
+      sync();
+      return g;
+    }
     function choiceGrid(list, isOn, onPick, opts) {
       opts = opts || {};
       const g = el("div", "v7-choices");
@@ -3400,7 +3775,7 @@
         b.addEventListener("click", () => onPick(item.v));
         g.appendChild(b);
       });
-      return g;
+      return opts.multi ? g : radioKeys(g);
     }
     function renderSetup(c) {
       stageHead(c, "", "Set up your profile",
@@ -3438,11 +3813,24 @@
         id => +id.slice(3) === curQ, jumpQ, { label: "Questions in your profile", on: "answered", off: "not answered yet", lockW: "not open yet",
           target: id => list.querySelector('.v7-qblock[data-pq="' + id.slice(3) + '"]') }));
       // After an answer, the next open question scrolls up level with its square (Prem, 2026-10-30).
+      // W-06 (inferred): focus moves with it, to the next question's heading, at every width; on a
+      // phone (no column) the question scrolls up to sit under the sticky row of squares. A choice
+      // made with the arrow keys stays where it is (W-09).
       const pick = (fn, i) => {
+        const byArrow = arrowPick;
         fn(); saveState(); renderStage();
         const nx = root.querySelector('[data-pq="' + (i + 1) + '"]'); if (nx && i + 1 >= profileShown - 1) announce("Next question: " + qs[i + 1 >= 6 ? 5 : i + 1].label + ".");
         const nq = profileQs().findIndex(x => !x.has), pc = root.querySelector(".v7-prof-col");
-        if (nq > i && pc && pc._level) requestAnimationFrame(() => pc._level("pq-" + nq));
+        if (nq <= i || byArrow) return;
+        const hq = document.getElementById("pq" + nq);
+        if (hq) { hq.tabIndex = -1; hq.focus({ preventScroll: true }); }
+        requestAnimationFrame(() => {
+          if (pc && pc._level && pc._level("pq-" + nq)) return;
+          const blk = root.querySelector('.v7-qblock[data-pq="' + nq + '"]'), row = root.querySelector(".v7-qcount");
+          if (!blk) return;
+          const under = row && getComputedStyle(row).position === "sticky" ? (parseFloat(getComputedStyle(row).top) || 0) + row.offsetHeight : (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--v7-bar")) || 43);
+          glide(blk.getBoundingClientRect().top - under - 8);
+        });
       };
       for (let i = 0; i <= reveal; i++) {
         const isNew = i >= profileShown;
@@ -3454,7 +3842,7 @@
         const h = (t) => { const x = el("h3", "v7-q v7-q-lg", t); x.id = "pq" + i; blk.appendChild(x); };
         if (i === 0) {
           h("Choose the agency you are applying to.");
-          blk.appendChild(explainBox("This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec (FRQ), which now requires it for all grant applications in its three sectors. It also sets the format notes you see, since font rules differ between agencies. If you are not sure which applies, the program's application guide names the format."));
+          blk.appendChild(explainBox("This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec (FRQ), which now requires it for all grant applications in its three sectors. It also sets the format notes on Export, since font rules differ between agencies. If you are not sure which applies, the program's application guide names the format."));
           blk.appendChild(choiceGrid(AGENCIES.map(a => ({ v: a.v, l: a.v === "other" ? "Not sure yet" : a.l, n: agencyFull[a.v] })), v => L.agency === v,
             v => pick(() => { L.agency = v; const a = AGENCIES.find(x => x.v === v); L.format = a ? a.fmt : ""; }, 0), { labelledby: "pq0", idp: "ag" }));
           if (L.agency) {
@@ -3467,7 +3855,7 @@
         }
         if (i === 1) {
           h("Name the competition or funding you are applying for.");
-          blk.appendChild(explainBox("A narrative CV is written for a specific competition. If you name the competition here, the personal statement prompt will ask about that competition by name."));
+          blk.appendChild(explainBox("A narrative CV is written for a specific competition. If you name the competition here, the " + secName("ps").toLowerCase().replace(/^the /, "") + " prompt will ask about that competition by name."));
           const row = el("div", "v7-comp-row");
           const wrap = el("div");
           const lab = el("label", "v7-field-label", "Competition"); lab.htmlFor = "v7-comp";
@@ -3480,11 +3868,13 @@
             if (before !== !!L.program.trim()) renderStage(); else refreshRail();
           });
           inp.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
+          // r1-a-4: surrounding spaces go when the box is left.
+          inp.addEventListener("blur", () => { const t = inp.value.trim(); if (t !== inp.value) { inp.value = t; L.program = t; saveState(); } });
           wrap.appendChild(lab); wrap.appendChild(inp);
           row.appendChild(wrap);
           const und = el("button", "v7-mini", "Undecided"); und.type = "button"; und.id = "v7-undecided";
           und.setAttribute("aria-pressed", L.undecided ? "true" : "false");
-          und.addEventListener("click", () => pick(() => { L.undecided = !L.undecided; if (L.undecided) L.program = ""; }, 1));
+          und.addEventListener("click", () => pick(() => { L.undecided = !L.undecided; L.program = (L.program || "").trim(); }, 1));
           row.appendChild(und);
           blk.appendChild(row);
           const yl = el("span", "v7-field-label", ""); yl.id = "v7-yl";
@@ -3498,7 +3888,7 @@
             b.addEventListener("click", () => { L.year = L.year === y ? "" : y; saveState(); renderStage(); });
             yr.appendChild(b);
           });
-          blk.appendChild(yr);
+          blk.appendChild(radioKeys(yr));
         }
         if (i === 2) {
           h("Which career stage are you at?");
@@ -3508,7 +3898,7 @@
         if (i === 3) {
           h("Which field is your work closest to?");
           blk.appendChild(explainBox("Your answer chooses the worked examples and discipline notes you see, so they come from work like yours. Changing it later leaves your draft as it is."));
-          blk.appendChild(choiceGrid(DISCIPLINES, v => L.discipline === v, v => pick(() => { L.discipline = v; if (L.discipline2 === v) L.discipline2 = ""; }, 3), { labelledby: "pq3", idp: "di" }));
+          blk.appendChild(choiceGrid(DISCIPLINES, v => L.discipline === v, v => pick(() => { L.discipline = v; if (L.discipline2 === v) { L.discipline2 = ""; announce("Another field cleared, because it matched your main field."); } }, 3), { labelledby: "pq3", idp: "di" }));
           // D-2: one line for a researcher whose field is missing.
           const miss = el("p", "v7-quiet");
           miss.appendChild(document.createTextNode("If your field is not listed, choose the closest one and let us know at "));
@@ -3517,7 +3907,7 @@
           blk.appendChild(miss);
         }
         if (i === 4) {
-          h("Does your work also sit in another field?");
+          h("Does your work also belong to another field?");
           blk.appendChild(explainBox("With a second field, the Contributions step adds a worked example that spans both."));
           const opts = [{ v: "none", l: "No, just this one", wide: true }].concat(DISCIPLINES.filter(d => d.v !== L.discipline));
           blk.appendChild(choiceGrid(opts, v => L.discipline2 === v, v => pick(() => { L.discipline2 = v; }, 4), { labelledby: "pq4", idp: "d2" }));
@@ -3539,7 +3929,10 @@
         note: ns.ui.profileNote ? "" : "You can change these answers later with the Change button at the top of each step." });
       else {
         const nav = el("div", "narrative-nav v7-nav-quiet");
-        nav.appendChild(el("p", "v4-help v7-nav-note", "The next question opens when you answer this one."));
+        // W-38: the line names the question that holds things up.
+        const bi = qs.findIndex(x => !x.has), blocker = qs[bi];
+        nav.appendChild(el("p", "v4-help v7-nav-note", !blocker ? "The next question opens when you answer this one."
+          : "Answer “" + blocker.label + "” " + (bi + 1 < profileShown ? "to confirm your profile." : "to open the next question.")));
         c.appendChild(nav);
       }
       c.appendChild(el("div", "v7-prof-room")).setAttribute("aria-hidden", "true");
@@ -3568,7 +3961,7 @@
       head.appendChild(el("h2", null, secName("contrib")));
       c.appendChild(head);
       c.appendChild(el("p", "v7-startline", "You start with your contributions."));
-      const lede = el("p", "narrative-intro-text v7-lede", "Describe up to 10 contributions that relate to this funding opportunity; they may differ from your most recent work. A contribution can be a single output or a group of related work, such as a cluster of papers, a program or a partnership. A few well-explained contributions are stronger than a long list. In the finished CV, each one reads as a single paragraph. The guide sets out ");
+      const lede = el("p", "narrative-intro-text v7-lede", "Describe up to 10 contributions that relate to this funding opportunity; they may differ from your most recent work. A contribution can be a single output or a group of related work, such as a cluster of papers, a program or a partnership. Three or four well-explained contributions carry more weight than a long list. In the finished CV, each one reads as a single paragraph. The guide sets out ");
       lede.appendChild(guideLink("what counts as a contribution", "three"));
       lede.appendChild(document.createTextNode("."));
       c.appendChild(lede);
@@ -3584,29 +3977,31 @@
           const modes = pick.modes.map((m, i) => { const l = labelOf(WORK_MODES, m); return i ? l.charAt(0).toLowerCase() + l.slice(1) : l; }).join(" and ");
           let match = "This example: " + [labelOf(DISCIPLINES, pick.disc) || "STEM / engineering", modes, labelOf(CAREER_STAGES, pick.stage)].join(" · ") + ".";
           if (!L.discipline) match += " Choose your field in your profile and it changes to match.";
-          return exampleBox({ title: "What a finished contribution reads like — " + (labelOf(DISCIPLINES, pick.disc) || "STEM / engineering"), match,
+          return exampleBox({ title: "What a finished contribution reads like (" + (labelOf(DISCIPLINES, pick.disc) || "STEM / engineering") + ")", match,
             segs: pick.cell.segments.map(sg => ({ t: sg.t, keys: sg.keys, job: sg.r })), legend: SIX_LEGEND,
             foot: "The content is fictional: the researcher, the project and the numbers are invented. In the finished CV these sentences run together as one paragraph, and each one still does one of the six parts." });
         }
         if (key === "two" && inter) {
           const pair = disciplineLabel(L).replace(" + ", " and ");
-          return exampleBox({ title: "A contribution across two fields — " + pair, match: "Shown because you chose a second field.",
+          return exampleBox({ title: "A contribution across two fields (" + pair + ")", match: "This example: " + pair + ".",
             segs: inter.segments.map(sg => ({ t: sg.t, keys: sg.keys, job: sg.r })), legend: SIX_LEGEND,
             foot: "When work spans two fields, each of the six parts can say what the work meant in each field: the role in both, outputs in both kinds of venue, outcomes for both audiences. The content is fictional." });
         }
         if (key === "jobs" && SHAPE_HINTS[disc]) {
           const box = el("div", "v7-exbox"); box.id = "v7-exbox";
-          const hh = el("h4", null, "In " + (labelOf(DISCIPLINES, disc) || "") + ", the six parts usually sound like this.");
-          box.appendChild(hh);
-          const ul = el("ul", "v7-hints");
-          SHAPE_HINTS[disc].forEach(x => {
-            const li = el("li");
-            const d = el("span", "v7-jd v7-jd-" + x.beat); d.setAttribute("aria-hidden", "true");
-            li.appendChild(d); li.appendChild(el("b", null, BEAT_LABEL[x.beat]));
-            li.appendChild(document.createTextNode(" — " + x.text));
-            ul.appendChild(li);
+          // W-33: with a second field, its cue list follows the first.
+          [disc].concat(L.discipline2 && L.discipline2 !== disc && SHAPE_HINTS[L.discipline2] ? [L.discipline2] : []).forEach(dk => {
+            box.appendChild(el("h4", null, "In " + (labelOf(DISCIPLINES, dk) || "") + ", the six parts usually sound like this."));
+            const ul = el("ul", "v7-hints");
+            SHAPE_HINTS[dk].forEach(x => {
+              const li = el("li");
+              const d = el("span", "v7-jd v7-jd-" + x.beat); d.setAttribute("aria-hidden", "true");
+              li.appendChild(d); li.appendChild(el("b", null, BEAT_LABEL[x.beat] + "."));
+              li.appendChild(document.createTextNode(" " + x.text.charAt(0).toUpperCase() + x.text.slice(1) + "."));
+              ul.appendChild(li);
+            });
+            box.appendChild(ul);
           });
-          box.appendChild(ul);
           box.appendChild(el("p", "v7-exfoot", "These are examples. Skip any part your record does not include; a contribution can be complete without all six."));
           return box;
         }
@@ -3618,7 +4013,7 @@
       c.appendChild(cards);
       if (ns.contributions.length >= 10) c.appendChild(el("p", "v4-help", "You have 10, the most the format allows. Combine related work into one contribution if you need room."));
       else {
-        const add = el("button", "v7-add", "+ Add a contribution"); add.type = "button";
+        const add = el("button", "v7-add", "+ Add a contribution"); add.type = "button"; add.id = "v7-add-contrib";
         add.addEventListener("click", () => {
           ns.contributions.forEach(x => { x.folded = true; });
           const nc = blankContribution(); ns.contributions.push(nc);
@@ -3630,17 +4025,17 @@
         });
         c.appendChild(add);
       }
-      navRow(c, { note: "You will put these in order in Review, after the personal statement." });
+      navRow(c, { note: "You will put these in order in Review, after the " + secName("ps").toLowerCase().replace(/^the /, "") + "." });
     }
     function contribFold(contrib, i) {
       const b = el("button", "v7-fold");
       b.type = "button"; b.id = "fold-" + contrib.cid;
-      b.setAttribute("aria-label", "Contribution " + (i + 1) + ", " + (contrib.title || "no headline") + ", " + cCount(contrib) + " of 9 answered. Select to open.");
+      b.setAttribute("aria-label", "Contribution " + (i + 1) + ", " + ((contrib.title || "").trim() || "no headline") + ", " + cCount(contrib) + " of 9 answered. Select to open.");
       b.setAttribute("aria-expanded", "false");
       b.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
       const t = el("span", "v7-fold-t");
       t.appendChild(el("span", "v7-num", "Contribution " + (i + 1)));
-      t.appendChild(document.createTextNode(" · " + (contrib.title || "No headline yet")));
+      t.appendChild(document.createTextNode(" · " + ((contrib.title || "").trim() || "No headline yet")));
       b.appendChild(t);
       // Pass D: the folded row uses the standard progress squares (one per field, green when written).
       const jobs = dots(cCount(contrib), 9); jobs.classList.add("v7-jobs");
@@ -3663,7 +4058,7 @@
       const head = el("div", "v7-card-h");
       const title = el("h3", "v7-card-t"); title.id = "ct" + contrib.cid;
       title.appendChild(el("span", "v7-num", "Contribution " + (i + 1)));
-      const tt = el("span", null, contrib.title ? " · " + contrib.title : "");
+      const tt = el("span", null, (contrib.title || "").trim() ? " · " + contrib.title.trim() : "");
       title.appendChild(tt);
       head.appendChild(title);
       const side = el("span", "v7-card-side");
@@ -3676,10 +4071,22 @@
         side.appendChild(fold);
         const rm = el("button", "v7-icon-btn", "×"); rm.type = "button";
         rm.setAttribute("aria-label", "Remove contribution " + (i + 1));
-        rm.addEventListener("click", () => {
-          if (cLive(contrib) && !confirm("Remove contribution " + (i + 1) + (contrib.title ? ", “" + contrib.title + "”," : "") + " and everything in it?")) return;
+        const removeC = () => {
+          // F-6: the evidence view is held by index, so it closes when any card goes.
+          UI.evCard = -1;
           ns.contributions.splice(i, 1); if (!ns.contributions.some(x => !x.folded)) ns.contributions[Math.max(0, i - 1)].folded = false;
           saveState(); renderStage();
+          // W-04: focus goes to the card now in this place (else the one before), and the removal is spoken.
+          const nc = ns.contributions[i] || ns.contributions[i - 1];
+          const n = nc && (nc.folded ? document.getElementById("fold-" + nc.cid) : focusable(document.getElementById("ct" + nc.cid)));
+          (n || document.getElementById("v7-add-contrib") || stepHeading()).focus();
+          announce("Contribution " + (i + 1) + " removed.");
+        };
+        // W-45 (inferred, option A): the inline warning, under the card's header.
+        rm.addEventListener("click", () => {
+          const ht = (contrib.title || "").trim();
+          if (!cLive(contrib)) return removeC();
+          inlineConfirm(card, "Remove contribution " + (i + 1) + (ht ? ", “" + gvCut(ht, 60) + "”," : "") + " and everything in it?", rm, "Remove", removeC, { after: head });
         });
         side.appendChild(rm);
       }
@@ -3687,7 +4094,9 @@
       card.appendChild(head);
       const colItems = CF().map(f => ({ id: "c" + contrib.cid + "-" + f.k, label: f.label || BEAT_LABEL[f.job], has: () => cHas(contrib, f.k) }))
         .concat([{ id: "ev", label: "Evidence", has: () => liveEvidence(contrib).length > 0 }]);
-      card.appendChild(fieldCol(card, "contribution " + (i + 1), colItems,
+      // W-10 (inferred): the column is built here and placed after the fields, so the Tab order reads
+      // the card first; the grid puts it on the right whatever its place in the markup.
+      const col = fieldCol(card, "contribution " + (i + 1), colItems,
         (id) => id === "ev" ? UI.evCard === i : (UI.evCard !== i && UI.active === id),
         (id) => {
           if (id === "ev") {
@@ -3696,10 +4105,7 @@
               if (!liveEvidence(contrib).length) contrib.evidence = [{ text: "", type: "", note: "" }];
               saveState(); renderStage(); countEvent("evidenceOpen");
             }
-            const a = root.querySelector(".v7-ev-area"), t0 = a && a.querySelector("textarea, input");
-            if (t0) t0.focus({ preventScroll: true });
-            const cc = a && a.closest(".v7-card-col");
-            if (a && !(cc && cc._level && cc._level("ev"))) a.scrollIntoView({ block: "start", behavior: motionMs(1) ? "smooth" : "auto" });
+            focusEvidence(contrib);
             return;
           }
           if (UI.evCard === i) {
@@ -3708,9 +4114,10 @@
             saveState(); renderStage(); focusField(id); return;
           }
           jumpToField(id);
-        }));
+        });
+      card._update = () => update();
       const update = () => {
-        tt.textContent = contrib.title ? " · " + contrib.title : "";
+        tt.textContent = (contrib.title || "").trim() ? " · " + contrib.title.trim() : "";
         const nd = progress(cCount(contrib), 9); side.replaceChild(nd, dt); dt = nd;
         announceCount(cCount(contrib) + " of 9 answered");
         if (strip) { const ns2 = contribStrip(contrib, UI.evCard === i, i); card.replaceChild(ns2, strip); strip = ns2; }
@@ -3729,7 +4136,10 @@
           fields.appendChild(cardField({
             id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: resolveHelp(f.def), line: f.line, placeholder: f.placeholder,
             lintKind: f.lint, get: () => contrib[f.k], set: (v) => { contrib[f.k] = v; },
+            // r1-b-2: a role line that names your part covers the card, so "we" elsewhere in it is the team.
+            roleNamed: f.k === "roleLine" ? null : () => /\b(?:I|my)\b/.test(contrib.roleLine || ""),
             has: () => cHas(contrib, f.k), onChange: update,
+            noEnter: !!f.role,
             shown: f.role ? () => [(ROLE_LEVELS.find(x => x[0] === contrib.roleMode) || [])[1], contrib.roleLine].filter(Boolean).join(" · ") : null,
             before: f.role ? (inner) => {
               const lv = el("div", "v7-levels");
@@ -3746,7 +4156,8 @@
                 });
                 minis.appendChild(b);
               });
-              lv.appendChild(minis);
+              lv.appendChild(radioKeys(minis));
+              lv.appendChild(el("p", "v4-help v7-lv-note", "The level guides your line; the draft prints your line."));
               inner.appendChild(lv);
             } : null
           }));
@@ -3756,7 +4167,7 @@
         const evs = liveEvidence(contrib);
         if (evs.length) evRow.appendChild(el("span", "v7-ev-s", evs.length + " item" + (evs.length > 1 ? "s" : "") + ": " + evs.map((e, j) => letter(j)).join(", ")));
         const eb = el("button", "btn btn-outline v7-btn-small", evs.length ? "Edit evidence" : "+ Add evidence"); eb.type = "button"; eb.id = "ev-open-" + contrib.cid;
-        eb.addEventListener("click", () => { UI.evCard = i; UI.active = ""; if (!liveEvidence(contrib).length) contrib.evidence = [{ text: "", type: "", note: "" }]; saveState(); renderStage(); countEvent("evidenceOpen"); });
+        eb.addEventListener("click", () => { UI.evCard = i; UI.active = ""; if (!liveEvidence(contrib).length) contrib.evidence = [{ text: "", type: "", note: "" }]; saveState(); renderStage(); countEvent("evidenceOpen"); focusEvidence(contrib); });
         evRow.appendChild(eb);
         fields.appendChild(evRow);
         card.appendChild(fields);
@@ -3765,8 +4176,21 @@
         strip = contribStrip(contrib, true, i); card.appendChild(strip);
         card.appendChild(evidenceArea(contrib, i));
       }
+      card.appendChild(col);
       card._colSync();
       return card;
+    }
+    // W-02: the evidence view opens with focus on item a, on its first kind card, or on The item once
+    // a kind is chosen; the view comes up level with the Evidence square (or to the top on a phone).
+    function focusEvidence(contrib) {
+      const a = root.querySelector(".v7-ev-area");
+      if (!a) return;
+      const it = a.querySelector(".v7-ev-item");
+      // r1-b-5: a chosen kind is folded to one line, so focus goes to The item.
+      const t = it ? (it.querySelector('.v7-kind[aria-checked="true"]') || !it.querySelector(".v7-kind") ? document.getElementById("evt" + contrib.cid + "-0") : it.querySelector(".v7-kind")) : document.getElementById("ev-add-" + contrib.cid);
+      if (t) t.focus({ preventScroll: true });
+      const cc = a.closest(".v7-card-col");
+      if (!(cc && cc._level && cc._level("ev"))) a.scrollIntoView({ block: "start", behavior: motionMs(1) ? "smooth" : "auto" });
     }
     // V7-26: one element. "Your paragraph so far" while writing; "What you wrote" over the evidence.
     function contribStrip(contrib, isTop, i) {
@@ -3776,16 +4200,17 @@
       const h = el("div", "v7-strip-h");
       h.appendChild(el("b", null, isTop ? "What you wrote" : "Your paragraph so far"));
       if (isTop) {
-        const ed = el("button", "btn btn-outline v7-btn-small", "Edit"); ed.type = "button"; ed.id = "ev-open-" + contrib.cid;
-        ed.addEventListener("click", () => { UI.evCard = -1; contrib.evidence = (contrib.evidence || []).filter(e => (e.text || "").trim() || (e.note || "").trim() || e.type); if (!contrib.evidence.length) contrib.evidence = []; saveState(); renderStage(); });
+        // W-02: its own id (the field view's "+ Add evidence" holds ev-open-), and a name that says what it opens.
+        const ed = el("button", "btn btn-outline v7-btn-small", "Edit"); ed.type = "button"; ed.id = "ev-edit-" + contrib.cid;
+        ed.setAttribute("aria-label", "Edit the writing for contribution " + (i + 1));
+        ed.addEventListener("click", () => { UI.evCard = -1; contrib.evidence = (contrib.evidence || []).filter(e => (e.text || "").trim() || (e.note || "").trim() || e.type); if (!contrib.evidence.length) contrib.evidence = []; saveState(); renderStage(); if (UI.active) focusField(UI.active); });
         h.appendChild(ed);
       }
       s.appendChild(h);
-      const role = [(ROLE_LEVELS.find(x => x[0] === contrib.roleMode) || [])[1], (contrib.roleLine || "").trim()].filter(Boolean).join(". ");
-      if (role) s.appendChild(el("p", "v7-strip-role", role));
+      const asm = assembleContribution(contrib);
       const body = el("p");
-      if (!w.parts.length) body.appendChild(el("span", "v7-empty", "Your answers appear here as one paragraph, in the order a reviewer reads them."));
-      w.parts.forEach((p, idx) => {
+      if (!asm.seq.length) body.appendChild(el("span", "v7-empty", "Your answers appear here as one paragraph, in the order a reviewer reads them."));
+      asm.seq.forEach((p, idx) => {
         if (idx > 0 && CONNECTIVES[p.k]) { const j = el("span", "v4-connective", CONNECTIVES[p.k]); j.title = "A suggested join; it does not appear in your draft"; body.appendChild(j); body.appendChild(document.createTextNode(" ")); }
         body.appendChild(document.createTextNode(p.t + " "));
       });
@@ -3802,7 +4227,8 @@
       "Peer-reviewed": "an article, chapter or book", "Media / public": "coverage, a public talk, a podcast",
       "Policy / practice uptake": "a policy, guideline or program that adopted your work", "Dataset / tool": "data or software others use",
       "Award / recognition": "a prize, fellowship or honour", "Funding": "a grant the work attracted",
-      "Replication / citation": "a study that repeated or cited your work", "Other": "anything else a reviewer could check"
+      "Replication / citation": "a study that repeated or cited your work", "Exhibition / performance": "a show, a screening, a commission or an acquisition",
+      "Other": "anything else a reviewer could check"
     };
     function evidenceArea(contrib, i) {
       const area = el("div", "v7-ev-area");
@@ -3822,17 +4248,33 @@
         it.appendChild(ehead);
         const rm = el("button", "v7-icon-btn v7-ev-rm", "×"); rm.type = "button";
         rm.setAttribute("aria-label", "Remove evidence item " + letter(j));
-        rm.addEventListener("click", () => { contrib.evidence.splice(j, 1); saveState(); renderStage(); const a = document.getElementById("ev-add-" + contrib.cid); if (a) a.focus(); });
+        rm.addEventListener("click", () => { contrib.evidence.splice(j, 1); saveState(); renderStage(); const a = document.getElementById("ev-add-" + contrib.cid); if (a) a.focus(); announce("Evidence item " + letter(j) + " removed."); });
         ehead.appendChild(rm);
-        const kinds = el("div", "v7-kinds"); kinds.setAttribute("role", "radiogroup"); kinds.setAttribute("aria-labelledby", hk.id);
-        EVIDENCE_TYPES.forEach(t => {
-          const b = el("button", "v7-kind"); b.type = "button"; b.id = "evkind-" + contrib.cid + "-" + j + "-" + t.replace(/\W+/g, "");
-          b.setAttribute("role", "radio"); b.setAttribute("aria-checked", ev.type === t ? "true" : "false");
-          b.appendChild(el("b", null, t)); b.appendChild(el("small", null, EV_KIND_HINT[t]));
-          b.addEventListener("click", () => { ev.type = t; saveState(); renderStage(); });
-          kinds.appendChild(b);
-        });
-        it.appendChild(kinds);
+        // r1-b-5 (inferred): once a kind is chosen the nine cards fold to one line, "Kind: Peer-reviewed ·
+        // Change", as an answered field does; Change opens them again.
+        const kKey = contrib.cid + "-" + j;
+        if (ev.type && UI.kindOpen !== kKey) {
+          const row = el("p", "v7-kind-row");
+          row.appendChild(document.createTextNode("Kind: ")); row.appendChild(el("b", null, ev.type === "Other" && one(ev.otherLabel) ? one(ev.otherLabel) : ev.type));
+          const chg = el("button", "v7-linkbtn", "Change"); chg.type = "button"; chg.id = "evkchg-" + kKey;
+          chg.setAttribute("aria-label", "Change the kind of evidence item " + letter(j));
+          chg.addEventListener("click", () => { UI.kindOpen = kKey; renderStage(); const b = document.querySelector('[id^="evkind-' + kKey + '-"][aria-checked="true"]'); if (b) b.focus(); });
+          row.appendChild(document.createTextNode(" · ")); row.appendChild(chg);
+          it.appendChild(row);
+        } else {
+          const kinds = el("div", "v7-kinds"); kinds.setAttribute("role", "radiogroup"); kinds.setAttribute("aria-labelledby", hk.id);
+          EVIDENCE_TYPES.forEach(t => {
+            const b = el("button", "v7-kind"); b.type = "button"; b.id = "evkind-" + kKey + "-" + t.replace(/\W+/g, "");
+            b.setAttribute("role", "radio"); b.setAttribute("aria-checked", ev.type === t ? "true" : "false");
+            b.appendChild(el("b", null, t)); b.appendChild(el("small", null, EV_KIND_HINT[t]));
+            b.addEventListener("click", () => {
+              ev.type = t; UI.kindOpen = ""; saveState(); renderStage();
+              const n = document.getElementById(t === "Other" ? "evo" + kKey : "evt" + kKey); if (n) n.focus({ preventScroll: true });
+            });
+            kinds.appendChild(b);
+          });
+          it.appendChild(radioKeys(kinds));
+        }
         if (ev.type === "Other") {
           const ow = el("div", "v7-one");
           const ol = el("label", "v7-field-label", "Name the kind"); ol.htmlFor = "evo" + contrib.cid + "-" + j;
@@ -3843,26 +4285,43 @@
         }
         const tw = el("div", "v7-one");
         const tl = el("label", "v7-field-label", "The item"); tl.htmlFor = "evt" + contrib.cid + "-" + j;
-        const ti = el("input", "v7-input"); ti.id = tl.htmlFor; ti.type = "text";
+        // W-34: both boxes grow with their text; The item stays one entry (Enter adds no line).
+        const ti = el("textarea", "v7-input v7-grow"); ti.id = tl.htmlFor; ti.rows = 1;
+        ti.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
         ti.placeholder = "Name it so a reviewer can find it: a reference, a policy, a dataset or an award"; ti.value = ev.text || "";
-        const ln = el("p", "v4-ev-note"); const setLn = (v) => { const m = evidenceLinkNote(v); ln.textContent = m; ln.hidden = !m; }; setLn(ev.text);
-        ti.addEventListener("input", e => { ev.text = e.target.value; saveState(); setLn(e.target.value); refreshRail(); });
+        const ln = el("p", "v4-ev-note"); ln.id = "evln" + contrib.cid + "-" + j; ti.setAttribute("aria-describedby", ln.id);
+        let lnSaid = !!evidenceLinkNote(ev.text, ev.type);
+        const setLn = (v) => { const m = evidenceLinkNote(v, ev.type); ln.textContent = m; ln.hidden = !m; if (m && !lnSaid) { lnSaid = true; announce(m); } else if (!m) lnSaid = false; }; setLn(ev.text);
+        ti.addEventListener("input", e => {
+          const had = !!(ev.text || "").trim();
+          ev.text = e.target.value; saveState(); setLn(e.target.value); refreshRail(); growBox(ti, 1);
+          // W-26, r2-a-1: the letters in "What you wrote", the card's count and its squares follow the items
+          // as they gain or lose text.
+          const cd = had !== !!ev.text.trim() && area.closest(".v7-card");
+          if (cd && cd._update) { cd._update(); if (cd._colSync) cd._colSync(); }
+        });
         tw.appendChild(tl); tw.appendChild(ti); tw.appendChild(ln); it.appendChild(tw);
         const ww = el("div");
         const wl = el("label", "v7-field-label"); wl.htmlFor = "evw" + contrib.cid + "-" + j;
         wl.appendChild(document.createTextNode("Why it matters ")); wl.appendChild(el("span", "v7-opt", "(two lines, optional)"));
-        const wt = el("textarea", "v7-input v7-two"); wt.id = wl.htmlFor;
+        const wt = el("textarea", "v7-input v7-two v7-grow"); wt.id = wl.htmlFor;
         wt.placeholder = "What it found, or why it was useful, so a reviewer has the point without opening the source"; wt.value = ev.note || "";
-        wt.addEventListener("input", e => { ev.note = e.target.value; saveState(); });
-        ww.appendChild(wl); ww.appendChild(wt); it.appendChild(ww);
+        const wn = el("span", "v4-meta v7-ev-wc"); wn.id = wt.id + "-wc"; wt.setAttribute("aria-describedby", wn.id);
+        const setWn = () => { const n = countWords(ev.note); wn.textContent = n ? n + (n === 1 ? " word" : " words") + " · up to about 40 is comfortable here" : ""; };
+        setWn();
+        wt.addEventListener("input", e => { ev.note = e.target.value; saveState(); setWn(); growBox(wt, 2); });
+        ww.appendChild(wl); ww.appendChild(wt); ww.appendChild(wn); it.appendChild(ww);
+        requestAnimationFrame(() => { growBox(ti, 1); growBox(wt, 2); });
         items.appendChild(it);
       });
       area.appendChild(items);
       const add = el("button", "v7-add", "+ Add " + ((contrib.evidence || []).length ? "another item" : "an item")); add.type = "button"; add.id = "ev-add-" + contrib.cid;
       add.addEventListener("click", () => {
         contrib.evidence.push({ text: "", type: "", note: "" }); saveState(); renderStage();
-        const j = contrib.evidence.length - 1, n = document.getElementById("evt" + contrib.cid + "-" + j);
-        if (n) n.scrollIntoView({ block: "center" });
+        // W-03: as "+ Add a contribution" does, focus goes to the new item (its first kind card).
+        const j = contrib.evidence.length - 1, it = root.querySelectorAll(".v7-ev-item")[j], k = it && it.querySelector(".v7-kind");
+        if (k) k.focus({ preventScroll: true });
+        if (it) it.scrollIntoView({ block: "start" });
         announce("Evidence item " + letter(j) + " added.");
       });
       area.appendChild(add);
@@ -3871,9 +4330,13 @@
 
     // Guide sync (P-31): the TCV does not permit links, with one exception. The CV-FRQ permits them
     // as references tied to a contribution, which is what an evidence row is, so it gets no note.
-    function evidenceLinkNote(v) {
+    // r2-b-3 (inferred): in a creative field the TCV's exception covers the work itself (an exhibition,
+    // a performance, or an item of its own kind); a press article or a paper keeps the full rule.
+    const CREATIVE_LINK_KINDS = ["Exhibition / performance", "Other", ""];
+    const creativeLinkOk = (type) => ns.lens.discipline === "creative" && CREATIVE_LINK_KINDS.indexOf(type || "") !== -1;
+    function evidenceLinkNote(v, type) {
       if (!v || !new RegExp(LINK_RE.source, "i").test(v) || isFrq() || !ns.lens.format) return "";
-      return ns.lens.discipline === "creative"
+      return creativeLinkOk(type)
         ? "The TCV permits a link only for an audio or visual creative output, where the funding opportunity allows it. Reviewers are not guaranteed to open it, so describe the work in words as well."
         : "Links are not permitted in the TCV, which must be self-contained. Give the reference in words. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it.";
     }
@@ -3884,24 +4347,60 @@
       // B-27: an "Other" item prints the researcher's own label.
       const refs = (contrib.evidence || []).filter(e => e.text && e.text.trim())
         .map((e, i) => ({
-          key: String.fromCharCode(97 + i), text: e.text.trim(), note: (e.note || "").trim(),
-          type: (e.type === "Other" && e.otherLabel && e.otherLabel.trim()) ? e.otherLabel.trim() : (e.type || "")
+          key: String.fromCharCode(97 + i), text: one(e.text), note: one(e.note),
+          // W-17: an "Other" item with no label of its own prints no kind.
+          type: e.type === "Other" ? one(e.otherLabel) : (e.type || "")
         }));
       const order = ["stakes", "activities", "outputs", "outcomes", "translational", "impact"];
-      const parts = order.map(k => ({ k, t: (contrib[k] || "").trim() })).filter(p => p.t);
+      const parts = order.map(k => ({ k, t: one(contrib[k]) })).filter(p => p.t);
       const gaps = [];
-      if (!contrib.stakes) gaps.push("Stakes is empty — what problem was this work answering?");
-      if (!contrib.outcomes) gaps.push("What already changed is empty — is there something concrete you can name yet?");
-      if (!contrib.impact) gaps.push("What could change is empty — what might this change at field scale? Hedged is fine.");
-      if (!refs.length) gaps.push("No evidence attached — add one item so the claim has a record behind it.");
-      return { title: contrib.title, roleLine: contrib.roleLine, parts, refs, gaps };
+      if (!one(contrib.stakes)) gaps.push("Stakes is empty. What problem was this work answering?");
+      if (!one(contrib.outcomes)) gaps.push("What already changed is empty. Is there something concrete you can name yet?");
+      if (!one(contrib.impact)) gaps.push("What could change is empty. What might this change at field scale? Hedged language is fine here.");
+      if (!refs.length) gaps.push("No evidence attached. Add one item a reviewer could check.");
+      return { title: one(contrib.title), roleLine: one(contrib.roleLine), parts, refs, gaps };
+    }
+    // W-14 (audit loop round 2, inferred from the walkthrough's option A): one assembly for the strip,
+    // the on-screen draft, Word, Print, the .txt and the section copy. The paragraph runs Stakes, your
+    // role line, What you did, What resulted, What already changed, One moment, What could change, in
+    // roman type, as the Stakes hint and the worked examples do. The level ("I led it") guides the
+    // line and does not print.
+    function assembleContribution(contrib) {
+      const w = buildWeave(contrib);
+      const seq = w.parts.slice();
+      if (w.roleLine) seq.splice(seq.length && seq[0].k === "stakes" ? 1 : 0, 0, { k: "role", t: w.roleLine });
+      return { title: w.title, seq, body: seq.map(x => x.t).join(" "), refs: w.refs, keys: w.refs.map(r => r.key), gaps: w.gaps };
+    }
+    // W-20 (inferred, option A): a trainee as a sentence for the draft. The sector is named for
+    // industry, government and community agencies; no pronoun is used.
+    // r2-a-11: the Mentorship and statement steps have one example, written for Social sciences.
+    const oneExampleNote = () => ns.lens.discipline && ns.lens.discipline !== "social"
+      ? "There is no " + labelOf(DISCIPLINES, ns.lens.discipline) + " example yet. This one is written for Social sciences." : "One example for now, written for Social sciences.";
+    const MENTEE_NOUN = { doctoral: "doctoral student", masters: "master's student", postdoc: "postdoctoral fellow", undergrad: "undergraduate researcher" };
+    function menteeSentence(m) {
+      const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).toLowerCase() || "trainee";
+      const org = [one(m.org), one(m.unit)].filter(Boolean).join(", ");
+      const where = !org && !m.kind ? "" : m.kind === "industry" ? "now works in industry" + (org ? " at " + org : "")
+        : m.kind === "government" ? "now works in government" + (org ? " at " + org : "")
+        : m.kind === "community" ? "now works at a community agency" + (org ? ", " + org : "")
+        : m.kind === "arts" ? "now works at an arts or cultural organization" + (org ? ", " + org : "")
+        : m.kind === "health" ? "now works in the health system" + (org ? " at " + org : "")
+        : org ? "is now at " + org : "";
+      const recog = one(m.recognition), why = one(m.why);
+      let t = articleFor(noun).replace(/^a/, "A") + " " + noun + " I trained" + (where ? " " + where : "");
+      if (recog) t += (where ? ", and" : "") + " received " + recog;
+      t = t.replace(/[.;,\s]+$/, "") + ".";
+      if (why) t += " " + why.replace(/^./, ch => ch.toUpperCase()) + (/[.!?]$/.test(why) ? "" : ".");
+      return t;
     }
 
     // ── Stage: Mentorship (V7-27) ──────────────────────────────────────────
     const PF = () => [
       { k: "mentorPhilosophy", label: "One thing you do", def: PROMPTS.mentor.philosophy },
       { k: "mentorEDI", label: "Who gets in", def: PROMPTS.mentor.edi },
-      { k: "mentorCrossStage", label: "Who else you mentor", def: PROMPTS.mentor.crossStage }
+      // r2-b-8 (inferred): early in a career there may be no one else to name, so the third prompt is optional.
+      ns.lens.careerStage === "early" ? { k: "mentorCrossStage", label: "Who else you mentor (optional)", def: PROMPTS.mentor.crossStage, optional: true }
+        : { k: "mentorCrossStage", label: "Who else you mentor", def: PROMPTS.mentor.crossStage }
     ];
     const menteeHead = (m, i) => {
       const st = m.stageKind ? menteeStageLabel(m) : "";
@@ -3922,7 +4421,7 @@
       }
       exampleRow(c, [["mentor", "See a finished example"]], () => {
         const b = borrowJobs(MENTOR_EXAMPLE.segments, MENTOR_EXAMPLE.legend);
-        return exampleBox({ title: "What a finished mentorship section reads like — Social sciences", match: "One example for now, written for Social sciences.",
+        return exampleBox({ title: "What a finished mentorship section reads like (Social sciences)", match: oneExampleNote(),
           segs: b.segs, legend: b.legend,
           foot: "The content is fictional: the people, the places and the numbers are invented. In the finished section these parts run together as one passage." });
       });
@@ -3939,9 +4438,11 @@
       MENTOR_COUNT_LABELS.forEach(([k, lab]) => {
         const tile = el("div", "v7-tile");
         const l = el("label", null, lab); l.htmlFor = "v7-t-" + k;
-        const inp = el("input"); inp.id = l.htmlFor; inp.type = "number"; inp.min = "0"; inp.inputMode = "numeric"; inp.placeholder = "0";
-        inp.value = ns.mentorCounts[k] || "";
-        inp.addEventListener("input", e => { ns.mentorCounts[k] = e.target.value; saveState(); setSum(); setPc(); refreshRail(); });
+        const inp = el("input"); inp.id = l.htmlFor; inp.type = "number"; inp.min = "0"; inp.max = "999"; inp.step = "1"; inp.inputMode = "numeric"; inp.placeholder = "0";
+        inp.value = cleanCount(ns.mentorCounts[k]);
+        // W-22: whole numbers from 0 to 999 only; "-2" and "2.5" are kept as "2".
+        inp.addEventListener("keydown", e => { if (["-", "+", ".", ",", "e", "E"].includes(e.key)) e.preventDefault(); });
+        inp.addEventListener("input", e => { const v = cleanCount(e.target.value); if (e.target.value !== v) e.target.value = v; ns.mentorCounts[k] = v; saveState(); setSum(); setPc(); refreshRail(); });
         tile.appendChild(l); tile.appendChild(inp);
         tiles.appendChild(tile);
       });
@@ -3955,7 +4456,7 @@
       setPc(); sh.appendChild(pc); c.appendChild(sh);
       c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers will read your CV, so leave out names to protect the privacy of the people you trained. Describe each person by their level and where they went, and add any best-paper prizes or prestigious scholarships they held or went on to win."));
       ns.mentees.forEach((m, i) => c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)));
-      const addP = el("button", "v7-add", "+ Add a person"); addP.type = "button";
+      const addP = el("button", "v7-add", "+ Add a person"); addP.type = "button"; addP.id = "v7-add-person";
       addP.addEventListener("click", () => {
         ns.mentees.forEach(x => { x.folded = true; });
         ns.mentees.push(blankMentee()); saveState(); renderStage();
@@ -3992,7 +4493,10 @@
       b.setAttribute("aria-expanded", "false");
       b.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
       const t = el("span", "v7-fold-t"); t.appendChild(el("span", "v7-num", h.num)); t.appendChild(document.createTextNode(h.rest || " · not described yet"));
+      t.setAttribute("aria-hidden", "true");
       b.appendChild(t);
+      // W-20: screen readers read "→" as "right arrow", so the row's name is written out.
+      b.appendChild(el("span", "v7-sr", h.num + (h.rest ? ", " + h.rest.replace(/^ · /, "").replace(" → ", ", now at ") : ", not described yet") + ". Select to open."));
       b.appendChild(el("span", "v7-fold-meta", (m.recognition || "").trim() ? "Prize noted" : ""));
       b.appendChild(el("span", "v7-fold-op", "Open")).setAttribute("aria-hidden", "true");
       b.addEventListener("click", () => { ns.mentees.forEach((x, j) => { x.folded = j !== i; }); saveState(); renderStage(); const s = document.getElementById("v7-ps" + i); if (s) s.focus(); });
@@ -4014,11 +4518,19 @@
         side.appendChild(fold);
       }
       const rm = el("button", "v7-icon-btn", "×"); rm.type = "button"; rm.setAttribute("aria-label", "Remove person " + letter(i).toUpperCase());
-      rm.addEventListener("click", () => {
-        if (menteeHasContent(m) && !confirm("Remove person " + letter(i).toUpperCase() + "?")) return;
+      const removeP = () => {
         ns.mentees.splice(i, 1); if (!ns.mentees.length) ns.mentees.push(blankMentee());
         if (!ns.mentees.some(x => !x.folded)) ns.mentees[ns.mentees.length - 1].folded = false;
         saveState(); renderStage();
+        // W-04: focus goes to the person now in this place (else the one before), and the removal is spoken.
+        const k = Math.min(i, ns.mentees.length - 1), nm = ns.mentees[k];
+        const n = nm && (nm.folded ? document.getElementById("pfold-" + k) : focusable(document.getElementById("v7-ph" + k)));
+        (n || document.getElementById("v7-add-person") || stepHeading()).focus();
+        announce("Person " + letter(i).toUpperCase() + " removed.");
+      };
+      rm.addEventListener("click", () => {
+        if (!menteeHasContent(m)) return removeP();
+        inlineConfirm(card, "Remove person " + letter(i).toUpperCase() + " and what you wrote about them?", rm, "Remove", removeP, { after: head });
       });
       side.appendChild(rm); head.appendChild(side); card.appendChild(head);
       const changed = () => { saveState(); setHead(); setPc(); refreshRail(); };
@@ -4040,29 +4552,32 @@
         w.appendChild(l); w.appendChild(inp); return w;
       };
       const pair = el("div", "v7-pair");
-      pair.appendChild(select("v7-ps" + i, "Level", MENTEE_STAGES, m.stageKind, v => { m.stageKind = v; m.stage = v === "other" ? (m.stageOther || "") : (MENTEE_STAGES.find(x => x[0] === v) || [, ""])[1]; changed(); renderStage(); }));
+      const lvl = select("v7-ps" + i, "Level", MENTEE_STAGES, m.stageKind, v => { m.stageKind = v; m.stage = v === "other" ? (m.stageOther || "") : (MENTEE_STAGES.find(x => x[0] === v) || [, ""])[1]; changed(); renderStage(); });
+      pair.appendChild(lvl);
       pair.appendChild(select("v7-pw" + i, "Where are they now?", MENTEE_KINDS, m.kind, v => { m.kind = v; changed(); renderStage(); }));
       card.appendChild(pair);
-      if (m.stageKind === "other") card.appendChild(input("v7-po" + i, "Describe their level", false, m.stageOther, v => { m.stageOther = v; m.stage = v; changed(); }));
+      // W-24: "Describe their level" sits in the Level column, under its select.
+      if (m.stageKind === "other") lvl.appendChild(input("v7-po" + i, "Describe their level", false, m.stageOther, v => { m.stageOther = v; m.stage = v; changed(); }));
       if (m.kind) {
         const uni = m.kind === "university";
         const p2 = el("div", "v7-pair");
         const a = input("v7-pg" + i, uni ? "University" : "Organization", false, m.org, v => { m.org = v; changed(); });
-        const b = input("v7-pu" + i, uni ? "Department or discipline" : "Unit or subdivision", false, m.unit, v => { m.unit = v; changed(); });
+        const b = input("v7-pu" + i, uni ? "Department or discipline" : "Unit or position", false, m.unit, v => { m.unit = v; changed(); });
         a.className = ""; b.className = "";
         p2.appendChild(a); p2.appendChild(b); card.appendChild(p2);
       }
       card.appendChild(input("v7-pz" + i, "Prizes or scholarships", true, m.recognition, v => { m.recognition = v; changed(); }));
-      const why = input("v7-py" + i, "Why this example matters", true, m.why, v => { m.why = v; changed(); });
+      const why = input("v7-py" + i, "What this person's path shows", true, m.why, v => { m.why = v; changed(); });
       why.className = ""; card.appendChild(why);
       return card;
     }
 
     // ── Stage: Personal statement (V7-28) ──────────────────────────────────
+    // The statement's first sentence; every output builds it here.
     const psAnchorText = () => {
-      const p = ns.ps;
-      if (!(p.role || p.institution || p.field)) return "";
-      return "I am " + articleFor(p.role) + " " + (p.role || "___") + " at " + (p.institution || "___") + ". My work is in " + (p.field || "___") + ".";
+      const r = one(ns.ps.role), inst = one(ns.ps.institution), fld = one(ns.ps.field);
+      if (!(r || inst || fld)) return "";
+      return "I am " + articleFor(r) + " " + (r || "___") + " at " + (inst || "___") + ". My work is in " + (fld || "___").replace(/[.\s]+$/, "") + ".";
     };
     const SF = () => {
       const a = [
@@ -4104,7 +4619,7 @@
       c.appendChild(lede);
       exampleRow(c, [["psx", "See a finished example"]], () => {
         const b = borrowJobs(PS_EXAMPLE.segments, PS_EXAMPLE.legend);
-        return exampleBox({ title: "What a finished personal statement reads like — Social sciences", match: "One example for now, written for Social sciences.",
+        return exampleBox({ title: "What a finished personal statement reads like (Social sciences)", match: oneExampleNote(),
           segs: b.segs, legend: b.legend,
           foot: (isFrq() ? "This example is a TCV personal statement; the team question is in the card below. " : "") + "The content is fictional: the researcher, the strands of work and the numbers are invented, and the institution is unnamed on purpose." });
       });
@@ -4116,8 +4631,9 @@
       const pc = () => { const f = SF(); return [f.filter(x => psHas(x.k)).length, f.length]; };
       let dd = progress(pc()[0], pc()[1]); side.appendChild(dd);
       ch.appendChild(side); card.appendChild(ch);
-      card.appendChild(fieldCol(card, "Your statement", SF().map(f => ({ id: "ps-" + f.k, label: f.label, has: () => psHas(f.k) })),
-        (id) => UI.active === id, jumpToField));
+      // W-10 (inferred): placed after the fields and the strip, as on the contribution cards.
+      const col = fieldCol(card, "Your statement", SF().map(f => ({ id: "ps-" + f.k, label: f.label, has: () => psHas(f.k) })),
+        (id) => UI.active === id, jumpToField);
       card.appendChild(el("p", "v7-card-sub", "If a prompt feels hard, the answer is usually already in one of your contributions."));
       if (!UI.active || UI.active.indexOf("ps-") !== 0) { const first = SF().find(f => !psHas(f.k)); UI.active = "ps-" + (first ? first.k : "anchor"); }
       let strip = null;
@@ -4130,7 +4646,7 @@
       SF().forEach(f => {
         if (f.k === "anchor") {
           fields.appendChild(cardField({
-            id: "ps-anchor", label: f.label, q: "Finish this line.", help: "Plain and direct: your first sentence.",
+            id: "ps-anchor", label: f.label, q: "Finish this line.", help: "Your first sentence, plain and direct.",
             get: () => psAnchorText(), has: () => psHas("anchor"), shown: psAnchorText, onChange: update,
             anchor: (fw) => {
               const line = el("div", "v7-anchor-line");
@@ -4164,6 +4680,7 @@
       });
       card.appendChild(fields);
       if (V7_TRIALS.paragraphStrip) { strip = psStrip(); card.appendChild(strip); }
+      card.appendChild(col);
       card._colSync();
       c.appendChild(card);
       navRow(c);
@@ -4197,16 +4714,18 @@
       const live = liveContributions();
       if (!live.length) body.appendChild(el("p", "v7-empty", "Not written yet."));
       live.forEach(({ c: contrib }, pos) => {
-        const w = buildWeave(contrib);
+        const w = assembleContribution(contrib);
         const p = el("p");
-        p.appendChild(el("b", null, (pos + 1) + ". " + (contrib.title || "Untitled contribution")));
+        p.appendChild(el("b", null, (pos + 1) + ". " + (w.title || "Untitled contribution")));
         p.appendChild(el("br"));
-        if ((contrib.roleLine || "").trim()) { p.appendChild(el("span", "v7-r", contrib.roleLine.trim())); p.appendChild(document.createTextNode(" ")); }
-        p.appendChild(document.createTextNode(w.parts.map(x => x.t).join(" ") + (w.refs.length ? " (" + w.refs.map(r => r.key).join(", ") + ")" : "")));
+        p.appendChild(document.createTextNode(w.body));
+        // W-16: superscript letters with commas in the HTML outputs.
+        if (w.keys.length) { p.appendChild(document.createTextNode(w.body ? " " : "")); p.appendChild(el("sup", null, w.keys.join(", "))); }
         body.appendChild(p);
         if (w.refs.length) {
           const refs = el("div", "v7-refs");
-          w.refs.forEach((r, j) => { if (j) refs.appendChild(el("br")); refs.appendChild(document.createTextNode(r.key + ". " + r.text + (r.type ? " (" + r.type + ")" : ""))); });
+          // W-15: each item's "Why it matters" note shows under it. W-17: the kind is the tool's label and stays out.
+          w.refs.forEach((r, j) => { if (j) refs.appendChild(el("br")); refs.appendChild(document.createTextNode(r.key + ". " + r.text)); if (r.note) { refs.appendChild(el("br")); refs.appendChild(el("span", "v7-ref-note", r.note)); } });
           body.appendChild(refs);
         }
       });
@@ -4220,13 +4739,28 @@
     function missingList() {
       const out = [];
       liveContributions().forEach(({ c: contrib, i }, pos) => {
-        CF().forEach(f => { if (!f.optional && !cHas(contrib, f.k)) out.push({ step: "contrib", i, field: "c" + contrib.cid + "-" + f.k, label: "Contribution " + (pos + 1) + ": " + (f.label || BEAT_LABEL[f.job]) }); });
+        // W-14: the level guides the line and does not print, so a level alone leaves Your role missing.
+        CF().forEach(f => { if (!f.optional && (f.k === "roleLine" ? !one(contrib.roleLine) : !cHas(contrib, f.k))) out.push({ step: "contrib", i, field: "c" + contrib.cid + "-" + f.k, label: "Contribution " + (pos + 1) + ": " + (f.label || BEAT_LABEL[f.job]) }); });
         if (!liveEvidence(contrib).length) out.push({ step: "contrib", i, ev: true, label: "Contribution " + (pos + 1) + ": Evidence" });
       });
       if (!liveContributions().length) out.push({ step: "contrib", i: 0, field: "c" + (ns.contributions[0] || {}).cid + "-title", label: "Contributions: none written yet" });
       if (!ns.mentees.some(menteeHasPlace)) out.push({ step: "mentor", person: true, label: "Mentorship: one person you trained, and where they went" });
-      PF().forEach(f => { if (!(ns[f.k] || "").trim()) out.push({ step: "mentor", field: "m-" + f.k, label: "Mentorship: " + f.label }); });
+      PF().forEach(f => { if (!f.optional && !(ns[f.k] || "").trim()) out.push({ step: "mentor", field: "m-" + f.k, label: "Mentorship: " + f.label }); });
       SF().forEach(f => { if (!psHas(f.k)) out.push({ step: "ps", field: "ps-" + f.k, label: (isFrq() ? "Background and skills" : "Personal statement") + ": " + f.label }); });
+      return out;
+    }
+    // r1-a-2 (audit 2026-10-31): links the format does not allow, listed beside Still missing. The TCV
+    // permits none (a creative discipline keeps links in its evidence items, for audio or visual work);
+    // the CV-FRQ keeps them in the evidence list.
+    function linkList() {
+      const out = [], frq = isFrq(), has = (v) => new RegExp(LINK_RE.source, "i").test(v || "");
+      if (!ns.lens.format) return out;
+      liveContributions().forEach(({ c: contrib, i }, pos) => {
+        CF().forEach(f => { if (has(contrib[f.k])) out.push({ step: "contrib", i, field: "c" + contrib.cid + "-" + f.k, label: "Contribution " + (pos + 1) + ": " + (f.label || BEAT_LABEL[f.job]) }); });
+        if (!frq && liveEvidence(contrib).some(e => (has(e.text) && !creativeLinkOk(e.type)) || has(e.note))) out.push({ step: "contrib", i, ev: true, label: "Contribution " + (pos + 1) + ": Evidence" });
+      });
+      PF().forEach(f => { if (has(ns[f.k])) out.push({ step: "mentor", field: "m-" + f.k, label: "Mentorship: " + f.label }); });
+      SF().forEach(f => { if (has(ns.ps[f.k])) out.push({ step: "ps", field: "ps-" + f.k, label: (frq ? "Background and skills" : "Personal statement") + ": " + f.label }); });
       return out;
     }
     function jumpTo(m) {
@@ -4315,13 +4849,30 @@
       const t1 = el("div", "v7-tile"); t1.appendChild(el("span", "v7-tile-k", "Still missing"));
       if (miss.length) {
         const ul = el("ul");
-        miss.forEach(m => { const li = el("li"); const a = el("a", null, m.label); a.href = "#"; a.addEventListener("click", e => { e.preventDefault(); jumpTo(m); }); li.appendChild(a); ul.appendChild(li); });
+        // r1-b-10 (audit 2026-10-31): one line per contribution ("Contribution 5: Stakes, What you did
+        // and Evidence"), linked to its first missing part.
+        const grouped = [];
+        miss.forEach(m => {
+          const g = m.step === "contrib" && !/none written yet/.test(m.label) && grouped.find(x => x.step === "contrib" && x.i === m.i);
+          if (g) g.parts.push(m.label.split(": ").slice(1).join(": "));
+          else grouped.push(Object.assign({}, m, { parts: m.step === "contrib" ? [m.label.split(": ").slice(1).join(": ")] : null }));
+        });
+        grouped.forEach(m => { if (m.parts && m.parts.length > 1) m.label = m.label.split(": ")[0] + ": " + m.parts.slice(0, -1).join(", ") + " and " + m.parts[m.parts.length - 1]; });
+        grouped.forEach(m => { const li = el("li"); const a = el("a", null, m.label); a.href = "#"; a.addEventListener("click", e => { e.preventDefault(); jumpTo(m); }); li.appendChild(a); ul.appendChild(li); });
         t1.appendChild(ul);
       } else t1.appendChild(el("p", "v7-ok", "✓ Nothing missing."));
+      const links = linkList();
+      if (links.length) {
+        t1.appendChild(el("span", "v7-tile-k v7-tile-k2", isFrq() ? "Links to move to the evidence list" : "Links to take out"));
+        t1.appendChild(el("p", "v7-quiet", isFrq() ? "In the CV-FRQ, links belong with your references, in the evidence list of the contribution they support." : "The TCV does not permit links. Give the reference in words."));
+        const ul = el("ul");
+        links.forEach(m => { const li = el("li"); const a = el("a", null, m.label); a.href = "#"; a.addEventListener("click", e => { e.preventDefault(); jumpTo(m); }); li.appendChild(a); ul.appendChild(li); });
+        t1.appendChild(ul);
+      }
       gl.appendChild(t1);
       const t2 = el("div", "v7-tile"); t2.appendChild(el("span", "v7-tile-k", "Length"));
       t2.appendChild(el("span", "v7-big", w / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(w).replace("roughly ", "")));
-      t2.appendChild(el("span", "v7-quiet", "of " + PAGE_LIMIT_EN + " pages, roughly · about " + (Math.round(w / 10) * 10).toLocaleString("en-CA") + " words"));
+      t2.appendChild(el("span", "v7-quiet", "of " + PAGE_LIMIT_EN + " pages, roughly · about " + roughWords(w).toLocaleString("en-CA") + (w === 1 ? " word" : " words")));
       const pb = el("div", "v7-pages"); pb.setAttribute("aria-hidden", "true");
       const fill = el("i"); fill.style.width = Math.min(100, w / (WORDS_PER_PAGE * PAGE_LIMIT_EN) * 100) + "%"; pb.appendChild(fill);
       [20, 40, 60, 80].forEach(x => { const s = el("s"); s.style.left = x + "%"; pb.appendChild(s); });
@@ -4342,7 +4893,7 @@
         ["coherence", "Coherence: my " + (isFrq() ? "background and skills section" : "personal statement") + " frames the whole and ends pointed forward."],
         ["selection", "Selection: each contribution relates to this application, and I chose them for this funding opportunity."],
         ["mentorship", "Mentorship: my supervision and mentorship section names at least one person I trained and where they went."],
-        ["format", "Format: I will paste this into the current version of my agency's template and keep within the page limit."]
+        ["format", "Format: I will paste this into the current version of " + templateOf() + " template and keep within the page limit."]
       ].forEach(([id, t]) => {
         const label = el("label");
         const cb = el("input"); cb.type = "checkbox"; cb.checked = !!ns.selfCheck[id];
@@ -4350,7 +4901,7 @@
         label.appendChild(cb); label.appendChild(document.createTextNode(t));
         sc.appendChild(label);
       });
-      sc.appendChild(el("p", "v7-closing", "Prepare your CV in the current version of the template your agency provides, and keep the formatting it sets. Do not exceed the page limit: " + PAGE_LIMIT + "."));
+      sc.appendChild(el("p", "v7-closing", "Prepare your CV in the current version of " + templateOf() + " template (" + (isFrq() ? "the CV-FRQ" : "the TCV") + "), and keep the formatting it sets. Keep within the page limit: " + PAGE_LIMIT + "."));
       c.appendChild(sc);
       navRow(c);
     }
@@ -4448,17 +4999,20 @@
       const live = liveContributions();
       const rows = ROLE_LEVELS.map(([v]) => [GV_ROLE[v] || v, live.filter(({ c }) => c.roleMode === v).length]);
       const chosen = rows.reduce((n, r) => n + r[1], 0);
+      // r1-a-6: a role line written without a level counts as a role too.
+      const lineOnly = live.filter(({ c }) => !c.roleMode && (c.roleLine || "").trim()).length;
+      if (lineOnly) rows.push(["Role line, no level chosen", lineOnly]);
       if (!chosen) return null;
       const title = "Your role";
       const sub = gvText(16, 26, "Across " + live.length + (live.length === 1 ? " contribution" : " contributions") +
-        (chosen < live.length ? ", " + chosen + " with a role chosen" : ""), { size: 12, fill: GV_MUTED });
+        (chosen + lineOnly < live.length ? ", " + (chosen + lineOnly) + " with a role" : ""), { size: 12, fill: GV_MUTED });
       const bars = gvBarRows(rows, 42, Math.max(live.length, 1));
       return { key: "role", title, summary: gvSummary(title, rows), svg: gvSvg(42 + bars.h + 10, gvSummary(title, rows), sub + bars.svg) };
     }
 
     // 4. People trained (counts by level) and where the trainees you described are now.
     function glanceTrained() {
-      const levels = MENTOR_COUNT_LABELS.map(([k, l]) => [l, Math.max(0, parseInt(ns.mentorCounts[k], 10) || 0)]);
+      const levels = MENTOR_COUNT_LABELS.map(([k, l]) => [l, parseInt(cleanCount(ns.mentorCounts[k]), 10) || 0]);
       const withContent = ns.mentees.filter(menteeHasContent);
       const kinds = MENTEE_KINDS.map(([k, l]) => [l, withContent.filter(m => m.kind === k).length]);
       const nL = levels.reduce((n, r) => n + r[1], 0), nK = kinds.reduce((n, r) => n + r[1], 0);
@@ -4484,30 +5038,24 @@
 
     // 5. Length against the page limit. The three groups mirror draftWords() exactly, so they add
     // up to the same total the Length tile shows.
-    const gvCount = (parts) => { const t = parts.filter(Boolean).join(" ").trim(); return t ? t.split(/\s+/).length : 0; };
+    const gvCount = (parts) => countWords(parts.filter(Boolean).join(" "));
+    // Audit loop round 2: the length counts the text the CV prints (the section copies), without the
+    // contribution numbers, evidence letters and letter groups; draftWords() is its total.
+    const printedWords = (t) => gvCount([String(t || "").replace(/^\s*(?:\d+|[a-z])\.\s+/gm, "").replace(/\((?:[a-z], )*[a-z]\)/g, "")]);
     function glanceWordSplit() {
-      const p = ns.ps, ps = [];
-      if (p.role || p.institution || p.field) ps.push("I am a", p.role, "at", p.institution, "My work is in", p.field);
-      ps.push(p.challenge, p.streams, p.pivot, p.standing, p.programFit, isFrq() ? p.teamFit : "", p.horizon);
-      const co = [];
-      ns.contributions.forEach(c2 => {
-        co.push(c2.title, c2.roleLine, c2.stakes, c2.activities, c2.outputs, c2.outcomes, c2.translational, c2.impact);
-        (c2.evidence || []).forEach(e => co.push(e.text, e.note));
-      });
-      const me = [];
-      ns.mentees.forEach(m => { const q = menteeParts(m); me.push(m.stage, q.where, q.recog, q.why); });
-      me.push(ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage);
-      return { contrib: gvCount(co), mentor: gvCount(me), ps: gvCount(ps) };
+      return { contrib: printedWords(sectionText("contrib")), mentor: printedWords(sectionText("mentor")), ps: printedWords(sectionText("ps")) };
     }
     const GV_LEN_TONES = { contrib: "#912338", mentor: "#c27a88", ps: "#e7cfd3" };
+    const roughWords = (n) => n > 100 ? Math.round(n / 10) * 10 : n;
     function glanceLength() {
       const s = glanceWordSplit(), total = s.contrib + s.mentor + s.ps;
       if (!total) return null;
       const title = "Length against the page limit";
       const cap = WORDS_PER_PAGE * PAGE_LIMIT_EN, scale = Math.max(cap, total);
       const bx = 16, bw = GV_W - 32, by = 50, bh = 26;
-      const segs = [["contrib", "Contributions"], ["mentor", "Mentorship"], ["ps", secName("ps")]].map(([k, l]) => ({ k, l, n: s[k] }));
-      let body = gvText(16, 26, "About " + gvNum(Math.round(total / 10) * 10) + " words, " + (total / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(total).replace("roughly ", "")) + " of " + PAGE_LIMIT_EN + " pages, roughly", { size: 12.5 });
+      // W-51: the CV's order and the tool's short names; tens only above 100 words.
+      const segs = [["ps", isFrq() ? "Background and skills" : "Personal statement"], ["contrib", "Contributions"], ["mentor", "Mentorship"]].map(([k, l]) => ({ k, l, n: s[k] }));
+      let body = gvText(16, 26, "About " + gvNum(roughWords(total)) + (total === 1 ? " word, " : " words, ") + (total / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(total).replace("roughly ", "")) + " of " + PAGE_LIMIT_EN + " pages, roughly", { size: 12.5 });
       body += gvRect(bx, by, bw, bh, GV_TRACK, ' rx="3"');
       let x = bx;
       segs.forEach(g => { if (!g.n) return; const w = bw * g.n / scale; body += gvRect(x, by, w, bh, GV_LEN_TONES[g.k], ' stroke="#ffffff" stroke-width="1"'); x += w; });
@@ -4525,11 +5073,11 @@
         const ly = ly0 + i * 20;
         body += gvRect(16, ly - 10, 12, 12, GV_LEN_TONES[g.k], ' rx="2"' + (g.k === "ps" ? ' stroke="#b9a0a5" stroke-width="1"' : ""));
         body += gvText(34, ly, g.l, { size: 12 });
-        body += gvText(GV_W - 16, ly, gvNum(g.n) + " words", { size: 12, weight: 600, anchor: "end" });
+        body += gvText(GV_W - 16, ly, gvNum(g.n) + (g.n === 1 ? " word" : " words"), { size: 12, weight: 600, anchor: "end" });
       });
       const ly = ly0 + segs.length * 20 - 20;
-      body += gvText(16, ly + 24, "At about " + WORDS_PER_PAGE + " words a page. The template sets the real length.", { size: 11, fill: GV_MUTED });
-      const label = title + ": about " + total + " words against " + PAGE_LIMIT_EN + " pages; contributions " + s.contrib + ", mentorship " + s.mentor + ", " + secName("ps").toLowerCase() + " " + s.ps + ".";
+      body += gvText(16, ly + 24, "At 500 to 600 words a page. The template sets the real length.", { size: 11, fill: GV_MUTED });
+      const label = title + ": about " + total + " words against " + PAGE_LIMIT_EN + " pages; " + segs.map(g => g.l.toLowerCase() + " " + g.n).join(", ") + ".";
       return { key: "length", title, summary: label, svg: gvSvg(ly + 36, label, body) };
     }
 
@@ -4615,17 +5163,20 @@
       if (!list.length) return null;
       const sec = el("section", "v7-gv-exp"); sec.setAttribute("aria-labelledby", "v7-gvx-t");
       const h = el("h3", "v7-h3", "Visuals from your draft"); h.id = "v7-gvx-t"; sec.appendChild(h);
-      sec.appendChild(el("p", "v7-quiet v7-gap-b", "The " + (list.length === 1 ? "visual" : list.length + " visuals") + " from At a glance on the Review page, each saved as a separate PNG image: " + list.map(v => v.title.toLowerCase()).join("; ") + "."));
+      sec.appendChild(el("p", "v7-quiet v7-gap-b", "The " + (list.length === 1 ? "visual" : list.length + " visuals") + " from What your draft contains on the Review page, each saved as a separate PNG image: " + list.map(v => v.title.toLowerCase()).join("; ") + "."));
       const b = el("button", "btn btn-outline", list.length === 1 ? "Download the visual" : "Download all visuals"); b.type = "button"; b.id = "v7-gv-all";
       const st = el("span", "v7-copied"); st.setAttribute("aria-live", "polite");
+      // W-11: aria-disabled while the images download, so focus stays on the button; a second click waits.
+      let busy = false;
       b.addEventListener("click", async () => {
+        if (busy) return;
         countEvent("glancePngAll");
-        b.disabled = true; let n = 0;
+        busy = true; b.setAttribute("aria-disabled", "true"); let n = 0;
         for (let i = 0; i < list.length; i++) {
           if (i) await new Promise(r => setTimeout(r, 350));
           if (await downloadPng(list[i].png, gvFile(list[i].key))) n++;
         }
-        b.disabled = false;
+        busy = false; b.removeAttribute("aria-disabled");
         st.textContent = n === list.length ? "Downloaded " + n + (n === 1 ? " image." : " images.") : n + " of " + list.length + " images downloaded.";
         setTimeout(() => { st.textContent = ""; }, 3000);
       });
@@ -4640,14 +5191,17 @@
         "You can take your draft out of the tool as a file, as sections to paste into the template, or as a saved draft file you can open here again later.", false);
       const a = ns.lens.agency, unsure = !a || a === "other";
       const font = /Arial/.test(PRINT_FONT[a] || "") ? "12-point Arial" : "12-point Times New Roman";
-      const setup = el("p", "v7-setup-line");
-      setup.appendChild(el("span", "v7-k", "Set up for: "));
-      setup.appendChild(document.createTextNode(unsure ? "Agency not chosen · Tri-agency CV layout · 12-point Times New Roman"
-        : labelOf(AGENCIES, a) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV") + " · " + font));
-      const chg = el("button", "btn btn-outline v7-btn-small", "Change"); chg.type = "button"; chg.setAttribute("aria-label", "Change your profile answers");
-      chg.addEventListener("click", () => goStage("setup"));
-      setup.appendChild(chg);
-      c.appendChild(setup);
+      tailoredBar(c, { lead: "Set up for:", text: unsure ? "Agency not chosen · Tri-agency CV layout · 12-point Times New Roman"
+        : labelOf(AGENCIES, a) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV") + " · " + font });
+      // r2-a-16: links the format does not allow are named here too, before anything is downloaded.
+      const lk = linkList();
+      if (lk.length) {
+        const box = el("div", "v7-note v7-links-note"); box.setAttribute("role", "note");
+        box.appendChild(el("p", null, (lk.length === 1 ? "1 link is" : lk.length + " links are") + " still in your draft. " + (isFrq() ? "In the CV-FRQ, links belong in the evidence list of the contribution they support." : "The TCV does not permit links; give the reference in words.")));
+        const ul = el("ul");
+        lk.forEach(m => { const li = el("li"); const ln = el("a", null, m.label); ln.href = "#"; ln.addEventListener("click", e => { e.preventDefault(); jumpTo(m); }); li.appendChild(ln); ul.appendChild(li); });
+        box.appendChild(ul); c.appendChild(box);
+      }
 
       const pv = el("section", "v7-card"); pv.setAttribute("aria-labelledby", "v7-pv-t");
       const ph = el("div", "v7-card-h"); const pt = el("h3", "v7-card-t", "Your draft"); pt.id = "v7-pv-t"; ph.appendChild(pt);
@@ -4655,13 +5209,14 @@
       pv.appendChild(draftPreview("v7-preview", "Draft preview, read only"));
       c.appendChild(pv);
 
-      const done = (msg, node) => { ns.ui.exported = true; saveState(); refreshRail(); if (node) { node.textContent = msg; setTimeout(() => { node.textContent = ""; }, 2500); } };
+      // r2-a-4: a download names its file beside the button and aloud, and stays a little longer.
+      const done = (msg, node) => { ns.ui.exported = true; saveState(); refreshRail(); if (node) { node.textContent = msg; announce(msg); setTimeout(() => { if (node.textContent === msg) node.textContent = ""; }, /^Downloaded/.test(msg) ? 6000 : 2500); } };
       const dl = el("section", "v7-card"); dl.setAttribute("aria-labelledby", "v7-dl-t");
       const dlt = el("h3", "v7-h3", "Download or print"); dlt.id = "v7-dl-t"; dl.appendChild(dlt);
       const fmt = ns.ui.exportFmt || "doc";
       const fg = el("div", "v7-fmt"); fg.setAttribute("role", "radiogroup"); fg.setAttribute("aria-labelledby", "v7-dl-t");
       [["doc", "Word (.doc)", "Set in " + (unsure ? "12-point Times New Roman" : font) + " on a Letter page with 2 cm margins, with your agency's section names.", true],
-       ["txt", "Plain text (.txt)", "The same draft without formatting, for pasting anywhere.", false]].forEach(([v, l, n, rec]) => {
+       ["txt", "Plain text (.txt)", "The draft as plain text with the tool's notes to you, for working on it elsewhere.", false]].forEach(([v, l, n, rec]) => {
         const b = el("button", "v7-choice"); b.type = "button"; b.id = "v7-fmt-" + v;
         b.setAttribute("role", "radio"); b.setAttribute("aria-checked", fmt === v ? "true" : "false");
         const tick = el("span", "v7-tick", "✓"); tick.setAttribute("aria-hidden", "true"); b.appendChild(tick);
@@ -4670,23 +5225,24 @@
         b.addEventListener("click", () => { ns.ui.exportFmt = v; saveState(); renderStage(); });
         fg.appendChild(b);
       });
-      dl.appendChild(fg);
+      dl.appendChild(radioKeys(fg));
       const acts = el("div", "v7-actions");
       const status = el("span", "v7-copied"); status.setAttribute("aria-live", "polite");
       const down = el("button", "btn btn-primary", fmt === "doc" ? "Download Word file" : "Download text file"); down.type = "button";
       down.addEventListener("click", () => {
+        const base = "narrative-cv-draft" + (ns.lens.agency && ns.lens.agency !== "other" ? "-" + ns.lens.agency : "");
         if (fmt === "doc") { countEvent("downloadWord"); downloadWordDraft(); }
         else {
           countEvent("downloadDraft");
           const blob = new Blob([buildExportText()], { type: "text/plain;charset=utf-8" });
-          const an = el("a"); an.href = URL.createObjectURL(blob); an.download = "narrative-cv-draft.txt";
+          const an = el("a"); an.href = URL.createObjectURL(blob); an.download = base + ".txt";
           document.body.appendChild(an); an.click(); an.remove();
         }
-        done("Downloaded.", status);
+        done("Downloaded " + base + (fmt === "doc" ? ".doc" : ".txt") + ".", status);
       });
       acts.appendChild(down);
       const pr = el("button", "btn btn-outline v7-quiet-btn", "Print view"); pr.type = "button";
-      pr.addEventListener("click", () => { countEvent("printView"); openPrintView(); done("", null); });
+      pr.addEventListener("click", () => { countEvent("printView"); if (openPrintView()) done("", null); else status.textContent = "The browser blocked the print view. Allow pop-ups for this page, or download the Word file."; });
       acts.appendChild(pr);
       const cp = el("button", "btn btn-outline v7-quiet-btn", "Copy draft"); cp.type = "button";
       cp.addEventListener("click", async () => { countEvent("copyDraft"); try { await navigator.clipboard.writeText(buildExportText()); done("Copied.", status); } catch (_) { status.textContent = "Copying is blocked in this browser. Use the download instead."; } });
@@ -4789,26 +5345,15 @@
       return "roughly " + (f(lo) === f(hi) ? f(lo) : f(lo) + " to " + f(hi));
     }
     // Words in the draft itself (no labels, no gap notes): what the page limit is measured against.
-    function draftWords() {
-      const p = ns.ps, parts = [];
-      if (p.role || p.institution || p.field) parts.push("I am a", p.role, "at", p.institution, "My work is in", p.field);
-      parts.push(p.challenge, p.streams, p.pivot, p.standing, p.programFit, isFrq() ? p.teamFit : "", p.horizon);
-      ns.contributions.forEach(c2 => {
-        parts.push(c2.title, c2.roleLine, c2.stakes, c2.activities, c2.outputs, c2.outcomes, c2.translational, c2.impact);
-        (c2.evidence || []).forEach(e => parts.push(e.text, e.note));
-      });
-      ns.mentees.forEach(m => { const q = menteeParts(m); parts.push(m.stage, q.where, q.recog, q.why); });
-      parts.push(ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage);
-      const t = parts.filter(Boolean).join(" ").trim();
-      return t ? t.split(/\s+/).length : 0;
-    }
+    function draftWords() { const w = glanceWordSplit(); return w.contrib + w.mentor + w.ps; }
 
     // ── Exports ─────────────────────────────────────────────────────────────
     // Section headings in the agency's own names; the CV-FRQ's carry the French template names too.
-    function exportHeading(k) {
-      const s = SECTION_NAMES[isFrq() ? "cv-frq" : "tcv"];
-      return (s[k] + (isFrq() ? " / " + s[k + "Fr"] : "")).toUpperCase();
-    }
+    // r2-b-7: one heading rule for Word, Print and the .txt (the .txt in capitals).
+    const docHeading = (k) => { const s = SECTION_NAMES[isFrq() ? "cv-frq" : "tcv"]; return s[k] + (isFrq() ? " / " + s[k + "Fr"] : ""); };
+    function exportHeading(k) { return docHeading(k).toUpperCase(); }
+    // "SSHRC's", "the FRQ's", or "your agency's" when the agency is not chosen.
+    const templateOf = () => { const a = ns.lens.agency; return a === "frq" ? "the FRQ's" : (a && a !== "other" ? labelOf(AGENCIES, a) + "'s" : "your agency's"); };
     function formatReminder() {
       const a = ns.lens.agency, known = a && a !== "other";
       return "Before you submit: paste this into the current version of " + (known ? (a === "frq" ? "the FRQ's" : labelOf(AGENCIES, a) + "'s") : "your agency's") +
@@ -4817,50 +5362,44 @@
     // The first section, in export order; the CV-FRQ adds the team answer after program fit.
     function psParts(anchor) {
       const p = ns.ps;
-      return [anchor, p.challenge, p.streams, p.pivot, p.standing, p.programFit, isFrq() ? p.teamFit : "", p.horizon].filter(s => s && s.trim());
+      return [anchor, p.challenge, p.streams, p.pivot, p.standing, p.programFit, isFrq() ? p.teamFit : "", p.horizon].map(one).filter(Boolean);
     }
+    // W-19 (inferred): the .txt is the working copy. It carries the tool's notes in square brackets
+    // (kinds, what is still missing, the mentorship prompts); the section copies hold the text to paste.
+    const GAP_HINT = { stakes: "What problem was this work answering?", outcomes: "Is there something concrete you can name yet?",
+      impact: "What might this change at field scale? Hedged language is fine here.", ev: "Add one item a reviewer could check." };
     function buildExportText() {
-      const L = ns.lens, lines = [];
-      const rule = "=".repeat(60);
-      lines.push("NARRATIVE CV — WORKING DRAFT (V7 beta)");
-      const ctx = [labelOf(AGENCIES, L.agency), L.format ? (L.format === "cv-frq" ? "CV-FRQ" : "TCV") : "", L.program, labelOf(CAREER_STAGES, L.careerStage), disciplineLabel(L)].filter(Boolean);
-      if (ctx.length) lines.push("Context (for tailoring only — not for submission): " + ctx.join(" · "));
+      const lines = [], rule = "=".repeat(60);
+      lines.push("NARRATIVE CV, WORKING DRAFT (" + TOOL_LABEL + ")");
+      lines.push("[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]");
+      const ctx = profilePills();
+      if (ctx.length) lines.push("[Profile, for tailoring and not for submission: " + ctx.join(" · ") + "]");
       lines.push(formatReminder());
       lines.push("");
-      lines.push(rule); lines.push(exportHeading("ps") + "  (appears first; you wrote it last)"); lines.push(rule);
-      const anchor = (ns.ps.role || ns.ps.institution || ns.ps.field)
-        ? "I am " + articleFor(ns.ps.role) + " " + (ns.ps.role || "___") + " at " + (ns.ps.institution || "___") + ". My work is in " + (ns.ps.field || "___") + "." : "";
+      lines.push(rule); lines.push(exportHeading("ps") + "  [first in the CV, written last in the tool]"); lines.push(rule);
+      const anchor = psAnchorText();
       // V7-34: the "I am a…" line, then the rest of the statement as one paragraph.
       if (anchor) { lines.push(anchor); lines.push(""); }
-      const psRest = psParts("").map(x => x.trim()).join(" ");
+      const psRest = psParts("").join(" ");
       if (psRest) { lines.push(psRest); lines.push(""); }
       lines.push(rule); lines.push(exportHeading("contrib")); lines.push(rule);
-      liveContributions().forEach(({ c: contrib }, i) => {
-        const w = buildWeave(contrib);
-        lines.push((i + 1) + ". " + (contrib.title || "Untitled contribution"));
-        if (contrib.roleLine) lines.push("   [role] " + contrib.roleLine.trim());
-        if (w.parts.length) {
-          const keys = w.refs.map(r => r.key).join(",");
-          lines.push("   " + w.parts.map(p => p.t).join(" ") + (keys ? " [" + keys + "]" : ""));
-        }
-        if (w.refs.length) {
-          lines.push("   Evidence:");
-          w.refs.forEach(r => { lines.push("     " + r.key + ". " + r.text + (r.type ? "  (" + r.type + ")" : "")); if (r.note) lines.push("        " + r.note); });
-        }
-        if (w.gaps.length) w.gaps.forEach(g => lines.push("   [gap] " + g));
+      const miss = missingList();
+      liveContributions().forEach(({ c: contrib, i }, pos) => {
+        const w = assembleContribution(contrib);
+        lines.push((pos + 1) + ". " + (w.title || "Untitled contribution"));
+        if (w.body || w.keys.length) lines.push("   " + w.body + (w.keys.length ? (w.body ? " " : "") + "(" + w.keys.join(", ") + ")" : ""));
+        w.refs.forEach(r => { lines.push("   " + r.key + ". " + r.text + (r.type ? "  [" + r.type + "]" : "")); if (r.note) lines.push("      " + r.note); });
+        miss.filter(m => m.step === "contrib" && m.i === i).forEach(m => {
+          const k = m.ev ? "ev" : (m.field || "").replace(/^c[^-]*-/, "");
+          lines.push("   [Still missing: " + m.label.split(": ").slice(1).join(": ") + "." + (GAP_HINT[k] ? " " + GAP_HINT[k] : "") + "]");
+        });
         lines.push("");
       });
       lines.push(rule); lines.push(exportHeading("mentor")); lines.push(rule);
-      const mc = ns.mentorCounts;
-      const totals = MENTOR_COUNT_LABELS.filter(([k]) => mc[k]).map(([k, , out]) => mc[k] + " " + countNoun(mc[k], out));
+      const totals = mentorTotalsParts();
       if (totals.length) lines.push("Totals (last five years): " + totals.join(", "));
-      const traj = ns.mentees.filter(menteeHasContent);
-      if (traj.length) {
-        lines.push("Where the people I trained went:");
-        traj.forEach(m => { const q = menteeParts(m); lines.push("   - " + q.label + (q.where ? " → " + q.where : "") + (q.recog ? ". Recognition: " + q.recog : "") + (q.why ? ". " + q.why : "")); });
-      }
-      [["How I mentor", ns.mentorPhilosophy], ["Who gets in, and what I changed", ns.mentorEDI], ["Who else I mentor", ns.mentorCrossStage]]
-        .filter(([, v]) => v && v.trim()).forEach(([k, v]) => lines.push(k + ": " + v.trim()));
+      ns.mentees.filter(menteeHasContent).forEach(m => lines.push(menteeSentence(m)));
+      PF().forEach(f => { if (one(ns[f.k])) lines.push("[" + f.label + "] " + one(ns[f.k])); });
       lines.push("");
       return lines.join("\n");
     }
@@ -4917,56 +5456,56 @@
       const font = PRINT_FONT[ns.lens.agency] || PRINT_FONT.other;
       const fontName = /Arial/.test(font) ? "12-point Arial" : "12-point Times New Roman";
       let html = (forWord
-          ? "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Narrative CV — working draft</title><style>" +
+          ? "<html lang='en' xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Narrative CV, working draft</title><style>" +
             "@page Section1{size:8.5in 11in;margin:2cm;}div.Section1{page:Section1;}" +
             "body{font-family:" + font + ";font-size:12pt;line-height:1.2;color:#000;}" +
             ".word-note{color:#555;font-style:italic;}"
-          : "<!doctype html><html><head><meta charset='utf-8'><title>Narrative CV — print view</title><style>" +
+          : "<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Narrative CV, print view</title><style>" +
             "@page{size:letter;margin:2cm;}" +
             "body{font-family:" + font + ";font-size:12pt;line-height:1.2;color:#000;max-width:17.6cm;margin:2rem auto;padding:0 1rem;}") +
         "h1{font-size:12pt;font-weight:bold;margin:0 0 6pt;}h2{font-size:12pt;font-weight:bold;margin:12pt 0 4pt;}p{margin:0 0 6pt;}" +
         "sup{font-weight:bold;} .contrib{margin:0 0 8pt;} .ctitle{font-weight:bold;}" +
         ".evbox{border-left:2px solid #999;padding:0 0 0 8pt;margin:4pt 0 0;font-size:12pt;}" +
         ".screen-note{font-family:system-ui,sans-serif;font-size:13px;color:#555;background:#fff8e1;border:1px solid #f9ca24;padding:8px 12px;margin:0 0 1.5rem;line-height:1.5;}" +
+        ".screen-note button{display:block;margin:8px 0 0;font:600 14px system-ui,sans-serif;padding:8px 18px;min-height:44px;border:0;border-radius:6px;background:#912338;color:#fff;cursor:pointer;}" +
+        ".screen-note button:focus-visible{outline:2px solid #912338;outline-offset:2px;}" +
         "@media print{.screen-note{display:none;} body{margin:0;padding:0;max-width:none;}}</style></head><body>";
       const whose = ns.lens.agency === "frq" ? "the FRQ's" : (ns.lens.agency && ns.lens.agency !== "other" ? labelOf(AGENCIES, ns.lens.agency) + "'s" : "your agency's");
       html += forWord
-        ? "<div class='Section1'><p class='word-note'>Working draft from the Pathways narrative CV tool (" + esc(TOOL_VERSION) + "), set in " + fontName + " and headed with the section names of " + esc(whose) + " template. Paste each section into the matching section of the current version of " + esc(whose) + " template, keep within the page limit (" + PAGE_LIMIT + "), then delete this paragraph.</p>"
-        : "<p class='screen-note'>Working draft from the Pathways narrative CV tool (" + esc(TOOL_VERSION) + "), set in " + fontName + ". This is not the template: paste your text into the current version of " + esc(whose) + " template before you submit, and do not exceed the page limit (" + PAGE_LIMIT + "). This note does not print.</p>";
-      html += "<h2>" + esc(secName("ps")) + "</h2>";
-      const anchor = (ns.ps.role || ns.ps.institution || ns.ps.field)
-        ? "I am " + articleFor(ns.ps.role) + " " + esc(ns.ps.role || "___") + " at " + esc(ns.ps.institution || "___") + ". My work is in " + esc(ns.ps.field || "___") + "." : "";
+        ? "<div class='Section1'><p class='word-note'>Working draft from the Pathways narrative CV tool (" + esc(TOOL_LABEL) + "), set in " + fontName + " and headed with the section names of " + esc(whose) + " template. Paste each section into the matching section of the current version of " + esc(whose) + " template, keep within the page limit (" + PAGE_LIMIT + "), then delete this paragraph." + (ns.lens.agency === "frq" ? " The CV-FRQ also asks for your name in the header and the document title in the footer; the template has room for both." : "") + "</p>"
+        : "<div class='screen-note'><p>Working draft from the Pathways narrative CV tool (" + esc(TOOL_LABEL) + "), set in " + fontName + ". Paste your text into the current version of " + esc(whose) + " template before you submit, and keep within the page limit (" + PAGE_LIMIT + "). This note does not print.</p><button type='button' onclick='window.print()'>Print</button></div>";
+      html += "<h2>" + esc(docHeading("ps")) + "</h2>";
+      const anchor = esc(psAnchorText());
       if (anchor) html += "<p>" + anchor + "</p>";
       const psRest = psParts("").map(x => x.trim()).join(" ");
       if (psRest) html += "<p>" + esc(psRest) + "</p>";
-      html += "<h2>" + esc(secName("contrib")) + "</h2>";
+      html += "<h2>" + esc(docHeading("contrib")) + "</h2>";
       liveContributions().forEach(({ c: contrib }, i) => {
-        const w = buildWeave(contrib);
-        html += "<div class='contrib'><p><span class='ctitle'>" + (i + 1) + ". " + esc(contrib.title || "Untitled contribution") + ".</span> ";
-        if (contrib.roleLine) html += "<em>" + esc(contrib.roleLine.trim()) + "</em> ";
-        html += w.parts.map(p => esc(p.t)).join(" ");
-        html += w.refs.map(r => "<sup>" + r.key + "</sup>").join("");
+        // W-14, W-16, W-17: the shared assembly; the headline on its own line with no added full stop.
+        const w = assembleContribution(contrib);
+        html += "<div class='contrib'><p><span class='ctitle'>" + (i + 1) + ". " + esc(w.title || "Untitled contribution") + "</span><br>";
+        html += esc(w.body) + (w.keys.length ? (w.body ? " " : "") + "<sup>" + w.keys.join(", ") + "</sup>" : "");
         html += "</p>";
         if (w.refs.length) {
           html += "<div class='evbox'>";
-          w.refs.forEach(r => { html += "<div><b>" + r.key + ".</b> " + esc(r.text) + (r.type ? " <span class='note'>(" + esc(r.type) + ")</span>" : "") + (r.note ? "<br>" + esc(r.note) : "") + "</div>"; });
+          w.refs.forEach(r => { html += "<div><b>" + r.key + ".</b> " + esc(r.text) + (r.note ? "<br>" + esc(r.note) : "") + "</div>"; });
           html += "</div>";
         }
         html += "</div>";
       });
-      html += "<h2>" + esc(secName("mentor")) + "</h2>";
-      const mc = ns.mentorCounts;
-      const totals = MENTOR_COUNT_LABELS.filter(([k]) => mc[k]).map(([k, , out]) => esc(mc[k]) + " " + countNoun(mc[k], out));
+      html += "<h2>" + esc(docHeading("mentor")) + "</h2>";
+      const totals = mentorTotalsParts();
       if (totals.length) html += "<p><b>Totals (last five years):</b> " + totals.join(", ") + "</p>";
       const traj = ns.mentees.filter(menteeHasContent);
-      traj.forEach(m => { const q = menteeParts(m); html += "<p>" + esc(q.label) + (q.where ? " → " + esc(q.where) : "") + (q.recog ? ". Recognition: " + esc(q.recog) : "") + (q.why ? ". " + esc(q.why) : "") + "</p>"; });
-      [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(s => s && s.trim()).forEach(s => { html += "<p>" + esc(s.trim()) + "</p>"; });
+      traj.forEach(m => { html += "<p>" + esc(menteeSentence(m)) + "</p>"; });
+      [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].map(one).filter(Boolean).forEach(s => { html += "<p>" + esc(s) + "</p>"; });
       html += (forWord ? "</div>" : "") + "</body></html>";
       return html;
     }
     function openPrintView() {
       const win = window.open("", "_blank");
       if (win) { win.document.write(buildDraftHtml(false)); win.document.close(); }
+      return !!win;
     }
     // Word opens an HTML file saved as .doc with its fonts, headings and margins intact; no library,
     // no network call. It is a working draft in the template's section order, set in the agency's font.
@@ -4982,8 +5521,7 @@
     function sectionText(k) {
       const out = [];
       if (k === "ps") {
-        const anchor = (ns.ps.role || ns.ps.institution || ns.ps.field)
-          ? "I am " + articleFor(ns.ps.role) + " " + (ns.ps.role || "___") + " at " + (ns.ps.institution || "___") + ". My work is in " + (ns.ps.field || "___") + "." : "";
+        const anchor = psAnchorText();
         if (anchor) out.push(anchor);
         const rest = psParts("").map(t => t.trim()).join(" ");
         if (rest) out.push(rest);
@@ -4991,22 +5529,19 @@
       }
       if (k === "contrib") {
         liveContributions().forEach(({ c: contrib }, pos) => {
-          const w = buildWeave(contrib);
-          const keys = w.refs.map(r => r.key).join(",");
-          const body = [contrib.roleLine ? contrib.roleLine.trim() : ""].concat(w.parts.map(p => p.t)).filter(Boolean).join(" ");
-          const block = [(pos + 1) + ". " + (contrib.title || "Untitled contribution")];
-          if (body) block.push(body + (keys ? " [" + keys + "]" : ""));
-          w.refs.forEach(r => block.push(r.key + ". " + r.text + (r.type ? " (" + r.type + ")" : "") + (r.note ? "\n   " + r.note : "")));
+          const w = assembleContribution(contrib);
+          const block = [(pos + 1) + ". " + (w.title || "Untitled contribution")];
+          if (w.body || w.keys.length) block.push(w.body + (w.keys.length ? (w.body ? " " : "") + "(" + w.keys.join(", ") + ")" : ""));
+          w.refs.forEach(r => block.push(r.key + ". " + r.text + (r.note ? "\n   " + r.note : "")));
           out.push(block.join("\n"));
         });
         return out.join("\n\n");
       }
-      const mc = ns.mentorCounts;
-      const totals = MENTOR_COUNT_LABELS.filter(([key]) => mc[key]).map(([key, , label]) => mc[key] + " " + countNoun(mc[key], label));
+      const totals = mentorTotalsParts();
       if (totals.length) out.push("Totals (last five years): " + totals.join(", "));
       const traj = ns.mentees.filter(menteeHasContent);
-      if (traj.length) out.push(traj.map(m => { const q = menteeParts(m); return q.label + (q.where ? " → " + q.where : "") + (q.recog ? ". Recognition: " + q.recog : "") + (q.why ? ". " + q.why : ""); }).join("\n"));
-      [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(t => t && t.trim()).forEach(t => out.push(t.trim()));
+      if (traj.length) out.push(traj.map(menteeSentence).join("\n"));
+      [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].map(one).filter(Boolean).forEach(t => out.push(t));
       return out.join("\n\n");
     }
 
@@ -5052,7 +5587,7 @@
       out.push("Context: " + [labelOf(AGENCIES, L.agency) + (L.format ? " (" + (L.format === "cv-frq" ? "CV-FRQ" : "TCV") + ")" : ""),
         disciplineLabel(L), labelOf(CAREER_STAGES, L.careerStage),
         (L.workMode || []).map(w => labelOf(WORK_MODES, w)).join(" + ")].filter(Boolean).join(" · ") +
-        " · competition named: " + (L.program && L.program.trim() ? "yes" : "no"));
+        " · competition named: " + (competitionName() ? "yes" : "no"));
       if ((L.otherField || "").trim()) out.push("Field not listed, as the researcher named it: " + L.otherField.trim().slice(0, 80));
       out.push("Steps (visits, active minutes): " + stages().map(st => st.short + " " + (S.visits[st.key] || 0) + "×, " + mins(S.stageMs[st.key]) + " min").join(" · "));
       const started = ns.contributions.filter(c2 => c2.title || c2.activities);
@@ -5335,7 +5870,8 @@
     // Reset, step two: the browser confirm, then the clear. Step one is resetWarning().
     function resetDraft(e) {
       if (e) e.preventDefault();
-      if (!confirm("Are you sure? This clears your draft from this browser. A draft file you saved stays where you saved it.")) return false;
+      setTimeout(() => { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); announce("Draft cleared."); }, 0);
+      resumeStore();
       try { localStorage.removeItem(NCV_KEY); } catch (_) {}
       ns = defaultState();
       resetUI();
@@ -5343,30 +5879,46 @@
       renderStage();
       return true;
     }
-    // Reset, step one: an inline warning inside `container`. Focus moves to the warning; Cancel
-    // removes it and returns focus to `trigger` (the Reset button). `question` is worded per context.
-    function resetWarning(container, question, trigger) {
-      const old = container.querySelector(".v7-warn");
-      if (old) { old.focus(); return old; }
-      const w = el("div", "v7-warn"); w.setAttribute("role", "group"); w.tabIndex = -1;
-      const q = el("p", null, question); q.id = "v7-warn-q"; w.setAttribute("aria-labelledby", "v7-warn-q");
+    // W-45 (inferred, option A): every confirmation in the tool is this inline warning inside
+    // `container`: a question, Cancel and a named action. Focus moves to the warning; Cancel or Escape
+    // removes it and returns focus to `trigger`. opts.after places it after that element.
+    let warnSeq = 0;
+    function inlineConfirm(container, question, trigger, actionLabel, onGo, opts) {
+      opts = opts || {};
+      const old = container.querySelector(":scope > .v7-warn");
+      if (old) old.remove();
+      const w = el("div", "v7-warn" + (opts.cls ? " " + opts.cls : "")); w.setAttribute("role", "group"); w.tabIndex = -1;
+      const q = el("p", null, question); q.id = "v7-warn-q" + (++warnSeq); w.setAttribute("aria-labelledby", q.id);
       w.appendChild(q);
       const acts = el("div", "v7-warn-actions");
       const cancel = el("button", "btn btn-outline", "Cancel"); cancel.type = "button";
-      cancel.addEventListener("click", () => { w.remove(); if (trigger) trigger.focus(); });
-      const go = el("button", "btn btn-primary", "Clear my draft"); go.type = "button";
-      go.addEventListener("click", () => { resetDraft(); });
+      cancel.addEventListener("click", () => { w.remove(); if (trigger && trigger.isConnected) trigger.focus(); });
+      const go = el("button", "btn btn-primary", actionLabel); go.type = "button";
+      go.addEventListener("click", () => { if (go._next) return go._next(); w.remove(); onGo(); });
       acts.appendChild(cancel); acts.appendChild(go);
       w.appendChild(acts);
       w.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.stopPropagation(); cancel.click(); } });
-      container.appendChild(w);
+      if (opts.after && opts.after.parentNode === container) opts.after.after(w); else container.appendChild(w);
       w.focus();
+      return w;
+    }
+    // Reset: two steps in one warning (DECIDED: a double reset). Step one asks; step two replaces the
+    // question in place; Clear my draft then clears. One wording wherever Reset draft appears.
+    function resetWarning(container, question, trigger) {
+      const w = inlineConfirm(container, "Clear your draft from this browser? Save a draft file first if you want to keep it.", trigger, "Clear my draft", () => {});
+      const go = w.querySelector(".btn-primary");
+      go._next = () => {
+        w.querySelector("p").textContent = "Are you sure? This clears your draft from this browser. A draft file you saved stays where you saved it.";
+        go._next = () => { w.remove(); resetDraft(); };
+        w.focus();
+      };
       return w;
     }
     document.getElementById("v7-home").addEventListener("click", (e) => { e.preventDefault(); goStage("start"); });
 
     document.getElementById("v4-guide-top").href = GUIDE_URL;
     loadState();
+    showLoadFailed();
     updateNoteBtn();
     if (ns.mode && ns.profileConfirmed && ns.stageKey !== "start" && ns.stageKey !== "setup") reentryPending = true;
     renderStage();

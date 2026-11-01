@@ -1,0 +1,45 @@
+NARRATIVE CV — WORKING DRAFT (V7 beta)
+Context (for tailoring only — not for submission): CIHR · TCV · Project Grant · Mid career · Health / clinical + Social sciences
+Before you submit: paste this into the current version of CIHR's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  (appears first; you wrote it last)
+============================================================
+I am a nurse scientist at a teaching hospital in Eastshore. My work is in perioperative nursing and patient-partnered research.
+
+For ten years my research has addressed one question, why patients recover unevenly after surgery when care is organised around staff routines instead of the person in the bed. Three strands of work address it: a guideline on early mobility after cardiac surgery, a trial protocol designed with patients who live with chronic wounds and a training program that teaches nurses to find delirium. All three put the front-line nurse and the patient at the centre of the design. I came to research from the cardiac ward, where I spent eleven years as a bedside nurse before returning to graduate school. That background is why every project starts from what a nurse can do in a shift. I hold a CIHR operating grant and a provincial health-research chair, two hospitals use my guideline, and the health authority has put my training course into nurse orientation. Project Grant funds research that moves from design to practice with partners, and my record is strongest where patients and nurses design the work together. The next phase tests the mobility guideline in rural hospitals, where nurse staffing is thin and patient transfer is common.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A clinical practice guideline for early mobility after cardiac surgery, adopted by two hospitals
+   [role] I co-led the guideline panel with a physiotherapy lead and wrote the nursing mobility protocol.
+   Patients recovering from cardiac surgery were kept in bed for days because wards had no shared standard for when to start walking, so recovery times varied widely between units and between hospitals. A 14-member panel of nurses, physiotherapists, surgeons and two patient advisors reviewed 62 trials and wrote a staged walking protocol. We piloted it on two cardiac wards over 12 months. The work produced a clinical practice guideline, a bedside checklist for nurses and a peer-reviewed systematic review. Two hospitals adopted the guideline in 2025, and median time to first walk after surgery fell by one day on the pilot wards. A patient advisor on the panel, recovering from her own valve repair, asked that the checklist be written in plain language, and the ward now hands it to families on day one. If other cardiac programs adopt the staged protocol, patients across the health region could leave hospital sooner and with fewer complications. [a]
+   Evidence:
+     a. Early mobility after cardiac surgery: clinical practice guideline, adopted by Northgate General and Lakeside Regional hospitals (2025).  (Policy / practice uptake)
+        Both hospital quality committees approved it as the standard of care for post-surgical walking.
+
+2. A trial protocol designed with patients who live with chronic wounds
+   [role] I led the design of the protocol with the patient advisory council and wrote the outcome list in plain language.
+   Trials of wound care rarely measure what patients say matters most, such as sleep, odour and time spent on dressing changes, so results do not guide daily care. With 11 patient partners from the hospital advisory council, we ran six co-design sessions, ranked 24 candidate outcomes and built a protocol for a 240-patient multicentre trial across five sites. The work produced a registered trial protocol, a patient-reported outcome set and a protocol paper. The funder approved the trial in 2026, and three more wound-care teams adopted the outcome set in their own studies. At the third co-design session a patient partner who lives with a leg ulcer said that the smell of a dressing decides whether she goes to the clinic at all, so the group moved the odour question to the top of the outcome set. If the outcome set becomes standard, wound-care trials could report what patients value and speed its way into clinical guidelines. [a]
+   Evidence:
+     a. Patient-partnered outcome set for chronic wound trials: protocol paper, Journal of Wound Research (2026).  (Peer-reviewed)
+        It sets the outcome set that all five trial sites will use.
+
+3. A bedside training program that taught 300 nurses to assess delirium
+   [role] I designed the curriculum and trained the first cohort of nurse educators.
+   Delirium after surgery is often missed on night shifts, because nurses are not trained to screen for it and the first signs are subtle. We built a four-hour simulation course, taught it to nurses on six units over two years and audited screening on each unit every month. The program produced a screening toolkit, a simulation case library and a trained group of nine nurse educators. Screening on the six units rose from 38 percent to 91 percent, and the health authority now includes the course in orientation for new nurses. If other hospitals teach the course, delirium could be found and treated sooner for older patients across the province. [a,b]
+   Evidence:
+     a. Delirium screening course added to new-nurse orientation, Eastshore Health Authority (2026).  (Policy / practice uptake)
+     b. Provincial Nursing Innovation Award, Eastshore Nurses Association (2026).  (Award / recognition)
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 5 master's students, 2 undergraduate researchers
+Where the people I trained went:
+   - Master's → Government, Eastshore Health Authority, Surgical services, nurse manager. Recognition: Provincial graduate nursing scholarship (2023). She now leads the unit that uses the delirium screening course from my training program.
+   - Undergraduate research → Eastshore University, Master of Nursing program
+How I mentor: In a first meeting I ask each student which ward problem they want to solve and write their first-year plan around it, then review the plan with them every quarter and hand over the unit audit once they can explain it back to the nurses.
+Who gets in, and what I changed: Our patient advisory council includes people who have never been inside a research project, so I pay partners from the first meeting and run sessions at hours and places that suit shift workers.
+Who else I mentor: I mentor two nurse managers at the health authority who are starting their own audits. With one of them I sat in on her first unit meeting, then reviewed her audit plan before she presented it.

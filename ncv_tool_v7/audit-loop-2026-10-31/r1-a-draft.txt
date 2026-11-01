@@ -1,0 +1,69 @@
+NARRATIVE CV — WORKING DRAFT (V7 beta)
+Context (for tailoring only — not for submission): SSHRC · TCV · Insight Development Grants    · Early career · Social sciences
+Before you submit: paste this into the current version of SSHRC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Arial in black type.
+
+============================================================
+PERSONAL STATEMENT  (appears first; you wrote it last)
+============================================================
+I am an assistant professor of sociology at Made-up University. My work is in housing, tenancy and community-engaged sociology.
+
+Tenants in older rental buildings are displaced by renovations that no public record counts, and the people most affected hold the least information about how common this is. 1. Counting renovation-based evictions (linked permit and tribunal records)
+2. Plain-language materials written with tenants
+3. Open data that tenants’ associations and councils can reuse
+The thread: tenants hold evidence that public records leave out. I grew up in a walk-up building that was emptied for renovation, and I trained in survey methods during my postdoc; I came back to this city to work with the association that organized my neighbours. A 2025 article in the Journal of Housing Studies (23 citations), an open dataset of 412 buildings downloaded 740 times, a Canadian Housing Research Network data award & a community report in three languages. An Insight Development Grant funds the stage I am at: testing the linkage method in two more provinces with community partners before a larger application. Next I will repeat the linkage in two more provinces, with tenants’ associations leading the questions.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Tracing how “renovictions” cluster in older rental buildings
+   [role] I co-led the study with a colleague at another university and wrote the paper as lead author; Tenants & Allies of Maple Court (the tenants’ association) set the research questions with us.
+   Tenants in mid-sized Ontario cities were being asked to leave older apartment buildings for “renovations”, and no provincial record counted these departures, so councils and tenants could not tell how common they were. • Linked 3 years of municipal renovation-permit records to eviction filings in 4 cities
+• Interviewed 62 tenants and 9 city staff (2022–2024)
+• Co-designed the survey with Tenants & Allies of Maple Court One open-access article, “Renovation-based displacement in mid-sized Ontario cities: evidence from permit and tribunal records,” Journal of Housing Studies 38(2), 211–236, https://doi.org/10.1234/jhs.2025.0417 (DOI 10.1234/jhs.2025.0417), cited 23 times as of October 2026 & used as the baseline in the 2026 provincial housing review. It reports 412 renovation-permit buildings and 1,187 eviction filings across 4 cities. - Cited in the 2026 provincial housing review
+- Tenants & Allies of Maple Court used the building-level counts in its 2025 hearing
+- City council voted to start a renovation-permit registry If renovation-permit and eviction records were linked routinely, tenants’ associations and councils in other provinces could track “renovictions” as they happen. [a,b]
+   Evidence:
+     a. Okafor, A., & Lindqvist, S. (2025). Renovation-based displacement in mid-sized Ontario cities. Journal of Housing Studies, 38(2), 211–236. https://doi.org/10.1234/jhs.2025.0417  (Peer-reviewed)
+        First published count of renovation-based evictions in Ontario.
+Used by the Tenants & Allies of Maple Court brief to council.
+     b. Ontario Ministry of Municipal Affairs and Housing, Review of Residential Tenancy Protections (2026), section 4.2, which cites the article for building-level eviction counts.  (Policy / practice uptake)
+        The review took the article’s counts as its baseline for older buildings.
+
+2. An open building-level dataset of renovation permits and eviction filings
+   [role] I designed the linkage method, cleaned and documented the data with two research assistants, and negotiated the release terms with Tenants & Allies of Maple Court and the four cities.
+   Researchers, councils and tenants’ associations who wanted to count renovation-based evictions had to request permit and tribunal files one building at a time. 1) Linked permit records to eviction filings by civic address
+2) Removed names and unit numbers; reviewed by the university ethics board
+3) Wrote a 31-page data guide with the association A public dataset of 412 buildings and 1,187 eviction filings, deposited in the Borealis repository (doi:10.1234/BOREALIS/ABC123) with a 31-page data guide. Downloaded 740 times since March 2026. Two other research teams reused it, and the city of Hamilton cited it in a council report. In April 2026 a tenant organizer in Hamilton used the dataset to show a city councillor that 14 of 18 buildings on her street had a renovation permit before an eviction filing. Other provinces could build the same linkage if they publish permit records, so tenants’ groups could monitor “renovictions” without filing information requests. [a,b,c]
+   Evidence:
+     a. Okafor, A., & Lindqvist, S. (2026). Ontario renovation permits and eviction filings, 2021–2024 (Version 2) [Data set]. Borealis. https://doi.org/10.1234/BOREALIS/ABC123  (Dataset / tool)
+        Open licence; the first public linkage of permit and tribunal records in Canada.
+     b. Reuse by the Prairie Housing Lab to build a Winnipeg comparison file (working paper 2026-07).  (Replication / citation)
+        Shows the linkage method travels to a city with different permit rules.
+     c. Open Data Impact Award, Canadian Housing Research Network (2026).  (Award / recognition)
+        Given for a community-co-designed data release.
+
+3.   A plain-language community report for tenants facing “renovation” notices  
+   [role] I led the writing process: I ran the workshops, chaired the tenant editorial committee, and wrote the final text with its members.
+   Tenants who received “renovation” notices had no plain-language account of their rights, and the rights advice that existed was written for lawyers & paralegals. * Ran 6 evening workshops with 38 tenants in 3 buildings
+* Drafted the guide with a tenant editorial committee of 7
+* Tested two versions with 20 tenants & revised after their comments One 24-page report, “What To Do When The Renovation Notice Comes,” released in English, French and Spanish by Tenants & Allies of Maple Court (https://tenantsandallies.example.org/renovation-guide). 3,400 copies distributed; 5,100 downloads. Two legal clinics adopted the guide for intake and the association now hands it to every household that receives a notice. If tenants’ associations in other cities adapted the guide, more households facing a notice could act before a deadline passes. [a,b]
+   Evidence:
+     a. Maple Court Community Legal Clinic, Intake Manual, 3rd edition (2026), appendix C reproduces the guide’s notice checklist.  (Policy / practice uptake)
+        • Two clinics now use the checklist at intake
+• Staff report fewer missed deadlines
+     b. Local newspaper feature, “Tenants write their own playbook,” 14 March 2026 & radio interview on the guide.  (Media / public)
+        Reached readers beyond the three buildings; 600 downloads followed the week it ran.
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 1 master's student, 2 undergraduate researchers
+Where the people I trained went:
+   - Master's → Government, City of Maple Court, Housing Services. Recognition: Ontario Graduate Scholarship (2024). Joined the city’s housing policy team after co-authoring the permit-linkage paper & building the eviction-filings database.
+   - Undergraduate research → Made-up University, Faculty of Law (JD program). Recognition: Undergraduate Student Research Award (2024). Ran the tenant interviews in Cantonese & Mandarin and is now in the first year of a law degree.
+   - Undergraduate research → Community agency, Tenants & Allies of Maple Court, Organizing team. Joined the association as a part-time organizer after the study.
+How I mentor: • Weekly 30-minute check-ins with each research assistant
+• A shared one-page “who does what” sheet, revisited every month
+• Student names go first on any dataset or report they built
+Who gets in, and what I changed: Our partnership with Tenants & Allies of Maple Court brings in students who are tenants themselves; I paid for interpreter training and a transit pass so they could join the fieldwork.
+Who else I mentor: I mentor a new sessional instructor in the department; we reworked her first syllabus together and I introduced her to two community partners.

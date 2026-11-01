@@ -1,0 +1,73 @@
+# NCV V7 beta: code audit (Fable), 2026-10-31
+
+Read-only audit of the frozen copy `walk/r1/site/narrative-cv-prototype-v7.html` (5,505 lines; line numbers below refer to it). The 56 issues in `ncv_tool_v7/walkthrough-2026-10-30.md` (W-01 to W-57) are not repeated. Each finding was either confirmed by running the page in headless Chrome (driver `walk/cdp.js`, outputs under `walk/r1/fable/`) or tied to the code by reading.
+
+Counts: blocker 0 · major 3 · minor 6.
+
+One result worth stating up front because it is a negative: user text never reaches `innerHTML` unescaped. Every on-screen path uses `textContent`, the five SVG visuals escape through `gvEsc`, and the Word file and print view escape through `esc`. A headline, role line, stakes, activities and an evidence item set to `<b>bold</b> & "q" </textarea> <img src=x onerror=…>` rendered as literal text on the cards, in the Review preview, inside the Review SVGs and in the downloaded `.doc` (`walk/r1/fable/downloads/narrative-cv-draft-sshrc.doc`); nothing executed. No file name takes user input.
+
+---
+
+## F-1 · major · A malformed or hostile draft file crashes half-way through `applySaved`, leaves the half-applied state live, and the next save persists it
+
+- Lines: 1836–1878 (`applySaved`), 1949–1963 (`readDraftFile`), 1971–1977 (`r.onload` in `openDraftFile`), 1983–1999 (`saveState`), 2225–2228 (`visibilitychange`).
+- Scenario (confirmed by running): a file `{"format":"pathways-narrative-cv-draft","version":1,"draft":{…,"contributions":[{"title":"Good card","stakes":"Real text here"},null]}}` passes every check in `readDraftFile` (the wrapper and `version` are fine; `draft` is an object). `applySaved` reassigns `ns` on line 1837, then throws `TypeError: Cannot read properties of null (reading 'folded')` at line 1853. The throw is uncaught (no try/catch in `readDraftFile` or `r.onload`), so `alert(err)` never runs, the page stays on the start page, and the researcher sees nothing. `ns` is now the hostile object with its migration half done and `teamNotes`/`feedback`/`session` not restored. The first save after that, here a tab switch (`visibilitychange`, line 2226), wrote `{"lens":{"agency":"nserc"},"contributions":[{…"Good card"…},null],"profileConfirmed":true}` to `ncv-v7`. On reload, `loadState` threw again, fell to `defaultState()`, and the boot render saved that: the file's good card and the researcher's previous browser draft were both gone.
+- The same shape of failure comes from any non-string in a text field: `"title": 5` crashes at line 1870 (`(c[k] || "").trim()`); a number in `evidence[].text` crashes at line 1856; a non-string in `ps.*` at line 1872; `lens.program` as a number survives load and crashes `competitionName()` (3103) on the first Contributions render. Only the top-level containers are type-checked (`Array.isArray` on `contributions`, `mentees`, `workMode`).
+- Fix: make `applySaved` build into a local object and assign `ns` only on success; coerce every text field with a `str = (v) => typeof v === "string" ? v : ""` and drop array items that are not objects; wrap the call in `readDraftFile` in try/catch and return the "not a draft saved from this tool" sentence (restoring `keep`) when it throws.
+
+## F-2 · major · Any failure inside `applySaved` on page load wipes the stored draft, with no backup and no message
+
+- Lines: 1879–1884 (`loadState`), 2416 (`saveState()` at the end of every `renderStage`), 5498–5501 (boot).
+- Scenario (confirmed by running): `ncv-v7` holding a full draft with one bad field (`"title": 5`, twenty pages of stakes text and a statement answer) loads as a blank tool: `loadState` catches the throw, sets `ns = defaultState()`, and the boot `renderStage()` saves that default over the stored draft. After one load, `localStorage.ncv-v7` no longer contained "careful writing" or "big question"; the console held no error; the page showed "Start your draft".
+- This is the path F-1 ends on, and it is also the path every future migration bug ends on: one throw in `applySaved` after a V7.x change and every returning researcher opens an empty tool, with the only copy of their draft overwritten before they can act.
+- Fix: in the `catch`, copy the raw string to `ncv-v7-recovery` (with a timestamp) before anything else, keep `ns` at default but set a flag that blocks `saveState` until the researcher starts or resets, and show the existing `#v4-save-warning` line reworded ("Your saved draft could not be opened. A copy is kept; email us."). A single `try/catch` around `applySaved` in `loadState` that falls back per section (contributions, mentees, ps) would save most of the draft rather than none.
+
+## F-3 · major · Two tabs on the same draft: the last tab to save wins, silently
+
+- Lines: 1983–1999 (`saveState`), 2224 (`countEvent`), 2225–2228 (`visibilitychange` saves on hide, which Chrome also fires on navigation and tab close), 2416 (save on every render). No `storage` listener exists in the file (checked), and nothing compares the stored `lastSavedAt` with the tab's own.
+- Scenario (by reading): the tool is open in tab A and tab B, each holding its own `ns`. The researcher writes two contributions in A over an hour (each keystroke saves). They close A (A saves, fine) and later return to B, which still holds the morning's state; folding a card, picking an example or just switching away from B saves B's `ns` over A's. A's two contributions are gone from storage, and B shows no sign that anything changed. The reverse order loses B's work the same way. Nothing in the tool says "one tab at a time".
+- Fix: add `window.addEventListener("storage", …)` for `NCV_KEY`: if the stored `lastSavedAt` is newer than the tab's last write and the tab has no unsaved edits since its last save, re-run `loadState()` and re-render; otherwise set a `staleTab` flag that makes `saveState` refuse to write and shows a one-line banner ("This draft was changed in another tab. Reload to continue here."). As a minimum, have `saveState` read the stored stamp first and never overwrite a newer one.
+
+## F-4 · minor · The V6 offer survives only until the first reload, because an untouched visit already writes `ncv-v7`
+
+- Lines: 1899–1907 (offer gated on `!localStorage.getItem(NCV_KEY)`), 2416 (the boot render saves), 2749–2764 (`renderStart`).
+- Scenario (confirmed by running): with `ncv-v6` holding a V6 draft and no `ncv-v7`, the first load shows the "Open my V6 draft" box, but the boot `renderStage()` has already saved a blank V7 state (`mode: ""`). The researcher reads the start page and comes back tomorrow: no offer, no other route to the V6 draft (`ncv-v6` is still there, untouched). The comment says "offered once, on the first V7 visit"; a visit that was only a look should not use up the offer.
+- Fix: gate the offer on "no V7 draft with content" (`!draftHasContent(ns)`) plus a stored `ns.ui.v6Declined` set by "Start without it", rather than on the key's absence; or do not save on the boot render until the researcher starts.
+
+## F-5 · minor · Reset draft (and Load) leave `profileShown` stale, so a fresh Setup opens with all six questions at once
+
+- Lines: 3432 (`let profileShown = 0`, module scope), 3507–3510 (`reveal = Math.min(5, Math.max(reveal, profileShown - 1))`), 3635, 5465–5474 (`resetDraft` resets `ns` and `UI` only).
+- Scenario (confirmed by running): answer all six questions, Confirm profile, then Change → Reset draft → Clear my draft → confirm. The start page shows "Start your draft"; pressing it opens Setup with six `.v7-qblock`s and none answered, instead of the one-question-at-a-time reveal the step is built on. Loading a draft file saved mid-Setup (profile not confirmed) does the same when the current tab had reached a later question. The "Next question: …" announcement and the `revealed` animation also key off `profileShown`.
+- Fix: reset `profileShown = 0` in `resetDraft`, in `readDraftFile` and in the V6-offer handler (or derive it from `ns` rather than keeping it as tab state).
+
+## F-6 · minor · Removing the contribution whose evidence view is open leaves `UI.evCard` pointing at the card that takes its index
+
+- Lines: 3776–3787 (remove), 3797–3807 (evidence square sets `UI.evCard = i`), 3822 and 3867–3869 (`UI.evCard === i` picks the evidence view), 2953 (`UI.evCard` is an array index, not a `cid`).
+- Scenario (confirmed by running): two contributions; open card 1's evidence view ("+ Add evidence"); remove card 1 and confirm. Card 2 becomes index 0, is unfolded by line 3780, and renders in the evidence editor: header "What you wrote", zero `.v7-ev-item`s, a "+ Add an item" button, and no fields or "+ Add evidence" (the field view only returns after "Edit"). The researcher never opened evidence on that card. The blank-row insertion at 3802 does not run either, so the editor and the card disagree about whether an item exists.
+- Fix: set `UI.evCard = -1` in the remove handler (as the add handler does at 3725), or key `UI.evCard` by `cid` like `UI.active`.
+
+## F-7 · minor · Print view with popups blocked does nothing, says nothing, and still marks Export as done
+
+- Lines: 4817–4818 (`openPrintView(); done("", null)`), 5096–5099 (`if (win)` guard with no else), 4787 (`done` sets `ns.ui.exported = true`).
+- Scenario (confirmed silent by running with `window.open` returning null): pressing "Print view" leaves the status span empty and shows no warning; `done` still sets `exported`, so the rail's Export turns green (by reading: 2167) for an export that never happened. Blocked popups are the default for a first `window.open` in several browsers when the click is interpreted as untrusted (extensions, strict settings).
+- Fix: have `openPrintView` return `!!win`; on `false`, write "Your browser blocked the print window. Allow pop-ups for this page, or use the Word file." into the status span and skip `done`.
+
+## F-8 · minor (a11y) · The checks block under each field is a live region rebuilt on every keystroke
+
+- Lines: 3335 (`checks.setAttribute("aria-live", "polite")`), 3360–3366 (input → `runChecks()`), 2547–2564 (`renderChecks` clears and re-appends strengths, flags, the word count line and the read-back).
+- Scenario (by reading): typing "Over 12 months I ran the trial" into Activities changes the region's content on every character ("1 specific number", "7 words · 40 to 80 is a comfortable range here.", then the flags as they appear and disappear). A polite live region whose whole content is replaced each time queues the entire block for announcement after each pause, so a screen-reader user hears the checks over and over while writing. W-07 and W-08 covered `#v7-live` and the count throttle; this region is separate and not throttled.
+- Fix: drop `aria-live` from `.v7-f-checks` and announce a debounced one-line summary instead ("2 checks on this field" after 1.5 s of no typing, through `announceCount`), or set the live attribute only after the field has been idle.
+
+## F-9 · minor · An agency code outside `AGENCIES` (from a hand-edited or future file) crashes the text export and blanks the format note
+
+- Lines: 4941–4945 (`formatReminder`: `FONT_RULES[a].split(".")`), 772–777 (`FONT_RULES` has four keys), 2447 and 2456 (`known` is true for any non-empty, non-"other" code), 1849 (only the three old FRQ codes are normalised).
+- Scenario (by reading): a draft file with `"agency": "FRQ"` (typed by hand) or a code added by a later version opens normally, the Profile pill reads " · TCV" with no agency name, Setup's format note shows an empty "Font" row, and on Export both "Download text file" and "Copy draft" throw `TypeError: Cannot read properties of undefined (reading 'split')` inside `buildExportText`, so nothing downloads and the status stays blank. The Word file and print view fall back to Times New Roman silently.
+- Fix: in `applySaved`, map any `lens.agency` not in `AGENCIES` to `""` (and `lens.format` to `""`), and do the same for `careerStage`, `discipline`, `discipline2`, `workMode` items and `ui.exportFmt`; this is the enum half of the validator F-1 asks for.
+
+---
+
+## Structural risk for the next rounds
+
+The two things most likely to turn a small fix into a lost draft are both in the load path. `applySaved` is the single funnel for browser storage, draft files and the V6 offer, which is right, but it has no schema: every field is trusted, the assignment to `ns` happens before the migration runs, and the only guard is a `catch` that replaces the draft with defaults and then saves them (F-1, F-2). Any new field added in the next 20 rounds needs its own `|| ""`, and any mistake there is paid by the researcher. A twenty-line `normalizeDraft(raw)` that returns a fresh object or throws, called before `ns` is touched, with a recovery copy on failure, would make the rest of the tool safe to change. The save side has the mirror problem: `saveState` runs on every render, every keystroke and every `visibilitychange`, including the boot render and the navigation-away event, so the tool writes state it has not been asked to keep (F-4) and overwrites whatever another tab or an external clear left there (F-3, W-48).
+
+The second risk is duplicated assembly. The draft is assembled in four places (`draftPreview`, `buildExportText`, `buildDraftHtml`, `sectionText`), the "I am a … at … My work is in …" line is built in six (`psAnchorText`, `glanceWordSplit`, `draftWords`, and the three exports), the mentee line and the totals line in three each, `draftWords` and `glanceWordSplit` are the same function twice, and `crossBox` and `renderCrossRead` are two versions of one box. W-14 to W-20 are the drift this has already produced; batch 3's "one assembly" is the right fix and should also own the word count. About 600 lines are unreachable or switched off and still read as live code (`renderXray` and `analyzeDraft`, `buildAdvisorPacket`, `renderCrossRead`, `chipRow`, `menteeComplete`, the Feedback step, the note panel): each is a place a future edit can land without effect, and `sessionSummary` still reports `mode === "xray"`. UI state mixes stable ids (`UI.active` by `cid`) with array indices (`UI.evCard`, the person cards' `v7-ps0` ids, the `i` captured in every remove handler), which is where F-6 came from and where the next remove/reorder bug will come from. The native `confirm()`/`alert()` calls (W-45) also block the headless harness mid-click, so every automated run has to route around them. On the positive side, listeners are attached once at module scope (`scroll`, `focusin`, `input`, `click`, `visibilitychange`), timers are cleared, the per-keystroke work (lint, strip rebuild, debounced rail) is cheap, and the escaping discipline held under a hostile probe in every output.
