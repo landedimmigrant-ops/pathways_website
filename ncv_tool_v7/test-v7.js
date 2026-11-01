@@ -762,7 +762,7 @@ async function seed(state, extra) {
       document.getElementById('v7-home').click(); await w(150);
       q('.v7-path-reset').click(); await w(100); q('.v7-path-cont').click(); await w(100); a.warns=qa('.v7-warn').length;
       return a;`);
-    check("a level typed under Other keeps its capitals and takes the article of its letters (G-3)", /An MD-PhD trainee I trained is now at A made-up university\./.test(r.mentor), r.mentor);
+    check("a level typed under Other keeps its capitals and takes the article of its letters; a person under Other in a community-engaged profile is one you mentored (G-3, r9-b-1)", /An MD-PhD trainee I mentored is now at A made-up university\./.test(r.mentor), r.mentor);
     check("one inline warning at a time on a step (G-6)", r.warns === 1, r);
   }
 
@@ -858,7 +858,7 @@ async function seed(state, extra) {
       a.kinds=qa('.v7-kind').length;
       rail('Export').click(); await w(150);
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
-      qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
+      const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(!cb) return {err:'no copy', btns:qa('.btn').map(b=>b.innerText).join('|')}; cb.click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       a.shared=!!q('.v7-shared-note'); a.agree=null;
       rail('Review').click(); await w(150); a.agree=!!qa('.v7-selfcheck label').find(l=>/Agreement:/.test(l.innerText));
       // history: Export, Back to Review, then lock Review from another tab and press Back: the closed entry is passed over
@@ -896,7 +896,7 @@ async function seed(state, extra) {
       rail('Personal statement').click(); await w(150); a.pivot=(q('[data-f="ps-pivot"] .v7-f-more')||{}).textContent||'';
       rail('Export').click(); await w(150);
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
-      qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
+      const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(!cb) return {err:'no copy', btns:qa('.btn').map(b=>b.innerText).join('|')}; cb.click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       q('#v7-chg').click(); await w(150); setsel(q('#v7-chg-st'),'early'); qa('#v7-chg-panel .btn-primary').find(b=>/Confirm/.test(b.innerText)).click(); await w(200); a.live=q('#v7-live').textContent;
       return a;`);
     check("past five contributions a line on choosing appears; each folded row shows its length (r6-a-1, r6-a-2)", /You have 6 contributions/.test(r.sel) && r.meta.every(m => /\d+ w$/.test(m)), r);
@@ -904,7 +904,7 @@ async function seed(state, extra) {
     check("removing a written contribution names its words and can be undone for ten seconds (r6-a-3)", /with its [\d,]+ words/.test(r.warn) && r.undo && r.n1 === 5 && r.n2 === 6 && r.first === "cr1", r);
     check("'my team ran it' is not your own role; a pause and a counterfactual are not flagged; a year counts as a date (r6-b-6, r6-b-4, r6-b-5)", !/Your own role is named/.test(r.roleTick) && !/hedge|does not say who|No numbers or dates/.test(r.actFlags), r);
     check("the totals and How you got here say where a leave goes, without stating an agency's rule (r6-b-1, r6-b-2)", /if a leave fell inside it/.test(r.tilesHelp) && /If a leave, a move between institutions/.test(r.pivot), r);
-    check("a 'went on to do' answer that starts with a verb joins the sentence (r6-a-7); a profile change names what changed (r6-b-7)", /made-up health authority and now leads the made-up analytics team\./.test(r.mentor) && /Profile updated: career stage/.test(r.live), r);
+    check("a 'went on to do' answer that starts with a verb joins the sentence, without a second “now” (r6-a-7, r9-a-13); a profile change names what changed (r6-b-7)", /made-up health authority and leads the made-up analytics team\./.test(r.mentor) && /Profile updated: career stage/.test(r.live), r);
   }
 
   console.log("Audit loop, round 6: Fable's review of round 5");
@@ -964,7 +964,7 @@ async function seed(state, extra) {
     check("parts that do not end a sentence get a full stop where they join (r7-a-2)", /The made-up papers were scattered\. I led the made-up build\./.test(r.prev), r.prev.slice(0, 300));
     check("a list still in the draft is named on Review and Export (r7-a-1); Copy draft says it carries notes (r7-a-6)", r.listsHead.some(t => /Lists to rewrite/i.test(t)) && r.lists.some(t => /What you did/.test(t)) && /reads as a list|still read/.test(r.listNote) && /with notes/.test(r.copyBtn), r);
     check("trainee answers that start with a verb join the sentence in any case; with nothing before them they follow 'I trained' (r7-a-3, M-2)", /A made-up city and joined the made-up housing team\./.test(r.mentor) && /A postdoctoral fellow I trained now leads a made-up lab of six\./.test(r.mentor) && /is now at A made-up university, received a made-up prize and is now a made-up policy analyst\./.test(r.mentor), r.mentor);
-    check("with a second field, What resulted names that field's outputs (r7-b-7)", /Name outputs from STEM \/ engineering too/.test(r.outQ), r.outQ);
+    check("with a second field, What resulted names that field's outputs (r7-b-7)", /Name outputs from STEM and engineering too/.test(r.outQ), r.outQ);
     // M-3: an ordinary Back to the start page is not "an earlier draft"
     await send("Page.resetNavigationHistory");
     await seed(null);
@@ -991,7 +991,7 @@ async function seed(state, extra) {
       const cs=q('[data-f="m-mentorCrossStage"] .v7-box'); cs.focus(); setv(cs,'I mentor two made-up staff. It was a prestigious grant.'); await w(80); a.prest=qa('[data-f="m-mentorCrossStage"] .v4-flag').map(x=>x.textContent).join('|');
       rail('Export').click(); await w(150);
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
-      qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip;
+      const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(!cb) return {err:'no copy', btns:qa('.btn').map(b=>b.innerText).join('|')}; cb.click(); await w(40); a.mentor=clip;
       qa('button').find(b=>/^Copy working draft/.test(b.innerText)).click(); await w(40); a.txt=clip; navigator.clipboard.writeText=ow;
       return a;`);
     check("the .txt names lists to rewrite in its header, above the contributions (N-6)", r.txt.indexOf("[Lists to rewrite") > -1 && r.txt.indexOf("[Lists to rewrite") < r.txt.indexOf("1. Made-up walking protocol"), r.txt.slice(0, 600));
@@ -1052,6 +1052,87 @@ async function seed(state, extra) {
       && /If it answered a practical problem, name the problem too\.$/.test(fq.humStem.stakes), { c: fq.stemCommunity.stakes, sh: fq.stemHum.stakes, hs: fq.humStem.stakes });
     check("humanities and creative profiles get their own wording for What you did and What already changed (Q-18)",
       /sources, archives/.test(fq.humanities.act) && /drawn on this work/.test(fq.humanities.out) && /seen, used or responded/.test(fq.creative.out) && /^Which methods, sites/.test(fq.stem.act), { h: fq.humanities, c: fq.creative });
+  }
+
+  console.log("Audit loop, round 9");
+  {
+    const base = () => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    const blankC = (cid) => ({ cid, title: "Made-up contribution", stakes: "", roleMode: "", roleLine: "", activities: "", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} });
+    // Checks on the community-engaged fixture (Social sciences + Community-engaged).
+    const st = base(); st.contributions = [blankC("r91")];
+    st.mentees = [{ stageKind: "doctoral", stage: "Doctoral", kind: "health", org: "A made-up hospital", unit: "", recognition: "", why: "Now leads a made-up hospital program.", folded: false },
+      { stageKind: "masters", stage: "Master's", kind: "", org: "", unit: "", recognition: "", why: "Rose now runs a made-up lab.", folded: false },
+      { stageKind: "other", stage: "Community researcher", stageOther: "Community researcher", kind: "indigenous", org: "", unit: "", recognition: "", why: "Leads the made-up survey team.", folded: false }];
+    await seed(st);
+    r = await js(H + `await w(200); const a={}; const box=(k)=>q('[data-f$="-'+k+'"] .v7-box'); const fl=(k)=>qa('[data-f$="-'+k+'"] .v4-flag').map(x=>x.textContent).join('|');
+      const put=async(k,v)=>{ box(k).focus(); setv(box(k),v); await w(80); return fl(k); };
+      a.twelve=await put('activities','We ran the survey at the twelve made-up sites over a year. I designed it.');
+      a.child=await put('activities','I was a child in that region, and we all knew the made-up river.');
+      a.years=await put('activities','2019. Joined the made-up lab\\n2021. Led the made-up survey');
+      a.dash=await put('activities','— one made-up thing\\n— two made-up things');
+      a.by=await put('activities','Three cohorts were taught to 24 made-up workers by the partners’ nurses and Elders.');
+      a.withC=await put('activities','The score was developed in workshops with the crew.');
+      a.bare=await put('activities','The score was developed in 2023.');
+      a.howMany=await put('activities','I saw how many made-up patients arrived late, in 2021.');
+      a.qHedge=await put('stakes','How might a made-up warehouse become a score for dance?');
+      a.asked=await put('stakes','In 2019 the partners asked how nurses could give care at home.');
+      a.hedge=await put('stakes','The made-up practice could be read as a craft.');
+      setv(box('stakes'),'a corpus of made-up letters'); await w(80);
+      a.q={ act:(q('[data-f$="-activities"] .v7-q')||{}).innerText||'', tr:(q('[data-f$="-translational"] .v7-q')||{}).innerText||'' };
+      // r9-b-12: a role level re-reads the card's other fields.
+      setv(box('activities'),'We ran the made-up survey in 2023.'); await w(80); a.weBefore=fl('activities');
+      box('roleLine').focus(); await w(150); const lv=qa('[data-f$="-roleLine"] .v7-mini')[0]; if(!lv) return {err:'no role level', html:(q('[data-f$="-roleLine"]')||{}).outerHTML}; lv.click(); await w(120); a.weAfter=fl('activities');
+      // r9-b-13: a key press on the chosen level keeps it; a mouse click on it clears it.
+      lv.dispatchEvent(new MouseEvent('click',{bubbles:true,detail:0})); await w(80); a.kept=lv.getAttribute('aria-checked');
+      lv.dispatchEvent(new MouseEvent('click',{bubbles:true,detail:1})); await w(80); a.cleared=lv.getAttribute('aria-checked'); setv(box('roleLine'),'I designed the made-up survey.'); await w(80);
+      // r9-b-14: one Tab stop in the field column.
+      a.tabStops=qa('.v7-fcol .v7-fsq').filter(b=>b.tabIndex===0).length; a.sq=qa('.v7-fcol .v7-fsq').length;
+      a.join=qa('.v4-connective').map(x=>x.textContent).join('|');
+      rail('Personal statement').click(); await w(200); a.ps=(q('[data-f="ps-challenge"] .v7-q')||{}).innerText||'';
+      rail('Review').click(); await w(200); a.prev=(q('.v7-draft-body')||{}).innerText||''; a.self=(q('.v7-selfcheck')||{}).innerText||'';
+      rail('Mentorship').click(); await w(200); a.mhead=qa('#ncv-v4-root h3').map(x=>x.innerText).join('|');
+      rail('Export').click(); await w(150);
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(!cb) return {err:'no copy', btns:qa('.btn').map(b=>b.innerText).join('|')}; cb.click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
+      return a;`);
+    check("spelled-out numbers after 'the' count again; 'I was a child' does not name your part (R-1, R-6)", !/No numbers or dates/.test(r.twelve) && /“we”/.test(r.child), { twelve: r.twelve, child: r.child });
+    check("one list detector: year-led lines are not a list, dash lines are (R-5)", !/reads as a list/.test(r.years) && /reads as a list/.test(r.dash), { years: r.years, dash: r.dash });
+    check("a passive with its agent named by 'by' or 'with' people is not flagged; a bare one is (r9-b-2, r9-a-11)", !/does not say who/.test(r.by) && !/does not say who/.test(r.withC) && /does not say who/.test(r.bare), { by: r.by, withC: r.withC, bare: r.bare });
+    check("'how many' is not vague; 'could' in a reported question is not a hedge (r9-b-16, r9-b-10)", !/how many\?/.test(r.howMany) && !/hedge/.test(r.asked), { howMany: r.howMany, asked: r.asked });
+    check("a question in The problem or question may use 'might'; a hedged statement there gets the part's own message (r9-a-1)", !/hedge/.test(r.qHedge) && /as it stood/.test(r.hedge), { qHedge: r.qHedge, hedge: r.hedge });
+    check("a part starting with 'a' prints with a capital (R-4)", /A corpus of made-up letters\./.test(r.prev), r.prev.slice(0, 200));
+    check("a role level re-reads the card's other fields, so the 'we' flag goes (r9-b-12)", /“we”/.test(r.weBefore) && !/“we”/.test(r.weAfter), { before: r.weBefore, after: r.weAfter });
+    check("a key press on the chosen role level keeps it; a click on it clears it (r9-b-13)", r.kept === "true" && r.cleared === "false", r);
+    check("the field column is one Tab stop (r9-b-14)", r.tabStops === 1 && r.sq > 5, { tabStops: r.tabStops, sq: r.sq });
+    check("community-engaged wording: What you did, One moment, the join, Mentorship headings and the self-check; the main field's own statement wording comes first (r9-b-1, r9-b-4, r9-b-11)",
+      /communities or partners/.test(r.q.act) && /in use by a specific person/.test(r.q.tr) && /in response/.test(r.join) && /keep returning to/.test(r.ps)
+      && /People you have trained or mentored in the last five years/.test(r.mhead) && /where they are now/.test(r.mhead) && /names the parts the partners led or hold/.test(r.self) && /their data/.test(r.self),
+      { q: r.q, join: r.join, ps: r.ps, mhead: r.mhead });
+    check("trainee answers: 'Now leads…' joins, a name before 'now' stays whole, a community researcher is one you mentored (R-3, r9-b-1)",
+      /A doctoral student I trained now works at A made-up hospital and leads a made-up hospital program\./.test(r.mentor) && /I trained\. Rose now runs a made-up lab\./.test(r.mentor) && /A community researcher I mentored/.test(r.mentor), r.mentor);
+    // Creative / fine arts, team-based: the wording follows the field.
+    const sc = base(); sc.lens = Object.assign({}, sc.lens, { discipline: "creative", discipline2: "", workMode: ["team"] }); sc.contributions = [blankC("r92")];
+    await seed(sc);
+    r = await js(H + `await w(200); const g=(k)=>((q('[data-f$="-'+k+'"] .v7-q')||{}).innerText||'').trim(); const hp=(k)=>((q('#cr92-'+k+'-hp')||q('[id$="-'+k+'-hp"]')||{}).textContent||'');
+      const a={role:g('roleLine'), imp:g('impact'), outH:hp('outputs')};
+      setv(q('[data-f$="-stakes"] .v7-box'),'What can a made-up warehouse teach about dance?'); const box=q('[data-f$="-activities"] .v7-box'); box.focus(); setv(box,'The audience may linger afterwards.'); await w(80); a.hedge=qa('[data-f$="-activities"] .v4-flag').map(x=>x.textContent).join('|');
+      setv(q('[data-f$="-activities"] .v7-box'),'I made it.'); setv(q('[data-f$="-outputs"] .v7-box'),'Three made-up works.'); await w(80);
+      a.join=qa('.v4-connective').map(x=>x.textContent).join('|');
+      q('#ev-open-r92').click(); await w(200); a.kind=((qa('.v7-kind')[0])||{}).innerText||'';
+      return a;`);
+    check("creative wording: role, What could change, What resulted's example, the hedge example, the join and the first evidence kind (r9-a-1 to r9-a-10)",
+      /who made the other parts/.test(r.role) && /practice, audience or community/.test(r.imp) && /The cycle produced/.test(r.outH) && /performances were not filmed/.test(r.hedge) && /in response/.test(r.join) && /^Exhibition/.test(r.kind.trim()), r);
+    // R-2: a larger browser text size gets the one-column layout; a raised page text size keeps the content usable.
+    await send("Emulation.setDeviceMetricsOverride", { width: 1000, height: 800, deviceScaleFactor: 1, mobile: false });
+    await send("Page.setFontSizes", { fontSizes: { standard: 32, fixed: 26 } });
+    await seed(Object.assign(base(), { contributions: [blankC("r93")] }));
+    const big = await js(H + `await w(250); return {toggle:getComputedStyle(q('#v7-rail-toggle')).display, sw:document.documentElement.scrollWidth};`);
+    await send("Page.setFontSizes", { fontSizes: { standard: 16, fixed: 13 } });
+    await send("Emulation.setDeviceMetricsOverride", { width: 769, height: 900, deviceScaleFactor: 1, mobile: false });
+    await seed(Object.assign(base(), { contributions: [blankC("r94")] }));
+    const root = await js(H + `document.documentElement.style.fontSize='200%'; await w(300); const c=q('.narrative-stage-content'); const a={sw:document.documentElement.scrollWidth, content:Math.round(c.getBoundingClientRect().width)}; document.documentElement.style.fontSize=''; return a;`);
+    await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
+    check("large browser text gets one column; 200% page text at 769 px keeps the content column usable with no sideways scroll (R-2)", big.toggle !== "none" && big.sw <= 1000 && root.sw <= 769 && root.content >= 300, { big, root });
   }
 
   console.log("Register (W-57): the tool's prompt strings");

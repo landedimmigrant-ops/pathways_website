@@ -217,3 +217,27 @@ _none yet_
 **After round 8 (Prem, 2026-11-01):** P-1 decided and applied. "Stakes" is now "The problem" on the card, the legend, the charts, Review, Export and the .txt; the data key stays `stakes`. Tests: 218 of 218 (217 + 1).
 
 **Q-18 (Prem, 2026-11-01): field wording, same data.** The first part is "The problem or question" in the contributions and the statement, and its question follows the field (problem for STEM and health, question for humanities and creative, both for social sciences, need or question for community-engaged work). Field wording also added to What you did, What already changed, What resulted, One moment and the mentoring help (INFERRED, Q-19). From round 9, each persona also reads the wording as their field. Tests: 221 of 221 (218 + 3).
+
+### Round 9 · Fable's review of round 8 and the field wording, a research-creation choreographer, a health researcher working with a First Nations health authority (2026-11-01)
+
+**Who walked it** (the round 9 snapshot = commit `1fcad1c`), all findings in [r9-findings.md](audit-loop-2026-10-31/r9-findings.md)
+- **Fable review** of round 8 and Q-18: 4 major · 2 minor (number words after "the", the rail column at large text, sentence-case trainee answers, "a …" left in lower case). The field wording itself checked out.
+- **r9-a** Mid-career choreographer, FRQSC research-creation (CV-FRQ), Creative / fine arts + Social sciences, reading every prompt as their field: 1 major · 12 minor · 5 polish ([draft](audit-loop-2026-10-31/r9-a-draft.txt)).
+- **r9-b** Senior health researcher, CIHR Project Grant, community-engaged with a First Nations health authority that sets the questions and owns the data, keyboard only for one contribution: 1 major · 11 minor · 3 polish ([draft](audit-loop-2026-10-31/r9-b-draft.txt)).
+
+**What they wrote**
+- r9-a: site-specific dance works made with warehouse workers, a public archive of movement scores, a community dance program for older adults; about 1,500 words.
+- r9-b: a home-care nursing program led by the health authority, a community-owned diabetes dataset, community health workers trained as co-researchers; 1,505 words.
+
+**Fixed this round**
+- **Review (R-1 to R-6):** number words count again after "the"; the breakpoints in em, with a capped rail and wrapping step buttons; trainee answers typed with a capital join the sentence and names stay whole; "a …" and accented starts take a capital; one list detector; "I was a …" needs a role word.
+- **Field fit, creative (r9-a):** a question in The problem or question is not checked for hedges; the hedge example, What resulted's example, What could change, the role question, Standing's help, the evidence introduction, kinds and notes, the join word, the Mentorship placeholders and help all follow the field; dance companies count as arts organizations.
+- **Field fit, community-engaged (r9-b):** Mentorship says "trained or mentored" and "where they are now", and a community researcher prints as one you mentored; What you did, What resulted, What could change, One moment, the statement, Standing, the mentoring prompts, the self-check and the field panel name the partners' part; the Dataset and Community document placeholders.
+- **Checks and keyboard:** passives with "by" or "with" people; "could" in a reported question; "how many"; a role change re-reads the card; Space keeps the chosen role level; the field column is one Tab stop.
+
+**INFERRED this round (for Prem to override):** the em breakpoints and the 30% rail cap; "I mentored" for a person under Other in a community-engaged profile; the main field's wording comes before the community-engaged wording where a field has its own (Q-22); all the new field wording (listed in r9-findings.md, part of Q-19).
+
+**Open for Prem from this round:** role levels for partner-led and co-created work (Q-20); an "Independent or self-employed artist" destination (Q-21); a community-engaged worked example in which a partner raised the question (with Q-8).
+
+**Tests:** 234 of 234 (221 + 13).
+
