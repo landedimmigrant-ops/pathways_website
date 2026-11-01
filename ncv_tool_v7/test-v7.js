@@ -1224,6 +1224,56 @@ async function seed(state, extra) {
     check("STEM wording: What resulted's example and the evidence introduction (r10-b-8, r10-b-10)", /a tool, a method and three papers/.test(r.outH) && /conference paper/.test(r.evIntro) && /patent/.test(r.evIntro), { outH: r.outH, evIntro: r.evIntro });
   }
 
+  console.log("Audit loop, round 11");
+  {
+    const base = () => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    const blankC = (cid) => ({ cid, title: "Made-up contribution", stakes: "", roleMode: "", roleLine: "", activities: "", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} });
+    const st = base(); st.lens = Object.assign({}, st.lens, { discipline: "stem", workMode: ["community", "solo"] });
+    st.contributions = [Object.assign(blankC("r111"), { roleMode: "led", stakes: "x" })];
+    st.mentorCounts = Object.assign({}, st.mentorCounts || {}, { other: "1" }); st.mentorOtherLabel = "agents de recherche communautaires";
+    st.mentees = [{ stageKind: "masters", stage: "Master's", kind: "industry", org: "Shopify", unit: "", recognition: "", why: "Works as a made-up data scientist", folded: false },
+      { stageKind: "doctoral", stage: "Doctoral", kind: "government", org: "Statistics Canada", unit: "", recognition: "", why: "Joined Statistics Canada's made-up census team", folded: false },
+      { stageKind: "postdoc", stage: "Postdoctoral", kind: "university", org: "UBC", unit: "", recognition: "", why: "Visiting scholar at UBC", folded: false },
+      { stageKind: "doctoral", stage: "Doctoral", kind: "health", org: "The Ottawa Hospital", unit: "", recognition: "", why: "", folded: false },
+      { stageKind: "other", stage: "Analyst", stageOther: "Analyst", kind: "", org: "", unit: "Marketing", recognition: "", why: "", folded: false }];
+    await seed(st);
+    r = await js(H + `await w(200); const a={}; const box=(k)=>q('[data-f$="-'+k+'"] .v7-box'); const fl=(k)=>qa('[data-f$="-'+k+'"] .v4-flag').map(x=>x.textContent).join('|');
+      const put=async(k,v)=>{ box(k).focus(); setv(box(k),v); await w(80); return fl(k); };
+      a.fr=await put('activities','Nous avons tenu vingt-quatre ateliers avec 3 200 personnes.'); a.frMeta=qa('[data-f$="-activities"] .v4-meta, [data-f$="-activities"] .v4-ok').map(x=>x.textContent).join('|');
+      a.frIf=await put('outputs','Trois articles, dont un à facteur d’impact de 14,2.');
+      a.byEnd=await put('activities','The made-up tool was tested in clinics by the end-users in 2023.');
+      a.note=((q('.v7-first-note')||{}).textContent||'');
+      setv(box('activities'),'l’équipe a tenu 24 made-up ateliers.'); await w(60);
+      rail('Review').click(); await w(200); a.prev=(q('.v7-draft-body')||{}).innerText||'';
+      rail('Mentorship').click(); await w(200); a.edi=((q('[data-f="m-mentorEDI"] .v7-q')||{}).innerText||'').trim();
+      rail('Export').click(); await w(150);
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(cb){ cb.click(); await w(40); } a.mentor=clip; navigator.clipboard.writeText=ow;
+      return a;`);
+    check("French: number words and '3 200' count, 'facteur d'impact' is caught, the note says the checks read English (r11-a-1, r11-a-4, r11-a-5)", !/No numbers/.test(r.fr) && /impact/i.test(r.frIf) && /They read English/.test(r.note), { fr: r.fr, frMeta: r.frMeta, frIf: r.frIf });
+    check("an elided French start takes a capital (r11-a-3); 'by the end-users' names an agent (T-15)", /L’équipe a tenu 24/.test(r.prev) && !/does not say who/.test(r.byEnd), { byEnd: r.byEnd, prev: r.prev.slice(0, 300) });
+    check("the equity question follows community-engaged first, whatever the order (T-11)", /^Who joins the research team/.test(r.edi), r.edi);
+    check("trainee sentences keep a typed organization, join a listed verb before a name, leave titles whole, keep 'The Ottawa Hospital', and say 'in Marketing' (T-2, T-4, T-5, T-13, T-14)",
+      /now works in industry at Shopify and works as a made-up data scientist\./.test(r.mentor) && /at Statistics Canada and joined Statistics Canada's made-up census team\./.test(r.mentor)
+      && /I trained is now at UBC\. Visiting scholar at UBC\./.test(r.mentor) && /now works at The Ottawa Hospital\./.test(r.mentor) && /is now in Marketing\./.test(r.mentor), r.mentor);
+    check("a group name under Other prints as typed (r11-a-10)", /1 agents de recherche communautaires/.test(r.mentor), r.mentor.slice(0, 200));
+    // r11-b: what a screen reader gets.
+    const sb = base(); sb.contributions = [Object.assign(blankC("r112"), { title: "A made-up study", stakes: "A made-up gap.", roleMode: "led", activities: "I ran it.", outputs: "A made-up report.", evidence: [{ text: "A made-up article", type: "Peer-reviewed", note: "" }, { text: "A made-up dataset", type: "Dataset / tool", note: "" }] })];
+    sb.lens = Object.assign({}, sb.lens, { year: "" });
+    await seed(sb);
+    r = await js(H + `await w(200); const a={}; a.title=document.title; a.join=qa('.v4-connective').every(x=>x.getAttribute('aria-hidden')==='true') && qa('.v4-connective').length>0;
+      a.sq=qa('.v7-fcol .v7-fsq').some(b=>b.title);
+      const cur=qa('.v7-ri').find(b=>b.getAttribute('aria-current')==='step'); cur.click(); await w(150); a.curFocus=document.activeElement.tagName;
+      q('#ev-open-r112').click(); await w(200);
+      a.labels=qa('label[for^="evtr112"]').map(l=>l.textContent).join('|');
+      const chg=qa('.v7-ev-item button').find(b=>/^Change/.test(b.innerText)); if(chg){ chg.click(); await w(150); const k=q('.v7-kind[aria-checked="true"]'); k.focus(); k.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true})); await w(150); a.kindMid=JSON.parse(localStorage.getItem('ncv-v7')).contributions[0].evidence[0].type;
+        const g=q('.v7-kinds'); if(g) g.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); await w(150); }
+      a.kindAfter=JSON.parse(localStorage.getItem('ncv-v7')).contributions[0].evidence[0].type;
+      return a;`);
+    check("screen reader: page title names the step, join words hidden, no repeated titles on the column, the current rail step focuses its heading (r11-b-1, r11-b-4, r11-b-14, r11-b-19)", /^Contributions · /.test(r.title) && r.join && !r.sq && r.curFocus === "H2", r);
+    check("evidence fields name their item; Escape in the kind chooser keeps the kind it had (r11-b-2, r11-b-10)", /Evidence item a: The item\|Evidence item b: The item/.test(r.labels) && r.kindMid !== "Peer-reviewed" && r.kindAfter === "Peer-reviewed", { labels: r.labels, kindMid: r.kindMid, kindAfter: r.kindAfter });
+  }
+
   console.log("Register (W-57): the tool's prompt strings");
   {
     const src = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v7.html"), "utf8");

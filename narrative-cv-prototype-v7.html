@@ -266,8 +266,9 @@
     /* r10-b-11: text the shared styles fix in px follows the browser's text size here. */
     .v7-skip { font-size: 1rem; }
     #ncv-v4-root .narrative-intro-text { font-size: 1.125rem; }
+    #ncv-v4-root .narrative-intro-text.v7-lede { font-size: 1rem; } /* T-9 */
     .v7-skip:focus { position: fixed; top: calc(var(--v7-bar, 43px) + 8px); z-index: 1001; }
-    @media (width > 48em) {
+    @media (min-width: 48.001em) {
       .v7-qcount { margin: 0; }
       .v7-qcount .v7-dots { display: none; }
       .v7-prof-col { display: grid; grid-template-columns: minmax(0, 1fr) 24px; column-gap: 12px; }
@@ -275,7 +276,7 @@
       .v7-prof-col > .v7-fcol { grid-column: 2; grid-row: 1; align-self: start; position: sticky; top: calc(var(--v7-bar, 43px) + 16px); }
       .v7-fsq:disabled { cursor: default; }
     }
-    @media (width <= 48em) {
+    @media (max-width: 48em) {
       .v7-qcount { position: sticky; top: var(--v7-bar, 43px); z-index: 5; background: #fff; padding: 8px 0; margin: 0 0 4px; }
     }
     .v7-prog { display: inline-flex; align-items: center; }
@@ -361,13 +362,13 @@
     .v7-fsq.is-cur i { width: 0; height: 0; border-radius: 0; background: none; border-style: solid; border-width: 6px 10px 6px 0; border-color: transparent #912338 transparent transparent; }
     .v7-fsq:not(.is-cur):not(.is-on):not(:disabled):hover i { border-color: #912338; }
     .v7-fsq:focus-visible { outline: 2px solid #912338; outline-offset: 1px; }
-    @media (width > 48em) {
+    @media (min-width: 48.001em) {
       .v7-card.v7-card-col { display: grid; grid-template-columns: minmax(0, 1fr) 24px; column-gap: 12px; padding-right: 12px; }
       .v7-card.v7-card-col > * { grid-column: 1; }
       .v7-card.v7-card-col > .v7-fcol { grid-column: 2; grid-row: 2 / span 30; align-self: start; position: sticky; top: calc(var(--v7-bar, 43px) + 16px); }
       .v7-card.v7-card-col > .v7-card-h .v7-dots { display: none; }
     }
-    @media (width <= 48em) {
+    @media (max-width: 48em) {
       .v7-fcol { display: none; }
       .v7-card.v7-card-col > .v7-card-h { position: sticky; top: var(--v7-bar, 43px); z-index: 5; background: var(--v7-card); margin: -14px -14px 12px; padding: 12px 14px 8px; border-radius: 10px 10px 0 0; }
       .v7-card.v7-card-col > .v7-card-h { align-items: center; }
@@ -522,7 +523,7 @@
     .v7-ref-note { display: inline-block; padding-left: 1.4em; color: #555; }
     .v7-draft.is-shut .v7-draft-body { height: 0; padding-top: 0; padding-bottom: 0; visibility: hidden; }
     /* r2-a-7: a phone scrolls the page; a box that scrolls inside it showed a tenth of the draft. */
-    @media (width <= 48em) { .v7-draft:not(.is-shut) .v7-draft-body { height: auto; overflow: visible; } }
+    @media (max-width: 48em) { .v7-draft:not(.is-shut) .v7-draft-body { height: auto; overflow: visible; } }
     .v7-order { margin: 0 0 24px; }
     .v7-slot { font-size: 0.8rem; color: var(--muted); margin: 12px 0 6px; padding-left: 2px; max-width: 70ch; }
     .v7-slot b { color: var(--text); }
@@ -553,7 +554,7 @@
     .v7-pages s { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; }
     .v7-pages-scale { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); }
     .v7-selfcheck label { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; font-size: 0.9rem; color: #333; cursor: pointer; }
-    .v7-selfcheck input { margin-top: 0.25em; width: 1.1em; height: 1.1em; accent-color: #912338; flex-shrink: 0; } /* r10-b-11 */
+    .v7-selfcheck input { margin-top: 0.25em; width: 1rem; height: 1rem; accent-color: #912338; flex-shrink: 0; } /* r10-b-11 */
     .v7-closing { margin: 12px 0 0; padding: 10px 14px; border: 1.5px solid var(--v7-card-b); background: #fafafa; font-size: 0.88rem; border-radius: 8px; }
 
     /* Export */
@@ -580,13 +581,13 @@
     /* N-5: the rail column grows with the text size (220 px at 100%), so its labels keep whole words.
        R-2: the breakpoints are in em, so a larger browser text size gets the one-column layout sooner;
        the cap keeps the content column usable when only the page's own text size is raised. */
-    @media (width > 48em) { .narrative-module-shell:not(.is-start) { grid-template-columns: min(13.75rem, 30vw) minmax(0, 1fr); } }
-    @media (width <= 48em) { #ncv-v4-root .narrative-progress-panel { position: static; } }
+    @media (min-width: 48.001em) { .narrative-module-shell:not(.is-start) { grid-template-columns: min(13.75rem, 30vw) minmax(0, 1fr); } }
+    @media (max-width: 48em) { #ncv-v4-root .narrative-progress-panel { position: static; } }
     .narrative-module-shell.is-start .v7-paths { max-width: 720px; }
     .v7-rail-in { animation: v7-rail-in 400ms ease-out both; }
     @keyframes v7-rail-in { from { opacity: 0; } to { opacity: 1; } }
     @media (prefers-reduced-motion: reduce) { .v7-rail-in { animation: none; } }
-    @media (width <= 48em) {
+    @media (max-width: 48em) {
       .narrative-module-shell { grid-template-columns: minmax(0, 1fr); }
       .v7-tailored-pills { flex-wrap: nowrap; overflow: hidden; white-space: nowrap; }
       .v7-qblock, .v7-card, .v7-dash { padding: 14px 14px 16px; }
@@ -608,9 +609,9 @@
     /* Design check, 2026-10-27 */
     /* r4-b-1: the top bar's height plus, at 768 px and below, the sticky card header or Setup's count row. */
     html { scroll-padding-top: calc(var(--v7-bar, 43px) + 13px); }
-    @media (width <= 48em) { html { scroll-padding-top: calc(var(--v7-bar, 43px) + var(--v7-stick, 0px) + 12px); } }
+    @media (max-width: 48em) { html { scroll-padding-top: calc(var(--v7-bar, 43px) + var(--v7-stick, 0px) + 12px); } }
     /* A short screen keeps the card header in the flow, so the sticky stack does not fill it. */
-    @media (width <= 48em) and (height <= 32.5em) {
+    @media (max-width: 48em) and (max-height: 32.5em) {
       .v7-card.v7-card-col > .v7-card-h, .v7-qcount { position: static !important; }
       html { scroll-padding-top: calc(var(--v7-bar, 43px) + 12px); }
     }
@@ -624,7 +625,7 @@
     .v7-glance { align-items: start; }
     .v7-anchor-line { display: block; line-height: 2.6; }
     .v7-anchor-line .v7-input { display: inline-block; max-width: 100%; vertical-align: middle; }
-    @media (width <= 48em) {
+    @media (max-width: 48em) {
       .narrative-nav { flex-wrap: wrap; gap: 10px; }
       .narrative-nav .v7-nav-note { flex-basis: 100%; order: -1; margin: 0; }
       .narrative-nav .btn { white-space: nowrap; }
@@ -711,14 +712,14 @@
     .v7-gv-art svg { display: block; width: 100%; height: auto; max-width: 100%; }
     .v7-gv-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--v7-rule); font-size: 0.85rem; }
     .v7-gv-exp { background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 10px; padding: 16px 22px 18px; margin: 0 0 16px; }
-    @media (width <= 48em) {
+    @media (max-width: 48em) {
       .v7-gv-grid { grid-template-columns: minmax(0, 1fr); }
       .v7-gv-exp { padding: 14px 14px 16px; }
     }
     .narrative-stage-header .v4-kicker { color: #912338; letter-spacing: 0.06em; font-weight: 600; }
     .narrative-nav .v7-nav-note { flex: 1 1 240px; margin: 0 12px; align-self: center; }
     #ncv-v4-root .narrative-nav { flex-wrap: wrap; gap: 10px; } /* R-2: the step buttons wrap at large text instead of running off the page */
-    @media (width <= 48em) {
+    @media (max-width: 48em) {
       .v7-paths { grid-template-columns: 1fr; }
       .v7-path-cont { flex-direction: row; align-items: center; gap: 12px; }
       .v7-path-cont .v7-arrow { margin: 0 0 0 auto; padding: 0; align-self: center; }
@@ -735,7 +736,7 @@
       .narrative-module-shell.is-start { display: flex; flex-direction: column; }
     }
     /* r8-a-1 (inferred): a phone held sideways is wide but short; it gets one column and the folded rail. */
-    @media (width > 48em) and (height <= 32.5em) and (pointer: coarse) {
+    @media (min-width: 48.001em) and (max-height: 32.5em) and (pointer: coarse) {
       #ncv-v4-root .narrative-module-shell { grid-template-columns: minmax(0, 1fr); }
       #ncv-v4-root .narrative-progress-panel { position: static; padding: 0; max-height: none; overflow: visible; }
       .v7-rail-toggle { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 48px; padding: 0 16px; background: none; border: 0; font: inherit; font-size: 1rem; font-weight: 700; color: #912338; cursor: pointer; text-align: left; }
@@ -749,7 +750,7 @@
     .v7-rail-foot button { font: inherit; font-size: 0.85rem; text-align: left; background: none; border: 0; padding: 4px 0; color: #912338; text-decoration: underline; cursor: pointer; min-height: 32px; }
     .v7-rail-foot .v7-rail-saved { font-size: 0.75rem; color: var(--muted); margin: 0; }
     /* W-53, W-55: phone sizes. 16 px fields stop the iOS zoom on focus; 44 px targets (D-14); charts keep a readable size and scroll sideways inside their figure. */
-    @media (width <= 48em) {
+    @media (max-width: 48em) {
       .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: max(16px, 0.92rem); } /* r10-b-1: the 16 px floor, scaled above it */
       .v7-select, .v7-input, .v7-chg-row .v7-input, .v7-chg-row .v7-select, .v7-tile input, .v7-rail-foot button { min-height: 44px; }
       .v7-icon-btn { width: 44px; height: 44px; }
@@ -762,7 +763,7 @@
     }
     /* r1-b-3 (audit 2026-10-31): a touch screen wider than a phone (a tablet) takes the phone's
        16 px fields and 44 px targets; the layout stays the desktop one. */
-    @media (pointer: coarse) and (width > 48em) {
+    @media (pointer: coarse) and (min-width: 48.001em) {
       .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: max(16px, 0.92rem); } /* r10-b-1: the 16 px floor, scaled above it */
       .v7-select, .v7-input, .v7-chg-row .v7-input, .v7-chg-row .v7-select, .v7-tile input, .v7-rail-foot button,
       .v7-mini, .v7-btn-small, .v7-ri, .v7-linkbtn, .v7-ex-btn { min-height: 44px; }
@@ -943,7 +944,7 @@
         { beat: "impact", text: "care at system scale, and for whom" }
       ],
       social: [
-        { beat: "stakes", text: "a gap in how a problem is understood or governed" },
+        { beat: "stakes", text: "a gap in how a problem is understood or governed, or a question the field has not settled" },
         { beat: "role", text: "the agenda you set, or the part you led" },
         { beat: "activities", text: "the study, the data, the fieldwork, the framework" },
         { beat: "outputs", text: "books, datasets, methods, briefs, public work" },
@@ -1696,7 +1697,7 @@
     // H3: prestige / journal-metric language — reviewer guidelines say to disregard these, so they
     // are flagged rather than rewarded as specificity. Absorbs the three journal-prestige phrases
     // that used to live in VAGUE_LIST ("leading journal" included, per the decisions log's move-out).
-    const PRESTIGE_TERMS = ["impact factor","JIF","h-index","h index","i10-index","top-tier","top tier","high-impact","high impact","prestigious","Q1 journal","leading journal"];
+    const PRESTIGE_TERMS = ["impact factor","JIF","h-index","h index","i10-index","top-tier","top tier","high-impact","high impact","prestigious","Q1 journal","leading journal","facteur d'impact","facteur d’impact","indice h","revue prestigieuse","revues prestigieuses"];
     // Guide sync (P-12): reviewers are asked to disregard the JIF and other journal-based metrics;
     // the h-index is DORA's concern, not a reviewer instruction, so it gets its own reason.
     const AUTHOR_METRIC_RE = /h[-\s]?index|i10/i;
@@ -1720,7 +1721,10 @@
       /\bJIF\s*[:=]?\s*\d+(?:[.,]\d+)?/g,
       /\bIF\s*[:=]?\s*\d+(?:[.,]\d+)?/g,
       /\bimpact\s+factors?\b(?:\s+\w+){0,3}?\s*[:=]?\s*\d+(?:[.,]\d+)?/gi,
-      /\bh[-\s]?index\b(?:\s+\w+){0,3}?\s*[:=]?\s*\d+(?:[.,]\d+)?/gi
+      /\bh[-\s]?index\b(?:\s+\w+){0,3}?\s*[:=]?\s*\d+(?:[.,]\d+)?/gi,
+      // r11-a-5: French ("facteur d'impact de 14,2", "indice h de 11").
+      /\bfacteurs?\s+d['’]impact\b(?:\s+\S+){0,3}?\s*[:=]?\s*\d+(?:[.,]\d+)?/gi,
+      /\bindice\s+h\b(?:\s+\S+){0,3}?\s*[:=]?\s*\d+(?:[.,]\d+)?/gi
     ];
     function prestigeMetricMatches(t) {
       const found = [];
@@ -1736,7 +1740,10 @@
     // H8: spelled-out numbers count as specific numbers too ("two-year" counts as one hit).
     const NUMBER_WORDS = ["one","two","three","four","five","six","seven","eight","nine","ten",
       "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty",
-      "thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred","thousand","dozen"];
+      "thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred","thousand","dozen",
+      // r11-a-4: French ("un" and "une" are left out: they are also articles).
+      "deux","trois","quatre","cinq","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","vingt",
+      "trente","quarante","cinquante","soixante","cent","cents","mille","douzaine"];
     // r8-a-5: "one" after each, every, no, any, this, that, the, or before "of" or "another", is a pronoun.
     const NUMBER_WORD_RE = (() => {
       // R-1: the pronoun guards (r8-a-5) apply to a bare "one" only; "the twelve sites", "two of the three"
@@ -1798,7 +1805,9 @@
       // marker. H1: the `my` half used to accept any "my <word>", so "My research focuses…" read as
       // a role claim and let a nearby "we partnered / our findings" pass. The verb half is
       // unchanged. Prefer under-flagging: a missed vague sentence costs less than nagging a clear one.
-      const weMatches = [...t.matchAll(/\b(we|our)\b/gi)] // r10-a-5: "us" is usually general ("the records let us say").map(m => ({ text: m[0], index: m.index }));
+      // r10-a-5: "us" is usually general ("the records let us say"), so only "we" and "our" count.
+      // r11-b-6: "our cities", "our society" are general, not the team.
+      const weMatches = [...t.matchAll(/\b(we|our)\b(?!\s+(?:cities|city|society|societies|country|countries|world|time|times|planet|species|lives|children|democracy|economy)\b)/gi)].map(m => ({ text: m[0], index: m.index }));
       const weCount = weMatches.length;
       const own = ownershipIn(t), iVerb = own.iVerb, myWord = own.myWord;
       const ownership = iVerb || myWord;
@@ -1818,7 +1827,7 @@
           const tail = t.slice(pm.index + pm[0].length - pm[1].length).toLowerCase();
           // r9-b-2: a passive with its agent named ("were taught … by the Authority's nurses") says who did the work.
           const after = t.slice(pm.index + pm[0].length);
-          const byAgent = /^(?:\s+[^\s.;:!?]+){0,6}?\s+by\s+(?!hand\b|email\b|e-mail\b|phone\b|video\b|mail\b|post\b|\d|(?:the\s+)?(?:end|time|beginning|start|middle|close|then|now|late|early|mid|next|last|spring|summer|fall|autumn|winter|january|february|march|april|may|june|july|august|september|october|november|december)\b)/i.test(after)
+          const byAgent = /^(?:\s+[^\s.;:!?]+){0,6}?\s+by\s+(?!hand\b|email\b|e-mail\b|phone\b|video\b|mail\b|post\b|\d|(?:the\s+)?(?:end|time|beginning|start|middle|close|then|now|late|early|mid|next|last|spring|summer|fall|autumn|winter|january|february|march|april|may|june|july|august|september|october|november|december)(?=[\s,.;:!?]|$))/i.test(after)
             // r9-a-11: "developed in workshops with the crew" credits the people who did it.
             || /^(?:\s+[^\s.;:!?]+){0,5}?\s+with\s+(?:the\s+|our\s+|my\s+|their\s+|\d+\s+)?(?:[\w’'-]+\s+){0,2}?(?:crew|team|dancers?|performers?|partners?|communit(?:y|ies)|members|workers|artists?|Elders|nurses|staff|colleagues|collaborators|musicians|actors)\b/i.test(after);
           if (!byAgent && !PASSIVE_SKIP.some(s => tail.indexOf(s) === 0)) passives.push(pm[0]);
@@ -1842,7 +1851,7 @@
         // H5: the prestige metrics' own numbers are removed from this working copy first — they are
         // the very numbers the prestige flag asks you to cut. Numbers elsewhere still count.
         // r1-a-3: list markers on every line, DOIs and years are not specific numbers.
-        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
+        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[\s:;,(])\d{1,2}\)\s/g, " ") /* r11-a-5: "1) un guide ; 2) …" */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
         metricHits.forEach(m => { forNums = forNums.split(m.text).join(" "); });
         links.forEach(l => { forNums = forNums.split(l.text).join(" "); });
         const nums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
@@ -1946,7 +1955,7 @@
     // discipline (university) or the subdivision (everything else).
     const blankMentee = () => ({ stage: "", stageKind: "", stageOther: "", kind: "", org: "", unit: "", recognition: "", why: "", folded: false });
     // r2-b-6 (inferred): arts and cultural organizations are a destination of their own.
-    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["health", "Health system (hospital or health authority)"], ["indigenous", "First Nations, Inuit or Métis government or organization"], ["arts", "Arts, cultural or heritage organization (museum, library, archive)"], ["other", "Other"]];
+    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["health", "Health system (hospital, CISSS/CIUSSS or public health authority)"], ["indigenous", "First Nations, Inuit or Métis government or organization"], ["arts", "Arts, cultural or heritage organization (museum, library, archive)"], ["other", "Other"]];
     const menteeKindLabel = (k) => { const m = MENTEE_KINDS.find(x => x[0] === k); return m ? m[1] : ""; };
     // Drafts saved before this change held `who` (dropped on purpose) and a free-text
     // `destination` (kept, moved to `org`).
@@ -1979,13 +1988,13 @@
     // r7-a-2: where the parts of a paragraph join, each ends as a sentence (a full stop when none is there).
     const asSentence = (t) => {
       if (!t) return t;
-      t = t.replace(/^[a-zà-ÿ](?=[a-zà-ÿ\s])/, ch => ch.toUpperCase()); // N-2, R-4: "a corpus…" → "A corpus…", "école…" → "École…" ("eDNA", "mRNA", "x-ray" stay)
+      t = t.replace(/^[a-zà-ÿœ](?=[a-zà-ÿœ\s'’])/, ch => ch.toUpperCase()); // r11-a-3: "l'équipe" → "L'équipe" // N-2, R-4: "a corpus…" → "A corpus…", "école…" → "École…" ("eDNA", "mRNA", "x-ray" stay)
       return /[.!?…](?:[\s\u00a0\u202f]*["”’'»›)\]])*$/.test(t) ? t : t.replace(/[;:,\s\u00a0—–-]+$/, "") + "."; // N-3
     };
     // r2-b-2: a word is a token with a letter or a digit, so a lone « or » (set off by a non-breaking
     // space) or a dash is not one; list markers count only at a line start. Digit groups joined by a
     // non-breaking or thin space ("3 200") are one number.
-    const joinDigits = (t) => String(t || "").replace(/(\d)[\u00a0\u202f](?=\d{3}\b)/g, "$1");
+    const joinDigits = (t) => String(t || "").replace(/(\d)[\u00a0\u202f](?=\d{3}\b)/g, "$1").replace(/(\b\d{1,3}) (?=\d{3}\b(?![.,]\d))/g, "$1"); // r11-a-5: "3 200"
     const countWords = (t) => { const x = joinDigits(t).replace(/^\s*(?:[•·\-*–—]|\d+[.)])\s+/gm, "").trim(); return x ? x.split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length : 0; };
     const menteeWhere = (m) => [(m.kind && m.kind !== "university" && m.kind !== "other") ? menteeKindLabel(m.kind) : "", one(m.org), one(m.unit)].filter(Boolean).join(", ");
     const menteeHasPlace = (m) => !!(m.kind || (m.org || "").trim() || (m.unit || "").trim());
@@ -2344,6 +2353,14 @@
     const secName = (k) => SECTION_NAMES[isFrq() ? "cv-frq" : "tcv"][k];
     // B-15: the role line's work-mode variant is stricter than the general resolveQ() lookup — it
     // only applies when "solo" is the ONLY work mode chosen, not merely present among several.
+    // T-11: who joins follows the work mode before the field, whatever order the modes were chosen in:
+    // community-engaged first, then largely solo work without a team, then the field.
+    const resolveEdiQ = () => {
+      const wm = ns.lens.workMode || [], v = PROMPTS.mentor.edi.variants;
+      if (wm.includes("community")) return v.community;
+      if (wm.includes("solo") && !wm.includes("team")) return v.solo;
+      return resolveQ(PROMPTS.mentor.edi);
+    };
     const resolveRoleLineQ = () => {
       const wm = ns.lens.workMode || [];
       const def = PROMPTS.contrib.roleLine;
@@ -2379,7 +2396,7 @@
           variants: {
             humanities: "What is the central question your work keeps asking?",
             creative: "What question does your body of work keep asking?",
-            social: "What problem in the world does your research keep returning to?",
+            social: "What problem or question does your research keep returning to?", // r11-b-15
             community: "What question, raised with your partners, does your research program keep returning to?" // r9-b-7
           }
         },
@@ -2435,13 +2452,13 @@
           variants: { team: "In one line, what was your unique contribution within the team?", partners: "In one line, what was your part in this work, and who led the other parts?", creative: "In one line, what was your part in this work, and who made the other parts?" },
           helpVariants: { stem: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the method.”", // r10-b-10
             humanities: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the people who worked with you and still make your own part clear: “I prepared the edition with two research assistants.”", // r10-a-7
-            community: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Name the partners’ leadership and your own part in the same line: “The Nation’s education department directs the program; I lead the evaluation design with its Elders’ council.”" }
+            community: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Name the partners’ leadership and your own part in the same line: “The community organizations set the priorities and run the outreach; I lead the evaluation design with their board.”" }
         },
         activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.",
           variants: { creative: "What did making the work involve, and which part was yours?", humanities: "Which sources, archives, methods or partners did the work involve, and at what scale?",
             community: "Which methods, communities or partners did the work involve, and over what period?" },
           helpVariants: { creative: "Count where you can: how many venues, performers or collaborators, and how long.", stem: "Count where you can: how many sites, structures or sensors, how long, how many people.", humanities: "Count where you can: how many sources or collections, how long, how many people.",
-            community: "Count where you can: how many communities took part, for how long, and how many people worked on it." } },
+            community: "Count where you can: how many people and communities took part, over what period, and how many people worked on it." } },
         outputs: {
           q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "Write a sentence that names what the work produced, such as “The study produced a protocol and three papers.” Its effects belong in the next field.",
           // r9-a-3, r9-b-4: the example follows the field; in community-engaged work, say who holds each output.
@@ -2551,7 +2568,7 @@
     const mentorTotal = () => Object.values(ns.mentorCounts).reduce((n, v) => n + (parseInt(cleanCount(v), 10) || 0), 0);
     // "14 doctoral students, 1 master's student": the totals line every output prints.
     // r5-b-5: the Other group prints under the name the researcher gives it ("7 community researchers").
-    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out]) => n + " " + countNoun(n, out));
+    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out : countNoun(n, out))); // r11-a-10: as typed
     const menteesDescribed = () => ns.mentees.filter(menteeHasContent).length;
     const stageDone = (key) => {
       const v = !!ns.visited[key];
@@ -2759,7 +2776,7 @@
         const li = el("li");
         const b = el("button", "narrative-stage-item v7-ri" + (square ? " v7-sq" : "") + (isActive ? " is-active" : "") + (done ? " is-done" : "") + (ghost ? " is-ghost" : ""));
         b.type = "button";
-        if (ghost) b.setAttribute("aria-disabled", "true");
+        if (ghost) { b.setAttribute("aria-disabled", "true"); b.setAttribute("aria-describedby", "v7-rail-cap"); } // r11-b-7: the reason
         b.appendChild(el("span", "narrative-stage-dot"));
         const mt = railMetric(st.key);
         const lb = el("span", "v7-ri-l", st.short);
@@ -2768,7 +2785,7 @@
         b.appendChild(lb);
         if (mt && mt.n !== "") { const n = el("span", "v7-mt", String(mt.n)); n.setAttribute("aria-hidden", "true"); b.appendChild(n); }
         if (isActive) b.setAttribute("aria-current", "step");
-        b.addEventListener("click", () => { if (!isLockedStage(st.key)) goStage(st.key); });
+        b.addEventListener("click", () => { if (isActive) { const h = stepHeading(); if (h) h.focus(); return; } if (!isLockedStage(st.key)) goStage(st.key); }); // r11-b-1
         li.appendChild(b);
         if (mt && mt.sub) {
           const sub = el("div", "v7-rsub" + (done && !isActive && !ghost ? " is-done" : "")); sub.setAttribute("aria-hidden", "true");
@@ -2821,7 +2838,7 @@
       save.title = "Download your draft as a file you can open here later";
       const savedNote = el("p", "v7-rail-saved", UI.railSaved && UI.railSaved > Date.now() ? "Saved to your downloads." : "");
       savedNote.setAttribute("aria-live", "polite");
-      save.addEventListener("click", () => { saveDraftFile(); UI.railSaved = Date.now() + 5000; savedNote.textContent = "Saved to your downloads."; });
+      save.addEventListener("click", () => { saveDraftFile(); UI.railSaved = Date.now() + 5000; savedNote.textContent = "Saved " + draftFileName() + " to your downloads."; }); // r11-b-13
       foot.appendChild(save);
       foot.appendChild(savedNote);
       panel.appendChild(foot);
@@ -2863,8 +2880,7 @@
           "Welcome back. You were on “" + (stages().find(s => s.key === ns.stageKey) || {}).short + "”.");
         // W-07 (inferred): the browser may restore the scroll position, so the greeting is also spoken.
         banner.setAttribute("role", "status");
-        c.appendChild(banner);
-        announce(banner.textContent);
+        c.appendChild(banner); // r11-b-17: the banner's own status role speaks it once
         reentryPending = false;
         // r2-a-9 (inferred): on a writing step, one button goes to the first part still to write.
         const nextUp = missingList().find(m => m.step === ns.stageKey && m.field);
@@ -2894,9 +2910,10 @@
       if (stageChanged && !firstRender) {
         const h = stepHeading();
         // r10-b-7: a heading in the lower part of the screen (large text, a short window) is brought to the top too.
-        if (h) { h.focus({ preventScroll: true }); const hr = h.getBoundingClientRect(); if (hr.top < 0 || hr.top > window.innerHeight * 0.4 || hr.bottom > window.innerHeight - 24) (h.closest(".narrative-stage-header") || h).scrollIntoView({ block: "start" }); }
+        if (h) { h.focus({ preventScroll: true }); const hr = h.getBoundingClientRect(); if (hr.top < 0 || (matchMedia("(max-width: 48em)").matches && hr.top > window.innerHeight * 0.4) || hr.bottom > window.innerHeight - 24) /* T-6: the 0.4 rule in the folded layout only */ (h.closest(".narrative-stage-header") || h).scrollIntoView({ block: "start" }); }
       }
       lastStageKey = ns.stageKey;
+      { const sn = (stages().find(x => x.key === ns.stageKey) || {}).short; document.title = (sn && ns.stageKey !== "start" ? sn + " · " : "") + "Narrative CV — V7 beta"; } // r11-b-14
       // W-47 (inferred, option A): each step is a history entry with its own address (#contributions),
       // so the browser's Back and Forward move between steps; a step the gates send elsewhere is replaced.
       // J-1: every entry carries a number that grows with time, so a Back or Forward knows its direction.
@@ -3116,8 +3133,9 @@
       if (range) meta += res.words < range[0] ? ". The usual range here is " + range[0] + " to " + range[1] + ", so this is short." : res.words > range[1] ? ". The usual range here is " + range[0] + " to " + range[1] + ", so this is long." : ", within the usual range of " + range[0] + " to " + range[1] + ".";
       host.appendChild(el("span", "v4-meta", meta));
       if (res.flags.length && res.hits && res.hits.length && (!conditional || readbackAddsInfo(res))) {
-        host.appendChild(el("span", "v4-meta", "Where these appear in your sentence:"));
-        host.appendChild(renderReadback(t, res.hits));
+        // r11-b-5: the read-back repeats the answer, so screen readers skip it; the flags above name the words.
+        const rbh = el("span", "v4-meta", "Where these appear in your sentence:"); rbh.setAttribute("aria-hidden", "true"); host.appendChild(rbh);
+        const rb = renderReadback(t, res.hits); rb.setAttribute("aria-hidden", "true"); host.appendChild(rb);
       }
     };
 
@@ -3581,7 +3599,7 @@
       const ol = el("ol");
       const btns = items.map(it => {
         const li = el("li"), b = el("button", "v7-fsq");
-        b.type = "button"; b.dataset.for = it.id; b.title = it.label;
+        b.type = "button"; b.dataset.for = it.id; // r11-b-19: no title; the aria-label names it
         b.appendChild(el("i")).setAttribute("aria-hidden", "true");
         b.addEventListener("click", () => onPick(it.id));
         li.appendChild(b); ol.appendChild(li);
@@ -3986,7 +4004,7 @@
         // V7-23: the note that checks are suggestions, the first time a check fires, once per draft.
         if (checks.querySelector(".v4-flag") && (!ns.ui.checksNoteSeen || ns.ui.checksNoteField === id)) {
           ns.ui.checksNoteSeen = true; ns.ui.checksNoteField = id;
-          checks.appendChild(el("span", "v4-meta v7-first-note", "The checks under each field are suggestions about content (numbers, your role, cautious words); they do not check grammar or spelling. You can continue without acting on them; they carry no score and stay here with your draft."));
+          checks.appendChild(el("span", "v4-meta v7-first-note", "The checks under each field are suggestions about content (numbers, your role, cautious words); they do not check grammar or spelling. They read English: in French text only the number, list, link and length checks apply. You can continue without acting on them; they carry no score and stay here with your draft."));
         }
       };
       runChecks();
@@ -4074,20 +4092,27 @@
       if (!noAnchor) keepAnchor(f.querySelector(".v7-box") || f, top, motionMs(200) + 300);
       // r10-a-11: a field reached by Tab near the foot of the screen grows below it once it opens; when the
       // anchoring is done, the box is brought into view (above the on-screen keyboard where there is one).
-      setTimeout(() => {
-        if (!f.isConnected || !f.classList.contains("is-open") || !f.contains(document.activeElement)) return;
-        const box = f.querySelector(".v7-box") || f, r = box.getBoundingClientRect();
+      // T-7: only after a keyboard focus (no pointer in the last half second), never when the caller scrolls
+      // itself (noAnchor), and not if the user scrolls before it fires.
+      const armed = performance.now();
+      if (!noAnchor && armed - lastPointerAt > 500) setTimeout(() => {
+        if (!f.isConnected || !f.classList.contains("is-open") || !f.contains(document.activeElement) || lastUserScrollAt > armed) return;
+        const box = f.querySelector(".v7-box") || f, r = box.getBoundingClientRect(), vv = window.visualViewport;
+        const off = vv ? vv.offsetTop : 0; // T-12: the visual viewport may be panned above the keyboard
         const topLimit = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 56;
-        const bottom = (window.visualViewport ? window.visualViewport.height : window.innerHeight) - 12;
-        if (r.bottom > bottom) glide(Math.min(r.bottom - bottom, r.top - topLimit));
+        const bottom = (vv ? vv.height : window.innerHeight) - 12;
+        if (r.bottom - off > bottom) glide(Math.min(r.bottom - off - bottom, r.top - topLimit));
         else if (r.top < topLimit) glide(r.top - topLimit);
-      }, (noAnchor ? 0 : motionMs(200) + 300) + 40);
+      }, motionMs(200) + 340);
     }
     // r1-b-1 (audit 2026-10-31): an answered Setup question shows its question while focus is inside
     // it (.has-focus, was :focus-within). Leaving it shows the shorter keyword, which lifted the
     // Confirm profile button 44 px between mouse-down and mouse-up and lost the click. While a
     // pointer is down the swap waits until the click has landed.
-    let pointerHeld = false;
+    let pointerHeld = false, lastPointerAt = -1e9, lastUserScrollAt = -1e9;
+    document.addEventListener("pointerdown", () => { lastPointerAt = performance.now(); }, true);
+    ["wheel", "touchmove"].forEach(t => window.addEventListener(t, () => { lastUserScrollAt = performance.now(); }, { passive: true }));
+    window.addEventListener("keydown", (e) => { if (/^(?:PageUp|PageDown|ArrowUp|ArrowDown|Home|End| )$/.test(e.key) && !(e.target.closest && e.target.closest("textarea, input, [role=radio], [role=radiogroup], .v7-fcol"))) lastUserScrollAt = performance.now(); }, true);
     const qbFocus = () => root.querySelectorAll(".v7-qblock").forEach(b => b.classList.toggle("has-focus", b.contains(document.activeElement)));
     let pointerTimer = 0;
     document.addEventListener("pointerdown", () => { pointerHeld = true; clearTimeout(pointerTimer); pointerTimer = setTimeout(pointerDone, 1500); }, true);
@@ -4119,7 +4144,7 @@
     // question opens below it; nothing folds, jumps or moves on by itself.
     const YEAR_NOW = new Date().getFullYear();
     const YEARS = [YEAR_NOW, YEAR_NOW + 1, YEAR_NOW + 2, YEAR_NOW + 3].map(String);
-    let profileShown = 0;
+    let profileShown = 0; const profileSaid = {};
     function profileQs() {
       const L = ns.lens;
       return [
@@ -4221,7 +4246,7 @@
       const pick = (fn, i) => {
         const byArrow = arrowPick;
         fn(); saveState(); renderStage();
-        const nx = root.querySelector('[data-pq="' + (i + 1) + '"]'); if (nx && i + 1 >= profileShown - 1) announce("Next question: " + qs[i + 1 >= 6 ? 5 : i + 1].label + ".");
+        const nx = root.querySelector('[data-pq="' + (i + 1) + '"]'); if (nx && i + 1 >= profileShown - 1 && !profileSaid[i + 1]) { profileSaid[i + 1] = true; announce("Next question: " + qs[i + 1 >= 6 ? 5 : i + 1].label + "."); } // r11-b-8: once per question
         const nq = profileQs().findIndex(x => !x.has), pc = root.querySelector(".v7-prof-col");
         if (nq <= i || byArrow) return;
         const hq = document.getElementById("pq" + nq);
@@ -4287,10 +4312,15 @@
           YEARS.forEach(y => {
             const b = el("button", "v7-mini", y); b.type = "button"; b.id = "v7-year-" + y;
             b.setAttribute("role", "radio"); b.setAttribute("aria-checked", L.year === y ? "true" : "false");
-            b.addEventListener("click", () => { L.year = L.year === y ? "" : y; saveState(); renderStage(); });
+            b.addEventListener("click", () => { if (L.year === y) return; L.year = y; saveState(); renderStage(); const n = document.getElementById(b.id); if (n) n.focus({ preventScroll: true }); });
             yr.appendChild(b);
           });
           blk.appendChild(radioKeys(yr));
+          if (L.year) { // r11-b-9: a radio keeps its choice; this button clears it, as "Clear the level" does
+            const cy = el("button", "v7-linkbtn v7-lv-clear", "Clear the year"); cy.type = "button";
+            cy.addEventListener("click", () => { L.year = ""; saveState(); renderStage(); announce("Year cleared."); const n = document.getElementById("v7-year-" + YEARS[0]); if (n) n.focus({ preventScroll: true }); });
+            blk.appendChild(cy);
+          }
         }
         if (i === 2) {
           h("Which career stage are you at?");
@@ -4429,7 +4459,7 @@
           UI.active = "c" + nc.cid + "-title"; UI.evCard = -1;
           saveState(); renderStage();
           focusField(UI.active);
-          announce("Contribution " + (i + 1) + " added.");
+          announce("Contribution " + (i + 1) + " added." + (ns.contributions.length >= 10 ? " This is the most the format allows." : ""));
         });
         c.appendChild(add);
       }
@@ -4493,7 +4523,7 @@
           else { ns.contributions.splice(i, 1); if (!ns.contributions.some(x => !x.folded)) ns.contributions[Math.max(0, i - 1)].folded = false; }
           if (cLive(gone)) {
             const un = UI.cUndo = { c: gone, i, until: Date.now() + 10000 };
-            setTimeout(() => { if (UI.cUndo !== un) return; UI.cUndo = null; const r = document.querySelector(".v7-cundo"); if (r) { const had = r.contains(document.activeElement); r.remove(); if (had) { const a = document.getElementById("v7-add-contrib") || stepHeading(); if (a) a.focus(); } } }, 10000);
+            setTimeout(() => { if (UI.cUndo !== un) return; UI.cUndo = null; const r = document.querySelector(".v7-cundo"); if (r) { const had = r.contains(document.activeElement); r.remove(); if (had) { const nc = ns.contributions[i] || ns.contributions[i - 1]; const a = (nc && (nc.folded ? document.getElementById("fold-" + nc.cid) : focusable(document.getElementById("ct" + nc.cid)))) || stepHeading(); if (a) a.focus({ preventScroll: true }); announce("Undo has ended."); } } }, 10000); // T-1
           }
           saveState(); renderStage();
           // W-04: focus goes to the card now in this place (else the one before), and the removal is spoken.
@@ -4662,12 +4692,12 @@
       const body = el("p");
       if (!asm.seq.length) body.appendChild(el("span", "v7-empty", "Your answers appear here as one paragraph, in the order a reviewer reads them."));
       asm.seq.forEach((p, idx) => {
-        if (idx > 0 && connectiveFor(p.k)) { const j = el("span", "v4-connective", connectiveFor(p.k)); j.title = "A suggested join; it does not appear in your draft"; body.appendChild(j); body.appendChild(document.createTextNode(" ")); }
+        if (idx > 0 && connectiveFor(p.k)) { const j = el("span", "v4-connective", connectiveFor(p.k)); j.setAttribute("aria-hidden", "true"); /* r11-b-4: a visual aid, not the draft */ j.title = "A suggested join; it does not appear in your draft"; body.appendChild(j); body.appendChild(document.createTextNode(" ")); }
         body.appendChild(document.createTextNode(p.t + " "));
       });
       if (w.refs.length) body.appendChild(document.createTextNode("(" + w.refs.map(r => r.key).join(", ") + ")"));
       s.appendChild(body);
-      if (body.querySelector(".v4-connective")) { const jn = el("p", "v7-quiet v7-join-note", "The shaded words between the parts suggest how to link them. They are not part of your draft."); s.appendChild(jn); }
+      if (body.querySelector(".v4-connective")) { const jn = el("p", "v7-quiet v7-join-note", "The shaded words with arrows between the parts suggest how to link them. They are not part of your draft, and screen readers skip them."); s.appendChild(jn); }
       if (!isTop) {
         if (!contrib.stakes && (contrib.activities || contrib.outputs)) s.appendChild(el("span", "v4-gap", "The problem or question part is empty, so the paragraph opens on the work itself."));
         if (!contrib.outcomes && !contrib.impact && contrib.outputs) s.appendChild(el("span", "v4-gap", "What already changed and What could change are both empty, so the paragraph ends on what resulted."));
@@ -4679,13 +4709,13 @@
       "Peer-reviewed": "an article, chapter or book, or a juried or curated selection", "Media / public": "coverage, a critical review, a public talk, a podcast",
       "Policy / practice uptake": "a policy, guideline or program that adopted your work", "Dataset / tool": "data, software, a catalogue or a collection, and who holds it",
       "Award / recognition": "a prize, fellowship or honour", "Funding": "a grant the work attracted",
-      "Replication / citation": "a study that repeated or cited your work, scholarship that built on it, or a work restaged or adapted", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Community document": "a letter, resolution, agreement, report or plan a community holds",
+      "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Community document": "a letter, resolution, agreement, report or plan a community holds",
       "Other": "anything else a reviewer could check"
     };
     // r10-b-8: a few kind hints follow the field.
     const EV_KIND_HINT_STEM = { "Peer-reviewed": "a journal article or conference paper", "Dataset / tool": "data or software, with its version and who holds it",
       "Replication / citation": "a study that repeated or cited your work, or a standard, code or guideline that cites it", "Other": "a patent, a licence, a technical report, or anything else a reviewer could check" };
-    const evKindHint = (t) => (ns.lens.discipline === "stem" && EV_KIND_HINT_STEM[t]) || EV_KIND_HINT[t];
+    const evKindHint = (t) => (ns.lens.discipline === "stem" && EV_KIND_HINT_STEM[t]) || (ns.lens.discipline === "creative" && t === "Replication / citation" && "a study or review that cited your work, or a work restaged or adapted") || EV_KIND_HINT[t];
     const EV_INTRO_ITEMS = {
       stem: "a journal article or conference paper, a patent or licence, a standard or guideline that cites your work, a software or data release, a technical report, coverage, an award",
       health: "an article, a guideline or program that adopted your work, a dataset, coverage, an award",
@@ -4735,11 +4765,18 @@
           row.appendChild(document.createTextNode("Kind: ")); row.appendChild(el("b", null, ev.type === "Other" && one(ev.otherLabel) ? one(ev.otherLabel) : ev.type));
           const chg = el("button", "v7-linkbtn", "Change"); chg.type = "button"; chg.id = "evkchg-" + kKey;
           chg.setAttribute("aria-label", "Change the kind of evidence item " + letter(j) + ", now " + (ev.type === "Other" && one(ev.otherLabel) ? one(ev.otherLabel) : ev.type));
-          chg.addEventListener("click", () => { UI.kindOpen = kKey; renderStage(); const b = document.querySelector('[id^="evkind-' + kKey + '-"][aria-checked="true"]'); if (b) b.focus(); });
+          chg.addEventListener("click", () => { UI.kindOpen = kKey; UI.kindPrev = { key: kKey, type: ev.type }; renderStage(); const b = document.querySelector('[id^="evkind-' + kKey + '-"][aria-checked="true"]'); if (b) b.focus(); });
           row.appendChild(document.createTextNode(" · ")); row.appendChild(chg);
           it.appendChild(row);
         } else {
-          const kinds = el("div", "v7-kinds"); kinds.setAttribute("role", "radiogroup"); kinds.setAttribute("aria-label", "Evidence item " + letter(j) + ": kind");
+          const kinds = el("div", "v7-kinds");
+          kinds.addEventListener("keydown", (e) => { // r11-b-10: Escape closes the chooser and keeps the kind it had
+            if (e.key !== "Escape" || !ev.type) return;
+            e.preventDefault(); if (UI.kindPrev && UI.kindPrev.key === kKey) ev.type = UI.kindPrev.type;
+            UI.kindOpen = ""; UI.kindPrev = null; saveState(); renderStage();
+            const n = document.getElementById("evt" + kKey); if (n) n.focus({ preventScroll: true }); announce("Kind unchanged: " + ev.type + ".");
+          });
+          kinds.setAttribute("role", "radiogroup"); kinds.setAttribute("aria-label", "Evidence item " + letter(j) + ": kind");
           // r9-a-8: creative work lists its own kind first.
           (ns.lens.discipline === "creative" ? ["Exhibition, performance or screening"].concat(EVIDENCE_TYPES.filter(x => x !== "Exhibition, performance or screening")) : EVIDENCE_TYPES).forEach(t => {
             const b = el("button", "v7-kind"); b.type = "button"; b.id = "evkind-" + kKey + "-" + t.replace(/\W+/g, "");
@@ -4767,7 +4804,8 @@
           ow.appendChild(ol); ow.appendChild(oi); it.appendChild(ow);
         }
         const tw = el("div", "v7-one");
-        const tl = el("label", "v7-field-label", "The item"); tl.htmlFor = "evt" + contrib.cid + "-" + j;
+        const tl = el("label", "v7-field-label"); tl.htmlFor = "evt" + contrib.cid + "-" + j;
+        tl.appendChild(el("span", "v7-sr", "Evidence item " + letter(j) + ": ")); tl.appendChild(document.createTextNode("The item")); // r11-b-2
         // W-34: both boxes grow with their text; The item stays one entry (Enter adds no line).
         const ti = el("textarea", "v7-input v7-grow"); ti.id = tl.htmlFor; ti.rows = 1;
         ti.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
@@ -4793,7 +4831,7 @@
         tw.appendChild(tl); tw.appendChild(ti); tw.appendChild(ln); tw.appendChild(lg); it.appendChild(tw);
         const ww = el("div");
         const wl = el("label", "v7-field-label"); wl.htmlFor = "evw" + contrib.cid + "-" + j;
-        wl.appendChild(document.createTextNode("Why it matters ")); wl.appendChild(el("span", "v7-opt", "(two lines, optional)"));
+        wl.appendChild(el("span", "v7-sr", "Evidence item " + letter(j) + ": ")); wl.appendChild(document.createTextNode("Why it matters ")); wl.appendChild(el("span", "v7-opt", "(two lines, optional)"));
         const wt = el("textarea", "v7-input v7-two v7-grow"); wt.id = wl.htmlFor;
         // r9-a-7: the note's prompt follows the kind.
         const NOTE_HINT = { "Exhibition, performance or screening": "What the work did or showed, and how it bears on your question", "Media / public": "What the piece says about the work, or whom it reached",
@@ -4828,7 +4866,7 @@
         const j = contrib.evidence.length - 1, it = root.querySelectorAll(".v7-ev-item")[j], k = it && it.querySelector(".v7-kind");
         if (k) k.focus({ preventScroll: true });
         if (it) it.scrollIntoView({ block: "start" });
-        announce("Evidence item " + letter(j) + " added.");
+        announce("Evidence item " + letter(j) + " added. Choose its kind.");
       });
       area.appendChild(add);
       return area;
@@ -4868,7 +4906,7 @@
       const gaps = [];
       if (!one(contrib.stakes)) gaps.push("The problem or question part is empty. " + resolveQ(PROMPTS.contrib.stakes)); // r9-a-12: the field's own question
       if (!one(contrib.outcomes)) gaps.push("What already changed is empty. Is there something concrete you can name yet?");
-      if (!one(contrib.impact)) gaps.push("What could change is empty. What might this change at field scale? Hedged language is fine here.");
+      if (!one(contrib.impact)) gaps.push("What could change is empty. Who or what could this affect if it is taken up more widely? Hedged language is fine here.");
       if (!refs.length) gaps.push("No evidence attached. Add one item a reviewer could check.");
       return { title: one(contrib.title), roleLine: one(contrib.roleLine), parts, refs, gaps };
     }
@@ -4909,7 +4947,7 @@
         if (ns.contributions.some(x => x.cid === un.c.cid)) { UI.cUndo = null; row.remove(); return announce("That contribution is already back."); }
         // M-5: a blank card left by removing the only contribution is replaced; at the cap, the restore waits.
         const blank = ns.contributions.length === 1 && !cLive(ns.contributions[0]);
-        if (!blank && ns.contributions.length >= 10) { ub.disabled = true; return announce("There are already 10 contributions. Remove one to restore this one."); }
+        if (!blank && ns.contributions.length >= 10) { ub.setAttribute("aria-disabled", "true"); return announce("There are already 10 contributions. Remove one to restore this one."); }
         ns.contributions.forEach(x => { x.folded = true; }); un.c.folded = false;
         if (blank) ns.contributions = [un.c]; else ns.contributions.splice(Math.min(un.i, ns.contributions.length), 0, un.c);
         UI.cUndo = null; saveState(); renderStage();
@@ -4920,12 +4958,14 @@
       c.insertBefore(row, c.children[un.i] || null); // r8-a-6: in the removed card's place
     }
     const lcArticle = (t) => String(t || "").replace(/^(A|An|The)(?=\s)/, a => a.toLowerCase());
+    // T-13: "The Ottawa Hospital" keeps its capital; "The provincial ministry" (a phone's capital) does not.
+    const lcArticleSoft = (t) => String(t || "").replace(/^(A|An|The)(?=\s+[a-zà-ÿ])/, a => a.toLowerCase());
     function menteeSentence(m) {
       // G-3: a level typed under Other keeps its capitals ("MD-PhD trainee"); only a leading capital is lowered.
       const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) || "trainee";
       // r3-a-7: the unit or position follows the organization in brackets ("at a robotics firm (process engineer)").
       // r10-a-3: a phone's capital article mid-sentence ("at The provincial ministry") is lowered.
-      const orgName = lcArticle(one(m.org)), unit = one(m.unit), bracket = (u) => /[()]/.test(u) ? ", " + u : " (" + u + ")";
+      const orgName = lcArticleSoft(one(m.org)), unit = one(m.unit), bracket = (u) => /[()]/.test(u) ? ", " + u : " (" + u + ")";
       const org = orgName && unit ? orgName + bracket(unit) : orgName;
       let where = !org && !m.kind ? "" : m.kind === "industry" ? "now works in industry" + (org ? " at " + org : "")
         : m.kind === "government" ? "now works in government" + (org ? " at " + org : "")
@@ -4935,11 +4975,13 @@
         : m.kind === "health" ? (org && /health|hospital|clinic|medical|care\b/i.test(org) ? "now works at " + org : "now works in the health system" + (org ? " at " + org : ""))
         : org ? "is now at " + org : "";
       // r10-a-1: a unit with no organization follows the sector in brackets ("is now at a university (History)").
-      if (!orgName && unit) where = !m.kind || m.kind === "other" ? "is now at " + unit : m.kind === "university" ? "is now at a university" + bracket(unit) : where + bracket(unit);
+      if (!orgName && unit) where = !m.kind || m.kind === "other" ? "is now in " + unit : m.kind === "university" ? "is now at a university" + bracket(unit) : where + bracket(unit);
       const recog = lcArticle(one(m.recognition));
       // r10-a-4: "Now a lecturer…" reads as "is now a lecturer…"; "Teaching history…" as "is teaching history…".
       let why = one(m.why).replace(/^now\s+(?=(?:a|an|the)\b)/i, "Is now ");
-      if (/^[A-Za-z]+ing\s+[a-z]/.test(why) && !/^(?:during|nothing|something|everything|morning|evening|being|bringing)\b/i.test(why)) why = "Is " + why.charAt(0).toLowerCase() + why.slice(1);
+      // T-5: not a title ("Visiting scholar", "Managing editor") or a word before a role noun.
+      if (/^[A-Za-zÀ-ÿ]{3,}ing\s+[a-zà-ÿ]/.test(why) && !/^(?:during|nothing|something|everything|morning|evening|being|bringing)\b/i.test(why)
+        && !/^[A-Za-zÀ-ÿ]+ing\s+(?:scholar|fellow|editor|director|chair|engineer|assistant|member|specialist|professor|nurse|officer|coordinator|manager|researcher|scientist|artist|partner)\b/i.test(why)) why = "Is " + why.charAt(0).toLowerCase() + why.slice(1);
       // N-1: a capitalised first word joins only when it is a listed verb ("Joined", "Led"); the -s/-ed guess
       // applies only to an answer typed in lower case, so "James…", "Statistics Canada…" or French stay whole.
       const w0raw = (why.match(/^(?:(?:now|also|then|later|since)\s+)?([A-Za-zÀ-ÿ'-]+)/i) || [])[1] || "", w0 = w0raw.toLowerCase();
@@ -4951,14 +4993,16 @@
       // ("James now leads…", "Rose now runs…", "Charles runs…").
       const w1 = ((why.match(/^(?:(?:now|also|then|later|since)\s+)?[A-Za-zÀ-ÿ'-]+\s+([^\s]+)/i) || [])[1] || "").toLowerCase();
       const first = (why.match(/^[A-Za-zÀ-ÿ'-]+/) || [""])[0];
+      const listedFirst = /^(?:is|has|was|went|became|left|got|rose|moved|joined)$/i.test(first) || IRREGULAR_PAST.indexOf(first.toLowerCase()) !== -1 || ACTION_VERBS.indexOf(first.toLowerCase()) !== -1;
       // S-4: two capitalised words open a name ("Veterans Affairs Canada…", "Charles Adams now…").
-      const nameShape = /^[A-ZÀ-Ý]/.test(first) && !/^(?:now|also|then|later|since|is|has|was)$/i.test(first) && (/^[A-Za-zÀ-ÿ'-]+\s+(?:now|also|then|later|since|has|is|was)\b/i.test(why) || /^[A-ZÀ-Ý][\wÀ-ÿ'-]*\s+[A-ZÀ-Ý]/.test(why));
+      const nameShape = /^[A-ZÀ-Ý]/.test(first) && !/^(?:now|also|then|later|since|is|has|was)$/i.test(first) && (/^[A-Za-zÀ-ÿ'-]+\s+(?:now|also|then|later|since|has|is|was)\b/i.test(why) || /^[A-ZÀ-Ý][\wÀ-ÿ'-]*\s+[A-ZÀ-Ý][\wÀ-ÿ'-]*\s+(?:now|also|then|later|since|has|is|was)\b/.test(why)
+        || (!listedFirst && /^[A-ZÀ-Ý][\wÀ-ÿ'-]*\s+[A-ZÀ-Ý]/.test(why))); // T-4: a listed verb before a name still joins
       const AFTER_VERB = /^(?:a|an|the|at|in|on|for|with|as|to|from|into|his|her|their|its|two|three|four|five|six|seven|eight|nine|ten|several|\d+)\b/i; // S-4: whole words
       const verbFirst = !!why && !NOT_VERB.test(w0) && !nameShape && (listed || (/(?:ed|s)$/.test(w0) && (lowerStart || AFTER_VERB.test(w1))));
       // One sentence with its predicates joined: "…now works at X, received Y and now leads Z."
       const preds = [];
       // r10-a-4: an answer that names its own place ("Works at the provincial archives") replaces the sector clause.
-      const ownPlace = verbFirst && /^(?:now\s+)?works?\s+(?:at|in|for|with|as)\b/i.test(why);
+      const ownPlace = verbFirst && !orgName && /^(?:now\s+)?works?\s+(?:at|for)\b/i.test(why); // T-2: never drops a typed organization
       if (where && !ownPlace) preds.push(where);
       if (recog) preds.push("received " + recog);
       // r9-a-13, r10-a-4: "now works at X and now makes…" or "… and is now a…" drops the second "now".
@@ -5029,7 +5073,7 @@
         tiles.appendChild(tile);
       });
       dash.appendChild(tiles);
-      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Count " + ({ stem: "technicians, industry-embedded trainees", health: "research staff, community researchers", creative: "apprentices, assistant artists", humanities: "research assistants, archive interns" }[ns.lens.discipline] || "community researchers") + " and other trainees who are not students under Other, and name the group in its box. The instructions for your funding opportunity set the period for these totals; if a leave fell inside it, say so with its dates in one of the prompts below."));
+      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Count " + ({ stem: "technicians, industry-embedded trainees", health: "research staff, residents, clinical fellows, community researchers", creative: "apprentices, assistant artists", humanities: "research assistants, archive interns" }[ns.lens.discipline] || "community researchers") + " and other trainees who are not students under Other, and name the group in its box. The instructions for your funding opportunity set the period for these totals; if a leave fell inside it, say so with its dates in one of the prompts below."));
       c.appendChild(dash);
 
       const sh = el("div", "v7-section-t");
@@ -5063,7 +5107,7 @@
       const fields = el("div", "v7-fields");
       if (!UI.active || UI.active.indexOf("m-") !== 0) { const first = PF().find(f => !(ns[f.k] || "").trim()); UI.active = "m-" + (first ? first.k : "mentorPhilosophy"); }
       PF().forEach(f => fields.appendChild(cardField({
-        id: "m-" + f.k, label: f.label, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", roleNamed: () => MENTOR_TEXT_KEYS.some(k => ownershipIn(ns[k]).iVerb),
+        id: "m-" + f.k, label: f.label, q: f.k === "mentorEDI" ? resolveEdiQ() : resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", roleNamed: () => MENTOR_TEXT_KEYS.some(k => ownershipIn(ns[k]).iVerb),
         get: () => ns[f.k], set: (v) => { ns[f.k] = v; }, has: () => !!(ns[f.k] || "").trim(),
         onChange: () => { const nd = progress(pn(), 3); side.replaceChild(nd, dd); dd = nd; announceCount(pn() + " of 3 answered"); }
       })));
@@ -5175,6 +5219,7 @@
       const setPv = () => { pv.textContent = menteeHasContent(m) ? "Prints as: " + menteeSentence(m) : ""; };
       card.addEventListener("input", setPv); card.addEventListener("change", setPv); setPv();
       card.appendChild(pv);
+      pv.id = "v7-pv" + i; { const wta = card.querySelector("#v7-py" + i); if (wta) wta.setAttribute("aria-describedby", pv.id); } // r11-b-3: read with the box
       return card;
     }
 
@@ -5185,7 +5230,7 @@
       // when nothing else in the role is capitalised ("Postdoctoral fellow"; "Canada Research Chair" stays).
       const role0 = one(ns.ps.role);
       const r = /^(?:Postdoctoral|Assistant|Associate|Full|Adjunct|Senior|Junior|Doctoral|Research|Visiting|Clinical|Professor|Lecturer|Instructor|Scientist|Researcher|Fellow|Independent|Early-career|Tenured)\b/.test(role0) && !/\s[A-ZÀ-Ý]/.test(role0) ? role0.charAt(0).toLowerCase() + role0.slice(1) : role0;
-      const inst = lcArticle(one(ns.ps.institution)), fld = lcArticle(one(ns.ps.field));
+      const inst = lcArticleSoft(one(ns.ps.institution)), fld = lcArticleSoft(one(ns.ps.field));
       if (!(r || inst || fld)) return "";
       return "I am " + articleFor(r) + " " + (r || "___") + " at " + (inst || "___") + ". My work is in " + (fld || "___").replace(/[.\s]+$/, "") + ".";
     };
@@ -5637,7 +5682,9 @@
             : gvRect(x + 0.75, y + 4.75, sq - 1.5, sq - 1.5, "#ffffff", ' rx="3" stroke="' + GV_HAIR + '" stroke-width="1.5"');
           if (on) have.push(p.meta[1]);
         });
-        said.push("Contribution " + (pos + 1) + " has " + have.length + " of " + parts.length + (have.length ? " (" + have.join(", ") + ")" : ""));
+        // r11-b-20: name only what is missing.
+        const lacking = parts.filter(p => have.indexOf(p.meta[1]) === -1).map(p => p.meta[1]);
+        said.push("Contribution " + (pos + 1) + (!lacking.length ? " has all " + parts.length : " has " + have.length + " of " + parts.length + (have.length ? "; missing " + lacking.join(", ") : "")));
       });
       const label = title + ". " + said.join("; ") + ".";
       return { key: "parts", title, summary: label, svg: gvSvg(headH + live.length * rh + 6, label, body) };
@@ -5796,7 +5843,7 @@
         b.addEventListener("click", async () => {
           countEvent("glancePng");
           const ok = await downloadPng(v.png, gvFile(v.key));
-          st.textContent = ok ? "Downloaded." : "The image could not be made in this browser.";
+          st.textContent = ok ? "Downloaded " + gvFile(v.key) + "." : "The image could not be made in this browser.";
           setTimeout(() => { st.textContent = ""; }, 2500);
         });
         foot.appendChild(b); foot.appendChild(st); fig.appendChild(foot);
@@ -5929,7 +5976,7 @@
         const w = el("div");
         const b = el("button", "btn btn-outline", "Copy " + secName(k).replace(/^The /, "the ")); b.type = "button";
         const st = el("span", "v7-copied"); st.setAttribute("aria-live", "polite");
-        b.addEventListener("click", async () => { countEvent("copySection"); try { await navigator.clipboard.writeText(sectionText(k)); done("Copied " + secName(k) + ".", st); } catch (_) { st.textContent = "Copying is blocked in this browser."; } });
+        b.addEventListener("click", async () => { countEvent("copySection"); try { await navigator.clipboard.writeText(sectionText(k)); done("Copied " + secName(k) + ".", st); } catch (_) { st.textContent = "Copying is blocked in this browser. Use the Word file or the text file instead."; } }); // r11-b-12
         w.appendChild(b); w.appendChild(st); row.appendChild(w);
       });
       pt2.appendChild(row);
@@ -5942,7 +5989,7 @@
       kw.appendChild(el("p", "v7-body", "This saves your whole draft as a small file on your computer. Keep it somewhere safe. Later, choose Load your draft on the start page and open the file to carry on. It is not a Word file. Clearing your browser data erases the draft stored in the tool, so a saved file is your backup."));
       const sv = el("button", "btn btn-outline", "Save a draft file"); sv.type = "button";
       const svs = el("span", "v7-copied"); svs.setAttribute("aria-live", "polite");
-      sv.addEventListener("click", () => { saveDraftFile(); done("Saved to your downloads.", svs); });
+      sv.addEventListener("click", () => { saveDraftFile(); done("Saved " + draftFileName() + " to your downloads.", svs); });
       kw.appendChild(sv); kw.appendChild(svs);
       kw.appendChild(el("p", "v7-quiet v7-shared-note", "On a shared computer, save a draft file, then choose Reset draft on the start page, so the next person who opens the tool here starts with no draft."));
       c.appendChild(kw);
@@ -5966,6 +6013,7 @@
     // Before the personal statement: words that recur across contributions, and any contribution
     // that shares words with every other one. Counting only, on this device; no model involved.
     const CROSS_STOP = new Set(("university universities session sessions " + // r9-a-18
+      "pourrait pourraient produit produits avait avaient ayant étaient était entre aussi ainsi depuis selon comme toutes autres après avant chaque leurs cette notre nous avons dans pour avec plusieurs travail recherche " + // r11-a-8
       "about above after again along also among another around based because been before being below between both " +
       "built could during each early either every first found found from further given group have having into large later least level made " +
       "make makes many might more most much must other others over people project projects research same several shall should since " +
@@ -6033,7 +6081,7 @@
     // W-19 (inferred): the .txt is the working copy. It carries the tool's notes in square brackets
     // (kinds, what is still missing, the mentorship prompts); the section copies hold the text to paste.
     const GAP_HINT = { stakes: "What problem or question was this work answering?", outcomes: "Is there something concrete you can name yet?",
-      impact: "What might this change at field scale? Hedged language is fine here.", ev: "Add one item a reviewer could check." };
+      impact: "Who or what could this affect if it is taken up more widely? Hedged language is fine here.", /* r11-b-16 */ ev: "Add one item a reviewer could check." };
     function buildExportText() {
       const lines = [], rule = "=".repeat(60);
       lines.push("NARRATIVE CV, WORKING DRAFT (" + TOOL_LABEL + ")");

@@ -1,0 +1,44 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: SSHRC · Tri-agency CV · Insight Development Grant · Early career · Social sciences · Team-based]
+Before you submit: paste this into the current version of SSHRC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Arial in black type.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am an assistant professor at a mid-sized Canadian university. My work is in the sociology of platform work and precarious labour.
+
+Why do the people who keep our cities running have the least say over when they work? My research returns to this question for gig workers, whose schedules change without notice. Three strands: interviews on how platform scheduling shapes household life, an open archive of those interviews, and policy work that turns the findings into notice rules. The thread is predictability. I came to sociology from five years as a union organizer, where I saw rosters decide who could attend a school meeting. That is why I study schedules as a form of power. I took six months of parental leave in 2024, and the dataset deposit followed on my return. I was awarded a SSHRC Doctoral Fellowship, my article appeared in Work, Employment and Society in 2026, and I deposited an open set of 74 interview transcripts that three seminars now use. The Insight Development Grant funds early-stage work on a new question, and my next step is a pilot of time-use diaries to follow couriers' schedules across a full year. I plan to build a year-long panel of couriers and test whether two weeks' shift notice changes sleep, care time and income, with the city labour office as partner.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Showing how platform scheduling rules shape gig workers' weeks
+   Platform scheduling rules change without notice, and little was known about how that affects caregiving, sleep and income for couriers and drivers in Canadian cities. I led the study design and the interviews, with two co-investigators and three research assistants. I designed the study, recruited 62 couriers and rideshare drivers in Toronto and Montréal, and ran 74 interviews over 18 months, tracking each worker's schedule changes week by week. The study produced a coded interview corpus, a peer-reviewed article in Work, Employment and Society, and a conference paper. Two municipal labour offices cited the findings in a consultation, and a courier association used the schedule timeline in its bargaining brief. At a courier association meeting, a driver with two children pointed to the timeline and asked the city to require two weeks' notice of any shift change. Predictable-scheduling rules could be written into platform labour regulation in other cities, and other researchers could use the same week-by-week timeline measure. (a, b)
+   a. Okafor, N., and Lindqvist, P. 2026. Unannounced shifts: scheduling and household strain among platform workers. Work, Employment and Society.  [Peer-reviewed]
+      Shows that unannounced shift changes, not total hours, drove the strain workers reported.
+   b. Anonymized interview transcripts, 74 files with a codebook, deposited in the Borealis repository (open access, CC BY 4.0).  [Dataset / tool]
+      Other teams can reuse the transcripts to study scheduling, caregiving and pay.
+
+2. Opening 74 anonymized interviews with gig workers to other researchers
+   Interview studies of platform work are rarely shared, so other teams could not test or extend findings on how workers experience scheduling, and students and community groups could not read the workers' own accounts. I led the de-identification protocol and the data deposit, and wrote the codebook with one research assistant. I wrote the de-identification protocol with the ethics office, removed names, employers and districts from 74 transcripts, built a codebook of 31 codes and deposited the files with a data-use licence. The deposit includes 74 anonymized transcripts, a 31-code codebook and a short guide for teaching with the files. Three graduate seminars at two universities have assigned the transcripts, and a community legal clinic used excerpts to prepare a submission on shift notice. If more platform-work studies deposit transcripts under similar terms, comparisons across cities and platforms could become routine, and graduate students could learn interview analysis from real material. (a, b)
+   a. Gig Workers' Scheduling Interviews, 74 anonymized transcripts with codebook, held in the Borealis repository, open access under CC BY 4.0.  [Dataset / tool]
+      Gives other teams the full material to test and extend the scheduling findings.
+   b. Submission on shift-notice rules to a provincial labour standards review, Community Legal Clinic of Eastside, 2026, citing excerpts from the deposited transcripts.  [Community document]
+
+3. A policy brief that led a city to require notice of shift changes
+   The city labour office had no local evidence on how shift notice affects workers, and worker groups were asking for a notice rule. I wrote the policy brief for the city and presented it to the council committee.
+   [Still missing: What you did.]
+   [Still missing: What resulted.]
+   [Still missing: What already changed. Is there something concrete you can name yet?]
+   [Still missing: What could change. What might this change at field scale? Hedged language is fine here.]
+   [Still missing: Evidence. Add one item a reviewer could check.]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 2 master's students, 5 undergraduate researchers
+A master's student I trained now works in government at a provincial labour ministry (policy analyst), received a provincial graduate scholarship and drafts the ministry's guidance on shift-notice rules.
+[One thing you do] Every project in my group starts with a one-page agreement on authorship and data use, which we revisit at the midpoint.
+[Who gets in] I removed the prior-experience requirement from assistantship postings and paid from the first week, so students without family support could apply.
+[Who else you mentor (optional)] I mentor two early-career colleagues in other departments, and last year I helped one of them draft her first partnership grant.

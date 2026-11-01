@@ -264,3 +264,25 @@ _none yet_
 
 **Tests:** 249 of 249 (234 + 15).
 
+### Round 11 · Fable's review of round 10, a francophone public-health researcher writing in French, a blind sociologist with a screen reader (2026-11-01)
+
+**Who walked it** (the round 11 snapshot = commit `f895d32`), all findings in [r11-findings.md](audit-loop-2026-10-31/r11-findings.md)
+- **Fable review** of round 10: 5 major · 9 minor · 1 polish (a jump when Undo ended, a dropped organization, an empty read-back, verbs taken for names, "-ing" titles; Safari media queries; small layout regressions).
+- **r11-a** Mid-career public-health researcher, FRQS (CV-FRQ), Health + Social sciences, writing the whole draft in French: 2 major · 9 minor · 4 polish ([draft](audit-loop-2026-10-31/r11-a-draft.txt)).
+- **r11-b** Early-career sociologist who is blind, SSHRC, keyboard and screen reader only: 11 minor · 9 polish ([draft](audit-loop-2026-10-31/r11-b-draft.txt)).
+
+**What they wrote**
+- r11-a: a vaccination outreach program co-designed in Montréal-Nord, a regional health survey of 3 200 people, community health worker training; 1,318 words. French text survives every output.
+- r11-b: gig workers' scheduling, an interview dataset, a policy brief adopted by a city; about 1,010 words. Every task could be finished without sight.
+
+**Fixed this round**
+- **Review (T-1 to T-15):** Undo's end, organizations kept, the read-back restored, verb-before-name joins, titles left whole, scrolls that respect the user, classic media queries, sizes restored, the equity question by work mode, "The Ottawa Hospital", "in Marketing".
+- **French (r11-a):** number words, "3 200", inline "1) …", "facteur d'impact" and "indice h", elided capitals, French stop words, the group name as typed, a note that the checks read English; Quebec health bodies and clinical trainees.
+- **Screen reader (r11-b):** evidence fields named by item; "Prints as" read with its box; join words and the read-back hidden; locked steps give their reason; one "Next question"; "Clear the year"; Escape in the kind chooser; page titles per step; named files; shorter chart text; the current rail step focuses its heading.
+
+**INFERRED this round (for Prem to override):** classic media queries with a 0.001em offset; "Clear the year"; the new community role example; the social sciences statement question; the wording changes above (part of Q-19).
+
+**Open for Prem from this round:** French drafts (Q-23): a draft-language choice that gives French frames for the trainee sentences, the Totals line and the first sentence, French checks, the 6-page French limit, French join words and `lang` on the outputs.
+
+**Tests:** 256 of 256 (249 + 7).
+
