@@ -1,0 +1,52 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: NSERC · Tri-agency CV · NSERC Discovery Grant (renewal) 2027 · Senior · STEM / engineering · Team-based · Partnered with industry, government or health systems]
+Before you submit: paste this into the current version of NSERC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am a professor of environmental engineering at a large Canadian research university. My work is in urban water systems and the control of stormwater and wastewater infrastructure.
+
+For 20 years my research has returned to one problem: cities and utilities discharge more polluted water to rivers than their infrastructure and budgets were designed for, and the cost falls on downstream communities. Three strands address it: real-time control of combined sewers, low-cost treatment of landfill leachate and open models and monitoring for river nutrients. In each the control, the measurement or the model is built with the operator who will use it. I trained as a hydraulic engineer and spent four years as a consulting engineer, which is why I start from the operating decision a utility faces. I have held two consecutive Discovery Grants, hold an NSERC industrial research chair and have trained 64 people. A provincial ministry and a regional utility have adopted methods from my group. This renewal funds the long-term work that the partnerships depend on, and the next phase needs five more years of continuous data. The next phase extends the control methods to combined and separate systems in cold regions, and the monitoring methods to lakes.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Real-time control cut combined sewer overflows by 62 percent in three Quebec municipalities
+   Combined sewer systems in older Quebec towns discharge untreated overflow into rivers during storms. A ministry of environment fines the municipalities, and a regional water utility must meet a 2030 overflow limit with a fixed capital budget. Residents downstream fish and swim in these rivers. I directed the project from the first pilot, designed the control algorithm and supervised the field calibration with the utility. My group built sensors and a model-predictive controller for 41 regulator gates, tested it in a hydraulic lab, then ran it live for two storm seasons in Granby, Saint-Hyacinthe and Drummondville with the regional water utility, using 9 years of the utility flow records. The work produced a control software package, 14 refereed papers, a design guide adopted by the ministry and the doctoral theses of three trainees. Combined sewer overflows in the three towns fell by 62 percent over two storm seasons. The ministry now accepts real-time control as an alternative to new storage tanks, and the utility has avoided 18 million dollars in tank construction. Other municipalities with combined sewers could meet their overflow limits at a fraction of the capital cost, and rivers downstream could reopen for swimming and fishing during the warm season. (a, b)
+   a. Tremblay, M., and Okafor, A. (2024). Model-predictive control of combined sewer regulators. Water Research 251, 120-134.  [Peer-reviewed]
+      Reports the 62 percent overflow reduction measured against the 2019 to 2021 baseline.
+   b. Fault-free overflow control software v2.1, released under an open licence with the 41-gate calibration data.  [Dataset / tool]
+      Downloaded by 23 utilities and two ministries since release.
+
+2. An open stormwater model calibrated on 40 Canadian catchments
+   Municipal engineers size stormwater pipes with models that were calibrated on European storms, and the Canadian winter and snowmelt events break their assumptions. Utilities and the ministry need one shared model they can audit. I contributed the snowmelt and frozen-ground module and calibrated it against 12 of the catchments. Six universities and four municipal utilities pooled 40 catchments of rain, snowmelt and flow data, and I ran the snowmelt calibration with two graduate students over four winters. The model is released as open code with a 40-catchment benchmark dataset and 6 refereed papers. Nine municipalities now size new storm sewers with the model, and the ministry lists it among the accepted tools in its stormwater design manual. Climate adaptation planning for stormwater could use one audited model, which would make design standards comparable across provinces. (a, b)
+   a. Open stormwater model v3.0 and 40-catchment benchmark dataset, hosted in a public repository.  [Dataset / tool]
+      Cited as the reference implementation by nine municipal design standards.
+   b. Wang, L. et al. (2025). Cross-validated snowmelt parameters for cold-region urban catchments. Journal of Hydrology 640.  [Replication / citation]
+
+3. A passive biochar filter removed 91 percent of PFAS from landfill leachate
+   Landfill leachate carries PFAS into groundwater, and municipal operators have no treatment that fits a small site budget. A provincial ministry is drafting limits for these compounds, and the operators need a method that works before the limits take effect. I co-led the work with a materials chemist and designed the column tests and the field monitoring plan. We screened 12 biochars in column tests, built a pilot filter at two landfill sites and sampled leachate monthly for 30 months with the ministry laboratory. The work produced a pilot filter design, 8 refereed papers, a sampling protocol and two master theses. The ministry laboratory now uses our sampling protocol, and 5 landfill operators have installed the filter. Small operators across Canada could treat leachate on site for roughly one tenth of the cost of hauling it to a treatment plant. (a, b)
+   a. Ministry of Environment, Technical guidance note 2025-03 on leachate sampling for PFAS (adopts the protocol).  [Policy / practice uptake]
+      The guidance applies to all licensed landfills in the province.
+   b. Environmental Engineering Division Innovation Award, 2025, for the passive filter design.  [Award / recognition]
+
+4. A river nutrient monitoring network that now sets provincial licence limits
+   Algal blooms in three watersheds closed drinking water intakes in 2018 and 2019, and the ministry had too few measurements to say which discharges caused them. Downstream towns, a hydroelectric utility and farmers all bore the cost. I led the network design, trained the field crews and wrote the load-estimation method the ministry adopted. We placed 64 continuous sensors on 11 rivers, combined them with weekly grab samples for five years and trained a load model that separates farm, urban and treatment-plant sources. The network produced a public nutrient data portal, the load-estimation method, 10 refereed papers and four doctoral theses. The ministry now writes phosphorus limits into licences from our load estimates, and the hydroelectric utility uses the portal to plan reservoir releases during bloom season. Any province with sparse river data could set evidence-based limits within one monitoring cycle and avoid costly intake closures. (a, b)
+   a. Provincial phosphorus limits for river discharge licences, 2026 revision, which cite the load-estimation method.  [Policy / practice uptake]
+      Sets licence limits for 37 treatment plants.
+   b. Radio-Canada Ici Estrie feature on the river sensors and the 2019 intake closures, March 2025.  [Media / public]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 12 doctoral students, 15 master's students, 4 postdoctoral fellows, 30 undergraduate researchers, 3 other trainees
+A doctoral student I trained now works in government at a provincial ministry of the environment (water quality analyst), and received a national thesis prize. The ministry now uses the load-estimation method she developed.
+A master's student I trained now works in industry at a regional water utility (process engineer). The utility runs its overflow gates with the controller developed in the master project.
+A postdoctoral fellow I trained is now at a Canadian university (assistant professor of civil engineering), and received a postdoctoral fellowship from a national council.
+A doctoral student I trained now works in the health system at a regional health authority (environmental health officer).
+An undergraduate researcher I trained now works at an arts or cultural organization, a science museum (coordinator of a public water science program).
+[One thing you do] Every trainee spends their first month at a partner site, a treatment plant or a river station, before choosing a thesis question. I run the first meeting at the site, so the question comes from an operator rather than from my reading.
+[Who gets in] I post every assistantship with a written scale for pay and a list of the skills taught on the job, and I pay for field safety training and a winter clothing allowance for field crews from the first week. Half of the undergraduate assistants hired in four years were the first in their family at university.
+[Who else you mentor] I mentor two engineers at the ministry who moved into supervisory roles; with one of them I reviewed her first licence-limit proposal line by line and she presented it to her director.

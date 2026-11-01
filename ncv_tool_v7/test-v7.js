@@ -406,7 +406,7 @@ async function seed(state, extra) {
   console.log("Change panel");
   await seed(Object.assign({}, fixture, { stageKey: "contrib", mode: "compose" }));
   r = await js(H + `const agency=()=>JSON.parse(localStorage.getItem('ncv-v7')).lens.agency; const a={ag0:agency()};
-    const ch=q('#v7-chg'); a.exp0=ch.getAttribute('aria-expanded'); a.ctl=ch.getAttribute('aria-controls'); ch.click(); await w(100);
+    const ch=q('#v7-chg'); a.exp0=ch.getAttribute('aria-expanded'); a.ctl0=ch.getAttribute('aria-controls'); ch.click(); await w(100); a.ctl=ch.getAttribute('aria-controls');
     a.exp1=ch.getAttribute('aria-expanded'); a.panel=!!q('#v7-chg-panel'); a.focusIn=q('#v7-chg-panel').contains(document.activeElement);
     a.ids=['ag','st','di','d2','yr'].map(k=>!!q('#v7-chg-'+k)); a.comp=!!q('#v7-chg-comp'); a.pills=qa('#v7-chg-panel [aria-pressed]').length;
     const other=[...q('#v7-chg-ag').options].map(o=>o.value).find(v=>v&&v!==a.ag0&&v!=='other'); a.other=other;
@@ -421,7 +421,7 @@ async function seed(state, extra) {
     a.warn=q('#v7-chg-panel .v7-warn p')?.innerText; a.warnBtns=qa('#v7-chg-panel .v7-warn .btn').map(b=>b.innerText); a.kept=JSON.parse(localStorage.getItem('ncv-v7')).contributions.length>0;
     qa('#v7-chg-panel .v7-warn .btn').find(b=>b.innerText==='Cancel').click(); await w(100); a.warnGone=!q('.v7-warn'); a.kept2=JSON.parse(localStorage.getItem('ncv-v7')).contributions.length>0;
     return a;`);
-  check("Change is a disclosure: aria-expanded flips, it controls the panel, and focus moves in", r.exp0 === "false" && r.exp1 === "true" && r.ctl === "v7-chg-panel" && r.panel && r.focusIn, r);
+  check("Change is a disclosure: aria-expanded flips, it controls the panel, and focus moves in", r.exp0 === "false" && r.exp1 === "true" && r.ctl0 === null && r.ctl === "v7-chg-panel" && r.panel && r.focusIn, r);
   check("the panel holds the six answers: agency, stage, field, second field, year, competition, work-mode pills", r.ids.every(Boolean) && r.comp && r.pills >= 4, r);
   check("Escape discards the edit, closes the panel and returns focus to Change", r.stillSaved && !r.esc.panel && r.esc.focus === "v7-chg" && r.esc.ag === r.ag0 && r.esc.exp === "false", r);
   check("Confirm applies the new answers, closes the panel and returns focus to Change", !r.ok.panel && r.ok.focus === "v7-chg" && r.ok.ag === r.other && r.ok.ag !== r.ag0, r);
@@ -712,7 +712,7 @@ async function seed(state, extra) {
       return a;`);
     check("TCV in a creative field: a press link is listed to take out, the video of the work is not (r2-b-3)", r.links.some(t => /^Contribution 1: Evidence$/.test(t)) && /Contribution 1: Evidence/.test(r.note), r);
     check("Export names the links still in the draft (r2-a-16) and a download names its file (r2-a-4)", /still in your draft/.test(r.note) && /^Downloaded narrative-cv-draft-sshrc\.doc\.$/.test(r.dl), r);
-    check("a trainee in the health system prints as a sentence (r2-a-2)", /A master's student I trained now works in the health system at A made-up health authority \(Nurse manager\)\./.test(r.mentor), r.mentor);
+    check("a trainee in the health system prints as a sentence (r2-a-2)", /A master's student I trained now works at A made-up health authority \(Nurse manager\)\./.test(r.mentor), r.mentor);
   }
 
   console.log("Audit loop, round 3: the walkthrough's remaining items");
@@ -778,8 +778,8 @@ async function seed(state, extra) {
       const cid=card.querySelector('[id^=ev-open-], [id^=ev-add-]')?.id.split('-').pop() || '';
       qa('.v7-kind-row .v7-linkbtn')[0].click(); await w(200);
       const k0=document.activeElement; k0.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true})); await w(200);
-      a.stillOpen=qa('.v7-ev-item')[0].querySelectorAll('.v7-kind').length; a.focusKind=document.activeElement.getAttribute('role'); a.live=q('#v7-live').textContent;
-      document.activeElement.click(); await w(200); a.folded=qa('.v7-ev-item')[0].querySelectorAll('.v7-kind').length===0;
+      a.stillOpen=qa('.v7-ev-item')[0].querySelectorAll('.v7-kind').length; a.focusKind=document.activeElement.getAttribute('role'); a.checked=document.activeElement.getAttribute('aria-checked');
+      document.activeElement.click(); await w(200); a.folded=qa('.v7-ev-item')[0].querySelectorAll('.v7-kind').length===0; a.live=q('#v7-live').textContent;
       qa('.v7-ev-rm')[1].click(); await w(200); a.undo=!!q('.v7-undo button'); a.items1=qa('.v7-ev-item').length;
       q('.v7-undo button').click(); await w(200); a.items2=qa('.v7-ev-item').length; a.back=qa('.v7-ev-item textarea')[2]?.value||qa('[id^=evt]')[1]?.value;
       a.dir=q('.v7-ev-item textarea').dir;
@@ -789,10 +789,53 @@ async function seed(state, extra) {
       qa('#v7-chg-panel .btn-primary').find(b=>/Confirm/.test(b.innerText)).click(); await w(150);
       a.need=!!q('.v7-chg-need') && !!q('#v7-chg-panel');
       return a;`);
-    check("arrow keys move through the evidence kinds with the chooser open and say the kind; Enter folds it (r3-a-1)", r.stillOpen === 9 && r.focusKind === "radio" && /^Kind: /.test(r.live) && r.folded, r);
+    check("arrow keys move through the evidence kinds with the chooser open and say the kind; Enter folds it (r3-a-1)", r.stillOpen === 9 && r.focusKind === "radio" && r.checked === "true" && r.folded && /Kind: /.test(r.live), r);
     check("a removed evidence item can be restored with Undo (r3-b-6); boxes take the text's direction (r3-b-13)", r.undo && r.items1 === 1 && r.items2 === 2 && r.dir === "auto", r);
     check("an unbroken 250-character headline wraps on Review and the move buttons use a short name (r3-b-1, r3-b-2)", r.sw && r.mv < 90, r);
     check("the Change panel asks for a work mode before it confirms (r3-b-9)", r.need, r);
+  }
+
+  console.log("Audit loop, round 4");
+  {
+    // History: Back after Confirm profile is never a dead press; Back after a reset stays on the start page.
+    await seed(null);
+    r = await js(H + `q('.v7-path-new').click(); await w(150);
+      q('#ag-nserc').click(); await w(120); q('#v7-undecided').click(); await w(120); q('#st-mid').click(); await w(100); q('#di-stem').click(); await w(100); q('#d2-none').click(); await w(100);
+      q('#wm-team').click(); await w(100); q('#wm-solo').click(); await w(120);
+      const a={wm:JSON.parse(localStorage.getItem('ncv-v7')).lens.workMode.join(','), live1:q('#v7-live').textContent};
+      qa('.narrative-nav .btn').find(b=>/Confirm profile/.test(b.innerText)).click(); await w(200);
+      history.back(); await w(300); a.back=(q('.v7-path-new h3')||{}).innerText||'';
+      history.forward(); await w(300); a.fwd=q('h2').innerText;
+      history.pushState(null,'','#profile'); history.back(); await w(250); history.forward(); await w(300);
+      a.after=q('h2').innerText; a.focus=document.activeElement.tagName; a.live=q('#v7-live').textContent; a.hash=location.hash;
+      document.getElementById('v7-home').click(); await w(150); q('.v7-path-reset').click(); await w(100);
+      qa('.v7-warn .btn-primary')[0].click(); await w(100); qa('.v7-warn .btn-primary')[0].click(); await w(250);
+      history.back(); await w(300); a.afterReset=(q('.v7-path-new h3')||{}).innerText; a.mode=JSON.parse(localStorage.getItem('ncv-v7')||'{}').mode;
+      return a;`);
+    check("Team-based and Largely solo replace each other, and the change is spoken (r4-a-4)", r.wm === "solo" && /Team-based cleared/.test(r.live1), r);
+    check("Confirm profile replaces Setup's history entry, so Back goes to the start page and Forward returns (H-1)", r.back === "Continue your draft" && /Most significant/.test(r.fwd), r);
+    check("an address for a closed step (Setup after Confirm) is not a dead press: the step shown is named and its heading focused (H-1)", /Most significant/.test(r.after) && r.focus === "H2" && /not open now/.test(r.live) && r.hash === "#contributions", r);
+    check("Back after a reset stays on the start page and starts nothing (H-2)", r.afterReset === "Start your draft" && !r.mode, r);
+    // A blank card with only a level; the historian's and the zoom fixes.
+    const st7 = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    st7.contributions = [{ cid: "cz1", title: "Made-up archive", stakes: "No researcher outside the town could learn what it held.", roleMode: "led", roleLine: "", activities: "I catalogued it.", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} }];
+    st7.mentorCounts = { phd: "", masters: "1", undergrad: "", postdoc: "", other: "" };
+    st7.mentees = [{ stageKind: "masters", stage: "Master's", kind: "university", org: "A made-up university", unit: "", recognition: "", why: "", folded: false }, { stageKind: "undergrad", stage: "Undergraduate research", kind: "arts", org: "A made-up science museum", unit: "", recognition: "", why: "", folded: true }];
+    await seed(st7);
+    r = await js(H + `await w(200); const a={};
+      a.hedge=[...qa('[data-f$="-stakes"] .v4-flag')].map(x=>x.textContent).join('|');
+      a.pad=getComputedStyle(document.documentElement).scrollPaddingTop; a.dot=getComputedStyle(q('.v7-dots i:not(.on)')||document.body).boxShadow;
+      rail('Mentorship').click(); await w(150); a.pc=qa('.v7-counter').map(x=>x.innerText).join('|');
+      rail('Review').click(); await w(200); a.bar=!!q('.v7-tailored #v7-chg'); a.miss=qa('.v7-glance a').map(x=>x.innerText).join('|');
+      rail('Export').click(); await w(150); a.unf=(q('.v7-unfinished-note')||{}).innerText||'';
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
+      return a;`);
+    check("'could learn' in Stakes is a past inability, not a hedge (r4-a-5)", !/hedge/.test(r.hedge), r.hedge);
+    check("more people described than counted is named beside the count and in Still missing (r4-a-6)", /2 described, more than the 1 counted/.test(r.pc) && /totals lower than the people you described/.test(r.miss), r);
+    check("Review has the Profile bar with Change (r4-a-1); Export names unfinished contributions (r3-b-5)", r.bar && /still missing parts/.test(r.unf), r);
+    check("each person is its own paragraph in the section copy (r4-a-9); an organization that names its sector is not given it twice (r4-b-7)", /\(\d|\.\n\nAn undergraduate researcher I trained now works at A made-up science museum\./.test(r.mentor), r.mentor);
+    check("the scroll padding follows the top bar (r4-b-1); empty progress squares have an edge (r4-b-4)", /px/.test(r.pad) && parseFloat(r.pad) >= 50 && /inset/.test(r.dot), r);
   }
 
   console.log("Register (W-57): the tool's prompt strings");

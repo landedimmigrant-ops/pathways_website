@@ -99,3 +99,27 @@ _none yet_
 **Open for Prem from this round:** r3-a-5 (Setup's Confirm sits after the column's six buttons in the Tab order), r3-a-9 (heading levels), r3-a-14 ("8 of 9" counts the optional One moment), r3-b-5 (a line on Export naming unfinished contributions).
 
 **Tests:** 174 of 174 (160 + 14: the walkthrough's last items, the review fixes, the persona fixes, the register check).
+
+### Round 4 · Fable's review of round 3, a returning historian, a low-vision engineer at 200% zoom
+
+**Who walked it** (the round 4 snapshot = commit `98c91e1`, which also carries another session's Q12–Q15 work) — all findings in [r4-findings.md](audit-loop-2026-10-31/r4-findings.md)
+- **Fable review** of round 3 and Q12–Q15: 2 major · 11 minor, mostly in the new Back and Forward.
+- **r4-a** Early-career historian, SSHRC Insight Development Grants, reopening a draft file saved by this morning's build: 6 minor · 4 polish ([draft](audit-loop-2026-10-31/r4-a-draft.txt)). The old file migrated cleanly.
+- **r4-b** Senior environmental engineer, NSERC, low vision at 200% zoom (640 × 450): 1 major · 6 minor · 6 polish ([draft](audit-loop-2026-10-31/r4-b-draft.txt)). No sideways scroll anywhere.
+
+**What they wrote**
+- r4-a: a monograph chapter on a 1912 mill strike, a digitized mill-town archive, a public exhibition with the local historical society; two trainees; a seven-part statement; about 1,220 words.
+- r4-b: real-time control of sewer overflows, an open stormwater model, a biochar PFAS filter, a river nutrient network; 64 trainees with five described; a full statement; 1,314 words.
+
+**Fixed this round**
+- **History (H-1, H-2, H-13):** Confirm profile replaces Setup's entry, so Back goes to the start page; an address for a closed step names the step shown and focuses its heading; with no draft started every address is the start page; `popping` always resets.
+- **Other review items:** H-3 to H-12 (one Undo timer, blank card with a level, chart label, the chooser held by index, the rail closing on step change, Welcome back after a gated reload, rail focus on rebuild, no step count before Confirm, focus after a take-up, a stopped tab ignoring other tabs).
+- **Zoom (r4-b):** the scroll padding follows the real sticky stack and short screens stop the card header sticking (r4-b-1, major); the heading comes into view after a step change; empty squares have a 3:1 edge; sector named once in mentorship sentences; wider panel selects; the Export preview a Tab stop only when it scrolls.
+- **Historian (r4-a):** the opened-on line names the profile and Review has the Profile bar; the cue list's footer matches Still missing; Humanities wording for two kinds and the evidence intro; Team-based and Largely solo replace each other; "could learn" is not a hedge; described more than counted is named; the path field's label; people as paragraphs in the copy; day-first date; the solo role prompt in the house register.
+- **Small open items from round 3:** Export names unfinished contributions (r3-b-5); `aria-controls` only while a panel exists (r3-a-12).
+
+**INFERRED this round (for Prem to override):** the Profile bar on Review; Team-based and Largely solo as alternatives; the "described more than counted" line in Still missing; the Export line for unfinished contributions; the step heading brought into view; static card headers below 520 px of height; the solo role prompt's new wording.
+
+**Open for Prem from this round:** r4-b-3 (profile pills clipped on narrow screens), r4-b-6 (the phone rail row does not stick; Save draft only in the rail), r4-a-7 (field examples for Mentorship and the statement, again), r4-b-4's text count beside the squares, r4-b-5 (a long first-sentence field at narrow widths).
+
+**Tests:** 188 of 188 (179 + 9: history after Confirm and after a reset, the gated address, solo and team, "could learn", described more than counted, Review's Profile bar and Export's note, the mentorship copy, the scroll padding and squares).

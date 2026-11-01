@@ -240,13 +240,14 @@
     /* Pass B: the Change panel opens inside the bar */
     .v7-tailored.is-open { flex-wrap: wrap; border-color: #912338; background: var(--v7-open); }
     .v7-chg { flex: 1 1 100%; border-top: 1px solid var(--v7-card-b); padding-top: 12px; margin-top: 2px; }
-    .v7-chg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px 14px; }
+    .v7-chg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px 14px; }
     .v7-chg-f.wide { grid-column: 1 / -1; }
     .v7-chg .v7-field-label { font-size: 0.8rem; }
     .v7-select { width: 100%; box-sizing: border-box; font: inherit; font-size: 0.88rem; padding: 6px 8px; border: 1px solid var(--v7-field); border-radius: 6px; background: #fff; min-height: 36px; color: var(--text); }
     .v7-chg-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .v7-chg-row .v7-input { flex: 1 1 220px; width: auto; min-height: 36px; padding: 6px 10px; font-size: 0.88rem; }
     .v7-chg-row .v7-select { flex: 0 0 auto; width: auto; }
+    .v7-counter.is-warn { color: #7a4b00; font-weight: 600; }
     .v7-chg-note { margin: 6px 0 0; font-size: 0.82rem; color: #7a4b00; }
     .v7-chg-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
     .v7-startline { font-size: 1.05rem; font-weight: 600; margin: -4px 0 8px; }
@@ -346,8 +347,8 @@
     .v7-card-side { display: flex; align-items: center; gap: 10px; flex-shrink: 0; font-size: 0.8rem; color: var(--muted); }
     .v7-card-sub { font-size: 0.85rem; color: var(--muted); margin: -4px 0 12px; }
     .v7-dots { display: inline-flex; gap: 3px; }
-    .v7-dots i { width: 8px; height: 8px; border-radius: 2px; background: #d4d4d4; }
-    .v7-dots i.on { background: var(--v7-done); }
+    .v7-dots i { width: 8px; height: 8px; border-radius: 2px; background: #e8e8e8; box-shadow: inset 0 0 0 1px #8a8a8a; }
+    .v7-dots i.on { background: var(--v7-done); box-shadow: none; }
     /* Pass D: card progress column (desktop, option B); sticky header row on phones (option A). */
     .v7-fcol ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
     .v7-fsq { width: 24px; height: 24px; padding: 0; margin: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
@@ -527,8 +528,8 @@
     .v7-tile-k2 { margin-top: 12px; }
     /* r3-a-11: links and the read-only draft take the tool's burgundy ring. */
     #ncv-v4-root a:focus-visible, .v7-skip:focus-visible, .v7-draft-body:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
-    .v7-links-note { display: block; border: 1px solid #e0b252; background: #fff8e1; border-radius: 6px; padding: 10px 14px; margin: 0 0 18px; }
-    .v7-links-note p { margin: 0 0 4px; } .v7-links-note ul { margin: 0; padding-left: 1.2em; }
+    .v7-links-note, .v7-unfinished-note { display: block; border: 1px solid #e0b252; background: #fff8e1; border-radius: 6px; padding: 10px 14px; margin: 0 0 18px; }
+    .v7-links-note p, .v7-unfinished-note p { margin: 0 0 4px; } .v7-links-note ul { margin: 0; padding-left: 1.2em; }
     .v7-tile-k { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
     .v7-big { font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
     .v7-pages { position: relative; height: 10px; background: var(--v7-track); border-radius: 5px; margin: 10px 0 4px; overflow: hidden; }
@@ -584,7 +585,14 @@
     }
 
     /* Design check, 2026-10-27 */
-    html { scroll-padding-top: 56px; }
+    /* r4-b-1: the top bar's height plus, at 768 px and below, the sticky card header or Setup's count row. */
+    html { scroll-padding-top: calc(var(--v7-bar, 43px) + 13px); }
+    @media (max-width: 768px) { html { scroll-padding-top: calc(var(--v7-bar, 43px) + var(--v7-stick, 0px) + 12px); } }
+    /* A short screen keeps the card header in the flow, so the sticky stack does not fill it. */
+    @media (max-width: 768px) and (max-height: 520px) {
+      .v7-card.v7-card-col > .v7-card-h, .v7-qcount { position: static !important; }
+      html { scroll-padding-top: calc(var(--v7-bar, 43px) + 12px); }
+    }
     .proto-shell a:not(.btn) { text-decoration: underline; text-underline-offset: 2px; }
     p .v4-guide-link, .v7-lede .v4-guide-link, .v7-explain .v4-guide-link { font-size: inherit; }
     .v7-lede { font-size: 1rem; line-height: 1.6; }
@@ -783,7 +791,12 @@
     const clear = (n) => { while (n.firstChild) n.removeChild(n.firstChild); };
     const root = document.getElementById("ncv-v4-root");
     // Pass D: the height of the sticky top bar, for the sticky card column and the phone card header.
-    const setBar = () => { const b = document.querySelector(".proto-banner"); if (b) document.documentElement.style.setProperty("--v7-bar", b.offsetHeight + "px"); };
+    const setBar = () => {
+      const b = document.querySelector(".proto-banner"); if (b) document.documentElement.style.setProperty("--v7-bar", b.offsetHeight + "px");
+      // r4-b-1: the tallest sticky header under the bar, for the scroll padding.
+      const hs = [...document.querySelectorAll(".v7-card.v7-card-col > .v7-card-h, .v7-qcount")].filter(h => getComputedStyle(h).position === "sticky");
+      document.documentElement.style.setProperty("--v7-stick", (hs.length ? Math.max(...hs.map(h => h.offsetHeight)) : 0) + "px");
+    };
     setBar(); window.addEventListener("resize", setBar);
 
     // ── Vocabularies ────────────────────────────────────────────────────────
@@ -1809,7 +1822,9 @@
       if (!isProse) {
         // W-30: "could not" and "would not" describe a past inability (what Stakes asks for), not a hedge.
         const hedgeText = t.replace(/\bMay\b(?=\s+(?:\d{4}|\d{1,2})\b)/g, "MAYMONTH_SENTINEL")
-          .replace(/\b(could|would|should|might|may)(?=\s+not\b)/gi, "NEGMODAL_SENTINEL");
+          .replace(/\b(could|would|should|might|may)(?=\s+not\b)/gi, "NEGMODAL_SENTINEL")
+          // r4-a-5: "no one could learn what it held" is a past inability; "could" before a verb of access or knowing is not a hedge.
+          .replace(/\bcould(?=\s+(?:learn|find|see|tell|access|read|reach|get|use|know|afford|attend|travel|count|measure|track|say|identify|locate|compare|link|trace|obtain|open|consult|search)\b)/gi, "ABLEMODAL_SENTINEL");
         const hedges = [];
         HEDGES.forEach(h => { const ms = allMatches(hedgeText, h); if (ms.length) { hedges.push(h); ms.forEach(m => out.hits.push({ text: m.text, rule: "hedge" })); } });
         if (kind === "impact") {
@@ -2094,9 +2109,9 @@
       if (!draft || typeof draft !== "object") return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft.";
       const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session };
       // W-46: the step it opens on says which draft it opened.
-      const when = obj && obj.savedAt && !isNaN(Date.parse(obj.savedAt)) ? new Date(obj.savedAt).toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" }) : "";
+      const when = obj && obj.savedAt && !isNaN(Date.parse(obj.savedAt)) ? new Date(obj.savedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "";
       try { applySaved(draft); } catch (_) { return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft."; }
-      openedPending = when ? "Opened your draft saved on " + when + "." : "Opened your draft.";
+      openedPending = (when ? "Opened your draft saved on " + when : "Opened your draft") + (profilePills().length ? ", set up for " + profilePills().join(", ").replace(/ · /g, ", ") + "." : ".");
       Object.assign(ns, keep);
       resumeStore();
       saveState();
@@ -2186,6 +2201,13 @@
     // while Undecided is on); the bracketed agency prints only when the agency is known.
     // r1-b-7, r1-b-11: the agencies a competition name mentions ("NSERC Discovery Grant" → ["nserc"]).
     const agenciesNamed = (t) => AGENCIES.filter(a => a.v !== "other" && new RegExp("\\b" + a.l + (a.v === "frq" ? "(?:SC|NT|S)?" : "") + "\\b", "i").test(t || "")).map(a => a.v);
+    // r4-a-4 (inferred): "Team-based" and "Largely solo" describe the same thing two ways, so choosing
+    // one clears the other (and says so); community and partnered work combine with either.
+    function soloTeamSwap(list, v) {
+      const other = v === "solo" ? "team" : v === "team" ? "solo" : "";
+      const k = other ? list.indexOf(other) : -1;
+      if (k >= 0) { list.splice(k, 1); announce(labelOf(WORK_MODES, other) + " cleared, because " + labelOf(WORK_MODES, v).toLowerCase() + " was chosen."); }
+    }
     const interpolate = (s) => {
       const ag = ns.lens.agency && ns.lens.agency !== "other" ? labelOf(AGENCIES, ns.lens.agency) : "";
       // The bracket names the agency only when the competition name does not name one itself.
@@ -2269,7 +2291,7 @@
           helpVariants: { creative: "Short, plain and memorable. Name what the work was for; the title of the exhibition or work belongs in the evidence list." } },
         stakes: { q: "What problem did this work address, and who had it?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true },
         roleLine: {
-          q: "In one line, what did you do that wouldn't exist without you?",
+          q: "In one line, what was your own part in this work?",
           help: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the protocol.”",
           variants: { team: "In one line, what was your unique contribution within the team?", partners: "In one line, what was your part in this work, and who else took part?" }
         },
@@ -2432,9 +2454,12 @@
         if (raw !== null && ns.stageKey !== keep.stageKey && stages().some(x => x.key === keep.stageKey) && !isLockedStage(keep.stageKey)) ns.stageKey = keep.stageKey;
         // G-2: an open Change panel holds a copy of the old profile, so it closes when the profile changed
         // elsewhere; the evidence view follows its card by id.
-        if (UI.chg && JSON.stringify(ns.lens) !== lensBefore) { UI.chg = null; spoken = true; announce("Your profile was changed in another tab, so the Change panel closed."); }
+        let chgClosed = false;
+        if (UI.chg && JSON.stringify(ns.lens) !== lensBefore) { UI.chg = null; chgClosed = true; spoken = true; announce("Your profile was changed in another tab, so the Change panel closed."); }
         UI.evCard = evCid ? ns.contributions.findIndex(c => c.cid === evCid) : -1;
+        replaceNext = true; // a take-up is not a step the researcher chose
         renderStage();
+        if (chgClosed) { const b = document.getElementById("v7-chg"); if (b) b.focus({ preventScroll: true }); } // H-11
       } catch (_) { /* a copy this tab cannot read: keep the tab as it is */ }
       saveMuted = false;
       if (spoken) announce(raw === null ? "The draft was cleared in another tab." : "This tab now shows the changes made in another tab.");
@@ -2443,7 +2468,7 @@
       if (e.key !== NCV_KEY && e.key !== null) return;
       // G-1 (review 2026-10-31): a tab that has stopped saving (outside clear, unreadable draft) may hold
       // the only copy of the draft, so it keeps that copy and its warning.
-      if ((storeCleared || loadFailed) && e.newValue !== null) return;
+      if (storeCleared || loadFailed) return; // H-12: whatever the other tab did
       otherTab = e.key === null ? null : e.newValue;
       if (!document.hidden && !composing) takeUpOtherTab(false);
     });
@@ -2483,6 +2508,7 @@
       ns.profileConfirmed = true;
       railGrow = true;
       countEvent("profileConfirmed");
+      replaceNext = true; // H-1: Setup closes once the profile is confirmed, so its entry is replaced.
       goStage("contrib");
       announce("Profile confirmed.");
     };
@@ -2519,6 +2545,7 @@
     // W-54 (inferred, option A): on a phone the rail folds to one row ("Contributions · step 1 of 5 ▸")
     // above the step, so each step opens on its heading; the row opens the full list, Save draft included.
     function fillRail(panel) {
+      const had = panel.contains(document.activeElement) ? document.activeElement.id : "";
       fillRailList(panel);
       if (ns.stageKey === "start") return;
       const body = el("div", "v7-rail-body"); body.id = "v7-rail-body";
@@ -2527,11 +2554,12 @@
       const pos = st.findIndex(x => x.key === ns.stageKey);
       const tg = el("button", "v7-rail-toggle"); tg.type = "button"; tg.id = "v7-rail-toggle";
       tg.setAttribute("aria-controls", body.id); tg.setAttribute("aria-expanded", UI.railOpen ? "true" : "false");
-      tg.appendChild(el("span", "v7-rail-toggle-t", ((st[pos] || {}).short || "") + (pos >= 0 ? " · step " + (pos + 1) + " of " + st.length : "")));
+      tg.appendChild(el("span", "v7-rail-toggle-t", ((st[pos] || {}).short || "") + (pos >= 0 && ns.profileConfirmed ? " · step " + (pos + 1) + " of " + st.length : "")));
       tg.appendChild(el("span", "v7-tri" + (UI.railOpen ? " is-down" : ""), "▸")).setAttribute("aria-hidden", "true");
       tg.addEventListener("click", () => { UI.railOpen = !UI.railOpen; panel.classList.toggle("is-open", UI.railOpen); tg.setAttribute("aria-expanded", UI.railOpen ? "true" : "false"); tg.querySelector(".v7-tri").classList.toggle("is-down", UI.railOpen); });
       panel.classList.toggle("is-open", !!UI.railOpen);
       panel.appendChild(tg); panel.appendChild(body);
+      if (had) { const n = document.getElementById(had); if (n) n.focus({ preventScroll: true }); } // H-9
     }
     function fillRailList(panel) {
       clear(panel);
@@ -2679,26 +2707,36 @@
         if (n) { n.focus({ preventScroll: true }); try { if (caret != null) n.setSelectionRange(caret, caret); } catch (_) {} }
       }
       // W-01: on a step change focus moves to the step's heading (not on the first render of the page).
-      if (stageChanged && !firstRender) { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); }
+      if (stageChanged && !firstRender) {
+        const h = stepHeading();
+        if (h) { h.focus({ preventScroll: true }); if (h.getBoundingClientRect().bottom > window.innerHeight - 24) h.scrollIntoView({ block: "start" }); }
+      }
+      setBar();
       lastStageKey = ns.stageKey;
       // W-47 (inferred, option A): each step is a history entry with its own address (#contributions),
       // so the browser's Back and Forward move between steps; a step the gates send elsewhere is replaced.
       if (stageChanged || stepFromHash() !== ns.stageKey) {
         const st = { step: ns.stageKey }, url = "#" + (STEP_HASH[ns.stageKey] || ns.stageKey);
-        try { if (firstRender || popping || location.hash === url) history.replaceState(st, "", url); else history.pushState(st, "", url); } catch (_) {}
+        try { if (firstRender || popping || replaceNext || location.hash === url) history.replaceState(st, "", url); else history.pushState(st, "", url); } catch (_) {}
       }
+      replaceNext = false;
       saveState();
     };
     const STEP_HASH = { start: "start", setup: "profile", contrib: "contributions", mentor: "mentorship", ps: "statement", review: "review", export: "export", feedback: "feedback" };
     const stepFromHash = () => { const h = location.hash.slice(1); return Object.keys(STEP_HASH).find(k => STEP_HASH[k] === h) || ""; };
-    let popping = false;
+    let popping = false, replaceNext = false;
     window.addEventListener("popstate", () => {
       const k = stepFromHash();
       if (!k || k === ns.stageKey) return;
       popping = true;
-      if (k !== "start" && !ns.mode) ns.mode = "compose";
-      ns.stageKey = k; renderStage();
-      popping = false;
+      try {
+        // H-2: with no draft started (after a reset, or a clear in another tab) every address is the
+        // start page; only the start page's buttons start a draft.
+        ns.stageKey = ns.mode ? k : "start"; renderStage();
+        // H-1: a step the gates do not allow (Setup after Confirm, a locked Review) is not a dead press:
+        // the step shown is named and its heading takes focus.
+        if (ns.stageKey !== k) { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); announce("That step is not open now. This is " + ((stages().find(x => x.key === ns.stageKey) || {}).short || "the start page") + "."); }
+      } finally { popping = false; } // H-13
     });
 
     // W-01, W-12: the step's heading, or the page title on the start page; focusable by script only.
@@ -3239,7 +3277,7 @@
     // Screen state that is not part of the draft: the open field, the open example, the evidence
     // view. Reset when the step changes, so every step arrives in the same quiet state.
     const UI = { active: "", ex: "", evCard: -1, moved: "", chg: null };
-    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; UI.kindOpen = ""; };
+    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; UI.kindOpen = ""; UI.railOpen = false; };
     const motionMs = (ms) => (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) ? 0 : ms;
     // W-07: the live region is in the page from the start (#v7-live); this only rebuilds a lost one.
     const announceEl = () => {
@@ -3430,20 +3468,21 @@
       ch.appendChild(document.createTextNode("Change"));
       ch.type = "button"; ch.id = "v7-chg";
       ch.setAttribute("aria-label", "Change your profile answers");
-      ch.setAttribute("aria-controls", "v7-chg-panel");
+      // r3-a-12: aria-controls names the panel only while it is in the page.
+      if (UI.chg) ch.setAttribute("aria-controls", "v7-chg-panel");
       ch.setAttribute("aria-expanded", UI.chg ? "true" : "false");
       const close = () => {
         UI.chg = null;
         const pn = bar.querySelector(".v7-chg"); if (pn) pn.remove();
         bar.classList.remove("is-open");
-        ch.setAttribute("aria-expanded", "false");
+        ch.setAttribute("aria-expanded", "false"); ch.removeAttribute("aria-controls");
         ch.focus();
       };
       ch.addEventListener("click", () => {
         if (UI.chg) { close(); return; }
         UI.chg = { lens: JSON.parse(JSON.stringify(ns.lens)) };
         bar.classList.add("is-open");
-        ch.setAttribute("aria-expanded", "true");
+        ch.setAttribute("aria-expanded", "true"); ch.setAttribute("aria-controls", "v7-chg-panel");
         const pn = changePanel(close);
         bar.appendChild(pn);
         const first = pn.querySelector("select, input, button");
@@ -3528,8 +3567,8 @@
         b.setAttribute("aria-pressed", d.workMode.indexOf(m.v) !== -1 ? "true" : "false");
         b.addEventListener("click", () => {
           const ix = d.workMode.indexOf(m.v);
-          if (ix >= 0) d.workMode.splice(ix, 1); else d.workMode.push(m.v);
-          b.setAttribute("aria-pressed", ix >= 0 ? "false" : "true");
+          if (ix >= 0) d.workMode.splice(ix, 1); else { d.workMode.push(m.v); soloTeamSwap(d.workMode, m.v); }
+          pillsW.querySelectorAll(".v7-mini").forEach((x, xi) => x.setAttribute("aria-pressed", d.workMode.indexOf(WORK_MODES[xi].v) !== -1 ? "true" : "false"));
           const need = p.querySelector(".v7-chg-need"); if (need && d.workMode.length) need.remove();
         });
         pillsW.appendChild(b);
@@ -3583,7 +3622,7 @@
         const b = el("button", "v7-ex-btn" + (idx === 0 ? " is-primary" : ""));
         b.type = "button"; b.id = "v7-ex-" + key;
         b.setAttribute("aria-expanded", on ? "true" : "false");
-        b.setAttribute("aria-controls", "v7-exbox");
+        if (on) b.setAttribute("aria-controls", "v7-exbox");
         b.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
         b.appendChild(document.createTextNode(label));
         b.addEventListener("click", () => { UI.ex = on ? "" : key; if (!on) countEvent("example:" + key); renderStage(); });
@@ -4019,7 +4058,7 @@
           blk.appendChild(explainBox("Many researchers work in more than one way. Your answer chooses the role and outcome prompts and the worked example you see."));
           blk.appendChild(choiceGrid(WORK_MODES, v => (L.workMode || []).indexOf(v) !== -1, v => {
             const m = L.workMode || (L.workMode = []); const ix = m.indexOf(v);
-            if (ix >= 0) m.splice(ix, 1); else m.push(v);
+            if (ix >= 0) m.splice(ix, 1); else { m.push(v); soloTeamSwap(m, v); }
             saveState(); renderStage();
           }, { labelledby: "pq5", multi: true, idp: "wm" }));
         }
@@ -4104,7 +4143,7 @@
             });
             box.appendChild(ul);
           });
-          box.appendChild(el("p", "v7-exfoot", "These are examples. Skip any part your record does not include; a contribution can be complete without all six."));
+          box.appendChild(el("p", "v7-exfoot", "These are examples. A part your record does not include can stay empty; Review lists empty parts so you can check each one."));
           return box;
         }
         return null;
@@ -4194,7 +4233,7 @@
         // W-45 (inferred, option A): the inline warning, under the card's header.
         rm.addEventListener("click", () => {
           const ht = (contrib.title || "").trim();
-          if (only && !cLive(contrib)) return announce("Contribution 1 is already blank.");
+          if (only && !cCount(contrib)) return announce("Contribution 1 is already blank.");
           if (!cLive(contrib)) return removeC();
           inlineConfirm(card, "Remove contribution " + (i + 1) + (ht ? ", “" + gvCut(ht, 60) + "”," : "") + " and everything in it?", rm, "Remove", removeC, { after: head });
         });
@@ -4335,9 +4374,9 @@
     // V7-25 + D-5, D-7: the evidence view. Kinds as a small grid of cards, none pre-selected.
     const EV_KIND_HINT = {
       "Peer-reviewed": "an article, chapter or book", "Media / public": "coverage, a public talk, a podcast",
-      "Policy / practice uptake": "a policy, guideline or program that adopted your work", "Dataset / tool": "data or software others use",
+      "Policy / practice uptake": "a policy, guideline or program that adopted your work", "Dataset / tool": "data, software, a catalogue or a digitized collection others use",
       "Award / recognition": "a prize, fellowship or honour", "Funding": "a grant the work attracted",
-      "Replication / citation": "a study that repeated or cited your work", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition",
+      "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition",
       "Other": "anything else a reviewer could check"
     };
     function evidenceArea(contrib, i) {
@@ -4345,7 +4384,7 @@
       area.appendChild(el("div", "v7-f-k is-q", "Evidence"));
       const q = el("span", "v7-q", "What backs up this contribution?"); q.id = "evq" + contrib.cid;
       area.appendChild(q);
-      area.appendChild(explainBox("Evidence backs up what you have just described. Add the items a reviewer could check: a paper, a policy or program that adopted your work, coverage, a dataset, an award. Add as many as you need. Each item gets a letter, and the letters follow the contribution in your draft.", guideLink("More kinds of evidence that count", "difference")));
+      area.appendChild(explainBox("Evidence backs up what you have just described. Add the items a reviewer could check: a paper, an edition or collection, a policy or program that adopted your work, coverage, a dataset, an award. Add as many as you need. Each item gets a letter, and the letters follow the contribution in your draft.", guideLink("More kinds of evidence that count", "difference")));
       const items = el("div", "v7-ev-items");
       (contrib.evidence || []).forEach((ev, j) => {
         const it = el("div", "v7-ev-item");
@@ -4362,6 +4401,13 @@
         rm.addEventListener("click", () => {
           const gone = contrib.evidence.splice(j, 1)[0];
           UI.evUndo = (gone.text || "").trim() || (gone.note || "").trim() ? { cid: contrib.cid, j, ev: gone, until: Date.now() + 10000 } : null;
+          UI.kindOpen = ""; // H-6: the open chooser is held by index
+          if (UI.evUndo) { const un0 = UI.evUndo; setTimeout(() => {
+            if (UI.evUndo !== un0) return; UI.evUndo = null;
+            const row = document.getElementById("ev-undo-" + un0.cid)?.closest(".v7-undo"); if (!row) return;
+            const had = row.contains(document.activeElement); row.remove();
+            if (had) { const a = document.getElementById("ev-add-" + un0.cid); if (a) a.focus(); }
+          }, 10000); }
           saveState(); renderStage();
           const a = document.getElementById(UI.evUndo ? "ev-undo-" + contrib.cid : "ev-add-" + contrib.cid) || document.getElementById("ev-add-" + contrib.cid); if (a) a.focus();
           announce("Evidence item " + letter(j) + " removed." + (UI.evUndo ? " Undo is available for ten seconds." : ""));
@@ -4391,7 +4437,7 @@
               ev.type = t; UI.kindOpen = viaArrow ? kKey : ""; saveState(); renderStage();
               const n = viaArrow ? document.getElementById(b.id) : document.getElementById(t === "Other" ? "evo" + kKey : "evt" + kKey);
               if (n) n.focus({ preventScroll: true });
-              announce("Kind: " + t + ".");
+              if (!viaArrow) announce("Kind: " + t + "."); // an arrow's option is read by the screen reader itself
             });
             kinds.appendChild(b);
           });
@@ -4446,16 +4492,15 @@
         row.appendChild(document.createTextNode("Evidence item " + letter(un.j) + " removed. "));
         const ub = el("button", "v7-linkbtn", "Undo"); ub.type = "button"; ub.id = "ev-undo-" + contrib.cid;
         ub.addEventListener("click", () => {
-          contrib.evidence.splice(Math.min(un.j, contrib.evidence.length), 0, un.ev); UI.evUndo = null; saveState(); renderStage();
+          contrib.evidence.splice(Math.min(un.j, contrib.evidence.length), 0, un.ev); UI.evUndo = null; UI.kindOpen = ""; saveState(); renderStage();
           const t = document.getElementById("evt" + contrib.cid + "-" + un.j); if (t) t.focus();
           announce("Evidence item " + letter(un.j) + " restored.");
         });
         row.appendChild(ub); area.appendChild(row);
-        setTimeout(() => { if (UI.evUndo === un) { UI.evUndo = null; if (row.isConnected) { const had = row.contains(document.activeElement); row.remove(); if (had) { const a = document.getElementById("ev-add-" + contrib.cid); if (a) a.focus(); } } } }, un.until - Date.now());
       }
       const add = el("button", "v7-add", "+ Add " + ((contrib.evidence || []).length ? "another item" : "an item")); add.type = "button"; add.id = "ev-add-" + contrib.cid;
       add.addEventListener("click", () => {
-        contrib.evidence.push({ text: "", type: "", note: "" }); saveState(); renderStage();
+        contrib.evidence.push({ text: "", type: "", note: "" }); UI.kindOpen = ""; saveState(); renderStage();
         // W-03: as "+ Add a contribution" does, focus goes to the new item (its first kind card).
         const j = contrib.evidence.length - 1, it = root.querySelectorAll(".v7-ev-item")[j], k = it && it.querySelector(".v7-kind");
         if (k) k.focus({ preventScroll: true });
@@ -4523,8 +4568,8 @@
       const where = !org && !m.kind ? "" : m.kind === "industry" ? "now works in industry" + (org ? " at " + org : "")
         : m.kind === "government" ? "now works in government" + (org ? " at " + org : "")
         : m.kind === "community" ? "now works at a community agency" + (org ? ", " + org : "")
-        : m.kind === "arts" ? "now works at an arts or cultural organization" + (org ? ", " + org : "")
-        : m.kind === "health" ? "now works in the health system" + (org ? " at " + org : "")
+        : m.kind === "arts" ? (org && /museum|gallery|theat|arts?\b|festival|orchestra|cultur|librar/i.test(org) ? "now works at " + org : "now works at an arts or cultural organization" + (org ? ", " + org : ""))
+        : m.kind === "health" ? (org && /health|hospital|clinic|medical|care\b/i.test(org) ? "now works at " + org : "now works in the health system" + (org ? " at " + org : ""))
         : org ? "is now at " + org : "";
       const recog = one(m.recognition), why = one(m.why);
       let t = articleFor(noun).replace(/^a/, "A") + " " + noun + " I trained" + (where ? " " + where : "");
@@ -4592,7 +4637,8 @@
       const sh = el("div", "v7-section-t");
       sh.appendChild(el("h3", "v7-h3", "A few of the people you trained, and where they went."));
       const pc = el("span", "v7-counter"); pc.setAttribute("aria-live", "polite");
-      const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? d + " of " + t + " described" : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); };
+      // r4-a-6: more people described than counted reads as a gap, here and in Still missing.
+      const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? (d > t ? d + " described, more than the " + t + " counted above. Raise a count or remove a person." : d + " of " + t + " described") : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); pc.classList.toggle("is-warn", !!t && d > t); };
       setPc(); sh.appendChild(pc); c.appendChild(sh);
       c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers will read your CV, so leave out names to protect the privacy of the people you trained. Describe each person by their level and where they went, and add any best-paper prizes or prestigious scholarships they held or went on to win."));
       ns.mentees.forEach((m, i) => c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)));
@@ -4707,7 +4753,9 @@
         p2.appendChild(a); p2.appendChild(b); card.appendChild(p2);
       }
       card.appendChild(input("v7-pz" + i, "Prizes or scholarships", true, m.recognition, v => { m.recognition = v; changed(); }));
-      const why = input("v7-py" + i, "What this person's path shows", true, m.why, v => { m.why = v; changed(); });
+      const why = input("v7-py" + i, "What this person did or went on to do", true, m.why, v => { m.why = v; changed(); });
+      // r4-a-8: the sentence prints after where they are now, so it starts with the person's action.
+      why.querySelector("input").placeholder = "One sentence, such as “They catalogued the ledgers and now…”";
       why.className = ""; card.appendChild(why);
       return card;
     }
@@ -4849,6 +4897,7 @@
       const wrap = el("div", "v7-draft");
       const body = el("div", "v7-draft-body " + (cls || "") + (ns.lens.agency === "sshrc" ? "" : " tnr"));
       body.tabIndex = 0; body.setAttribute("role", "region"); body.setAttribute("aria-label", label);
+      requestAnimationFrame(() => { if (body.isConnected && body.scrollHeight <= body.clientHeight + 1) body.removeAttribute("tabindex"); }); // r4-b-11
       const h4 = (t) => body.appendChild(el("h4", null, t));
       h4(docHeading("ps"));
       const a = psAnchorText();
@@ -4891,6 +4940,7 @@
       });
       if (!liveContributions().length) out.push({ step: "contrib", i: 0, field: "c" + (ns.contributions[0] || {}).cid + "-title", label: "Contributions: none written yet" });
       if (!ns.mentees.some(menteeHasPlace)) out.push({ step: "mentor", person: true, label: "Mentorship: one person you trained, and where they went" });
+      else if (mentorTotal() && menteesDescribed() > mentorTotal()) out.push({ step: "mentor", field: "v7-t-phd", label: "Mentorship: totals lower than the people you described" });
       PF().forEach(f => { if (!f.optional && !(ns[f.k] || "").trim()) out.push({ step: "mentor", field: "m-" + f.k, label: "Mentorship: " + f.label }); });
       SF().forEach(f => { if (!psHas(f.k)) out.push({ step: "ps", field: "ps-" + f.k, label: (isFrq() ? "Background and skills" : "Personal statement") + ": " + f.label }); });
       return out;
@@ -4918,6 +4968,8 @@
       if (m.field) { UI.active = m.field; renderStage(); focusField(m.field); }
     }
     function renderReview(c) {
+      // r4-a-1 (inferred): the Profile bar and its Change on Review, as on the writing steps.
+      tailoredBar(c);
       stageHead(c, "", "Review your CV", "", false);
       const lede = el("p", "narrative-intro-text v7-lede", "This step shows your working draft, lets you put your contributions in order and shows what is still missing. ");
       lede.appendChild(guideLink("What reviewers look for", "reviewers"));
@@ -5100,6 +5152,8 @@
         const row = counts.find(r => r[0] === e.type);
         if (row) row[1]++; else untyped++;
       }));
+      // r4-a-10: a label short enough for the chart.
+      counts.forEach(r => { if (/^Exhibition/.test(r[0])) r[0] = "Exhibition or performance"; });
       if (untyped) counts.push(["Kind not chosen", untyped]);
       const total = counts.reduce((n, r) => n + r[1], 0);
       if (!total) return null;
@@ -5344,6 +5398,14 @@
       tailoredBar(c, { lead: "Set up for:", text: unsure ? "Agency not chosen yet · Tri-agency CV layout · 12-point Times New Roman"
         : labelOf(AGENCIES, a) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV") + " · " + font });
       // r2-a-16: links the format does not allow are named here too, before anything is downloaded.
+      // r3-b-5 (inferred): contributions still missing parts are named, so stubs are not pasted by accident.
+      const unfinished = [...new Set(missingList().filter(m => m.step === "contrib" && !/none written yet/.test(m.label)).map(m => m.i))];
+      if (unfinished.length) {
+        const box = el("div", "v7-note v7-unfinished-note"); box.setAttribute("role", "note");
+        const pp = el("p", null, (unfinished.length === 1 ? "1 contribution is" : unfinished.length + " contributions are") + " still missing parts. The copies below include them as they are. ");
+        const rv = el("button", "v7-linkbtn", "See what is missing on Review"); rv.type = "button"; rv.addEventListener("click", () => goStage("review"));
+        pp.appendChild(rv); box.appendChild(pp); c.appendChild(box);
+      }
       const lk = linkList();
       if (lk.length) {
         const box = el("div", "v7-note v7-links-note"); box.setAttribute("role", "note");
@@ -5680,7 +5742,7 @@
       const totals = mentorTotalsParts();
       if (totals.length) out.push("Totals (last five years): " + totals.join(", "));
       const traj = ns.mentees.filter(menteeHasContent);
-      if (traj.length) out.push(traj.map(menteeSentence).join("\n"));
+      traj.forEach(m => out.push(menteeSentence(m)));
       [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].map(one).filter(Boolean).forEach(t => out.push(t));
       return out.join("\n\n");
     }
@@ -6061,6 +6123,8 @@
     showLoadFailed();
     updateNoteBtn();
     if (stepFromHash() && ns.mode) ns.stageKey = stepFromHash();
+    // H-8: the same gates renderStage applies, so a reload at #profile after Confirm still says Welcome back.
+    if (ns.mode && ns.profileConfirmed && ns.stageKey === "setup") ns.stageKey = "contrib";
     if (ns.mode && ns.profileConfirmed && ns.stageKey !== "start" && ns.stageKey !== "setup") reentryPending = true;
     renderStage();
   })();
