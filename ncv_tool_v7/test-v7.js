@@ -871,6 +871,78 @@ async function seed(state, extra) {
     check("Export has the shared-computer note (r5-a-4); Review's self-check asks about partners' agreement (r5-b-7); each history entry carries a number (J-1)", r.shared && r.agree && r.hasN, r);
   }
 
+  console.log("Audit loop, round 6");
+  {
+    const mkc = (t, x) => ({ cid: "cr" + t, title: "Made-up contribution " + t, stakes: "Stakes " + x + ".", roleMode: "led", roleLine: "I led it.", activities: "I did " + x + ".", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {}, folded: true });
+    const st9 = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    st9.contributions = [1, 2, 3, 4, 5, 6].map(n => mkc(n, "x".repeat(3) + n));
+    st9.contributions[0].folded = false;
+    st9.contributions[0].activities = ("I modelled the made-up data and wrote the made-up report. ").repeat(300);
+    st9.mentees = [{ stageKind: "doctoral", stage: "Doctoral", kind: "health", org: "A made-up health authority", unit: "", recognition: "", why: "now leads the made-up analytics team", folded: false }];
+    await seed(st9);
+    r = await js(H + `await w(200); const a={};
+      a.sel=(q('.v7-select-note')||{}).innerText||''; a.meta=qa('.v7-fold-meta').map(x=>x.innerText);
+      a.wc=(q('.v7-rail-wc')||{}).innerText||''; a.wcOver=!!q('.v7-rail-wc.is-over');
+      rail('Export').click(); await w(150); a.over=(q('.v7-over-note')||{}).innerText||''; rail('Contributions').click(); await w(150);
+      const card=q('.v7-card-col'); card.querySelector('[aria-label^="Remove contribution 1"]').click(); await w(150);
+      a.warn=(q('.v7-warn p')||{}).innerText||''; qa('.v7-warn .btn-primary')[0].click(); await w(250);
+      a.undo=!!q('#c-undo'); a.n1=JSON.parse(localStorage.getItem('ncv-v7')).contributions.length;
+      q('#c-undo').click(); await w(250); a.n2=JSON.parse(localStorage.getItem('ncv-v7')).contributions.length; a.first=JSON.parse(localStorage.getItem('ncv-v7')).contributions[0].cid;
+      const role=q('[data-f$="-roleLine"] .v7-box'); role.focus(); setv(role,'My team ran the course while I was on leave.'); await w(80);
+      a.roleTick=qa('[data-f$="-roleLine"] .v4-strength').map(x=>x.textContent).join('|');
+      const act=q('[data-f$="-activities"] .v7-box'); act.focus(); setv(act,'Sampling was paused for twelve months in 2023, and I would have run the dive surveys myself otherwise.'); await w(80);
+      a.actFlags=qa('[data-f$="-activities"] .v4-flag').map(x=>x.textContent).join('|');
+      rail('Mentorship').click(); await w(150); a.tilesHelp=(q('.v7-tiles-help')||{}).innerText||'';
+      rail('Personal statement').click(); await w(150); a.pivot=(q('[data-f="ps-pivot"] .v7-f-more')||{}).textContent||'';
+      rail('Export').click(); await w(150);
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
+      q('#v7-chg').click(); await w(150); setsel(q('#v7-chg-st'),'early'); qa('#v7-chg-panel .btn-primary').find(b=>/Confirm/.test(b.innerText)).click(); await w(200); a.live=q('#v7-live').textContent;
+      return a;`);
+    check("past five contributions a line on choosing appears; each folded row shows its length (r6-a-1, r6-a-2)", /You have 6 contributions/.test(r.sel) && r.meta.every(m => /\d+ w$/.test(m)), r);
+    check("the rail says when the draft is over the limit; Export says so too (r6-a-4)", /over 5 p/.test(r.wc) && r.wcOver && /needs cutting/.test(r.over), r);
+    check("removing a written contribution names its words and can be undone for ten seconds (r6-a-3)", /with its [\d,]+ words/.test(r.warn) && r.undo && r.n1 === 5 && r.n2 === 6 && r.first === "cr1", r);
+    check("'my team ran it' is not your own role; a pause and a counterfactual are not flagged; a year counts as a date (r6-b-6, r6-b-4, r6-b-5)", !/Your own role is named/.test(r.roleTick) && !/hedge|does not say who|No numbers or dates/.test(r.actFlags), r);
+    check("the totals and How you got here say where a leave goes, without stating an agency's rule (r6-b-1, r6-b-2)", /if a leave fell inside it/.test(r.tilesHelp) && /If a leave, a move between institutions/.test(r.pivot), r);
+    check("a 'went on to do' answer that starts with a verb joins the sentence (r6-a-7); a profile change names what changed (r6-b-7)", /made-up health authority, and now leads the made-up analytics team\./.test(r.mentor) && /Profile updated: career stage/.test(r.live), r);
+  }
+
+  console.log("Audit loop, round 6: Fable's review of round 5");
+  {
+    // The tab's session history is capped at 50 entries by Chrome, and the suite fills it; start clean.
+    await send("Page.resetNavigationHistory");
+    await seed(null);
+    r = await js(H + `const log=[]; const L=(t)=>log.push(t+':'+location.hash+':'+(history.state&&history.state.n)+':'+history.length);
+      L('start'); q('.v7-path-new').click(); await w(150); L('setup');
+      q('#ag-nserc').click(); await w(100); q('#v7-undecided').click(); await w(100); q('#st-mid').click(); await w(80); q('#di-stem').click(); await w(80); q('#d2-none').click(); await w(80); q('#wm-team').click(); await w(120);
+      qa('.narrative-nav .btn').find(b=>/Confirm profile/.test(b.innerText)).click(); await w(200); L('conf');
+      rail('Mentorship').click(); await w(150); L('mentor'); rail('Personal statement').click(); await w(150); L('ps');
+      document.getElementById('v7-home').click(); await w(150); L('home'); q('.v7-path-reset').click(); await w(100);
+      qa('.v7-warn .btn-primary')[0].click(); await w(100); qa('.v7-warn .btn-primary')[0].click(); await w(250); L('reset');
+      q('.v7-path-new').click(); await w(200); L('new'); return {log, h0:q('h2').innerText, len:history.length, st:JSON.stringify(history.state)};`);
+    await js(`history.back(); return 1;`); await sleep(500);
+    r = Object.assign(r, await js(H + `return {b1:(q('.v7-path-new h3')||{}).innerText||q('h2')?.innerText, st1:JSON.stringify(history.state), hash1:location.hash};`));
+    await js(`history.back(); return 1;`); await sleep(700);
+    r = Object.assign(r, await js(H + `return {b2:(q('.v7-path-new h3')||{}).innerText||q('h2')?.innerText, live:q('#v7-live').textContent, here:location.pathname};`));
+    check("after a reset and a new draft, Back never re-enters the earlier draft's steps or leaves the tool (K-1)", /Set up your profile/.test(r.h0) && /draft/.test(r.b1) && /draft/.test(r.b2) && /narrative-cv-prototype-v7/.test(r.here), r);
+    const stA = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    stA.contributions[0].roleLine = "We co-designed the made-up survey with the partners.";
+    stA.contributions[0].roleMode = "";
+    stA.contributions[0].activities = "Phase I trials across three sites; we recruited 40 made-up patients.";
+    stA.contributions[0].impact = "Clinics may use the made-up tool to plan intake.";
+    stA.ps = Object.assign({}, stA.ps, { role: "professor", challenge: "Our lab pivoted to community data; we rebuilt the pipeline and our partners hosted it." });
+    await seed(stA);
+    r = await js(H + `await w(200); const a={};
+      const box=(k)=>q('[data-f$="-'+k+'"] .v7-box');
+      box('activities').focus(); setv(box('activities'), box('activities').value+' '); await w(80); a.act=qa('[data-f$="-activities"] .v4-flag').map(x=>x.textContent).join('|');
+      box('impact').focus(); setv(box('impact'), box('impact').value+' '); await w(80); a.imp=qa('[data-f$="-impact"] .v4-strength').map(x=>x.textContent).join('|');
+      rail('Personal statement').click(); await w(150);
+      const ch=q('[data-f="ps-challenge"] .v7-box'); ch.focus(); setv(ch, ch.value+' '); await w(80); a.ps=qa('[data-f="ps-challenge"] .v4-flag').map(x=>x.textContent).join('|');
+      return a;`);
+    check("'Phase I' is not the writer, and a role line that only says 'we' does not silence the card's check (K-2, K-4)", /“we”/.test(r.act), r);
+    check("the statement's first sentence does not silence its 'we' check (K-3); 'may use' in What could change is praised as a hedge (K-5)", /“we”/.test(r.ps) && /Hedged/.test(r.imp), r);
+  }
+
   console.log("Register (W-57): the tool's prompt strings");
   {
     const src = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v7.html"), "utf8");

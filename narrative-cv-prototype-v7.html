@@ -455,6 +455,9 @@
     .v7-undo { margin: 8px 0 0; font-size: 0.88rem; }
     .v7-v6-offer { margin-bottom: 16px; }
     .v7-shared-note { margin: 10px 0 0; }
+    .v7-ow { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .v7-select-note { display: block; margin: 0 0 12px; color: var(--text); }
+    .v7-rail-wc.is-over { color: #912338; font-weight: 600; }
     .v7-tile input.v7-tile-name { order: 3; font-size: 0.8rem; font-weight: 400; min-height: 30px; padding: 4px 6px; margin-top: 6px; border: 1px solid var(--v7-field); border-radius: 4px; }
     .v7-tiles-help { margin: 8px 0 0; }
     .v7-rail-toggle { display: none; }
@@ -736,7 +739,9 @@
       .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
     }
     /* r1-b-4: below about 1100 px two charts side by side shrink their labels to 5 px; one per row. */
-    @media (max-width: 1100px) { .v7-gv-grid { grid-template-columns: minmax(0, 1fr); } }
+    /* r6-a-6 (inferred): one chart per row at every width, so their text is not scaled down to 8 px. */
+    .v7-gv-grid { grid-template-columns: minmax(0, 1fr); }
+    .v7-gv-art svg { max-width: 640px; }
     .v4-note-panel { position: sticky; top: 34px; z-index: 999; max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
     .v4-note-panel-inner { background: #fff; border: 2px solid #1a1a1a; border-radius: 0 0 8px 8px; padding: 0.9rem 1rem; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
     .v4-note-panel textarea { width: 100%; box-sizing: border-box; min-height: 70px; padding: 0.5rem; font: inherit; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 6px; }
@@ -1632,7 +1637,7 @@
     const countNoun = (n, plural) => String(n).trim() === "1" ? plural.replace(/s$/, "") : plural;
     const MENTOR_EXAMPLE = {
       segments: [
-        { r: "totals", t: "Since 2018 I have supervised four PhD students, nine master's students, two postdocs and 11 undergraduate research assistants." },
+        { r: "totals", t: "Over the last five years I have supervised four PhD students, nine master's students, two postdocs and 11 undergraduate research assistants." },
         { r: "people", t: "One PhD student now leads evaluation at a national non-profit, and the role is built on methods I developed with that student, who won a best-paper prize at the field's main conference in 2024. A master's student moved to a provincial statistics unit and still co-authors with the group." },
         { r: "practice", t: "Every project in my group begins with a written agreement on authorship, data and ownership, revisited at the midpoint. The agreement takes an hour to draft, and authorship disputes, once common in my group, have stopped." },
         { r: "access", t: "Three years ago I removed the prior-experience requirement from my assistantship postings and began paying from the first week, because unpaid trial periods had been screening out applicants without family support. Two-thirds of the assistants hired since are the first in their family to attend university." },
@@ -1667,7 +1672,9 @@
     // showed less passivity. An agentless passive is flagged only where the field is about your own
     // work and nothing else in it names you (and no "we" flag already covers it).
     const PASSIVE_RE = /\b(?:was|were|is|are|been|being)\s+(?:\w+ly\s+)?(\w{3,}ed|used|built|written|led|run|made|done|taken|given|held|kept|found|sent|spent|won|drawn|grown|shown|known|begun|brought|chosen|taught|overseen|undertaken)\b(?!\s+by\b)/gi;
-    const PASSIVE_SKIP = ["based","located","interested","committed","related","involved","concerned","supposed","needed","dedicated","aimed","designed to","titled","entitled"];
+    const PASSIVE_SKIP = ["based","located","interested","committed","related","involved","concerned","supposed","needed","dedicated","aimed","designed to","titled","entitled",
+      // r6-b-4: a pause, a delay or a restart is not work anyone did.
+      "paused","delayed","interrupted","suspended","halted","postponed","cancelled","canceled","restarted","resumed"];
     const PASSIVE_KINDS = ["roleLine", "activities", "generic"];
     // Guide sync (P-17, P-31): link rules differ by format. The format comes in through ctx so this
     // engine still runs on its own (scripts/ncv-v5-examples.js extracts it).
@@ -1702,6 +1709,17 @@
 
     // Every case-insensitive, word-boundaried occurrence of a literal phrase, with its real index
     // and as-typed casing — feeds both the flag decision and the B-16 read-back highlight.
+    // K-2 to K-4 (review 2026-11-01): one test of whether a text names the writer's own part. "I" plus a
+    // listed or past-tense verb within three words, or any verb right after "I" (r5-b-1); an "I" that is a
+    // numeral ("Phase I", "Type I", "Level I") or opens a quotation does not count.
+    const I_NOT_ME = "(?<!\\b(?:Phase|Type|Level|Class|Grade|Stage|Part|Chapter|Volume|Tier|Section|Title|War|Act|Schedule|Appendix|Book|Figure|Table|Unit|Module|Category|Division|Track|Series)\\s)(?<![\"“‘'])";
+    function ownershipIn(text) {
+      const t = String(text || "");
+      const verbAlt = "(?:" + ACTION_VERBS.join("|") + "|" + IRREGULAR_PAST.join("|") + "|\\w{2,}ed)\\b";
+      const iVerb = new RegExp(I_NOT_ME + "\\bI\\b(?:\\s+\\S+){0,3}?\\s*\\b" + verbAlt).test(t)
+        || new RegExp(I_NOT_ME + "\\bI\\s+(?!am\\b|was\\b|were\\b|have\\b|had\\b|will\\b|would\\b|could\\b|should\\b|might\\b|may\\b|can\\b|do\\b|did\\b|think\\b|believe\\b|hope\\b|feel\\b|also\\b|and\\b|or\\b)[a-z]{3,}\\b").test(t);
+      return { iVerb, myWord: MY_ROLE_NOUN.test(t) };
+    }
     function allMatches(t, phrase) {
       const pattern = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
       const re = new RegExp("\\b" + pattern + "\\b", "gi");
@@ -1732,16 +1750,12 @@
       // unchanged. Prefer under-flagging: a missed vague sentence costs less than nagging a clear one.
       const weMatches = [...t.matchAll(/\b(we|us|our)\b/gi)].map(m => ({ text: m[0], index: m.index }));
       const weCount = weMatches.length;
-      const verbAlt = "(?:" + ACTION_VERBS.join("|") + "|" + IRREGULAR_PAST.join("|") + "|\\w{2,}ed)\\b";
-      const iVerb = new RegExp("\\bI\\b(?:\\s+\\S+){0,3}?\\s*\\b" + verbAlt, "i").test(t)
-        // r5-b-1: "I analyse", "I facilitate", "that I negotiate": any verb right after "I" names a part.
-        || /\bI\s+(?!am\b|was\b|were\b|have\b|had\b|will\b|would\b|could\b|should\b|might\b|may\b|can\b|do\b|did\b|think\b|believe\b|hope\b|feel\b|also\b)[a-z]{3,}\b/.test(t);
-      const myWord = MY_ROLE_NOUN.test(t);
+      const own = ownershipIn(t), iVerb = own.iVerb, myWord = own.myWord;
       const ownership = iVerb || myWord;
       const weak = [];
       WEAK_PHRASES.forEach(p => { const ms = allMatches(t, p); if (ms.length) { weak.push(p); ms.forEach(m => out.hits.push({ text: m.text, rule: "weak" })); } });
       if (ownership && weCount) out.strengths.push("Team voice and your own role are both visible.");
-      else if (ownership) out.strengths.push("Your own role is named.");
+      else if (iVerb) out.strengths.push("Your own role is named."); // r6-b-6: "my team ran it" names the team
       if (weCount && !ownership && !ctx.roleNamed) {
         out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " and no sentence names your own part. Name it beside the team’s or the partners’, for example “I co-lead the methods; the partner communities hold the data.”");
         weMatches.forEach(m => out.hits.push({ text: m.text, rule: "ownership" }));
@@ -1778,7 +1792,7 @@
         links.forEach(l => { forNums = forNums.split(l.text).join(" "); });
         const nums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
         if (nums) { out.strengths.push(nums + " specific number" + (nums > 1 ? "s" : "")); out.score++; }
-        else if (kind === "activities" || kind === "outcomes") {
+        else if ((kind === "activities" || kind === "outcomes") && !/\b(?:19|20)\d{2}\b/.test(t)) {
           // B-19 (amended): dropped off "outputs" — a list of things without numbers is a correct
           // answer there. The check now fires only where the prompt actually asked for a quantity.
           out.flags.push("No numbers or dates in this field. Is that right for this one?");
@@ -1832,10 +1846,13 @@
         const mask = (m) => "#".repeat(m.length);
         const hedgeText = t.replace(/\bMay\b(?=\s+(?:\d{4}|\d{1,2})\b)/g, mask)
           .replace(/\b(could|would|should|might|may)(?=\s+not\b)/gi, mask)
+          // r6-b-4: "could only supervise by video", "would have run the surveys myself" describe the past.
+          .replace(/\bcould(?=\s+only\b)|\bwould(?=\s+have\b)/gi, mask)
           // r4-a-5: "no one could learn what it held" is a past inability; "could" before a verb of access or knowing is not a hedge.
           .replace(/\bcould(?=\s+(?:learn|find|see|tell|access|read|reach|get|use|know|afford|attend|travel|count|measure|track|say|identify|locate|compare|link|trace|obtain|open|consult|search)\b)/gi, mask)
-          // r5-b-4: a right or a rule in an agreement ("may withdraw", "would require") is not a hedge.
-          .replace(/\b(?:may|can)(?=\s+(?:withdraw|request|decline|refuse|review|approve|veto|leave|choose|access|use)\b)|\b(?:would|will)(?=\s+(?:require|need)\b)/gi, mask);
+          // r5-b-4, K-5: a right or a rule in an agreement ("may withdraw", "would require") is not a hedge,
+          // outside What could change, where hedges are asked for.
+          .replace(kind === "impact" ? /$^/ : /\b(?:may|can)(?=\s+(?:withdraw|decline|refuse|veto|request)\b)|\b(?:would|will)(?=\s+(?:require|need)\b)/gi, mask);
         const hedges = [];
         HEDGES.forEach(h => { const ms = allMatches(hedgeText, h); if (ms.length) { hedges.push(h); ms.forEach(m => out.hits.push({ text: m.text, rule: "hedge", index: m.index })); } });
         if (kind === "impact") {
@@ -1844,7 +1861,7 @@
           if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " is a hedge" : " are hedges") + ". A hedge suits a sentence about what might follow; state what happened plainly.");
           else out.score++;
         } else {
-          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " is a hedge" : " are hedges") + ". This field describes what happened; what might follow belongs under What could change.");
+          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " is a hedge" : " are hedges") + ". This field describes what happened. State an uncertainty as a fact (such as “three reefs were not sampled in 2023”), or move a possibility to What could change.");
           else out.score++;
         }
       }
@@ -2101,8 +2118,10 @@
         "-" + d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + "-" + pad(d.getHours()) + pad(d.getMinutes()) + ".json";
     }
     // r5-a-3: what the draft says, without the tool's own state, to tell whether it changed since a file save.
-    const contentSig = () => JSON.stringify([ns.lens, ns.contributions.map(c => CONTRIB_TEXT_KEYS.map(k => c[k] || "").concat([c.roleMode || "", JSON.stringify(c.evidence || [])])), ns.mentorCounts, ns.mentees.map(m => [m.stageKind, m.stageOther, m.kind, m.org, m.unit, m.recognition, m.why]), MENTOR_TEXT_KEYS.map(k => ns[k] || ""), ns.ps]);
+    const contentSig = () => JSON.stringify([ns.lens, ns.contributions.map(c => CONTRIB_TEXT_KEYS.map(k => c[k] || "").concat([c.roleMode || "", JSON.stringify((c.evidence || []).filter(e => (e.text || "").trim() || (e.note || "").trim()))])), ns.mentorCounts, ns.mentorOtherLabel || "", ns.consultQuestions || "", ns.mentees.map(m => [m.stageKind, m.stageOther, m.kind, m.org, m.unit, m.recognition, m.why]), MENTOR_TEXT_KEYS.map(k => ns[k] || ""), ns.ps]);
     const hhmm = (t) => new Date(t).toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: false });
+    // K-8: "at 09:08" today, "on 24 October at 09:08" on another day.
+    const savedWhen = (t) => new Date(t).toDateString() === new Date().toDateString() ? "at " + hhmm(t) : "on " + new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "long" }) + " at " + hhmm(t);
     function saveDraftFile() {
       const blob = new Blob([JSON.stringify(buildDraftFile(), null, 2)], { type: "application/json" });
       const a = el("a"); a.href = URL.createObjectURL(blob); a.download = draftFileName();
@@ -2128,6 +2147,9 @@
       const when = obj && obj.savedAt && !isNaN(Date.parse(obj.savedAt)) ? new Date(obj.savedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + " at " + hhmm(obj.savedAt) : "";
       try { applySaved(draft); } catch (_) { return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft."; }
       resetUI(); // r5-a-1: nothing from the draft that was on screen (an Undo, an open view) carries over
+      ns.ui.histGen = Date.now(); // K-1: a new draft for the history
+      // K-8: an opened file counts as saved at the time it was saved, with this content.
+      ns.ui.fileSavedAt = obj && Date.parse(obj.savedAt) || Date.now(); ns.ui.fileSavedSig = contentSig();
       openedPending = (when ? "Opened your draft saved on " + when : "Opened your draft") + (profilePills().length ? ", set up for " + profilePills().join("; ") + "." : ".");
       Object.assign(ns, keep);
       resumeStore();
@@ -2141,7 +2163,7 @@
       const trigger = e && e.currentTarget, host = trigger && trigger.closest(".v7-paths");
       const oldErr = document.getElementById("v7-load-err"); if (oldErr) oldErr.remove();
       if (draftHasContent(ns) && host) {
-        const saved = ns.ui.fileSavedAt ? (ns.ui.fileSavedSig === contentSig() ? "You saved this draft to a file at " + hhmm(ns.ui.fileSavedAt) + " and have not changed it since. " : "You saved this draft to a file at " + hhmm(ns.ui.fileSavedAt) + " and changed it after that. ") : "";
+        const saved = ns.ui.fileSavedAt ? (ns.ui.fileSavedSig === contentSig() ? "This draft was saved to a file " + savedWhen(ns.ui.fileSavedAt) + " and has not changed since. " : "This draft was saved to a file " + savedWhen(ns.ui.fileSavedAt) + " and has changed since. ") : "";
         inlineConfirm(host, saved + "Opening a file replaces the draft in this browser." + (saved && ns.ui.fileSavedSig === contentSig() ? "" : " Save a draft file first if you want to keep it."), trigger, "Choose a file", pickDraftFile, { cls: "v7-warn-wide" });
         return;
       }
@@ -2285,7 +2307,7 @@
           }
         },
         streams: { q: "Name two to four strands of your work. What single thread connects them?", help: "A reviewer should see one coherent program." },
-        pivot: { q: "How did you get here?", help: "Many strong statements name a turning point, such as a field you came from, a pivot or a defining collaboration. It explains why your work looks the way it does.", isNew: true },
+        pivot: { q: "How did you get here?", help: "Many strong statements name a turning point, such as a field you came from, a pivot or a defining collaboration. It explains why your work looks the way it does. If a leave, a move between institutions or another interruption shaped your record, say so here in one or two factual sentences: when it was, how long it lasted and what the work did in the meantime. The instructions for your funding opportunity say where the agency wants this and how much detail it asks for.", isNew: true },
         standing: {
           q: "List your strongest signals of standing.",
           help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual's work. The citation count for a single article or book can support what you say about it.",
@@ -2472,7 +2494,7 @@
       const lensBefore = JSON.stringify(ns.lens), evCid = UI.evCard >= 0 ? (ns.contributions[UI.evCard] || {}).cid : null;
       saveMuted = true;
       try {
-        if (raw === null) { ns = defaultState(); resetUI(); resumeStore(); ns.stageKey = "start"; }
+        if (raw === null) { ns = defaultState(); ns.ui.histGen = Date.now(); resetUI(); resumeStore(); ns.stageKey = "start"; }
         else { applySaved(JSON.parse(raw)); Object.assign(ns, { teamNotes: keep.teamNotes, feedback: keep.feedback, session: keep.session }); storeSeen = true; }
         if (raw !== null && ns.stageKey !== keep.stageKey && stages().some(x => x.key === keep.stageKey) && !isLockedStage(keep.stageKey)) ns.stageKey = keep.stageKey;
         // G-2: an open Change panel holds a copy of the old profile, so it closes when the profile changed
@@ -2637,9 +2659,10 @@
           if (w) {
             const pp = pagesShort(w);
             const wc = el("span", "v7-rail-wc");
-            const vis = el("span", null, w.toLocaleString("en-CA") + " w" + (pp ? " · " + pp : "")); vis.setAttribute("aria-hidden", "true");
+            const vis = el("span", null, w.toLocaleString("en-CA") + " w" + (pp ? " · " + pp : "") + (overLimit(w) ? " · over " + PAGE_LIMIT_EN + " p" : "")); vis.setAttribute("aria-hidden", "true");
+            if (overLimit(w)) wc.classList.add("is-over");
             wc.appendChild(vis);
-            wc.appendChild(el("span", "v7-sr", "Draft so far: " + w.toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (pp ? ", " + pagesRange(w) + (+(Math.round(w / WORDS_PER_PAGE * 2) / 2) <= 1 ? " page" : " pages") : "")));
+            wc.appendChild(el("span", "v7-sr", "Draft so far: " + w.toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (pp ? ", " + pagesRange(w) + (+(Math.round(w / WORDS_PER_PAGE * 2) / 2) <= 1 ? " page" : " pages") : "") + (overLimit(w) ? ", over the " + PAGE_LIMIT_EN + "-page limit" : "")));
             row.appendChild(wc);
           }
           groups.appendChild(row);
@@ -2743,8 +2766,9 @@
       if (stageChanged || stepFromHash() !== ns.stageKey) {
         const url = "#" + (STEP_HASH[ns.stageKey] || ns.stageKey);
         try {
-          if (firstRender || popping || replace || location.hash === url) { histN = (history.state && history.state.n) || histN || Date.now(); history.replaceState({ step: ns.stageKey, n: histN }, "", url); }
-          else { histN = Math.max(Date.now(), histN + 1); history.pushState({ step: ns.stageKey, n: histN }, "", url); }
+          if (!ns.ui.histGen) ns.ui.histGen = Date.now();
+          if (firstRender || popping || replace || location.hash === url) { histN = (history.state && history.state.n) || histN || Date.now(); history.replaceState({ step: ns.stageKey, n: histN, g: ns.ui.histGen }, "", url); }
+          else { histN = Math.max(Date.now(), histN + 1); history.pushState({ step: ns.stageKey, n: histN, g: ns.ui.histGen }, "", url); }
         } catch (_) {}
       }
       saveState();
@@ -2767,6 +2791,14 @@
       const k = stepFromHash(); if (!k) return;
       const n = e.state && e.state.n, dir = n && histN ? Math.sign(n - histN) : 0;
       if (n) histN = n;
+      // K-1 (review 2026-11-01): an entry left by an earlier draft (before a reset, a clear or a file load)
+      // belongs to no step of this one: it is the start page, and it is never skipped through.
+      if (e.state && e.state.g && ns.ui.histGen && e.state.g !== ns.ui.histGen) {
+        try { history.replaceState({ step: "start", n: histN, g: ns.ui.histGen }, "", "#start"); } catch (_) {}
+        if (ns.stageKey !== "start") { popping = true; try { ns.stageKey = "start"; renderStage(); } finally { popping = false; } announce("That page belonged to an earlier draft. This is the start page."); }
+        else { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); announce("That page belonged to an earlier draft. This is the start page."); }
+        return;
+      }
       // H-2: with no draft open every older entry is the start page; the press stays here and says so.
       if (!ns.mode) {
         if (ns.stageKey !== "start") { popping = true; try { ns.stageKey = "start"; renderStage(); } finally { popping = false; } }
@@ -2779,7 +2811,13 @@
       // goes back to the step shown.
       if ((!to || to === ns.stageKey) && dir && skipping < 8) {
         skipping++; const at = location.hash; history.go(dir);
-        setTimeout(() => { if (skipping && location.hash === at) { skipping = 0; try { history.replaceState({ step: ns.stageKey, n: histN }, "", "#" + STEP_HASH[ns.stageKey]); } catch (_) {} } }, 400);
+        setTimeout(() => {
+          if (!(skipping && location.hash === at)) return;
+          skipping = 0;
+          try { history.replaceState({ step: ns.stageKey, n: histN, g: ns.ui.histGen }, "", "#" + STEP_HASH[ns.stageKey]); } catch (_) {}
+          const h = stepHeading(); if (h) h.focus({ preventScroll: true }); // K-6
+          announce("No step lies further that way. This is " + stepName(ns.stageKey) + ".");
+        }, 400);
         return;
       }
       skipping = 0;
@@ -3161,7 +3199,7 @@
       const nwArrow = el("span", "v7-arrow", "→"); nwArrow.setAttribute("aria-hidden", "true");
       go.appendChild(nwArrow);
       go.addEventListener("click", () => {
-        if (!ns.mode) { ns.mode = "compose"; ns.ui.profileNote = true; }
+        if (!ns.mode) { ns.mode = "compose"; ns.ui.profileNote = true; ns.ui.histGen = Date.now(); }
         if (loadFailed) resumeStore();
         goStage(started ? resumeStep() : "setup");
       });
@@ -3335,7 +3373,7 @@
     // Screen state that is not part of the draft: the open field, the open example, the evidence
     // view. Reset when the step changes, so every step arrives in the same quiet state.
     const UI = { active: "", ex: "", evCard: -1, moved: "", chg: null };
-    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; UI.kindOpen = ""; UI.railOpen = false; UI.evUndo = null; };
+    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; UI.kindOpen = ""; UI.railOpen = false; UI.evUndo = null; UI.cUndo = null; };
     const motionMs = (ms) => (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) ? 0 : ms;
     // W-07: the live region is in the page from the start (#v7-live); this only rebuilds a lost one.
     const announceEl = () => {
@@ -3646,12 +3684,15 @@
         }
         nl.program = (nl.program || "").trim();
         if (nl.discipline2 && nl.discipline2 === nl.discipline) nl.discipline2 = "";
+        // r6-b-7: the confirmation names what changed.
+        const changedKeys = [["agency", "agency"], ["program", "competition"], ["careerStage", "career stage"], ["discipline", "field"], ["discipline2", "second field"], ["workMode", "work mode"]]
+          .filter(([k]) => JSON.stringify(nl[k] || "") !== JSON.stringify(ns.lens[k] || "")).map(([, l]) => l);
         Object.assign(ns.lens, nl);
         UI.chg = null;
         countEvent("profileChanged");
         renderStage();
         const b = document.getElementById("v7-chg"); if (b) b.focus();
-        announce("Profile updated.");
+        announce(changedKeys.length ? "Profile updated: " + changedKeys.join(", ") + ". The prompts and examples follow the new answers." : "Profile unchanged.");
       });
       // W-44 (inferred, option A): Cancel beside Confirm; Reset draft at the panel's foot, as on the start card.
       const cn = el("button", "btn btn-outline v7-btn-small", "Cancel"); cn.type = "button";
@@ -4091,7 +4132,7 @@
         }
         if (i === 2) {
           h("Which career stage are you at?");
-          blk.appendChild(explainBox("This changes a few of the prompts. Early career, for instance, gets prompts for the signals you have so far."));
+          blk.appendChild(explainBox("This changes a few of the prompts. Early career, for instance, gets prompts for the signals you have so far. If your funding opportunity defines early career, use its definition."));
           blk.appendChild(choiceGrid(CAREER_STAGES, v => L.careerStage === v, v => pick(() => { L.careerStage = v; }, 2), { labelledby: "pq2", idp: "st" }));
         }
         if (i === 3) {
@@ -4207,10 +4248,13 @@
         return null;
       });
 
+      // r6-a-1 (inferred): past five, a line on choosing; each folded row shows its length.
+      if (liveContributions().length > 5) c.appendChild(selectionNote());
       const cards = el("div", "v7-cards");
       ns.contributions.forEach((contrib, i) => cards.appendChild(contrib.folded ? contribFold(contrib, i) : contribCard(contrib, i)));
       c.appendChild(cards);
-      if (ns.contributions.length >= 10) c.appendChild(el("p", "v4-help", "You have 10, the most the format allows. Combine related work into one contribution if you need room."));
+      renderContribUndo(c);
+      if (ns.contributions.length >= 10) c.appendChild(el("p", "v4-help", "You have 10, the most the format allows. Combine related work into one contribution, or remove the ones that relate least to this application."));
       else {
         const add = el("button", "v7-add", "+ Add a contribution"); add.type = "button"; add.id = "v7-add-contrib";
         add.addEventListener("click", () => {
@@ -4240,7 +4284,7 @@
       const jobs = dots(cCount(contrib), 9); jobs.classList.add("v7-jobs");
       b.appendChild(jobs);
       const ne = liveEvidence(contrib).length;
-      b.appendChild(el("span", "v7-fold-meta", ne ? ne + " evidence" : "No evidence"));
+      b.appendChild(el("span", "v7-fold-meta", (ne ? ne + " evidence" : "No evidence") + " · " + cWords(contrib).toLocaleString("en-CA") + " w"));
       b.appendChild(el("span", "v7-fold-op", "Open")).setAttribute("aria-hidden", "true");
       b.addEventListener("click", () => {
         ns.contributions.forEach((x, j) => { x.folded = j !== i; });
@@ -4279,21 +4323,27 @@
         const removeC = () => {
           // F-6: the evidence view is held by index, so it closes when any card goes.
           UI.evCard = -1;
+          const gone = ns.contributions[i];
           if (only) { ns.contributions = [blankContribution()]; UI.active = null; }
           else { ns.contributions.splice(i, 1); if (!ns.contributions.some(x => !x.folded)) ns.contributions[Math.max(0, i - 1)].folded = false; }
+          if (cLive(gone)) {
+            const un = UI.cUndo = { c: gone, i, until: Date.now() + 10000 };
+            setTimeout(() => { if (UI.cUndo !== un) return; UI.cUndo = null; const r = document.querySelector(".v7-cundo"); if (r) { const had = r.contains(document.activeElement); r.remove(); if (had) { const a = document.getElementById("v7-add-contrib"); if (a) a.focus(); } } }, 10000);
+          }
           saveState(); renderStage();
           // W-04: focus goes to the card now in this place (else the one before), and the removal is spoken.
           const nc = ns.contributions[i] || ns.contributions[i - 1];
           const n = nc && (nc.folded ? document.getElementById("fold-" + nc.cid) : focusable(document.getElementById("ct" + nc.cid)));
           (n || document.getElementById("v7-add-contrib") || stepHeading()).focus();
-          announce("Contribution " + (i + 1) + " removed." + (only ? " A blank Contribution 1 is ready." : ""));
+          announce("Contribution " + (i + 1) + " removed." + (only ? " A blank Contribution 1 is ready." : "") + (UI.cUndo ? " Undo is available for ten seconds." : ""));
         };
         // W-45 (inferred, option A): the inline warning, under the card's header.
         rm.addEventListener("click", () => {
           const ht = (contrib.title || "").trim();
           if (only && !cCount(contrib)) return announce("Contribution 1 is already blank.");
           if (!cLive(contrib)) return removeC();
-          inlineConfirm(card, "Remove contribution " + (i + 1) + (ht ? ", “" + gvCut(ht, 60) + "”," : "") + " and everything in it?", rm, "Remove", removeC, { after: head });
+          const nw = cWords(contrib), ne = liveEvidence(contrib).length;
+          inlineConfirm(card, "Remove contribution " + (i + 1) + (ht ? ", “" + gvCut(ht, 60) + "”," : "") + " with its " + nw.toLocaleString("en-CA") + (nw === 1 ? " word" : " words") + (ne ? " and " + ne + " evidence " + (ne === 1 ? "item" : "items") : "") + "?", rm, "Remove", removeC, { after: head });
         });
         side.appendChild(rm);
       }
@@ -4345,7 +4395,7 @@
             lintKind: f.lint, get: () => contrib[f.k], set: (v) => { contrib[f.k] = v; },
             // r1-b-2: a role line that names your part covers the card, so "we" elsewhere in it is the team.
             // r1-b-2, r5-b-2: a chosen level or a written role line names your part for the whole card.
-            roleNamed: f.k === "roleLine" ? () => !!contrib.roleMode : () => !!contrib.roleMode || !!one(contrib.roleLine),
+            roleNamed: f.k === "roleLine" ? () => !!contrib.roleMode : () => !!contrib.roleMode || ownershipIn(contrib.roleLine).iVerb,
             has: () => cHas(contrib, f.k), onChange: update,
             noEnter: !!f.role,
             shown: f.role ? () => [(ROLE_LEVELS.find(x => x[0] === contrib.roleMode) || [])[1], contrib.roleLine].filter(Boolean).join(" · ") : null,
@@ -4619,6 +4669,30 @@
     const oneExampleNote = () => ns.lens.discipline && ns.lens.discipline !== "social"
       ? "There is no " + labelOf(DISCIPLINES, ns.lens.discipline) + " example yet. This one is written for Social sciences." : "One example for now, written for Social sciences.";
     const MENTEE_NOUN = { doctoral: "doctoral student", masters: "master's student", postdoc: "postdoctoral fellow", undergrad: "undergraduate researcher" };
+    // r6-a-2: the words one contribution prints (headline, paragraph, evidence and notes).
+    const cWords = (c) => { const w = assembleContribution(c); return countWords([w.title, w.body].concat(w.refs.map(r => r.text + " " + r.note)).join(" ")); };
+    // r6-a-4: over the English page limit, by the tool's 500-words-a-page rule.
+    const overLimit = (w) => w / WORDS_PER_PAGE > PAGE_LIMIT_EN;
+    function selectionNote() {
+      const n = liveContributions().length;
+      return el("p", "v7-note v7-select-note", "You have " + n + " contributions. Reviewers read each one closely, and four or five written in full usually carry more weight than " + n + " in outline. Finish the ones that relate most to this application; Review shows each one's length and evidence.");
+    }
+    // r6-a-3 (inferred): a removed contribution can be restored for ten seconds, as an evidence item can.
+    function renderContribUndo(c) {
+      const un = UI.cUndo;
+      if (!un || un.until <= Date.now()) return;
+      const row = el("p", "v7-undo v7-cundo");
+      row.appendChild(document.createTextNode("Contribution " + (un.i + 1) + (one(un.c.title) ? ", “" + gvCut(one(un.c.title), 60) + "”," : "") + " removed. "));
+      const ub = el("button", "v7-linkbtn", "Undo"); ub.type = "button"; ub.id = "c-undo";
+      ub.addEventListener("click", () => {
+        if (ns.contributions.length >= 10) return;
+        ns.contributions.forEach(x => { x.folded = true; }); un.c.folded = false;
+        ns.contributions.splice(Math.min(un.i, ns.contributions.length), 0, un.c); UI.cUndo = null; saveState(); renderStage();
+        const h = focusable(document.getElementById("ct" + un.c.cid)); if (h) h.focus();
+        announce("Contribution " + (un.i + 1) + " restored.");
+      });
+      row.appendChild(ub); c.appendChild(row);
+    }
     function menteeSentence(m) {
       // G-3: a level typed under Other keeps its capitals ("MD-PhD trainee"); only a leading capital is lowered.
       const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) || "trainee";
@@ -4635,7 +4709,9 @@
       let t = articleFor(noun).replace(/^a/, "A") + " " + noun + " I trained" + (where ? " " + where : "");
       if (recog) t += (where ? ", and" : "") + " received " + recog;
       t = t.replace(/[.;,\s]+$/, "") + ".";
-      if (why) t += " " + why.replace(/^./, ch => ch.toUpperCase()) + (/[.!?]$/.test(why) ? "" : ".");
+      // r6-a-7: an answer that starts with a verb ("now leads…", "catalogued…") joins the sentence; one with its own subject stands alone.
+      if (why && /^(?:now |also |then |later |since )?[a-z]+(?:s|ed)\b/.test(why) && !/^(?:this|his|her|its|was|has|is)\b/.test(why)) t = t.replace(/\.$/, "") + ", and " + why + (/[.!?]$/.test(why) ? "" : ".");
+      else if (why) t += " " + why.replace(/^./, ch => ch.toUpperCase()) + (/[.!?]$/.test(why) ? "" : ".");
       return t;
     }
 
@@ -4698,7 +4774,7 @@
         tiles.appendChild(tile);
       });
       dash.appendChild(tiles);
-      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Count community researchers and other trainees who are not students under Other, and name the group in its box."));
+      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Count community researchers and other trainees who are not students under Other, and name the group in its box. The instructions for your funding opportunity set the period for these totals; if a leave fell inside it, say so with its dates in one of the prompts below."));
       c.appendChild(dash);
 
       const sh = el("div", "v7-section-t");
@@ -4732,7 +4808,7 @@
       const fields = el("div", "v7-fields");
       if (!UI.active || UI.active.indexOf("m-") !== 0) { const first = PF().find(f => !(ns[f.k] || "").trim()); UI.active = "m-" + (first ? first.k : "mentorPhilosophy"); }
       PF().forEach(f => fields.appendChild(cardField({
-        id: "m-" + f.k, label: f.label, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", roleNamed: () => MENTOR_TEXT_KEYS.some(k => /\bI\b/.test(ns[k] || "")),
+        id: "m-" + f.k, label: f.label, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", roleNamed: () => MENTOR_TEXT_KEYS.some(k => ownershipIn(ns[k]).iVerb),
         get: () => ns[f.k], set: (v) => { ns[f.k] = v; }, has: () => !!(ns[f.k] || "").trim(),
         onChange: () => { const nd = progress(pn(), 3); side.replaceChild(nd, dd); dd = nd; announceCount(pn() + " of 3 answered"); }
       })));
@@ -4935,7 +5011,7 @@
           return;
         }
         fields.appendChild(cardField({
-          id: "ps-" + f.k, label: f.label, job: f.job, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", placeholder: f.placeholder, roleNamed: () => !!psAnchorText(),
+          id: "ps-" + f.k, label: f.label, job: f.job, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", placeholder: f.placeholder, roleNamed: () => PS_ANSWER_KEYS().some(k => ownershipIn(ns.ps[k]).iVerb),
           get: () => ns.ps[f.k], set: (v) => { ns.ps[f.k] = v; }, has: () => psHas(f.k), onChange: update,
           before: f.cross ? (inner) => { const b = crossBox(); if (b) inner.appendChild(b); } : null
         }));
@@ -5064,6 +5140,7 @@
       const oh = el("div", "v7-section-t");
       const ot = el("h3", "v7-h3", "Order of contributions"); ot.id = "v7-oc-t"; oh.appendChild(ot);
       oh.appendChild(el("span", "v7-counter", "The numbers in Contributions follow this order."));
+      if (liveContributions().length > 5) os.appendChild(selectionNote());
       os.appendChild(oh);
       const live = liveContributions(), comp = competitionName();
       if (live.length < 2) {
@@ -5084,6 +5161,7 @@
           txt.appendChild(el("div", "v7-ot", one(contrib.title) || "Untitled contribution"));
           const gist = (contrib.stakes || contrib.activities || "").trim();
           if (gist) txt.appendChild(el("div", "v7-og", gist));
+          { const nw = cWords(contrib); txt.appendChild(el("div", "v7-ow", nw.toLocaleString("en-CA") + (nw === 1 ? " word" : " words") + " · " + liveEvidence(contrib).length + " evidence")); } // r6-a-2
           oc.appendChild(txt);
           const mv = el("div", "v7-mv");
           // r3-b-2: the buttons and the announcement use the shortened headline, as the remove warning does.
@@ -5467,6 +5545,7 @@
       tailoredBar(c, { lead: "Set up for:", text: unsure ? "Agency not chosen yet · Tri-agency CV layout · 12-point Times New Roman"
         : labelOf(AGENCIES, a) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV") + " · " + font });
       // r2-a-16: links the format does not allow are named here too, before anything is downloaded.
+      { const dw = draftWords(); if (overLimit(dw)) { const ov = el("p", "v7-note v7-unfinished-note v7-over-note", "Your draft is about " + roughWords(dw).toLocaleString("en-CA") + " words, " + pagesRange(dw) + " pages. The limit in English is " + PAGE_LIMIT_EN + " pages, so it needs cutting before it goes into the template."); ov.setAttribute("role", "note"); c.appendChild(ov); } } // r6-a-4
       // r3-b-5 (inferred): contributions still missing parts are named, so stubs are not pasted by accident.
       const unfinished = [...new Set(missingList().filter(m => m.step === "contrib" && !/none written yet/.test(m.label)).map(m => m.i))];
       if (unfinished.length) {
@@ -5587,7 +5666,7 @@
       // W-39 (inferred): generic research words and place words that join contributions without saying anything.
       "tested shared trial model record health hospital provincial regional national community partner partnership " +
       "local public practice training patient patients student students across ontario quebec canada canadian " +
-      "asked language researcher researchers nation nations").split(/\s+/));
+      "asked language researcher researchers nation nations interrupted interruption leave paused delayed resumed").split(/\s+/));
     function crossTerms(text) {
       const out = new Set();
       // W-39: a word capitalised mid-sentence is a name (a place, a partner), and is left out.
@@ -5647,6 +5726,7 @@
       lines.push("[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]");
       const ctx = profilePills();
       if (ctx.length) lines.push("[Profile, for tailoring and not for submission: " + ctx.join(" · ") + "]");
+      if (overLimit(draftWords())) lines.push("[Over the limit: about " + roughWords(draftWords()).toLocaleString("en-CA") + " words, " + pagesRange(draftWords()) + " pages, against " + PAGE_LIMIT_EN + " in English.]"); // r6-a-4
       lines.push(formatReminder());
       lines.push("");
       lines.push(rule); lines.push(exportHeading("ps") + "  [first in the CV, written last in the tool]"); lines.push(rule);
@@ -6148,7 +6228,7 @@
       setTimeout(() => { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); announce("Draft cleared."); }, 0);
       resumeStore();
       try { localStorage.removeItem(NCV_KEY); } catch (_) {}
-      ns = defaultState();
+      ns = defaultState(); ns.ui.histGen = Date.now(); // K-1
       resetUI();
       updateNoteBtn();
       renderStage();

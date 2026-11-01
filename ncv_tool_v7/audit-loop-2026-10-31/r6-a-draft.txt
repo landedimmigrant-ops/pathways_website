@@ -1,0 +1,45 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: CIHR · Tri-agency CV · CIHR Project Grant 2027 · Senior · Health / clinical · Team-based · Partnered with industry, government or health systems]
+Before you submit: paste this into the current version of CIHR's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am a professor of health services research at a Canadian university. My work is in access to emergency and hospital care outside large cities.
+
+For 25 years my research has addressed one problem: patients outside large cities, and older patients leaving hospital, receive care that depends on whether a local service happens to exist. Four strands address it: virtual emergency consultation for rural hospitals, discharge planning for older adults, national surveillance of outbreaks in long-term care and nurse-led follow-up for chronic disease. In each, a health system carried the design and adopted the result. I trained as a nurse and worked in a northern emergency department for eight years before graduate school, which is why my work starts from what a clinician can do at 3 a.m. with the staff on shift. I hold a Foundation Grant and two Project Grants, direct a research unit with 12 staff and have trained 29 people. Four provincial health authorities have adopted programs I designed with them. The Project Grant funds work built with the health system it will serve, and partnership with health authorities is where my record is strongest. The next phase tests the consult line and the discharge bundle together in Indigenous communities, with the health authorities and Nations that have asked for them.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A virtual emergency consult service for rural hospitals
+   Rural patients with time-critical conditions waited hours for specialist advice, and 40 hospitals had no emergency physician on site. I am the principal investigator and chaired the clinical governance group that set the consult protocols. With four health authorities, we built a 24-hour video consult line that connects 40 rural emergency departments to 12 emergency physicians and tested it over three years in 18 000 patient visits. A consult protocol, a 12-physician on-call roster, an evaluation of 18 000 visits and four papers. Transfers to city hospitals fell by 31 percent in the 40 sites, and three provincial health authorities now fund the line permanently. A nurse in a northern clinic used the line to reach a cardiologist within eight minutes during a night shift and kept an infarct patient in town for thrombolysis. The same model could cover rural emergency departments in every province, about 400 sites. (a, b)
+   a. Made-up Author D, et al. Tele-emergency consultation for rural hospitals: a stepped-wedge evaluation. Fictional Journal of Emergency Care, 2022.  [Peer-reviewed]
+   b. Three provincial health authorities added the consult line to their annual operating budgets, 2023 to 2025.  [Policy / practice uptake]
+
+2. A pan-Canadian trial of nurse-led diabetes follow-up
+   Adults with type 2 diabetes lost touch with care after a hospital stay and no one had tested nurse follow-up at scale. I co-led the trial with a nurse scientist and designed the follow-up protocol. Across 14 hospitals in six provinces, we randomized 1 900 adults with type 2 diabetes to nurse-led phone follow-up or usual care and followed them for 18 months. A trial report, a nurse training manual and a dataset deposited in a national repository. Four provincial health systems adopted the nurse-led follow-up, and hospital readmissions among participants fell by 22 percent. A nurse in Thunder Bay used the protocol to reach a patient who had missed three appointments, and the patient restarted insulin within a week. If every province adopted it, about 70 000 adults a year could keep contact with care after discharge. (a, b)
+   a. Made-up Author C, et al. Nurse-led telephone follow-up after hospital discharge in type 2 diabetes: a pragmatic randomized trial. Fictional Medical Journal, 2024.  [Peer-reviewed]
+   b. Four provincial health authorities adopted the nurse-led follow-up protocol in their discharge policies, 2024 to 2025.  [Policy / practice uptake]
+
+3. A discharge-planning bundle that cut 30-day readmissions
+   Patients over 65 were readmitted within a month at a rate of 18 percent, and hospitals had no shared discharge standard. I led the research program and wrote the bundle with hospital discharge nurses. We tested a five-part discharge bundle in 12 hospitals with 6 300 patients over 65 in a stepped-wedge design, and measured readmission within 30 days. A discharge bundle, a toolkit, a trial report and three papers. Readmissions fell from 18 to 14 percent, and two health authorities made the bundle a required discharge standard in 2024. A hospital in Moncton used the bundle for an 82-year-old patient with heart failure who had been admitted three times in two months and stayed home for the next six months. The bundle could prevent about 9 000 readmissions a year if every Canadian hospital used it. (a)
+   a. Made-up Author F, et al. A hospital discharge bundle for older adults: a stepped-wedge trial. Fictional Journal of Hospital Medicine, 2022.  [Peer-reviewed]
+
+4. A national registry of long-term care outbreaks
+   Outbreaks in care homes went unrecorded between provinces, so no one could compare how fast they were contained. I direct the registry and set its data-sharing agreement with 10 provinces and territories. We built a secure registry that collects outbreak dates, sizes and control measures from 1 400 care homes in 10 jurisdictions, updated weekly. A registry platform, a data dictionary and a dashboard used by public health officers, plus five papers. Six provincial public health agencies now use the registry dashboard to decide when to send outbreak teams, and median time to containment fell from 19 to 12 days. During a 2024 influenza outbreak, a medical officer in Saskatchewan used the dashboard to send a team within a day, and the outbreak ended in nine days. A pan-Canadian surveillance standard for care homes could be set from the registry's definitions. (a)
+   a. National long-term care outbreak registry and data dictionary (made-up repository), 2022 to 2025.  [Dataset / tool]
+
+5. A patient-reported outcome measure for chronic kidney care
+   Dialysis clinics measured lab values but not what patients said mattered, which delayed changes to care plans. I led the measure's development with a patient partner council and a nephrologist. We interviewed 64 dialysis patients, ran a three-round consensus process with 120 patients and clinicians, and tested the 18-item measure in 22 clinics. A validated patient-reported measure, a user guide in four languages and two papers. Fifteen clinics changed their care plans after patients reported fatigue and sleep problems, and the national kidney registry added the measure in 2024. A patient partner from Winnipeg asked that the measure include a question on work, and clinics now ask it at every quarterly review. Used across all dialysis clinics, the measure could reach about 25 000 patients a year. (a)
+   a. Made-up Author E, et al. Development and validation of a patient-reported measure for dialysis care. Fictional Kidney Journal, 2023.  [Peer-reviewed]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 6 doctoral students, 11 master's students, 3 postdoctoral fellows, 9 undergraduate researchers
+A doctoral student I trained now works at a provincial health authority (Director of quality and safety analytics), and received Best paper prize at a national health services research conference, 2024. Now leads the analytics team that runs the consult-line dashboard.
+[One thing you do] Every trainee presents to our health-system partners within the first year, and I attend the first meeting with the partner so the trainee has an advocate in the room.
+[Who gets in] I fund two paid traineeships a year for students from rural and northern communities, and I removed the requirement for prior health research experience from the postings.
+[Who else you mentor] I mentor two early-career clinician investigators and walked one through her first grant submission; she was funded on the second try.

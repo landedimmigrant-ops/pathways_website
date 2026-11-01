@@ -146,3 +146,25 @@ _none yet_
 **Open for Prem from this round:** an optional "Draft name" (r5-a-2); a community-engaged Mentorship example (r5-b-9, with r1-a-5).
 
 **Tests:** 192 of 192 (188 + 4).
+
+### Round 6 · Fable's review of round 5, a senior researcher choosing five of ten, a researcher with two leaves (2026-11-01)
+
+**Who walked it** (the round 6 snapshot = commit `84af742`; the three were cut off by a usage limit and resumed) — all findings in [r6-findings.md](audit-loop-2026-10-31/r6-findings.md)
+- **Fable review** of round 5: 1 major · 7 minor (history entries from an earlier draft; the ownership check now too lenient).
+- **r6-a** Senior health-services researcher, CIHR, entering ten contributions and cutting to five: 4 major · 3 minor · 1 polish ([draft](audit-loop-2026-10-31/r6-a-draft.txt)).
+- **r6-b** Mid-career marine biologist, NSERC, a parental leave, a medical leave and a lab move: 2 major · 5 minor · 1 polish ([draft](audit-loop-2026-10-31/r6-b-draft.txt)).
+
+**What they wrote**
+- r6-a: kept a virtual emergency consult service, a pan-Canadian diabetes follow-up trial, a discharge-planning bundle, a long-term care outbreak registry and a kidney-care outcome measure; cut five; 1,204 words after going to 4,144.
+- r6-b: kelp forest recovery data kept through two leaves, an eDNA method for lobster habitat, a field course for fisheries technicians; the leaves written into How you got here and Standing; about 1,190 words.
+
+**Fixed this round**
+- **Review (K-1 to K-8):** draft generations on history entries; one `ownershipIn()` helper with numerals and quotations excluded; the statement and role-line checks tightened; the rights list narrowed and kept out of What could change; a spoken end to a skip chain; a complete saved-file signature; an opened file counts as saved, with its date.
+- **Choosing and cutting (r6-a):** a selection line past five contributions; words per contribution on folded rows and order cards; Undo for a removed contribution and a warning that names what it removes; over the limit in the rail, on Export and in the .txt; one chart per row; "went on to do" answers joined into the sentence.
+- **Leaves (r6-b):** where a leave belongs (How you got here) and how the totals' period works, without stating an agency's rule; hedges, passives, dates and the role tick on honest leave wording; the example's window; what Confirm changed; leave words out of the theme list.
+
+**INFERRED this round (for Prem to override):** the selection line and its wording; Undo for contributions; the over-limit signals; one chart per row; the interruption guidance in How you got here and under the totals (for Eli to check against the agencies' instructions); the history generations.
+
+**Open for Prem from this round:** "leave out" or remove on folded rows and order cards (r6-a-5); a per-contribution split of the length chart (r6-a-2); D-1's five-year label for researchers with leaves (r6-b-2, waits on Eli).
+
+**Tests:** 201 of 201 (192 + 9; one history test now resets the tab's history first, since Chrome caps it at 50 entries).
