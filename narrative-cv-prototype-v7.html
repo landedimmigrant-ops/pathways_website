@@ -961,7 +961,7 @@
     // toggle reveals the invisible scaffold inside finished prose.
     // B-12: canonical beat names (decisions log confirms beat 5 keeps "already" — F1).
     const SEG_META = [
-      ["stakes", "Stakes", "#f7e5b8"], ["role", "Your role", "#e7cfd3"],
+      ["stakes", "The problem", "#f7e5b8"], ["role", "Your role", "#e7cfd3"],
       ["activities", "What you did", "#bfdce9"], ["outputs", "What resulted", "#d3e0c4"],
       ["outcomes", "What already changed", "#f7d4cc"], ["impact", "What could change", "#ddd7ea"]
     ];
@@ -3307,7 +3307,7 @@
       const whole = text;
       const coverage = [
         ["Opens with “I am a …” anchor", /\bI am an?\b/i.test(whole)],
-        ["Names a problem / stakes (challenge, gap, need, risk…)", /\b(challenge|problem|gap|need|risk|barrier|question|fail|crisis)\b/i.test(whole)],
+        ["Names a problem (challenge, gap, need, risk…)", /\b(challenge|problem|gap|need|risk|barrier|question|fail|crisis)\b/i.test(whole)],
         ["Numbered or titled contributions detected", /^\s*\d+[\.\)]\s/m.test(whole)],
         ["Specific numbers, dates or quantities present", /\b\d+(?:[.,]\d+)?%?\b/.test(whole)],
         // V4 #10: citation shapes the old test could not see — "cited 41 times", a DOI, a volume
@@ -4529,7 +4529,7 @@
       s.appendChild(body);
       if (body.querySelector(".v4-connective")) { const jn = el("p", "v7-quiet v7-join-note", "The shaded words between the parts suggest how to link them. They are not part of your draft."); s.appendChild(jn); }
       if (!isTop) {
-        if (!contrib.stakes && (contrib.activities || contrib.outputs)) s.appendChild(el("span", "v4-gap", "Stakes is empty, so the paragraph starts without the problem."));
+        if (!contrib.stakes && (contrib.activities || contrib.outputs)) s.appendChild(el("span", "v4-gap", "The problem part is empty, so the paragraph opens on the work itself."));
         if (!contrib.outcomes && !contrib.impact && contrib.outputs) s.appendChild(el("span", "v4-gap", "What already changed and What could change are both empty, so the paragraph ends on what resulted."));
       }
       return s;
@@ -4704,7 +4704,7 @@
       const order = ["stakes", "activities", "outputs", "outcomes", "translational", "impact"];
       const parts = order.map(k => ({ k, t: one(contrib[k]) })).filter(p => p.t);
       const gaps = [];
-      if (!one(contrib.stakes)) gaps.push("Stakes is empty. What problem was this work answering?");
+      if (!one(contrib.stakes)) gaps.push("The problem part is empty. What problem was this work answering?");
       if (!one(contrib.outcomes)) gaps.push("What already changed is empty. Is there something concrete you can name yet?");
       if (!one(contrib.impact)) gaps.push("What could change is empty. What might this change at field scale? Hedged language is fine here.");
       if (!refs.length) gaps.push("No evidence attached. Add one item a reviewer could check.");

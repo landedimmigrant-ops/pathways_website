@@ -212,3 +212,5 @@ _none yet_
 **Open for Prem from this round:** the 60 remaining plain-language rewrites (P-1 to P-60, a Decision column in the rewrites file), including renaming "Stakes" and "Standing"; P-24's reason for the TCV link rule and P-50's FRQ line, for Eli.
 
 **Tests:** 217 of 217 (206 + 11).
+
+**After round 8 (Prem, 2026-11-01):** P-1 decided and applied. "Stakes" is now "The problem" on the card, the legend, the charts, Review, Export and the .txt; the data key stays `stakes`. Tests: 218 of 218 (217 + 1).

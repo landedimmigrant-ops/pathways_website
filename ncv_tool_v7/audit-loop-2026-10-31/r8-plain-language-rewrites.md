@@ -22,7 +22,7 @@ Mark each line **Yes**, **Edit: …** or **No** in the Decision column, and the 
 
 | # | Where | Now | Proposed | Decision |
 |---|---|---|---|---|
-| P-1 | Part name, legend, charts, Still missing, .txt | "Stakes" | "The problem" (matches the statement's part of the same name) or "Why it matters" | |
+| P-1 | Part name, legend, charts, Still missing, .txt | "Stakes" | "The problem" (matches the statement's part of the same name) or "Why it matters" | **Yes: "The problem"** (Prem, 2026-11-01). Applied: the part is called "The problem" everywhere it shows; the two empty-part messages read "The problem part is empty…"; the Self-check line reads "Names a problem". |
 | P-2 | Statement part name | "Standing" | "Recognition" | |
 | P-3 | Legend line | "In Health / clinical, the six parts usually sound like this." | "In Health / clinical, each of the six parts usually says the following." | |
 | P-4 | What could change, legend | "Care at system scale, and for whom." | "How care could change across the health system, and for which patients." | |

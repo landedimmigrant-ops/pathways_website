@@ -743,3 +743,4 @@ Prem asked for a full audit, persona tests of researchers writing a narrative CV
 - INFERRED (round 7): listed under Round 7 in the loop log.
 - BUILT (round 8, 2026-11-01): Fable's review of round 7 (N-1 to N-9: trainee names, capitals and stops at joins, the rail column in rem, the .txt notes in its header); a sideways-phone layout and focus fixes (r8-a); plain-language and ownership fixes from a researcher writing in a third language (r8-b). Tests: 217 of 217.
 - INFERRED (round 8): listed under Round 8 in the loop log. The remaining plain-language rewrites wait for Prem in `ncv_tool_v7/audit-loop-2026-10-31/r8-plain-language-rewrites.md`.
+- DECIDED (Prem, 2026-11-01): P-1, the first part of a contribution is called "The problem" (was "Stakes"), matching the question under it and the statement part of the same name. The data key stays `stakes`, so saved drafts open unchanged. The empty-part messages read "The problem part is empty…". 1 new check; 218 of 218.
