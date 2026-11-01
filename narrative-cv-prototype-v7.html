@@ -454,6 +454,9 @@
     .v7-kind-row { margin: 0 0 12px; font-size: 0.9rem; }
     .v7-undo { margin: 8px 0 0; font-size: 0.88rem; }
     .v7-v6-offer { margin-bottom: 16px; }
+    .v7-shared-note { margin: 10px 0 0; }
+    .v7-tile input.v7-tile-name { order: 3; font-size: 0.8rem; font-weight: 400; min-height: 30px; padding: 4px 6px; margin-top: 6px; border: 1px solid var(--v7-field); border-radius: 4px; }
+    .v7-tiles-help { margin: 8px 0 0; }
     .v7-rail-toggle { display: none; }
     .v7-kinds { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 8px; margin: 0 0 14px; }
     .v7-kind { display: flex; flex-direction: column; align-items: flex-start; text-align: left; background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 8px; padding: 8px 10px; cursor: pointer; font: inherit; color: var(--text); }
@@ -875,7 +878,9 @@
       "Peer-reviewed", "Media / public", "Policy / practice uptake",
       "Dataset / tool", "Award / recognition", "Funding", "Replication / citation",
       // Q13 / r2-b-6 (inferred): a kind for work shown to an audience, for every field.
-      "Exhibition, performance or screening", "Other"
+      "Exhibition, performance or screening",
+      // r5-b-8 (inferred): letters, resolutions and agreements a community holds.
+      "Community document", "Other"
     ];
     const labelOf = (list, v) => { const m = list.find(x => x.v === v); return m ? m.l : ""; };
 
@@ -1728,7 +1733,9 @@
       const weMatches = [...t.matchAll(/\b(we|us|our)\b/gi)].map(m => ({ text: m[0], index: m.index }));
       const weCount = weMatches.length;
       const verbAlt = "(?:" + ACTION_VERBS.join("|") + "|" + IRREGULAR_PAST.join("|") + "|\\w{2,}ed)\\b";
-      const iVerb = new RegExp("\\bI\\b(?:\\s+\\S+){0,3}?\\s*\\b" + verbAlt, "i").test(t);
+      const iVerb = new RegExp("\\bI\\b(?:\\s+\\S+){0,3}?\\s*\\b" + verbAlt, "i").test(t)
+        // r5-b-1: "I analyse", "I facilitate", "that I negotiate": any verb right after "I" names a part.
+        || /\bI\s+(?!am\b|was\b|were\b|have\b|had\b|will\b|would\b|could\b|should\b|might\b|may\b|can\b|do\b|did\b|think\b|believe\b|hope\b|feel\b|also\b)[a-z]{3,}\b/.test(t);
       const myWord = MY_ROLE_NOUN.test(t);
       const ownership = iVerb || myWord;
       const weak = [];
@@ -1736,7 +1743,7 @@
       if (ownership && weCount) out.strengths.push("Team voice and your own role are both visible.");
       else if (ownership) out.strengths.push("Your own role is named.");
       if (weCount && !ownership && !ctx.roleNamed) {
-        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " with no sentence that names your own part. If every sentence says “we”, reviewers cannot tell what you did.");
+        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " and no sentence names your own part. Name it beside the team’s or the partners’, for example “I co-lead the methods; the partner communities hold the data.”");
         weMatches.forEach(m => out.hits.push({ text: m.text, rule: "ownership" }));
       }
       if (!ownership && !weCount && PASSIVE_KINDS.indexOf(kind) !== -1) {
@@ -1821,12 +1828,16 @@
       // Skipped for "prose" (neither flagged nor praised).
       if (!isProse) {
         // W-30: "could not" and "would not" describe a past inability (what Stakes asks for), not a hedge.
-        const hedgeText = t.replace(/\bMay\b(?=\s+(?:\d{4}|\d{1,2})\b)/g, "MAYMONTH_SENTINEL")
-          .replace(/\b(could|would|should|might|may)(?=\s+not\b)/gi, "NEGMODAL_SENTINEL")
+        // J-3: each exemption is masked with characters of the same length, so positions still match t.
+        const mask = (m) => "#".repeat(m.length);
+        const hedgeText = t.replace(/\bMay\b(?=\s+(?:\d{4}|\d{1,2})\b)/g, mask)
+          .replace(/\b(could|would|should|might|may)(?=\s+not\b)/gi, mask)
           // r4-a-5: "no one could learn what it held" is a past inability; "could" before a verb of access or knowing is not a hedge.
-          .replace(/\bcould(?=\s+(?:learn|find|see|tell|access|read|reach|get|use|know|afford|attend|travel|count|measure|track|say|identify|locate|compare|link|trace|obtain|open|consult|search)\b)/gi, "ABLEMODAL_SENTINEL");
+          .replace(/\bcould(?=\s+(?:learn|find|see|tell|access|read|reach|get|use|know|afford|attend|travel|count|measure|track|say|identify|locate|compare|link|trace|obtain|open|consult|search)\b)/gi, mask)
+          // r5-b-4: a right or a rule in an agreement ("may withdraw", "would require") is not a hedge.
+          .replace(/\b(?:may|can)(?=\s+(?:withdraw|request|decline|refuse|review|approve|veto|leave|choose|access|use)\b)|\b(?:would|will)(?=\s+(?:require|need)\b)/gi, mask);
         const hedges = [];
-        HEDGES.forEach(h => { const ms = allMatches(hedgeText, h); if (ms.length) { hedges.push(h); ms.forEach(m => out.hits.push({ text: m.text, rule: "hedge" })); } });
+        HEDGES.forEach(h => { const ms = allMatches(hedgeText, h); if (ms.length) { hedges.push(h); ms.forEach(m => out.hits.push({ text: m.text, rule: "hedge", index: m.index })); } });
         if (kind === "impact") {
           if (hedges.length) { out.strengths.push("Hedged, as suits this field."); out.score++; }
         } else if (kind === "generic") {
@@ -1857,7 +1868,7 @@
     // discipline (university) or the subdivision (everything else).
     const blankMentee = () => ({ stage: "", stageKind: "", stageOther: "", kind: "", org: "", unit: "", recognition: "", why: "", folded: false });
     // r2-b-6 (inferred): arts and cultural organizations are a destination of their own.
-    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["health", "Health system (hospital or health authority)"], ["arts", "Arts or cultural organization"], ["other", "Other"]];
+    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["health", "Health system (hospital or health authority)"], ["indigenous", "First Nations, Inuit or Métis government or organization"], ["arts", "Arts or cultural organization"], ["other", "Other"]];
     const menteeKindLabel = (k) => { const m = MENTEE_KINDS.find(x => x[0] === k); return m ? m[1] : ""; };
     // Drafts saved before this change held `who` (dropped on purpose) and a free-text
     // `destination` (kept, moved to `org`).
@@ -1906,7 +1917,7 @@
       contributions: [blankContribution()],
       mentorCounts: { phd: "", masters: "", undergrad: "", postdoc: "", other: "" },
       mentees: [blankMentee()],
-      mentorPhilosophy: "", mentorEDI: "", mentorCrossStage: "",
+      mentorPhilosophy: "", mentorEDI: "", mentorCrossStage: "", mentorOtherLabel: "",
       ps: { role: "", institution: "", field: "", challenge: "", streams: "", pivot: "", standing: "", programFit: "", teamFit: "", horizon: "" },
       consultQuestions: "", selfCheck: {}, lastSavedAt: 0, visited: {},
       // Feedback for the team: answers, notes taken during the session, and a local session log
@@ -1927,7 +1938,7 @@
     function normalizeDraft(raw) {
       if (!isObj(raw)) throw new Error("not a draft");
       const d = JSON.parse(JSON.stringify(raw));
-      ["mode", "stageKey", "consultQuestions"].concat(MENTOR_TEXT_KEYS).forEach(k => { if (k in d) d[k] = str(d[k]); });
+      ["mode", "stageKey", "consultQuestions", "mentorOtherLabel"].concat(MENTOR_TEXT_KEYS).forEach(k => { if (k in d) d[k] = str(d[k]); });
       ["ui", "ps", "mentorCounts", "visited", "selfCheck", "xray", "feedback", "session"].forEach(k => { if (k in d && !isObj(d[k])) delete d[k]; });
       if ("lens" in d && !isObj(d.lens)) delete d.lens;
       const L = d.lens || {};
@@ -2083,16 +2094,21 @@
       Object.keys(ns).forEach(k => { if (DRAFT_SKIP.indexOf(k) === -1) draft[k] = ns[k]; });
       return { format: DRAFT_FORMAT, version: DRAFT_VERSION, tool: TOOL_VERSION, savedAt: new Date().toISOString(), draft };
     }
+    // r5-a-2: the time of day in the name, so two saves on one day (or two researchers) do not share a name.
     function draftFileName() {
       const d = new Date(), pad = (n) => String(n).padStart(2, "0");
       return "narrative-cv-draft" + (ns.lens.agency && ns.lens.agency !== "other" ? "-" + ns.lens.agency : "") +
-        "-" + d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + ".json";
+        "-" + d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + "-" + pad(d.getHours()) + pad(d.getMinutes()) + ".json";
     }
+    // r5-a-3: what the draft says, without the tool's own state, to tell whether it changed since a file save.
+    const contentSig = () => JSON.stringify([ns.lens, ns.contributions.map(c => CONTRIB_TEXT_KEYS.map(k => c[k] || "").concat([c.roleMode || "", JSON.stringify(c.evidence || [])])), ns.mentorCounts, ns.mentees.map(m => [m.stageKind, m.stageOther, m.kind, m.org, m.unit, m.recognition, m.why]), MENTOR_TEXT_KEYS.map(k => ns[k] || ""), ns.ps]);
+    const hhmm = (t) => new Date(t).toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: false });
     function saveDraftFile() {
       const blob = new Blob([JSON.stringify(buildDraftFile(), null, 2)], { type: "application/json" });
       const a = el("a"); a.href = URL.createObjectURL(blob); a.download = draftFileName();
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      ns.ui.fileSavedAt = Date.now(); ns.ui.fileSavedSig = contentSig();
       ns.ui.exported = true;
       countEvent("draftFileSaved");
     }
@@ -2109,9 +2125,10 @@
       if (!draft || typeof draft !== "object") return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft.";
       const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session };
       // W-46: the step it opens on says which draft it opened.
-      const when = obj && obj.savedAt && !isNaN(Date.parse(obj.savedAt)) ? new Date(obj.savedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "";
+      const when = obj && obj.savedAt && !isNaN(Date.parse(obj.savedAt)) ? new Date(obj.savedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + " at " + hhmm(obj.savedAt) : "";
       try { applySaved(draft); } catch (_) { return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft."; }
-      openedPending = (when ? "Opened your draft saved on " + when : "Opened your draft") + (profilePills().length ? ", set up for " + profilePills().join(", ").replace(/ · /g, ", ") + "." : ".");
+      resetUI(); // r5-a-1: nothing from the draft that was on screen (an Undo, an open view) carries over
+      openedPending = (when ? "Opened your draft saved on " + when : "Opened your draft") + (profilePills().length ? ", set up for " + profilePills().join("; ") + "." : ".");
       Object.assign(ns, keep);
       resumeStore();
       saveState();
@@ -2124,7 +2141,8 @@
       const trigger = e && e.currentTarget, host = trigger && trigger.closest(".v7-paths");
       const oldErr = document.getElementById("v7-load-err"); if (oldErr) oldErr.remove();
       if (draftHasContent(ns) && host) {
-        inlineConfirm(host, "Opening a file replaces the draft in this browser. Save a draft file first if you want to keep it.", trigger, "Choose a file", pickDraftFile, { cls: "v7-warn-wide" });
+        const saved = ns.ui.fileSavedAt ? (ns.ui.fileSavedSig === contentSig() ? "You saved this draft to a file at " + hhmm(ns.ui.fileSavedAt) + " and have not changed it since. " : "You saved this draft to a file at " + hhmm(ns.ui.fileSavedAt) + " and changed it after that. ") : "";
+        inlineConfirm(host, saved + "Opening a file replaces the draft in this browser." + (saved && ns.ui.fileSavedSig === contentSig() ? "" : " Save a draft file first if you want to keep it."), trigger, "Choose a file", pickDraftFile, { cls: "v7-warn-wide" });
         return;
       }
       pickDraftFile();
@@ -2237,7 +2255,8 @@
       const def = PROMPTS.contrib.roleLine;
       const hasTeamMode = wm.some(w => w === "team" || w === "community" || w === "industry");
       // W-31: largely solo work done with a community has partners, not a team.
-      if (wm.includes("solo") && wm.includes("community") && !wm.some(w => w === "team" || w === "industry") && def.variants && def.variants.partners) return interpolate(def.variants.partners);
+      // r5-b-3 (inferred): community-engaged work asks for your part and who led the other parts, with a team or without.
+      if (wm.includes("community") && def.variants && def.variants.partners) return interpolate(def.variants.partners);
       if (hasTeamMode && def.variants && def.variants.team) return interpolate(def.variants.team);
       return interpolate(def.q);
     };
@@ -2293,7 +2312,8 @@
         roleLine: {
           q: "In one line, what was your own part in this work?",
           help: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the protocol.”",
-          variants: { team: "In one line, what was your unique contribution within the team?", partners: "In one line, what was your part in this work, and who else took part?" }
+          variants: { team: "In one line, what was your unique contribution within the team?", partners: "In one line, what was your part in this work, and who led the other parts?" },
+          helpVariants: { community: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Name the partners’ leadership and your own part in the same line: “The Nation’s education department directs the program; I lead the evaluation design with its Elders’ council.”" }
         },
         activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.", variants: { creative: "What did making the work involve, and which part was yours?" } },
         outputs: {
@@ -2309,7 +2329,7 @@
           }
         },
         impact: { q: "If the work is taken up more widely, which field, sector or population could it affect, and how?", help: "Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems get framed.", academicTag: true },
-        translational: { q: "Which one occasion shows the work reaching a specific person or group?", help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
+        translational: { q: "Which one occasion shows the work reaching a specific person or group?", help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
         evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter (a, b, c), and the letter appears in your draft beside the sentence it backs up. Under each item there is room for two lines on what it found, or why the dataset or tool was useful, so a reviewer has the point without opening the source." }
       },
       mentor: {
@@ -2318,7 +2338,9 @@
           // B-30/B-31: the "Equity in practice —" label is dropped (the abstract noun summoned
           // boilerplate); the question underneath already asks for a structure, not a statement.
           q: "Who gets into your group, and what have you changed about how they get there?", help: "One change you made: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so describe what you changed.",
-          variants: { community: "Who do your community partnerships bring into research, and what did you change to make that possible?" }
+          variants: { community: "Who do your community partnerships bring into research, and what did you change to make that possible?" },
+          // r5-b-9: in community-led work the partners often choose who joins.
+          helpVariants: { community: "One change you made, such as a role the partners defined, a requirement you dropped or a way of paying community researchers from the start. Where the partners choose who joins, say so, and say what you changed to make that possible." }
         },
         crossStage: { q: "Who else do you mentor beyond your own students? Take one person and say what you did.", help: "Informal mentoring counts here, as the format says. It includes early-career colleagues, postdocs you do not supervise, visiting scholars, peers and community researchers. One concrete example, such as a grant you read, an introduction you made or a committee you brought someone onto, carries more than a list of names." }
       }
@@ -2371,7 +2393,8 @@
     const cleanCount = (v) => { const d = String(v == null ? "" : v).split(/[.,eE]/)[0].replace(/\D/g, ""); return d ? String(Math.min(999, parseInt(d, 10))) : ""; };
     const mentorTotal = () => Object.values(ns.mentorCounts).reduce((n, v) => n + (parseInt(cleanCount(v), 10) || 0), 0);
     // "14 doctoral students, 1 master's student": the totals line every output prints.
-    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), out]).filter(([n]) => +n > 0).map(([n, out]) => n + " " + countNoun(n, out));
+    // r5-b-5: the Other group prints under the name the researcher gives it ("7 community researchers").
+    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out]) => n + " " + countNoun(n, out));
     const menteesDescribed = () => ns.mentees.filter(menteeHasContent).length;
     const stageDone = (key) => {
       const v = !!ns.visited[key];
@@ -2462,7 +2485,7 @@
         if (chgClosed) { const b = document.getElementById("v7-chg"); if (b) b.focus({ preventScroll: true }); } // H-11
       } catch (_) { /* a copy this tab cannot read: keep the tab as it is */ }
       saveMuted = false;
-      if (spoken) announce(raw === null ? "The draft was cleared in another tab." : "This tab now shows the changes made in another tab.");
+      if (spoken || raw === null) announce(raw === null ? "The draft was cleared in another tab." : "This tab now shows the changes made in another tab.");
     }
     window.addEventListener("storage", (e) => {
       if (e.key !== NCV_KEY && e.key !== null) return;
@@ -2635,17 +2658,18 @@
       // V7-6 / V7-29: Save draft works from any step; the file is how a draft moves between browsers.
       const foot = el("div", "v7-rail-foot");
       const save = el("button", null, "Save draft");
-      save.type = "button";
+      save.type = "button"; save.id = "v7-rail-save";
       save.title = "Download your draft as a file you can open here later";
-      const savedNote = el("p", "v7-rail-saved");
+      const savedNote = el("p", "v7-rail-saved", UI.railSaved && UI.railSaved > Date.now() ? "Saved to your downloads." : "");
       savedNote.setAttribute("aria-live", "polite");
-      save.addEventListener("click", () => { saveDraftFile(); savedNote.textContent = "Saved to your downloads."; });
+      save.addEventListener("click", () => { saveDraftFile(); UI.railSaved = Date.now() + 5000; savedNote.textContent = "Saved to your downloads."; });
       foot.appendChild(save);
       foot.appendChild(savedNote);
       panel.appendChild(foot);
     }
 
     const renderStage = () => {
+      const replace = replaceNext; replaceNext = false; // J-5: read and cleared before anything can throw
       const scrollY = window.scrollY;
       const act = document.activeElement, focusId = act && act.id && root.contains(act) ? act.id : "";
       let caret = null;
@@ -2707,35 +2731,67 @@
         if (n) { n.focus({ preventScroll: true }); try { if (caret != null) n.setSelectionRange(caret, caret); } catch (_) {} }
       }
       // W-01: on a step change focus moves to the step's heading (not on the first render of the page).
+      setBar(); // J-6: the sticky stack of this step, before the heading is scrolled into view
       if (stageChanged && !firstRender) {
         const h = stepHeading();
         if (h) { h.focus({ preventScroll: true }); if (h.getBoundingClientRect().bottom > window.innerHeight - 24) h.scrollIntoView({ block: "start" }); }
       }
-      setBar();
       lastStageKey = ns.stageKey;
       // W-47 (inferred, option A): each step is a history entry with its own address (#contributions),
       // so the browser's Back and Forward move between steps; a step the gates send elsewhere is replaced.
+      // J-1: every entry carries a number that grows with time, so a Back or Forward knows its direction.
       if (stageChanged || stepFromHash() !== ns.stageKey) {
-        const st = { step: ns.stageKey }, url = "#" + (STEP_HASH[ns.stageKey] || ns.stageKey);
-        try { if (firstRender || popping || replaceNext || location.hash === url) history.replaceState(st, "", url); else history.pushState(st, "", url); } catch (_) {}
+        const url = "#" + (STEP_HASH[ns.stageKey] || ns.stageKey);
+        try {
+          if (firstRender || popping || replace || location.hash === url) { histN = (history.state && history.state.n) || histN || Date.now(); history.replaceState({ step: ns.stageKey, n: histN }, "", url); }
+          else { histN = Math.max(Date.now(), histN + 1); history.pushState({ step: ns.stageKey, n: histN }, "", url); }
+        } catch (_) {}
       }
-      replaceNext = false;
       saveState();
     };
     const STEP_HASH = { start: "start", setup: "profile", contrib: "contributions", mentor: "mentorship", ps: "statement", review: "review", export: "export", feedback: "feedback" };
     const stepFromHash = () => { const h = location.hash.slice(1); return Object.keys(STEP_HASH).find(k => STEP_HASH[k] === h) || ""; };
-    let popping = false, replaceNext = false;
-    window.addEventListener("popstate", () => {
-      const k = stepFromHash();
-      if (!k || k === ns.stageKey) return;
+    let popping = false, replaceNext = false, histN = 0, skipping = 0;
+    const stepName = (k) => k === "start" ? "the start page" : ((stages().find(x => x.key === k) || {}).short || "this step"); // J-2
+    // Where the gates would send an address: "" when the entry is closed (Setup after Confirm, a locked
+    // Review). H-2: with no draft started every address is the start page.
+    const gatedStep = (k) => {
+      if (!ns.mode) return "start";
+      if (k === "start") return "start";
+      if (k === "setup") return ns.profileConfirmed ? "" : "setup";
+      if (!ns.profileConfirmed) return "setup";
+      if (isLockedStage(k) || !stages().some(x => x.key === k)) return "";
+      return k;
+    };
+    window.addEventListener("popstate", (e) => {
+      const k = stepFromHash(); if (!k) return;
+      const n = e.state && e.state.n, dir = n && histN ? Math.sign(n - histN) : 0;
+      if (n) histN = n;
+      // H-2: with no draft open every older entry is the start page; the press stays here and says so.
+      if (!ns.mode) {
+        if (ns.stageKey !== "start") { popping = true; try { ns.stageKey = "start"; renderStage(); } finally { popping = false; } }
+        else { try { history.replaceState({ step: "start", n: histN }, "", "#start"); } catch (_) {} announce("No draft is open. This is the start page."); }
+        return;
+      }
+      const to = gatedStep(k);
+      // J-1: an entry that is closed, or that would show the step already on screen, is passed over in the
+      // direction of travel, so no press is silent. If there is nothing further that way, the address
+      // goes back to the step shown.
+      if ((!to || to === ns.stageKey) && dir && skipping < 8) {
+        skipping++; const at = location.hash; history.go(dir);
+        setTimeout(() => { if (skipping && location.hash === at) { skipping = 0; try { history.replaceState({ step: ns.stageKey, n: histN }, "", "#" + STEP_HASH[ns.stageKey]); } catch (_) {} } }, 400);
+        return;
+      }
+      skipping = 0;
       popping = true;
       try {
-        // H-2: with no draft started (after a reset, or a clear in another tab) every address is the
-        // start page; only the start page's buttons start a draft.
-        ns.stageKey = ns.mode ? k : "start"; renderStage();
-        // H-1: a step the gates do not allow (Setup after Confirm, a locked Review) is not a dead press:
-        // the step shown is named and its heading takes focus.
-        if (ns.stageKey !== k) { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); announce("That step is not open now. This is " + ((stages().find(x => x.key === ns.stageKey) || {}).short || "the start page") + "."); }
+        if (to && to !== ns.stageKey) { ns.stageKey = to; renderStage(); }
+        else {
+          // H-1: with no direction to follow, the step shown is named and its heading brought into view.
+          try { history.replaceState({ step: ns.stageKey, n: histN }, "", "#" + STEP_HASH[ns.stageKey]); } catch (_) {}
+          const h = stepHeading(); if (h) { h.focus({ preventScroll: true }); h.scrollIntoView({ block: "start" }); }
+          announce("That step is not open now. This is " + stepName(ns.stageKey) + ".");
+        }
       } finally { popping = false; } // H-13
     });
 
@@ -2819,6 +2875,8 @@
       const ranges = [];
       hits.forEach(h => {
         if (!h || !h.text) return;
+        // J-3: a hit that knows its position marks that occurrence only.
+        if (typeof h.index === "number") { if (h.index + h.text.length <= source.length) ranges.push([h.index, h.index + h.text.length]); return; }
         const key = String(h.text).toLowerCase();
         if (seen.has(key)) return;
         seen.add(key);
@@ -2881,7 +2939,7 @@
       if (range) meta += " · " + range[0] + " to " + range[1] + " is a comfortable range here.";
       host.appendChild(el("span", "v4-meta", meta));
       if (res.flags.length && res.hits && res.hits.length && (!conditional || readbackAddsInfo(res))) {
-        host.appendChild(el("span", "v4-meta", "Check them in your own sentence:"));
+        host.appendChild(el("span", "v4-meta", "Where these appear in your sentence:"));
         host.appendChild(renderReadback(t, res.hits));
       }
     };
@@ -3097,7 +3155,7 @@
       const nwText = el("span");
       nwText.appendChild(el("h3", null, started ? "Continue your draft" : "Start your draft"));
       nwText.appendChild(el("p", null, started
-        ? "Your draft is saved in this browser. You pick up where you left off."
+        ? "Your draft is saved in this browser" + (one((liveContributions()[0] || {}).c?.title) ? ", starting with “" + gvCut(one(liveContributions()[0].c.title), 70) + "”" : "") + ". You pick up where you left off."
         : "You answer a series of prompts, one section at a time. At the end, you review your draft and set the order of your contributions."));
       go.appendChild(nwText);
       const nwArrow = el("span", "v7-arrow", "→"); nwArrow.setAttribute("aria-hidden", "true");
@@ -3255,7 +3313,7 @@
             // H3/B-16: the same read-back the Contributions fields show — the paragraph with every
             // triggering word marked. Flagged paragraphs only; headings are never linted.
             if (pr.lint.flags.length && pr.lint.hits.length) {
-              checks.appendChild(el("span", "v4-meta", "Check them in your own sentence:"));
+              checks.appendChild(el("span", "v4-meta", "Where these appear in your sentence:"));
               checks.appendChild(renderReadback(pr.text, pr.lint.hits));
             }
             card.appendChild(checks);
@@ -3277,7 +3335,7 @@
     // Screen state that is not part of the draft: the open field, the open example, the evidence
     // view. Reset when the step changes, so every step arrives in the same quiet state.
     const UI = { active: "", ex: "", evCard: -1, moved: "", chg: null };
-    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; UI.kindOpen = ""; UI.railOpen = false; };
+    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; UI.kindOpen = ""; UI.railOpen = false; UI.evUndo = null; };
     const motionMs = (ms) => (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) ? 0 : ms;
     // W-07: the live region is in the page from the start (#v7-live); this only rebuilds a lost one.
     const announceEl = () => {
@@ -4286,7 +4344,8 @@
             id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: resolveHelp(f.def), line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
             lintKind: f.lint, get: () => contrib[f.k], set: (v) => { contrib[f.k] = v; },
             // r1-b-2: a role line that names your part covers the card, so "we" elsewhere in it is the team.
-            roleNamed: f.k === "roleLine" ? null : () => /\b(?:I|my)\b/.test(contrib.roleLine || ""),
+            // r1-b-2, r5-b-2: a chosen level or a written role line names your part for the whole card.
+            roleNamed: f.k === "roleLine" ? () => !!contrib.roleMode : () => !!contrib.roleMode || !!one(contrib.roleLine),
             has: () => cHas(contrib, f.k), onChange: update,
             noEnter: !!f.role,
             shown: f.role ? () => [(ROLE_LEVELS.find(x => x[0] === contrib.roleMode) || [])[1], contrib.roleLine].filter(Boolean).join(" · ") : null,
@@ -4376,7 +4435,7 @@
       "Peer-reviewed": "an article, chapter or book", "Media / public": "coverage, a public talk, a podcast",
       "Policy / practice uptake": "a policy, guideline or program that adopted your work", "Dataset / tool": "data, software, a catalogue or a digitized collection others use",
       "Award / recognition": "a prize, fellowship or honour", "Funding": "a grant the work attracted",
-      "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition",
+      "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Community document": "a letter, resolution or agreement a community holds",
       "Other": "anything else a reviewer could check"
     };
     function evidenceArea(contrib, i) {
@@ -4384,7 +4443,7 @@
       area.appendChild(el("div", "v7-f-k is-q", "Evidence"));
       const q = el("span", "v7-q", "What backs up this contribution?"); q.id = "evq" + contrib.cid;
       area.appendChild(q);
-      area.appendChild(explainBox("Evidence backs up what you have just described. Add the items a reviewer could check: a paper, an edition or collection, a policy or program that adopted your work, coverage, a dataset, an award. Add as many as you need. Each item gets a letter, and the letters follow the contribution in your draft.", guideLink("More kinds of evidence that count", "difference")));
+      area.appendChild(explainBox("Evidence backs up what you have just described. Add the items a reviewer could check: a paper, an edition or collection, a policy or program that adopted your work, coverage, a dataset, an award, a document a community holds. Add as many as you need. Each item gets a letter, and the letters follow the contribution in your draft. Name a community, an organization or a person only with their agreement.", guideLink("More kinds of evidence that count", "difference")));
       const items = el("div", "v7-ev-items");
       (contrib.evidence || []).forEach((ev, j) => {
         const it = el("div", "v7-ev-item");
@@ -4456,7 +4515,7 @@
         // W-34: both boxes grow with their text; The item stays one entry (Enter adds no line).
         const ti = el("textarea", "v7-input v7-grow"); ti.id = tl.htmlFor; ti.rows = 1;
         ti.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
-        ti.placeholder = "Name it so a reviewer can find it: a reference, a policy, a dataset or an award"; ti.value = ev.text || "";
+        ti.placeholder = "Name it so a reviewer can find it, or say who holds it: a reference, a policy, a dataset, an award or a letter"; ti.value = ev.text || "";
         const ln = el("p", "v4-ev-note"); ln.id = "evln" + contrib.cid + "-" + j; ti.setAttribute("aria-describedby", ln.id);
         let lnSaid = !!evidenceLinkNote(ev.text, ev.type);
         // r3-b-4: an item past about 60 words is a paragraph; the note under it says so.
@@ -4568,7 +4627,8 @@
       const where = !org && !m.kind ? "" : m.kind === "industry" ? "now works in industry" + (org ? " at " + org : "")
         : m.kind === "government" ? "now works in government" + (org ? " at " + org : "")
         : m.kind === "community" ? "now works at a community agency" + (org ? ", " + org : "")
-        : m.kind === "arts" ? (org && /museum|gallery|theat|arts?\b|festival|orchestra|cultur|librar/i.test(org) ? "now works at " + org : "now works at an arts or cultural organization" + (org ? ", " + org : ""))
+        : m.kind === "arts" ? (org && /museum|gallery|theat|\barts?\b|festival|orchestra|cultur|librar/i.test(org) ? "now works at " + org : "now works at an arts or cultural organization" + (org ? ", " + org : ""))
+        : m.kind === "indigenous" ? (org ? "now works at " + org : "now works with a First Nations, Inuit or Métis government or organization")
         : m.kind === "health" ? (org && /health|hospital|clinic|medical|care\b/i.test(org) ? "now works at " + org : "now works in the health system" + (org ? " at " + org : ""))
         : org ? "is now at " + org : "";
       const recog = one(m.recognition), why = one(m.why);
@@ -4616,7 +4676,7 @@
       const dh = el("div", "v7-dash-h");
       const dt = el("h3", "v7-h3", "People you have trained in the last five years"); dt.id = "v7-tot-t";
       dh.appendChild(dt);
-      const sum = el("span", "v7-counter"); sum.setAttribute("aria-live", "polite");
+      const sum = el("span", "v7-counter");
       const setSum = () => { const t = mentorTotal(); sum.textContent = t ? t.toLocaleString("en-CA") + " in total" : "Type a number in each box that applies"; };
       setSum(); dh.appendChild(sum); dash.appendChild(dh);
       const tiles = el("div", "v7-tiles"); tiles.setAttribute("role", "group"); tiles.setAttribute("aria-labelledby", "v7-tot-t");
@@ -4627,20 +4687,27 @@
         inp.value = cleanCount(ns.mentorCounts[k]);
         // W-22: whole numbers from 0 to 999 only; "-2" and "2.5" are kept as "2".
         inp.addEventListener("keydown", e => { if (["-", "+", ".", ",", "e", "E"].includes(e.key)) e.preventDefault(); });
-        inp.addEventListener("input", e => { const v = cleanCount(e.target.value); if (e.target.value !== v) e.target.value = v; ns.mentorCounts[k] = v; saveState(); setSum(); setPc(); refreshRail(); });
+        inp.addEventListener("input", e => { const v = cleanCount(e.target.value); if (e.target.value !== v) e.target.value = v; ns.mentorCounts[k] = v; saveState(); setSum(); setPc(); refreshRail(); announceCount(sum.textContent + ". " + pc.textContent); });
         tile.appendChild(l); tile.appendChild(inp);
+        if (k === "other") {
+          const on = el("input", "v7-input v7-tile-name"); on.type = "text"; on.id = "v7-t-other-name"; on.value = ns.mentorOtherLabel || "";
+          on.placeholder = "Who are they?"; on.setAttribute("aria-label", "Name the Other group, such as community researchers (optional)");
+          on.addEventListener("input", e => { ns.mentorOtherLabel = e.target.value; saveState(); });
+          tile.appendChild(on);
+        }
         tiles.appendChild(tile);
       });
       dash.appendChild(tiles);
+      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Count community researchers and other trainees who are not students under Other, and name the group in its box."));
       c.appendChild(dash);
 
       const sh = el("div", "v7-section-t");
       sh.appendChild(el("h3", "v7-h3", "A few of the people you trained, and where they went."));
-      const pc = el("span", "v7-counter"); pc.setAttribute("aria-live", "polite");
+      const pc = el("span", "v7-counter");
       // r4-a-6: more people described than counted reads as a gap, here and in Still missing.
-      const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? (d > t ? d + " described, more than the " + t + " counted above. Raise a count or remove a person." : d + " of " + t + " described") : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); pc.classList.toggle("is-warn", !!t && d > t); };
+      const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? (d > t ? d + " described, more than the " + t + " in the five-year totals. Check the totals, or keep an earlier trainee on purpose." : d + " of " + t + " described") : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); pc.classList.toggle("is-warn", !!t && d > t); };
       setPc(); sh.appendChild(pc); c.appendChild(sh);
-      c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers will read your CV, so leave out names to protect the privacy of the people you trained. Describe each person by their level and where they went, and add any best-paper prizes or prestigious scholarships they held or went on to win."));
+      c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers will read your CV, so leave out names to protect the privacy of the people you trained. Describe each person by their level and where they went, and add any best-paper prizes or prestigious scholarships they held or went on to win. In a small community an organization and a position can identify a person, so describe them only as closely as they agree to."));
       ns.mentees.forEach((m, i) => c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)));
       const addP = el("button", "v7-add", "+ Add a person"); addP.type = "button"; addP.id = "v7-add-person";
       addP.addEventListener("click", () => {
@@ -4665,7 +4732,7 @@
       const fields = el("div", "v7-fields");
       if (!UI.active || UI.active.indexOf("m-") !== 0) { const first = PF().find(f => !(ns[f.k] || "").trim()); UI.active = "m-" + (first ? first.k : "mentorPhilosophy"); }
       PF().forEach(f => fields.appendChild(cardField({
-        id: "m-" + f.k, label: f.label, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose",
+        id: "m-" + f.k, label: f.label, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", roleNamed: () => MENTOR_TEXT_KEYS.some(k => /\bI\b/.test(ns[k] || "")),
         get: () => ns[f.k], set: (v) => { ns[f.k] = v; }, has: () => !!(ns[f.k] || "").trim(),
         onChange: () => { const nd = progress(pn(), 3); side.replaceChild(nd, dd); dd = nd; announceCount(pn() + " of 3 answered"); }
       })));
@@ -4753,6 +4820,7 @@
         p2.appendChild(a); p2.appendChild(b); card.appendChild(p2);
       }
       card.appendChild(input("v7-pz" + i, "Prizes or scholarships", true, m.recognition, v => { m.recognition = v; changed(); }));
+      { const pz = card.querySelector("#v7-pz" + i); if (pz) pz.placeholder = "Such as a provincial graduate scholarship (2022)"; } // r5-b-10
       const why = input("v7-py" + i, "What this person did or went on to do", true, m.why, v => { m.why = v; changed(); });
       // r4-a-8: the sentence prints after where they are now, so it starts with the person's action.
       why.querySelector("input").placeholder = "One sentence, such as “They catalogued the ledgers and now…”";
@@ -4867,7 +4935,7 @@
           return;
         }
         fields.appendChild(cardField({
-          id: "ps-" + f.k, label: f.label, job: f.job, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", placeholder: f.placeholder,
+          id: "ps-" + f.k, label: f.label, job: f.job, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", placeholder: f.placeholder, roleNamed: () => !!psAnchorText(),
           get: () => ns.ps[f.k], set: (v) => { ns.ps[f.k] = v; }, has: () => psHas(f.k), onChange: update,
           before: f.cross ? (inner) => { const b = crossBox(); if (b) inner.appendChild(b); } : null
         }));
@@ -4940,7 +5008,6 @@
       });
       if (!liveContributions().length) out.push({ step: "contrib", i: 0, field: "c" + (ns.contributions[0] || {}).cid + "-title", label: "Contributions: none written yet" });
       if (!ns.mentees.some(menteeHasPlace)) out.push({ step: "mentor", person: true, label: "Mentorship: one person you trained, and where they went" });
-      else if (mentorTotal() && menteesDescribed() > mentorTotal()) out.push({ step: "mentor", field: "v7-t-phd", label: "Mentorship: totals lower than the people you described" });
       PF().forEach(f => { if (!f.optional && !(ns[f.k] || "").trim()) out.push({ step: "mentor", field: "m-" + f.k, label: "Mentorship: " + f.label }); });
       SF().forEach(f => { if (!psHas(f.k)) out.push({ step: "ps", field: "ps-" + f.k, label: (isFrq() ? "Background and skills" : "Personal statement") + ": " + f.label }); });
       return out;
@@ -5094,6 +5161,8 @@
         ["coherence", "Coherence: my " + (isFrq() ? "background and skills section" : "personal statement") + " frames the whole and ends pointed forward."],
         ["selection", "Selection: each contribution relates to this application, and I chose them for this funding opportunity."],
         ["mentorship", "Mentorship: my supervision and mentorship section names at least one person I trained and where they went."],
+        // r5-b-7 (inferred): communities, partners and people are named only as they agreed to be.
+        ["agreement", "Agreement: the communities, partners and people named in my CV agreed to how they are described."],
         ["format", "Format: I will paste this into the current version of " + templateOf() + " template and keep within the page limit."]
       ].forEach(([id, t]) => {
         const label = el("label");
@@ -5218,7 +5287,7 @@
       const levels = MENTOR_COUNT_LABELS.map(([k, l]) => [l, parseInt(cleanCount(ns.mentorCounts[k]), 10) || 0]);
       const withContent = ns.mentees.filter(menteeHasContent);
       // r3-b: short sector names, so a label fits the chart ("Health system", not the full option).
-      const kinds = MENTEE_KINDS.map(([k, l]) => [{ health: "Health system", arts: "Arts or culture", community: "Community agency" }[k] || l, withContent.filter(m => m.kind === k).length]);
+      const kinds = MENTEE_KINDS.map(([k, l]) => [{ health: "Health system", arts: "Arts or culture", community: "Community agency", indigenous: "Indigenous government or org." }[k] || l, withContent.filter(m => m.kind === k).length]);
       const nL = levels.reduce((n, r) => n + r[1], 0), nK = kinds.reduce((n, r) => n + r[1], 0);
       if (!nL && !nK) return null;
       const title = "People trained and where they went";
@@ -5488,6 +5557,7 @@
       const svs = el("span", "v7-copied"); svs.setAttribute("aria-live", "polite");
       sv.addEventListener("click", () => { saveDraftFile(); done("Saved to your downloads.", svs); });
       kw.appendChild(sv); kw.appendChild(svs);
+      kw.appendChild(el("p", "v7-quiet v7-shared-note", "On a shared computer, save a draft file, then choose Reset draft on the start page, so the next person who opens the tool here starts with no draft."));
       c.appendChild(kw);
 
       const contact = el("p", "v7-body v7-contact");
@@ -5516,7 +5586,8 @@
       "work works worked working produced paper papers program programs team teams method methods data results result report reports " +
       // W-39 (inferred): generic research words and place words that join contributions without saying anything.
       "tested shared trial model record health hospital provincial regional national community partner partnership " +
-      "local public practice training patient patients student students across ontario quebec canada canadian").split(/\s+/));
+      "local public practice training patient patients student students across ontario quebec canada canadian " +
+      "asked language researcher researchers nation nations").split(/\s+/));
     function crossTerms(text) {
       const out = new Set();
       // W-39: a word capitalised mid-sentence is a name (a place, a partner), and is left out.
@@ -5602,6 +5673,8 @@
       if (totals.length) lines.push("Totals (last five years): " + totals.join(", "));
       ns.mentees.filter(menteeHasContent).forEach(m => lines.push(menteeSentence(m)));
       PF().forEach(f => { if (one(ns[f.k])) lines.push("[" + f.label + "] " + one(ns[f.k])); });
+      const rest = miss.filter(m => m.step !== "contrib");
+      if (rest.length) { lines.push(""); lines.push("[Still missing outside the contributions: " + rest.map(m => m.label).join("; ") + ".]"); }
       lines.push("");
       return lines.join("\n");
     }

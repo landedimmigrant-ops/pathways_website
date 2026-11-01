@@ -123,3 +123,26 @@ _none yet_
 **Open for Prem from this round:** r4-b-3 (profile pills clipped on narrow screens), r4-b-6 (the phone rail row does not stick; Save draft only in the rail), r4-a-7 (field examples for Mentorship and the statement, again), r4-b-4's text count beside the squares, r4-b-5 (a long first-sentence field at narrow widths).
 
 **Tests:** 188 of 188 (179 + 9: history after Confirm and after a reset, the gated address, solo and team, "could learn", described more than counted, Review's Profile bar and Export's note, the mentorship copy, the scroll padding and squares).
+
+### Round 5 · Fable's review of round 4, a facilitator with three drafts, a Partnership researcher
+
+**Who walked it** (the round 5 snapshot = commit `2aa1c6e`) — all findings in [r5-findings.md](audit-loop-2026-10-31/r5-findings.md)
+- **Fable review** of round 4: 1 major · 8 minor (history again: duplicate entries after a gate made some presses silent).
+- **r5-a** Research facilitator opening three researchers' draft files in one browser: 3 minor · 2 polish ([drafts](audit-loop-2026-10-31/r5-a-draft.txt)). Nothing crossed between drafts in six switches; every saved file reopened exactly.
+- **r5-b** Senior social scientist, SSHRC Partnership Grant with First Nations and Métis partners and a health authority: 9 minor · 3 polish ([draft](audit-loop-2026-10-31/r5-b-draft.txt)).
+
+**What they wrote**
+- r5-a: edits to the sociologist's renovictions study, the engineer's sewer-overflow work and the artist's Montréal back-lanes installation (a headline, a role line and an evidence note each).
+- r5-b: a community-owned health survey under OCAP® principles, a land-based youth program evaluated with a Nation, a co-authored report adopted by a health authority; 21 trainees including 7 community researchers; 1,418 words.
+
+**Fixed this round**
+- **History (J-1, J-2, J-5, J-6):** numbered entries; closed or duplicate entries are passed over in the direction of travel; with no draft open a press stays on the start page and says so.
+- **Review's other items:** positioned hedge marks (J-3), the softer described-versus-counted check (J-4), Save draft keeping focus (J-7), throttled mentorship counters (J-8), `\barts?\b` (J-9), a spoken clear from another tab, Still missing outside the contributions in the .txt.
+- **Facilitator:** Undo cleared on file load; time in file names and in the opened line; the Start card names the draft by its first headline; the overwrite warning says whether the draft was saved since its last change; a shared-computer line on Export; semicolons in the profile list.
+- **Partnership:** the ownership check counts any verb after "I", a chosen level or a written role line, and the statement's first sentence; community-engaged work gets the partners' role prompt and help; rights and rules in agreements are not hedges; a name for the Other trainees; a First Nations, Inuit or Métis destination; agreement lines (One moment, evidence, people, self-check); a Community document kind; a community help variant for "Who gets in"; a prize placeholder; more stop words.
+
+**INFERRED this round (for Prem to override):** the history skip rule; the softer five-year check; the time in file names; the overwrite warning's saved-since wording; the shared-computer line; the partners' role prompt for any community-engaged profile; the Other group name; the First Nations, Inuit or Métis destination; the agreement lines and self-check; the Community document kind.
+
+**Open for Prem from this round:** an optional "Draft name" (r5-a-2); a community-engaged Mentorship example (r5-b-9, with r1-a-5).
+
+**Tests:** 192 of 192 (188 + 4).

@@ -190,7 +190,7 @@ async function seed(state, extra) {
     q('.v7-cards ~ .v7-add').click(); await w(150);
     const st3=q('.v7-card [data-f$="-stakes"] .v7-box'); st3.focus(); setv(st3,'A made-up stakes-only card.'); await w(60);
     return a;`);
-  check("evidence view: What you wrote on top, nine kinds (Exhibition, performance or screening added), none pre-selected", r.top.toLowerCase() === "what you wrote" && r.kinds === 9 && r.pre === 0, r);
+  check("evidence view: What you wrote on top, ten kinds (Exhibition, performance or screening; Community document), none pre-selected", r.top.toLowerCase() === "what you wrote" && r.kinds === 10 && r.pre === 0, r);
   check("evidence item saved with its letter", r.row === "1 item: a", r.row);
   check("Add a contribution folds the others and focuses the new headline", r.folds === 1 && r.cards === 1 && /-title$/.test(r.focus || ""), r);
 
@@ -259,7 +259,7 @@ async function seed(state, extra) {
   check("Set up for line names the agency and font", /^Set up for:[^]*FRQ · CV-FRQ · 12-point Times New Roman/.test(r.setup), r.setup);
   check("three export cards", r.cards.join("|") === "Download or print|Paste into the template, one section at a time|Keep your work", r.cards);
   check("email nudge with the address printed as text", /impact@concordia\.ca about your experience/.test(r.nudge) && /Email us\s+impact@concordia\.ca/.test(r.nudge), r.nudge);
-  check("downloads: Word, text and draft file", r.names[0] === "narrative-cv-draft-frq.doc" && r.names[1] === "narrative-cv-draft-frq.txt" && /^narrative-cv-draft-frq-\d{4}-\d{2}-\d{2}\.json$/.test(r.names[2]), r.names);
+  check("downloads: Word, text and draft file", r.names[0] === "narrative-cv-draft-frq.doc" && r.names[1] === "narrative-cv-draft-frq.txt" && /^narrative-cv-draft-frq-\d{4}-\d{2}-\d{2}-\d{4}\.json$/.test(r.names[2]), r.names);
   const psDoc = (r.doc.match(/<h2>The candidate's background and skills \/ Parcours et compétences de la personne candidate<\/h2>(.*?)<h2>/s) || [])[1] || "";
   check("Word file: the first line, then the statement as one paragraph (V7-34)", (psDoc.match(/<p>/g) || []).length === 2 && /Why clinics drop the protocol\. Two strands carry it\./.test(psDoc), psDoc);
   check("text file: the statement as one paragraph", /Why clinics drop the protocol\. Two strands carry it\./.test(r.txt), r.txt.slice(0, 500));
@@ -699,7 +699,7 @@ async function seed(state, extra) {
       rail('Background and skills').click(); await w(150); a.fit=(q('[data-f="ps-programFit"] .v7-q')||{}).innerText||'';
       return a;`);
     check("CV-FRQ: the Contributions note names the background and skills section, not the personal statement (r2-b-1)", /after the candidate's background and skills/.test(r.nav) && !/personal statement/i.test(r.nav), r.nav);
-    check("a chosen kind folds to one line with Change, which reopens the nine cards on the chosen one (r1-b-5)", r.rows.length === 2 && /^Kind: Exhibition, performance or screening · Change$/.test(r.rows[0]) && r.grid === 0 && r.open === 9 && r.focus === "true", r);
+    check("a chosen kind folds to one line with Change, which reopens the ten cards on the chosen one (r1-b-5)", r.rows.length === 2 && /^Kind: Exhibition, performance or screening · Change$/.test(r.rows[0]) && r.grid === 0 && r.open === 10 && r.focus === "true", r);
     check("early career: Who else you mentor is optional (r2-b-8); a competition naming FRQSC gets no (FRQ) bracket (r2-b-10)", r.optional && !/\(FRQ\)/.test(r.fit), r);
     await seed(Object.assign({}, st3, { lens: Object.assign({}, st3.lens, { agency: "sshrc", format: "tcv" }), stageKey: "review" }));
     r = await js(H + `await w(150); const a={links:qa('.v7-glance a').map(x=>x.innerText)};
@@ -789,7 +789,7 @@ async function seed(state, extra) {
       qa('#v7-chg-panel .btn-primary').find(b=>/Confirm/.test(b.innerText)).click(); await w(150);
       a.need=!!q('.v7-chg-need') && !!q('#v7-chg-panel');
       return a;`);
-    check("arrow keys move through the evidence kinds with the chooser open and say the kind; Enter folds it (r3-a-1)", r.stillOpen === 9 && r.focusKind === "radio" && r.checked === "true" && r.folded && /Kind: /.test(r.live), r);
+    check("arrow keys move through the evidence kinds with the chooser open and say the kind; Enter folds it (r3-a-1)", r.stillOpen === 10 && r.focusKind === "radio" && r.checked === "true" && r.folded && /Kind: /.test(r.live), r);
     check("a removed evidence item can be restored with Undo (r3-b-6); boxes take the text's direction (r3-b-13)", r.undo && r.items1 === 1 && r.items2 === 2 && r.dir === "auto", r);
     check("an unbroken 250-character headline wraps on Review and the move buttons use a short name (r3-b-1, r3-b-2)", r.sw && r.mv < 90, r);
     check("the Change panel asks for a work mode before it confirms (r3-b-9)", r.need, r);
@@ -832,10 +832,43 @@ async function seed(state, extra) {
       qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
     check("'could learn' in Stakes is a past inability, not a hedge (r4-a-5)", !/hedge/.test(r.hedge), r.hedge);
-    check("more people described than counted is named beside the count and in Still missing (r4-a-6)", /2 described, more than the 1 counted/.test(r.pc) && /totals lower than the people you described/.test(r.miss), r);
+    check("more people described than counted is named beside the count as a check, not a gap (r4-a-6, J-4)", /2 described, more than the 1 in the five-year totals/.test(r.pc) && !/totals lower/.test(r.miss), r);
     check("Review has the Profile bar with Change (r4-a-1); Export names unfinished contributions (r3-b-5)", r.bar && /still missing parts/.test(r.unf), r);
     check("each person is its own paragraph in the section copy (r4-a-9); an organization that names its sector is not given it twice (r4-b-7)", /\(\d|\.\n\nAn undergraduate researcher I trained now works at A made-up science museum\./.test(r.mentor), r.mentor);
     check("the scroll padding follows the top bar (r4-b-1); empty progress squares have an edge (r4-b-4)", /px/.test(r.pad) && parseFloat(r.pad) >= 50 && /inset/.test(r.dot), r);
+  }
+
+  console.log("Audit loop, round 5");
+  {
+    const st8 = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "review", ui: { profileNote: false } });
+    st8.lens = Object.assign({}, st8.lens, { workMode: ["community", "team"] });
+    st8.contributions = [{ cid: "cq1", title: "Made-up survey", stakes: "S.", roleMode: "coled", roleLine: "Co-lead with the partner communities.", activities: "We met 18 times in four communities.", outputs: "A data agreement under which each community may withdraw its data and any later use would require approval.", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} }];
+    st8.mentorCounts = { phd: "1", masters: "", undergrad: "", postdoc: "", other: "7" };
+    st8.mentorOtherLabel = "community researchers";
+    st8.mentees = [{ stageKind: "doctoral", stage: "Doctoral", kind: "indigenous", org: "A made-up Nation's health department", unit: "", recognition: "", why: "", folded: false }];
+    await seed(st8);
+    r = await js(H + `await w(200); const a={};
+      rail('Contributions').click(); await w(200);
+      a.roleQ=(q('[data-f$="-roleLine"] .v7-q')||{}).textContent||'';
+      const box=(k)=>q('[data-f$="-'+k+'"] .v7-box');
+      box('activities').focus(); setv(box('activities'), box('activities').value+' '); await w(80);
+      a.we=qa('[data-f$="-activities"] .v4-flag').map(x=>x.textContent).join('|');
+      box('outputs').focus(); setv(box('outputs'), box('outputs').value+' '); await w(80);
+      a.hedge=qa('[data-f$="-outputs"] .v4-flag').map(x=>x.textContent).join('|');
+      a.kinds=qa('.v7-kind').length;
+      rail('Export').click(); await w(150);
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
+      a.shared=!!q('.v7-shared-note'); a.agree=null;
+      rail('Review').click(); await w(150); a.agree=!!qa('.v7-selfcheck label').find(l=>/Agreement:/.test(l.innerText));
+      // history: Export, Back to Review, then lock Review from another tab and press Back: the closed entry is passed over
+      rail('Export').click(); await w(150); const n0=history.state&&history.state.n;
+      a.hasN=typeof n0==='number';
+      return a;`);
+    check("community-engaged work gets the partners' role prompt (r5-b-3)", /who led the other parts/.test(r.roleQ), r.roleQ);
+    check("a written role line names the part, so 'we' in What you did is not flagged (r5-b-2); 'may withdraw' and 'would require' are not hedges (r5-b-4)", !/“we”/.test(r.we) && !/hedge/.test(r.hedge), r);
+    check("the Other group prints under its name; a First Nations, Inuit or Métis destination prints with its organization (r5-b-5, r5-b-6)", /1 doctoral student, 7 community researchers/.test(r.mentor) && /now works at A made-up Nation's health department\./.test(r.mentor), r.mentor);
+    check("Export has the shared-computer note (r5-a-4); Review's self-check asks about partners' agreement (r5-b-7); each history entry carries a number (J-1)", r.shared && r.agree && r.hasN, r);
   }
 
   console.log("Register (W-57): the tool's prompt strings");
