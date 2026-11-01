@@ -71,3 +71,31 @@ _none yet_
 **Open for Prem from this round:** examples for fields other than Social sciences in Mentorship and the statement (r1-a-5, r2-a-11, r2-b-6); straight apostrophes in tool-made headings (r2-b-9).
 
 **Tests:** 160 of 160 (148 + 12: one assembly, inline confirmations, persona fixes).
+
+### Round 3 · Fable's review of rounds 1–2, a keyboard-only persona, an edge-case persona, the walkthrough's last items
+
+**Who walked it** (the round 3 snapshot = commit `ed42314`)
+- **Fable review** of the rounds 1–2 diff: 2 major · 5 minor ([r3-fable-review.md](audit-loop-2026-10-31/r3-fable-review.md)). Both majors were in the two-tab sync.
+- **r3-a** Early-career mechanical engineer, NSERC Discovery, blind, keyboard and screen reader only: 1 major · 7 minor · 8 polish ([findings](audit-loop-2026-10-31/r3-a-findings.md), [draft](audit-loop-2026-10-31/r3-a-draft.txt)).
+- **r3-b** Rushed public-health postdoc, CIHR, breaking things on purpose (huge pastes, Arabic, emoji, HTML-looking text, ten contributions, Back and Forward, V6 offer, bad files): 8 minor · 5 polish ([findings](audit-loop-2026-10-31/r3-b-findings.md), [draft](audit-loop-2026-10-31/r3-b-draft.txt)).
+
+**What they wrote**
+- r3-a: a compliant gripper for a collaborative robot line and a battery-pack cooling plate; 8 trainees with one described; a seven-part statement; about 700 words. The whole flow works by keyboard.
+- r3-b: seven contributions (three full: a rural medication-review trial, a wound-care protocol, a home-check program; four stubs), four people, a full statement; about 955 words (6,800 at its heaviest). Nothing lost; escaping held in every output.
+
+**Fixed this round**
+- **Review (G-1 to G-7):** a tab that has stopped saving keeps its own copy and its warning, and the warning no longer suggests a reload (G-1); an open Change panel closes when the profile changed in another tab, and the evidence view follows its card by id (G-2); a typed level keeps its capitals and acronyms take the right article (G-3, also r3-b-3); the on-screen draft uses the bilingual CV-FRQ headings (G-5); one inline warning at a time (G-6); the Setup pointer hold ends on a lost release (G-7). From the reviewer's list: a take-up waits for an IME or dead-key composition, and a page restored from the back-forward cache reads the store again.
+- **Walkthrough's last items:** W-39 (the read across contributions shows once, under The problem, leaves out names and generic words, and drops the "spanning" line when half or more qualify; the dead `renderCrossRead` is gone), W-40 (first-sentence boxes as wide as their text), W-42 (statement fields carry the legend's squares), W-47 (each step has an address, so Back and Forward move between steps), W-52 (Review: draft, At a glance, order, visuals, self-check), W-54 (on a phone the rail folds to one row, "Contributions · step 1 of 5"). W-57's register check now runs in the tests over the prompt strings; the last string with dashes is rewritten.
+- **Persona fixes:** r3-a-1 to r3-a-8, r3-a-10, r3-a-11, r3-a-13, r3-a-15, r3-a-16; r3-b-1 to r3-b-4, r3-b-6 to r3-b-13, part of r3-b-5 (see the two findings files).
+
+**INFERRED this round (for Prem to override)**
+- W-39, W-42, W-47, W-52, W-54 built on the walkthrough's option A (Q7 to Q10, and Q9).
+- W-47: the addresses are `#profile`, `#contributions`, `#mentorship`, `#statement`, `#review`, `#export`; an address for a step the gates do not allow is replaced by the step they send to.
+- r3-b-6: evidence removal stays instant, with Undo for ten seconds.
+- r3-a-7: a unit or position prints in brackets after the organization.
+- r3-b-4: 15 words for a headline and 60 for an evidence item are the thresholds for a note.
+- G-4: the Your role chart still needs at least one level chosen (no change).
+
+**Open for Prem from this round:** r3-a-5 (Setup's Confirm sits after the column's six buttons in the Tab order), r3-a-9 (heading levels), r3-a-14 ("8 of 9" counts the optional One moment), r3-b-5 (a line on Export naming unfinished contributions).
+
+**Tests:** 174 of 174 (160 + 14: the walkthrough's last items, the review fixes, the persona fixes, the register check).

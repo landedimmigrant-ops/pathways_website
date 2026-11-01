@@ -428,7 +428,7 @@
     .v7-first-note { display: block; margin-top: 4px; }
     .v7-levels { margin: 0 0 10px; }
     .v7-anchor-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.95rem; }
-    .v7-anchor-line .v7-input { flex: 1 1 150px; width: auto; }
+    .v7-anchor-line .v7-input { flex: 0 1 auto; max-width: 100%; }
     .v7-ev-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #fff; border: 1px dashed #c4c4c4; border-radius: 8px; padding: 9px 12px; }
     .v7-ev-row .v7-f-k { margin: 0; }
     .v7-ev-s { font-size: 0.85rem; color: var(--muted); flex: 1 1 auto; }
@@ -451,6 +451,9 @@
     .v7-ev-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0 0 6px; }
     .v7-ev-head .v7-field-label { margin: 0; }
     .v7-kind-row { margin: 0 0 12px; font-size: 0.9rem; }
+    .v7-undo { margin: 8px 0 0; font-size: 0.88rem; }
+    .v7-v6-offer { margin-bottom: 16px; }
+    .v7-rail-toggle { display: none; }
     .v7-kinds { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 8px; margin: 0 0 14px; }
     .v7-kind { display: flex; flex-direction: column; align-items: flex-start; text-align: left; background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 8px; padding: 8px 10px; cursor: pointer; font: inherit; color: var(--text); }
     .v7-kind:hover { border-color: #912338; }
@@ -500,7 +503,7 @@
     .v7-draft-body .v7-r { font-style: italic; color: #444; }
     .v7-refs { font-size: 0.82rem; color: #444; margin: 0 0 10px; padding-left: 1em; }
     .v7-ref-note { display: inline-block; padding-left: 1.4em; color: #555; }
-    .v7-draft.is-shut .v7-draft-body { height: 0; padding-top: 0; padding-bottom: 0; }
+    .v7-draft.is-shut .v7-draft-body { height: 0; padding-top: 0; padding-bottom: 0; visibility: hidden; }
     /* r2-a-7: a phone scrolls the page; a box that scrolls inside it showed a tenth of the draft. */
     @media (max-width: 768px) { .v7-draft:not(.is-shut) .v7-draft-body { height: auto; overflow: visible; } }
     .v7-order { margin: 0 0 24px; }
@@ -509,7 +512,8 @@
     .v7-ocard { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 12px 14px; margin: 0 0 8px; }
     .v7-ocard.moved { box-shadow: 0 0 0 2px rgba(145,35,56,.25); }
     .v7-n { width: 26px; height: 26px; box-sizing: border-box; border-radius: 50%; background: #fff; border: 1.5px solid var(--v7-field); color: #912338; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
-    .v7-ot { font-weight: 600; font-size: 0.92rem; line-height: 1.35; }
+    .v7-ot { font-weight: 600; font-size: 0.92rem; line-height: 1.35; overflow-wrap: anywhere; }
+    .v7-otxt { min-width: 0; flex: 1 1 auto; }
     .v7-og { overflow-wrap: anywhere; font-size: 0.82rem; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
     .v7-mv { display: flex; gap: 6px; }
     .v7-mv .btn { min-width: 44px; min-height: 44px; padding: 4px 10px; font-size: 15px; }
@@ -521,6 +525,8 @@
     .v7-glance li:last-child { border-bottom: 0; }
     .v7-ok { color: var(--v7-done); font-weight: 600; font-size: 0.9rem; margin: 6px 0 0; }
     .v7-tile-k2 { margin-top: 12px; }
+    /* r3-a-11: links and the read-only draft take the tool's burgundy ring. */
+    #ncv-v4-root a:focus-visible, .v7-skip:focus-visible, .v7-draft-body:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
     .v7-links-note { display: block; border: 1px solid #e0b252; background: #fff8e1; border-radius: 6px; padding: 10px 14px; margin: 0 0 18px; }
     .v7-links-note p { margin: 0 0 4px; } .v7-links-note ul { margin: 0; padding-left: 1.2em; }
     .v7-tile-k { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
@@ -588,7 +594,7 @@
     .v7-mini[aria-checked="true"], .v7-mini[aria-pressed="true"] { background: var(--v7-open); border-color: #912338; color: #912338; font-weight: 600; }
     .v7-glance { align-items: start; }
     .v7-anchor-line { display: block; line-height: 2.6; }
-    .v7-anchor-line .v7-input { display: inline-block; width: 16ch; max-width: 100%; vertical-align: middle; }
+    .v7-anchor-line .v7-input { display: inline-block; max-width: 100%; vertical-align: middle; }
     @media (max-width: 768px) {
       .narrative-nav { flex-wrap: wrap; gap: 10px; }
       .narrative-nav .v7-nav-note { flex-basis: 100%; order: -1; margin: 0; }
@@ -686,6 +692,12 @@
       .narrative-progress-panel .v7-rail-foot button { width: auto; text-align: left; }
       .v7-rail-foot .v7-rail-saved { flex-basis: 100%; }
       .narrative-module-shell.is-start .narrative-stage-content { order: -1; }
+      #ncv-v4-root .narrative-progress-panel { position: static; padding: 0; max-height: none; overflow: visible; }
+      .v7-rail-toggle { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 48px; padding: 0 16px; background: none; border: 0; font: inherit; font-weight: 700; color: #912338; cursor: pointer; text-align: left; }
+      .v7-rail-toggle .v7-tri { transition: transform 150ms; }
+      .v7-rail-toggle .v7-tri.is-down { transform: rotate(90deg); }
+      .narrative-progress-panel:not(.is-open) > .v7-rail-body { display: none; }
+      .narrative-progress-panel > .v7-rail-body { padding: 4px 16px 16px; }
       .narrative-module-shell.is-start { display: flex; flex-direction: column; }
     }
     @media (prefers-reduced-motion: reduce) { .v7-path { transition: none; } .v7-path-new:hover { transform: none; } }
@@ -780,7 +792,7 @@
     const AGENCIES = [
       { v: "sshrc", l: "SSHRC", fmt: "tcv" }, { v: "nserc", l: "NSERC", fmt: "tcv" },
       { v: "cihr",  l: "CIHR",  fmt: "tcv" }, { v: "frq", l: "FRQ", fmt: "cv-frq" },
-      { v: "other", l: "Other / not sure", fmt: "tcv" }
+      { v: "other", l: "Agency not chosen yet", fmt: "tcv" }
     ];
     const OLD_FRQ_CODES = ["frqnt", "frqsc", "frqs"];
 
@@ -844,13 +856,13 @@
     ];
     const WORK_MODES = [
       { v: "team", l: "Team-based" }, { v: "community", l: "Community-engaged" },
-      { v: "solo", l: "Largely solo" }, { v: "industry", l: "Industry-partnered" }
+      { v: "solo", l: "Largely solo" }, { v: "industry", l: "Partnered with industry, government or health systems" }
     ];
     const EVIDENCE_TYPES = [
       "Peer-reviewed", "Media / public", "Policy / practice uptake",
       "Dataset / tool", "Award / recognition", "Funding", "Replication / citation",
       // Q13 / r2-b-6 (inferred): a kind for work shown to an audience, for every field.
-      "Exhibition / performance", "Other"
+      "Exhibition, performance or screening", "Other"
     ];
     const labelOf = (list, v) => { const m = list.find(x => x.v === v); return m ? m.l : ""; };
 
@@ -1921,7 +1933,7 @@
         if ("folded" in c && typeof c.folded !== "boolean") c.folded = !!c.folded;
         if (!isObj(c.flags)) c.flags = {};
         if (!isObj(c.notes)) c.notes = {};
-        c.evidence = (Array.isArray(c.evidence) ? c.evidence : []).filter(isObj).map(e => { strKeys(e, ["text", "type", "note", "otherLabel"]); return e; });
+        c.evidence = (Array.isArray(c.evidence) ? c.evidence : []).filter(isObj).map(e => { strKeys(e, ["text", "type", "note", "otherLabel"]); if (e.type === "Exhibition / performance") e.type = "Exhibition, performance or screening"; return e; });
         return c;
       });
       if ("mentees" in d) d.mentees = (Array.isArray(d.mentees) ? d.mentees : []).filter(isObj).map(m => { strKeys(m, ["stage", "stageKind", "stageOther", "kind", "org", "unit", "recognition", "why", "destination"]); return m; });
@@ -2104,8 +2116,8 @@
     }
     function showLoadError(msg) {
       const host = document.querySelector(".v7-paths");
-      const p = el("p", "v4-save-warning v7-load-err", msg); p.id = "v7-load-err"; p.setAttribute("role", "alert");
-      if (host) host.after(p); else announce(msg);
+      const p = el("p", "v4-save-warning v7-load-err", msg); p.id = "v7-load-err"; p.setAttribute("role", "alert"); p.tabIndex = -1;
+      if (host) { host.after(p); p.focus(); } else announce(msg);
     }
     function pickDraftFile() {
       const inp = el("input"); inp.type = "file"; inp.accept = ".json,application/json";
@@ -2141,7 +2153,7 @@
         if (storeSeen && localStorage.getItem(NCV_KEY) === null) {
           storeCleared = true;
           const w = document.getElementById("v4-save-warning");
-          if (w) { w.textContent = "Your browser data was cleared, so this draft is no longer saved here. Save a draft file now to keep it, or reload the page to start again."; w.hidden = false; }
+          if (w) { w.textContent = "Your browser data was cleared, so this draft is no longer saved here. Save a draft file now to keep it."; w.hidden = false; }
           return;
         }
         localStorage.setItem(NCV_KEY, JSON.stringify(ns));
@@ -2209,7 +2221,10 @@
     };
     // H2: "a"/"an" by vowel sound — "hon…" counts as a vowel sound, "uni…"/"use…" as consonant.
     const articleFor = (role) => {
-      const r = (role || "").trim().toLowerCase();
+      // G-3: an acronym is read by its letters ("an MD-PhD trainee", "a PhD student").
+      const raw = (role || "").trim();
+      if (/^[A-Z]{2}|^[A-Z]-/.test(raw)) return "AEFHILMNORSX".indexOf(raw[0]) !== -1 ? "an" : "a";
+      const r = raw.toLowerCase();
       if (!r) return "a";
       if (/^(uni|use|uti|eu|one)/.test(r)) return "a";
       if (/^(hon|hour)/.test(r)) return "an";
@@ -2283,7 +2298,7 @@
           q: "Who gets into your group, and what have you changed about how they get there?", help: "One change you made: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so describe what you changed.",
           variants: { community: "Who do your community partnerships bring into research, and what did you change to make that possible?" }
         },
-        crossStage: { q: "Who else do you mentor beyond your own students? Take one person and say what you did.", help: "Informal mentoring counts here, and the format says so: early-career colleagues, postdocs you don't supervise, visiting scholars, peers, community researchers. One concrete example — a grant you read, an introduction you made, a room you got someone into — says more than a list of names." }
+        crossStage: { q: "Who else do you mentor beyond your own students? Take one person and say what you did.", help: "Informal mentoring counts here, as the format says. It includes early-career colleagues, postdocs you do not supervise, visiting scholars, peers and community researchers. One concrete example, such as a grant you read, an introduction you made or a committee you brought someone onto, carries more than a list of names." }
       }
     };
 
@@ -2361,7 +2376,7 @@
       if (key === "mentor") {
         const t = mentorTotal(), d = menteesDescribed();
         if (!t && !d) return null;
-        return { n: t || "", sub: d ? ["People", d] : null,
+        return { n: t ? t.toLocaleString("en-CA") : "", sub: d ? ["People", d] : null,
           sr: [t ? plural(t, "person trained", "people trained") : "", d ? plural(d, "person described", "people described") : ""].filter(Boolean).join(", ") };
       }
       return null;
@@ -2409,11 +2424,16 @@
       if (otherTab === undefined) return;
       const raw = otherTab; otherTab = undefined;
       const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session, stageKey: ns.stageKey };
+      const lensBefore = JSON.stringify(ns.lens), evCid = UI.evCard >= 0 ? (ns.contributions[UI.evCard] || {}).cid : null;
       saveMuted = true;
       try {
         if (raw === null) { ns = defaultState(); resetUI(); resumeStore(); ns.stageKey = "start"; }
         else { applySaved(JSON.parse(raw)); Object.assign(ns, { teamNotes: keep.teamNotes, feedback: keep.feedback, session: keep.session }); storeSeen = true; }
         if (raw !== null && ns.stageKey !== keep.stageKey && stages().some(x => x.key === keep.stageKey) && !isLockedStage(keep.stageKey)) ns.stageKey = keep.stageKey;
+        // G-2: an open Change panel holds a copy of the old profile, so it closes when the profile changed
+        // elsewhere; the evidence view follows its card by id.
+        if (UI.chg && JSON.stringify(ns.lens) !== lensBefore) { UI.chg = null; spoken = true; announce("Your profile was changed in another tab, so the Change panel closed."); }
+        UI.evCard = evCid ? ns.contributions.findIndex(c => c.cid === evCid) : -1;
         renderStage();
       } catch (_) { /* a copy this tab cannot read: keep the tab as it is */ }
       saveMuted = false;
@@ -2421,8 +2441,20 @@
     }
     window.addEventListener("storage", (e) => {
       if (e.key !== NCV_KEY && e.key !== null) return;
+      // G-1 (review 2026-10-31): a tab that has stopped saving (outside clear, unreadable draft) may hold
+      // the only copy of the draft, so it keeps that copy and its warning.
+      if ((storeCleared || loadFailed) && e.newValue !== null) return;
       otherTab = e.key === null ? null : e.newValue;
-      if (!document.hidden) takeUpOtherTab(false);
+      if (!document.hidden && !composing) takeUpOtherTab(false);
+    });
+    // Review note (2026-10-31): a take-up waits while an accent or an IME composition is being typed,
+    // and a page restored from the back-forward cache (which hears no storage events) reads the store again.
+    let composing = false;
+    document.addEventListener("compositionstart", () => { composing = true; });
+    document.addEventListener("compositionend", () => { composing = false; if (!document.hidden) takeUpOtherTab(false); });
+    window.addEventListener("pageshow", (e) => {
+      if (!e.persisted || storeCleared || loadFailed) return;
+      try { const raw = localStorage.getItem(NCV_KEY); if (raw !== null && raw !== JSON.stringify(ns)) { otherTab = raw; takeUpOtherTab(true); } } catch (_) {}
     });
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) { tickStageTime(); stageEnteredAt = 0; saveState(); }
@@ -2455,6 +2487,7 @@
       announce("Profile confirmed.");
     };
     const goStage = (key) => {
+      UI.railOpen = false;
       if (key !== "start" && !ns.mode) ns.mode = "compose";
       ns.stageKey = key; renderStage();
     };
@@ -2483,7 +2516,24 @@
       clearTimeout(railTimer);
       railTimer = setTimeout(() => { const p = root.querySelector(".narrative-progress-panel"); if (p) fillRail(p); }, 250);
     };
+    // W-54 (inferred, option A): on a phone the rail folds to one row ("Contributions · step 1 of 5 ▸")
+    // above the step, so each step opens on its heading; the row opens the full list, Save draft included.
     function fillRail(panel) {
+      fillRailList(panel);
+      if (ns.stageKey === "start") return;
+      const body = el("div", "v7-rail-body"); body.id = "v7-rail-body";
+      while (panel.firstChild) body.appendChild(panel.firstChild);
+      const st = stages().filter(x => x.key !== "start" && x.key !== "setup" || (x.key === "setup" && !ns.profileConfirmed));
+      const pos = st.findIndex(x => x.key === ns.stageKey);
+      const tg = el("button", "v7-rail-toggle"); tg.type = "button"; tg.id = "v7-rail-toggle";
+      tg.setAttribute("aria-controls", body.id); tg.setAttribute("aria-expanded", UI.railOpen ? "true" : "false");
+      tg.appendChild(el("span", "v7-rail-toggle-t", ((st[pos] || {}).short || "") + (pos >= 0 ? " · step " + (pos + 1) + " of " + st.length : "")));
+      tg.appendChild(el("span", "v7-tri" + (UI.railOpen ? " is-down" : ""), "▸")).setAttribute("aria-hidden", "true");
+      tg.addEventListener("click", () => { UI.railOpen = !UI.railOpen; panel.classList.toggle("is-open", UI.railOpen); tg.setAttribute("aria-expanded", UI.railOpen ? "true" : "false"); tg.querySelector(".v7-tri").classList.toggle("is-down", UI.railOpen); });
+      panel.classList.toggle("is-open", !!UI.railOpen);
+      panel.appendChild(tg); panel.appendChild(body);
+    }
+    function fillRailList(panel) {
       clear(panel);
       const isStart = ns.stageKey === "start";
       // V7-3a: a way back to the start page that changes nothing.
@@ -2620,6 +2670,8 @@
       }
       openedPending = "";
       RENDERERS[ns.stageKey](c);
+      // r3-b-13: a box takes the direction of what is typed in it (an Arabic or Hebrew name reads right to left).
+      c.querySelectorAll("textarea, input[type=text]").forEach(x => { if (!x.dir) x.dir = "auto"; });
       if (stageChanged) window.scrollTo(0, 0);
       else window.scrollTo(0, scrollY);
       if (!stageChanged && focusId) {
@@ -2629,8 +2681,25 @@
       // W-01: on a step change focus moves to the step's heading (not on the first render of the page).
       if (stageChanged && !firstRender) { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); }
       lastStageKey = ns.stageKey;
+      // W-47 (inferred, option A): each step is a history entry with its own address (#contributions),
+      // so the browser's Back and Forward move between steps; a step the gates send elsewhere is replaced.
+      if (stageChanged || stepFromHash() !== ns.stageKey) {
+        const st = { step: ns.stageKey }, url = "#" + (STEP_HASH[ns.stageKey] || ns.stageKey);
+        try { if (firstRender || popping || location.hash === url) history.replaceState(st, "", url); else history.pushState(st, "", url); } catch (_) {}
+      }
       saveState();
     };
+    const STEP_HASH = { start: "start", setup: "profile", contrib: "contributions", mentor: "mentorship", ps: "statement", review: "review", export: "export", feedback: "feedback" };
+    const stepFromHash = () => { const h = location.hash.slice(1); return Object.keys(STEP_HASH).find(k => STEP_HASH[k] === h) || ""; };
+    let popping = false;
+    window.addEventListener("popstate", () => {
+      const k = stepFromHash();
+      if (!k || k === ns.stageKey) return;
+      popping = true;
+      if (k !== "start" && !ns.mode) ns.mode = "compose";
+      ns.stageKey = k; renderStage();
+      popping = false;
+    });
 
     // W-01, W-12: the step's heading, or the page title on the start page; focusable by script only.
     const focusable = (n) => { if (n) { n.tabIndex = -1; n.classList.add("v7-focus-h"); } return n; };
@@ -2972,9 +3041,10 @@
           const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session };
           try { applySaved(v6Offer); } catch (_) { v6Offer = null; announce("The V6 draft could not be opened."); renderStage(); return; }
           Object.assign(ns, keep); resumeStore();
+          openedPending = "Opened your draft from V6."; // the step it opens on follows V7-38's remap
           v6Offer = null; countEvent("v6DraftOpened"); renderStage();
         });
-        no.addEventListener("click", () => { v6Offer = null; ns.ui.v6Declined = true; saveState(); renderStage(); });
+        no.addEventListener("click", () => { v6Offer = null; ns.ui.v6Declined = true; saveState(); renderStage(); const g = root.querySelector(".v7-path-new, .v7-path-go"); if (g) g.focus(); });
         row.appendChild(open); row.appendChild(no);
         box.appendChild(row);
         c.appendChild(box);
@@ -3169,7 +3239,7 @@
     // Screen state that is not part of the draft: the open field, the open example, the evidence
     // view. Reset when the step changes, so every step arrives in the same quiet state.
     const UI = { active: "", ex: "", evCard: -1, moved: "", chg: null };
-    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; };
+    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; UI.kindOpen = ""; };
     const motionMs = (ms) => (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) ? 0 : ms;
     // W-07: the live region is in the page from the start (#v7-live); this only rebuilds a lost one.
     const announceEl = () => {
@@ -3335,7 +3405,7 @@
     // The profile as the Profile bar's pills; the .txt's profile line uses the same words (W-19).
     function profilePills() {
       const L = ns.lens, out = [];
-      if (L.agency) out.push(L.agency === "other" ? "Agency not chosen" : labelOf(AGENCIES, L.agency) + " · " + (isFrq() ? "CV-FRQ" : "TCV"));
+      if (L.agency) out.push(L.agency === "other" ? "Agency not chosen yet" : labelOf(AGENCIES, L.agency) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV"));
       if (competitionName()) out.push(competitionName() + (L.year ? " " + L.year : ""));
       else if (L.undecided) out.push("Competition undecided");
       if (L.careerStage) out.push(labelOf(CAREER_STAGES, L.careerStage));
@@ -3429,6 +3499,7 @@
       und.setAttribute("aria-pressed", d.undecided ? "true" : "false");
       und.addEventListener("click", () => {
         d.undecided = !d.undecided;
+        announce(d.undecided ? "Undecided. The competition name is kept and set aside." : "Competition name back in use.");
         inp.disabled = d.undecided; und.setAttribute("aria-pressed", d.undecided ? "true" : "false"); setAgNote();
       });
       const yr = select("v7-chg-yr", [["", "Year (optional)"]].concat(YEARS.map(y => [y, y])), d.year, v => { d.year = v; });
@@ -3459,6 +3530,7 @@
           const ix = d.workMode.indexOf(m.v);
           if (ix >= 0) d.workMode.splice(ix, 1); else d.workMode.push(m.v);
           b.setAttribute("aria-pressed", ix >= 0 ? "false" : "true");
+          const need = p.querySelector(".v7-chg-need"); if (need && d.workMode.length) need.remove();
         });
         pillsW.appendChild(b);
       });
@@ -3468,6 +3540,13 @@
       const ok = el("button", "btn btn-primary v7-btn-small", "Confirm"); ok.type = "button";
       ok.addEventListener("click", () => {
         const nl = UI.chg.lens;
+        // r3-b-9: Setup asks for at least one way the work happens; the panel holds to the same rule.
+        if (!(nl.workMode || []).length) {
+          let nt = p.querySelector(".v7-chg-need");
+          if (!nt) { nt = el("p", "v4-help v7-chg-note v7-chg-need", "Choose at least one way your work usually happens."); nt.setAttribute("role", "alert"); wf.appendChild(nt); }
+          const first = wf.querySelector(".v7-mini"); if (first) first.focus();
+          return;
+        }
         nl.program = (nl.program || "").trim();
         if (nl.discipline2 && nl.discipline2 === nl.discipline) nl.discipline2 = "";
         Object.assign(ns.lens, nl);
@@ -3488,7 +3567,7 @@
       foot.appendChild(rs);
       foot.appendChild(el("span", "v7-path-foot-note", "Clears the draft saved in this browser and starts again."));
       p.appendChild(foot);
-      p.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.preventDefault(); close(); } });
+      p.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.preventDefault(); close(); announce("Profile unchanged."); } });
       return p;
     }
 
@@ -3568,7 +3647,7 @@
       const more = el("div", "v7-f-more");
       const inner = el("div");
       if (o.before) o.before(inner);
-      if (o.help) inner.appendChild(explainBox(o.help));
+      if (o.help) { const hb = explainBox(o.help); hb.id = id + "-hp"; inner.appendChild(hb); }
       more.appendChild(inner);
       let box;
       if (o.anchor) box = o.anchor(f);
@@ -3581,7 +3660,8 @@
         box.value = o.get() || "";
         if (o.placeholder) box.placeholder = o.placeholder;
         box.setAttribute("aria-labelledby", id + "-k " + id + "-q");
-        box.setAttribute("aria-describedby", id + "-st");
+        // r3-a-2: the status, the help and the checks are read with the box.
+        box.setAttribute("aria-describedby", id + "-st" + (o.help ? " " + id + "-hp" : "") + (o.lintKind ? " " + id + "-ck" : ""));
         // W-18: the role line is one sentence, so Enter adds no line break (the box still wraps).
         if (o.line || o.noEnter) box.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
         // W-35: a one-line answer loses its leading and trailing spaces when the box is left.
@@ -3593,12 +3673,18 @@
       }
       // F-8 (audit 2026-10-31): the checks are not a live region (it was rebuilt on every keystroke);
       // a change in the number of suggestions is spoken once, after a pause in typing.
-      const checks = el("div", "v7-f-checks");
+      const checks = el("div", "v7-f-checks"); checks.id = id + "-ck";
       f.appendChild(checks);
       f.appendChild(more);
       let flagsSaid = -1, flagsTimer = 0;
       const runChecks = (typed) => {
-        if (!o.lintKind) return;
+        // r3-b-4: a headline says when it runs long; it has no other checks.
+        if (!o.lintKind) {
+          if (!o.wordHint) return;
+          clear(checks); const n = countWords(o.get());
+          if (n > o.wordHint) checks.appendChild(el("span", "v4-meta", n + " words. A headline reads best at about " + o.wordHint + " words or fewer."));
+          return;
+        }
         renderChecks(checks, o.get(), o.lintKind, { roleNamed: o.roleNamed ? o.roleNamed() : false });
         const nf = checks.querySelectorAll(".v4-flag").length;
         if (flagsSaid < 0) flagsSaid = nf;
@@ -3606,7 +3692,8 @@
         if (typed && nf !== flagsSaid) flagsTimer = setTimeout(() => {
           if (!f.isConnected) return;
           flagsSaid = nf;
-          announce(nf ? nf + (nf === 1 ? " suggestion" : " suggestions") + " under this field." : "No suggestions under this field.");
+          const first = checks.querySelector(".v4-flag");
+          announce(nf ? nf + (nf === 1 ? " suggestion" : " suggestions") + " under this field. " + first.textContent.replace(/^⚠\s*/, "") : "No suggestions under this field.");
         }, 1500);
         // V7-23: the note that checks are suggestions, the first time a check fires, once per draft.
         if (checks.querySelector(".v4-flag") && (!ns.ui.checksNoteSeen || ns.ui.checksNoteField === id)) {
@@ -3640,6 +3727,17 @@
     // The open box starts at three lines and grows with the text (to 60% of the screen, then scrolls).
     // A closed field drops the inline height so its CSS height applies.
     // W-34: a box at least `lines` lines high that grows to its text.
+    // W-40: a box inside a sentence is as wide as its text (at least 12 characters, at most the line),
+    // so "associate professor of mechanical engineering" shows whole and the sentence wraps around it.
+    function fitInline(b) {
+      if (!b || !b.isConnected) return;
+      const cs = getComputedStyle(b), cx = (fitInline.cv || (fitInline.cv = document.createElement("canvas"))).getContext("2d");
+      cx.font = cs.font;
+      const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth) + 6;
+      b.style.width = Math.max(cx.measureText("0").width * 12, cx.measureText(b.value || b.placeholder || "").width) + pad + "px";
+      // The browser's own text width wins where the two measures differ.
+      if (b.scrollWidth > b.clientWidth) b.style.width = b.offsetWidth + b.scrollWidth - b.clientWidth + 2 + "px";
+    }
     function growBox(b, lines) {
       if (!b || !b.isConnected) return;
       b.style.height = "auto";
@@ -3692,10 +3790,14 @@
     // pointer is down the swap waits until the click has landed.
     let pointerHeld = false;
     const qbFocus = () => root.querySelectorAll(".v7-qblock").forEach(b => b.classList.toggle("has-focus", b.contains(document.activeElement)));
-    document.addEventListener("pointerdown", () => { pointerHeld = true; }, true);
-    const pointerDone = () => { if (!pointerHeld) return; pointerHeld = false; setTimeout(qbFocus, 0); };
+    let pointerTimer = 0;
+    document.addEventListener("pointerdown", () => { pointerHeld = true; clearTimeout(pointerTimer); pointerTimer = setTimeout(pointerDone, 1500); }, true);
+    const pointerDone = () => { if (!pointerHeld) return; pointerHeld = false; clearTimeout(pointerTimer); setTimeout(qbFocus, 0); };
     document.addEventListener("pointerup", pointerDone, true);
     document.addEventListener("pointercancel", pointerDone, true);
+    // G-7: a release the page never sees (a context menu, a native picker, a window switch) ends the hold too.
+    document.addEventListener("contextmenu", pointerDone, true);
+    window.addEventListener("blur", pointerDone);
     root.addEventListener("focusin", (e) => { const b = e.target.closest && e.target.closest(".v7-qblock"); if (b) b.classList.add("has-focus"); if (!pointerHeld) qbFocus(); });
     root.addEventListener("focusout", () => { if (!pointerHeld) setTimeout(qbFocus, 0); });
     // focusout with relatedTarget: a field opens when focus moves into its box, and the one left
@@ -3791,7 +3893,7 @@
       const count = el("p", "v7-qcount");
       count.appendChild(progress(n, 6));
       c.appendChild(count);
-      announceCount(n + " of 6 answered");
+      announceCount(n + " of 6 answered" + (n === 6 ? ". Confirm profile is ready, after the questions." : ""));
       const list = el("div", "v7-prof-list");
       let reveal = qs.findIndex(q => !q.has);
       if (reveal < 0) reveal = 5;
@@ -3940,7 +4042,7 @@
 
     // ── Stage: Contributions (V7-20 to V7-26) ──────────────────────────────
     const CF = () => [
-      { k: "title", label: "Headline", line: true, def: PROMPTS.contrib.title, placeholder: "A headline a reviewer could repeat" },
+      { k: "title", label: "Headline", line: true, def: PROMPTS.contrib.title, placeholder: "A headline a reviewer could repeat", wordHint: 15 },
       { k: "stakes", job: "stakes", def: PROMPTS.contrib.stakes, lint: "stakes" },
       { k: "roleLine", job: "role", def: PROMPTS.contrib.roleLine, lint: "roleLine", role: true },
       { k: "activities", job: "activities", def: PROMPTS.contrib.activities, lint: "activities" },
@@ -4045,10 +4147,12 @@
       b.appendChild(el("span", "v7-fold-op", "Open")).setAttribute("aria-hidden", "true");
       b.addEventListener("click", () => {
         ns.contributions.forEach((x, j) => { x.folded = j !== i; });
-        const first = CF().find(f => !cHas(contrib, f.k));
+        // r3-a-8: the first part still to write, the optional One moment last; the opening is spoken.
+        const first = CF().find(f => !f.optional && !cHas(contrib, f.k)) || CF().find(f => !cHas(contrib, f.k));
         UI.active = "c" + contrib.cid + "-" + (first ? first.k : "title"); UI.evCard = -1;
         saveState(); renderStage();
         focusField(UI.active);
+        announce("Contribution " + (i + 1) + " opened.");
       });
       return b;
     }
@@ -4069,22 +4173,28 @@
         fold.setAttribute("aria-label", "Fold contribution " + (i + 1));
         fold.addEventListener("click", () => { contrib.folded = true; saveState(); renderStage(); });
         side.appendChild(fold);
+      }
+      {
+        // Q14 (Prem, 2026-10-31): the only contribution can be removed too; a blank Contribution 1 takes its place.
+        const only = ns.contributions.length === 1;
         const rm = el("button", "v7-icon-btn", "×"); rm.type = "button";
         rm.setAttribute("aria-label", "Remove contribution " + (i + 1));
         const removeC = () => {
           // F-6: the evidence view is held by index, so it closes when any card goes.
           UI.evCard = -1;
-          ns.contributions.splice(i, 1); if (!ns.contributions.some(x => !x.folded)) ns.contributions[Math.max(0, i - 1)].folded = false;
+          if (only) { ns.contributions = [blankContribution()]; UI.active = null; }
+          else { ns.contributions.splice(i, 1); if (!ns.contributions.some(x => !x.folded)) ns.contributions[Math.max(0, i - 1)].folded = false; }
           saveState(); renderStage();
           // W-04: focus goes to the card now in this place (else the one before), and the removal is spoken.
           const nc = ns.contributions[i] || ns.contributions[i - 1];
           const n = nc && (nc.folded ? document.getElementById("fold-" + nc.cid) : focusable(document.getElementById("ct" + nc.cid)));
           (n || document.getElementById("v7-add-contrib") || stepHeading()).focus();
-          announce("Contribution " + (i + 1) + " removed.");
+          announce("Contribution " + (i + 1) + " removed." + (only ? " A blank Contribution 1 is ready." : ""));
         };
         // W-45 (inferred, option A): the inline warning, under the card's header.
         rm.addEventListener("click", () => {
           const ht = (contrib.title || "").trim();
+          if (only && !cLive(contrib)) return announce("Contribution 1 is already blank.");
           if (!cLive(contrib)) return removeC();
           inlineConfirm(card, "Remove contribution " + (i + 1) + (ht ? ", “" + gvCut(ht, 60) + "”," : "") + " and everything in it?", rm, "Remove", removeC, { after: head });
         });
@@ -4134,7 +4244,7 @@
           const id = "c" + contrib.cid + "-" + f.k;
           const q = f.k === "roleLine" ? resolveRoleLineQ() : resolveQ(f.def);
           fields.appendChild(cardField({
-            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: resolveHelp(f.def), line: f.line, placeholder: f.placeholder,
+            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: resolveHelp(f.def), line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
             lintKind: f.lint, get: () => contrib[f.k], set: (v) => { contrib[f.k] = v; },
             // r1-b-2: a role line that names your part covers the card, so "we" elsewhere in it is the team.
             roleNamed: f.k === "roleLine" ? null : () => /\b(?:I|my)\b/.test(contrib.roleLine || ""),
@@ -4167,7 +4277,7 @@
         const evs = liveEvidence(contrib);
         if (evs.length) evRow.appendChild(el("span", "v7-ev-s", evs.length + " item" + (evs.length > 1 ? "s" : "") + ": " + evs.map((e, j) => letter(j)).join(", ")));
         const eb = el("button", "btn btn-outline v7-btn-small", evs.length ? "Edit evidence" : "+ Add evidence"); eb.type = "button"; eb.id = "ev-open-" + contrib.cid;
-        eb.addEventListener("click", () => { UI.evCard = i; UI.active = ""; if (!liveEvidence(contrib).length) contrib.evidence = [{ text: "", type: "", note: "" }]; saveState(); renderStage(); countEvent("evidenceOpen"); focusEvidence(contrib); });
+        eb.addEventListener("click", () => { UI.evCard = i; UI.active = ""; const fresh = !liveEvidence(contrib).length; if (fresh) contrib.evidence = [{ text: "", type: "", note: "" }]; saveState(); renderStage(); countEvent("evidenceOpen"); focusEvidence(contrib); announce(fresh ? "Evidence item a added. Choose its kind." : "Evidence for contribution " + (i + 1) + "."); });
         evRow.appendChild(eb);
         fields.appendChild(evRow);
         card.appendChild(fields);
@@ -4227,7 +4337,7 @@
       "Peer-reviewed": "an article, chapter or book", "Media / public": "coverage, a public talk, a podcast",
       "Policy / practice uptake": "a policy, guideline or program that adopted your work", "Dataset / tool": "data or software others use",
       "Award / recognition": "a prize, fellowship or honour", "Funding": "a grant the work attracted",
-      "Replication / citation": "a study that repeated or cited your work", "Exhibition / performance": "a show, a screening, a commission or an acquisition",
+      "Replication / citation": "a study that repeated or cited your work", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition",
       "Other": "anything else a reviewer could check"
     };
     function evidenceArea(contrib, i) {
@@ -4248,7 +4358,14 @@
         it.appendChild(ehead);
         const rm = el("button", "v7-icon-btn v7-ev-rm", "×"); rm.type = "button";
         rm.setAttribute("aria-label", "Remove evidence item " + letter(j));
-        rm.addEventListener("click", () => { contrib.evidence.splice(j, 1); saveState(); renderStage(); const a = document.getElementById("ev-add-" + contrib.cid); if (a) a.focus(); announce("Evidence item " + letter(j) + " removed."); });
+        // r3-b-6 (inferred): an item goes at once (W-45 keeps evidence instant) and Undo restores it for ten seconds.
+        rm.addEventListener("click", () => {
+          const gone = contrib.evidence.splice(j, 1)[0];
+          UI.evUndo = (gone.text || "").trim() || (gone.note || "").trim() ? { cid: contrib.cid, j, ev: gone, until: Date.now() + 10000 } : null;
+          saveState(); renderStage();
+          const a = document.getElementById(UI.evUndo ? "ev-undo-" + contrib.cid : "ev-add-" + contrib.cid) || document.getElementById("ev-add-" + contrib.cid); if (a) a.focus();
+          announce("Evidence item " + letter(j) + " removed." + (UI.evUndo ? " Undo is available for ten seconds." : ""));
+        });
         ehead.appendChild(rm);
         // r1-b-5 (inferred): once a kind is chosen the nine cards fold to one line, "Kind: Peer-reviewed ·
         // Change", as an answered field does; Change opens them again.
@@ -4257,19 +4374,24 @@
           const row = el("p", "v7-kind-row");
           row.appendChild(document.createTextNode("Kind: ")); row.appendChild(el("b", null, ev.type === "Other" && one(ev.otherLabel) ? one(ev.otherLabel) : ev.type));
           const chg = el("button", "v7-linkbtn", "Change"); chg.type = "button"; chg.id = "evkchg-" + kKey;
-          chg.setAttribute("aria-label", "Change the kind of evidence item " + letter(j));
+          chg.setAttribute("aria-label", "Change the kind of evidence item " + letter(j) + ", now " + (ev.type === "Other" && one(ev.otherLabel) ? one(ev.otherLabel) : ev.type));
           chg.addEventListener("click", () => { UI.kindOpen = kKey; renderStage(); const b = document.querySelector('[id^="evkind-' + kKey + '-"][aria-checked="true"]'); if (b) b.focus(); });
           row.appendChild(document.createTextNode(" · ")); row.appendChild(chg);
           it.appendChild(row);
         } else {
-          const kinds = el("div", "v7-kinds"); kinds.setAttribute("role", "radiogroup"); kinds.setAttribute("aria-labelledby", hk.id);
+          const kinds = el("div", "v7-kinds"); kinds.setAttribute("role", "radiogroup"); kinds.setAttribute("aria-label", "Evidence item " + letter(j) + ": kind");
           EVIDENCE_TYPES.forEach(t => {
             const b = el("button", "v7-kind"); b.type = "button"; b.id = "evkind-" + kKey + "-" + t.replace(/\W+/g, "");
             b.setAttribute("role", "radio"); b.setAttribute("aria-checked", ev.type === t ? "true" : "false");
             b.appendChild(el("b", null, t)); b.appendChild(el("small", null, EV_KIND_HINT[t]));
             b.addEventListener("click", () => {
-              ev.type = t; UI.kindOpen = ""; saveState(); renderStage();
-              const n = document.getElementById(t === "Other" ? "evo" + kKey : "evt" + kKey); if (n) n.focus({ preventScroll: true });
+              // r3-a-1: an arrow key moves through the kinds and keeps the chooser open; a click, Enter
+              // or Space chooses, folds it to one line and moves on to The item.
+              const viaArrow = arrowPick;
+              ev.type = t; UI.kindOpen = viaArrow ? kKey : ""; saveState(); renderStage();
+              const n = viaArrow ? document.getElementById(b.id) : document.getElementById(t === "Other" ? "evo" + kKey : "evt" + kKey);
+              if (n) n.focus({ preventScroll: true });
+              announce("Kind: " + t + ".");
             });
             kinds.appendChild(b);
           });
@@ -4291,16 +4413,19 @@
         ti.placeholder = "Name it so a reviewer can find it: a reference, a policy, a dataset or an award"; ti.value = ev.text || "";
         const ln = el("p", "v4-ev-note"); ln.id = "evln" + contrib.cid + "-" + j; ti.setAttribute("aria-describedby", ln.id);
         let lnSaid = !!evidenceLinkNote(ev.text, ev.type);
+        // r3-b-4: an item past about 60 words is a paragraph; the note under it says so.
+        const lg = el("span", "v4-meta v7-ev-wc"); const setLong = () => { const n = countWords(ev.text); lg.textContent = n > 60 ? n + " words. An item names the source; about 60 words or fewer keeps it a reference." : ""; };
         const setLn = (v) => { const m = evidenceLinkNote(v, ev.type); ln.textContent = m; ln.hidden = !m; if (m && !lnSaid) { lnSaid = true; announce(m); } else if (!m) lnSaid = false; }; setLn(ev.text);
         ti.addEventListener("input", e => {
           const had = !!(ev.text || "").trim();
-          ev.text = e.target.value; saveState(); setLn(e.target.value); refreshRail(); growBox(ti, 1);
+          ev.text = e.target.value; saveState(); setLn(e.target.value); refreshRail(); growBox(ti, 1); setLong();
           // W-26, r2-a-1: the letters in "What you wrote", the card's count and its squares follow the items
           // as they gain or lose text.
           const cd = had !== !!ev.text.trim() && area.closest(".v7-card");
           if (cd && cd._update) { cd._update(); if (cd._colSync) cd._colSync(); }
         });
-        tw.appendChild(tl); tw.appendChild(ti); tw.appendChild(ln); it.appendChild(tw);
+        setLong();
+        tw.appendChild(tl); tw.appendChild(ti); tw.appendChild(ln); tw.appendChild(lg); it.appendChild(tw);
         const ww = el("div");
         const wl = el("label", "v7-field-label"); wl.htmlFor = "evw" + contrib.cid + "-" + j;
         wl.appendChild(document.createTextNode("Why it matters ")); wl.appendChild(el("span", "v7-opt", "(two lines, optional)"));
@@ -4315,6 +4440,19 @@
         items.appendChild(it);
       });
       area.appendChild(items);
+      const un = UI.evUndo;
+      if (un && un.cid === contrib.cid && un.until > Date.now()) {
+        const row = el("p", "v7-undo");
+        row.appendChild(document.createTextNode("Evidence item " + letter(un.j) + " removed. "));
+        const ub = el("button", "v7-linkbtn", "Undo"); ub.type = "button"; ub.id = "ev-undo-" + contrib.cid;
+        ub.addEventListener("click", () => {
+          contrib.evidence.splice(Math.min(un.j, contrib.evidence.length), 0, un.ev); UI.evUndo = null; saveState(); renderStage();
+          const t = document.getElementById("evt" + contrib.cid + "-" + un.j); if (t) t.focus();
+          announce("Evidence item " + letter(un.j) + " restored.");
+        });
+        row.appendChild(ub); area.appendChild(row);
+        setTimeout(() => { if (UI.evUndo === un) { UI.evUndo = null; if (row.isConnected) { const had = row.contains(document.activeElement); row.remove(); if (had) { const a = document.getElementById("ev-add-" + contrib.cid); if (a) a.focus(); } } } }, un.until - Date.now());
+      }
       const add = el("button", "v7-add", "+ Add " + ((contrib.evidence || []).length ? "another item" : "an item")); add.type = "button"; add.id = "ev-add-" + contrib.cid;
       add.addEventListener("click", () => {
         contrib.evidence.push({ text: "", type: "", note: "" }); saveState(); renderStage();
@@ -4332,7 +4470,7 @@
     // as references tied to a contribution, which is what an evidence row is, so it gets no note.
     // r2-b-3 (inferred): in a creative field the TCV's exception covers the work itself (an exhibition,
     // a performance, or an item of its own kind); a press article or a paper keeps the full rule.
-    const CREATIVE_LINK_KINDS = ["Exhibition / performance", "Other", ""];
+    const CREATIVE_LINK_KINDS = ["Exhibition, performance or screening", "Other", ""];
     const creativeLinkOk = (type) => ns.lens.discipline === "creative" && CREATIVE_LINK_KINDS.indexOf(type || "") !== -1;
     function evidenceLinkNote(v, type) {
       if (!v || !new RegExp(LINK_RE.source, "i").test(v) || isFrq() || !ns.lens.format) return "";
@@ -4378,8 +4516,10 @@
       ? "There is no " + labelOf(DISCIPLINES, ns.lens.discipline) + " example yet. This one is written for Social sciences." : "One example for now, written for Social sciences.";
     const MENTEE_NOUN = { doctoral: "doctoral student", masters: "master's student", postdoc: "postdoctoral fellow", undergrad: "undergraduate researcher" };
     function menteeSentence(m) {
-      const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).toLowerCase() || "trainee";
-      const org = [one(m.org), one(m.unit)].filter(Boolean).join(", ");
+      // G-3: a level typed under Other keeps its capitals ("MD-PhD trainee"); only a leading capital is lowered.
+      const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) || "trainee";
+      // r3-a-7: the unit or position follows the organization in brackets ("at a robotics firm (process engineer)").
+      const org = one(m.org) && one(m.unit) ? one(m.org) + " (" + one(m.unit) + ")" : one(m.org) || one(m.unit);
       const where = !org && !m.kind ? "" : m.kind === "industry" ? "now works in industry" + (org ? " at " + org : "")
         : m.kind === "government" ? "now works in government" + (org ? " at " + org : "")
         : m.kind === "community" ? "now works at a community agency" + (org ? ", " + org : "")
@@ -4432,9 +4572,9 @@
       const dt = el("h3", "v7-h3", "People you have trained in the last five years"); dt.id = "v7-tot-t";
       dh.appendChild(dt);
       const sum = el("span", "v7-counter"); sum.setAttribute("aria-live", "polite");
-      const setSum = () => { const t = mentorTotal(); sum.textContent = t ? t + " in total" : "Type a number in each box that applies"; };
+      const setSum = () => { const t = mentorTotal(); sum.textContent = t ? t.toLocaleString("en-CA") + " in total" : "Type a number in each box that applies"; };
       setSum(); dh.appendChild(sum); dash.appendChild(dh);
-      const tiles = el("div", "v7-tiles");
+      const tiles = el("div", "v7-tiles"); tiles.setAttribute("role", "group"); tiles.setAttribute("aria-labelledby", "v7-tot-t");
       MENTOR_COUNT_LABELS.forEach(([k, lab]) => {
         const tile = el("div", "v7-tile");
         const l = el("label", null, lab); l.htmlFor = "v7-t-" + k;
@@ -4526,7 +4666,7 @@
         const k = Math.min(i, ns.mentees.length - 1), nm = ns.mentees[k];
         const n = nm && (nm.folded ? document.getElementById("pfold-" + k) : focusable(document.getElementById("v7-ph" + k)));
         (n || document.getElementById("v7-add-person") || stepHeading()).focus();
-        announce("Person " + letter(i).toUpperCase() + " removed.");
+        announce("Person " + letter(i).toUpperCase() + (ns.mentees.length === 1 && i === 0 && !menteeHasContent(ns.mentees[0]) ? " cleared." : " removed."));
       };
       rm.addEventListener("click", () => {
         if (!menteeHasContent(m)) return removeP();
@@ -4554,7 +4694,7 @@
       const pair = el("div", "v7-pair");
       const lvl = select("v7-ps" + i, "Level", MENTEE_STAGES, m.stageKind, v => { m.stageKind = v; m.stage = v === "other" ? (m.stageOther || "") : (MENTEE_STAGES.find(x => x[0] === v) || [, ""])[1]; changed(); renderStage(); });
       pair.appendChild(lvl);
-      pair.appendChild(select("v7-pw" + i, "Where are they now?", MENTEE_KINDS, m.kind, v => { m.kind = v; changed(); renderStage(); }));
+      pair.appendChild(select("v7-pw" + i, "Where are they now?", MENTEE_KINDS, m.kind, v => { const was = m.kind; m.kind = v; changed(); renderStage(); if (v && !was) announce(v === "university" ? "University and Department or discipline added." : "Organization and Unit or position added."); }));
       card.appendChild(pair);
       // W-24: "Describe their level" sits in the Level column, under its select.
       if (m.stageKind === "other") lvl.appendChild(input("v7-po" + i, "Describe their level", false, m.stageOther, v => { m.stageOther = v; m.stage = v; changed(); }));
@@ -4582,12 +4722,13 @@
     const SF = () => {
       const a = [
         { k: "anchor", label: "Your first sentence" },
-        { k: "challenge", label: PS_KICKER.challenge, def: PROMPTS.ps.challenge, cross: true },
-        { k: "streams", label: PS_KICKER.streams, def: PROMPTS.ps.streams, cross: true },
-        { k: "pivot", label: PS_KICKER.pivot, def: PROMPTS.ps.pivot },
-        { k: "standing", label: PS_KICKER.standing, def: PROMPTS.ps.standing, placeholder: "Grants, scale of output, recognition, reach. List them first, then gather them into one paragraph." },
-        { k: "programFit", label: PS_KICKER.programFit, def: PROMPTS.ps.programFit },
-        { k: "horizon", label: PS_KICKER.horizon, def: PROMPTS.ps.horizon }
+        // W-42 (inferred, option A): each field carries the tint its part has in the example's legend.
+        { k: "challenge", label: PS_KICKER.challenge, def: PROMPTS.ps.challenge, cross: true, job: JOB_KEYS[0] },
+        { k: "streams", label: PS_KICKER.streams, def: PROMPTS.ps.streams, job: JOB_KEYS[1] },
+        { k: "pivot", label: PS_KICKER.pivot, def: PROMPTS.ps.pivot, job: JOB_KEYS[2] },
+        { k: "standing", label: PS_KICKER.standing, def: PROMPTS.ps.standing, job: JOB_KEYS[3], placeholder: "Grants, scale of output, recognition, reach. List them first, then gather them into one paragraph." },
+        { k: "programFit", label: PS_KICKER.programFit, def: PROMPTS.ps.programFit, job: JOB_KEYS[4] },
+        { k: "horizon", label: PS_KICKER.horizon, def: PROMPTS.ps.horizon, job: JOB_KEYS[5] }
       ];
       if (isFrq()) a.splice(6, 0, { k: "teamFit", label: PS_KICKER.teamFit, def: PROMPTS.ps.teamFit });
       return a;
@@ -4650,13 +4791,18 @@
             get: () => psAnchorText(), has: () => psHas("anchor"), shown: psAnchorText, onChange: update,
             anchor: (fw) => {
               const line = el("div", "v7-anchor-line");
+              // r3-a-13: the three boxes are read as one sentence.
+              line.setAttribute("role", "group"); line.setAttribute("aria-label", "Your first sentence: I am a (role) at (institution). My work is in (field).");
               line.appendChild(document.createTextNode("I am "));
               const art = el("span", null, articleFor(ns.ps.role)); line.appendChild(art);
               line.appendChild(document.createTextNode(" "));
               const mk = (key, ph, lab) => {
                 const i2 = el("input", "v7-box v7-input"); i2.type = "text"; i2.id = "ps-anchor-" + key; i2.placeholder = ph; i2.value = ns.ps[key] || "";
                 i2.setAttribute("aria-label", lab);
-                i2.addEventListener("input", e => { ns.ps[key] = e.target.value; if (key === "role") art.textContent = articleFor(e.target.value); });
+                i2.addEventListener("input", e => { ns.ps[key] = e.target.value; if (key === "role") art.textContent = articleFor(e.target.value); fitInline(i2); });
+                requestAnimationFrame(() => fitInline(i2));
+                // The field opens on focus and its text can change size, so the three boxes are measured again.
+                i2.addEventListener("focus", () => setTimeout(() => i2.parentNode && i2.parentNode.querySelectorAll(".v7-input").forEach(fitInline), 0));
                 i2.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
                 return i2;
               };
@@ -4673,7 +4819,7 @@
           return;
         }
         fields.appendChild(cardField({
-          id: "ps-" + f.k, label: f.label, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", placeholder: f.placeholder,
+          id: "ps-" + f.k, label: f.label, job: f.job, q: resolveQ(f.def), help: resolveHelp(f.def), lintKind: "prose", placeholder: f.placeholder,
           get: () => ns.ps[f.k], set: (v) => { ns.ps[f.k] = v; }, has: () => psHas(f.k), onChange: update,
           before: f.cross ? (inner) => { const b = crossBox(); if (b) inner.appendChild(b); } : null
         }));
@@ -4704,13 +4850,13 @@
       const body = el("div", "v7-draft-body " + (cls || "") + (ns.lens.agency === "sshrc" ? "" : " tnr"));
       body.tabIndex = 0; body.setAttribute("role", "region"); body.setAttribute("aria-label", label);
       const h4 = (t) => body.appendChild(el("h4", null, t));
-      h4(secName("ps"));
+      h4(docHeading("ps"));
       const a = psAnchorText();
       const rest = psParts("").join(" ");
       if (a) body.appendChild(el("p", null, a));
       if (rest) body.appendChild(el("p", null, rest));
       if (!a && !rest) body.appendChild(el("p", "v7-empty", "Not written yet."));
-      h4(secName("contrib"));
+      h4(docHeading("contrib"));
       const live = liveContributions();
       if (!live.length) body.appendChild(el("p", "v7-empty", "Not written yet."));
       live.forEach(({ c: contrib }, pos) => {
@@ -4720,7 +4866,7 @@
         p.appendChild(el("br"));
         p.appendChild(document.createTextNode(w.body));
         // W-16: superscript letters with commas in the HTML outputs.
-        if (w.keys.length) { p.appendChild(document.createTextNode(w.body ? " " : "")); p.appendChild(el("sup", null, w.keys.join(", "))); }
+        if (w.keys.length && w.body) { p.appendChild(document.createTextNode(" ")); p.appendChild(el("sup", null, w.keys.join(", "))); }
         body.appendChild(p);
         if (w.refs.length) {
           const refs = el("div", "v7-refs");
@@ -4729,7 +4875,7 @@
           body.appendChild(refs);
         }
       });
-      h4(secName("mentor"));
+      h4(docHeading("mentor"));
       const mt = sectionText("mentor");
       if (mt) mt.split(/\n+/).forEach(par => body.appendChild(el("p", null, par)));
       else body.appendChild(el("p", "v7-empty", "Not written yet."));
@@ -4793,7 +4939,6 @@
       wd.appendChild(dp);
       if (shut) wd.appendChild(el("p", "v7-quiet", "The draft is shrunk. Show it to read it again; it follows the order below."));
       c.appendChild(wd);
-      renderGlance(c, { title: "What your draft contains" });
 
       // V7-31: the order of contributions, with ↑ ↓.
       const os = el("section", "v7-order"); os.setAttribute("aria-labelledby", "v7-oc-t");
@@ -4816,13 +4961,14 @@
           else if (pos === 1) os.appendChild(el("p", "v7-slot", "The ones in between follow the thread from the first to the last."));
           const oc = el("div", "v7-ocard" + (UI.moved === contrib.cid ? " moved" : ""));
           const n = el("span", "v7-n", String(pos + 1)); n.setAttribute("aria-hidden", "true"); oc.appendChild(n);
-          const txt = el("div");
-          txt.appendChild(el("div", "v7-ot", contrib.title || "Untitled contribution"));
+          const txt = el("div", "v7-otxt");
+          txt.appendChild(el("div", "v7-ot", one(contrib.title) || "Untitled contribution"));
           const gist = (contrib.stakes || contrib.activities || "").trim();
           if (gist) txt.appendChild(el("div", "v7-og", gist));
           oc.appendChild(txt);
           const mv = el("div", "v7-mv");
-          const name = contrib.title || "contribution " + (pos + 1);
+          // r3-b-2: the buttons and the announcement use the shortened headline, as the remove warning does.
+          const name = gvCut(one(contrib.title), 60) || "contribution " + (pos + 1);
           const swap = (to, dir) => {
             const j = live[to].i;
             const tmp = ns.contributions[i]; ns.contributions[i] = ns.contributions[j]; ns.contributions[j] = tmp;
@@ -4839,7 +4985,6 @@
           os.appendChild(oc);
         });
       }
-      c.appendChild(os);
 
       // At a glance: only what is missing, each a link to its field; the length.
       const miss = missingList(), w = draftWords();
@@ -4872,7 +5017,8 @@
       gl.appendChild(t1);
       const t2 = el("div", "v7-tile"); t2.appendChild(el("span", "v7-tile-k", "Length"));
       t2.appendChild(el("span", "v7-big", w / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(w).replace("roughly ", "")));
-      t2.appendChild(el("span", "v7-quiet", "of " + PAGE_LIMIT_EN + " pages, roughly · about " + roughWords(w).toLocaleString("en-CA") + (w === 1 ? " word" : " words")));
+      const over = w / WORDS_PER_PAGE > PAGE_LIMIT_EN;
+      t2.appendChild(el("span", "v7-quiet", (over ? "pages, roughly · about " : "of " + PAGE_LIMIT_EN + " pages, roughly · about ") + roughWords(w).toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (over ? ". The limit in English is " + PAGE_LIMIT_EN + " pages." : "")));
       const pb = el("div", "v7-pages"); pb.setAttribute("aria-hidden", "true");
       const fill = el("i"); fill.style.width = Math.min(100, w / (WORDS_PER_PAGE * PAGE_LIMIT_EN) * 100) + "%"; pb.appendChild(fill);
       [20, 40, 60, 80].forEach(x => { const s = el("s"); s.style.left = x + "%"; pb.appendChild(s); });
@@ -4882,6 +5028,9 @@
       gl.appendChild(t2);
       dash.appendChild(gl);
       c.appendChild(dash);
+      // W-52 (inferred, option A): working draft, At a glance, the order, then the visuals, at every width.
+      c.appendChild(os);
+      renderGlance(c, { title: "What your draft contains" });
 
       // Guide sync: the four qualities from "What reviewers look for", then selection and format.
       const sc = el("section", "v7-card v7-selfcheck"); sc.setAttribute("aria-labelledby", "v7-sc-t");
@@ -5014,7 +5163,8 @@
     function glanceTrained() {
       const levels = MENTOR_COUNT_LABELS.map(([k, l]) => [l, parseInt(cleanCount(ns.mentorCounts[k]), 10) || 0]);
       const withContent = ns.mentees.filter(menteeHasContent);
-      const kinds = MENTEE_KINDS.map(([k, l]) => [l, withContent.filter(m => m.kind === k).length]);
+      // r3-b: short sector names, so a label fits the chart ("Health system", not the full option).
+      const kinds = MENTEE_KINDS.map(([k, l]) => [{ health: "Health system", arts: "Arts or culture", community: "Community agency" }[k] || l, withContent.filter(m => m.kind === k).length]);
       const nL = levels.reduce((n, r) => n + r[1], 0), nK = kinds.reduce((n, r) => n + r[1], 0);
       if (!nL && !nK) return null;
       const title = "People trained and where they went";
@@ -5055,7 +5205,7 @@
       const bx = 16, bw = GV_W - 32, by = 50, bh = 26;
       // W-51: the CV's order and the tool's short names; tens only above 100 words.
       const segs = [["ps", isFrq() ? "Background and skills" : "Personal statement"], ["contrib", "Contributions"], ["mentor", "Mentorship"]].map(([k, l]) => ({ k, l, n: s[k] }));
-      let body = gvText(16, 26, "About " + gvNum(roughWords(total)) + (total === 1 ? " word, " : " words, ") + (total / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(total).replace("roughly ", "")) + " of " + PAGE_LIMIT_EN + " pages, roughly", { size: 12.5 });
+      let body = gvText(16, 26, "About " + gvNum(roughWords(total)) + (total === 1 ? " word, " : " words, ") + (total / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(total).replace("roughly ", "")) + (total / WORDS_PER_PAGE > PAGE_LIMIT_EN ? " pages, roughly; the limit is " + PAGE_LIMIT_EN : " of " + PAGE_LIMIT_EN + " pages, roughly"), { size: 12.5 });
       body += gvRect(bx, by, bw, bh, GV_TRACK, ' rx="3"');
       let x = bx;
       segs.forEach(g => { if (!g.n) return; const w = bw * g.n / scale; body += gvRect(x, by, w, bh, GV_LEN_TONES[g.k], ' stroke="#ffffff" stroke-width="1"'); x += w; });
@@ -5191,7 +5341,7 @@
         "You can take your draft out of the tool as a file, as sections to paste into the template, or as a saved draft file you can open here again later.", false);
       const a = ns.lens.agency, unsure = !a || a === "other";
       const font = /Arial/.test(PRINT_FONT[a] || "") ? "12-point Arial" : "12-point Times New Roman";
-      tailoredBar(c, { lead: "Set up for:", text: unsure ? "Agency not chosen · Tri-agency CV layout · 12-point Times New Roman"
+      tailoredBar(c, { lead: "Set up for:", text: unsure ? "Agency not chosen yet · Tri-agency CV layout · 12-point Times New Roman"
         : labelOf(AGENCIES, a) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV") + " · " + font });
       // r2-a-16: links the format does not allow are named here too, before anything is downloaded.
       const lk = linkList();
@@ -5210,7 +5360,8 @@
       c.appendChild(pv);
 
       // r2-a-4: a download names its file beside the button and aloud, and stays a little longer.
-      const done = (msg, node) => { ns.ui.exported = true; saveState(); refreshRail(); if (node) { node.textContent = msg; announce(msg); setTimeout(() => { if (node.textContent === msg) node.textContent = ""; }, /^Downloaded/.test(msg) ? 6000 : 2500); } };
+      // r3-a-4: the status span beside the button is the one live region for its message.
+      const done = (msg, node) => { ns.ui.exported = true; saveState(); refreshRail(); if (node) { node.textContent = msg; setTimeout(() => { if (node.textContent === msg) node.textContent = ""; }, /^Downloaded/.test(msg) ? 6000 : 2500); } };
       const dl = el("section", "v7-card"); dl.setAttribute("aria-labelledby", "v7-dl-t");
       const dlt = el("h3", "v7-h3", "Download or print"); dlt.id = "v7-dl-t"; dl.appendChild(dlt);
       const fmt = ns.ui.exportFmt || "doc";
@@ -5245,7 +5396,7 @@
       pr.addEventListener("click", () => { countEvent("printView"); if (openPrintView()) done("", null); else status.textContent = "The browser blocked the print view. Allow pop-ups for this page, or download the Word file."; });
       acts.appendChild(pr);
       const cp = el("button", "btn btn-outline v7-quiet-btn", "Copy draft"); cp.type = "button";
-      cp.addEventListener("click", async () => { countEvent("copyDraft"); try { await navigator.clipboard.writeText(buildExportText()); done("Copied.", status); } catch (_) { status.textContent = "Copying is blocked in this browser. Use the download instead."; } });
+      cp.addEventListener("click", async () => { countEvent("copyDraft"); try { await navigator.clipboard.writeText(buildExportText()); done("Copied the draft.", status); } catch (_) { status.textContent = "Copying is blocked in this browser. Use the download instead."; } });
       acts.appendChild(cp);
       acts.appendChild(status);
       dl.appendChild(acts);
@@ -5260,7 +5411,7 @@
         const w = el("div");
         const b = el("button", "btn btn-outline", "Copy " + secName(k)); b.type = "button";
         const st = el("span", "v7-copied"); st.setAttribute("aria-live", "polite");
-        b.addEventListener("click", async () => { countEvent("copySection"); try { await navigator.clipboard.writeText(sectionText(k)); done("Copied.", st); } catch (_) { st.textContent = "Copying is blocked in this browser."; } });
+        b.addEventListener("click", async () => { countEvent("copySection"); try { await navigator.clipboard.writeText(sectionText(k)); done("Copied " + secName(k) + ".", st); } catch (_) { st.textContent = "Copying is blocked in this browser."; } });
         w.appendChild(b); w.appendChild(st); row.appendChild(w);
       });
       pt2.appendChild(row);
@@ -5300,10 +5451,16 @@
       "make makes many might more most much must other others over people project projects research same several shall should since " +
       "small some still study studies such than that their them then there these they this those three through under until used using " +
       "very were what when where which while whose will with within without would years year since across after which first second " +
-      "work works worked working produced paper papers program programs team teams method methods data results result report reports").split(/\s+/));
+      "work works worked working produced paper papers program programs team teams method methods data results result report reports " +
+      // W-39 (inferred): generic research words and place words that join contributions without saying anything.
+      "tested shared trial model record health hospital provincial regional national community partner partnership " +
+      "local public practice training patient patients student students across ontario quebec canada canadian").split(/\s+/));
     function crossTerms(text) {
       const out = new Set();
+      // W-39: a word capitalised mid-sentence is a name (a place, a partner), and is left out.
+      const names = new Set((text.match(/[a-zà-ÿ0-9,;)]\s+([A-ZÀ-Ý][a-zà-ÿ'-]{4,})/g) || []).map(m => m.replace(/^.\s+/, "").toLowerCase()));
       (text.toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ'-]{4,}/g) || []).forEach(w => {
+        if (names.has(w)) return;
         w = w.replace(/'s$/, "").replace(/(ies)$/, "y").replace(/([^s])s$/, "$1");
         if (w.length >= 5 && !CROSS_STOP.has(w)) out.add(w);
       });
@@ -5316,28 +5473,11 @@
       const df = new Map();
       live.forEach(x => x.terms.forEach(t => df.set(t, (df.get(t) || 0) + 1)));
       const recurring = [...df.entries()].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1] || b[0].length - a[0].length).map(([t]) => t).slice(0, 8);
-      const spanning = live.length < 3 ? [] : live.filter(x => live.every(y => y === x || [...x.terms].filter(t => y.terms.has(t)).length >= 2));
+      let spanning = live.length < 3 ? [] : live.filter(x => live.every(y => y === x || [...x.terms].filter(t => y.terms.has(t)).length >= 2));
+      // W-39 (inferred): when half or more qualify, the shared words are the field's own, not a thread.
+      if (spanning.length * 2 >= live.length) spanning = [];
       return { recurring, spanning, count: live.length };
     }
-    function renderCrossRead(c) {
-      const r = crossCuttingRead();
-      if (!r || (!r.recurring.length && !r.spanning.length)) return;
-      const box = el("div", "narrative-funder-note v6-cross");
-      box.appendChild(el("p", "narrative-legend-title", "A read across your " + r.count + " contributions"));
-      if (r.recurring.length) {
-        const p = el("p", null);
-        p.appendChild(document.createTextNode("Words that recur in more than one contribution: "));
-        p.appendChild(el("strong", null, r.recurring.join(", ")));
-        p.appendChild(document.createTextNode(". A word that runs through several contributions may name the problem or one of the strands below."));
-        box.appendChild(p);
-      }
-      r.spanning.forEach(x => {
-        box.appendChild(el("p", null, "“" + (x.c.title || "Contribution " + (x.i + 1)) + "” shares words with each of your other contributions. It may be cross-cutting enough to belong in the statement itself, as the problem or a strand, with the contribution kept for its evidence."));
-      });
-      box.appendChild(el("p", "v4-help", "Worked out by counting repeated words on this device. It is a suggestion; the statement says what you decide."));
-      c.appendChild(box);
-    }
-
     // D-12: one length rule everywhere, 500 to 600 words a page. "roughly 2 to 2.5"
     function pagesRange(words) {
       const lo = words / 600, hi = words / WORDS_PER_PAGE;
@@ -5387,7 +5527,7 @@
       liveContributions().forEach(({ c: contrib, i }, pos) => {
         const w = assembleContribution(contrib);
         lines.push((pos + 1) + ". " + (w.title || "Untitled contribution"));
-        if (w.body || w.keys.length) lines.push("   " + w.body + (w.keys.length ? (w.body ? " " : "") + "(" + w.keys.join(", ") + ")" : ""));
+        if (w.body) lines.push("   " + w.body + (w.keys.length ? " (" + w.keys.join(", ") + ")" : ""));
         w.refs.forEach(r => { lines.push("   " + r.key + ". " + r.text + (r.type ? "  [" + r.type + "]" : "")); if (r.note) lines.push("      " + r.note); });
         miss.filter(m => m.step === "contrib" && m.i === i).forEach(m => {
           const k = m.ev ? "ev" : (m.field || "").replace(/^c[^-]*-/, "");
@@ -5484,7 +5624,7 @@
         // W-14, W-16, W-17: the shared assembly; the headline on its own line with no added full stop.
         const w = assembleContribution(contrib);
         html += "<div class='contrib'><p><span class='ctitle'>" + (i + 1) + ". " + esc(w.title || "Untitled contribution") + "</span><br>";
-        html += esc(w.body) + (w.keys.length ? (w.body ? " " : "") + "<sup>" + w.keys.join(", ") + "</sup>" : "");
+        html += esc(w.body) + (w.keys.length && w.body ? " <sup>" + w.keys.join(", ") + "</sup>" : "");
         html += "</p>";
         if (w.refs.length) {
           html += "<div class='evbox'>";
@@ -5531,7 +5671,7 @@
         liveContributions().forEach(({ c: contrib }, pos) => {
           const w = assembleContribution(contrib);
           const block = [(pos + 1) + ". " + (w.title || "Untitled contribution")];
-          if (w.body || w.keys.length) block.push(w.body + (w.keys.length ? (w.body ? " " : "") + "(" + w.keys.join(", ") + ")" : ""));
+          if (w.body) block.push(w.body + (w.keys.length ? " (" + w.keys.join(", ") + ")" : ""));
           w.refs.forEach(r => block.push(r.key + ". " + r.text + (r.note ? "\n   " + r.note : "")));
           out.push(block.join("\n"));
         });
@@ -5584,7 +5724,7 @@
       out.push("Tool: " + TOOL_VERSION);
       if (S.startedAt) out.push("Started: " + fmtTime(S.startedAt) + " · active time on the tool: about " + mins(totalMs) + " min");
       out.push("Path: " + (ns.mode === "xray" ? "I already have a draft (structural read)" : ns.mode === "compose" ? "Start fresh" : "not chosen"));
-      out.push("Context: " + [labelOf(AGENCIES, L.agency) + (L.format ? " (" + (L.format === "cv-frq" ? "CV-FRQ" : "TCV") + ")" : ""),
+      out.push("Context: " + [labelOf(AGENCIES, L.agency) + (L.format ? " (" + (L.format === "cv-frq" ? "CV-FRQ" : "Tri-agency CV") + ")" : ""),
         disciplineLabel(L), labelOf(CAREER_STAGES, L.careerStage),
         (L.workMode || []).map(w => labelOf(WORK_MODES, w)).join(" + ")].filter(Boolean).join(" · ") +
         " · competition named: " + (competitionName() ? "yes" : "no"));
@@ -5885,8 +6025,8 @@
     let warnSeq = 0;
     function inlineConfirm(container, question, trigger, actionLabel, onGo, opts) {
       opts = opts || {};
-      const old = container.querySelector(":scope > .v7-warn");
-      if (old) old.remove();
+      // G-6: one warning open at a time anywhere on the step.
+      root.querySelectorAll(".v7-warn").forEach(x => x.remove());
       const w = el("div", "v7-warn" + (opts.cls ? " " + opts.cls : "")); w.setAttribute("role", "group"); w.tabIndex = -1;
       const q = el("p", null, question); q.id = "v7-warn-q" + (++warnSeq); w.setAttribute("aria-labelledby", q.id);
       w.appendChild(q);
@@ -5920,6 +6060,7 @@
     loadState();
     showLoadFailed();
     updateNoteBtn();
+    if (stepFromHash() && ns.mode) ns.stageKey = stepFromHash();
     if (ns.mode && ns.profileConfirmed && ns.stageKey !== "start" && ns.stageKey !== "setup") reentryPending = true;
     renderStage();
   })();

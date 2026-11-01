@@ -270,13 +270,13 @@ By severity: blocker 0 · major 16 · minor 35 · polish 5.
 - Severity: major · Kind: ux · Personas: p2-21, p3-09, p1-29 (b)
 - Cause: `crossBox()` is rendered under both The problem and Strands (`cross: true`, 4070–4071, 4162); `crossCuttingRead` counts any contribution sharing two terms with every other as "spanning" (4763), and the stop list (4742–4747) lacks generic research verbs and place names, so five same-province contributions all match and print the same paragraph five times.
 - Fix (INFERRED): show the box once, under The problem; print the spanning lines only when fewer than half the contributions qualify; add generic verbs to the stop list (tested, shared, trial, model, record, health, hospital, provincial, regional, national, community, partner) and skip words that appear capitalised mid-sentence in the source (proper nouns). Inference on the half rule and the stop list, for Prem to tune.
-- Disposition: FIX-INFERRED · Status: open
+- Disposition: FIX-INFERRED · Status: fixed (audit loop round 3, 2026-10-31)
 
 **W-40 · First-sentence inputs cut off what is typed**
 - Severity: minor · Kind: layout · Personas: p1-29 (a), p2-16, p4-15
 - Cause: the three inline boxes are `flex: 1 1 150px` on desktop (407) and `16ch` on phone (557), so "associate professor of mechanical engineering" shows as "associate professo".
 - Fix: size each box to its content (`field-sizing: content` where supported, with a JS width fallback from a hidden span), minimum 12ch, maximum the line width, the sentence wrapping onto the next line; on phone the three boxes stack full width with the sentence shown beneath (the strip already does this).
-- Disposition: FIX · Status: open
+- Disposition: FIX · Status: fixed (audit loop round 3, 2026-10-31)
 
 **W-41 · "I am a écologue": the article rule ignores accented vowels**
 - Severity: polish · Kind: bug · Personas: p5-20
@@ -288,7 +288,7 @@ By severity: blocker 0 · major 16 · minor 35 · polish 5.
 - Severity: polish · Kind: inconsistency · Personas: p4-14
 - Cause: `SF()` fields have no `job` (4067–4079), so `cardField` draws no `.v7-jd` (3250); the example legend is positional (`borrowJobs`, 4106). D-8 covers Contributions only.
 - Fix: Prem's call (Q9). Recommended: give the six statement fields the legend's positional tints so the example and the fields connect as on Contributions. Options: (A) add the squares; (B) leave the statement plain and say so in the decisions log.
-- Disposition: PREM · Status: open
+- Disposition: PREM · Status: fixed (audit loop round 3, 2026-10-31)
 
 ### E. Change panel, navigation, Export and the rail
 
@@ -320,7 +320,7 @@ By severity: blocker 0 · major 16 · minor 35 · polish 5.
 - Severity: minor · Kind: ux · Personas: p1-25, p3-24, p4-08, p5-25
 - Cause: no `pushState`, hash or `popstate` handling anywhere; `history.length` stays as the page arrived.
 - Fix: Prem's call (Q7). Recommended: push one history entry per step with a hash (`#contributions`, `#review`), render on `popstate` without pushing, and resolve the hash on load after the gate and confirm rules (`renderStage`'s redirects at 2344–2348 already cover a hash that is not allowed). Options: (A) hash per step; (B) `replaceState` only (reload keeps the step; Back still leaves); (C) leave as is for the beta.
-- Disposition: PREM · Status: open
+- Disposition: PREM · Status: fixed (audit loop round 3, 2026-10-31)
 
 **W-48 · The privacy line says clearing browser data clears the draft, but the tool writes it back while open**
 - Severity: minor · Kind: bug / copy · Personas: p4-10
@@ -350,7 +350,7 @@ By severity: blocker 0 · major 16 · minor 35 · polish 5.
 - Severity: minor · Kind: ux / layout · Personas: p1-14
 - Cause: `renderReview` order: working draft, `renderGlance` (4262), Order of contributions, At a glance, Self-check. V7-32 DECIDED draft → order → At a glance → self-check; the visuals were added later between the first two. On a phone the order list starts three screens down.
 - Fix: Prem's call (Q8). Recommended: working draft, At a glance (Still missing, Length), Order of contributions, What your draft contains, Self-check, at every width. Options: (A) as recommended; (B) keep the order and fold the visuals behind a disclosure on phones only; (C) leave as is.
-- Disposition: PREM · Status: open
+- Disposition: PREM · Status: fixed (audit loop round 3, 2026-10-31)
 
 **W-53 · Charts are unreadable at phone width**
 - Severity: minor · Kind: layout · Personas: p1-15, p3-25
@@ -362,7 +362,7 @@ By severity: blocker 0 · major 16 · minor 35 · polish 5.
 - Severity: major · Kind: ux / layout · Personas: p1-01
 - Cause: on ≤ 768 px the shell is one column with the rail first (528) and every step change scrolls to the top (2371); the rail (Start page, three steps with metrics, Draft group, gate caption, Save draft) fills about 690–740 px before the step heading.
 - Fix: Prem's call (Q10). Recommended: on phones the rail collapses to one sticky row under the top bar, "Contributions · 2 of 5 ▸", that expands to the full list on tap (the disclosure pattern), with Save draft inside the open list. Options: (A) collapsed rail; (B) rail after the content on phones; (C) leave as is.
-- Disposition: PREM · Status: open
+- Disposition: PREM · Status: fixed (audit loop round 3, 2026-10-31)
 
 **W-55 · Phone: inputs under 16 px (iOS zoom), tap targets under 44 px, quiet buttons white on hover, Change-panel order and label**
 - Severity: minor · Kind: layout / inconsistency · Personas: p1-11, p1-12, p2-14, p5-29 (a)
@@ -477,12 +477,14 @@ Every question above was answered; each answer is the recommended option. Items 
 - Q4 (W-17) Evidence kind label only in the .txt. **built** (round 2)
 - Q5 (W-20) People-trained lines as first-person sentences. **built** (round 2)
 - Q6 (W-44) Cancel beside Confirm; Reset draft at the panel foot. **built** (round 2; status line above still says open)
-- Q7 (W-47) "Yes, now": a history entry per step; Back and Forward move between steps; Back from the first step leaves as usual. **to build**
-- Q8 (W-52) Review order: working draft, At a glance, Order of contributions, What your draft contains, Self-check. **to build**
-- Q9 (W-42) Part-colour squares beside the Personal statement questions, as on Contributions. **to build**
-- Q10 (W-54) Phones: the rail collapses to one sticky row showing the current step; tap to expand. **to build**
+- Q7 (W-47) "Yes, now": a history entry per step; Back and Forward move between steps; Back from the first step leaves as usual. **built** (audit round 3)
+- Q8 (W-52) Review order: working draft, At a glance, Order of contributions, What your draft contains, Self-check. **built** (audit round 3)
+- Q9 (W-42) Part-colour squares beside the Personal statement questions, as on Contributions. **built** (audit round 3)
+- Q10 (W-54) Phones: the rail collapses to one sticky row showing the current step; tap to expand. **built** (audit round 3)
 - Q11 (W-56) Keep V7-5's green-on-any-content rule for the beta. **no build**
-- Q12 (p3-01, p4-26) Work mode "Industry-partnered" becomes "Partnered with industry, government or health systems"; research-creation unchanged. **to build**
-- Q13 (p4-04) Ninth evidence kind worded "Exhibition, performance or screening". **to build** (built as "Exhibition / performance"; reword)
-- Q14 (p5-11) The only contribution can be removed when it has content: the inline warning first, then a fresh blank Contribution 1. **to build**
-- Q15 (p5-22) Spell the format out everywhere ("SSHRC · Tri-agency CV", "FRQSC · CV-FRQ"; no "TCV" left), and one phrase "Agency not chosen yet" everywhere. **to build** (partly: TCV still in 3 places, "Agency not chosen" without "yet")
+- Q12 (p3-01, p4-26) Work mode "Industry-partnered" becomes "Partnered with industry, government or health systems"; research-creation unchanged. **built** (2026-10-31, between audit rounds)
+- Q13 (p4-04) Ninth evidence kind worded "Exhibition, performance or screening". **built** (reworded 2026-10-31)
+- Q14 (p5-11) The only contribution can be removed when it has content: the inline warning first, then a fresh blank Contribution 1. **built** (2026-10-31)
+- Q15 (p5-22) Spell the format out everywhere ("SSHRC · Tri-agency CV", "FRQSC · CV-FRQ"; no "TCV" left), and one phrase "Agency not chosen yet" everywhere. **built** (2026-10-31; TCV kept in running text where defined, INFERRED)
+
+**Standing requirement (Prem, 2026-10-31): every run double-checks accessibility and screen readers before a change is called done.** For each change: a keyboard pass (reachable, visible focus ring, focus never left on `<body>` after an action); a screen-reader pass on the accessibility tree (names, roles, `aria-expanded` / `aria-current` / `aria-disabled`, heading order, live-region messages spoken once with the right text); contrast, 44 px phone targets (D-14), reduced motion and 375 px reflow; a test check for each new a11y behaviour; and a line in the round's report on what was checked and what could not be (no real VoiceOver or NVDA run).

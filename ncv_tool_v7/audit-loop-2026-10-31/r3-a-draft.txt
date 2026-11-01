@@ -1,0 +1,33 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: NSERC · TCV · NSERC Discovery Grant (first application) · Early career · STEM / engineering · Team-based · Industry-partnered]
+Before you submit: paste this into the current version of NSERC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am an assistant professor of mechanical engineering at a mid-sized university. My work is in robotics and thermal systems for manufacturing and transportation.
+
+My program keeps returning to one problem: machines that share space with people and with heat need controls and materials that stay safe at low cost, and small manufacturers and transit fleets cannot buy custom engineering for each case. Soft-contact robotic grippers, thermal management of battery packs, and open test methods. The thread is that each strand turns a safety or temperature limit into a measured design rule that a small firm can apply. I trained in mechanical engineering and worked three years at a motion-control firm before my doctorate, so my questions come from problems that production teams reported to me. Two peer-reviewed papers and a pending patent in the first two years of my appointment, a national conference best-paper award for a student I supervised, and two industry partnerships that now fund three graduate students. The Discovery Grant funds a long program, which fits work that builds methods first and applications second, and it lets me keep one thread across both partnerships. The next five years extend the gripper test protocol into a shared standard and apply the cooling-plate geometry to heavy-duty vehicles.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A compliant gripper cut cycle times on a collaborative robot line
+   Short-run jobs on small-batch assembly benches need a robot arm fenced off for safety, so a person and a machine rarely share a bench. Line operators and the manufacturer lose about 40 percent of each shift to changeovers. I designed and tested the gripper, working with two other engineers and the manufacturers process lead. In a research partnership with a mid-sized manufacturer I designed and tested a soft-fingered gripper on three pilot cells, running 1,200 trials over 14 months to measure contact force against cycle time. The work produced 2 peer-reviewed papers, a validated force-limiting design, and an open test protocol that the partner now uses to qualify new grippers. The manufacturer fitted the gripper to 6 benches and cut changeover time by 35 percent, and two other firms adopted the test protocol. If the protocol is adopted as a standard, small manufacturers could share one bench between a person and a robot without a safety fence. (a)
+   a. Okafor, N., Lindqvist, A. and Singh, R. (2026). Force-limiting soft grippers for shared-bench assembly. IEEE Transactions on Robotics 42(3), 512-526.  [Peer-reviewed]
+      Reports the contact-force limits and the 1,200-trial test series that the partner now uses.
+
+2. A battery-pack cooling plate that cut peak cell temperature by 9 degrees
+   Electric-bus operators in cold climates see packs overheat during fast charging, which shortens pack life and forces buses off routes for hours. I led the thermal modelling and the bench validation, and two graduate students built the test rig. I built a thermal model of a 96-cell pack and tested cooling plates with two industrial partners on a purpose-built rig, at charge rates up to 3C. The model, a patent-pending plate geometry and 2 conference papers resulted from the work. A transit agency fitted the plate to 12 buses, and peak cell temperature fell by 9 degrees during fast charging. If adopted across fleets, the design could extend pack life and keep buses on route through winter charging. (a)
+   a. Metro Transit Authority fleet adoption of the cooling plate on 12 buses (2026).  [Policy / practice uptake]
+      Records that the plate was fitted and that the fast-charge temperature limit was met in service.
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 1 doctoral student, 3 master's students, 4 undergraduate researchers
+A master's student I trained now works in industry at a mid-sized robotics manufacturer, process engineer, and received Best student paper at a national robotics conference. A masters project on contact sensing became a product feature within a year of graduation.
+[One thing you do] Each new student and I write a one-page plan in the first month that names the skills they want to build, the project that will build them and the three people outside the group they will meet.
+[Who gets in] I recruit through two college co-op programs and a bridging course for students from non-engineering backgrounds, and I cover first-term equipment costs from the grant.
+[Who else you mentor (optional)] I mentor two junior engineers at the partner firm through a monthly design review.

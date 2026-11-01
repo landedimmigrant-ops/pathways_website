@@ -1,0 +1,78 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: CIHR · TCV · Competition undecided · Early career · Health / clinical · Team-based · Community-engaged]
+Before you submit: paste this into the current version of CIHR's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am a public health postdoctoral fellow at a university in Montréal. My work is in health services research with northern communities.
+
+For six years my research has asked why people flown out of northern communities for care are sent home with so little follow-up, and why one in five is flown out again. Three strands address it: a trial of nurse-led medication review, a co-designed home check run by local health workers, and a cost model of repeat transfers. All three treat the return home as part of the care. I came to this work from nursing in a northern clinic, where I saw the same patients return within weeks, and I moved into health services research to measure it. I hold a CIHR postdoctoral fellowship, led a stepped-wedge trial in nine clinics, and the partner organization now runs the home check for 90 people a year. A Project Grant funds work built with the health authority that will use it, which is how this program has been run since 2021. The next phase takes the home check to three more nations and tests whether it lowers repeat evacuations over two years.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A rural medication-review trial that cut repeat transfers
+   Patients on five or more medicines in rural clinics were often readmitted within a month because nobody reviewed their list after discharge. I designed the trial, wrote the protocol and supervised the pharmacists who ran the reviews. We enrolled 412 adults across nine rural clinics and followed them for 18 months; a pharmacist reviewed each patient's medicines within a week of discharge. A trial report, a one-page review checklist and an open dataset of 412 patient records. Repeat transfers fell by 14%, and two health authorities now fund the review.
+   [Still missing: What could change. What might this change at field scale? Hedged language is fine here.]
+   [Still missing: Evidence. Add one item a reviewer could check.]
+
+2. Wound-care <b>bold</b> & <script>x</script> protocol for 🙂 community clinics
+   Wounds in remote clinics heal slowly when dressings are changed late <b>bold</b> & <script>alert(1)</script> — and "quotes" & ampersands &amp; &lt;i&gt; matter. I wrote the protocol	with a tab in it and led the nurse training. We ran 6 workshops 🙂🔬 for 40 nurses across 3 sites, with <img src=x onerror=alert(2)> in the notes. A protocol, a 12-page guide and a short video. Clinics now use the protocol in 3 sites.
+   [Still missing: What could change. What might this change at field scale? Hedged language is fine here.]
+   [Still missing: Evidence. Add one item a reviewer could check.]
+
+3. Rewiring follow-up care after air transfer for people from northern communities — a postdoctoral program of co-designed home checks, delivered with local health workers, community Elders and the regional health authority, that reduced repeat evacuations… and left a protocol the organization now owns and runs itself across several nations, including جمعية صحة المجتمع 🙂🔬
+   People flown out of northern communities for hospital care return home with little follow-up, and about one in five is flown out again within a year for the same condition. As a postdoctoral fellow I co-designed the check with the care team and trained six local health workers. Over 14 months I met with Elders and families in two communities, ran 11 co-design sessions and rewrote the check three times. A follow-up protocol the organization owns, a plain-language guide for families and a report co-authored with its research lead. The organization now delivers the check for 90 people a year. On the first day the check ran, a grandmother returning from Edmonton was visited by a local health worker, who found a missed insulin change and called the nurse in charge. Adoption of the check by other nations could make follow-up after a medical flight a standard part of care across the region. (a, b, c)
+   a. Okonkwo-Reyes A, Tanaka L, Whitedeer J, Nakashima P, et al. Follow-up checks delivered by local health workers after air medical transfer from remote northern communities: a stepped-wedge cluster trial protocol and early implementation findings from two partner communities, including patient-reported measures, readmission and repeat-evacuation counts, health-worker training fidelity, and Elder-guided cultural safety review. Int J Circumpolar Health. 2026;85(2):e2291144. doi:10.1000/ijch.2026.2291144 — supplementary appendix A–F, data dictionary and co-design session guides are held in the partner organization’s repository… <b>bold</b> & <script>x</script> 🙂🔬 جمعية صحة المجتمع  [Peer-reviewed]
+      A reviewer can see that the partner organization, not our team, runs the check.
+   b. Community Partnership Award, Northern Health Network, 2026.  [Award / recognition]
+   c. CIHR Catalyst Grant, 2025, 150,000 dollars. Renewed through 2028 pending review.  [Funding]
+
+4. Policy brief for the regional health authority
+   The regional authority had no plan for follow-up after medical flights. I drafted the brief and presented it to the authority's board.
+   [Still missing: What you did.]
+   [Still missing: What resulted.]
+   [Still missing: What already changed. Is there something concrete you can name yet?]
+   [Still missing: What could change. What might this change at field scale? Hedged language is fine here.]
+   [Still missing: Evidence. Add one item a reviewer could check.]
+
+5. Cost model for repeat air transfers
+   Repeat air transfers cost the health authority about 2.1 million dollars a year. I built the model and presented it to the authority's finance committee.
+   [Still missing: What you did.]
+   [Still missing: What resulted.]
+   [Still missing: What already changed. Is there something concrete you can name yet?]
+   [Still missing: What could change. What might this change at field scale? Hedged language is fine here.]
+   [Still missing: Evidence. Add one item a reviewer could check.]
+
+6. Brief: stepped-wedge design\tnotes … done
+   [Still missing: Stakes. What problem was this work answering?]
+   [Still missing: Your role.]
+   [Still missing: What you did.]
+   [Still missing: What resulted.]
+   [Still missing: What already changed. Is there something concrete you can name yet?]
+   [Still missing: What could change. What might this change at field scale? Hedged language is fine here.]
+   [Still missing: Evidence. Add one item a reviewer could check.]
+
+7. Open dataset of transfer pathways
+   (a)
+   a. Transfer pathways dataset, 2019–2025 (n = 5,214). Zenodo. doi:10.5281/zenodo.0000000  [Dataset / tool]
+   [Still missing: Stakes. What problem was this work answering?]
+   [Still missing: Your role.]
+   [Still missing: What you did.]
+   [Still missing: What resulted.]
+   [Still missing: What already changed. Is there something concrete you can name yet?]
+   [Still missing: What could change. What might this change at field scale? Hedged language is fine here.]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 3 doctoral students, 5 master's students, 1 postdoctoral fellow, 12 undergraduate researchers
+A master's student I trained now works in industry at Northern Analytics Ltd., Data analyst. Applied the cost model to real transfer data.
+An undergraduate researcher I trained is now at McGill University, MSc program in epidemiology, and received NSERC USRA. Presented the work at a national student conference.
+An undergraduate researcher I trained now works in the health system at Northern Regional Hospital, Clinical research coordinator.
+A doctoral student I trained now works at a community agency, جمعية صحة المجتمع, Program coordinator 🙂, and received CIHR Doctoral Award <b>2024</b>. Moved into a coordinator role after a thesis built with the partner & its board.
+[One thing you do] I hand a trainee the next task only after they have explained the last one back to me, and I co-sign no paper that a trainee cannot present without notes.
+[Who gets in] Partner communities sit on the hiring panels for my research assistants, and I pay for travel and child care so that panel members can attend.
+[Who else you mentor (optional)] I mentor two early-career colleagues at the regional health authority and run a monthly analysis clinic for its staff.

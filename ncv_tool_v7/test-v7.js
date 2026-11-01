@@ -35,7 +35,7 @@ function check(name, ok, detail) {
 // Helpers loaded into the page for each test.
 const H = `const w=(ms)=>new Promise(r=>setTimeout(r,ms));
   const q=(s)=>document.querySelector(s), qa=(s)=>[...document.querySelectorAll(s)];
-  const rail=(t)=>qa('.v7-ri').find(b=>b.innerText.split('\\n')[0]===t);
+  const rail=(t)=>{const tg=q('#v7-rail-toggle'); if(tg&&getComputedStyle(tg).display!=='none'&&tg.getAttribute('aria-expanded')==='false') tg.click(); return qa('.v7-ri').find(b=>b.innerText.split('\\n')[0]===t);};
   const nav=(re)=>qa('.narrative-nav .btn').find(b=>re.test(b.innerText));
   const setv=(el,v)=>{el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));};
   const setsel=(el,v)=>{el.value=v;el.dispatchEvent(new Event('change',{bubbles:true}));};
@@ -190,7 +190,7 @@ async function seed(state, extra) {
     q('.v7-cards ~ .v7-add').click(); await w(150);
     const st3=q('.v7-card [data-f$="-stakes"] .v7-box'); st3.focus(); setv(st3,'A made-up stakes-only card.'); await w(60);
     return a;`);
-  check("evidence view: What you wrote on top, nine kinds (Exhibition / performance added), none pre-selected", r.top.toLowerCase() === "what you wrote" && r.kinds === 9 && r.pre === 0, r);
+  check("evidence view: What you wrote on top, nine kinds (Exhibition, performance or screening added), none pre-selected", r.top.toLowerCase() === "what you wrote" && r.kinds === 9 && r.pre === 0, r);
   check("evidence item saved with its letter", r.row === "1 item: a", r.row);
   check("Add a contribution folds the others and focuses the new headline", r.folds === 1 && r.cards === 1 && /-title$/.test(r.focus || ""), r);
 
@@ -433,8 +433,9 @@ async function seed(state, extra) {
   console.log("Phone width and reduced motion");
   await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
   await seed(Object.assign({}, fixture, { stageKey: "contrib", mode: "compose" }));
-  r = await js(H + `const out={}; const names=qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]); out.names=names; for (const t of names) { rail(t).click(); await w(120); out[t]=document.documentElement.scrollWidth; if (t==='Review') out.mv=Math.round(q('.v7-mv .btn')?.getBoundingClientRect().height||0); } rail('Contributions').click(); await w(100); out.reset=!!q('.v7-reset'); out.setup=names.indexOf('Set up your profile'); return out;`);
+  r = await js(H + `const out={}; const tg0=q('#v7-rail-toggle'); out.toggle=!!tg0&&getComputedStyle(tg0).display!=='none'; out.railH=Math.round(q('.narrative-progress-panel').getBoundingClientRect().height); if(tg0&&tg0.getAttribute('aria-expanded')==='false') tg0.click(); const names=qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]); out.names=names; for (const t of names) { rail(t).click(); await w(120); out[t]=document.documentElement.scrollWidth; if (t==='Review') out.mv=Math.round(q('.v7-mv .btn')?.getBoundingClientRect().height||0); } rail('Contributions').click(); await w(100); out.reset=!!q('.v7-reset'); out.setup=names.indexOf('Set up your profile'); return out;`);
   check("no sideways scroll on any step at 375 px", r.names.length === 5 && r.names.every(k => r[k] <= 375), r);
+  check("phone: the rail is one row until opened, so the step starts near the top (W-54)", r.toggle && r.railH <= 60, r);
   check("order buttons are at least 44 px (D-14); the phone rail has no Reset and no Set up your profile after confirming", r.mv >= 44 && !r.reset && r.setup === -1, r);
   r = await js(H + `rail('Contributions').click(); await w(100); window.scrollTo(0,0); q('#v7-chg').click(); await w(150); const o={sw:document.documentElement.scrollWidth, open:!!q('#v7-chg-panel'), right:Math.round(q('#v7-chg-panel').getBoundingClientRect().right)}; q('#v7-chg').click(); await w(60); return o;`);
   check("no sideways scroll at 375 px with the Change panel open", r.open && r.sw <= 375 && r.right <= 375, r);
@@ -457,7 +458,7 @@ async function seed(state, extra) {
   r = await js(H + `const a={}; const fs=(s)=>{const e=q(s); return e?parseFloat(getComputedStyle(e).fontSize):null;}; const hh=(s)=>{const e=q(s); return e?Math.round(e.getBoundingClientRect().height):null;};
     a.box=fs('.v7-card .v7-box'); window.scrollTo(0,0); q('#v7-chg').click(); await w(150);
     a.sel=fs('#v7-chg-ag'); a.selH=hh('#v7-chg-ag'); a.inp=fs('#v7-chg-comp'); a.inpH=hh('#v7-chg-comp'); a.yrH=hh('#v7-chg-yr'); q('#v7-chg').click(); await w(60);
-    a.icon=[hh('.v7-icon-btn'), Math.round(q('.v7-icon-btn').getBoundingClientRect().width)]; a.foot=qa('.v7-rail-foot button').map(b=>Math.round(b.getBoundingClientRect().height));
+    a.icon=[hh('.v7-icon-btn'), Math.round(q('.v7-icon-btn').getBoundingClientRect().width)]; { const tg=q('#v7-rail-toggle'); if(tg&&tg.getAttribute('aria-expanded')==='false') { tg.click(); await w(60); } a.toggleH=Math.round(tg.getBoundingClientRect().height); } a.foot=qa('.v7-rail-foot button').map(b=>Math.round(b.getBoundingClientRect().height));
     rail('Mentorship').click(); await w(200); a.tile=hh('.v7-tile input');
     return a;`);
   check("phone: text boxes, inputs and selects are 16 px, so iOS Safari does not zoom on focus", r.box === 16 && r.sel === 16 && r.inp === 16, r);
@@ -685,7 +686,7 @@ async function seed(state, extra) {
   {
     const st3 = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
     st3.lens = Object.assign({}, st3.lens, { agency: "frq", format: "cv-frq", program: "Made-up FRQSC program", discipline: "creative", careerStage: "early" });
-    st3.contributions[0].evidence = [{ text: "Video of the work https://example.org/v", type: "Exhibition / performance" }, { text: "Press https://example.org/p", type: "Media / public" }];
+    st3.contributions[0].evidence = [{ text: "Video of the work https://example.org/v", type: "Exhibition, performance or screening" }, { text: "Press https://example.org/p", type: "Media / public" }];
     st3.contributions[0].stakes = "S."; st3.contributions[0].roleLine = "I made it."; st3.contributions[0].activities = "A."; st3.contributions[0].outputs = "O."; st3.contributions[0].outcomes = "C."; st3.contributions[0].impact = "I.";
     st3.mentees = [{ stageKind: "masters", stage: "Master's", kind: "health", org: "A made-up health authority", unit: "Nurse manager", recognition: "", why: "", folded: false }];
     await seed(st3);
@@ -698,7 +699,7 @@ async function seed(state, extra) {
       rail('Background and skills').click(); await w(150); a.fit=(q('[data-f="ps-programFit"] .v7-q')||{}).innerText||'';
       return a;`);
     check("CV-FRQ: the Contributions note names the background and skills section, not the personal statement (r2-b-1)", /after the candidate's background and skills/.test(r.nav) && !/personal statement/i.test(r.nav), r.nav);
-    check("a chosen kind folds to one line with Change, which reopens the nine cards on the chosen one (r1-b-5)", r.rows.length === 2 && /^Kind: Exhibition \/ performance · Change$/.test(r.rows[0]) && r.grid === 0 && r.open === 9 && r.focus === "true", r);
+    check("a chosen kind folds to one line with Change, which reopens the nine cards on the chosen one (r1-b-5)", r.rows.length === 2 && /^Kind: Exhibition, performance or screening · Change$/.test(r.rows[0]) && r.grid === 0 && r.open === 9 && r.focus === "true", r);
     check("early career: Who else you mentor is optional (r2-b-8); a competition naming FRQSC gets no (FRQ) bracket (r2-b-10)", r.optional && !/\(FRQ\)/.test(r.fit), r);
     await seed(Object.assign({}, st3, { lens: Object.assign({}, st3.lens, { agency: "sshrc", format: "tcv" }), stageKey: "review" }));
     r = await js(H + `await w(150); const a={links:qa('.v7-glance a').map(x=>x.innerText)};
@@ -710,8 +711,127 @@ async function seed(state, extra) {
       qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
     check("TCV in a creative field: a press link is listed to take out, the video of the work is not (r2-b-3)", r.links.some(t => /^Contribution 1: Evidence$/.test(t)) && /Contribution 1: Evidence/.test(r.note), r);
-    check("Export names the links still in the draft (r2-a-16) and a download names its file (r2-a-4)", /still in your draft/.test(r.note) && /^Downloaded narrative-cv-draft-sshrc\.doc\.$/.test(r.dl) && /Downloaded/.test(r.live), r);
-    check("a trainee in the health system prints as a sentence (r2-a-2)", /A master's student I trained now works in the health system at A made-up health authority, Nurse manager\./.test(r.mentor), r.mentor);
+    check("Export names the links still in the draft (r2-a-16) and a download names its file (r2-a-4)", /still in your draft/.test(r.note) && /^Downloaded narrative-cv-draft-sshrc\.doc\.$/.test(r.dl), r);
+    check("a trainee in the health system prints as a sentence (r2-a-2)", /A master's student I trained now works in the health system at A made-up health authority \(Nurse manager\)\./.test(r.mentor), r.mentor);
+  }
+
+  console.log("Audit loop, round 3: the walkthrough's remaining items");
+  {
+    const st4 = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "ps", ui: { profileNote: false } });
+    st4.ps = Object.assign({}, st4.ps, { role: "associate professor of mechanical engineering", institution: "Made-up University" });
+    const mk = (t, x) => ({ cid: "cx" + t, title: "Made-up " + t, stakes: "Coastal flooding records " + x + " in Halifax towns.", activities: "Flooding records modelled " + x + ".", outputs: "", outcomes: "", impact: "", translational: "", roleLine: "I led it.", roleMode: "", evidence: [], flags: {}, notes: {} });
+    st4.contributions = [mk("a", "one"), mk("b", "two"), mk("c", "three")];
+    await seed(st4);
+    r = await js(H + `await w(200); const a={};
+      a.cross=qa('.v7-cross').length; a.under=q('.v7-cross')?.closest('.v7-f')?.dataset.f; a.span=/shares words with each/.test(q('.v7-cross')?.innerText||''); a.halifax=/halifax/i.test(q('.v7-cross strong')?.innerText||'');
+      const r0=q('#ps-anchor'); r0.focus(); await w(300); a.fw=[r0.scrollWidth,r0.clientWidth,r0.style.width]; a.fit=parseFloat(r0.style.width)>=r0.scrollWidth-2;
+      a.jd=qa('[data-f^="ps-"] .v7-f-k .v7-jd').length;
+      rail('Review').click(); await w(200);
+      a.order=qa('#v4-stage-content > section, #v4-stage-content > .v7-draft, #v4-stage-content > div > section').map(x=>x.getAttribute('aria-labelledby')||x.className).filter(Boolean);
+      a.hash=location.hash; history.back(); await w(250); a.back=q('.narrative-stage-header h2').innerText; a.hash2=location.hash;
+      history.forward(); await w(250); a.fwd=q('.narrative-stage-header h2').innerText;
+      return a;`);
+    check("the read across contributions shows once, under The problem; a place name is left out; no 'spanning' line when every card qualifies (W-39)", r.cross === 1 && r.under === "ps-challenge" && !r.span && !r.halifax, r);
+    check("a first-sentence box is as wide as its text (W-40); the statement fields carry the legend's squares (W-42)", r.fit && r.jd >= 6, r);
+    check("Review runs At a glance, then the order, then the visuals (W-52)", r.order.indexOf("v7-ag-t") !== -1 && r.order.indexOf("v7-ag-t") < r.order.indexOf("v7-oc-t") && r.order.indexOf("v7-oc-t") < r.order.indexOf("v7-gv-t"), r.order);
+    check("each step has an address; Back and Forward move between steps (W-47)", r.hash === "#review" && /Personal statement/.test(r.back) && r.hash2 === "#statement" && /Review/.test(r.fwd), r);
+  }
+
+  console.log("Audit loop, round 3: Fable's review of rounds 1 and 2");
+  {
+    const st5 = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    st5.mentees = [{ stageKind: "other", stageOther: "MD-PhD trainee", stage: "MD-PhD trainee", kind: "university", org: "A made-up university", unit: "", recognition: "", why: "", folded: false }];
+    await seed(st5);
+    r = await js(H + `await w(150); const a={};
+      q('#v7-chg').click(); await w(150); a.open=!!q('#v7-chg-panel');
+      const st=JSON.parse(localStorage.getItem('ncv-v7')); st.lens.careerStage='senior';
+      window.dispatchEvent(new StorageEvent('storage',{key:'ncv-v7', newValue:JSON.stringify(st)})); await w(200);
+      a.closed=!q('#v7-chg-panel'); a.live=q('#v7-live').textContent;
+      localStorage.removeItem('ncv-v7'); const box=q('[data-f$="-stakes"] .v7-box'); box.focus(); setv(box,'Kept here.'); await w(60);
+      const other=JSON.parse(JSON.stringify(st)); other.contributions[0].stakes='Other tab';
+      window.dispatchEvent(new StorageEvent('storage',{key:'ncv-v7', newValue:JSON.stringify(other)})); await w(200);
+      a.kept=q('[data-f$="-stakes"] .v7-box').value; a.warn=!q('#v4-save-warning').hidden;
+      return a;`);
+    check("an open Change panel closes when the other tab changed the profile (G-2)", r.open && r.closed && /changed in another tab/.test(r.live), r);
+    check("a tab that stopped saving after an outside clear keeps its own copy and its warning (G-1)", r.kept === "Kept here." && r.warn, r);
+    await seed(st5);
+    r = await js(H + `await w(150); const a={};
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      rail('Export').click(); await w(150);
+      const b=qa('.btn').find(x=>/^Copy Supervisory/.test(x.innerText)); if (b) { b.click(); await w(40); } a.mentor=clip; navigator.clipboard.writeText=ow;
+      document.getElementById('v7-home').click(); await w(150);
+      q('.v7-path-reset').click(); await w(100); q('.v7-path-cont').click(); await w(100); a.warns=qa('.v7-warn').length;
+      return a;`);
+    check("a level typed under Other keeps its capitals and takes the article of its letters (G-3)", /An MD-PhD trainee I trained is now at A made-up university\./.test(r.mentor), r.mentor);
+    check("one inline warning at a time on a step (G-6)", r.warns === 1, r);
+  }
+
+  console.log("Audit loop, round 3: persona fixes");
+  {
+    const st6 = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    st6.contributions[0].title = "x".repeat(250);
+    st6.contributions[0].roleLine = "I led it.";
+    st6.contributions[0].evidence = [{ text: "Made-up item a.", type: "Peer-reviewed" }, { text: "Made-up item b, long enough to keep.", type: "Funding", note: "A note." }];
+    await seed(st6);
+    r = await js(H + `await w(150); const a={};
+      const card=q('.v7-card-col'); card.querySelector('[id^=ev-open-]').click(); await w(300);
+      const cid=card.querySelector('[id^=ev-open-], [id^=ev-add-]')?.id.split('-').pop() || '';
+      qa('.v7-kind-row .v7-linkbtn')[0].click(); await w(200);
+      const k0=document.activeElement; k0.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true})); await w(200);
+      a.stillOpen=qa('.v7-ev-item')[0].querySelectorAll('.v7-kind').length; a.focusKind=document.activeElement.getAttribute('role'); a.live=q('#v7-live').textContent;
+      document.activeElement.click(); await w(200); a.folded=qa('.v7-ev-item')[0].querySelectorAll('.v7-kind').length===0;
+      qa('.v7-ev-rm')[1].click(); await w(200); a.undo=!!q('.v7-undo button'); a.items1=qa('.v7-ev-item').length;
+      q('.v7-undo button').click(); await w(200); a.items2=qa('.v7-ev-item').length; a.back=qa('.v7-ev-item textarea')[2]?.value||qa('[id^=evt]')[1]?.value;
+      a.dir=q('.v7-ev-item textarea').dir;
+      rail('Review').click(); await w(200); a.sw=document.documentElement.scrollWidth<=document.documentElement.clientWidth+1; a.mv=q('.v7-mv .btn').getAttribute('aria-label').length;
+      rail('Mentorship').click(); await w(150); q('#v7-chg').click(); await w(150);
+      qa('#v7-chg-panel .v7-mini[aria-pressed="true"]').forEach(b=>b.click()); await w(60);
+      qa('#v7-chg-panel .btn-primary').find(b=>/Confirm/.test(b.innerText)).click(); await w(150);
+      a.need=!!q('.v7-chg-need') && !!q('#v7-chg-panel');
+      return a;`);
+    check("arrow keys move through the evidence kinds with the chooser open and say the kind; Enter folds it (r3-a-1)", r.stillOpen === 9 && r.focusKind === "radio" && /^Kind: /.test(r.live) && r.folded, r);
+    check("a removed evidence item can be restored with Undo (r3-b-6); boxes take the text's direction (r3-b-13)", r.undo && r.items1 === 1 && r.items2 === 2 && r.dir === "auto", r);
+    check("an unbroken 250-character headline wraps on Review and the move buttons use a short name (r3-b-1, r3-b-2)", r.sw && r.mv < 90, r);
+    check("the Change panel asks for a work mode before it confirms (r3-b-9)", r.need, r);
+  }
+
+  console.log("Register (W-57): the tool's prompt strings");
+  {
+    const src = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v7.html"), "utf8");
+    const a = src.indexOf("    const PROMPTS = {"), b = src.indexOf("\n    };", a);
+    const body = src.slice(a, b).split("\n").filter(l => !/^\s*\/\//.test(l)).join("\n");
+    const strs = [...body.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map(m => m[1]).filter(x => x.split(" ").length > 3);
+    const HARD = { "rather than / instead of": /\b(rather than|instead of)\b/i, "em dash": /—/, "actually / really / simply": /\b(actually|really|genuinely|quietly|simply)\b/i,
+      "arriv-": /\barriv\w*/i, "this is": /\bthis is\b/i, "nobody / never / nothing": /\b(nobody|no one|never|nowhere|nothing)\b/i, "not only / , not": /\bnot only\b|,\s*not\b/i };
+    const hits = []; strs.forEach(x => { for (const [k, re] of Object.entries(HARD)) if (re.test(x)) hits.push(k + ": " + x.slice(0, 80)); });
+    check("the prompt strings keep the house register: no dashes, contrast framing, emphatics or dramatized negatives (" + strs.length + " strings)", strs.length > 40 && hits.length === 0, hits);
+  }
+
+  console.log("Prem's answers Q12 to Q15 (2026-10-31)");
+  {
+    const one = JSON.parse(JSON.stringify(fixture.contributions.slice(0, 1)));
+    one[0].evidence = [{ text: "A made-up show", type: "Exhibition / performance" }];
+    await seed(Object.assign({}, fixture, { profileConfirmed: true, stageKey: "contrib", mode: "compose", contributions: one }));
+    r = await js(H + `await w(300); const a={pills:qa('.v7-tailored-pills span, .v7-tailored-pills').map(x=>x.innerText).join(' | '), evType:JSON.parse(localStorage.getItem('ncv-v7')||'{}').contributions?.[0]?.evidence?.[0]?.type};
+      const rm=q('[aria-label="Remove contribution 1"]'); a.rm=!!rm; a.rmName=rm?.getAttribute('aria-label'); rm.click(); await w(150);
+      const warn=q('.v7-warn'); a.warnFocus=!!warn&&warn.contains(document.activeElement); a.warnRole=warn?.getAttribute('role'); a.warnName=warn&&document.getElementById(warn.getAttribute('aria-labelledby'))?.innerText;
+      [...warn.querySelectorAll('button')].find(b=>b.innerText==='Remove').click(); await w(300);
+      a.n=qa('.v7-card [aria-label^="Remove contribution"]').length; a.title=JSON.parse(JSON.stringify(window.ns||{})).contributions?.[0]?.title;
+      a.cards=qa('.v7-card').filter(c=>/Contribution 1/.test(c.innerText)).length; a.focus=document.activeElement.tagName; a.live=q('#v7-live').textContent;
+      q('[aria-label="Remove contribution 1"]').click(); await w(150); a.blankMsg=q('#v7-live').textContent; a.noWarn=!q('.v7-warn');
+      return a;`);
+    check("Q14: the only contribution has a Remove button; it asks inline (focus inside, named by its question), then leaves a blank Contribution 1 and says so", r.rm && r.warnFocus && r.warnRole === "group" && /Remove contribution 1/.test(r.warnName || "") && r.cards >= 1 && r.focus !== "BODY" && /removed\. A blank Contribution 1 is ready\./.test(r.live) && /already blank/.test(r.blankMsg) && r.noWarn, r);
+    check("Q13: an evidence item saved as \"Exhibition / performance\" loads as \"Exhibition, performance or screening\"", r.evType === "Exhibition, performance or screening", r);
+    check("Q15: the Profile bar spells out the format (Tri-agency CV, no TCV)", /Tri-agency CV/.test(r.pills) && !/\bTCV\b/.test(r.pills), r.pills);
+    await seed(Object.assign({}, fixture, { profileConfirmed: true, stageKey: "contrib", mode: "compose", lens: Object.assign({}, fixture.lens, { agency: "other" }) }));
+    r = await js(H + `await w(300); const a={pills:q('.v7-tailored')?.innerText};
+      const ch=qa('.v7-tailored button').find(b=>/Change/.test(b.innerText)); ch.click(); await w(200);
+      const lab=qa('.v7-tailored label, .v7-tailored .v7-pill, .v7-tailored button').map(x=>x.innerText.trim()); a.mode=lab.find(t=>/Partnered with industry/.test(t)); a.old=lab.some(t=>/Industry-partnered/.test(t));
+      const sel=qa('.v7-tailored select').find(s=>[...s.options].some(o=>o.value==='other')); a.opt=sel?[...sel.options].find(o=>o.value==='other').text:null;
+      const box=a.mode&&qa('.v7-tailored label, .v7-tailored .v7-pill, .v7-tailored button').find(x=>/Partnered with industry/.test(x.innerText)); a.sw=document.documentElement.scrollWidth<=innerWidth;
+      return a;`);
+    check("Q15: an unchosen agency reads \"Agency not chosen yet\" in the Profile bar", /Agency not chosen yet/.test(r.pills || ""), r);
+    check("Q12: the work-mode choice reads \"Partnered with industry, government or health systems\"; the old label is gone", !!r.mode && !r.old, r);
   }
 
   console.log("Network and errors");
