@@ -1,0 +1,38 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: CIHR · Tri-agency CV · CIHR Project Grant 2027 · Mid career · Health / clinical · Team-based · Partnered with industry, government or health systems]
+Before you submit: paste this into the current version of CIHR's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am an associate professor and clinician-scientist at Lakeshore University and its rehabilitation hospital. My work is in rehabilitation medicine, with a focus on recovery after stroke and spinal cord injury.
+
+My research program returns to one problem: many persons lose their independence after a stroke or a spinal cord injury, because the rehabilitation begins too late and does not reach the patients who live far from the hospitals. I work in three strands: early walking training in the hospital, tele-rehabilitation at home, and the return to work. The thread is to bring the rehabilitation to the person at the right time and at the right place. I trained as a physiotherapist in Brazil, then I did a doctorate in Montréal and a clinical fellowship in Toronto. I worked in the clinic during the pandemic, and I saw the patients wait for months, which changed my questions. I hold a CIHR operating grant and two provincial grants, and I have published 38 papers. My protocol is now in the guideline of one health authority, and in 2024 I have received a provincial award for clinical research. The Project Grant funds the questions that come from the clinic, and my work is made together with the health system. It is the good competition for me, because I want to test the tele-rehabilitation program in four provinces. The next step is to test the program with the First Nations communities of the North, together with their partners, and to measure the costs for the health systems.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A rehabilitation protocol that helps stroke survivors to walk sooner
+   Many persons who have a stroke wait too long for intensive rehabilitation, and the delay reduces their chance to walk again without help. In our region about 1,900 persons have a stroke each year. I am responsible of the clinical design and the analysis, and I lead a team of six clinicians and two statisticians. We have realized a randomized study in which 420 patients in eight hospitals received intensive walking training starting in the first week after the stroke, and I made the analysis with our biostatistician. The study was done with the Eastern Health Authority. The study gave a training protocol, a staff guide in French and English, and three papers, of which two are in open access. The results permitted to change the protocol of the regional health system, and six hospitals now begin the walking training before the seventh day. The median stay in hospital is shorter by 5 days. A bus driver of 58 years walked again with a stick after four weeks of the new training, and he returned to his work in the spring. The protocol could be used in other provinces, and it could reduce the cost of long hospital stays for stroke patients. (a, b)
+   a. Costa R, Silva M, Tremblay J. Early intensive walking training after stroke: a randomized trial in eight hospitals. Journal of Stroke Rehabilitation, 2025.  [Peer-reviewed]
+      The patients who started in the first week walked 30 metres more at three months.
+   b. Eastern Health Authority, Stroke Rehabilitation Standard, version 3, 2026, section 4 (adopts the walking protocol in six hospitals).  [Policy / practice uptake]
+
+2. A tele-rehabilitation program for patients who live far from a hospital
+   Patients who live more than two hours from a rehabilitation centre often stop their therapy after the discharge, and many of them lose the gains they made in the hospital. I designed the program with the regional health authority, and I supervise the three physiotherapists who deliver it. With the health authority we built a video program of 12 weekly sessions, and we have tested it in 11 rural communities with 260 patients during two years. A program manual, a set of exercise videos in three languages and two papers. Since 2025 the health authority pays the program from its regular budget, and 1,400 patients were enrolled. The model could help other regions with few specialists, for example in the North. (a)
+   a. Silva M, Costa R, Njoroge P. A video-based rehabilitation program for rural patients after stroke: a stepped-wedge trial in 11 communities. Journal of Telerehabilitation, 2026.  [Peer-reviewed]
+      The patients in the program kept their gains at six months, and the number of visits to the hospital was lower by one third.
+
+3. A short questionnaire that predicts return to work after spinal cord injury
+   People with a spinal cord injury often leave their work for good, because the clinicians cannot see early who needs help to return. In the rehabilitation hospitals of our network, 60 percent of the patients did not return to work in two years. I am the principal investigator, and I am responsible of the analysis. We have developed a questionnaire of 12 items with 18 patients and 9 employers, and we have tested it with 640 patients in five rehabilitation hospitals during three years. One questionnaire in English and French, a scoring guide for the clinicians and four papers. The results permitted to change the discharge planning, and the five hospitals now use the questionnaire in the second week of rehabilitation. Two employers of the region changed their return-to-work process after the training of their managers. A welder of 44 years was identified at risk in the second week, received an adaptation of his job, and went back to work half time after four months. The questionnaire could be used by employers and insurers to plan the return to work earlier, and it might reduce the long absences for the workers. (a)
+   a. Return-to-Work Questionnaire for spinal cord injury (12 items, English and French), open on the website of the Rehabilitation Hospital Network.  [Dataset / tool]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 3 doctoral students, 6 master's students, 2 postdoctoral fellows, 8 undergraduate researchers, 4 clinical research coordinators
+A doctoral student I trained now works at Eastern Regional Hospital (Stroke Rehabilitation Program), and received a provincial doctoral scholarship (2023), and leads the stroke rehabilitation program of a regional hospital and teaches the new protocol to nurses.
+[One thing you do] Every new trainee and I write together a plan for the first three months, with the goals, the hours of clinical work and the dates of our meetings.
+[Who gets in] We have changed the selection of the research coordinators: the posting is now published in French and English and sent to the colleges of the region, and a candidate without a university degree can apply with two years of clinical work.
+[Who else you mentor] I mentor a young physiotherapist of another hospital. I helped her to write her first grant application, and it was funded.

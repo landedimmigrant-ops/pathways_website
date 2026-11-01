@@ -23,6 +23,7 @@
     Styling rides the shared Pathways design system.
   -->
   <style>
+    .btn { font-size: 0.875rem; } /* N-4: the base for every button; specific rules below override it */
     .proto-banner {
       position: sticky; top: 0; z-index: 1000;
       background: #1a1a1a; color: #e5a712;
@@ -484,7 +485,7 @@
     .v7-dash-h, .v7-section-t { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
     .v7-dash-h .v7-h3, .v7-section-t .v7-h3 { margin: 0; }
     .v7-counter { font-size: 0.85rem; color: var(--muted); }
-    .v7-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .v7-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5em), 1fr)); gap: 12px; }
     .v7-lv-note { margin: 6px 0 0; font-size: 0.8rem; }
     .v7-tile { background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
     .v7-tile label { font-size: 0.78rem; color: var(--muted); font-weight: 600; order: 2; overflow-wrap: anywhere; hyphens: auto; }
@@ -568,6 +569,8 @@
 
     .narrative-module-shell > .narrative-stage-content, .narrative-module-shell > .narrative-progress-panel { min-width: 0; }
     .narrative-module-shell.is-start { grid-template-columns: minmax(0, 1fr); }
+    /* N-5: the rail column grows with the text size (220 px at 100%), so its labels keep whole words. */
+    @media (min-width: 769px) { .narrative-module-shell:not(.is-start) { grid-template-columns: 13.75rem minmax(0, 1fr); } }
     .narrative-module-shell.is-start .v7-paths { max-width: 720px; }
     .v7-rail-in { animation: v7-rail-in 400ms ease-out both; }
     @keyframes v7-rail-in { from { opacity: 0; } to { opacity: 1; } }
@@ -678,7 +681,8 @@
     .v7-rail-grouprow .v7-rail-group { margin: 0; }
     .v7-rail-wc { font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
     /* r7-b-1: at large text sizes a rail label breaks inside a long word before it runs under its count. */
-    .v7-ri > span:nth-child(2) { overflow-wrap: anywhere; hyphens: auto; min-width: 0; }
+    /* r7-b-1, N-5: at large text a rail label may break inside a long word; a container query was tried and moved the rail's connector lines. */
+    .v7-ri > span:nth-child(2) { overflow-wrap: anywhere; min-width: 0; }
     .narrative-progress-panel { overflow-x: hidden; }
     .v7-rail-grow { animation: v7-rail-grow 420ms var(--v7-ease) both; }
     @keyframes v7-rail-grow { from { opacity: 0; transform: translateY(-8px); clip-path: inset(0 0 100% 0); } to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); } }
@@ -700,7 +704,6 @@
       .v7-gv-grid { grid-template-columns: minmax(0, 1fr); }
       .v7-gv-exp { padding: 14px 14px 16px; }
     }
-    #ncv-v4-root .btn { font-size: 0.875rem; }
     .narrative-stage-header .v4-kicker { color: #912338; letter-spacing: 0.06em; font-weight: 600; }
     .narrative-nav .v7-nav-note { flex: 1 1 240px; margin: 0 12px; align-self: center; }
     @media (max-width: 768px) {
@@ -719,6 +722,16 @@
       .narrative-progress-panel > .v7-rail-body { padding: 4px 16px 16px; }
       .narrative-module-shell.is-start { display: flex; flex-direction: column; }
     }
+    /* r8-a-1 (inferred): a phone held sideways is wide but short; it gets one column and the folded rail. */
+    @media (min-width: 769px) and (max-height: 520px) and (pointer: coarse) {
+      #ncv-v4-root .narrative-module-shell { grid-template-columns: minmax(0, 1fr); }
+      #ncv-v4-root .narrative-progress-panel { position: static; padding: 0; max-height: none; overflow: visible; }
+      .v7-rail-toggle { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 48px; padding: 0 16px; background: none; border: 0; font: inherit; font-weight: 700; color: #912338; cursor: pointer; text-align: left; }
+      .v7-rail-toggle .v7-tri { transition: transform 150ms; }
+      .v7-rail-toggle .v7-tri.is-down { transform: rotate(90deg); }
+      .narrative-progress-panel:not(.is-open) > .v7-rail-body { display: none; }
+      .narrative-progress-panel > .v7-rail-body { padding: 4px 16px 16px; }
+    }
     @media (prefers-reduced-motion: reduce) { .v7-path { transition: none; } .v7-path-new:hover { transform: none; } }
     .v7-rail-foot { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
     .v7-rail-foot button { font: inherit; font-size: 0.85rem; text-align: left; background: none; border: 0; padding: 4px 0; color: #912338; text-decoration: underline; cursor: pointer; min-height: 32px; }
@@ -729,6 +742,7 @@
       .v7-select, .v7-input, .v7-chg-row .v7-input, .v7-chg-row .v7-select, .v7-tile input, .v7-rail-foot button { min-height: 44px; }
       .v7-icon-btn { width: 44px; height: 44px; }
       .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
+      .v7-tile input.v7-tile-name { font-size: 16px; min-height: 44px; }
       .v7-glance li a { display: inline-block; padding: 12px 0; }
       .proto-banner a { display: inline-flex; align-items: center; min-height: 44px; }
       .v7-gv-art { overflow-x: auto; }
@@ -742,6 +756,7 @@
       .v7-mini, .v7-btn-small, .v7-ri, .v7-linkbtn, .v7-ex-btn { min-height: 44px; }
       .v7-icon-btn { width: 44px; height: 44px; }
       .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
+      .v7-tile input.v7-tile-name { font-size: 16px; min-height: 44px; }
     }
     /* r1-b-4: below about 1100 px two charts side by side shrink their labels to 5 px; one per row. */
     /* r6-a-6 (inferred): one chart per row at every width, so their text is not scaled down to 8 px. */
@@ -784,7 +799,7 @@
       <p class="v7-intro">This tool helps you get familiar with how a narrative CV asks you to think about your work and describe it. You build a first outline in your own words: your contributions, your mentorship record and a personal statement. A full first draft can take a day or more, so allow time before your deadline. English only for now.</p>
       <p class="v7-intro">We recommend reading the <a id="v4-guide-top" href="https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html" target="_blank" rel="noopener">narrative CV guide</a> before you start, and consulting it as you go.</p>
     </div>
-    <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The checks are fixed rules. It leaves this device only if you email it.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
+    <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The checks are fixed rules. Your draft leaves this device only if you send it by email.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
     <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Use Save draft to keep a draft file, or copy your draft on the Export page, before you close this tab.</p>
     <div id="ncv-v4-root"></div>
   </div>
@@ -1663,7 +1678,7 @@
     // are topic statements — they say what the work is about, not which part of it was yours.
     const MY_ROLE_NOUN = /\bmy\s+(?:group|lab|team|students?|trainees?|collaborators?|co-?authors?|postdocs?|role|part|contributions?|responsibilit(?:y|ies))\b/i;
     const WEAK_PHRASES = ["worked on","participated in","assisted with","was involved in","helped with"];
-    const VAGUE_QUANTITY = ["various","several","many","a number of","a few","multiple"];
+    const VAGUE_QUANTITY = ["various","several","many","a number of","a few","multiple","a lot of","lots of","numerous","plenty of"];
     const VAGUE_REPUTATION = ["well-received","widely cited","highly regarded","well-known"];
     const VAGUE_LIST = VAGUE_QUANTITY.concat(VAGUE_REPUTATION);
     // H3: prestige / journal-metric language — reviewer guidelines say to disregard these, so they
@@ -1710,7 +1725,12 @@
     const NUMBER_WORDS = ["one","two","three","four","five","six","seven","eight","nine","ten",
       "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty",
       "thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred","thousand","dozen"];
-    const NUMBER_WORD_RE = new RegExp("\\b(?:" + NUMBER_WORDS.join("|") + ")(?:-\\w+)?\\b", "gi");
+    // r8-a-5: "one" after each, every, no, any, this, that, the, or before "of" or "another", is a pronoun.
+    const NUMBER_WORD_RE = (() => {
+      const core = "\\b(?:" + NUMBER_WORDS.join("|") + ")(?:-\\w+)?\\b(?!\\s+(?:of|another)\\b)";
+      try { return new RegExp("(?<!\\b(?:each|every|no|any|this|that|the|which|someone|anyone)\\s)" + core, "gi"); }
+      catch (_) { return new RegExp(core, "gi"); } // a browser without lookbehind (Safari before 16.4) keeps the plain list
+    })();
 
     // Every case-insensitive, word-boundaried occurrence of a literal phrase, with its real index
     // and as-typed casing — feeds both the flag decision and the B-16 read-back highlight.
@@ -1727,9 +1747,11 @@
         const pre = lookbehindOk ? I_NOT_ME : "";
         const verbAlt = "(?:" + ACTION_VERBS.join("|") + "|" + IRREGULAR_PAST.join("|") + "|\\w{2,}ed)\\b";
         ownRe = [new RegExp(pre + "\\bI\\b(?:\\s+\\S+){0,3}?\\s*\\b" + verbAlt),
+          // r8-b-1: "I am the principal investigator", "I am responsible for", "I was in charge of".
+          new RegExp(pre + "\\bI\\s+(?:am|was)\\s+(?:the|a|an|responsible|in\\s+charge|co-?lead|lead|principal|senior|first|sole)\\b"),
           new RegExp(pre + "\\bI\\s+(?!am\\b|was\\b|were\\b|have\\b|had\\b|will\\b|would\\b|could\\b|should\\b|might\\b|may\\b|can\\b|do\\b|did\\b|think\\b|believe\\b|hope\\b|feel\\b|also\\b|and\\b|or\\b)[a-z]{3,}\\b")];
       }
-      return { iVerb: ownRe[0].test(t) || ownRe[1].test(t), myWord: MY_ROLE_NOUN.test(t) };
+      return { iVerb: ownRe.some(re => re.test(t)), myWord: MY_ROLE_NOUN.test(t) };
     }
     function allMatches(t, phrase) {
       const pattern = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
@@ -1767,7 +1789,7 @@
       WEAK_PHRASES.forEach(p => { const ms = allMatches(t, p); if (ms.length) { weak.push(p); ms.forEach(m => out.hits.push({ text: m.text, rule: "weak" })); } });
       if (ownership && weCount) out.strengths.push("Team voice and your own role are both visible.");
       else if (iVerb) out.strengths.push("Your own role is named."); // r6-b-6: "my team ran it" names the team
-      if (weCount && !ownership && !ctx.roleNamed) {
+      if (weCount && !ownership && !ctx.roleNamed && kind !== "stakes" && kind !== "outputs") { // r8-b-2
         out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " and no sentence names your own part. Name it beside the team’s or the partners’, for example “I co-lead the methods; the partner communities hold the data.”");
         weMatches.forEach(m => out.hits.push({ text: m.text, rule: "ownership" }));
       }
@@ -1835,7 +1857,9 @@
       // H5: name every term that matched, the way the hedge flag does — naming only the first left
       // "high-impact" flagged silently. Guide sync (P-12): journal metrics and author metrics carry
       // different reasons, so they are named in separate flags.
-      const journalTerms = prestige.filter(p => !AUTHOR_METRIC_RE.test(p));
+      // r8-b-7: "prestigious" is an opinion about a prize or a journal, named on its own.
+      if (prestige.some(p => /^prestigious$/i.test(p))) out.flags.push("“prestigious” is an opinion. Name the prize, the journal or the funder, and the year.");
+      const journalTerms = prestige.filter(p => !AUTHOR_METRIC_RE.test(p) && !/^prestigious$/i.test(p));
       const authorTerms = prestige.filter(p => AUTHOR_METRIC_RE.test(p));
       if (journalTerms.length) out.flags.push(journalTerms.map(p => "“" + p + "”").join(", ") + ". Reviewers of Tri-agency applications are asked to disregard the Journal Impact Factor and other journal-based metrics. Say what the work changed.");
       if (authorTerms.length) out.flags.push(authorTerms.map(p => "“" + p + "”").join(", ") + ". DORA treats the h-index as an unreliable measure of an individual's work. The citation count for a single article or book can support what you say about that work.");
@@ -1860,7 +1884,7 @@
           // r6-b-4: "could only supervise by video", "would have run the surveys myself" describe the past.
           .replace(/\bcould(?=\s+only\b)|\bwould(?=\s+have\b)/gi, mask)
           // r4-a-5: "no one could learn what it held" is a past inability; "could" before a verb of access or knowing is not a hedge.
-          .replace(kind === "impact" ? /$^/ : /\bcould(?=\s+(?:learn|find|see|tell|access|read|reach|get|use|know|afford|attend|travel|count|measure|track|say|identify|locate|compare|link|trace|obtain|open|consult|search)\b)/gi, mask)
+          .replace(kind === "impact" ? /$^/ : /\bcould(?=\s+(?:learn|find|see|tell|access|read|reach|get|use|know|afford|attend|travel|count|measure|track|say|identify|locate|compare|link|trace|obtain|open|consult|search|walk|stand|swallow|return|climb|dress|speak|drive|live|eat|sleep|breathe|move|sit)\b)/gi, mask) // r8-b-3
           // r5-b-4, K-5: a right or a rule in an agreement ("may withdraw", "would require") is not a hedge,
           // outside What could change, where hedges are asked for.
           .replace(kind === "impact" ? /$^/ : /\b(?:may|can)(?=\s+(?:withdraw|decline|refuse|veto|request)\b)|\b(?:would|will)(?=\s+(?:require|need)\b)/gi, mask);
@@ -1927,7 +1951,11 @@
     // W-18: a part of the CV is one paragraph; line breaks typed inside a field become spaces in every output.
     const one = (t) => String(t || "").replace(/\s*[\r\n]+\s*/g, " ").trim();
     // r7-a-2: where the parts of a paragraph join, each ends as a sentence (a full stop when none is there).
-    const asSentence = (t) => !t ? t : /[.!?…]["”’»)\]]*$/.test(t) ? t : t.replace(/[;:,\s]+$/, "") + ".";
+    const asSentence = (t) => {
+      if (!t) return t;
+      t = t.replace(/^[a-z](?=[a-z])/, ch => ch.toUpperCase()); // N-2: "a corpus of…" → "A corpus of…" ("eDNA", "mRNA" stay)
+      return /[.!?…](?:[\s\u00a0\u202f]*["”’'»›)\]])*$/.test(t) ? t : t.replace(/[;:,\s\u00a0—–-]+$/, "") + "."; // N-3
+    };
     // r2-b-2: a word is a token with a letter or a digit, so a lone « or » (set off by a non-breaking
     // space) or a dash is not one; list markers count only at a line start. Digit groups joined by a
     // non-breaking or thin space ("3 200") are one number.
@@ -2352,7 +2380,7 @@
         },
         activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.", variants: { creative: "What did making the work involve, and which part was yours?" } },
         outputs: {
-          q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "List the things themselves; their effects belong in the next field.",
+          q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "Write a sentence that names what the work produced, such as “The study produced a protocol and three papers.” Its effects belong in the next field.",
           variants: { creative: "Which exhibitions, films, performances or published works came out of it?", humanities: "Which books, editions, exhibitions, public works or collections came out of it?" }
         },
         outcomes: {
@@ -2771,7 +2799,7 @@
       setBar(); // J-6: the sticky stack of this step, before the heading is scrolled into view
       if (stageChanged && !firstRender) {
         const h = stepHeading();
-        if (h) { h.focus({ preventScroll: true }); if (h.getBoundingClientRect().bottom > window.innerHeight - 24) h.scrollIntoView({ block: "start" }); }
+        if (h) { h.focus({ preventScroll: true }); if (h.getBoundingClientRect().bottom > window.innerHeight - 24) (h.closest(".narrative-stage-header") || h).scrollIntoView({ block: "start" }); }
       }
       lastStageKey = ns.stageKey;
       // W-47 (inferred, option A): each step is a history entry with its own address (#contributions),
@@ -2989,7 +3017,8 @@
       res.strengths.forEach(s => host.appendChild(el("span", "v4-strength", "✓ " + s)));
       res.flags.forEach(f => host.appendChild(el("span", "v4-flag", "⚠ " + f)));
       let meta = res.words + (res.words === 1 ? " word" : " words");
-      if (range) meta += " · " + range[0] + " to " + range[1] + " is a comfortable range here.";
+      // r8-b-4: the length line says where the count sits against the usual range.
+      if (range) meta += res.words < range[0] ? ". The usual range here is " + range[0] + " to " + range[1] + ", so this is short." : res.words > range[1] ? ". The usual range here is " + range[0] + " to " + range[1] + ", so this is long." : ", within the usual range of " + range[0] + " to " + range[1] + ".";
       host.appendChild(el("span", "v4-meta", meta));
       if (res.flags.length && res.hits && res.hits.length && (!conditional || readbackAddsInfo(res))) {
         host.appendChild(el("span", "v4-meta", "Where these appear in your sentence:"));
@@ -3521,6 +3550,7 @@
         if (k < 1) requestAnimationFrame(step);
       })(t0);
     }
+    root.addEventListener("focusin", (e) => { if (!(e.target.classList && e.target.classList.contains("v7-box"))) glideId++; }, true); // r8-a-3
     window.addEventListener("scroll", () => {
       if (spyFrame) return;
       spyFrame = requestAnimationFrame(() => { spyFrame = 0; root.querySelectorAll(".v7-card-col").forEach(c => { if (c._spyCalc) c._spyCalc(); }); });
@@ -3851,7 +3881,7 @@
         // V7-23: the note that checks are suggestions, the first time a check fires, once per draft.
         if (checks.querySelector(".v4-flag") && (!ns.ui.checksNoteSeen || ns.ui.checksNoteField === id)) {
           ns.ui.checksNoteSeen = true; ns.ui.checksNoteField = id;
-          checks.appendChild(el("span", "v4-meta v7-first-note", "The checks under each field are suggestions. You can continue without acting on them; they carry no score and stay here with your draft."));
+          checks.appendChild(el("span", "v4-meta v7-first-note", "The checks under each field are suggestions about content (numbers, your role, cautious words); they do not check grammar or spelling. You can continue without acting on them; they carry no score and stay here with your draft."));
         }
       };
       runChecks();
@@ -4269,7 +4299,7 @@
       const cards = el("div", "v7-cards");
       ns.contributions.forEach((contrib, i) => cards.appendChild(contrib.folded ? contribFold(contrib, i) : contribCard(contrib, i)));
       c.appendChild(cards);
-      renderContribUndo(c);
+      renderContribUndo(cards);
       if (ns.contributions.length >= 10) c.appendChild(el("p", "v4-help", "You have 10, the most the format allows. Combine related work into one contribution, or remove the ones that relate least to this application."));
       else {
         const add = el("button", "v7-add", "+ Add a contribution"); add.type = "button"; add.id = "v7-add-contrib";
@@ -4470,6 +4500,7 @@
       const t = it ? (it.querySelector('.v7-kind[aria-checked="true"]') || !it.querySelector(".v7-kind") ? document.getElementById("evt" + contrib.cid + "-0") : it.querySelector(".v7-kind")) : document.getElementById("ev-add-" + contrib.cid);
       if (t) t.focus({ preventScroll: true });
       const cc = a.closest(".v7-card-col");
+      setTimeout(() => { if (t && t.isConnected) { const r = t.getBoundingClientRect(); if (r.top < 0 || r.bottom > window.innerHeight) t.scrollIntoView({ block: "center" }); } }, motionMs(300) + 50); // r8-a-4
       if (!(cc && cc._level && cc._level("ev"))) a.scrollIntoView({ block: "start", behavior: motionMs(1) ? "smooth" : "auto" });
     }
     // V7-26: one element. "Your paragraph so far" while writing; "What you wrote" over the evidence.
@@ -4496,6 +4527,7 @@
       });
       if (w.refs.length) body.appendChild(document.createTextNode("(" + w.refs.map(r => r.key).join(", ") + ")"));
       s.appendChild(body);
+      if (body.querySelector(".v4-connective")) { const jn = el("p", "v7-quiet v7-join-note", "The shaded words between the parts suggest how to link them. They are not part of your draft."); s.appendChild(jn); }
       if (!isTop) {
         if (!contrib.stakes && (contrib.activities || contrib.outputs)) s.appendChild(el("span", "v4-gap", "Stakes is empty, so the paragraph starts without the problem."));
         if (!contrib.outcomes && !contrib.impact && contrib.outputs) s.appendChild(el("span", "v4-gap", "What already changed and What could change are both empty, so the paragraph ends on what resulted."));
@@ -4722,7 +4754,8 @@
         const h = focusable(document.getElementById("ct" + un.c.cid)); if (h) h.focus();
         announce("Contribution " + (un.i + 1) + " restored.");
       });
-      row.appendChild(ub); c.appendChild(row);
+      row.appendChild(ub);
+      c.insertBefore(row, c.children[un.i] || null); // r8-a-6: in the removed card's place
     }
     function menteeSentence(m) {
       // G-3: a level typed under Other keeps its capitals ("MD-PhD trainee"); only a leading capital is lowered.
@@ -4737,20 +4770,21 @@
         : m.kind === "health" ? (org && /health|hospital|clinic|medical|care\b/i.test(org) ? "now works at " + org : "now works in the health system" + (org ? " at " + org : ""))
         : org ? "is now at " + org : "";
       const recog = one(m.recognition), why = one(m.why);
-      let t = articleFor(noun).replace(/^a/, "A") + " " + noun + " I trained" + (where ? " " + where : "");
-      if (recog) t += (where ? ", and" : "") + " received " + recog;
-      t = t.replace(/[.;,\s]+$/, "") + ".";
-      // r6-a-7: an answer that starts with a verb ("now leads…", "catalogued…") joins the sentence; one with its own subject stands alone.
-      // r7-a-3: the first word decides, in any case: a verb ("Joined", "ran", "now leads") joins the sentence in
-      // lower case; a pronoun, an article or a name stands as its own sentence.
-      const w0 = ((why.match(/^(?:(?:now|also|then|later|since)\s+)?([A-Za-zÀ-ÿ'-]+)/i) || [])[1] || "").toLowerCase();
+      // N-1: a capitalised first word joins only when it is a listed verb ("Joined", "Led"); the -s/-ed guess
+      // applies only to an answer typed in lower case, so "James…", "Statistics Canada…" or French stay whole.
+      const w0raw = (why.match(/^(?:(?:now|also|then|later|since)\s+)?([A-Za-zÀ-ÿ'-]+)/i) || [])[1] || "", w0 = w0raw.toLowerCase();
       const NOT_VERB = /^(?:they|she|he|this|that|the|a|an|their|his|her|its|i|we|in|at|after|before|since|as|by|with|for|from|during|while|business|analysis|status|campus|series|news|process|success|class|access|progress|address|based|located|named|called|trained|hired)$/;
-      const verbFirst = why && !NOT_VERB.test(w0) && !/^[A-Z][A-Z]/.test(why)
-        && (/^(?:is|has|was|went|became|left|got|rose|moved|joined)$/.test(w0) || /(?:ed|s)$/.test(w0) || IRREGULAR_PAST.indexOf(w0) !== -1 || ACTION_VERBS.indexOf(w0) !== -1);
-      const lowerWhy = why.replace(/^([A-Z])(?=[a-z])/, ch => ch.toLowerCase()) + (/[.!?]$/.test(why) ? "" : ".");
-      if (verbFirst && !where && !recog) t = t.replace(/\.$/, "") + " " + lowerWhy; // "A postdoctoral fellow I trained now leads…"
-      else if (verbFirst) t = t.replace(/\.$/, "") + ", and " + lowerWhy;
-      else if (why) t += " " + why.replace(/^./, ch => ch.toUpperCase()) + (/[.!?]$/.test(why) ? "" : ".");
+      const listed = /^(?:is|has|was|went|became|left|got|rose|moved|joined)$/.test(w0) || IRREGULAR_PAST.indexOf(w0) !== -1 || ACTION_VERBS.indexOf(w0) !== -1;
+      const lowerStart = /^(?:(?:now|also|then|later|since)\s+)?[a-z]/.test(why);
+      const verbFirst = !!why && !NOT_VERB.test(w0) && (listed || (lowerStart && /(?:ed|s)$/.test(w0)));
+      // One sentence with its predicates joined: "…now works at X, received Y and now leads Z."
+      const preds = [];
+      if (where) preds.push(where);
+      if (recog) preds.push("received " + recog);
+      if (verbFirst) preds.push(why.replace(/^([A-Z])(?=[a-z])/, ch => ch.toLowerCase()).replace(/[.!?]+$/, ""));
+      let t = articleFor(noun).replace(/^a/, "A") + " " + noun + " I trained" + (preds.length ? " " + (preds.length > 1 ? preds.slice(0, -1).join(", ") + " and " + preds[preds.length - 1] : preds[0]) : "");
+      t = asSentence(t.replace(/[;,\s]+$/, "")); // N-7: one end-of-sentence rule
+      if (why && !verbFirst) t += " " + asSentence(why.replace(/^./, ch => ch.toUpperCase()));
       return t;
     }
 
@@ -4822,7 +4856,7 @@
       // r4-a-6: more people described than counted reads as a gap, here and in Still missing.
       const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? (d > t ? d + " described, more than the " + t + " in the five-year totals. Check the totals, or keep an earlier trainee on purpose." : d + " of " + t + " described") : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); pc.classList.toggle("is-warn", !!t && d > t); };
       setPc(); sh.appendChild(pc); c.appendChild(sh);
-      c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers will read your CV, so leave out names to protect the privacy of the people you trained. Describe each person by their level and where they went, and add any best-paper prizes or prestigious scholarships they held or went on to win. In a small community an organization and a position can identify a person, so describe them only as closely as they agree to."));
+      c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers will read your CV, so leave out names to protect the privacy of the people you trained. Describe each person by their level and where they went, and add any best-paper prizes or major scholarships they held or went on to win. In a small community an organization and a position can identify a person, so describe them only as closely as they agree to."));
       ns.mentees.forEach((m, i) => c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)));
       const addP = el("button", "v7-add", "+ Add a person"); addP.type = "button"; addP.id = "v7-add-person";
       addP.addEventListener("click", () => {
@@ -4935,12 +4969,12 @@
         p2.appendChild(a); p2.appendChild(b); card.appendChild(p2);
       }
       card.appendChild(input("v7-pz" + i, "Prizes or scholarships", true, m.recognition, v => { m.recognition = v; changed(); }));
-      { const pz = card.querySelector("#v7-pz" + i); if (pz) pz.placeholder = "Printed after “received”, such as a provincial graduate scholarship (2022)"; } // r5-b-10
+      { const pz = card.querySelector("#v7-pz" + i); if (pz) pz.placeholder = "Appears after the word “received”, such as “a provincial graduate scholarship (2022)”"; } // r5-b-10
       const why = input("v7-py" + i, "What this person did or went on to do", true, m.why, v => { m.why = v; changed(); });
       // r4-a-8: the sentence prints after where they are now, so it starts with the person's action.
       { // r7-b-12: one growing box, so a long sentence stays in view (Enter adds no line).
         const old = why.querySelector("input"), ta = el("textarea", "v7-input v7-grow"); ta.id = old.id; ta.rows = 1; ta.value = m.why || "";
-        ta.placeholder = "One sentence, such as “They catalogued the ledgers and now…”";
+        ta.placeholder = "Continues the sentence “A doctoral student I trained…”, such as “now leads a hospital program”";
         ta.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
         ta.addEventListener("input", e => { m.why = e.target.value; changed(); growBox(ta, 1); });
         old.replaceWith(ta); requestAnimationFrame(() => growBox(ta, 1));
@@ -5148,7 +5182,7 @@
       return out;
     }
     // r7-a-1: a field that still reads as a list (two or more lines that start with a marker).
-    const isList = (v) => ((v || "").match(/^\s*(?:[•·\-*–]|\d+[.)])\s+\S/gm) || []).length >= 2;
+    const isList = (v) => ((v || "").match(/^\s*(?:[•·\-*–—]|\d{1,2}[.)])\s+\S/gm) || []).length >= 2;
     function listList() {
       const out = [];
       liveContributions().forEach(({ c: contrib, i }, pos) => {
@@ -5739,8 +5773,8 @@
       // W-39 (inferred): generic research words and place words that join contributions without saying anything.
       "tested shared trial model record health hospital provincial regional national community partner partnership " +
       "local public practice training patient patients student students across ontario quebec canada canadian " +
-      "asked language researcher researchers nation nations interrupted interruption leave paused delayed resumed against documented").split(/\s+/));
-    const crossShown = new Map(); // r7-b-8: a stem and the first word written for it ("corpu" → "corpus")
+      "asked language researcher researchers nation nations interrupted interruption leave paused delayed resumed against documented permitted received change changed").split(/\s+/));
+    let crossShown = new Map(); // r7-b-8: a stem and the first word written for it ("corpu" → "corpus"); N-9: per read
     function crossTerms(text) {
       const out = new Set();
       // W-39: a word capitalised mid-sentence is a name (a place, a partner), and is left out.
@@ -5754,6 +5788,7 @@
       return out;
     }
     function crossCuttingRead() {
+      crossShown = new Map();
       const live = liveContributions().map(({ c, i }) => ({ c, i,
         terms: crossTerms([c.title, c.stakes, c.activities, c.outputs, c.outcomes, c.translational, c.impact].filter(Boolean).join(" ")) }));
       if (live.length < 2) return null;
@@ -5804,6 +5839,10 @@
       const ctx = profilePills();
       if (ctx.length) lines.push("[Profile, for tailoring and not for submission: " + ctx.join(" · ") + "]");
       if (overLimit(draftWords())) lines.push((overLimit(draftWords()) === 2 ? "[Over the limit:" : "[Possibly over the limit:") + " about " + roughWords(draftWords()).toLocaleString("en-CA") + " words, " + pagesRange(draftWords()) + " pages, against " + PAGE_LIMIT_EN + " in English.]"); // r6-a-4
+      // N-6: the link and list notes name fields in any section, so they sit in the header.
+      const lkTxt = linkList(), lsTxt = listList();
+      if (lkTxt.length) lines.push("[Links to " + (isFrq() ? "move to the evidence list" : "take out") + ": " + lkTxt.map(m => m.label).join("; ") + ".]");
+      if (lsTxt.length) lines.push("[Lists to rewrite as sentences: " + lsTxt.map(m => m.label).join("; ") + ".]");
       lines.push(formatReminder());
       lines.push("");
       lines.push(rule); lines.push(exportHeading("ps") + "  [first in the CV, written last in the tool]"); lines.push(rule);
@@ -5830,9 +5869,6 @@
       if (totals.length) lines.push("Totals (last five years): " + totals.join(", "));
       ns.mentees.filter(menteeHasContent).forEach(m => lines.push(menteeSentence(m)));
       PF().forEach(f => { if (one(ns[f.k])) lines.push("[" + f.label + "] " + one(ns[f.k])); });
-      const lkTxt = linkList(), lsTxt = listList();
-      if (lkTxt.length) lines.push("[Links to " + (isFrq() ? "move to the evidence list" : "take out") + ": " + lkTxt.map(m => m.label).join("; ") + ".]");
-      if (lsTxt.length) lines.push("[Lists to rewrite as sentences: " + lsTxt.map(m => m.label).join("; ") + ".]");
       const rest = miss.filter(m => m.step !== "contrib");
       if (rest.length) { lines.push(""); lines.push("[Still missing outside the contributions: " + rest.map(m => m.label).join("; ") + ".]"); }
       lines.push("");

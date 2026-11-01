@@ -678,7 +678,7 @@ async function seed(state, extra) {
     check("on-screen draft: the same order with superscript letters and no kind labels", r.sup === "a, b" && r.prev.includes(body) && !/Peer-reviewed/.test(r.prev), r.prev.slice(0, 400));
     check("section copy: the same paragraph with (a, b), no kind labels", r.sec.includes(body + " (a, b)") && !/Peer-reviewed|Other/.test(r.sec), r.sec);
     check(".txt: the working copy keeps the kind in brackets, never [Other], and lists what is still missing (W-19)", r.txt.includes("   " + body + " (a, b)") && /\[Peer-reviewed\]/.test(r.txt) && !/\[Other\]/.test(r.txt) && /\[Still missing: Your role\./.test(r.txt) && /^NARRATIVE CV, WORKING DRAFT \(V7 beta\)/.test(r.txt) && !/—/.test(r.txt), r.txt.slice(0, 900));
-    check("a trainee prints as a sentence with the sector named; the Other tile counts in the totals (W-20, W-23)", /A doctoral student I trained now works in government at Made-up Ministry, and received a made-up scholarship \(2024\)\./.test(r.mentor) && /1 doctoral student, 2 other trainees/.test(r.mentor) && !/→/.test(r.mentor), r.mentor);
+    check("a trainee prints as a sentence with the sector named; the Other tile counts in the totals (W-20, W-23)", /A doctoral student I trained now works in government at Made-up Ministry and received a made-up scholarship \(2024\)\./.test(r.mentor) && /1 doctoral student, 2 other trainees/.test(r.mentor) && !/→/.test(r.mentor), r.mentor);
     check("Still missing names Your role when only a level is chosen (W-14)", r.miss.some(t => /^Contribution 2: .*Your role/.test(t)), r.miss);
   }
 
@@ -904,7 +904,7 @@ async function seed(state, extra) {
     check("removing a written contribution names its words and can be undone for ten seconds (r6-a-3)", /with its [\d,]+ words/.test(r.warn) && r.undo && r.n1 === 5 && r.n2 === 6 && r.first === "cr1", r);
     check("'my team ran it' is not your own role; a pause and a counterfactual are not flagged; a year counts as a date (r6-b-6, r6-b-4, r6-b-5)", !/Your own role is named/.test(r.roleTick) && !/hedge|does not say who|No numbers or dates/.test(r.actFlags), r);
     check("the totals and How you got here say where a leave goes, without stating an agency's rule (r6-b-1, r6-b-2)", /if a leave fell inside it/.test(r.tilesHelp) && /If a leave, a move between institutions/.test(r.pivot), r);
-    check("a 'went on to do' answer that starts with a verb joins the sentence (r6-a-7); a profile change names what changed (r6-b-7)", /made-up health authority, and now leads the made-up analytics team\./.test(r.mentor) && /Profile updated: career stage/.test(r.live), r);
+    check("a 'went on to do' answer that starts with a verb joins the sentence (r6-a-7); a profile change names what changed (r6-b-7)", /made-up health authority and now leads the made-up analytics team\./.test(r.mentor) && /Profile updated: career stage/.test(r.live), r);
   }
 
   console.log("Audit loop, round 6: Fable's review of round 5");
@@ -963,13 +963,70 @@ async function seed(state, extra) {
       return a;`);
     check("parts that do not end a sentence get a full stop where they join (r7-a-2)", /The made-up papers were scattered\. I led the made-up build\./.test(r.prev), r.prev.slice(0, 300));
     check("a list still in the draft is named on Review and Export (r7-a-1); Copy draft says it carries notes (r7-a-6)", r.listsHead.some(t => /Lists to rewrite/i.test(t)) && r.lists.some(t => /What you did/.test(t)) && /reads as a list|still read/.test(r.listNote) && /with notes/.test(r.copyBtn), r);
-    check("trainee answers that start with a verb join the sentence in any case; with nothing before them they follow 'I trained' (r7-a-3, M-2)", /A made-up city, and joined the made-up housing team\./.test(r.mentor) && /A postdoctoral fellow I trained now leads a made-up lab of six\./.test(r.mentor) && /and received a made-up prize, and is now a made-up policy analyst\./.test(r.mentor), r.mentor);
+    check("trainee answers that start with a verb join the sentence in any case; with nothing before them they follow 'I trained' (r7-a-3, M-2)", /A made-up city and joined the made-up housing team\./.test(r.mentor) && /A postdoctoral fellow I trained now leads a made-up lab of six\./.test(r.mentor) && /is now at A made-up university, received a made-up prize and is now a made-up policy analyst\./.test(r.mentor), r.mentor);
     check("with a second field, What resulted names that field's outputs (r7-b-7)", /Name outputs from STEM \/ engineering too/.test(r.outQ), r.outQ);
     // M-3: an ordinary Back to the start page is not "an earlier draft"
     await send("Page.resetNavigationHistory");
     await seed(null);
     r = await js(H + `q('.v7-path-new').click(); await w(200); history.back(); await w(400); return {live:q('#v7-live').textContent, start:!!q('.v7-path-new')};`);
     check("Start, then Back, reaches the start page without the 'earlier draft' line (M-3)", r.start && !/earlier draft/.test(r.live), r);
+  }
+
+  console.log("Audit loop, round 8");
+  {
+    const stC = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    stC.contributions = [{ cid: "cq1", title: "Made-up walking protocol", stakes: "", roleMode: "", roleLine: "", activities: "", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} }];
+    stC.mentees = [{ stageKind: "doctoral", stage: "Doctoral", kind: "health", org: "A made-up hospital", unit: "", recognition: "", why: "James now leads the made-up clinic.", folded: false }];
+    await seed(stC);
+    r = await js(H + `await w(200); const a={}; const box=(k)=>q('[data-f$="-'+k+'"] .v7-box'); const fl=(k)=>qa('[data-f$="-'+k+'"] .v4-flag').map(x=>x.textContent).join('|');
+      box('stakes').focus(); setv(box('stakes'),'in our region about 1,900 made-up people have a stroke each year'); await w(80); a.stakes=fl('stakes');
+      box('roleLine').focus(); setv(box('roleLine'),'I am the principal investigator of the made-up study.'); await w(80);
+      box('activities').focus(); setv(box('activities'),'We have developed a made-up questionnaire with 12 items and tested it with 640 made-up patients.'); await w(80);
+      a.act=fl('activities'); a.meta=qa('[data-f$="-activities"] .v4-meta').map(x=>x.textContent).join('|');
+      box('outcomes').focus(); setv(box('outcomes'),'After the made-up training in 2024 the patients could walk without help.'); await w(80); a.walk=fl('outcomes');
+      setv(box('outcomes'),'The made-up nurses saw the patients, and each one improved.'); await w(80); a.each=fl('outcomes');
+      box('outputs').focus(); setv(box('outputs'),'• A made-up manual\\n• Two made-up papers'); await w(80);
+      rail('Review').click(); await w(200); a.prev=(q('.v7-draft-body')||{}).innerText||'';
+      rail('Mentorship').click(); await w(200); a.help=(q('.v7-people-help')||{}).innerText||'';
+      const cs=q('[data-f="m-mentorCrossStage"] .v7-box'); cs.focus(); setv(cs,'I mentor two made-up staff. It was a prestigious grant.'); await w(80); a.prest=qa('[data-f="m-mentorCrossStage"] .v4-flag').map(x=>x.textContent).join('|');
+      rail('Export').click(); await w(150);
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip;
+      qa('button').find(b=>/^Copy working draft/.test(b.innerText)).click(); await w(40); a.txt=clip; navigator.clipboard.writeText=ow;
+      return a;`);
+    check("the .txt names lists to rewrite in its header, above the contributions (N-6)", r.txt.indexOf("[Lists to rewrite") > -1 && r.txt.indexOf("[Lists to rewrite") < r.txt.indexOf("1. Made-up walking protocol"), r.txt.slice(0, 600));
+    check("'our region' in Stakes is not asked for your own part (r8-b-2)", !/“we”/.test(r.stakes), r);
+    check("a role line saying 'I am the principal investigator' names your part for the card (r8-b-1)", !/“we”/.test(r.act), r);
+    check("the length line gives a verdict against the usual range (r8-b-4)", /The usual range here is \d+ to \d+, so this is short\./.test(r.meta), r.meta);
+    check("'could walk' is a past ability, and 'each one' is not a number (r8-b-3, r8-a-5)", !/hedge/.test(r.walk) && /No numbers or dates/.test(r.each), r);
+    check("a part typed in lower case starts with a capital where it prints (N-2)", /In our region about 1,900/.test(r.prev), r.prev.slice(0, 200));
+    check("'prestigious' gets its own message, and the people note no longer uses the word (r8-b-7)", /is an opinion/.test(r.prest) && !/Journal Impact Factor/.test(r.prest) && !/prestigious/.test(r.help), r);
+    check("a trainee answer that starts with a name stays whole as its own sentence (N-1)", /A doctoral student I trained now works at A made-up hospital\. James now leads the made-up clinic\./.test(r.mentor), r.mentor);
+    // r8-a-6: the contribution Undo line takes the removed card's place.
+    const mk3 = (n, fold) => ({ cid: "cu" + n, title: "Made-up contribution " + n, stakes: "Stakes " + n + ".", roleMode: "led", roleLine: "I led it.", activities: "I ran " + n + " made-up sites.", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {}, folded: fold });
+    await seed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false }, contributions: [mk3(1, true), mk3(2, false), mk3(3, true)] }));
+    r = await js(H + `await w(200); q('[aria-label="Remove contribution 2"]').click(); await w(150); qa('.v7-warn .btn-primary')[0].click(); await w(250);
+      const kids=[...q('.v7-cards').children]; const a={at:kids.indexOf(q('.v7-cundo')), n:kids.length};
+      q('#c-undo').click(); await w(250); a.order=JSON.parse(localStorage.getItem('ncv-v7')).contributions.map(c=>c.cid).join(','); return a;`);
+    check("the contribution Undo line sits where the removed card was, and Undo puts it back there (r8-a-6)", r.at === 1 && r.order === "cu1,cu2,cu3", r);
+    // r8-a-1: a phone held sideways folds the rail into one row and keeps the page within the screen.
+    await send("Emulation.setDeviceMetricsOverride", { width: 812, height: 375, deviceScaleFactor: 1, mobile: true });
+    await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    await seed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "mentor", ui: { profileNote: false } }));
+    r = await js(H + `await w(300); window.scrollTo(0,0); const nm=q('#v7-t-other-name');
+      return {coarse:matchMedia('(pointer: coarse)').matches, toggle:getComputedStyle(q('#v7-rail-toggle')).display, railH:Math.round(q('.narrative-progress-panel').getBoundingClientRect().height), sw:document.documentElement.scrollWidth, nmH:nm?Math.round(nm.getBoundingClientRect().height):0, nmF:nm?getComputedStyle(nm).fontSize:''};`);
+    await send("Emulation.setTouchEmulationEnabled", { enabled: false, maxTouchPoints: 1 });
+    await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
+    // N-5: on a laptop at 150% text the rail column grows, so "Contributions" stays one word.
+    await send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
+    await seed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } }));
+    const r150 = await js(H + `document.documentElement.style.fontSize='150%'; await w(300);
+      const sp=qa('.v7-ri > span:nth-child(2)').find(x=>/^Contributions/.test(x.innerText)); const tn=sp.firstChild; const rg=document.createRange(); rg.setStart(tn,0); rg.setEnd(tn,'Contributions'.length);
+      const a={lines:new Set([...rg.getClientRects()].map(x=>Math.round(x.top))).size, rail:Math.round(q('.narrative-progress-panel').getBoundingClientRect().width), sw:document.documentElement.scrollWidth};
+      document.documentElement.style.fontSize=''; return a;`);
+    await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
+    check("at 150% text on a laptop the rail column grows and keeps 'Contributions' whole (N-5)", r150.lines === 1 && r150.rail > 300 && r150.sw <= 1280, r150);
+    check("a phone held sideways folds the rail to one row, with no sideways scroll; the Other name box is a 44 px, 16 px field (r8-a-1, r8-a-3)", r.coarse && r.toggle !== "none" && r.railH <= 80 && r.sw <= 812 && r.nmH >= 44 && r.nmF === "16px", r);
   }
 
   console.log("Register (W-57): the tool's prompt strings");

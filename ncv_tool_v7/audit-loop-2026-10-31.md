@@ -190,3 +190,25 @@ _none yet_
 **Open for Prem from this round:** open one exported .doc in Word to confirm Print Layout at Letter with 2 cm margins (r7-a-9); two-field examples written from each side (r7-b-6); the five-year label (D-1, r7-a-7).
 
 **Tests:** 206 of 206 (201 + 5).
+
+### Round 8 · Fable's review of round 7, a phone held sideways, a clinician-scientist writing in a third language (2026-11-01)
+
+**Who walked it** (the round 8 snapshot = commit `f3d959c`) — all findings in [r8-findings.md](audit-loop-2026-10-31/r8-findings.md)
+- **Fable review** of round 7: 2 major · 7 minor (trainee names read as verbs, lower-case starts after the new full stops, doubled stops, rail words broken at 150%).
+- **r8-a** Early-career freshwater ecologist, NSERC Discovery, a phone held sideways (812 × 375), then the laptop through a saved draft file: 6 minor · 2 polish ([draft](audit-loop-2026-10-31/r8-a-draft.txt)).
+- **r8-b** Mid-career rehabilitation clinician-scientist, CIHR Project Grant, English as a third language, reading every label for plain language: 1 major · 7 minor · 2 polish, and 26 rewrites ([draft](audit-loop-2026-10-31/r8-b-draft.txt), [rewrites for Prem](audit-loop-2026-10-31/r8-plain-language-rewrites.md)).
+
+**What they wrote**
+- r8-a: a stream-health index used by ministry crews, an eDNA protocol for invasive crayfish, a volunteer stream-monitoring program; 819 words. Nothing was lost between the phone and the laptop.
+- r8-b: a stroke rehabilitation protocol, a tele-rehabilitation program, a return-to-work questionnaire; 23 trainees; 1,074 words.
+
+**Fixed this round**
+- **Review (N-1 to N-9):** a trainee answer that starts with a name prints whole as its own sentence; a part typed in lower case starts with a capital; no doubled stops after closing marks; button sizes; the rail column in rem so its labels keep whole words at 150% and 200% text; the .txt's link and list notes in its header; one end-of-sentence rule; year-led lines are not lists; the read across rebuilt on each read.
+- **Phone held sideways (r8-a):** the one-column layout with the folded rail; the Other name box at 16 px and 44 px; tiles that reflow; focus kept in view after a fast Tab and after Add or Edit evidence; "each one" is not a number; the contribution Undo in the removed card's place; the whole step header in view.
+- **Plain language (r8-b):** "I am the principal investigator" names your part; Stakes and What resulted are not asked for it; "could walk" is a past ability; the length line gives a verdict; a sentence-shaped outputs prompt; a visible line on the join words; a message of its own for "prestigious"; a line saying the checks do not check grammar; more vague words; placeholders that show where the words print.
+
+**INFERRED this round (for Prem to override):** the sideways-phone layout rule (touch, wider than 768 px, at most 520 px high); no ownership check on Stakes and What resulted; the "I am the…" ownership forms; the length-verdict wording; the "prestigious" message; the rail column at 13.75rem; the nine plain-language lines applied from r8-b.
+
+**Open for Prem from this round:** the 60 remaining plain-language rewrites (P-1 to P-60, a Decision column in the rewrites file), including renaming "Stakes" and "Standing"; P-24's reason for the TCV link rule and P-50's FRQ line, for Eli.
+
+**Tests:** 217 of 217 (206 + 11).

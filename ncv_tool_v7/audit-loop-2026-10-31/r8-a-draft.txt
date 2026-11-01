@@ -1,0 +1,41 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: NSERC · Tri-agency CV · NSERC Discovery Grant 2027 · Early career · STEM / engineering · Team-based · Partnered with industry, government or health systems]
+Before you submit: paste this into the current version of NSERC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am a freshwater ecologist at a university in southern Ontario. My work is in stream and lake ecology, where I connect field measurements to the repair decisions that managers make.
+
+Small streams carry most of the habitat that brook trout and other cold-water fish depend on, yet managers choose where to spend repair money with little measurement of what each repair returns. My work has three strands: habitat-gain measurement at culverts, environmental DNA detection of invasive species and volunteer monitoring. The thread is a measurement that managers can apply without a research team. I trained in fisheries biology and moved to stream ecology during my doctorate, when a ministry partner asked how many kilometres of habitat a culvert repair would reopen. I have worked with ministry and conservation authority staff since 2021. A doctoral thesis award in 2024, two papers in fisheries journals, one open dataset of 120 crossings and a three-year partnership agreement with a provincial ministry. Discovery Grant funding would let me build a program on a long-term basis, with stable support for the trainees and the field seasons that this kind of measurement needs. The next phase tests whether the habitat-gain index predicts fish recovery five years after repair, using the 120 crossings as a baseline.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A stream-health index that Ontario ministry crews use to rank culvert repairs
+   Culverts that block fish passage fragment brook trout habitat, and provincial crews repair them without a measure of how much stream each one reopens. I designed the sampling protocol, led the analysis and wrote the scoring rules, working with two ministry biologists and a field crew of four. Over three field seasons I coordinated fish and habitat surveys at 120 culvert crossings across 14 watersheds, built occupancy models of brook trout presence and calibrated the scoring rules against passage measurements taken by the ministry crews. The work produced a culvert scoring index, an open dataset of 120 crossings with fish and habitat measures, two peer-reviewed papers and a field protocol that ministry staff now use. The index covers 14 watersheds. (a)
+   a. Okafor, A., Lindqvist, M. and Reyes, T. (2026). A habitat-gain index for ranking culvert repairs in Ontario brook trout streams. Canadian Journal of Fisheries and Aquatic Sciences.  [Peer-reviewed]
+      Ministry crews use the index to rank repairs across 14 watersheds.
+   [Still missing: What already changed. Is there something concrete you can name yet?]
+   [Still missing: What could change. What might this change at field scale? Hedged language is fine here.]
+
+2. An eDNA protocol that detects invasive rusty crayfish earlier than trapping
+   Rusty crayfish strip lake vegetation and displace native species, and managers on cottage-country lakes learn of an invasion only after it has spread. I developed the field filtration method and validated it against trap catches at 18 lakes, as one of six members of the lab team. Across two summers I sampled 18 lakes, filtered water at six points per lake, tuned primers for rusty crayfish and compared detections with trap catches set by the ministry invasive species unit. The work produced a validated primer set, a step-by-step filtration protocol, one peer-reviewed paper and a detection dataset covering 18 lakes. (a)
+   a. Okafor, A. and Lindqvist, M. (2026). Rusty crayfish eDNA detections and filtration protocol, 18 lakes, 2024 to 2025. Open repository dataset.  [Dataset / tool]
+      The ministry unit used the protocol on six further lakes.
+   [Still missing: What already changed. Is there something concrete you can name yet?]
+   [Still missing: What could change. What might this change at field scale? Hedged language is fine here.]
+
+3. A volunteer stream-monitoring program that fills gaps in provincial water-quality data
+   Provincial sampling reaches fewer than a third of small streams in southern Ontario, so conservation authorities lack data on the streams most exposed to road salt. I co-led the program design with a conservation authority and trained the volunteers in the sampling protocol. In two watersheds I trained 40 volunteers, set up 62 monitoring sites and checked their chloride and invertebrate samples against my own laboratory measurements each season. The program produced a three-year record at 62 sites, a training manual and a data portal that the conservation authority maintains. The conservation authority used the record to add four streams to its road-salt reduction plan in 2026. If other authorities adopt the manual, volunteer networks could extend monitoring to streams that provincial staff do not reach. (a)
+   a. Road-salt reduction plan, 2026 update, section 4.2: monitoring sites used to select four additional streams. Published by the conservation authority.  [Policy / practice uptake]
+      The plan names the volunteer record as its source for the four streams.
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 1 master's student, 3 undergraduate researchers
+A master's student I trained now works in government at A provincial natural resources ministry (Aquatic habitat biologist), and received a provincial graduate scholarship (2025). They built the monitoring plan that the ministry now uses at stream restoration sites.
+[One thing you do] At the first meeting I agree a one-page plan with each trainee that lists the skills they want to learn this term, who will teach each one and the date we review it.
+[Who gets in] I post field-assistant positions with the pay rate and a travel allowance, and I select from a short field task so that applicants without earlier fieldwork can show what they can do. Four of the six assistants hired since 2024 had no earlier field experience.
