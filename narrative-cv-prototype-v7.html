@@ -961,7 +961,7 @@
     // toggle reveals the invisible scaffold inside finished prose.
     // B-12: canonical beat names (decisions log confirms beat 5 keeps "already" — F1).
     const SEG_META = [
-      ["stakes", "The problem", "#f7e5b8"], ["role", "Your role", "#e7cfd3"],
+      ["stakes", "The problem or question", "#f7e5b8"], ["role", "Your role", "#e7cfd3"],
       ["activities", "What you did", "#bfdce9"], ["outputs", "What resulted", "#d3e0c4"],
       ["outcomes", "What already changed", "#f7d4cc"], ["impact", "What could change", "#ddd7ea"]
     ];
@@ -1642,11 +1642,11 @@
         { r: "programFit", t: "I am applying to a competition that funds research designed with the sector it studies. That is how this work has been built since 2019, and sustained partnership is where my record is strongest." },
         { r: "horizon", t: "The next phase follows the same households into care work, where scheduling volatility is growing fastest and longitudinal data are scarce." }
       ],
-      legend: ["Anchor", "The problem", "Strands", "How you got here", "Standing", "Why this competition", "What's next"]
+      legend: ["Anchor", "The problem or question", "Strands", "How you got here", "Standing", "Why this competition", "What's next"]
     };
     // Kickers for the PS fields below the example — same names as the legend, so the box's
     // vocabulary is the one the stage repeats (engineer note under S196).
-    const PS_KICKER = { challenge: "The problem", streams: "Strands", pivot: "How you got here", standing: "Standing", programFit: "Why this competition", teamFit: "How you complement the team", horizon: "What's next" };
+    const PS_KICKER = { challenge: "The problem or question", streams: "Strands", pivot: "How you got here", standing: "Standing", programFit: "Why this competition", teamFit: "How you complement the team", horizon: "What's next" };
     // Guide sync (P-25): master's and doctoral are graduate supervision; postdoctoral is its own line.
     // [state key, label in the grid, label in the exports]
     const MENTOR_COUNT_LABELS = [["phd", "Doctoral", "doctoral students"], ["masters", "Master's", "master's students"],
@@ -2371,32 +2371,57 @@
       contrib: {
         title: { q: "What one line would let a reviewer recall this work?", help: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the paper's title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
           helpVariants: { creative: "Short, plain and memorable. Name what the work was for; the title of the exhibition or work belongs in the evidence list." } },
-        stakes: { q: "What problem did this work address, and who had it?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true },
+        // Q-18 (Prem, 2026-11-01): one part, "The problem or question", whose question follows the field.
+        // The main field decides; community-engaged wording applies where the field has none of its own.
+        stakes: { q: "What problem did this work address, and who had it?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true,
+          variants: {
+            social: "What problem or question did this work address, and who did it affect?",
+            humanities: "What question did you take up in this work, and why did it matter?",
+            creative: "What question did you explore in this work, and why did it matter?",
+            community: "What need or question did this work take up, and who raised it?"
+          },
+          helpVariants: {
+            social: "Strong contributions open with the problem or question they took up, and the method follows.",
+            humanities: "Strong contributions open with the question they took up, such as a gap in the record, an unasked question or a source at risk, and the method follows.",
+            creative: "Strong contributions open with the question they explored, such as what an existing form, site or audience was leaving out, and the making follows.",
+            community: "Strong contributions open with the need or question the work took up. Where the partners set it, say so."
+          } },
         roleLine: {
           q: "In one line, what was your own part in this work?",
           help: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the protocol.”",
           variants: { team: "In one line, what was your unique contribution within the team?", partners: "In one line, what was your part in this work, and who led the other parts?" },
           helpVariants: { community: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Name the partners’ leadership and your own part in the same line: “The Nation’s education department directs the program; I lead the evaluation design with its Elders’ council.”" }
         },
-        activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.", variants: { creative: "What did making the work involve, and which part was yours?" } },
+        activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.",
+          variants: { creative: "What did making the work involve, and which part was yours?", humanities: "Which sources, archives, methods or partners did the work involve, and at what scale?" },
+          helpVariants: { creative: "Count where you can: how many venues, performers or collaborators, and how long.", humanities: "Count where you can: how many sources or collections, how long, how many people." } },
         outputs: {
           q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "Write a sentence that names what the work produced, such as “The study produced a protocol and three papers.” Its effects belong in the next field.",
-          variants: { creative: "Which exhibitions, films, performances or published works came out of it?", humanities: "Which books, editions, exhibitions, public works or collections came out of it?" }
+          variants: { creative: "Which exhibitions, films, performances or published works came out of it?", humanities: "Which books, editions, exhibitions, public works or collections came out of it?",
+            social: "Which papers, reports, datasets, instruments or programs came out of it, and how many?" }
         },
         outcomes: {
           q: "Who has used this work so far, and what is different for them now?", help: "If there is no change to report yet, leave this blank and put what you expect under What could change.",
           variants: {
+            humanities: "Who has drawn on this work so far, such as scholars, archives, teachers or the public, and what is different for them now?",
+            creative: "Who has seen, used or responded to the work so far, and what is different for them now?",
             community: "Which groups in the community or sector have used this, and what is different for them now?",
             health: "Where has practice, care or policy shifted because of this work, and for whom?",
             social: "Who took this up, whether scholars, practitioners, communities, the public or policy makers, and what shifted?"
           }
         },
-        impact: { q: "If the work is taken up more widely, which field, sector or population could it affect, and how?", help: "Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems get framed.", academicTag: true },
-        translational: { q: "Which one occasion shows the work reaching a specific person or group?", help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.", gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
+        impact: { q: "If the work is taken up more widely, which field, sector or population could it affect, and how?", help: "Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems and questions get framed.", academicTag: true },
+        translational: { q: "Which one occasion shows the work reaching a specific person or group?", help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
+          helpVariants: {
+            humanities: "One scene in two sentences, such as a reader, a classroom, an archive, a museum or a community meeting that used the work. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
+            creative: "One scene in two sentences, such as an audience, a venue, a classroom or a community meeting where the work was seen or used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement."
+          },
+          gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
         evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter (a, b, c), and the letter appears in your draft beside the sentence it backs up. Under each item there is room for two lines on what it found, or why the dataset or tool was useful, so a reviewer has the point without opening the source." }
       },
       mentor: {
-        philosophy: { q: "What is one concrete thing you do that shows how you mentor?", help: "One practice you follow, described concretely. How you run a first meeting, how you decide authorship, how you hand a project over when someone is ready for it." },
+        philosophy: { q: "What is one concrete thing you do that shows how you mentor?", help: "One practice you follow, described concretely. How you run a first meeting, how you decide authorship, how you hand a project over when someone is ready for it.",
+          helpVariants: { creative: "One practice you follow, described concretely. How you run a first meeting, how you credit the people who made a work with you, how you hand a project over when someone is ready for it." } },
         edi: {
           // B-30/B-31: the "Equity in practice —" label is dropped (the abstract noun summoned
           // boilerplate); the question underneath already asks for a structure, not a statement.
@@ -3307,7 +3332,7 @@
       const whole = text;
       const coverage = [
         ["Opens with “I am a …” anchor", /\bI am an?\b/i.test(whole)],
-        ["Names a problem (challenge, gap, need, risk…)", /\b(challenge|problem|gap|need|risk|barrier|question|fail|crisis)\b/i.test(whole)],
+        ["Names a problem or question (gap, need, risk…)", /\b(challenge|problem|gap|need|risk|barrier|question|fail|crisis)\b/i.test(whole)],
         ["Numbered or titled contributions detected", /^\s*\d+[\.\)]\s/m.test(whole)],
         ["Specific numbers, dates or quantities present", /\b\d+(?:[.,]\d+)?%?\b/.test(whole)],
         // V4 #10: citation shapes the old test could not see — "cited 41 times", a DOI, a volume
@@ -4442,6 +4467,12 @@
             const OUT_SHORT = { creative: "exhibitions, films or performances", humanities: "books, editions or collections", stem: "papers, datasets, tools or code", health: "papers, guidelines or datasets", social: "papers, reports or datasets" };
             q += " Name outputs from " + labelOf(DISCIPLINES, d2) + " too, such as " + OUT_SHORT[d2] + ".";
           }
+          // Q-18: the opening part follows the main field; a second field framed the other way adds a line.
+          if (f.k === "stakes" && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
+            const asksProblem = ["stem", "health"].includes(ns.lens.discipline), asksQuestion = ["humanities", "creative"].includes(ns.lens.discipline);
+            if (asksProblem && ["humanities", "creative"].includes(d2) && !/question/i.test(q)) q += " If it began from a question, name the question.";
+            else if (asksQuestion && ["stem", "health"].includes(d2)) q += " If it answered a practical problem, name the problem too.";
+          }
           fields.appendChild(cardField({
             id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: resolveHelp(f.def), line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
             lintKind: f.lint, get: () => contrib[f.k], set: (v) => { contrib[f.k] = v; },
@@ -4529,7 +4560,7 @@
       s.appendChild(body);
       if (body.querySelector(".v4-connective")) { const jn = el("p", "v7-quiet v7-join-note", "The shaded words between the parts suggest how to link them. They are not part of your draft."); s.appendChild(jn); }
       if (!isTop) {
-        if (!contrib.stakes && (contrib.activities || contrib.outputs)) s.appendChild(el("span", "v4-gap", "The problem part is empty, so the paragraph opens on the work itself."));
+        if (!contrib.stakes && (contrib.activities || contrib.outputs)) s.appendChild(el("span", "v4-gap", "The problem or question part is empty, so the paragraph opens on the work itself."));
         if (!contrib.outcomes && !contrib.impact && contrib.outputs) s.appendChild(el("span", "v4-gap", "What already changed and What could change are both empty, so the paragraph ends on what resulted."));
       }
       return s;
@@ -4704,7 +4735,7 @@
       const order = ["stakes", "activities", "outputs", "outcomes", "translational", "impact"];
       const parts = order.map(k => ({ k, t: one(contrib[k]) })).filter(p => p.t);
       const gaps = [];
-      if (!one(contrib.stakes)) gaps.push("The problem part is empty. What problem was this work answering?");
+      if (!one(contrib.stakes)) gaps.push("The problem or question part is empty. What problem or question was this work answering?");
       if (!one(contrib.outcomes)) gaps.push("What already changed is empty. Is there something concrete you can name yet?");
       if (!one(contrib.impact)) gaps.push("What could change is empty. What might this change at field scale? Hedged language is fine here.");
       if (!refs.length) gaps.push("No evidence attached. Add one item a reviewer could check.");
@@ -5014,10 +5045,10 @@
         const p = el("p");
         p.appendChild(document.createTextNode("Words that recur in more than one contribution: "));
         p.appendChild(el("strong", null, r.recurring.join(", ")));
-        p.appendChild(document.createTextNode(". A word that runs through several contributions may name the problem or one of the strands."));
+        p.appendChild(document.createTextNode(". A word that runs through several contributions may name the problem or question, or one of the strands."));
         box.appendChild(p);
       }
-      r.spanning.forEach(x => box.appendChild(el("p", null, "“" + (x.c.title || "Contribution " + (x.i + 1)) + "” shares words with each of your other contributions. It may be cross-cutting enough to belong in the statement itself, as the problem or a strand, with the contribution kept for its evidence.")));
+      r.spanning.forEach(x => box.appendChild(el("p", null, "“" + (x.c.title || "Contribution " + (x.i + 1)) + "” shares words with each of your other contributions. It may be cross-cutting enough to belong in the statement itself, as the problem or question or as a strand, with the contribution kept for its evidence.")));
       box.appendChild(el("p", "v7-cross-m", "Worked out by counting repeated words on this device. It is a suggestion only."));
       return box;
     }
@@ -5415,12 +5446,14 @@
       if (!live.length) return null;
       const parts = CF().filter(f => f.job).map(f => ({ k: f.k, job: f.job, meta: SEG_META.find(m => m[0] === f.job) }));
       const title = "The six parts across your contributions";
-      const lx = 16, gx = 184, cw = (GV_W - gx - 8) / parts.length, sq = 18, headH = 54, rh = 34;
+      const lx = 16, gx = 184, cw = (GV_W - gx - 8) / parts.length, sq = 18, rh = 34;
       let body = "";
-      // Column heads wrapped at about nine characters a line, bottom-aligned above the squares.
+      // Column heads wrapped at about nine characters a line, bottom-aligned above the squares;
+      // the head grows with the longest label ("The problem or question" takes four lines).
+      const heads = parts.map(p => { const lines = []; p.meta[1].split(" ").forEach(wd => { const last = lines.length - 1; if (last >= 0 && (lines[last] + " " + wd).length <= 9) lines[last] += " " + wd; else lines.push(wd); }); return lines; });
+      const headH = 18 + 12 * Math.max(3, ...heads.map(l => l.length));
       parts.forEach((p, j) => {
-        const lines = [], cx = gx + j * cw + cw / 2;
-        p.meta[1].split(" ").forEach(wd => { const last = lines.length - 1; if (last >= 0 && (lines[last] + " " + wd).length <= 9) lines[last] += " " + wd; else lines.push(wd); });
+        const lines = heads[j], cx = gx + j * cw + cw / 2;
         lines.forEach((ln, k) => { body += gvText(cx, headH - 10 - (lines.length - 1 - k) * 12, ln, { size: 10.5, fill: GV_MUTED, anchor: "middle" }); });
       });
       const said = [];
@@ -5830,7 +5863,7 @@
     }
     // W-19 (inferred): the .txt is the working copy. It carries the tool's notes in square brackets
     // (kinds, what is still missing, the mentorship prompts); the section copies hold the text to paste.
-    const GAP_HINT = { stakes: "What problem was this work answering?", outcomes: "Is there something concrete you can name yet?",
+    const GAP_HINT = { stakes: "What problem or question was this work answering?", outcomes: "Is there something concrete you can name yet?",
       impact: "What might this change at field scale? Hedged language is fine here.", ev: "Add one item a reviewer could check." };
     function buildExportText() {
       const lines = [], rule = "=".repeat(60);

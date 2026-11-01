@@ -10,7 +10,7 @@ One list of everything that waits on Prem or Eli, kept by Claude during the audi
 - Meanwhile the tool runs on Claude's recommended option, marked INFERRED in the loop log, so nothing stalls while a question waits.
 - Answer in any order, in chat or in the Answer column. An answered item moves to the end with the date.
 
-Last updated: 2026-11-01, after round 8.
+Last updated: 2026-11-01, after round 8 and Q-18.
 
 ## Critical
 
@@ -27,7 +27,7 @@ Last updated: 2026-11-01, after round 8.
 | # | Question | Recommendation | Details | Answer |
 |---|---|---|---|---|
 | Q-6 | The 59 remaining plain-language rewrites (P-2 to P-60), including "Standing" to "Recognition" (P-2). | Read the part names and check messages first (P-2 to P-12); they show on every screen. | `r8-plain-language-rewrites.md`, Decision column | |
-| Q-18 | "The problem" can read as too narrow (curiosity-driven, humanities and creative work; deficit framing in community-engaged work). Add a research-question field, or broaden the part? | Broaden, no new field. One label in both places, "The problem or question", with the question under it following the field (humanities and creative ask about the question, as the statement's prompt already does). | Asked in chat, 2026-11-01 | |
+| Q-19 | The field wording added for Q-18 is Claude's (INFERRED). Read it as each field would: the problem or question for social sciences, humanities, creative and community-engaged work; What you did and What already changed for humanities and creative; What resulted for social sciences; One moment for humanities and creative; the mentoring help for creative. | Read the humanities and creative lines first; they differ most from the default. | `narrative-cv-v7-decisions.md`, "Field wording (Q-18)" | |
 | Q-7 | Labels the tool writes use straight apostrophes ("The candidate's…") next to the researcher's curly ones. Switch to curly? | Yes, curly throughout. | `r2-b-findings.md` (r2-b-9); `r7-findings.md` (r7-a-8) | |
 
 ## Content to write or commission
@@ -67,4 +67,5 @@ Each round's INFERRED calls are listed under that round in `ncv_tool_v7/audit-lo
 
 | # | Question | Answer | Date |
 |---|---|---|---|
-| P-1 | Rename "Stakes"? | "The problem". Applied in commit `2b8bab1`. | 2026-11-01 |
+| P-1 | Rename "Stakes"? | "The problem" (commit `2b8bab1`), then broadened by Q-18. | 2026-11-01 |
+| Q-18 | A research-question field, or broaden "The problem"? | Broaden. One label, "The problem or question", in the contributions and the statement; the question under it follows the field (same part, same data). Prem: "the questions and wording matter based on your field". | 2026-11-01 |

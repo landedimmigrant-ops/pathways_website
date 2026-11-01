@@ -242,7 +242,7 @@ async function seed(state, extra) {
   check("visuals drawn from the draft: evidence, parts, trained and length; each an SVG image whose label carries numbers", r.gv.join(",") === "evidence,parts,trained,length" && r.gvAria.every(x => /^img\|.+\d/.test(x)) && /Policy \/ practice uptake 1/.test(r.gvAria[0]) && /Doctoral 2, Postdoctoral 1/.test(r.gvAria[2]), r.gvAria);
   check("the parts visual names contributions, and the word job does not appear in the section", /Contribution 3 has/.test(r.gvAria[1]) && !/\bjobs?\b/i.test(r.gvText + r.gvAria.join(" ")), r.gvAria[1]);
   check("Download image runs without a request (file name set)", /^narrative-cv-.+\.png$/.test(r.gvNames[0] || ""), r.gvNames);
-  check("At a glance: one line per contribution, linked to its first missing part, which opens with focus (r1-b-10)", r.missing > 0 && /^Contribution 1: The problem, .*What you did.* and Evidence$/.test(r.link) && /Most significant/.test(r.jump.h) && r.jump.focus === r.jump.open && /-stakes$/.test(r.jump.focus || ""), r);
+  check("At a glance: one line per contribution, linked to its first missing part, which opens with focus (r1-b-10)", r.missing > 0 && /^Contribution 1: The problem or question, .*What you did.* and Evidence$/.test(r.link) && /Most significant/.test(r.jump.h) && r.jump.focus === r.jump.open && /-stakes$/.test(r.jump.focus || ""), r);
 
   console.log("Export");
   r = await js(H + `rail('Export').click(); await w(150);
@@ -453,7 +453,7 @@ async function seed(state, extra) {
     a.numShown=num.getBoundingClientRect().width>=num.scrollWidth-1 && num.getBoundingClientRect().right<=t.getBoundingClientRect().right; a.numText=num.innerText;
     a.ell=getComputedStyle(rest).textOverflow==='ellipsis' && rest.scrollWidth>rest.clientWidth; a.hTitle=t.innerText; a.hRight=Math.round(h.getBoundingClientRect().right);
     return a;`);
-  check("phone: a 120-character unbroken word in The problem leaves no sideways scroll", r.sw <= 375, r);
+  check("phone: a 120-character unbroken word in The problem or question leaves no sideways scroll", r.sw <= 375, r);
   check("phone: the sticky card header keeps \"Contribution 1\" whole and shortens the headline with an ellipsis", r.numShown && r.numText === "Contribution 1" && r.ell && r.hRight <= 375, r);
   r = await js(H + `const a={}; const fs=(s)=>{const e=q(s); return e?parseFloat(getComputedStyle(e).fontSize):null;}; const hh=(s)=>{const e=q(s); return e?Math.round(e.getBoundingClientRect().height):null;};
     a.box=fs('.v7-card .v7-box'); window.scrollTo(0,0); q('#v7-chg').click(); await w(150);
@@ -674,7 +674,7 @@ async function seed(state, extra) {
       qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
     const body = "S one. I led R. A one. O one. C one. I one.";
-    check("Word: the headline on its own line, The problem then the role line in roman, superscript a, b, no kind labels (W-14, W-16, W-17)", r.doc.includes("<span class='ctitle'>1. Made-up T</span><br>" + body + "<sup>a, b</sup>") && !/Peer-reviewed|\(Other\)|<em>/.test(r.doc), r.doc.slice(r.doc.indexOf("ctitle"), r.doc.indexOf("ctitle") + 300));
+    check("Word: the headline on its own line, The problem or question then the role line in roman, superscript a, b, no kind labels (W-14, W-16, W-17)", r.doc.includes("<span class='ctitle'>1. Made-up T</span><br>" + body + "<sup>a, b</sup>") && !/Peer-reviewed|\(Other\)|<em>/.test(r.doc), r.doc.slice(r.doc.indexOf("ctitle"), r.doc.indexOf("ctitle") + 300));
     check("on-screen draft: the same order with superscript letters and no kind labels", r.sup === "a, b" && r.prev.includes(body) && !/Peer-reviewed/.test(r.prev), r.prev.slice(0, 400));
     check("section copy: the same paragraph with (a, b), no kind labels", r.sec.includes(body + " (a, b)") && !/Peer-reviewed|Other/.test(r.sec), r.sec);
     check(".txt: the working copy keeps the kind in brackets, never [Other], and lists what is still missing (W-19)", r.txt.includes("   " + body + " (a, b)") && /\[Peer-reviewed\]/.test(r.txt) && !/\[Other\]/.test(r.txt) && /\[Still missing: Your role\./.test(r.txt) && /^NARRATIVE CV, WORKING DRAFT \(V7 beta\)/.test(r.txt) && !/—/.test(r.txt), r.txt.slice(0, 900));
@@ -831,7 +831,7 @@ async function seed(state, extra) {
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
       qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
-    check("'could learn' in The problem is a past inability, not a hedge (r4-a-5)", !/hedge/.test(r.hedge), r.hedge);
+    check("'could learn' in The problem or question is a past inability, not a hedge (r4-a-5)", !/hedge/.test(r.hedge), r.hedge);
     check("more people described than counted is named beside the count as a check, not a gap (r4-a-6, J-4)", /2 described, more than the 1 in the five-year totals/.test(r.pc) && !/totals lower/.test(r.miss), r);
     check("Review has the Profile bar with Change (r4-a-1); Export names unfinished contributions (r3-b-5)", r.bar && /still missing parts/.test(r.unf), r);
     check("each person is its own paragraph in the section copy (r4-a-9); an organization that names its sector is not given it twice (r4-b-7)", /\(\d|\.\n\nAn undergraduate researcher I trained now works at A made-up science museum\./.test(r.mentor), r.mentor);
@@ -995,7 +995,7 @@ async function seed(state, extra) {
       qa('button').find(b=>/^Copy working draft/.test(b.innerText)).click(); await w(40); a.txt=clip; navigator.clipboard.writeText=ow;
       return a;`);
     check("the .txt names lists to rewrite in its header, above the contributions (N-6)", r.txt.indexOf("[Lists to rewrite") > -1 && r.txt.indexOf("[Lists to rewrite") < r.txt.indexOf("1. Made-up walking protocol"), r.txt.slice(0, 600));
-    check("'our region' in The problem is not asked for your own part (r8-b-2)", !/“we”/.test(r.stakes), r);
+    check("'our region' in The problem or question is not asked for your own part (r8-b-2)", !/“we”/.test(r.stakes), r);
     check("a role line saying 'I am the principal investigator' names your part for the card (r8-b-1)", !/“we”/.test(r.act), r);
     check("the length line gives a verdict against the usual range (r8-b-4)", /The usual range here is \d+ to \d+, so this is short\./.test(r.meta), r.meta);
     check("'could walk' is a past ability, and 'each one' is not a number (r8-b-3, r8-a-5)", !/hedge/.test(r.walk) && /No numbers or dates/.test(r.each), r);
@@ -1027,12 +1027,31 @@ async function seed(state, extra) {
     await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
     check("at 150% text on a laptop the rail column grows and keeps 'Contributions' whole (N-5)", r150.lines === 1 && r150.rail > 300 && r150.sw <= 1280, r150);
     check("a phone held sideways folds the rail to one row, with no sideways scroll; the Other name box is a 44 px, 16 px field (r8-a-1, r8-a-3)", r.coarse && r.toggle !== "none" && r.railH <= 80 && r.sw <= 812 && r.nmH >= 44 && r.nmF === "16px", r);
-    // P-1 (Prem, 2026-11-01): the first part is called "The problem".
+    // P-1, Q-18 (Prem, 2026-11-01): the first part is called "The problem or question".
     await seed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false },
       contributions: [{ cid: "cp1", title: "Made-up contribution", stakes: "", roleMode: "led", roleLine: "I led it.", activities: "I ran three made-up sites.", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} }] }));
     r = await js(H + `await w(200); const a={k:(q('[data-f$="-stakes"] .v7-f-k')||{}).innerText||''};
       rail('Review').click(); await w(200); a.gap=qa('.v4-gap').map(x=>x.textContent).join('|'); a.page=document.body.innerText; return a;`);
-    check("the first part is called 'The problem' on the card and in Review, and no 'Stakes' label is left (P-1)", r.k.trim() === "The problem" && /The problem part is empty, so the paragraph opens on the work itself\./.test(r.gap) && !/\bStakes\b/.test(r.page), { k: r.k, gap: r.gap });
+    check("the first part is called 'The problem or question' on the card and in Review, and no 'Stakes' label is left (P-1, Q-18)", r.k.trim() === "The problem or question" && /The problem or question part is empty, so the paragraph opens on the work itself\./.test(r.gap) && !/\bStakes\b/.test(r.page), { k: r.k, gap: r.gap });
+    // Q-18: same part, same data; the question under it follows the field chosen in Setup.
+    const stakesQ = async (lens) => {
+      const st = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+      st.lens = Object.assign({}, st.lens, { discipline2: "", workMode: [] }, lens);
+      st.contributions = [{ cid: "cf1", title: "Made-up contribution", stakes: "", roleMode: "", roleLine: "", activities: "", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} }];
+      await seed(st);
+      return js(H + `await w(150); const g=(k)=>((q('[data-f$="-'+k+'"] .v7-q')||{}).innerText||'').trim(); return {stakes:g('stakes'), act:g('activities'), out:g('outcomes')};`);
+    };
+    const fq = {};
+    for (const [k, lens] of Object.entries({ stem: { discipline: "stem" }, health: { discipline: "health" }, social: { discipline: "social" }, humanities: { discipline: "humanities" }, creative: { discipline: "creative" },
+      stemCommunity: { discipline: "stem", workMode: ["community"] }, stemHum: { discipline: "stem", discipline2: "humanities" }, humStem: { discipline: "humanities", discipline2: "stem" } })) fq[k] = await stakesQ(lens);
+    check("the problem part's question follows the field: problem for STEM and health, question for humanities and creative, both for social sciences (Q-18)",
+      /^What problem did this work address/.test(fq.stem.stakes) && /^What problem did this work address/.test(fq.health.stakes) && /^What problem or question did this work address/.test(fq.social.stakes)
+      && /^What question did you take up/.test(fq.humanities.stakes) && /^What question did you explore/.test(fq.creative.stakes), fq);
+    check("community-engaged work is asked about a need or question and who raised it; a second field framed the other way adds one line (Q-18)",
+      /^What need or question did this work take up, and who raised it\?$/.test(fq.stemCommunity.stakes) && /If it began from a question, name the question\.$/.test(fq.stemHum.stakes)
+      && /If it answered a practical problem, name the problem too\.$/.test(fq.humStem.stakes), { c: fq.stemCommunity.stakes, sh: fq.stemHum.stakes, hs: fq.humStem.stakes });
+    check("humanities and creative profiles get their own wording for What you did and What already changed (Q-18)",
+      /sources, archives/.test(fq.humanities.act) && /drawn on this work/.test(fq.humanities.out) && /seen, used or responded/.test(fq.creative.out) && /^Which methods, sites/.test(fq.stem.act), { h: fq.humanities, c: fq.creative });
   }
 
   console.log("Register (W-57): the tool's prompt strings");

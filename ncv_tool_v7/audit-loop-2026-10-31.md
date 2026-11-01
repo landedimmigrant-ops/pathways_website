@@ -215,3 +215,5 @@ _none yet_
 **Tests:** 217 of 217 (206 + 11).
 
 **After round 8 (Prem, 2026-11-01):** P-1 decided and applied. "Stakes" is now "The problem" on the card, the legend, the charts, Review, Export and the .txt; the data key stays `stakes`. Tests: 218 of 218 (217 + 1).
+
+**Q-18 (Prem, 2026-11-01): field wording, same data.** The first part is "The problem or question" in the contributions and the statement, and its question follows the field (problem for STEM and health, question for humanities and creative, both for social sciences, need or question for community-engaged work). Field wording also added to What you did, What already changed, What resulted, One moment and the mentoring help (INFERRED, Q-19). From round 9, each persona also reads the wording as their field. Tests: 221 of 221 (218 + 3).
