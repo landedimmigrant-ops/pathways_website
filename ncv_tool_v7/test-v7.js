@@ -260,7 +260,7 @@ async function seed(state, extra) {
   check("three export cards", r.cards.join("|") === "Download or print|Paste into the template, one section at a time|Keep your work", r.cards);
   check("email nudge with the address printed as text", /impact@concordia\.ca about your experience/.test(r.nudge) && /Email us\s+impact@concordia\.ca/.test(r.nudge), r.nudge);
   check("downloads: Word, text and draft file", r.names[0] === "narrative-cv-draft-frq.doc" && r.names[1] === "narrative-cv-draft-frq.txt" && /^narrative-cv-draft-frq-\d{4}-\d{2}-\d{2}-\d{4}\.json$/.test(r.names[2]), r.names);
-  const psDoc = (r.doc.match(/<h2>The candidate's background and skills \/ Parcours et compétences de la personne candidate<\/h2>(.*?)<h2>/s) || [])[1] || "";
+  const psDoc = (r.doc.match(/<h2>The candidate's background and skills \/ <span lang='fr'>Parcours et compétences de la personne candidate<\/span><\/h2>(.*?)<h2>/s) || [])[1] || "";
   check("Word file: the first line, then the statement as one paragraph (V7-34)", (psDoc.match(/<p>/g) || []).length === 2 && /Why clinics drop the protocol\. Two strands carry it\./.test(psDoc), psDoc);
   check("text file: the statement as one paragraph", /Why clinics drop the protocol\. Two strands carry it\./.test(r.txt), r.txt.slice(0, 500));
   check("a contribution with no headline still reaches the Word and text files", /A made-up stakes-only card\./.test(r.doc) && /A made-up stakes-only card\./.test(r.txt), "");
@@ -674,7 +674,7 @@ async function seed(state, extra) {
       qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
     const body = "S one. I led R. A one. O one. C one. I one.";
-    check("Word: the headline on its own line, Stakes then the role line in roman, superscript a, b, no kind labels (W-14, W-16, W-17)", r.doc.includes("<span class='ctitle'>1. Made-up T</span><br>" + body + " <sup>a, b</sup>") && !/Peer-reviewed|\(Other\)|<em>/.test(r.doc), r.doc.slice(r.doc.indexOf("ctitle"), r.doc.indexOf("ctitle") + 300));
+    check("Word: the headline on its own line, Stakes then the role line in roman, superscript a, b, no kind labels (W-14, W-16, W-17)", r.doc.includes("<span class='ctitle'>1. Made-up T</span><br>" + body + "<sup>a, b</sup>") && !/Peer-reviewed|\(Other\)|<em>/.test(r.doc), r.doc.slice(r.doc.indexOf("ctitle"), r.doc.indexOf("ctitle") + 300));
     check("on-screen draft: the same order with superscript letters and no kind labels", r.sup === "a, b" && r.prev.includes(body) && !/Peer-reviewed/.test(r.prev), r.prev.slice(0, 400));
     check("section copy: the same paragraph with (a, b), no kind labels", r.sec.includes(body + " (a, b)") && !/Peer-reviewed|Other/.test(r.sec), r.sec);
     check(".txt: the working copy keeps the kind in brackets, never [Other], and lists what is still missing (W-19)", r.txt.includes("   " + body + " (a, b)") && /\[Peer-reviewed\]/.test(r.txt) && !/\[Other\]/.test(r.txt) && /\[Still missing: Your role\./.test(r.txt) && /^NARRATIVE CV, WORKING DRAFT \(V7 beta\)/.test(r.txt) && !/—/.test(r.txt), r.txt.slice(0, 900));
@@ -941,6 +941,35 @@ async function seed(state, extra) {
       return a;`);
     check("'Phase I' is not the writer, and a role line that only says 'we' does not silence the card's check (K-2, K-4)", /“we”/.test(r.act), r);
     check("the statement's first sentence does not silence its 'we' check (K-3); 'may use' in What could change is praised as a hedge (K-5)", /“we”/.test(r.ps) && /Hedged/.test(r.imp), r);
+  }
+
+  console.log("Audit loop, round 7");
+  {
+    const stB = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "review", ui: { profileNote: false } });
+    stB.lens = Object.assign({}, stB.lens, { discipline: "humanities", discipline2: "stem" });
+    stB.contributions = [{ cid: "cs1", title: "Made-up corpus", stakes: "The made-up papers were scattered", roleMode: "led", roleLine: "I led the made-up build", activities: "• Scanned 4 made-up papers\n• Wrote a made-up guide", outputs: "A made-up corpus.", outcomes: "", impact: "", translational: "", evidence: [{ text: "Made-up item.", type: "Dataset / tool" }], flags: {}, notes: {} }];
+    stB.mentees = [
+      { stageKind: "masters", stage: "Master's", kind: "government", org: "A made-up city", unit: "", recognition: "", why: "Joined the made-up housing team.", folded: false },
+      { stageKind: "postdoc", stage: "Postdoctoral", kind: "", org: "", unit: "", recognition: "", why: "now leads a made-up lab of six", folded: true },
+      { stageKind: "doctoral", stage: "Doctoral", kind: "university", org: "A made-up university", unit: "", recognition: "a made-up prize", why: "is now a made-up policy analyst", folded: true }];
+    await seed(stB);
+    r = await js(H + `await w(200); const a={};
+      a.prev=q('.v7-draft-body').innerText; a.lists=qa('.v7-glance a').map(x=>x.innerText); a.listsHead=qa('.v7-glance .v7-tile-k').map(x=>x.innerText);
+      rail('Contributions').click(); await w(200); a.outQ=(q('[data-f$="-outputs"] .v7-q')||{}).textContent||'';
+      rail('Export').click(); await w(150); a.listNote=(q('.v7-lists-note')||{}).innerText||'';
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
+      a.copyBtn=qa('.v7-quiet-btn').map(b=>b.innerText).join('|');
+      return a;`);
+    check("parts that do not end a sentence get a full stop where they join (r7-a-2)", /The made-up papers were scattered\. I led the made-up build\./.test(r.prev), r.prev.slice(0, 300));
+    check("a list still in the draft is named on Review and Export (r7-a-1); Copy draft says it carries notes (r7-a-6)", r.listsHead.some(t => /Lists to rewrite/i.test(t)) && r.lists.some(t => /What you did/.test(t)) && /reads as a list|still read/.test(r.listNote) && /with notes/.test(r.copyBtn), r);
+    check("trainee answers that start with a verb join the sentence in any case; with nothing before them they follow 'I trained' (r7-a-3, M-2)", /A made-up city, and joined the made-up housing team\./.test(r.mentor) && /A postdoctoral fellow I trained now leads a made-up lab of six\./.test(r.mentor) && /and received a made-up prize, and is now a made-up policy analyst\./.test(r.mentor), r.mentor);
+    check("with a second field, What resulted names that field's outputs (r7-b-7)", /Name outputs from STEM \/ engineering too/.test(r.outQ), r.outQ);
+    // M-3: an ordinary Back to the start page is not "an earlier draft"
+    await send("Page.resetNavigationHistory");
+    await seed(null);
+    r = await js(H + `q('.v7-path-new').click(); await w(200); history.back(); await w(400); return {live:q('#v7-live').textContent, start:!!q('.v7-path-new')};`);
+    check("Start, then Back, reaches the start page without the 'earlier draft' line (M-3)", r.start && !/earlier draft/.test(r.live), r);
   }
 
   console.log("Register (W-57): the tool's prompt strings");

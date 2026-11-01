@@ -168,3 +168,25 @@ _none yet_
 **Open for Prem from this round:** "leave out" or remove on folded rows and order cards (r6-a-5); a per-contribution split of the length chart (r6-a-2); D-1's five-year label for researchers with leaves (r6-b-2, waits on Eli).
 
 **Tests:** 201 of 201 (192 + 9; one history test now resets the tab's history first, since Chrome caps it at 50 entries).
+
+### Round 7 · Fable's review of round 6, a committee member reading the outputs, a digital humanist at 150% text (2026-11-01)
+
+**Who walked it** (the round 7 snapshot = commit `6bb401d`) — all findings in [r7-findings.md](audit-loop-2026-10-31/r7-findings.md)
+- **Fable review** of round 6: 3 major · 6 minor (an Undo surviving a take-up, trainee fragments, a wrong "earlier draft" line).
+- **r7-a** Peer-review committee member reading the Word, print, .txt and section copies of three finished drafts: 3 major · 4 minor · 1 polish ([the three drafts](audit-loop-2026-10-31/r7-a-drafts.txt)).
+- **r7-b** Early-career digital humanist, SSHRC, Humanities + STEM, text at 150%: 9 minor · 3 polish ([draft](audit-loop-2026-10-31/r7-b-draft.txt)).
+
+**What they wrote or read**
+- r7-a: the sociologist's, engineer's and artist's drafts. The engineer's read as a narrative CV to paste after a light edit; the sociologist's was held back by pasted lists and run-on joins (fixed this round).
+- r7-b: an open-source text-mining tool, a digitized newspaper corpus, a co-authored article; 1,117 words.
+
+**Fixed this round**
+- **Outputs (r7-a):** each part ends as a sentence where parts join; lists still in the draft are named on Review, Export and in the .txt; trainee answers that start with a verb join the sentence in any case or tense; the Word file opens in Print Layout and marks the French headings; the Word note is highlighted; "Copy working draft, with notes"; the letters touch the sentence; no indented notes in the section copies.
+- **Review (M-1 to M-9):** Undo cleared on a take-up and never duplicates; no "earlier draft" line on the ordinary Back; one page-limit rule ("over" at 600 words a page, "may be over" between); Undo edges; every profile answer counts as a change; the generation on every history write; the year in saved dates.
+- **150% text (r7-b):** rail labels, folded rows, tiles and selects reflow; the tool's text sizes are in rem; What resulted names a second field's outputs; the two-field example says which side it is written from; the read across contributions shows words as written; item hints by kind; a heritage destination; a growing box for the person's sentence.
+
+**INFERRED this round (for Prem to override):** the full stop added at joins; Lists to rewrite on Review and Export; the Word Print-view setting; the one page-limit rule; the heritage destination wording; the two-field example's "written from" line.
+
+**Open for Prem from this round:** open one exported .doc in Word to confirm Print Layout at Letter with 2 cm margins (r7-a-9); two-field examples written from each side (r7-b-6); the five-year label (D-1, r7-a-7).
+
+**Tests:** 206 of 206 (201 + 5).
