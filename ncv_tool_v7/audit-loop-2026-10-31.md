@@ -5,6 +5,7 @@ Prem asked for a full audit of the V7 tool for errors and bugs, run through test
 - **Starting point:** `narrative-cv-prototype-v7.html` at commit `f852933` plus the uncommitted walkthrough batches 1 and 2 (W-01 to W-13, W-27, W-28, W-50, W-53, W-55). Tests 132 of 132. Backup: `backups/v7-2026-10-31-pre-audit-loop/`.
 - **Team:** Opus is the engineer and the only writer of the tool file. Persona testers are agents that walk a frozen copy of the file in their own headless Chrome (driver and brief kept with the session, not in the repo); they log only. Fable reviews the code and the direction at checkpoints.
 - **Rules:** a fix that needs a product decision is built on the walkthrough's recommended option and marked INFERRED here and in `narrative-cv-v7-decisions.md`, with an Overrides slot for Prem. All draft content is invented.
+- **Questions for Prem:** every open question is kept in `ncv_tool_v7/questions-for-prem.md` and asked mid-run only when Critical (Prem, 2026-11-01).
 - **Persona IDs:** `rN-x` (round N, persona x); finding IDs `rN-x-k`. Walkthrough IDs `W-NN` refer to `walkthrough-2026-10-30.md`.
 
 ## Overrides (Prem)
