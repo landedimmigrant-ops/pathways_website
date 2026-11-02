@@ -1,0 +1,7 @@
+{
+  // Cloudflare Pages project `research`: public/ is the tool (built by build.sh), functions/ holds
+  // /api/tester. The Neon connection string is the Pages secret DATABASE_URL, never in this folder.
+  "name": "research",
+  "compatibility_date": "2026-10-01",
+  "pages_build_output_dir": "./public"
+}

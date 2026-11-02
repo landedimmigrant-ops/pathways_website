@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copies the V8 tool and its stylesheet into public/, which the Worker serves.
+# Copies the V8 tool and its stylesheet into public/, which Pages serves.
 set -e
 cd "$(dirname "$0")"
 rm -rf public && mkdir public

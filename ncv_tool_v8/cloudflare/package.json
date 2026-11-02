@@ -1,0 +1,11 @@
+{
+  "name": "ncv-tool-pages",
+  "private": true,
+  "scripts": {
+    "build": "sh build.sh",
+    "deploy": "sh build.sh && npx wrangler pages deploy public --project-name research --branch main --commit-dirty=true"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.0"
+  }
+}

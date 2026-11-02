@@ -1,5 +1,6 @@
-// NCV V8 on Cloudflare: serves the tool from public/ and records testers in the Neon `testers`
-// table. POST /api/tester takes one of three actions, all keyed by the browser's random tester id:
+// NCV V8 on Cloudflare Pages: this Function answers /api/tester and records testers in the Neon
+// `testers` table; Pages serves the tool itself from public/. It takes one of three actions, all keyed
+// by the browser's random tester id:
 //   start  { id, email, answers, profile, version }  sign-up on the start page
 //   step   { id, step, profile }                     the step a tester last opened
 //   finish { id, answers, profile }                  the three questions on Export
@@ -59,14 +60,7 @@ async function tester(request, env) {
   return json(400, { error: "action" });
 }
 
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    if (url.pathname === "/api/tester") {
-      try { return await tester(request, env); }
-      catch (e) { console.error(e); return json(500, { error: "server" }); }
-    }
-    if (url.pathname.startsWith("/api/")) return json(404, { error: "not found" });
-    return env.ASSETS.fetch(request);
-  }
-};
+export async function onRequest({ request, env }) {
+  try { return await tester(request, env); }
+  catch (e) { console.error(e); return json(500, { error: "server" }); }
+}

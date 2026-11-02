@@ -945,11 +945,11 @@
       email: "impact@concordia.ca"
     };
     // V8 testing (Prem, 2026-11-02): testers sign up on the start page (email and three questions)
-    // and answer three more on Export. Rows go to the Neon `testers` table through the Worker that
-    // serves the tool (`ncv_tool_v8/worker/`), same origin, at /api/tester. It is on where the
-    // Worker serves the page (*.workers.dev) and, for the test script, with ?tester=1. The record
-    // lives under its own key, so Reset draft and Load your draft leave it alone. No draft text is sent.
-    const TESTER_ON = /\.workers\.dev$/.test(location.hostname) || /[?&]tester=1\b/.test(location.search);
+    // and answer three more on Export. Rows go to the Neon `testers` table through the Pages Function
+    // that serves alongside the tool (`ncv_tool_v8/cloudflare/`), same origin, at /api/tester. It is on
+    // where Cloudflare Pages serves the page (*.pages.dev) and, for the test script, with ?tester=1. The
+    // record lives under its own key, so Reset draft and Load your draft leave it alone. No draft text is sent.
+    const TESTER_ON = /\.pages\.dev$/.test(location.hostname) || /[?&]tester=1\b/.test(location.search);
     const TESTER_API = "/api/tester";
     const TESTER_KEY = "ncv-v8-tester";
     const TESTER_START_QS = [

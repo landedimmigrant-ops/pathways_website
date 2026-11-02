@@ -22,9 +22,9 @@ saved from V7 open in V8 with **Continue draft**.
 
 ## Testing with researchers (Cloudflare and Neon), 2026-11-02
 
-**Address for testers:** https://ncv-tool.immigrant-empire.workers.dev/
+**Address for testers:** https://research-8kh.pages.dev/
 
-The same V8 file is served by a Cloudflare Worker (`worker/`), which also records testers in a Neon database.
+The same V8 file is served by the Cloudflare Pages project `research` (`cloudflare/`). A Pages Function in the same project, `cloudflare/functions/api/tester.js`, records testers in a Neon database. The plain name `research.pages.dev` belonged to another account, so Cloudflare added the `-8kh` suffix. The project moved from a Worker to Pages on 2026-11-02 so the address could carry "research" without renaming the account's `immigrant-empire` Workers subdomain; the old `ncv-tool` Worker was deleted.
 The GitHub Pages copy (`/ncv_tool_v8/`) keeps working with no sign-up and no network calls.
 
 - **Start page:** a sign-up card asks for an email and three questions:
@@ -41,11 +41,11 @@ The GitHub Pages copy (`/ncv_tool_v8/`) keeps working with no sign-up and no net
 - **What is never sent:** draft text.
 - **Where the record lives in the browser:** under its own key, `ncv-v8-tester`, so Reset draft and Load your draft leave it alone.
 - **Database:** Neon project `ncv-testing` (`lucky-tree-08109926`, AWS US East 1).
-  - Table `testers`, with a `tester_summary` view; the schema is in [`worker/schema.sql`](worker/schema.sql).
+  - Table `testers`, with a `tester_summary` view; the schema is in [`cloudflare/schema.sql`](cloudflare/schema.sql).
   - To see who tested: `select * from tester_summary;`
-- **Deploy:** `cd ncv_tool_v8/worker && npm run deploy`. This copies the V8 file and `styles.css` into `public/` and deploys.
-  - The Neon connection string is the Worker secret `DATABASE_URL` and is never in the repo.
-- **Where it is switched on:** the sign-up is on only on `*.workers.dev`, or with `?tester=1` (used by the test script).
+- **Deploy:** `cd ncv_tool_v8/cloudflare && npm run deploy`. This copies the V8 file and `styles.css` into `public/` and deploys.
+  - The Neon connection string is the Pages secret `DATABASE_URL` on the `research` project and is never in the repo.
+- **Where it is switched on:** the sign-up is on only on `*.pages.dev`, or with `?tester=1` (used by the test script).
 
 The endpoint is `POST /api/tester`:
 - it accepts the tool's own origin only;
@@ -57,4 +57,4 @@ INFERRED, for Prem to confirm or change:
 - the sign-up card replaces the path cards until the tester signs up or skips;
 - the Export questions sit at the top of Export;
 - the privacy wording on the card;
-- the Worker name `ncv-tool`, which puts the account's `immigrant-empire` subdomain in the address.
+- the address `research-8kh.pages.dev` (a custom domain can replace it later).

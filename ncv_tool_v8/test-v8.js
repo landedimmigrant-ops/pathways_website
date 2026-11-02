@@ -1537,6 +1537,15 @@ async function seed(state, extra) {
     check("Q12: the work-mode choice reads \"Partnered with industry, government or health systems\"; the old label is gone", !!r.mode && !r.old, r);
   }
 
+  console.log("V8 testing: the sign-up switch follows the Pages address");
+  {
+    const src = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v8.html"), "utf8");
+    const m = src.match(/const TESTER_ON = (\/[^\n]*?\/)\.test\(location\.hostname\)/);
+    const re = m && eval(m[1]);
+    check("the sign-up is on at research-8kh.pages.dev and its deploy previews, and off on GitHub Pages and the old workers.dev address",
+      !!re && re.test("research-8kh.pages.dev") && re.test("1951b557.research-8kh.pages.dev") && !re.test("concordia-pathways.github.io") && !re.test("ncv-tool.immigrant-empire.workers.dev"), m && m[1]);
+  }
+
   console.log("V8 testing: tester sign-up and the three questions on Export");
   {
     const TP = () => PAGE() + "?tester=1";
