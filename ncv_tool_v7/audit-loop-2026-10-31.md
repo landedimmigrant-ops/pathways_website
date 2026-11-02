@@ -395,3 +395,18 @@ _none yet_
 
 **Tests:** 282 of 282 (279 + 3).
 
+### Round 18 · Fable's review of round 17 and a whole-file pass, two end-to-end regression walks (2026-11-01)
+
+**Who walked it** (the round 18 snapshot = commit `cc60013`), all findings in [r18-findings.md](audit-loop-2026-10-31/r18-findings.md)
+- **Fable review** of round 17 and the whole file: 2 major · 8 minor (a community group name lowered; the French note's coverage; dead code).
+- **r18-a** Sociologist of education, SSHRC, desktop, everything in order: 6 minor · 2 polish ([draft](audit-loop-2026-10-31/r18-a-draft.txt)).
+- **r18-b** Physiotherapy researcher, CIHR, phone, everything in order: 1 major · 5 minor · 6 polish ([draft](audit-loop-2026-10-31/r18-b-draft.txt)).
+
+**Fixed this round**
+- **Review (AB-1 to AB-10):** group names as typed; the French note by section; tab list markers; "Untitled contribution" not counted; one test for live contributions; a hidden tab mirrors a Reset; a visible reason on the disabled Competition field.
+- **Regression walks:** the "1 word" / "$1" bug in every empty field's count (a never-matching pattern that matched empty text); grade labels; no hedge or number checks on the role line; partner or community agreement; evidence Undo in view; 44 px Undo and Reset; health One moment wording; clinic destinations; a 60-character Other kind.
+
+**Open after the loop:** dead code to remove (AB-7); one precedence for field and work-mode wording (AB-5, Q-22).
+
+**Tests:** 285 of 285 (282 + 3).
+

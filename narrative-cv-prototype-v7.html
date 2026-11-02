@@ -800,6 +800,8 @@
     .v4-fb-status.is-ok { color: #2a6e2a; font-weight: 600; }
     .v4-fb-status.is-err { color: #7a1f15; }
     .v4-fb-nudge { border: 1px solid #f9ca24; background: #fff8e1; border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem 0 0; font-size: 0.9rem; }
+    /* r18-b-3, r18-b-4: Undo and Reset are full-size targets on phones and touch screens. */
+    @media (max-width: 48em), (pointer: coarse) { .v7-undo .v7-linkbtn { min-height: 44px; display: inline-flex; align-items: center; } .v7-path-reset { min-height: 44px; margin-top: 12px; } }
     /* r17-a-3: a disabled field looks disabled. */
     .v7-input:disabled { background: #f0f0f0; color: #595959; cursor: not-allowed; }
     /* r17-b-8: borders and glyphs of small controls at 3:1 and 4.5:1. */
@@ -1904,13 +1906,13 @@
         // H5: the prestige metrics' own numbers are removed from this working copy first — they are
         // the very numbers the prestige flag asks you to cut. Numbers elsewhere still count.
         // r1-a-3: list markers on every line, DOIs and years are not specific numbers.
-        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[:;.]\s+)\d{1,2}\)\s/gm, " ").replace(inlineRun(t) ? /(^|[.;:]\s+)[1-9][.)]\s+(?=[A-Za-zÀ-ÿ])/gm : /$^/, "$1") /* X-11 */ /* r11-a-5, U-1: "1) un guide ; 2) …", not "(n = 45) " */.replace(/(\d+(?:[.,]\d+)?)[\u00a0\u202f]?[–—][\u00a0\u202f]?\d+(?:[.,]\d+)?/g, "$1") /* V-6: closed ranges only */ /* r12-a-6: "0.71–0.89", "3–5" count once */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
+        let forNums = joinDigits(t).replace(/\b(?:Grade|Year|Phase|Level|Stage|Chapter|Table|Figure|Fig\.|Step|Unit|Wave)\s+\d{1,2}\b/gi, " ") /* r18-a-3: labels, not figures */.replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[:;.]\s+)\d{1,2}\)\s/gm, " ").replace(inlineRun(t) ? /(^|\t|[.;:]\s+)[1-9][.)]\s+(?=[A-Za-zÀ-ÿ])/gm : /(?!)/, "$1") /* X-11 */ /* r11-a-5, U-1: "1) un guide ; 2) …", not "(n = 45) " */.replace(/(\d+(?:[.,]\d+)?)[\u00a0\u202f]?[–—][\u00a0\u202f]?\d+(?:[.,]\d+)?/g, "$1") /* V-6: closed ranges only */ /* r12-a-6: "0.71–0.89", "3–5" count once */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
         metricHits.forEach(m => { forNums = forNums.split(m.text).join(" "); });
         links.forEach(l => { forNums = forNums.split(l.text).join(" "); });
         const enNums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
         // V-1: French number words count in French text, or in a short line with no other number and one French function word.
         const nums = enNums + (looksFrench(t) || (!enNums && /\b(?:avec|dans|une|sont|chez|auprès)\b/i.test(t)) /* X-3: unambiguous French words only */ ? (forNums.match(FR_NUMBER_WORD_RE) || []).length : 0);
-        if (nums) { out.strengths.push(nums + " specific number" + (nums > 1 ? "s" : "")); out.score++; }
+        if (nums && kind !== "roleLine") { out.strengths.push(nums + " specific number" + (nums > 1 ? "s" : "")); out.score++; } // r18-a-3: not on the role line
         else if ((kind === "activities" || kind === "outcomes") && !/\b(?:19|20)\d{2}\b/.test(t)) {
           // B-19 (amended): dropped off "outputs" — a list of things without numbers is a correct
           // answer there. The check now fires only where the prompt actually asked for a quantity.
@@ -1961,7 +1963,7 @@
 
       // Hedging — field-aware; H7: capitalised "May" before a year/day is the month, not a hedge.
       // Skipped for "prose" (neither flagged nor praised).
-      if (!isProse) {
+      if (!isProse && kind !== "roleLine") { // r18-a-4: a role line names permissions and limits, not outcomes
         // W-30: "could not" and "would not" describe a past inability (what Stakes asks for), not a hedge.
         // J-3: each exemption is masked with characters of the same length, so positions still match t.
         const mask = (m) => "#".repeat(m.length);
@@ -1970,14 +1972,14 @@
           // r6-b-4: "could only supervise by video", "would have run the surveys myself" describe the past.
           .replace(/\bcould(?=\s+only\b)|\bwould(?=\s+have\b)/gi, mask)
           // r4-a-5: "no one could learn what it held" is a past inability; "could" before a verb of access or knowing is not a hedge.
-          .replace(kind === "impact" ? /$^/ : /\bcould(?=\s+(?:learn|find|see|tell|access|read|reach|get|use|know|afford|attend|travel|count|measure|track|say|identify|locate|compare|link|trace|obtain|open|consult|search|walk|stand|swallow|return|climb|dress|speak|drive|live|eat|sleep|breathe|move|sit)\b)/gi, mask) // r8-b-3
+          .replace(kind === "impact" ? /(?!)/ : /\bcould(?=\s+(?:learn|find|see|tell|access|read|reach|get|use|know|afford|attend|travel|count|measure|track|say|identify|locate|compare|link|trace|obtain|open|consult|search|walk|stand|swallow|return|climb|dress|speak|drive|live|eat|sleep|breathe|move|sit)\b)/gi, mask) // r8-b-3
           // r5-b-4, K-5: a right or a rule in an agreement ("may withdraw", "would require") is not a hedge,
           // outside What could change, where hedges are asked for.
-          .replace(kind === "impact" ? /$^/ : /\b(?:may|can)(?=\s+(?:withdraw|decline|refuse|veto|request)\b)|\b(?:would|will)(?=\s+(?:require|need)\b)/gi, mask)
+          .replace(kind === "impact" ? /(?!)/ : /\b(?:may|can)(?=\s+(?:withdraw|decline|refuse|veto|request)\b)|\b(?:would|will)(?=\s+(?:require|need)\b)/gi, mask)
           // r9-b-10: "could" inside a reported question or a purpose clause reports what was asked or intended.
-          .replace(kind === "impact" ? /$^/ : /\b(how|whether|so that|in order that)\b([^.;:!?]{0,60}?)\b(could|might|may|would|should)\b/gi, (m0, a, b, c) => a + b + "#".repeat(c.length))
+          .replace(kind === "impact" ? /(?!)/ : /\b(how|whether|so that|in order that)\b([^.;:!?]{0,60}?)\b(could|might|may|would|should)\b/gi, (m0, a, b, c) => a + b + "#".repeat(c.length))
           // r9-a-1: The problem or question may be written as a question, which can use "might" or "could".
-          .replace(kind === "stakes" ? /[^.!?]*\?/g : /$^/, mask);
+          .replace(kind === "stakes" ? /[^.!?]*\?/g : /(?!)/, mask);
         const hedges = [];
         HEDGES.forEach(h => { const ms = allMatches(hedgeText, h); if (ms.length) { hedges.push(h); ms.forEach(m => out.hits.push({ text: m.text, rule: "hedge", index: m.index })); } });
         if (kind === "impact") {
@@ -2010,7 +2012,7 @@
     // discipline (university) or the subdivision (everything else).
     const blankMentee = () => ({ stage: "", stageKind: "", stageOther: "", kind: "", org: "", unit: "", recognition: "", why: "", folded: false });
     // r2-b-6 (inferred): arts and cultural organizations are a destination of their own.
-    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["health", "Health system (hospital, long-term care, public health, CISSS/CIUSSS)"], ["indigenous", "First Nations, Inuit or Métis government or organization"], ["arts", "Arts, cultural or heritage organization (museum, library, archive)"], ["other", "Other"]];
+    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["health", "Health system or clinic (hospital, clinic, long-term care, public health, CISSS/CIUSSS)"], ["indigenous", "First Nations, Inuit or Métis government or organization"], ["arts", "Arts, cultural or heritage organization (museum, library, archive)"], ["other", "Other"]];
     const menteeKindLabel = (k) => { const m = MENTEE_KINDS.find(x => x[0] === k); return m ? m[1] : ""; };
     // Drafts saved before this change held `who` (dropped on purpose) and a free-text
     // `destination` (kept, moved to `org`).
@@ -2050,7 +2052,9 @@
     // r2-b-2: a word is a token with a letter or a digit, so a lone « or » (set off by a non-breaking
     // space) or a dash is not one; list markers count only at a line start. Digit groups joined by a
     // non-breaking or thin space ("3 200") are one number.
-    const joinDigits = (t) => String(t || "").replace(/(\d)[\u00a0\u202f](?=\d{3}\b)/g, "$1").replace(looksFrench(t) ? /(\b\d{1,3}) (?=\d{3}\b(?![.,]\d))/g : /$^/, "$1"); // r11-a-5, U-3: "3 200" in French text only
+    // r18-a-1, r18-b-2: a pattern that never matches is /(?!)/; /$^/ matches an empty string, and its "$1"
+    // replacement then printed "$1", which counted as a word in every empty field.
+    const joinDigits = (t) => String(t || "").replace(/(\d)[\u00a0\u202f](?=\d{3}\b)/g, "$1").replace(looksFrench(t) ? /(\b\d{1,3}) (?=\d{3}\b(?![.,]\d))/g : /(?!)/, "$1"); // r11-a-5, U-3: "3 200" in French text only
     const countWords = (t) => { const x = joinDigits(t).replace(/(\p{L})[—–](\p{L})/gu, "$1 — $2") /* r12-a-7, V-8: words joined by a dash; ranges stay one word */.replace(/^\s*(?:[•·\-*–—]|\d+[.)])\s+/gm, "").trim(); return x ? x.split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length : 0; };
     const menteeWhere = (m) => [(m.kind && m.kind !== "university" && m.kind !== "other") ? menteeKindLabel(m.kind) : "", one(m.org), one(m.unit)].filter(Boolean).join(", ");
     const menteeHasPlace = (m) => !!(m.kind || (m.org || "").trim() || (m.unit || "").trim());
@@ -2330,7 +2334,7 @@
     let saveFailed = false;
     // W-48 (inferred): once the draft has been saved here, a missing key means the browser data was
     // cleared from outside; the tool then stops writing it back and says so.
-    let storeSeen = false, storeCleared = false, saveMuted = false;
+    let storeSeen = false, storeCleared = false, saveMuted = false, otherTab = undefined; // AB-9: declared before markCleared
     // r13-a-3, r13-a-5: a visible note at the top of the step; it goes with the next render.
     function stageNote(t) {
       const c = document.getElementById("v4-stage-content"); if (!c) return;
@@ -2340,7 +2344,7 @@
     }
     // r13-a-1, r13-a-2: this tab stops saving and keeps its copy; the warning is an alert that stays in view.
     function markCleared(msg) {
-      storeCleared = true; try { otherTab = undefined; } catch (_) {} // AA-8: no stale take-up waits behind the warning
+      storeCleared = true; otherTab = undefined; // AA-8: no stale take-up waits behind the warning
       const w = document.getElementById("v4-save-warning");
       if (w) { w.setAttribute("role", "alert"); w.textContent = msg || "Your browser data was cleared, so this draft is no longer saved here. Save a draft file now to keep it."; w.hidden = false; }
     }
@@ -2568,6 +2572,7 @@
           } },
         translational: { q: "Which one occasion shows the work reaching a specific person or group?", variants: { community: "Which one occasion shows the work in use by a specific person or group?" }, help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
           helpVariants: {
+            health: "One scene in two sentences, such as a patient, a clinic, a classroom or a committee that used the work. One concrete instance of What already changed, told as a scene. Optional. Leave out details that could identify a patient or participant, and name a clinic or community only with its agreement.", // r18-b-11
             stem: "One scene in two sentences, such as a control room, a field site, a deployment, a release review, an inspection or a standards committee where the work was used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.", // r10-b-10
             humanities: "One scene in two sentences, such as a reader, a classroom, an archive, a museum or a community meeting that used the work. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
             creative: "One scene in two sentences, such as an audience, a venue, a classroom or a community meeting where the work was seen or used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement."
@@ -2643,7 +2648,7 @@
     const mentorTotal = () => Object.values(ns.mentorCounts).reduce((n, v) => n + (parseInt(cleanCount(v), 10) || 0), 0);
     // "14 doctoral students, 1 master's student": the totals line every output prints.
     // r5-b-5: the Other group prints under the name the researcher gives it ("7 community researchers").
-    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out.replace(/^(?!(?:Elders?|Indigenous|First|Inuit|Métis|Knowledge)\b)([A-ZÀ-Ý])(?=[a-zà-ÿ]+(?:\s|$))/, ch => ch.toLowerCase()) : countNoun(n, out))); // r11-a-10, r16-a-7: as typed, a phone's capital lowered
+    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out.replace(/^(Students?|Postdocs?|Fellows?|Clinical|Research|Residents?|Interns?|Trainees?|Researchers?|Nurses?|Teachers?|Technicians?|Assistants?|Apprentices?|Community|Staff|Coordinators?|Volunteers?|Undergraduates?|Graduate|Doctoral|Visiting|Agents?|Assistantes?|Stagiaires?)\b/, w => w.toLowerCase()) /* AB-1: only a common group noun; "Cree youth" stays */ : countNoun(n, out))); // r11-a-10, r16-a-7: as typed, a phone's capital lowered
     const menteesDescribed = () => ns.mentees.filter(menteeHasContent).length;
     const stageDone = (key) => {
       const v = !!ns.visited[key];
@@ -2713,7 +2718,6 @@
     // F-3 (audit 2026-10-31, inferred): with the tool open in two tabs, a save in one tab is taken up
     // by the other (at once if it is in view, otherwise when it comes back into view), so the other
     // tab never writes its older copy back over the newer one. Taking it up writes nothing.
-    let otherTab = undefined;
     function takeUpOtherTab(spoken) {
       if (otherTab === undefined) return;
       const raw = otherTab; otherTab = undefined;
@@ -2755,7 +2759,8 @@
       const reset = resetSince();
       if ((e.newValue === null || e.key === null) && draftHasContent(ns) && !reset) { markCleared(); return; } // Z-6: cleared data, not a Reset
       if (e.newValue !== null && e.key !== null && draftHasContent(ns) && !(incoming && draftHasContent(incoming)) && !reset) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
-      otherTab = e.key === null ? null : e.newValue;
+      // AB-8: a Reset arrives as the key removed, then a blank draft; the tab mirrors the Reset itself.
+      otherTab = e.key === null || (reset && !(incoming && draftHasContent(incoming))) ? null : e.newValue;
       if (!document.hidden && !composing) takeUpOtherTab(false);
     });
     // Review note (2026-10-31): a take-up waits while an accent or an IME composition is being typed,
@@ -3906,7 +3911,7 @@
       const setAgNote = () => {
         const other = agenciesNamed(d.program).filter(v => v !== d.agency);
         const was = ns.lens.agency; // r12-b-2: a name entered for another agency is pointed out too
-        agNote.textContent = !d.undecided && d.agency && d.agency !== "other" && other.length ? "This name mentions " + other.map(v => labelOf(AGENCIES, v)).join(" and ") + ". Update it if it no longer applies."
+        agNote.textContent = d.undecided ? "Undecided is on; turn it off to name a competition." /* AB-10 */ : !d.undecided && d.agency && d.agency !== "other" && other.length ? "This name mentions " + other.map(v => labelOf(AGENCIES, v)).join(" and ") + ". Update it if it no longer applies."
           : !d.undecided && (d.program || "").trim() && (d.program || "").trim() === (ns.lens.program || "").trim() && !agenciesNamed(d.program).includes(d.agency) && was && was !== "other" && d.agency && d.agency !== was ? /* V-5, r17-a-4 */ "This name was entered for " + labelOf(AGENCIES, was) + ". Update it if it no longer applies." : "";
         agNote.hidden = !agNote.textContent;
       };
@@ -4413,6 +4418,7 @@
           // r1-a-4: surrounding spaces go when the box is left.
           inp.addEventListener("blur", () => { const t = inp.value.trim(); if (t !== inp.value) { inp.value = t; L.program = t; saveState(); } });
           wrap.appendChild(lab); wrap.appendChild(inp);
+          if (L.undecided) { const un = el("p", "v4-help", "Undecided is on; turn it off to name a competition."); un.id = "v7-comp-und"; inp.setAttribute("aria-describedby", un.id); wrap.appendChild(un); } // AB-10: a visible reason
           row.appendChild(wrap);
           const und = el("button", "v7-mini", "Undecided"); und.type = "button"; und.id = "v7-undecided";
           und.setAttribute("aria-pressed", L.undecided ? "true" : "false");
@@ -4711,7 +4717,7 @@
           // r13-b-1: work with a partner under an agreement may keep names and figures private.
           if ((f.k === "activities" || f.k === "outcomes") && (ns.lens.workMode || []).includes("industry")) helpExtra = " If an agreement keeps the partner or its figures private, describe the partner by its sector and size, give what you can, and say the rest is withheld.";
           // r16-b-11: in community-engaged work, who asked for the work and what may be named.
-          if (f.k === "stakes" && isCommunity() && !/partners set it/.test(resolveHelp(f.def))) helpExtra /* AA-5: once */ = " If a community asked for this work, say so. Name a community, its Elders or its protocols only as they agree.";
+          if (f.k === "stakes" && isCommunity() && !/partners set it/.test(resolveHelp(f.def))) helpExtra /* AA-5: once */ = " If a partner or community asked for this work, say so. Name a partner, a community, its Elders or its protocols only as they agree."; // r18-a-5
           // r12-b-5: the second field adds a line to What you did and What already changed too.
           if ((f.k === "activities" || f.k === "outcomes") && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
             const SECOND = {
@@ -4876,7 +4882,7 @@
           UI.kindOpen = ""; // H-6: the open chooser is held by index
           // r14-a-1: the evidence Undo also stays until the next change.
           saveState(); renderStage();
-          const a = document.getElementById(UI.evUndo ? "ev-undo-" + contrib.cid : "ev-add-" + contrib.cid) || document.getElementById("ev-add-" + contrib.cid); if (a) a.focus();
+          const a = document.getElementById(UI.evUndo ? "ev-undo-" + contrib.cid : "ev-add-" + contrib.cid) || document.getElementById("ev-add-" + contrib.cid); if (a) { a.focus({ preventScroll: true }); a.scrollIntoView({ block: "center" }); } // r18-b-1: in view
           announce("Evidence item " + letter(j) + " removed." + (UI.evUndo ? " Undo is available until your next change." : ""));
         });
         ehead.appendChild(rm);
@@ -4921,7 +4927,7 @@
         if (ev.type === "Other") {
           const ow = el("div", "v7-one");
           const ol = el("label", "v7-field-label", "Name the kind"); ol.htmlFor = "evo" + contrib.cid + "-" + j;
-          const oi = el("input", "v7-input"); oi.id = ol.htmlFor; oi.type = "text";
+          const oi = el("input", "v7-input"); oi.id = ol.htmlFor; oi.type = "text"; oi.maxLength = 60; // r18-b-12: a kind, not the reference
           oi.placeholder = "Patent, exhibition, clinical guideline, software release…"; oi.value = ev.otherLabel || "";
           oi.addEventListener("input", e => { ev.otherLabel = e.target.value; saveState(); });
           ow.appendChild(ol); ow.appendChild(oi); it.appendChild(ow);
@@ -5627,7 +5633,7 @@
       } else {
         live.forEach(({ c: contrib, i }, pos) => {
           if (pos === 0) { const s = el("p", "v7-slot"); s.appendChild(el("b", null, "First: ")); s.appendChild(document.createTextNode("the contribution that runs across most of your work. It opens the section and frames the others.")); os.appendChild(s); }
-          else if (pos === live.length - 1) { const s = el("p", "v7-slot"); s.appendChild(el("b", null, "Last: ")); s.appendChild(document.createTextNode("the one that leads most directly into ")); if (comp) s.appendChild(el("b", null, comp)); else s.appendChild(document.createTextNode("the project you are applying for")); s.appendChild(document.createTextNode(". It closes the section.")); os.appendChild(s); }
+          else if (pos === live.length - 1) { const s = el("p", "v7-slot"); s.appendChild(el("b", null, "Last: ")); s.appendChild(document.createTextNode("the one that leads most directly into ")); if (comp) { s.appendChild(document.createTextNode("this competition (")); s.appendChild(el("b", null, comp)); s.appendChild(document.createTextNode(")")); } else s.appendChild(document.createTextNode("the project you are applying for")); /* r18-a-7 */ s.appendChild(document.createTextNode(". It closes the section.")); os.appendChild(s); }
           else if (pos === 1) os.appendChild(el("p", "v7-slot", "The ones in between follow the thread from the first to the last."));
           const oc = el("div", "v7-ocard" + (UI.moved === contrib.cid ? " moved" : ""));
           const n = el("span", "v7-n", String(pos + 1)); n.setAttribute("aria-hidden", "true"); oc.appendChild(n);
@@ -5881,7 +5887,8 @@
     // contribution numbers, evidence letters and letter groups; draftWords() is its total.
     const printedWords = (t) => gvCount([String(t || "").replace(/^\s*(?:\d+|[a-z])\.\s+/gm, "").replace(/\((?:[a-z], )*[a-z]\)/g, "")]);
     function glanceWordSplit() {
-      return { contrib: liveContributions().length ? printedWords(sectionText("contrib")) : 0 /* r17-a-7 */, mentor: printedWords(sectionText("mentor")), ps: printedWords(sectionText("ps")) };
+      // r17-a-7, AB-4: the "Untitled contribution" stand-in is not the researcher's words.
+      return { contrib: liveContributions().length ? Math.max(0, printedWords(sectionText("contrib")) - 2 * liveContributions().filter(({ c }) => !one(c.title)).length) : 0, mentor: printedWords(sectionText("mentor")), ps: printedWords(sectionText("ps")) };
     }
     const GV_LEN_TONES = { contrib: "#912338", mentor: "#c27a88", ps: "#e7cfd3" };
     const roughWords = (n) => n > 100 ? Math.round(n / 10) * 10 : n;
@@ -6036,7 +6043,9 @@
       // r16-a-3: a draft written in French is told which sentences the tool still writes in English (Q-23).
       // AA-4: decided per contribution and for the statement, so one French field does not mark an English draft.
       const frC = ns.contributions.filter(c => cLive(c)), frN = frC.filter(c => looksFrench([c.stakes, c.activities, c.outputs, c.outcomes].join(" "))).length;
-      if ((frC.length && frN * 2 > frC.length) || looksFrench(Object.values(ns.ps || {}).filter(v => typeof v === "string").join(" ")) && frN * 2 >= frC.length) {
+      // AB-2: any section that reads as French (most contributions, the statement, or the Mentorship text) gets the note.
+      const frMentor = looksFrench(MENTOR_TEXT_KEYS.map(k => ns[k] || "").join(" ") + " " + (ns.mentees || []).map(m => m.why || "").join(" "));
+      if ((frC.length && frN * 2 > frC.length) || looksFrench(Object.values(ns.ps || {}).filter(v => typeof v === "string").join(" ")) || frMentor) {
         const fr = el("div", "v7-note"); fr.setAttribute("role", "note");
         fr.appendChild(el("p", null, "Your draft reads as French. The sentences the tool writes around your text are in English for now: the first sentence of your statement, the trainee sentences and the totals line. Translate them before you paste."));
         c.appendChild(fr);
@@ -6464,7 +6473,7 @@
         " · competition named: " + (competitionName() ? "yes" : "no"));
       if ((L.otherField || "").trim()) out.push("Field not listed, as the researcher named it: " + L.otherField.trim().slice(0, 80));
       out.push("Steps (visits, active minutes): " + stages().map(st => st.short + " " + (S.visits[st.key] || 0) + "×, " + mins(S.stageMs[st.key]) + " min").join(" · "));
-      const started = ns.contributions.filter(c2 => c2.title || c2.activities);
+      const started = ns.contributions.filter(c2 => cLive(c2)); // AB-6: the same test as everywhere else
       const fields = ["stakes", "activities", "outputs", "outcomes", "impact"];
       const byRule = {};
       let flagCount = 0, numberFlags = 0;

@@ -1,0 +1,43 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: CIHR · Tri-agency CV · CIHR Project Grant (applying 2027) · Early career · Health / clinical · Team-based]
+Before you submit: paste this into the current version of CIHR's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am a postdoctoral physiotherapy researcher at a Canadian university. My work is in falls prevention and balance assessment.
+
+How do we keep older adults active and upright in the places where they already gather? Falls are a leading cause of injury in older Canadians, and most proven exercise programs have been tested in clinics rather than community settings. Three strands: a community-delivered falls-prevention trial, a balance-assessment app for clinics, and a clinical-placement program for physiotherapy students. Each moves a method that works in research into everyday practice. I trained as a physiotherapist, worked in outpatient clinics for five years, and returned for graduate studies after seeing how few patients received tested exercise programs. My doctoral work led directly to the community trial. A cluster randomized trial in 16 centres, with results in Age and Ageing; a validated balance-assessment app used in 11 clinics; a postdoctoral fellowship; and a placement program that has trained 36 students. A Project Grant funds the sustained, practice-linked program of work I plan, with clinics and health authorities as partners from the start. The next phase tests whether the exercise program and the app together reduce falls when delivered through health authority channels, and extends the placement model to rural clinics.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Falls prevention exercise program for older adults in community centres
+   Older adults in community centres fall often, and few exercise programs have been tested outside research clinics, so centres and health authorities have little evidence on which program to offer. I was the trial physiotherapist lead and wrote the exercise protocol, working with two co-investigators and four community-centre coordinators. I trained 12 instructors across six community centres, delivered the balance and strength program in 16 centres over 18 months to 240 adults aged 65 and older, and ran the assessments at baseline, six months and twelve months. The trial produced an instructor training manual, a 12-week exercise program, a tested set of balance measures and two papers, one reporting the main results and one reporting how the centres delivered it. Three community centre networks and two regional health authorities now offer the program. Falls in the exercise group were 28 percent lower than in the comparison group at twelve months. At a seniors centre in a mid-sized city, a 78-year-old participant who had stopped walking outdoors after a fall told her instructor she now walks to the shops again, and the centre asked to keep the class on its weekly schedule. If health authorities adopt the program, more older adults could stay active and independent, and fewer would need hospital care after a fall. (a, b)
+   a. Smith A, Tremblay J, Ng P. Community-delivered balance and strength exercise to prevent falls in older adults: a cluster randomized trial. Age and Ageing. 2026.  [Peer-reviewed]
+      Falls were 28 percent lower at twelve months.
+   b. Regional Health Authority program catalogue: Steady Steps community exercise listing, adopted 2026.  [Policy / practice uptake]
+      Two authorities now fund the classes.
+
+2. Balance assessment app for clinics
+   Clinicians in outpatient clinics assess balance with different tests and paper forms, so results are hard to compare over time and between sites, and older patients at risk of falling are missed. I led the clinical design of the app and chose the balance tests it includes, with one software developer and three clinic physiotherapists. I ran usability sessions with 24 physiotherapists in eight clinics, revised the test scoring screens through four versions, and tested the app against clinician-timed tests in 150 patients. The work produced a tablet and phone app that scores five balance tests, a scoring guide for clinicians and a validation paper. The scoring guide has been translated into French for clinics in Quebec, and a short video shows how to position the phone during the tests, which helps new users learn the tests quickly and score them the same way. Eleven clinics now use the app in routine assessments, and one health network added it to its falls-risk pathway in 2026. A clinic physiotherapist in a rural hospital used the app to flag a patient whose scores had dropped over three visits, and the patient was referred to a falls clinic the same week. If more clinics adopt it, balance scores could be shared across settings, so that patients at risk of falls are referred sooner. (a, b)
+   a. BalanceCheck app, version 2.1, free to clinics; scoring code held by the university.  [Dataset / tool]
+      Used in 11 clinics.
+   b. Lopez M, Ng P. Validity of a smartphone balance score against clinician-timed tests. Physical Therapy. 2026.  [Peer-reviewed]
+
+3. Clinical placement program for physiotherapy students
+   Physiotherapy students often complete placements in busy clinics with little structured feedback, and clinics have few ways to take students without losing patient time. I co-designed the placement model with a clinical education coordinator and supervised the students and clinic supervisors in the first two years. I placed 36 students in nine clinics over two years, trained 20 clinic supervisors in a short feedback method and collected student and supervisor ratings after each placement. The program produced a supervisor training module, a placement feedback form and a report on student and clinic outcomes. Our department now uses the feedback form for all outpatient placements, and four additional clinics have joined as placement sites. A student placed in a small rural clinic led a falls-prevention session for clinic staff, and the clinic asked her to return as a supervisor-in-training. If other programs adopt the model, more clinics could host students, which could widen the number of trained physiotherapists in underserved regions. (a, b)
+   a. Placement Feedback Form, adopted by the department of physical therapy for all outpatient placements, 2026.  [Adopted form]
+      Used in all outpatient placements.
+   b. Student and clinic outcomes report, shared with the nine placement clinics, 2026.  [Community document]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 1 doctoral student, 3 master's students, 9 undergraduate researchers, 6 DPT students on placement
+A master's student I trained now works in the health system, received a provincial graduate scholarship (2025) and leads the falls-prevention program at a regional hospital, using the exercise protocol we tested together.
+An undergraduate researcher I trained is now a master's student in rehabilitation science, building on the balance-assessment work.
+[One thing you do] I give every student a one-page plan at the first meeting that names the skills they want to build and the clinic or lab tasks that will build them. We review it every three months and I hand over assessment tasks as each student is ready.
+[Who gets in] I opened our placement slots to students from regional campuses, and I pay travel costs to rural clinics so that students without a car can take the placement. Of the 36 students placed, 11 came from regional campuses.
+[Who else you mentor (optional)] I mentor two early-career clinicians who are starting research at hospital clinics, and I meet each of them monthly to review their draft ethics applications.

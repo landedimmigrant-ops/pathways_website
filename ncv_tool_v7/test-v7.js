@@ -1400,7 +1400,7 @@ async function seed(state, extra) {
       const rm=qa('button').find(b=>/^Remove contribution/.test(b.getAttribute('aria-label')||'')); if (rm) { rm.click(); await w(120); await okWarn(); await w(150); } a.u0=!!q('.v7-cundo');
       const sq=q('.v7-fcol .v7-fsq'); if (sq) { sq.click(); await w(120); } a.u1=!!q('.v7-cundo');
       return a;`);
-    check("community-engaged: the problem part asks who asked for the work; the humanities role example (r16-b-11, r16-b-8)", /If a community asked for this work, say so/.test(r.stakesHelp) && /Elders’ council/.test(r.roleHelp), { stakesHelp: r.stakesHelp, roleHelp: r.roleHelp });
+    check("community-engaged: the problem part asks who asked for the work; the humanities role example (r16-b-11, r16-b-8)", /If a partner or community asked for this work, say so/.test(r.stakesHelp) && /Elders’ council/.test(r.roleHelp), { stakesHelp: r.stakesHelp, roleHelp: r.roleHelp });
     check("Undo survives a field-column click (Z-2)", r.u0 && r.u1, { u0: r.u0, u1: r.u1 });
     check("a lower-case numbered run in the statement is a list to rewrite (r16-a-2)", /Strands/.test(r.lists), r.lists.slice(0, 300));
     check("Word: the evidence note is its own block; the headline is a block (r16-a-1, Z-5)", /<div class='evn'>Shows the made-up result\.<\/div>/.test(r.doc) && /<p class='ctitle'/.test(r.doc), r.doc.slice(r.doc.indexOf("evbox"), r.doc.indexOf("evbox") + 200));
@@ -1433,6 +1433,25 @@ async function seed(state, extra) {
       return a;`);
     check("the headline is one line with its placeholder again (AA-1)", (r.rows === 1 || r.rows === -1 ? r.rows === 1 : false) && /headline a reviewer could repeat/i.test(r.ph), r);
     check("with no agency, Export shows both formats' link and language rules and says which section names it uses (r17-a-1, r17-a-2)", /Links, Tri-agency CV/.test(r.dl) && /Links, CV-FRQ/.test(r.dl) && /until you choose an agency/.test(r.word + r.dl), { dl: r.dl, word: r.word.slice(0, 300) });
+  }
+
+  console.log("Audit loop, round 18");
+  {
+    const base = () => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    const st = base(); st.mentorCounts = Object.assign({}, st.mentorCounts || {}, { other: "5" }); st.mentorOtherLabel = "Cree youth";
+    st.contributions = [{ cid: "r181", title: "A made-up study", stakes: "A made-up gap.", roleMode: "led", roleLine: "I led it.", activities: "Students enter Grade 9 in Ontario.", outputs: "A report.", outcomes: "", impact: "", translational: "", evidence: [{ text: "A made-up article", type: "Peer-reviewed", note: "" }], flags: {}, notes: {} }];
+    await seed(st);
+    r = await js(H + `await w(200); const a={}; const box=q('[data-f$="-activities"] .v7-box'); box.focus(); setv(box, box.value); await w(80);
+      a.grade=qa('[data-f$="-activities"] .v4-flag, [data-f$="-activities"] .v4-meta').map(x=>x.textContent).join('|');
+      const rl=q('[data-f$="-roleLine"] .v7-box'); rl.focus(); setv(rl,'I led the design with three analysts, who set what could be shown.'); await w(80); a.role=qa('[data-f$="-roleLine"] .v4-flag').map(x=>x.textContent).join('|');
+      q('#ev-open-r181').click(); await w(200); a.noteCount=((q('[id$="-0-wc"]')||{}).textContent||'');
+      rail('Export').click(); await w(150);
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(cb){ cb.click(); await w(40); } a.mentor=clip; navigator.clipboard.writeText=ow;
+      return a;`);
+    check("an empty note shows no count (the /$^/ bug, r18-a-1)", !/1 word/.test(r.noteCount), r.noteCount);
+    check("'Grade 9' is not a figure; no hedge check on the role line (r18-a-3, r18-a-4)", /No numbers/.test(r.grade) && !/hedge/.test(r.role), { grade: r.grade, role: r.role });
+    check("a community group name keeps its capital (AB-1)", /5 Cree youth/.test(r.mentor), r.mentor.slice(0, 200));
   }
 
   console.log("Register (W-57): the tool's prompt strings");
