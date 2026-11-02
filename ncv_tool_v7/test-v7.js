@@ -1274,6 +1274,33 @@ async function seed(state, extra) {
     check("evidence fields name their item; Escape in the kind chooser keeps the kind it had (r11-b-2, r11-b-10)", /Evidence item a: The item\|Evidence item b: The item/.test(r.labels) && r.kindMid !== "Peer-reviewed" && r.kindAfter === "Peer-reviewed", { labels: r.labels, kindMid: r.kindMid, kindAfter: r.kindAfter });
   }
 
+  console.log("Audit loop, round 12");
+  {
+    const base = () => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    const blankC = (cid) => ({ cid, title: "Made-up contribution", stakes: "", roleMode: "", roleLine: "", activities: "", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} });
+    const st = base(); st.lens = Object.assign({}, st.lens, { discipline: "creative", discipline2: "health", workMode: ["community"] });
+    st.contributions = [Object.assign(blankC("r121"), { stakes: "a made-up gap.", roleMode: "led" })];
+    st.ps = Object.assign({}, st.ps, { role: "researcher", institution: "An NGO", field: "made-up care" });
+    await seed(st);
+    r = await js(H + `await w(200); const a={}; const box=(k)=>q('[data-f$="-'+k+'"] .v7-box'); const fl=(k)=>qa('[data-f$="-'+k+'"] .v4-flag').map(x=>x.textContent).join('|');
+      const put=async(k,v)=>{ box(k).focus(); setv(box(k),v); await w(80); return fl(k); };
+      a.n45=await put('activities','Made-up nurses (n = 45) took part.');
+      a.seize=await put('activities','We seize the made-up chance each spring.');
+      a.inl=await put('outputs','1. A made-up report.\t2. A made-up dataset. 3. Five made-up papers.');
+      a.qAct=((q('[data-f$="-activities"] .v7-q')||{}).innerText||''); a.qOut=((q('[data-f$="-outcomes"] .v7-q')||{}).innerText||'');
+      setv(box('outputs'),'A made-up report.\tA made-up guide.'); setv(box('activities'),'I ran 12 made-up sessions.'); await w(60);
+      a.panel=(()=>{ const b=qa('button').find(x=>/How each part sounds/.test(x.innerText)); if(b) b.click(); return ''; })(); await w(150); a.hints=((q('.v7-hints')||{}).innerText||'');
+      rail('Export').click(); await w(150);
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      const cb=qa('button').find(b=>/^Copy working draft/.test(b.innerText)); if(cb){ cb.click(); await w(40); } a.txt=clip; navigator.clipboard.writeText=ow;
+      return a;`);
+    check("'(n = 45)' keeps its number; 'seize' in English is not a number (U-1, U-2)", !/No numbers/.test(r.n45) && /No numbers/.test(r.seize), { n45: r.n45, seize: r.seize });
+    check("an inline numbered list on one line is a list (r12-a-1)", /reads as a list/.test(r.inl), r.inl);
+    check("a second field adds a line to What you did and What already changed (r12-b-5)", /on the health side too\./.test(r.qAct) && /care practice or guidelines that took it up too\./.test(r.qOut), { qAct: r.qAct, qOut: r.qOut });
+    check("the field panel keeps the field's cue and adds the partners (r12-b-4)", /where a partner raised the question, say so/.test(r.hints) && !/^The problem or question\. A question a partner raised/m.test(r.hints), r.hints.slice(0, 300));
+    check("a pasted tab prints as a space; 'An NGO' is lowered mid-sentence (r12-a-3, U-7)", !/\t/.test(r.txt) && /at an NGO\./.test(r.txt), r.txt.slice(0, 300));
+  }
+
   console.log("Register (W-57): the tool's prompt strings");
   {
     const src = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v7.html"), "utf8");

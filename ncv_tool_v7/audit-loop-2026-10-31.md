@@ -286,3 +286,21 @@ _none yet_
 
 **Tests:** 256 of 256 (249 + 7).
 
+### Round 12 · Fable's review of round 11, a clinician-scientist pasting ten contributions from Word, an arts-based health researcher on an iPad reopening a V6 draft (2026-11-01)
+
+**Who walked it** (the round 12 snapshot = commit `5ded397`; the walks stopped at a usage limit and were resumed), all findings in [r12-findings.md](audit-loop-2026-10-31/r12-findings.md)
+- **Fable review** of round 11: 1 major · 7 minor (an English "(n = 45)" lost its number; French number words and digit joins touched English text; stale announcement and kind state).
+- **r12-a** Senior cardiology clinician-scientist, CIHR, ten pasted contributions cut to six: 5 minor · 4 polish ([draft](audit-loop-2026-10-31/r12-a-draft.txt)).
+- **r12-b** Early-career arts-based health researcher, CIHR, Creative + Health, community-engaged, on an iPad, opening a V6 draft file: 1 major · 6 minor · 4 polish ([draft](audit-loop-2026-10-31/r12-b-draft.txt)).
+
+**Fixed this round**
+- **Review (U-1 to U-8):** French rules gated on a French-text test; list markers only at sentence starts; stale Setup and kind state cleared; a status banner that is read; "an NGO"; the French note.
+- **Pasted text (r12-a):** inline numbered lists, a leading bullet, tabs, intervals and ranges counted once, em-dash word counts, "my research" as ownership, "our guidelines", the page range near the limit, "(applying 2027)".
+- **V6 and tablet (r12-b):** the opening line explains a file from an earlier version; a hint when the agency changes under a competition name; 44 px buttons and banner links on touch tablets; the field panel keeps the field's cue; a second field adds lines to What you did and What already changed.
+
+**INFERRED this round (for Prem to override):** the French-text test; the earlier-version message (parts kept in the file, not shown); the second-field lines (part of Q-19).
+
+**Open for Prem from this round:** a care-home destination (Q-21); health examples for Mentorship and the statement (Q-8).
+
+**Tests:** 261 of 261 (256 + 5).
+

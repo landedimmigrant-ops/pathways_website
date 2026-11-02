@@ -767,6 +767,9 @@
       .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: max(16px, 0.92rem); } /* r10-b-1: the 16 px floor, scaled above it */
       .v7-select, .v7-input, .v7-chg-row .v7-input, .v7-chg-row .v7-select, .v7-tile input, .v7-rail-foot button,
       .v7-mini, .v7-btn-small, .v7-ri, .v7-linkbtn, .v7-ex-btn { min-height: 44px; }
+      /* r12-b-3: buttons, the step buttons and the banner links on a touch tablet too. */
+      .btn, .narrative-nav .btn, .v7-actions .btn, .v7-card .btn:not(.v7-btn-small), .v7-nudge .btn { min-height: 44px; }
+      .proto-banner a { display: inline-flex; align-items: center; min-height: 44px; }
       .v7-icon-btn { width: 44px; height: 44px; }
       .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
       .v7-tile input.v7-tile-name { font-size: max(16px, 0.92rem); min-height: 44px; }
@@ -1689,7 +1692,7 @@
     const IRREGULAR_PAST = ["wrote","built","ran","led","taught","took","made","gave","set","began","brought","chose","found","held","kept","met","put","saw","sent","spent","won","drew","grew","threw","oversaw","undertook","co-wrote"];
     // H1: only these nouns turn "my …" into a claim of role. "My research", "my work", "my paper"
     // are topic statements — they say what the work is about, not which part of it was yours.
-    const MY_ROLE_NOUN = /\bmy\s+(?:group|lab|team|students?|trainees?|collaborators?|co-?authors?|postdocs?|role|part|contributions?|responsibilit(?:y|ies))\b/i;
+    const MY_ROLE_NOUN = /\bmy\s+(?:group|lab|team|students?|trainees?|collaborators?|co-?authors?|postdocs?|role|part|contributions?|responsibilit(?:y|ies)|research|work|program(?:me)?|studies)\b/i; // r12-a-4: "my research has asked…"
     const WEAK_PHRASES = ["worked on","participated in","assisted with","was involved in","helped with"];
     const VAGUE_QUANTITY = ["various","several","many","a number of","a few","multiple","a lot of","lots of","numerous","plenty of"];
     const VAGUE_REPUTATION = ["well-received","widely cited","highly regarded","well-known"];
@@ -1740,10 +1743,12 @@
     // H8: spelled-out numbers count as specific numbers too ("two-year" counts as one hit).
     const NUMBER_WORDS = ["one","two","three","four","five","six","seven","eight","nine","ten",
       "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty",
-      "thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred","thousand","dozen",
-      // r11-a-4: French ("un" and "une" are left out: they are also articles).
-      "deux","trois","quatre","cinq","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","vingt",
-      "trente","quarante","cinquante","soixante","cent","cents","mille","douzaine"];
+      "thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred","thousand","dozen"
+    ];
+    // r11-a-4, U-2: French number words count only in text that reads as French ("un" and "une" are articles).
+    const FR_NUMBER_WORD_RE = /\b(?:deux|trois|quatre|cinq|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|vingt|trente|quarante|cinquante|soixante|cent|cents|mille|douzaine)(?:-[a-zà-ÿ]+)*\b/gi;
+    // U-2, U-3: one test of whether a text reads as French, so French rules never touch English text.
+    const looksFrench = (t) => { const w = String(t || "").toLowerCase().match(/[a-zà-ÿœ']+/g) || []; const fr = w.filter(x => /^(?:le|la|les|des|du|une|est|et|avec|pour|dans|nous|sur|qui|que|ont|été|aux|au|ce|cette|leurs|par|j'ai|l'|d'|qu')$/.test(x) || /^(?:l|d|j|qu)'/.test(x)).length; return w.length >= 4 && fr >= 3 && fr / w.length > 0.12; };
     // r8-a-5: "one" after each, every, no, any, this, that, the, or before "of" or "another", is a pronoun.
     const NUMBER_WORD_RE = (() => {
       // R-1: the pronoun guards (r8-a-5) apply to a bare "one" only; "the twelve sites", "two of the three"
@@ -1785,7 +1790,9 @@
       return out;
     }
 
-    const listLineCount = (v) => (String(v || "").match(/^\s*(?:[•·\-*–—]|\d{1,2}[.)])\s+\S/gm) || []).length;
+    // r12-a-1: "1. … <tab>2. … 3. …" on one line is a list too.
+    const listLineCount = (v) => Math.max((String(v || "").match(/^\s*(?:[•·\-*–—]|\d{1,2}[.)])\s+\S/gm) || []).length,
+      (String(v || "").match(/(?:^|\t|[.;]\s+)(?:[1-9])[.)]\s+[A-ZÀ-Ý]/gm) || []).length);
     function lintField(text, kind, ctx) {
       ctx = ctx || {};
       const out = { flags: [], strengths: [], score: 0, words: 0, hits: [] };
@@ -1807,7 +1814,7 @@
       // unchanged. Prefer under-flagging: a missed vague sentence costs less than nagging a clear one.
       // r10-a-5: "us" is usually general ("the records let us say"), so only "we" and "our" count.
       // r11-b-6: "our cities", "our society" are general, not the team.
-      const weMatches = [...t.matchAll(/\b(we|our)\b(?!\s+(?:cities|city|society|societies|country|countries|world|time|times|planet|species|lives|children|democracy|economy)\b)/gi)].map(m => ({ text: m[0], index: m.index }));
+      const weMatches = [...t.matchAll(/\b(we|our)\b(?!\s+(?:cities|city|society|societies|country|countries|world|time|times|planet|species|lives|children|democracy|economy|guidelines|field|discipline|profession|health system)\b)/gi)].map(m => ({ text: m[0], index: m.index }));
       const weCount = weMatches.length;
       const own = ownershipIn(t), iVerb = own.iVerb, myWord = own.myWord;
       const ownership = iVerb || myWord;
@@ -1851,10 +1858,10 @@
         // H5: the prestige metrics' own numbers are removed from this working copy first — they are
         // the very numbers the prestige flag asks you to cut. Numbers elsewhere still count.
         // r1-a-3: list markers on every line, DOIs and years are not specific numbers.
-        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[\s:;,(])\d{1,2}\)\s/g, " ") /* r11-a-5: "1) un guide ; 2) …" */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
+        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[:;.]\s+)\d{1,2}\)\s/gm, " ") /* r11-a-5, U-1: "1) un guide ; 2) …", not "(n = 45) " */.replace(/(\d+(?:[.,]\d+)?)\s*[–—]\s*\d+(?:[.,]\d+)?/g, "$1") /* r12-a-6: "0.71–0.89", "3–5" count once */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
         metricHits.forEach(m => { forNums = forNums.split(m.text).join(" "); });
         links.forEach(l => { forNums = forNums.split(l.text).join(" "); });
-        const nums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
+        const nums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length + (looksFrench(t) ? (forNums.match(FR_NUMBER_WORD_RE) || []).length : 0);
         if (nums) { out.strengths.push(nums + " specific number" + (nums > 1 ? "s" : "")); out.score++; }
         else if ((kind === "activities" || kind === "outcomes") && !/\b(?:19|20)\d{2}\b/.test(t)) {
           // B-19 (amended): dropped off "outputs" — a list of things without numbers is a correct
@@ -1988,14 +1995,15 @@
     // r7-a-2: where the parts of a paragraph join, each ends as a sentence (a full stop when none is there).
     const asSentence = (t) => {
       if (!t) return t;
+      t = t.replace(/\t+/g, " ").replace(/^\s*[•·*]\s+/, ""); // r12-a-2, r12-a-3: a pasted tab or a lone leading bullet
       t = t.replace(/^[a-zà-ÿœ](?=[a-zà-ÿœ\s'’])/, ch => ch.toUpperCase()); // r11-a-3: "l'équipe" → "L'équipe" // N-2, R-4: "a corpus…" → "A corpus…", "école…" → "École…" ("eDNA", "mRNA", "x-ray" stay)
       return /[.!?…](?:[\s\u00a0\u202f]*["”’'»›)\]])*$/.test(t) ? t : t.replace(/[;:,\s\u00a0—–-]+$/, "") + "."; // N-3
     };
     // r2-b-2: a word is a token with a letter or a digit, so a lone « or » (set off by a non-breaking
     // space) or a dash is not one; list markers count only at a line start. Digit groups joined by a
     // non-breaking or thin space ("3 200") are one number.
-    const joinDigits = (t) => String(t || "").replace(/(\d)[\u00a0\u202f](?=\d{3}\b)/g, "$1").replace(/(\b\d{1,3}) (?=\d{3}\b(?![.,]\d))/g, "$1"); // r11-a-5: "3 200"
-    const countWords = (t) => { const x = joinDigits(t).replace(/^\s*(?:[•·\-*–—]|\d+[.)])\s+/gm, "").trim(); return x ? x.split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length : 0; };
+    const joinDigits = (t) => String(t || "").replace(/(\d)[\u00a0\u202f](?=\d{3}\b)/g, "$1").replace(looksFrench(t) ? /(\b\d{1,3}) (?=\d{3}\b(?![.,]\d))/g : /$^/, "$1"); // r11-a-5, U-3: "3 200" in French text only
+    const countWords = (t) => { const x = joinDigits(t).replace(/[—–](?=\S)|(?<=\S)[—–]/g, " — ") /* r12-a-7 */.replace(/^\s*(?:[•·\-*–—]|\d+[.)])\s+/gm, "").trim(); return x ? x.split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length : 0; };
     const menteeWhere = (m) => [(m.kind && m.kind !== "university" && m.kind !== "other") ? menteeKindLabel(m.kind) : "", one(m.org), one(m.unit)].filter(Boolean).join(", ");
     const menteeHasPlace = (m) => !!(m.kind || (m.org || "").trim() || (m.unit || "").trim());
     const menteeHasContent = (m) => menteeHasPlace(m) || !!m.stageKind || !!((m.stage || "").trim() || (m.recognition || "").trim() || (m.why || "").trim());
@@ -2227,6 +2235,9 @@
       // K-8: an opened file counts as saved at the time it was saved, with this content.
       ns.ui.fileSavedAt = obj && Date.parse(obj.savedAt) || Date.now(); ns.ui.fileSavedSig = contentSig();
       openedPending = (when ? "Opened your draft saved on " + when : "Opened your draft") + (profilePills().length ? ", set up for " + profilePills().join("; ") + "." : ".");
+      // r12-b-1: a file from an earlier version may hold parts this version has no place for; say so.
+      const older = !!((draft.xray && String(draft.xray.text || "").trim()) || String(draft.consultQuestions || "").trim() || (Array.isArray(draft.teamNotes) && draft.teamNotes.length) || (Array.isArray(draft.contributions) && draft.contributions.some(c => c && c.flags && Object.keys(c.flags).length)));
+      if (older) openedPending += " This file came from an earlier version of the tool. Your contributions, evidence, mentorship and statement are here; its advisor questions, pasted text and review marks have no place in this version and are not shown.";
       Object.assign(ns, keep);
       resumeStore();
       saveState();
@@ -2273,7 +2284,7 @@
     let storeSeen = false, storeCleared = false, saveMuted = false;
     // Opening a draft file or resetting is a fresh start, so saving resumes.
     const resumeStore = () => {
-      storeSeen = false; profileShown = 0;
+      storeSeen = false; profileShown = 0; Object.keys(profileSaid).forEach(k => { delete profileSaid[k]; }); // U-4
       if (loadFailed) { loadFailed = false; const w = document.getElementById("v4-save-warning"); if (w) w.hidden = true; }
       if (storeCleared) { storeCleared = false; const w = document.getElementById("v4-save-warning"); if (w) w.hidden = true; }
     };
@@ -2602,8 +2613,8 @@
     };
     // Pass B: the word and page count beside the Draft group label, abbreviated ("1,240 w · 2–3 pp").
     const pagesShort = (w) => {
-      const f = (n) => (Math.round(n * 2) / 2).toString();
-      const lo = f(w / 600), hi = f(w / WORDS_PER_PAGE);
+      const f = (n) => (Math.round(n * 2) / 2).toString(), fl = (n) => (Math.floor(n * 2) / 2).toString(), fc = (n) => (Math.ceil(n * 2) / 2).toString();
+      const lo = overLimit(w) === 1 ? fl(w / 600) : f(w / 600), hi = overLimit(w) === 1 ? fc(w / WORDS_PER_PAGE) : f(w / WORDS_PER_PAGE); // r12-a-5
       if (w / WORDS_PER_PAGE < 0.5) return "";
       return (lo === hi ? lo : lo + "–" + hi) + (+hi <= 1 ? " p" : " pp");
     };
@@ -2880,6 +2891,7 @@
           "Welcome back. You were on “" + (stages().find(s => s.key === ns.stageKey) || {}).short + "”.");
         // W-07 (inferred): the browser may restore the scroll position, so the greeting is also spoken.
         banner.setAttribute("role", "status");
+        { const said = banner.textContent; banner.textContent = ""; requestAnimationFrame(() => { banner.insertBefore(document.createTextNode(said), banner.firstChild); }); } // U-5: a region that exists before its text is read reliably
         c.appendChild(banner); // r11-b-17: the banner's own status role speaks it once
         reentryPending = false;
         // r2-a-9 (inferred): on a writing step, one button goes to the first part still to write.
@@ -3708,7 +3720,7 @@
     function profilePills() {
       const L = ns.lens, out = [];
       if (L.agency) out.push(L.agency === "other" ? "Agency not chosen yet" : labelOf(AGENCIES, L.agency) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV"));
-      if (competitionName()) out.push(competitionName() + (L.year ? " " + L.year : ""));
+      if (competitionName()) out.push(competitionName() + (L.year ? " (applying " + L.year + ")" : "")); // r12-a-8
       else if (L.undecided) out.push("Competition undecided");
       if (L.careerStage) out.push(labelOf(CAREER_STAGES, L.careerStage));
       if (L.discipline) out.push(disciplineLabel(L));
@@ -3792,7 +3804,9 @@
       // r1-b-7: a name that mentions another agency is pointed out, since the prompts quote it.
       const setAgNote = () => {
         const other = agenciesNamed(d.program).filter(v => v !== d.agency);
-        agNote.textContent = !d.undecided && d.agency && d.agency !== "other" && other.length ? "This name mentions " + other.map(v => labelOf(AGENCIES, v)).join(" and ") + ". Update it if it no longer applies." : "";
+        const was = ns.lens.agency; // r12-b-2: a name entered for another agency is pointed out too
+        agNote.textContent = !d.undecided && d.agency && d.agency !== "other" && other.length ? "This name mentions " + other.map(v => labelOf(AGENCIES, v)).join(" and ") + ". Update it if it no longer applies."
+          : !d.undecided && (d.program || "").trim() && was && was !== "other" && d.agency && d.agency !== was ? "This name was entered for " + labelOf(AGENCIES, was) + ". Update it if it no longer applies." : "";
         agNote.hidden = !agNote.textContent;
       };
       UI.chg.setAgNote = setAgNote;
@@ -4004,7 +4018,7 @@
         // V7-23: the note that checks are suggestions, the first time a check fires, once per draft.
         if (checks.querySelector(".v4-flag") && (!ns.ui.checksNoteSeen || ns.ui.checksNoteField === id)) {
           ns.ui.checksNoteSeen = true; ns.ui.checksNoteField = id;
-          checks.appendChild(el("span", "v4-meta v7-first-note", "The checks under each field are suggestions about content (numbers, your role, cautious words); they do not check grammar or spelling. They read English: in French text only the number, list, link and length checks apply. You can continue without acting on them; they carry no score and stay here with your draft."));
+          checks.appendChild(el("span", "v4-meta v7-first-note", "The checks under each field are suggestions about content (numbers, your role, cautious words); they do not check grammar or spelling. They read English: in French text the number, list, link, length and journal-metric checks apply. You can continue without acting on them; they carry no score and stay here with your draft."));
         }
       };
       runChecks();
@@ -4427,8 +4441,9 @@
             box.appendChild(el("h4", null, "In " + (labelOf(DISCIPLINES, dk) || "") + ", the six parts usually sound like this."));
             const ul = el("ul", "v7-hints");
             // r9-b-5: in community-engaged work a partner often raises the question and leads.
-            const COMMUNITY_HINT = { stakes: "a question a partner raised, and what it concerns", role: "your part, beside the partners who lead" };
-            SHAPE_HINTS[dk].map(x => isCommunity() && COMMUNITY_HINT[x.beat] ? { beat: x.beat, text: COMMUNITY_HINT[x.beat] } : x).forEach(x => {
+            // r12-b-4: the field's own cue stays first, with the partners added.
+            const COMMUNITY_HINT = { stakes: "; where a partner raised the question, say so", role: ", beside the partners who lead" };
+            SHAPE_HINTS[dk].map(x => isCommunity() && COMMUNITY_HINT[x.beat] ? { beat: x.beat, text: x.text + COMMUNITY_HINT[x.beat] } : x).forEach(x => {
               const li = el("li");
               const d = el("span", "v7-jd v7-jd-" + x.beat); d.setAttribute("aria-hidden", "true");
               li.appendChild(d); li.appendChild(el("b", null, BEAT_LABEL[x.beat] + "."));
@@ -4591,6 +4606,14 @@
           if (f.k === "outputs" && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
             const OUT_SHORT = { creative: "exhibitions, films or performances", humanities: "books, editions or collections", stem: "papers, datasets, tools or code", health: "papers, guidelines or datasets", social: "papers, reports or datasets" };
             q += " Name outputs from " + ({ stem: "STEM and engineering", health: "health and clinical work", social: "the social sciences", humanities: "the humanities", creative: "creative and fine arts work" }[d2] || labelOf(DISCIPLINES, d2)) + " too, such as " + OUT_SHORT[d2] + "."; // r9-a-15
+          }
+          // r12-b-5: the second field adds a line to What you did and What already changed too.
+          if ((f.k === "activities" || f.k === "outcomes") && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
+            const SECOND = {
+              activities: { health: "Count participants, sites or sessions on the health side too.", stem: "Count sites, samples or tests on the STEM side too.", social: "Count participants or sites on the social sciences side too.", humanities: "Count sources or collections on the humanities side too.", creative: "Count works, venues or performers on the creative side too." },
+              outcomes: { health: "Name clinics, care practice or guidelines that took it up too.", stem: "Name tools, standards or practices that took it up too.", social: "Name policies, programs or communities that took it up too.", humanities: "Name readers, archives or teaching that took it up too.", creative: "Name audiences, venues or practices that took it up too." }
+            };
+            if (SECOND[f.k][d2]) q += " " + SECOND[f.k][d2];
           }
           // Q-18: the opening part follows the main field; a second field framed the other way adds a line.
           if (f.k === "stakes" && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
@@ -4772,9 +4795,9 @@
           const kinds = el("div", "v7-kinds");
           kinds.addEventListener("keydown", (e) => { // r11-b-10: Escape closes the chooser and keeps the kind it had
             if (e.key !== "Escape" || !ev.type) return;
-            e.preventDefault(); if (UI.kindPrev && UI.kindPrev.key === kKey) ev.type = UI.kindPrev.type;
+            e.preventDefault(); const back = !!(UI.kindPrev && UI.kindPrev.key === kKey); if (back) ev.type = UI.kindPrev.type;
             UI.kindOpen = ""; UI.kindPrev = null; saveState(); renderStage();
-            const n = document.getElementById("evt" + kKey); if (n) n.focus({ preventScroll: true }); announce("Kind unchanged: " + ev.type + ".");
+            const n = document.getElementById("evt" + kKey); if (n) n.focus({ preventScroll: true }); announce((back ? "Kind unchanged: " : "Kind: ") + ev.type + "."); // U-6
           });
           kinds.setAttribute("role", "radiogroup"); kinds.setAttribute("aria-label", "Evidence item " + letter(j) + ": kind");
           // r9-a-8: creative work lists its own kind first.
@@ -4786,7 +4809,7 @@
               // r3-a-1: an arrow key moves through the kinds and keeps the chooser open; a click, Enter
               // or Space chooses, folds it to one line and moves on to The item.
               const viaArrow = arrowPick;
-              ev.type = t; UI.kindOpen = viaArrow ? kKey : ""; saveState(); renderStage();
+              ev.type = t; UI.kindOpen = viaArrow ? kKey : ""; if (!viaArrow) UI.kindPrev = null; /* U-6 */ saveState(); renderStage();
               const n = viaArrow ? document.getElementById(b.id) : document.getElementById(t === "Other" ? "evo" + kKey : "evt" + kKey);
               if (n) n.focus({ preventScroll: true });
               if (!viaArrow) announce("Kind: " + t + "."); // an arrow's option is read by the screen reader itself
@@ -4861,7 +4884,7 @@
       }
       const add = el("button", "v7-add", "+ Add " + ((contrib.evidence || []).length ? "another item" : "an item")); add.type = "button"; add.id = "ev-add-" + contrib.cid;
       add.addEventListener("click", () => {
-        contrib.evidence.push({ text: "", type: "", note: "" }); UI.kindOpen = ""; saveState(); renderStage();
+        contrib.evidence.push({ text: "", type: "", note: "" }); UI.kindOpen = ""; UI.kindPrev = null; saveState(); renderStage();
         // W-03: as "+ Add a contribution" does, focus goes to the new item (its first kind card).
         const j = contrib.evidence.length - 1, it = root.querySelectorAll(".v7-ev-item")[j], k = it && it.querySelector(".v7-kind");
         if (k) k.focus({ preventScroll: true });
@@ -4959,7 +4982,7 @@
     }
     const lcArticle = (t) => String(t || "").replace(/^(A|An|The)(?=\s)/, a => a.toLowerCase());
     // T-13: "The Ottawa Hospital" keeps its capital; "The provincial ministry" (a phone's capital) does not.
-    const lcArticleSoft = (t) => String(t || "").replace(/^(A|An|The)(?=\s+[a-zà-ÿ])/, a => a.toLowerCase());
+    const lcArticleSoft = (t) => String(t || "").replace(/^(A|An)(?=\s)|^The(?=\s+(?:[a-zà-ÿ]|University\b|Université\b))/, a => a.toLowerCase()); // U-7: "a"/"an" always; "the" before a lower-case word or a university
     function menteeSentence(m) {
       // G-3: a level typed under Other keeps its capitals ("MD-PhD trainee"); only a leading capital is lowered.
       const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) || "trainee";
@@ -5068,6 +5091,7 @@
           const on = el("input", "v7-input v7-tile-name"); on.type = "text"; on.id = "v7-t-other-name"; on.value = ns.mentorOtherLabel || "";
           on.placeholder = "Who are they?"; on.setAttribute("aria-label", "Name the Other group, such as community researchers (optional)");
           on.addEventListener("input", e => { ns.mentorOtherLabel = e.target.value; saveState(); });
+          on.addEventListener("blur", () => { on.scrollLeft = 0; }); // r12-b-8: the start of the name shows
           tile.appendChild(on);
         }
         tiles.appendChild(tile);
@@ -6052,9 +6076,9 @@
     }
     // D-12: one length rule everywhere, 500 to 600 words a page. "roughly 2 to 2.5"
     function pagesRange(words) {
-      const lo = words / 600, hi = words / WORDS_PER_PAGE;
-      const f = (n) => (Math.round(n * 2) / 2).toString();
-      return "roughly " + (f(lo) === f(hi) ? f(lo) : f(lo) + " to " + f(hi));
+      const lo = words / 600, hi = words / WORDS_PER_PAGE, edge = overLimit(words) === 1; // r12-a-5: at the limit the range shows both sides of it
+      const fl = (n) => ((edge ? Math.floor(n * 2) : Math.round(n * 2)) / 2).toString(), fh = (n) => ((edge ? Math.ceil(n * 2) : Math.round(n * 2)) / 2).toString();
+      return "roughly " + (fl(lo) === fh(hi) ? fl(lo) : fl(lo) + " to " + fh(hi));
     }
     // Words in the draft itself (no labels, no gap notes): what the page limit is measured against.
     function draftWords() { const w = glanceWordSplit(); return w.contrib + w.mentor + w.ps; }
