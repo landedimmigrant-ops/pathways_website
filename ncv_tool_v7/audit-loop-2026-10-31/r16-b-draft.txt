@@ -1,0 +1,41 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: SSHRC · Tri-agency CV · Insight Development Grant (applying 2027) · Early career · Humanities + Social sciences · Community-engaged]
+Before you submit: paste this into the current version of SSHRC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Arial in black type.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am an early-career researcher at a university in my home territory. My work is in Indigenous studies and oral history.
+
+My work asks how a community can keep its own oral record, and decide who hears it, when archives have long held that record for it. Three strands address it: oral histories recorded with Elders, a community-held archive with its own access protocols, and a land-based teaching program. One thread connects them: the community sets the terms of how its knowledge is recorded and taught. I grew up in the community where I now work. I came to oral history after my grandmother’s recordings sat in a university collection that the family could not reach, and I completed my PhD in 2026 while holding the project at the community’s request. I have two articles reviewed by the Elders’ council before publication, a chapter on return as a research method, a community-held archive of 48 recordings and a doctoral fellowship from 2021 to 2025. The Insight Development Grant supports work at an early stage of a new line of research, and the next phase, a shared method for community-held archives, is at that stage. The next phase tests a protocol for community-held archives with two neighbouring communities, led by their own councils, and writes the method up with community co-authors.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Elders speak, the community keeps the record
+   Elders in my home community hold accounts of land use, language and kinship that existed only in speech. The community asked that these accounts be recorded, and kept in its own hands, before they are lost. The Elders’ council set the questions and approves every recording; I lead the interviews and the archive design with a community archivist. Over 30 months, with the community’s agreement, I recorded 48 oral histories with 21 Elders, in the language each chose, and worked with the archivist to transcribe, translate and describe every recording under access protocols the council wrote. The project produced a community-held archive of 48 recordings with transcripts, a written protocol for access and reuse, and two articles that the Elders’ council reviewed before submission. The community now plays the recordings in its language classes, and the band council cited three of them in its 2026 land-use submission. If community-held archives with community-set protocols become the norm for oral history, Indigenous communities could keep decisions about their own records. (a, b)
+   a. Community Oral History Archive, 48 recordings held by the community’s cultural centre; access follows the Elders’ council protocol, in words  [Dataset / tool]
+      The Elders’ council, teachers and families use it.
+   b. Elders’ council protocol for access and reuse, signed 2025, held by the cultural centre  [Community document]
+      It sets who may listen and what may be shared.
+
+2. Teaching from the land, with the Elders
+   Young people in the community learn the language and the history in classrooms, away from the places those teachings name. Elders asked for a program that teaches on the land, where the teachings belong, and that the community runs. The Elders’ council and the education committee set the content; I design the learning and the research with them and teach two of the seasonal camps. Since 2023 I have worked with 12 Elders and four community teachers to hold 16 seasonal camps for 140 youth, built a teaching guide from the oral histories, and kept a record of what the youth and Elders reported. The program produced a land-based teaching guide in the community’s language and in English, a camp calendar the community owns, and one article written with two community teachers. The school now schedules the camps within its year, the community funds the program from its own budget, and 12 of the first youth now work as camp helpers. If a program run by the community and taught on the land is recognized as part of formal schooling, other communities could adopt the guide and teach on their own land. (a)
+   a. Agreement between the education committee and the school to schedule the seasonal camps within the school year, 2025  [Policy / practice uptake]
+      It puts the camps in the school calendar.
+
+3. Returning the recordings to families
+   Families in the community had no access to the recordings of their own Elders, and the community wanted each family to decide how its Elder is heard. The families decide what is shared; I coordinate the return and write the access process with the cultural centre. Over 14 months I met with 31 families, returned copies of each recording with a listening session, and recorded each family’s wishes for access in the archive. The project produced a family access form, a listening-session guide for the cultural centre and a chapter on return as a research method. The cultural centre now runs return sessions on its own, and 19 families have set access wishes that the archive applies. If the process is adopted by other community archives, families could hold the same say over how their Elders are heard. (a)
+   a. Family access form, 2026, held by the cultural centre  [Community document]
+      It records each family’s wishes.
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 1 doctoral student, 2 master's students, 3 undergraduate researchers, 14 community interviewers and youth camp helpers
+A community interviewer I mentored now works at the community cultural centre (archive assistant) and catalogues new recordings for the archive and trains the next group of interviewers.
+A master's student I trained now works at the band council education office (language coordinator) and coordinates the language program that uses the recordings.
+[One thing you do] Every new interviewer first sits in on two recorded sessions led by an Elder, and the Elder, not I, decides when that interviewer is ready to record alone.
+[Who gets in] Community members join the team by invitation of the Elders’ council. Since 2024 the project pays interviewers from the first session, which let four people who had no university affiliation join.
+[Who else you mentor (optional)] I mentor a first-year graduate student from a neighbouring community who is starting her own oral-history project, and I helped her draft the request to her community’s council.

@@ -597,7 +597,8 @@
       .v7-qblock, .v7-card, .v7-dash { padding: 14px 14px 16px; }
       .v7-choices { grid-template-columns: 1fr 1fr; }
       .v7-comp-row, .v7-pair, .v7-glance, .v7-fmt { grid-template-columns: 1fr; }
-      .v7-tiles { grid-template-columns: 1fr 1fr; }
+      .v7-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } /* r16-b-1: tiles never push the page wider */
+      .v7-tile.v7-tile-wide { grid-column: 1 / -1; } /* r16-b-3: the Other tile spans the row, so its name can be read */
       .v7-card-t { white-space: normal; }
       .v7-card-h { align-items: flex-start; }
       .v7-f.is-open { padding: 10px 12px 12px; }
@@ -757,6 +758,7 @@
     @media (max-width: 48em) {
       .v7-box, .v7-input, .v7-select, .v7-chg-row .v7-input { font-size: max(16px, 0.92rem); } /* r10-b-1: the 16 px floor, scaled above it */
       .v7-select, .v7-input, .v7-chg-row .v7-input, .v7-chg-row .v7-select, .v7-tile input, .v7-rail-foot button { min-height: 44px; }
+      .btn, .narrative-nav .btn, .v7-actions .btn, .v7-card .btn:not(.v7-btn-small), .v7-nudge .btn { min-height: 44px; } /* r16-b-5 */
       .v7-icon-btn { width: 44px; height: 44px; }
       .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
       .v7-tile input.v7-tile-name { font-size: max(16px, 0.92rem); min-height: 44px; }
@@ -1762,7 +1764,7 @@
       w.forEach((x, k) => {
         const art = /^(?:le|la|les|des|du|de|un|une|en|aux|au)$/.test(x);
         // Y-3: "de", "du", "des", "au", "aux" before a lower-case word are French ("Encadrement de quinze stagiaires").
-        const str = /^(?:est|sont|et|à|avec|pour|dans|nous|sur|qui|que|ont|été|ce|cette|leurs|par|ne|pas|plus)$/.test(x) || /^(?:l|d|j|qu|n|s)['’]/i.test(x) || (/^(?:de|du|des|au|aux)$/.test(x) && /^[a-zà-ÿœ]/.test(w[k + 1] || ""));
+        const str = /^(?:est|sont|et|à|avec|pour|dans|nous|sur|qui|que|ont|été|ce|cette|leurs|par|ne|pas|plus)$/.test(x) || /^(?:l|d|j|qu|n|s)['’]/i.test(x) || (/^(?:de|du|des|au|aux)$/.test(x) && /^[a-zà-ÿœ]/.test(w[k + 1] || "") && !(k > 1 && /^[A-ZÀ-Ý]/.test(w[k - 1]))); // Z-4: not inside a name run
         if (art && !str && k > 1 && /^[A-ZÀ-Ý]/.test(w[k - 1])) return; // a name run; the line's first word does not start one
         if (art || str) fr++; if (str) strong++;
       });
@@ -1812,7 +1814,7 @@
     // r12-a-1: "1. … <tab>2. … 3. …" on one line is a list too.
     // V-7: inline markers count only as a run 1, 2, 3… and not after Fig., No., vol., p. and the like.
     const inlineRun = (v) => {
-      const ns2 = [...String(v || "").matchAll(/(?:^|\t|(\S+)[.;]\s+)([1-9])[.)]\s+[A-ZÀ-Ý]/gm)].filter(m => !/^(?:figs?|nos?|vol|pp?|ch|table|tab|eq|art|sec)$/i.test(m[1] || "")).map(m => +m[2]);
+      const ns2 = [...String(v || "").matchAll(/(?:^|\t|(\S+)[.;:]\s+)([1-9])[.)]\s+[A-Za-zÀ-ÿ]/gm)] /* r16-a-2: lower-case items too */.filter(m => !/^(?:figs?|nos?|vol|pp?|ch|table|tab|eq|art|sec)$/i.test(m[1] || "")).map(m => +m[2]);
       let run = 0; ns2.forEach(n => { if (n === run + 1) run = n; }); return run >= 2 ? run : 0;
     };
     const listLineCount = (v) => Math.max((String(v || "").match(/^\s*(?:[•·\-*–—]|\d{1,2}[.)])\s+\S/gm) || []).length, inlineRun(v));
@@ -2624,7 +2626,7 @@
     const mentorTotal = () => Object.values(ns.mentorCounts).reduce((n, v) => n + (parseInt(cleanCount(v), 10) || 0), 0);
     // "14 doctoral students, 1 master's student": the totals line every output prints.
     // r5-b-5: the Other group prints under the name the researcher gives it ("7 community researchers").
-    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out : countNoun(n, out))); // r11-a-10: as typed
+    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out.replace(/^(?!(?:Elders?|Indigenous|First|Inuit|Métis|Knowledge)\b)([A-ZÀ-Ý])(?=[a-zà-ÿ]+\s)/, ch => ch.toLowerCase()) : countNoun(n, out))); // r11-a-10, r16-a-7: as typed, a phone's capital lowered
     const menteesDescribed = () => ns.mentees.filter(menteeHasContent).length;
     const stageDone = (key) => {
       const v = !!ns.visited[key];
@@ -2731,6 +2733,8 @@
       let incoming = null; try { incoming = e.key === null || e.newValue === null ? null : JSON.parse(e.newValue); } catch (_) {}
       // X-6: a Reset in another tab removes the draft (newValue null) and is mirrored, as before r13; a blank copy
       // written by a fresh start after the browser's data was cleared is refused.
+      let resetMark = null; try { resetMark = localStorage.getItem(NCV_KEY + "-reset"); } catch (_) {}
+      if ((e.newValue === null || e.key === null) && draftHasContent(ns) && !resetMark) { markCleared(); return; } // Z-6: cleared data, not a Reset
       if (e.newValue !== null && e.key !== null && draftHasContent(ns) && !(incoming && draftHasContent(incoming))) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
       otherTab = e.key === null ? null : e.newValue;
       if (!document.hidden && !composing) takeUpOtherTab(false);
@@ -2743,7 +2747,8 @@
     window.addEventListener("pageshow", (e) => {
       if (!e.persisted || storeCleared || loadFailed) return;
       try { const raw = localStorage.getItem(NCV_KEY);
-        if (raw === null && draftHasContent(ns)) { otherTab = null; takeUpOtherTab(true); return; } // Y-6: a Reset elsewhere is mirrored here too
+        // Y-6, Z-6: a Reset elsewhere (it leaves a mark) is mirrored here too; a missing draft without the mark is cleared data.
+        if (raw === null && draftHasContent(ns)) { if (localStorage.getItem(NCV_KEY + "-reset")) { otherTab = null; takeUpOtherTab(true); } else markCleared(); return; }
         if (raw !== null && raw !== JSON.stringify(ns)) {
         // X-5: the same rule as the storage event: a blank copy does not replace a written draft.
         let inc = null; try { inc = JSON.parse(raw); } catch (_) {}
@@ -2791,10 +2796,10 @@
     root.addEventListener("input", (e) => { if (!(e.target.closest && e.target.closest(".v7-undo"))) endUndo(); }, true);
     // Y-2: a select's change, and a click on a button that changes something (not a disclosure, a rail item or the Undo row).
     root.addEventListener("change", (e) => { if (!(e.target.closest && e.target.closest(".v7-undo"))) endUndo(); }, true);
+    // Z-2: only controls that change the draft end it (navigation, folding, Cancel and views do not).
     root.addEventListener("click", (e) => {
-      const b = e.target.closest && e.target.closest("button"); if (!b || b.closest(".v7-undo") || b.hasAttribute("aria-expanded") || b.classList.contains("v7-ri")) return;
-      if (/^Remove /.test(b.getAttribute("aria-label") || "") || b.closest(".v7-gv-foot, .v7-export, .v7-actions")) return; // a new removal makes its own Undo; downloads and copies change nothing
-      endUndo();
+      const b = e.target.closest && e.target.closest(".v7-choice, .v7-kind, .v7-add, #v7-add-contrib, .v7-mini, .v7-lv-clear, [id^='mv-'], .v7-warn .btn-primary, #v7-chg-panel .btn-primary");
+      if (b && !b.closest(".v7-undo")) endUndo();
     }, true);
     const goStage = (key) => {
       endUndo();
@@ -4685,10 +4690,12 @@
           }
           // r13-b-1: work with a partner under an agreement may keep names and figures private.
           if ((f.k === "activities" || f.k === "outcomes") && (ns.lens.workMode || []).includes("industry")) helpExtra = " If an agreement keeps the partner or its figures private, describe the partner by its sector and size, give what you can, and say the rest is withheld.";
+          // r16-b-11: in community-engaged work, who asked for the work and what may be named.
+          if (f.k === "stakes" && isCommunity()) helpExtra = " If a community asked for this work, say so. Name a community, its Elders or its protocols only as they agree.";
           // r12-b-5: the second field adds a line to What you did and What already changed too.
           if ((f.k === "activities" || f.k === "outcomes") && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
             const SECOND = {
-              activities: { health: "Count participants, sites or sessions on the health side too.", stem: "Count sites, samples or tests on the STEM side too.", social: "Count participants or sites on the social sciences side too.", humanities: "Count sources or collections on the humanities side too.", creative: "Count works, venues or performers on the creative side too." },
+              activities: { health: "Count participants, sites or sessions on the health side too.", stem: "Count sites, samples or tests on the STEM side too.", social: "Count the people or sites involved on the social sciences side too.", humanities: "Count sources or collections on the humanities side too.", creative: "Count works, venues or performers on the creative side too." },
               outcomes: { health: "Name clinics, care practice or guidelines that took it up too.", stem: "Name tools, standards or practices that took it up too.", social: "Name policies, programs or communities that took it up too.", humanities: "Name readers, archives or teaching that took it up too.", creative: "Name audiences, venues or practices that took it up too." }
             };
             if (SECOND[f.k][d2]) q += " " + SECOND[f.k][d2];
@@ -4701,7 +4708,7 @@
           }
           fields.appendChild(cardField({
             // The role help's community-engaged example (partners lead) comes before a field's own example.
-            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: f.role && isCommunity() && f.def.helpVariants && f.def.helpVariants.community ? interpolate(f.def.helpVariants.community) : resolveHelp(f.def) + helpExtra, line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
+            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: f.role && isCommunity() && f.def.helpVariants && f.def.helpVariants.community ? interpolate(f.def.helpVariants.community).replace(/“The community organizations[^”]*”/, ({ humanities: "“The Elders’ council sets the questions and approves each recording; I lead the interviews and the archive design with a community archivist.”", stem: "“The department sets the standard and runs the road; I lead the design and the field measurements with its engineers.”" }[ns.lens.discipline] || "$&")) : resolveHelp(f.def) + helpExtra, // r16-b-8 line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
             lintKind: f.lint, get: () => contrib[f.k], set: (v) => { contrib[f.k] = v; },
             // r1-b-2: a role line that names your part covers the card, so "we" elsewhere in it is the team.
             // r1-b-2, r5-b-2: a chosen level or a written role line names your part for the whole card.
@@ -4907,7 +4914,7 @@
         ti.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
         // r7-b-10: what to write for each kind of item.
         const ITEM_HINT = { "Peer-reviewed": "The reference: authors, year, title and venue", "Media / public": "The outlet or platform, the title and the date; for your own series, its audience", "Policy / practice uptake": "The policy or program, who adopted it (or its sector, if it cannot be named) and when",
-          "Dataset / tool": "Name, version, who holds it and how access is granted (a licence, a DOI, a data agreement or an archive's terms of use), in words", "Award / recognition": "The award, who gave it and the year", "Funding": "The funder, the program, the amount and the years",
+          "Dataset / tool": "Name, version, who holds it and how to access it, in words", "Award / recognition": "The award, who gave it and the year", "Funding": "The funder, the program, the amount and the years",
           "Replication / citation": "The study, standard, guideline or code that repeated, cited or built on your work", "Exhibition, performance or screening": "The work, the venue, the city and the dates", "Community document": "What it is (a letter, resolution, agreement, report or plan), who holds it and its date" };
         ti.placeholder = ITEM_HINT[ev.type] || "Name it so a reviewer can find it, or say who holds it: a reference, a preprint, a talk, a patent and its licence, a performance, a policy, a dataset, an award or a letter"; ti.value = ev.text || "";
         const ln = el("p", "v4-ev-note"); ln.id = "evln" + contrib.cid + "-" + j; ti.setAttribute("aria-describedby", ln.id);
@@ -5058,10 +5065,10 @@
     const lcArticleSoft = (t) => String(t || "").replace(/^(A|An)(?=\s)|^The(?=\s+(?:[a-zà-ÿ]|Universit(?:y|é)(?=\s|$)))/, a => a.toLowerCase()); // U-7: "a"/"an" always; "the" before a lower-case word or a university
     function menteeSentence(m) {
       // G-3: a level typed under Other keeps its capitals ("MD-PhD trainee"); only a leading capital is lowered.
-      const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) || "trainee";
+      const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^(?:a|an|the)\s+/i, "").replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) || "trainee"; // r16-b-2: "a community interviewer" → "community interviewer"
       // r3-a-7: the unit or position follows the organization in brackets ("at a robotics firm (process engineer)").
       // r10-a-3: a phone's capital article mid-sentence ("at The provincial ministry") is lowered.
-      const orgName = lcArticleSoft(one(m.org)), unit = one(m.unit), bracket = (u) => /[()]/.test(u) ? ", " + u : " (" + u + ")";
+      const orgName = lcArticleSoft(one(m.org)), unit = one(m.unit), bracket = (u) => /[()]/.test(u) || /\)\s*$/.test(orgName) ? ", " + u : " (" + u + ")"; // r16-a-5: no two bracket groups side by side
       const org = orgName && unit ? orgName + bracket(unit) : orgName;
       let where = !org && !m.kind ? "" : m.kind === "industry" ? "now works in industry" + (org ? " at " + org : "")
         : m.kind === "government" ? "now works in government" + (org ? " at " + org : "")
@@ -5161,6 +5168,7 @@
         inp.addEventListener("input", e => { const v = cleanCount(e.target.value); if (e.target.value !== v) e.target.value = v; ns.mentorCounts[k] = v; saveState(); setSum(); setPc(); refreshRail(); announceCount(sum.textContent + ". " + pc.textContent); });
         tile.appendChild(l); tile.appendChild(inp);
         if (k === "other") {
+          tile.classList.add("v7-tile-wide");
           const on = el("input", "v7-input v7-tile-name"); on.type = "text"; on.id = "v7-t-other-name"; on.value = ns.mentorOtherLabel || "";
           on.placeholder = "Who are they?"; on.setAttribute("aria-label", "Name the Other group, such as community researchers (optional)");
           on.addEventListener("input", e => { ns.mentorOtherLabel = e.target.value; saveState(); });
@@ -6005,6 +6013,12 @@
         : labelOf(AGENCIES, a) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV") + " · " + font });
       // r2-a-16: links the format does not allow are named here too, before anything is downloaded.
       { const dw = draftWords(), ol = overLimit(dw); if (ol) { const ov = el("p", "v7-note v7-unfinished-note v7-over-note", "Your draft is about " + roughWords(dw).toLocaleString("en-CA") + " words, " + pagesRange(dw) + " pages. The limit in English is " + PAGE_LIMIT_EN + " pages, " + (ol === 2 ? "so it needs cutting before it goes into the template." : "so it may need cutting; check the page count in the template.")); ov.setAttribute("role", "note"); c.appendChild(ov); } } // r6-a-4, M-4
+      // r16-a-3: a draft written in French is told which sentences the tool still writes in English (Q-23).
+      if (looksFrench(ns.contributions.map(c => [c.stakes, c.activities, c.outputs].join(" ")).join(" ") + " " + Object.values(ns.ps || {}).join(" "))) {
+        const fr = el("div", "v7-note"); fr.setAttribute("role", "note");
+        fr.appendChild(el("p", null, "Your draft reads as French. The sentences the tool writes around your text are in English for now: the first sentence of your statement, the trainee sentences and the totals line. Translate them before you paste."));
+        c.appendChild(fr);
+      }
       // r3-b-5 (inferred): contributions still missing parts are named, so stubs are not pasted by accident.
       const unfinished = [...new Set(missingList().filter(m => m.step === "contrib" && !/none written yet/.test(m.label)).map(m => m.i))];
       if (unfinished.length) {
@@ -6196,7 +6210,7 @@
     }
     // W-19 (inferred): the .txt is the working copy. It carries the tool's notes in square brackets
     // (kinds, what is still missing, the mentorship prompts); the section copies hold the text to paste.
-    const GAP_HINT = { stakes: "What problem or question was this work answering?", outcomes: "Name something concrete if it has changed; if nothing has yet, say so under What could change.",
+    const GAP_HINT = { stakes: "What problem or question was this work answering?", outcomes: "If nothing has changed yet, leave this empty and put what you expect under What could change.",
       impact: "Who or what could this affect if it is taken up more widely? Hedged language is fine here.", /* r11-b-16 */ ev: "Add one item a reviewer could check." };
     function buildExportText() {
       const lines = [], rule = "=".repeat(60);
@@ -6302,7 +6316,7 @@
             "body{font-family:" + font + ";font-size:12pt;line-height:1.2;color:#000;max-width:17.6cm;margin:2rem auto;padding:0 1rem;}") +
         "h1{font-size:12pt;font-weight:bold;margin:0 0 6pt;}h2{font-size:12pt;font-weight:bold;margin:12pt 0 4pt;}p{margin:0 0 6pt;}" +
         "sup{font-weight:bold;} .contrib{margin:0 0 8pt;} .ctitle{font-weight:bold;}" +
-        "h1,h2,.ctitle{break-after:avoid;page-break-after:avoid;} .evbox,.evbox>div{break-inside:avoid;page-break-inside:avoid;} .evn{font-style:italic;padding-left:1.2em;display:block;}" + // r15-b-4, r15-b-5
+        "h1,h2,.ctitle{break-after:avoid;page-break-after:avoid;} .evbox,.evbox>div{break-inside:avoid;page-break-inside:avoid;} .evn{font-style:italic;margin:0 0 0 1.2em;}" + // r15-b-4, r15-b-5
         ".evbox{border-left:2px solid #999;padding:0 0 0 8pt;margin:4pt 0 0;font-size:12pt;}" +
         ".screen-note{font-family:system-ui,sans-serif;font-size:13px;color:#555;background:#fff8e1;border:1px solid #f9ca24;padding:8px 12px;margin:0 0 1.5rem;line-height:1.5;}" +
         ".screen-note button{display:block;margin:8px 0 0;font:600 14px system-ui,sans-serif;padding:8px 18px;min-height:44px;border:0;border-radius:6px;background:#912338;color:#fff;cursor:pointer;}" +
@@ -6321,12 +6335,12 @@
       liveContributions().forEach(({ c: contrib }, i) => {
         // W-14, W-16, W-17: the shared assembly; the headline on its own line with no added full stop.
         const w = assembleContribution(contrib);
-        html += "<div class='contrib'><p><span class='ctitle'>" + (i + 1) + ". " + esc(w.title || "Untitled contribution") + "</span><br>";
+        html += "<div class='contrib'><p class='ctitle' style='margin:0'>" + (i + 1) + ". " + esc(w.title || "Untitled contribution") + "</p><p>"; // Z-5: the headline is a block, kept with its text
         html += esc(w.body) + (w.keys.length && w.body ? "<sup>" + w.keys.join(", ") + "</sup>" : "");
         html += "</p>";
         if (w.refs.length) {
           html += "<div class='evbox'>";
-          w.refs.forEach(r => { html += "<div><b>" + r.key + ".</b> " + esc(r.text) + (r.note ? "<span class='evn'>" + esc(r.note) + "</span>" : "") + "</div>"; });
+          w.refs.forEach(r => { html += "<div><b>" + r.key + ".</b> " + esc(r.text) + (r.note ? "<div class='evn'>" + esc(r.note) + "</div>" : "") /* r16-a-1: a block Word keeps on its own line */ + "</div>"; });
           html += "</div>";
         }
         html += "</div>";
@@ -6454,7 +6468,7 @@
         (Object.values(ns.mentorCounts).some(v => String(v).trim()) ? "yes" : "no") + ", " +
         [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(v => (v || "").trim()).length + " of 3 prompts answered");
       if (ns.mode === "xray" || ns.xray.text.trim()) out.push("Structural read: pasted text " + (ns.xray.text.trim() ? "present" : "empty") + ", runs " + (S.events.structuralRead || 0) + ", sample draft used " + (S.events.sampleDraft || 0) + "×");
-      out.push("Self-check ticked: " + Object.values(ns.selfCheck).filter(Boolean).length + " of 7");
+      { const ids = ["ownership", "specificity", "significance", "coherence", "selection", "proofread", "mentorship", "agreement", "format"]; out.push("Self-check ticked: " + ids.filter(id => ns.selfCheck[id]).length + " of " + ids.length); } // Z-3
       out.push("Actions: " + [["downloadDraft", "draft downloaded"], ["downloadPacket", "advisor packet downloaded"], ["printView", "print view"],
         ["copyDraft", "draft copied"], ["downloadWord", "Word file downloaded"], ["copySection", "section copied"], ["orderMove", "contributions moved"],
         ["assemble", "assembled paragraph opened"]].map(([k, l]) => l + " " + (S.events[k] || 0)).join(", "));
@@ -6710,7 +6724,7 @@
       if (e) e.preventDefault();
       setTimeout(() => { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); announce("Draft cleared."); }, 0);
       resumeStore();
-      try { localStorage.removeItem(NCV_KEY); } catch (_) {}
+      try { localStorage.setItem(NCV_KEY + "-reset", String(Date.now())); localStorage.removeItem(NCV_KEY); } catch (_) {} // Z-6
       ns = defaultState(); ns.ui.histGen = Date.now(); // K-1
       setTimeout(() => { try { history.replaceState({ step: "start", n: histN, g: ns.ui.histGen }, "", "#start"); } catch (_) {} }, 0); // M-3
       resetUI();

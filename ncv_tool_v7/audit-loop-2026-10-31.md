@@ -359,3 +359,21 @@ _none yet_
 
 **Tests:** 273 of 273 (270 + 3).
 
+### Round 16 · Fable's review of round 15, a committee member reading three drafts' outputs, a researcher on a small, slow phone (2026-11-01)
+
+**Who walked it** (the round 16 snapshot = commit `7f6d852`), all findings in [r16-findings.md](audit-loop-2026-10-31/r16-findings.md)
+- **Fable review** of round 15: 1 major · 6 minor (the Word note, Undo on navigation clicks, the self-check count, keep-with-next, cleared data versus Reset).
+- **r16-a** Senior reviewer reading the outputs of three earlier testers' drafts: 2 major · 4 minor · 4 polish ([the .txt exports](audit-loop-2026-10-31/r16-a-draft.txt)). Every output agrees with the screen.
+- **r16-b** Early-career researcher in Indigenous studies on a 320 px phone, four times slower: 8 minor · 4 polish ([draft](audit-loop-2026-10-31/r16-b-draft.txt)).
+
+**Fixed this round**
+- **Review (Z-1 to Z-7):** evidence notes and headlines as blocks in Word; Undo ends only on changing controls; the self-check count; French name runs; a Reset mark to tell Reset from cleared data; the gap note.
+- **Committee read (r16-a):** lower-case numbered runs; a French-draft note on Export; no two bracket groups; group names lowered mid-list.
+- **Small phone (r16-b):** tiles at large text; "An a"; the Other tile; 44 px buttons; community agreement under The problem or question; an oral-history role example.
+
+**INFERRED this round (for Prem to override):** the Undo allow-list; the Reset mark; the French-draft note; the community agreement line and role examples (part of Q-19).
+
+**Open for Prem from this round:** none new (Q-20, Q-23, Q-24 grow).
+
+**Tests:** 279 of 279 (273 + 6).
+

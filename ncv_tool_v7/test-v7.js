@@ -674,7 +674,7 @@ async function seed(state, extra) {
       qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
     const body = "S one. I led R. A one. O one. C one. I one.";
-    check("Word: the headline on its own line, The problem or question then the role line in roman, superscript a, b, no kind labels (W-14, W-16, W-17)", r.doc.includes("<span class='ctitle'>1. Made-up T</span><br>" + body + "<sup>a, b</sup>") && !/Peer-reviewed|\(Other\)|<em>/.test(r.doc), r.doc.slice(r.doc.indexOf("ctitle"), r.doc.indexOf("ctitle") + 300));
+    check("Word: the headline on its own line, The problem or question then the role line in roman, superscript a, b, no kind labels (W-14, W-16, W-17)", r.doc.includes("<p class='ctitle' style='margin:0'>1. Made-up T</p><p>" + body + "<sup>a, b</sup>") && !/Peer-reviewed|\(Other\)|<em>/.test(r.doc), r.doc.slice(r.doc.indexOf("ctitle"), r.doc.indexOf("ctitle") + 300));
     check("on-screen draft: the same order with superscript letters and no kind labels", r.sup === "a, b" && r.prev.includes(body) && !/Peer-reviewed/.test(r.prev), r.prev.slice(0, 400));
     check("section copy: the same paragraph with (a, b), no kind labels", r.sec.includes(body + " (a, b)") && !/Peer-reviewed|Other/.test(r.sec), r.sec);
     check(".txt: the working copy keeps the kind in brackets, never [Other], and lists what is still missing (W-19)", r.txt.includes("   " + body + " (a, b)") && /\[Peer-reviewed\]/.test(r.txt) && !/\[Other\]/.test(r.txt) && /\[Still missing: Your role\./.test(r.txt) && /^NARRATIVE CV, WORKING DRAFT \(V7 beta\)/.test(r.txt) && !/—/.test(r.txt), r.txt.slice(0, 900));
@@ -1377,6 +1377,42 @@ async function seed(state, extra) {
     check("the first card's Move up is disabled (Y-1)", r.upDisabled === true, r);
     check("adding an item ends the Undo on offer (Y-2)", r.undo1 && !r.undo2, r);
     check("a role sentence in The problem or question gets a note, not praise; a French line with articles counts its numbers (r15-a-1, Y-3)", /reads like your role/.test(r.stakes) && !/Your own role is named/.test(r.stakes) && !/No numbers/.test(r.fr), { stakes: r.stakes, fr: r.fr });
+  }
+
+  console.log("Audit loop, round 16");
+  {
+    const base = () => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    const st = base(); st.lens = Object.assign({}, st.lens, { discipline: "humanities", workMode: ["community"] });
+    st.contributions = [{ cid: "r161", title: "A made-up archive", stakes: "A made-up gap.", roleMode: "led", roleLine: "I led it.", activities: "I ran 3 made-up camps.", outputs: "A report.", outcomes: "", impact: "", translational: "", evidence: [{ text: "A made-up article", type: "Peer-reviewed", note: "Shows the made-up result." }], flags: {}, notes: {} },
+      { cid: "r162", title: "Second", stakes: "x", roleMode: "led", roleLine: "I led it.", activities: "y", outputs: "z", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {}, folded: true }];
+    st.ps = Object.assign({}, st.ps, { streams: "My work has three strands: 1) made-up oral history; 2) a made-up archive; 3) made-up teaching." });
+    st.mentees = [{ stageKind: "other", stage: "a community interviewer", stageOther: "a community interviewer", kind: "health", org: "Made-up Institute (MUI)", unit: "team lead", recognition: "", why: "", folded: false }];
+    await seed(st);
+    r = await js(H + `await w(200); const a={}; a.stakesHelp=((q('[id$="-stakes-hp"]')||{}).textContent||''); a.roleHelp=((q('[id$="-roleLine-hp"]')||{}).textContent||'');
+      rail('Review').click(); await w(200); a.lists=(q('.v7-glance')||{}).innerText||'';
+      rail('Export').click(); await w(150);
+      let doc=''; const oc=URL.createObjectURL; URL.createObjectURL=(b)=>{ b.text().then(t=>{doc=t;}); return oc.call(URL,b); };
+      const wb=qa('button').find(b=>/Download Word/.test(b.innerText)); if (wb) { wb.click(); await w(300); } URL.createObjectURL=oc; a.doc=doc;
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(cb){ cb.click(); await w(40); } a.mentor=clip; navigator.clipboard.writeText=ow;
+      // Z-2: navigation does not end Undo.
+      rail('Contributions').click(); await w(200);
+      const rm=qa('button').find(b=>/^Remove contribution/.test(b.getAttribute('aria-label')||'')); if (rm) { rm.click(); await w(120); await okWarn(); await w(150); } a.u0=!!q('.v7-cundo');
+      const sq=q('.v7-fcol .v7-fsq'); if (sq) { sq.click(); await w(120); } a.u1=!!q('.v7-cundo');
+      return a;`);
+    check("community-engaged: the problem part asks who asked for the work; the humanities role example (r16-b-11, r16-b-8)", /If a community asked for this work, say so/.test(r.stakesHelp) && /Elders’ council/.test(r.roleHelp), { stakesHelp: r.stakesHelp, roleHelp: r.roleHelp });
+    check("Undo survives a field-column click (Z-2)", r.u0 && r.u1, { u0: r.u0, u1: r.u1 });
+    check("a lower-case numbered run in the statement is a list to rewrite (r16-a-2)", /Strands/.test(r.lists), r.lists.slice(0, 300));
+    check("Word: the evidence note is its own block; the headline is a block (r16-a-1, Z-5)", /<div class='evn'>Shows the made-up result\.<\/div>/.test(r.doc) && /<p class='ctitle'/.test(r.doc), r.doc.slice(r.doc.indexOf("evbox"), r.doc.indexOf("evbox") + 200));
+    check("trainee: a typed article is dropped, and a unit after a bracketed organization takes a comma (r16-b-2, r16-a-5)", /A community interviewer I mentored/.test(r.mentor) && /\(MUI\), team lead/.test(r.mentor), r.mentor);
+    // r16-b-1: tiles at 320 px with large text.
+    await send("Page.setFontSizes", { fontSizes: { standard: 24, fixed: 20 } });
+    await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 568, deviceScaleFactor: 1, mobile: true });
+    await seed(Object.assign(base(), { stageKey: "mentor" }));
+    const tw = await js(H + `await w(300); return document.documentElement.scrollWidth;`);
+    await send("Page.setFontSizes", { fontSizes: { standard: 16, fixed: 13 } });
+    await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
+    check("Mentorship tiles at 320 px with 24 px text: no sideways scroll (r16-b-1)", tw <= 320, tw);
   }
 
   console.log("Register (W-57): the tool's prompt strings");
