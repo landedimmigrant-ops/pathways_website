@@ -1,0 +1,38 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: SSHRC · Tri-agency CV · SSHRC Insight Development Grants (applying 2027) · Early career · Social sciences · Team-based]
+Before you submit: paste this into the current version of SSHRC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Arial in black type.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am an assistant professor at a mid-sized Canadian university. My work is in the sociology of food and student poverty.
+
+My research keeps returning to one question, why do students go hungry in places that count themselves as well-resourced, and what does a campus owe them? Three strands: a campus-wide hunger survey, an evaluation of a student pantry and a study of how students decide to ask for food. All three show that hunger on campus is hidden. I came to this work from public health nutrition, which I practised for four years before graduate school. A pilot grant from my university, two first-authored papers and an open survey dataset that four campuses now use. Insight Development funds early work that builds new questions, and my pantry data are at that stage. Next I will test whether a campus pantry changes how often students skip meals across three terms.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Counting hunger on campus: food insecurity among university students
+   Student food insecurity was assumed to be rare, and no campus had measured it with the national household instrument. I co-designed the survey with a dietitian and ran the analysis, as one of four team members. Over 18 months I surveyed 2,400 students at three universities with the 10-item adult food security module, then interviewed 40 students who reported skipping meals. The work produced a harmonized survey dataset, a public dashboard and two first-authored papers. It also yielded a one-page toolkit for campus pantries. Two student unions have adopted the dashboard, and a provincial student association cited the prevalence figures in its 2026 budget brief. A national food-bank network also asked for the survey items. Campus pantries could screen for food insecurity at intake, and student unions could track it each term. One university added a food-insecurity item to its annual student survey. (a)
+   a. Campus Food Security Survey, open dataset and codebook (2026), 2,400 respondents, deposited in a public repository.  [Dataset / tool]
+
+2. Evaluating a campus food pantry: who uses it and what it changes
+   Campus pantries opened across the country with no evidence on who uses them or whether they reduce hunger. I was the evaluation lead and co-wrote the pantry's intake form with the student volunteers. I followed 310 pantry users for two academic years, matched visits to short monthly surveys and held six focus groups with student volunteers. The study produced a pantry-use report, a short-form survey tool and one paper under review. The pantry board changed its opening hours after the report, and two other campuses began using the survey tool. Other campuses could build a pantry into orientation week, and funders could ask for use data.
+   [Still missing: What could change. Who or what could this affect if it is taken up more widely? Hedged language is fine here.]
+   [Still missing: Evidence. Add one item a reviewer could check.]
+
+3. Why hungry students stay away: how students decide to ask for food
+   Most students who reported skipping meals never used a pantry, and no study had asked them why. I designed the interview guide and led the analysis with one graduate research assistant. I interviewed 40 students who skipped meals and had never used a pantry, and coded their accounts of stigma, cost and information. The study produced a short report and one conference paper. The campus pantry moved its sign-up to a text-message form, and the student union now cites the three reasons students gave when it requests funding.
+   [Still missing: What could change. Who or what could this affect if it is taken up more widely? Hedged language is fine here.]
+   [Still missing: Evidence. Add one item a reviewer could check.]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 1 doctoral student, 3 master's students, 5 undergraduate researchers
+[One thing you do] Each term I hand an undergraduate assistant one survey item to clean and analyse end to end, with a written note on what I would check, so that by the second term they run a data-cleaning session for the others.
+[Who gets in] I removed the prior-experience requirement from assistant postings and pay from the first week, and I post the pay rate in the ad.
+[Who else you mentor (optional)] I meet monthly with a new colleague in public health to plan a joint paper.
+
+[Still missing outside the contributions: Mentorship: one person you trained, and where they went.]

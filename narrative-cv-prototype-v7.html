@@ -175,6 +175,7 @@
     .v4-totals-grid label { font-size: 0.8rem; color: var(--muted); display: block; margin: 0 0 3px; }
     .v4-export-area { width: 100%; box-sizing: border-box; min-height: 260px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.75rem; line-height: 1.55; padding: 12px; border: 1px solid var(--border); border-radius: 8px; white-space: pre; overflow: auto; color: var(--text); }
     .v4-inline-link { display: inline-block; margin-top: 0.25rem; }
+    .v4-save-warning:not([hidden]):not(.v7-load-err) { position: sticky; top: calc(var(--v7-bar, 43px) + 4px); z-index: 60; } /* r13-a-2: in view while the writer scrolls */
     .v4-save-warning { margin: 0 0 0.6rem; padding: 0.6rem 0.9rem; border: 1px solid #c0392b; background: #fdecea; color: #7a1f15; border-radius: 4px; font-size: 0.85rem; line-height: 1.5; }
     .v4-anchor-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.95rem; color: var(--text); }
     .v4-anchor-line .v4-text-input { flex: 1 1 160px; width: auto; }
@@ -1692,7 +1693,7 @@
     const IRREGULAR_PAST = ["wrote","built","ran","led","taught","took","made","gave","set","began","brought","chose","found","held","kept","met","put","saw","sent","spent","won","drew","grew","threw","oversaw","undertook","co-wrote"];
     // H1: only these nouns turn "my …" into a claim of role. "My research", "my work", "my paper"
     // are topic statements — they say what the work is about, not which part of it was yours.
-    const MY_ROLE_NOUN = /\bmy\s+(?:group|lab|team|students?|trainees?|collaborators?|co-?authors?|postdocs?|role|part|contributions?|responsibilit(?:y|ies)|research|work|program(?:me)?|studies)\b/i; // r12-a-4: "my research has asked…"
+    const MY_ROLE_NOUN = /\bmy\s+(?:group|lab|team|students?|trainees?|collaborators?|co-?authors?|postdocs?|role|part|contributions?|responsibilit(?:y|ies))\b/i; // V-2: "my research" does not name a part (H1)
     const WEAK_PHRASES = ["worked on","participated in","assisted with","was involved in","helped with"];
     const VAGUE_QUANTITY = ["various","several","many","a number of","a few","multiple","a lot of","lots of","numerous","plenty of"];
     const VAGUE_REPUTATION = ["well-received","widely cited","highly regarded","well-known"];
@@ -1714,7 +1715,7 @@
     const PASSIVE_KINDS = ["roleLine", "activities", "generic"];
     // Guide sync (P-17, P-31): link rules differ by format. The format comes in through ctx so this
     // engine still runs on its own (scripts/ncv-v5-examples.js extracts it).
-    const LINK_RE = /\b(?:https?:\/\/|www\.)[^\s<>()"“”]+/gi;
+    const LINK_RE = /\b(?:https?:\/\/|www\.|(?:github|gitlab|bitbucket)\.com\/|(?:pypi|arxiv|zenodo)\.org\/|osf\.io\/)[^\s<>()"“”]+/gi; // r13-b-5: repository addresses without "https://"
     // H5: metric-with-a-number shapes the term list cannot see on its own — "IF 14.2",
     // "impact factor of 14.2", "h-index is 11". They flag like the listed terms, and their own
     // numbers come out of the text before specificity is counted: a JIF is not a research number.
@@ -1748,7 +1749,13 @@
     // r11-a-4, U-2: French number words count only in text that reads as French ("un" and "une" are articles).
     const FR_NUMBER_WORD_RE = /\b(?:deux|trois|quatre|cinq|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|vingt|trente|quarante|cinquante|soixante|cent|cents|mille|douzaine)(?:-[a-zà-ÿ]+)*\b/gi;
     // U-2, U-3: one test of whether a text reads as French, so French rules never touch English text.
-    const looksFrench = (t) => { const w = String(t || "").toLowerCase().match(/[a-zà-ÿœ']+/g) || []; const fr = w.filter(x => /^(?:le|la|les|des|du|une|est|et|avec|pour|dans|nous|sur|qui|que|ont|été|aux|au|ce|cette|leurs|par|j'ai|l'|d'|qu')$/.test(x) || /^(?:l|d|j|qu)'/.test(x)).length; return w.length >= 4 && fr >= 3 && fr / w.length > 0.12; };
+    // V-1, V-3: curly apostrophes count; a stop word counts only as typed in lower case (so "Le Roux", "Du Bois"
+    // and "La Trobe" do not), and "et al." does not; two hits suffice in a short field.
+    const looksFrench = (t) => {
+      const src = String(t || "").replace(/\bet\s+al\b/g, " "), w = src.match(/[A-Za-zÀ-ÿœŒ'’]+/g) || [];
+      const fr = w.filter(x => /^(?:le|la|les|des|du|de|une|un|est|sont|et|en|à|avec|pour|dans|nous|sur|qui|que|ont|été|aux|au|ce|cette|leurs|par|ne|pas|plus)$/.test(x) || /^(?:l|d|j|qu|n|s)['’]/i.test(x)).length;
+      return w.length >= 3 && fr >= (w.length < 15 ? 2 : 3) && fr / w.length > 0.12;
+    };
     // r8-a-5: "one" after each, every, no, any, this, that, the, or before "of" or "another", is a pronoun.
     const NUMBER_WORD_RE = (() => {
       // R-1: the pronoun guards (r8-a-5) apply to a bare "one" only; "the twelve sites", "two of the three"
@@ -1791,8 +1798,12 @@
     }
 
     // r12-a-1: "1. … <tab>2. … 3. …" on one line is a list too.
-    const listLineCount = (v) => Math.max((String(v || "").match(/^\s*(?:[•·\-*–—]|\d{1,2}[.)])\s+\S/gm) || []).length,
-      (String(v || "").match(/(?:^|\t|[.;]\s+)(?:[1-9])[.)]\s+[A-ZÀ-Ý]/gm) || []).length);
+    // V-7: inline markers count only as a run 1, 2, 3… and not after Fig., No., vol., p. and the like.
+    const inlineRun = (v) => {
+      const ns2 = [...String(v || "").matchAll(/(?:^|\t|(\S+)[.;]\s+)([1-9])[.)]\s+[A-ZÀ-Ý]/gm)].filter(m => !/^(?:figs?|nos?|vol|pp?|ch|table|tab|eq|art|sec)$/i.test(m[1] || "")).map(m => +m[2]);
+      let run = 0; ns2.forEach(n => { if (n === run + 1) run = n; }); return run >= 2 ? run : 0;
+    };
+    const listLineCount = (v) => Math.max((String(v || "").match(/^\s*(?:[•·\-*–—]|\d{1,2}[.)])\s+\S/gm) || []).length, inlineRun(v));
     function lintField(text, kind, ctx) {
       ctx = ctx || {};
       const out = { flags: [], strengths: [], score: 0, words: 0, hits: [] };
@@ -1858,10 +1869,12 @@
         // H5: the prestige metrics' own numbers are removed from this working copy first — they are
         // the very numbers the prestige flag asks you to cut. Numbers elsewhere still count.
         // r1-a-3: list markers on every line, DOIs and years are not specific numbers.
-        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[:;.]\s+)\d{1,2}\)\s/gm, " ") /* r11-a-5, U-1: "1) un guide ; 2) …", not "(n = 45) " */.replace(/(\d+(?:[.,]\d+)?)\s*[–—]\s*\d+(?:[.,]\d+)?/g, "$1") /* r12-a-6: "0.71–0.89", "3–5" count once */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
+        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[:;.]\s+)\d{1,2}\)\s/gm, " ") /* r11-a-5, U-1: "1) un guide ; 2) …", not "(n = 45) " */.replace(/(\d+(?:[.,]\d+)?)[\u00a0\u202f]?[–—][\u00a0\u202f]?\d+(?:[.,]\d+)?/g, "$1") /* V-6: closed ranges only */ /* r12-a-6: "0.71–0.89", "3–5" count once */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
         metricHits.forEach(m => { forNums = forNums.split(m.text).join(" "); });
         links.forEach(l => { forNums = forNums.split(l.text).join(" "); });
-        const nums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length + (looksFrench(t) ? (forNums.match(FR_NUMBER_WORD_RE) || []).length : 0);
+        const enNums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
+        // V-1: French number words count in French text, or in a short line with no other number and one French function word.
+        const nums = enNums + (looksFrench(t) || (!enNums && /\b(?:avec|dans|pour|les|des|une|est|sont|chez|auprès)\b/.test(t)) ? (forNums.match(FR_NUMBER_WORD_RE) || []).length : 0);
         if (nums) { out.strengths.push(nums + " specific number" + (nums > 1 ? "s" : "")); out.score++; }
         else if ((kind === "activities" || kind === "outcomes") && !/\b(?:19|20)\d{2}\b/.test(t)) {
           // B-19 (amended): dropped off "outputs" — a list of things without numbers is a correct
@@ -1995,7 +2008,7 @@
     // r7-a-2: where the parts of a paragraph join, each ends as a sentence (a full stop when none is there).
     const asSentence = (t) => {
       if (!t) return t;
-      t = t.replace(/\t+/g, " ").replace(/^\s*[•·*]\s+/, ""); // r12-a-2, r12-a-3: a pasted tab or a lone leading bullet
+      t = t.replace(/\t+/g, " ").replace(/^\s*[•·]\s+/, ""); /* V-9: "*" can be content */ // r12-a-2, r12-a-3: a pasted tab or a lone leading bullet
       t = t.replace(/^[a-zà-ÿœ](?=[a-zà-ÿœ\s'’])/, ch => ch.toUpperCase()); // r11-a-3: "l'équipe" → "L'équipe" // N-2, R-4: "a corpus…" → "A corpus…", "école…" → "École…" ("eDNA", "mRNA", "x-ray" stay)
       return /[.!?…](?:[\s\u00a0\u202f]*["”’'»›)\]])*$/.test(t) ? t : t.replace(/[;:,\s\u00a0—–-]+$/, "") + "."; // N-3
     };
@@ -2003,7 +2016,7 @@
     // space) or a dash is not one; list markers count only at a line start. Digit groups joined by a
     // non-breaking or thin space ("3 200") are one number.
     const joinDigits = (t) => String(t || "").replace(/(\d)[\u00a0\u202f](?=\d{3}\b)/g, "$1").replace(looksFrench(t) ? /(\b\d{1,3}) (?=\d{3}\b(?![.,]\d))/g : /$^/, "$1"); // r11-a-5, U-3: "3 200" in French text only
-    const countWords = (t) => { const x = joinDigits(t).replace(/[—–](?=\S)|(?<=\S)[—–]/g, " — ") /* r12-a-7 */.replace(/^\s*(?:[•·\-*–—]|\d+[.)])\s+/gm, "").trim(); return x ? x.split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length : 0; };
+    const countWords = (t) => { const x = joinDigits(t).replace(/(\p{L})[—–](\p{L})/gu, "$1 — $2") /* r12-a-7, V-8: words joined by a dash; ranges stay one word */.replace(/^\s*(?:[•·\-*–—]|\d+[.)])\s+/gm, "").trim(); return x ? x.split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length : 0; };
     const menteeWhere = (m) => [(m.kind && m.kind !== "university" && m.kind !== "other") ? menteeKindLabel(m.kind) : "", one(m.org), one(m.unit)].filter(Boolean).join(", ");
     const menteeHasPlace = (m) => !!(m.kind || (m.org || "").trim() || (m.unit || "").trim());
     const menteeHasContent = (m) => menteeHasPlace(m) || !!m.stageKind || !!((m.stage || "").trim() || (m.recognition || "").trim() || (m.why || "").trim());
@@ -2213,6 +2226,7 @@
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
       ns.ui.fileSavedAt = Date.now(); ns.ui.fileSavedSig = contentSig();
       ns.ui.exported = true;
+      if (storeCleared) { const w = document.getElementById("v4-save-warning"); if (w) w.textContent = "Saved as " + draftFileName() + ". This browser is no longer keeping a copy, so use Save draft again after more changes."; } // r13-a-2
       countEvent("draftFileSaved");
     }
     // Returns an error sentence, or "" once the draft is open. A V6 or V7 browser draft pasted
@@ -2236,7 +2250,7 @@
       ns.ui.fileSavedAt = obj && Date.parse(obj.savedAt) || Date.now(); ns.ui.fileSavedSig = contentSig();
       openedPending = (when ? "Opened your draft saved on " + when : "Opened your draft") + (profilePills().length ? ", set up for " + profilePills().join("; ") + "." : ".");
       // r12-b-1: a file from an earlier version may hold parts this version has no place for; say so.
-      const older = !!((draft.xray && String(draft.xray.text || "").trim()) || String(draft.consultQuestions || "").trim() || (Array.isArray(draft.teamNotes) && draft.teamNotes.length) || (Array.isArray(draft.contributions) && draft.contributions.some(c => c && c.flags && Object.keys(c.flags).length)));
+      const older = !!((draft.xray && String(draft.xray.text || "").trim()) || String(draft.consultQuestions || "").trim() || /* V-10 */ (Array.isArray(draft.contributions) && draft.contributions.some(c => c && c.flags && Object.keys(c.flags).length)));
       if (older) openedPending += " This file came from an earlier version of the tool. Your contributions, evidence, mentorship and statement are here; its advisor questions, pasted text and review marks have no place in this version and are not shown.";
       Object.assign(ns, keep);
       resumeStore();
@@ -2282,6 +2296,18 @@
     // W-48 (inferred): once the draft has been saved here, a missing key means the browser data was
     // cleared from outside; the tool then stops writing it back and says so.
     let storeSeen = false, storeCleared = false, saveMuted = false;
+    // r13-a-3, r13-a-5: a visible note at the top of the step; it goes with the next render.
+    function stageNote(t) {
+      const c = document.getElementById("v4-stage-content"); if (!c) return;
+      const old = c.querySelector(".v7-stage-note"); if (old) old.remove();
+      const n = el("p", "narrative-session-banner v7-stage-note", t); c.insertBefore(n, c.firstChild);
+    }
+    // r13-a-1, r13-a-2: this tab stops saving and keeps its copy; the warning is an alert that stays in view.
+    function markCleared(msg) {
+      storeCleared = true;
+      const w = document.getElementById("v4-save-warning");
+      if (w) { w.setAttribute("role", "alert"); w.textContent = msg || "Your browser data was cleared, so this draft is no longer saved here. Save a draft file now to keep it."; w.hidden = false; }
+    }
     // Opening a draft file or resetting is a fresh start, so saving resumes.
     const resumeStore = () => {
       storeSeen = false; profileShown = 0; Object.keys(profileSaid).forEach(k => { delete profileSaid[k]; }); // U-4
@@ -2292,12 +2318,7 @@
       ns.lastSavedAt = Date.now();
       if (storeCleared || loadFailed || saveMuted) return;
       try {
-        if (storeSeen && localStorage.getItem(NCV_KEY) === null) {
-          storeCleared = true;
-          const w = document.getElementById("v4-save-warning");
-          if (w) { w.textContent = "Your browser data was cleared, so this draft is no longer saved here. Save a draft file now to keep it."; w.hidden = false; }
-          return;
-        }
+        if (storeSeen && localStorage.getItem(NCV_KEY) === null) { markCleared(); return; }
         localStorage.setItem(NCV_KEY, JSON.stringify(ns));
         storeSeen = true;
         if (saveFailed) {
@@ -2431,7 +2452,7 @@
         // before the normal variants/interpolate path runs.
         // Guide sync (P-48): the TCV's first section focuses on your expertise relative to this
         // opportunity; the CV-FRQ's adds fit with the program's objectives (and the team, below).
-        programFit: { q: "You are aiming at {program} ({agency}). Why is this the right competition for where you are?", noProgramQ: "Which competition do you have in mind, and why does it fit where you are?",
+        programFit: { q: "You are aiming at “{program}” ({agency}). Why is this the right competition for where you are?", noProgramQ: "Which competition do you have in mind, and why does it fit where you are?",
           help: "The TCV asks this section to show your expertise relative to this specific opportunity or project. Name what the competition funds and the expertise you bring to it.",
           helpVariants: { "cv-frq": "The CV-FRQ asks this section to show your expertise relative to this specific opportunity or project and your fit with the program's objectives. Name the objectives and where your work meets them." },
           isNew: true },
@@ -2441,7 +2462,8 @@
       contrib: {
         title: { q: "What one line would let a reviewer recall this work?", help: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the paper's title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
           helpVariants: { creative: "Short, plain and memorable. Name what the work was for; the title of the exhibition or work belongs in the evidence list.",
-            humanities: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the title of the book or article belongs in the evidence list." } },
+            humanities: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the title of the book or article belongs in the evidence list.",
+            stem: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the title of the paper, release or patent belongs in the evidence list." } },
         // Q-18 (Prem, 2026-11-01): one part, "The problem or question", whose question follows the field.
         // The main field decides; community-engaged wording applies where the field has none of its own.
         stakes: { q: "What problem did this work address, and who had it?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true,
@@ -2468,7 +2490,7 @@
         activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.",
           variants: { creative: "What did making the work involve, and which part was yours?", humanities: "Which sources, archives, methods or partners did the work involve, and at what scale?",
             community: "Which methods, communities or partners did the work involve, and over what period?" },
-          helpVariants: { creative: "Count where you can: how many venues, performers or collaborators, and how long.", stem: "Count where you can: how many sites, structures or sensors, how long, how many people.", humanities: "Count where you can: how many sources or collections, how long, how many people.",
+          helpVariants: { creative: "Count where you can: how many venues, performers or collaborators, and how long.", stem: "Count where you can: how many sites, structures, sensors, models, datasets or systems, how long, how many people.", humanities: "Count where you can: how many sources or collections, how long, how many people.",
             community: "Count where you can: how many people and communities took part, over what period, and how many people worked on it." } },
         outputs: {
           q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "Write a sentence that names what the work produced, such as “The study produced a protocol and three papers.” Its effects belong in the next field.",
@@ -2481,7 +2503,8 @@
             community: "Write a sentence that names what the work produced and who holds it, such as “The program produced a nursing protocol and a dataset the health authority holds.” Its effects belong in the next field."
           },
           variants: { creative: "Which exhibitions, films, performances or published works came out of it?", humanities: "Which books, editions, exhibitions, public works or collections came out of it?",
-            social: "Which papers, reports, datasets, instruments or programs came out of it, and how many?" }
+            social: "Which papers, reports, datasets, instruments or programs came out of it, and how many?",
+            stem: "Which papers, datasets, software releases, patents or licences came out of it, and how many?" } // r13-b-4
         },
         outcomes: {
           q: "Who has used this work so far, and what is different for them now?", help: "If there is no change to report yet, leave this blank and put what you expect under What could change.",
@@ -2505,7 +2528,7 @@
           } },
         translational: { q: "Which one occasion shows the work reaching a specific person or group?", variants: { community: "Which one occasion shows the work in use by a specific person or group?" }, help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
           helpVariants: {
-            stem: "One scene in two sentences, such as a control room, a field site, an inspection or a standards committee where the work was used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.", // r10-b-10
+            stem: "One scene in two sentences, such as a control room, a field site, a deployment, a release review, an inspection or a standards committee where the work was used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.", // r10-b-10
             humanities: "One scene in two sentences, such as a reader, a classroom, an archive, a museum or a community meeting that used the work. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
             creative: "One scene in two sentences, such as an audience, a venue, a classroom or a community meeting where the work was seen or used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement."
           },
@@ -2655,6 +2678,7 @@
       const raw = otherTab; otherTab = undefined;
       const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session, stageKey: ns.stageKey };
       const lensBefore = JSON.stringify(ns.lens), evCid = UI.evCard >= 0 ? (ns.contributions[UI.evCard] || {}).cid : null;
+      const hadUndo = !!(UI.cUndo || UI.evUndo), hadConfirm = !!document.querySelector(".v7-warn"); // r13-a-3
       UI.cUndo = null; UI.evUndo = null; // M-1: an Undo belongs to this tab's copy, which is being replaced
       saveMuted = true;
       try {
@@ -2669,6 +2693,8 @@
         replaceNext = true; // a take-up is not a step the researcher chose
         renderStage();
         if (chgClosed) { const b = document.getElementById("v7-chg"); if (b) b.focus({ preventScroll: true }); } // H-11
+        if (hadUndo || hadConfirm) stageNote("Another tab saved changes, so this page now shows them." + (hadUndo ? " The Undo offered here is no longer available." : "") + (hadConfirm ? " The question that was open here was closed." : ""));
+        if (document.activeElement === document.body) { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); }
       } catch (_) { /* a copy this tab cannot read: keep the tab as it is */ }
       saveMuted = false;
       if (spoken || raw === null) announce(raw === null ? "The draft was cleared in another tab." : "This tab now shows the changes made in another tab.");
@@ -2678,6 +2704,10 @@
       // G-1 (review 2026-10-31): a tab that has stopped saving (outside clear, unreadable draft) may hold
       // the only copy of the draft, so it keeps that copy and its warning.
       if (storeCleared || loadFailed) return; // H-12: whatever the other tab did
+      // r13-a-1: a blank draft written elsewhere (browser data cleared, then the tool opened again, or a Reset
+      // in another tab) does not replace a draft this tab holds: this tab keeps it and stops saving.
+      let incoming = null; try { incoming = e.key === null || e.newValue === null ? null : JSON.parse(e.newValue); } catch (_) {}
+      if (draftHasContent(ns) && !(incoming && draftHasContent(incoming))) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
       otherTab = e.key === null ? null : e.newValue;
       if (!document.hidden && !composing) takeUpOtherTab(false);
     });
@@ -2897,7 +2927,7 @@
         // r2-a-9 (inferred): on a writing step, one button goes to the first part still to write.
         const nextUp = missingList().find(m => m.step === ns.stageKey && m.field);
         if (nextUp) {
-          const go = el("button", "v7-linkbtn v7-banner-go", "Go to where you were"); go.type = "button";
+          const go = el("button", "v7-linkbtn v7-banner-go", "Go to the next part to write"); // r13-a-6 go.type = "button";
           go.addEventListener("click", () => jumpTo(nextUp));
           banner.appendChild(document.createTextNode(" ")); banner.appendChild(go);
         }
@@ -2962,8 +2992,8 @@
       if (e.state && e.state.g && ns.ui.histGen && e.state.g !== ns.ui.histGen && e.state.step !== "start") {
         skipping = 0; // M-8
         try { history.replaceState({ step: "start", n: histN, g: ns.ui.histGen }, "", "#start"); } catch (_) {}
-        if (ns.stageKey !== "start") { popping = true; try { ns.stageKey = "start"; renderStage(); } finally { popping = false; } announce("That page belonged to an earlier draft. This is the start page."); }
-        else { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); announce("That page belonged to an earlier draft. This is the start page."); }
+        if (ns.stageKey !== "start") { popping = true; try { ns.stageKey = "start"; renderStage(); } finally { popping = false; } stageNote("That page belonged to an earlier draft. This is the start page."); announce("That page belonged to an earlier draft. This is the start page."); }
+        else { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); stageNote("That page belonged to an earlier draft. This is the start page."); announce("That page belonged to an earlier draft. This is the start page."); }
         return;
       }
       // H-2: with no draft open every older entry is the start page; the press stays here and says so.
@@ -3806,7 +3836,7 @@
         const other = agenciesNamed(d.program).filter(v => v !== d.agency);
         const was = ns.lens.agency; // r12-b-2: a name entered for another agency is pointed out too
         agNote.textContent = !d.undecided && d.agency && d.agency !== "other" && other.length ? "This name mentions " + other.map(v => labelOf(AGENCIES, v)).join(" and ") + ". Update it if it no longer applies."
-          : !d.undecided && (d.program || "").trim() && was && was !== "other" && d.agency && d.agency !== was ? "This name was entered for " + labelOf(AGENCIES, was) + ". Update it if it no longer applies." : "";
+          : !d.undecided && (d.program || "").trim() && (d.program || "").trim() === (ns.lens.program || "").trim() && was && was !== "other" && d.agency && d.agency !== was ? /* V-5 */ "This name was entered for " + labelOf(AGENCIES, was) + ". Update it if it no longer applies." : "";
         agNote.hidden = !agNote.textContent;
       };
       UI.chg.setAgNote = setAgNote;
@@ -4600,13 +4630,15 @@
         const fields = el("div", "v7-fields");
         CF().forEach(f => {
           const id = "c" + contrib.cid + "-" + f.k;
-          let q = f.k === "roleLine" ? resolveRoleLineQ() : resolveQ(f.def);
+          let q = f.k === "roleLine" ? resolveRoleLineQ() : resolveQ(f.def), helpExtra = "";
           // r7-b-7: a second field's outputs are named too ("books or editions", "papers, datasets or tools").
           const d2 = ns.lens.discipline2;
           if (f.k === "outputs" && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
             const OUT_SHORT = { creative: "exhibitions, films or performances", humanities: "books, editions or collections", stem: "papers, datasets, tools or code", health: "papers, guidelines or datasets", social: "papers, reports or datasets" };
             q += " Name outputs from " + ({ stem: "STEM and engineering", health: "health and clinical work", social: "the social sciences", humanities: "the humanities", creative: "creative and fine arts work" }[d2] || labelOf(DISCIPLINES, d2)) + " too, such as " + OUT_SHORT[d2] + "."; // r9-a-15
           }
+          // r13-b-1: work with a partner under an agreement may keep names and figures private.
+          if ((f.k === "activities" || f.k === "outcomes") && (ns.lens.workMode || []).includes("industry")) helpExtra = " If an agreement keeps the partner or its figures private, describe the partner by its sector and size, give what you can, and say the rest is withheld.";
           // r12-b-5: the second field adds a line to What you did and What already changed too.
           if ((f.k === "activities" || f.k === "outcomes") && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
             const SECOND = {
@@ -4623,7 +4655,7 @@
           }
           fields.appendChild(cardField({
             // The role help's community-engaged example (partners lead) comes before a field's own example.
-            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: f.role && isCommunity() && f.def.helpVariants && f.def.helpVariants.community ? interpolate(f.def.helpVariants.community) : resolveHelp(f.def), line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
+            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: f.role && isCommunity() && f.def.helpVariants && f.def.helpVariants.community ? interpolate(f.def.helpVariants.community) : resolveHelp(f.def) + helpExtra, line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
             lintKind: f.lint, get: () => contrib[f.k], set: (v) => { contrib[f.k] = v; },
             // r1-b-2: a role line that names your part covers the card, so "we" elsewhere in it is the team.
             // r1-b-2, r5-b-2: a chosen level or a written role line names your part for the whole card.
@@ -4732,7 +4764,7 @@
       "Peer-reviewed": "an article, chapter or book, or a juried or curated selection", "Media / public": "coverage, a critical review, a public talk, a podcast",
       "Policy / practice uptake": "a policy, guideline or program that adopted your work", "Dataset / tool": "data, software, a catalogue or a collection, and who holds it",
       "Award / recognition": "a prize, fellowship or honour", "Funding": "a grant the work attracted",
-      "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Community document": "a letter, resolution, agreement, report or plan a community holds",
+      "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Community document": "a letter, resolution, agreement, report or plan a community or partner holds",
       "Other": "anything else a reviewer could check"
     };
     // r10-b-8: a few kind hints follow the field.
@@ -4833,10 +4865,10 @@
         const ti = el("textarea", "v7-input v7-grow"); ti.id = tl.htmlFor; ti.rows = 1;
         ti.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
         // r7-b-10: what to write for each kind of item.
-        const ITEM_HINT = { "Peer-reviewed": "The reference: authors, year, title and venue", "Media / public": "The outlet or platform, the title and the date; for your own series, its audience", "Policy / practice uptake": "The policy or program, who adopted it and when",
+        const ITEM_HINT = { "Peer-reviewed": "The reference: authors, year, title and venue", "Media / public": "The outlet or platform, the title and the date; for your own series, its audience", "Policy / practice uptake": "The policy or program, who adopted it (or its sector, if it cannot be named) and when",
           "Dataset / tool": "Name, version, who holds it and how access is granted (a licence, a DOI, a data agreement or an archive's terms of use), in words", "Award / recognition": "The award, who gave it and the year", "Funding": "The funder, the program, the amount and the years",
-          "Replication / citation": "The study that repeated, cited or built on your work", "Exhibition, performance or screening": "The work, the venue, the city and the dates", "Community document": "What it is (a letter, resolution, agreement, report or plan), who holds it and its date" };
-        ti.placeholder = ITEM_HINT[ev.type] || "Name it so a reviewer can find it, or say who holds it: a reference, a performance, a policy, a dataset, an award or a letter"; ti.value = ev.text || "";
+          "Replication / citation": "The study, standard, guideline or code that repeated, cited or built on your work", "Exhibition, performance or screening": "The work, the venue, the city and the dates", "Community document": "What it is (a letter, resolution, agreement, report or plan), who holds it and its date" };
+        ti.placeholder = ITEM_HINT[ev.type] || "Name it so a reviewer can find it, or say who holds it: a reference, a patent and its licence, a performance, a policy, a dataset, an award or a letter"; ti.value = ev.text || "";
         const ln = el("p", "v4-ev-note"); ln.id = "evln" + contrib.cid + "-" + j; ti.setAttribute("aria-describedby", ln.id);
         let lnSaid = !!evidenceLinkNote(ev.text, ev.type);
         // r3-b-4: an item past about 60 words is a paragraph; the note under it says so.
@@ -4859,7 +4891,7 @@
         // r9-a-7: the note's prompt follows the kind.
         const NOTE_HINT = { "Exhibition, performance or screening": "What the work did or showed, and how it bears on your question", "Media / public": "What the piece says about the work, or whom it reached",
           "Community document": "What it records or agrees, and whom it serves", "Dataset / tool": "What it holds, who uses it, or why it was useful",
-          "Policy / practice uptake": "Who adopted it, when, and what changed in practice" };
+          "Policy / practice uptake": "Who adopted it (or its sector), when, and what changed in practice", "Other": "What it is and why it matters, such as who licensed a patent and for what" };
         wt.placeholder = NOTE_HINT[ev.type] || "What it found, or why it was useful, so a reviewer has the point without opening the source"; wt.value = ev.note || "";
         const wn = el("span", "v4-meta v7-ev-wc"); wn.id = wt.id + "-wc"; wt.setAttribute("aria-describedby", wn.id);
         const setWn = () => { const n = countWords(ev.note); wn.textContent = n ? n + (n === 1 ? " word" : " words") + " · up to about 40 is comfortable here" : ""; };
@@ -4905,7 +4937,7 @@
       if (!v || !new RegExp(LINK_RE.source, "i").test(v) || isFrq() || !ns.lens.format) return "";
       return creativeLinkOk(type)
         ? "The TCV permits a link only for an audio or visual creative output, where the funding opportunity allows it. Reviewers are not guaranteed to open it, so describe the work in words as well."
-        : "Links are not permitted in the TCV, which must be self-contained. Give the reference in words. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it.";
+        : "Links are not permitted in the TCV, which must be self-contained. Give the reference in words; for software, its name, version and where it is hosted. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it.";
     }
 
     // ── Weave: the contribution's material in reading order, with suggested joins ──
@@ -4982,7 +5014,7 @@
     }
     const lcArticle = (t) => String(t || "").replace(/^(A|An|The)(?=\s)/, a => a.toLowerCase());
     // T-13: "The Ottawa Hospital" keeps its capital; "The provincial ministry" (a phone's capital) does not.
-    const lcArticleSoft = (t) => String(t || "").replace(/^(A|An)(?=\s)|^The(?=\s+(?:[a-zà-ÿ]|University\b|Université\b))/, a => a.toLowerCase()); // U-7: "a"/"an" always; "the" before a lower-case word or a university
+    const lcArticleSoft = (t) => String(t || "").replace(/^(A|An)(?=\s)|^The(?=\s+(?:[a-zà-ÿ]|Universit(?:y|é)(?=\s|$)))/, a => a.toLowerCase()); // U-7: "a"/"an" always; "the" before a lower-case word or a university
     function menteeSentence(m) {
       // G-3: a level typed under Other keeps its capitals ("MD-PhD trainee"); only a leading capital is lowered.
       const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) || "trainee";
@@ -5232,7 +5264,12 @@
       // r4-a-8: the sentence prints after where they are now, so it starts with the person's action.
       { // r7-b-12: one growing box, so a long sentence stays in view (Enter adds no line).
         const old = why.querySelector("input"), ta = el("textarea", "v7-input v7-grow"); ta.id = old.id; ta.rows = 1; ta.value = m.why || "";
-        ta.placeholder = m.stageKind === "other" && isCommunity() ? "Continues the sentence “A community researcher I mentored…”, such as “now leads the health centre’s research program”" : ns.lens.discipline === "creative" ? "Continues the sentence “A master’s student I trained…”, such as “now directs a dance company”" : ns.lens.discipline === "humanities" ? "Continues the sentence “A doctoral student I trained…”, such as “now teaches at a CEGEP”" : ns.lens.discipline === "stem" ? "Continues the sentence “A doctoral student I trained…”, such as “now leads a monitoring group at an engineering firm”" : "Continues the sentence “A doctoral student I trained…”, such as “now leads a hospital program”";
+        { // r13-b-7: the sentence named in the placeholder follows the level chosen.
+          const pn = m.stageKind === "other" ? (one(m.stageOther) || "trainee").replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) : (MENTEE_NOUN[m.stageKind] || "doctoral student");
+          const verb = m.stageKind === "other" && isCommunity() ? " I mentored" : " I trained";
+          const ex = m.stageKind === "other" && isCommunity() ? "now leads the health centre’s research program" : { creative: "now directs a dance company", humanities: "now teaches at a CEGEP", stem: "now leads a research team at a technology company" }[ns.lens.discipline] || "now leads a hospital program";
+          ta.placeholder = "Continues the sentence “" + articleFor(pn).replace(/^a/, "A") + " " + pn + verb + "…”, such as “" + ex + "”";
+        }
         ta.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
         ta.addEventListener("input", e => { m.why = e.target.value; changed(); growBox(ta, 1); });
         old.replaceWith(ta); requestAnimationFrame(() => growBox(ta, 1));
@@ -5601,7 +5638,7 @@
       const sct = el("h3", "v7-h3", "Self-check before you export"); sct.id = "v7-sc-t"; sc.appendChild(sct);
       [
         ["ownership", isCommunity() ? "Ownership: each contribution makes my own part clear and names the parts the partners led or hold." : "Ownership: each contribution makes my own role clear, even where the work was a team's."], // r9-b-11
-        ["specificity", "Specificity: my claims name outcomes, organizations and numbers, and leave out journal-based metrics."],
+        ["specificity", "Specificity: my claims name outcomes, organizations and numbers where I am free to give them, and leave out journal-based metrics."], // r13-b-1
         ["significance", "Significance: each contribution says what changed, and keeps what already changed apart from what could change."],
         ["coherence", "Coherence: my " + (isFrq() ? "background and skills section" : "personal statement") + " frames the whole and ends pointed forward."],
         ["selection", "Selection: each contribution relates to this application, and I chose them for this funding opportunity."],
@@ -6651,7 +6688,7 @@
     // Reset: two steps in one warning (DECIDED: a double reset). Step one asks; step two replaces the
     // question in place; Clear my draft then clears. One wording wherever Reset draft appears.
     function resetWarning(container, question, trigger) {
-      const w = inlineConfirm(container, "Clear your draft from this browser? Save a draft file first if you want to keep it.", trigger, "Clear my draft", () => {});
+      const w = inlineConfirm(container, "Clear your draft from this browser? " + (ns.ui.fileSavedAt ? "This draft was saved to a file " + savedWhen(ns.ui.fileSavedAt) + (ns.ui.fileSavedSig === contentSig() ? " and has not changed since." : " and has changed since, so clearing it removes those changes.") + " " : "") + "Save a draft file first if you want to keep it.", /* r13-a-4 */ trigger, "Clear my draft", () => {});
       const go = w.querySelector(".btn-primary");
       go._next = () => {
         w.querySelector("p").textContent = "Are you sure? This clears your draft from this browser. A draft file you saved stays where you saved it.";

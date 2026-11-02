@@ -304,3 +304,22 @@ _none yet_
 
 **Tests:** 261 of 261 (256 + 5).
 
+### Round 13 · Fable's review of round 12, a social scientist working in bursts (tabs, history, resets), a computer scientist with a confidential industry partner (2026-11-01)
+
+**Who walked it** (the round 13 snapshot = commit `7c267c4`), all findings in [r13-findings.md](audit-loop-2026-10-31/r13-findings.md)
+- **Fable review** of round 12: 2 major · 8 minor (French short fields, "my research" hiding a "we" problem, names read as French, ranges, figure numbers as lists).
+- **r13-a** Early-career social scientist, SSHRC, two tabs, history, reloads, field switches, Reset, cleared site data: 2 major · 4 minor ([draft](audit-loop-2026-10-31/r13-a-draft.txt)).
+- **r13-b** Mid-career computer scientist, NSERC Alliance, STEM + Social sciences, industry partner under a confidentiality agreement: 5 minor · 4 polish ([draft](audit-loop-2026-10-31/r13-b-draft.txt)).
+
+**Fixed this round**
+- **Review (V-1 to V-10):** a sturdier French-text test; "my research" reverted; Université; the agency hint; closed ranges; list runs; dash word counts; "*" kept; the earlier-version test.
+- **Data safety (r13-a):** a tab holding a written draft never takes up a blank one; the cleared-data warning is an alert that stays in view and updates after Save draft; visible notes when another tab closes an Undo or a question, and for an earlier draft; Reset says whether the file is current; "Go to the next part to write".
+- **Confidential partners and software (r13-b):** a line for private names and figures; patents, partner letters, software releases and repository links; STEM wording for models, datasets and deployments; the trainee placeholder by level; the competition name in quotation marks.
+- **Tests:** a fixed set of check sentences (H1, short French, French-derived names, spaced dashes, figure numbers, ranges).
+
+**INFERRED this round (for Prem to override):** keeping a tab's draft over a blank one from elsewhere (it stops saving and warns); the sticky alert; the confidentiality line; the STEM and evidence wording (part of Q-19).
+
+**Open for Prem from this round:** none new.
+
+**Tests:** 267 of 267 (261 + 6).
+

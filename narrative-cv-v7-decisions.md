@@ -759,4 +759,6 @@ Prem asked for a full audit, persona tests of researchers writing a narrative CV
 - INFERRED (round 11): listed under Round 11 in the loop log.
 - BUILT (round 12, 2026-11-01): Fable's review of round 11 (U-1 to U-8: French rules gated on a French-text test, list markers, stale state, a read status banner); pasted-text fixes from persona r12-a (inline lists, bullets, tabs, ranges, em dashes, ownership, the page range near the limit); V6 and tablet fixes from persona r12-b (an earlier-version message, an agency hint, touch targets, field cues, second-field lines).
 - INFERRED (round 12): listed under Round 12 in the loop log.
+- BUILT (round 13, 2026-11-01): Fable's review of round 12 (V-1 to V-10); data-safety fixes from persona r13-a (a written draft is never replaced by a blank one from elsewhere; a sticky alert; visible notes on take-ups and earlier drafts; Reset's file line); confidentiality, patent and software wording from persona r13-b; a fixed set of check sentences in the tests.
+- INFERRED (round 13): listed under Round 13 in the loop log.
 

@@ -293,7 +293,7 @@ async function seed(state, extra) {
     a.after=q('.v7-path-new h3')?.innerText; a.noReset=!q('.v7-path-reset'); a.saved=(JSON.parse(localStorage.getItem('ncv-v7')||'{}').contributions||[]).some(c=>(c.title||'').trim());
     return a;`);
   check("a saved draft puts Continue and Reset draft in one card", r.title === "Continue your draft" && r.tag === "DIV" && r.btns === 2 && r.rs, r);
-  check("Reset draft opens an inline warning first, Cancel and Clear my draft, and nothing is cleared yet", r.warn === "Clear your draft from this browser? Save a draft file first if you want to keep it." && r.warnBtns.join("|") === "Cancel|Clear my draft" && r.keptWhileWarned, r);
+  check("Reset draft opens an inline warning first, Cancel and Clear my draft, and nothing is cleared yet", /^Clear your draft from this browser\? (?:This draft was saved to a file .+ since[^.]*\. )?Save a draft file first if you want to keep it\.$/.test(r.warn) && r.warnBtns.join("|") === "Cancel|Clear my draft" && r.keptWhileWarned, r);
   check("Clear my draft asks again in the same warning (W-45), then clears; the card reads Start your draft", /^Are you sure/.test(r.cmsg) && r.keptAfterOne && r.after === "Start your draft" && r.noReset && !r.saved, r);
 
   console.log("V6 draft and migrations");
@@ -1299,6 +1299,41 @@ async function seed(state, extra) {
     check("a second field adds a line to What you did and What already changed (r12-b-5)", /on the health side too\./.test(r.qAct) && /care practice or guidelines that took it up too\./.test(r.qOut), { qAct: r.qAct, qOut: r.qOut });
     check("the field panel keeps the field's cue and adds the partners (r12-b-4)", /where a partner raised the question, say so/.test(r.hints) && !/^The problem or question\. A question a partner raised/m.test(r.hints), r.hints.slice(0, 300));
     check("a pasted tab prints as a space; 'An NGO' is lowered mid-sentence (r12-a-3, U-7)", !/\t/.test(r.txt) && /at an NGO\./.test(r.txt), r.txt.slice(0, 300));
+  }
+
+  console.log("Audit loop, round 13: a fixed set of check sentences (V-1 to V-9)");
+  {
+    const st = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    st.lens = Object.assign({}, st.lens, { workMode: ["team"] });
+    st.contributions = [{ cid: "r131", title: "Made-up contribution", stakes: "", roleMode: "", roleLine: "", activities: "", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} }];
+    await seed(st);
+    const SENT = {
+      h1: "My research examines made-up urban heat. We ran 12 workshops and our team built the network.",
+      frShort: "J’ai formé douze étudiants dans trois laboratoires.",
+      frCinq: "Cinq ateliers avec trois partenaires communautaires.",
+      enNames: "Le Roux and Du Bois at La Trobe ran the made-up site with nurses.",
+      dashNum: "In 2019 — 45 of them were made-up rural clinics.",
+      figs: "See Fig. 2. The results held. See Fig. 3. These too, in 2021.",
+      range: "From 2019–2022 we ran it.",
+    };
+    r = await js(H + `await w(200); const out={}; const box=q('[data-f$="-activities"] .v7-box'); box.focus();
+      for (const [k,v] of Object.entries(${JSON.stringify(SENT)})) { setv(box, v); await w(70); out[k]={flags:qa('[data-f$="-activities"] .v4-flag').map(x=>x.textContent).join('|'), meta:qa('[data-f$="-activities"] .v4-meta').map(x=>x.textContent).join('|')}; }
+      return out;`);
+    check("H1: 'My research… We… our team…' still asks for your own part (V-2)", /“we”/.test(r.h1.flags), r.h1);
+    check("short French fields with curly apostrophes count their number words (V-1)", !/No numbers/.test(r.frShort.flags) && !/No numbers/.test(r.frCinq.flags), { frShort: r.frShort.flags, frCinq: r.frCinq.flags });
+    check("English with French-derived names is not French; a number after a spaced dash counts (V-3, V-6)", /No numbers/.test(r.enNames.flags) && !/No numbers/.test(r.dashNum.flags), { enNames: r.enNames.flags, dashNum: r.dashNum.flags });
+    // r13-a-1, r13-a-2, r13-b-1: a blank draft from elsewhere does not replace this tab's draft; the warning is an alert.
+    const sx = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    sx.lens = Object.assign({}, sx.lens, { workMode: ["industry"] });
+    await seed(sx);
+    const kept = await js(H + `await w(200); const before=JSON.parse(localStorage.getItem('ncv-v7')).contributions.length;
+      const help=((q('[id$="-outcomes-hp"]')||{}).textContent||'');
+      window.dispatchEvent(new StorageEvent('storage', { key: 'ncv-v7', oldValue: null, newValue: JSON.stringify({ contributions: [{ cid: 'zz', title: '' }], ps: {}, mentees: [] }) }));
+      await w(200); const wn=q('#v4-save-warning');
+      return { before, cards: qa('.v7-card[data-cid], .v7-fold, .v7-card').length, warn: wn && !wn.hidden ? wn.textContent : '', role: wn ? wn.getAttribute('role') : '', help };`);
+    check("a blank draft written elsewhere does not replace this tab's draft; the tab says so in an alert (r13-a-1, r13-a-2)", kept.cards > 0 && /This tab still holds it/.test(kept.warn) && kept.role === "alert", kept);
+    check("partnered work gets a line for a partner or figures kept private (r13-b-1)", /describe the partner by its sector and size/.test(kept.help), kept.help);
+    check("'See Fig. 2. … Fig. 3.' is not a list; a closed range is one word (V-7, V-8)", !/reads as a list/.test(r.figs.flags) && /^5 words/.test(r.range.meta), { figs: r.figs.flags, range: r.range.meta });
   }
 
   console.log("Register (W-57): the tool's prompt strings");
