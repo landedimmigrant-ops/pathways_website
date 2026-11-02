@@ -10,12 +10,13 @@ One list of everything that waits on Prem or Eli, kept by Claude during the audi
 - Meanwhile the tool runs on Claude's recommended option, marked INFERRED in the loop log, so nothing stalls while a question waits.
 - Answer in any order, in chat or in the Answer column. An answered item moves to the end with the date.
 
-Last updated: 2026-11-02, after round 19.
+Last updated: 2026-11-02, after round 20 (the loop is complete).
 
 ## Critical
 
 | # | Question | Recommendation | Details | Answer |
 |---|---|---|---|---|
+| Q-28 | Before a first test with a real researcher: open the tool in Safari and Firefox (type, save a draft file, reopen it, copy a section, export Word, print preview). Every test so far ran in Chrome. | About 15 minutes on a Mac; Claude cannot run Safari here. | `r20-findings.md` (readiness) | |
 | Q-2 | **For Eli:** do the five-year totals in Mentorship keep the label "last five years" for a researcher whose window is extended by a leave? (D-1) | Send to Eli. The label stays as it is until Eli answers. | `narrative-cv-v7-decisions.md` (D-1); `r6-findings.md` (r6-b-2) | |
 | Q-3 | **For Eli:** is the guidance on career interruptions in How you got here and under the totals correct? It says where a leave goes and points to the funding opportunity's instructions; it states no agency rule. | Send to Eli before the tool goes to real researchers. | `r6-findings.md` (r6-b-1) | |
 | Q-4 | **For Eli:** two proposed lines name funder rules. P-24 gives a reason for the TCV no-links rule ("reviewers read only the CV"); P-50 rewrites the FRQ format line. Are both correct? And may a DOI be written as plain text in the TCV (r10-b-9)? | Send to Eli. Neither is applied. | `r8-plain-language-rewrites.md` (P-24, P-50) | |

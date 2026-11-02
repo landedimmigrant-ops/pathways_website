@@ -218,7 +218,7 @@ async function seed(state, extra) {
     return a;`);
   check("CV-FRQ heading and the team question", /background and skills/.test(r.h) && r.team, r);
   check("Why this competition names the competition", /Made-up Team Grants/.test(r.fit), r.fit);
-  check("statement strip joins the answers; button reads Review your CV", /^I am an associate professor\. My work is in ___\. Why clinics drop the protocol\. Two strands carry it\.$/.test(r.strip) && r.next === "Review your CV →", r);
+  check("statement strip joins the answers; button reads Review your CV", /^I am an associate professor at ___\. My work is in ___\. Why clinics drop the protocol\. Two strands carry it\.$/.test(r.strip) && r.next === "Review your CV →", r);
 
   console.log("Review");
   r = await js(H + `nav(/Review your CV/).click(); await w(150);
@@ -1463,13 +1463,31 @@ async function seed(state, extra) {
     st.contributions = [{ cid: "r191", title: "A made-up film", stakes: "A made-up question?", roleMode: "led", roleLine: "", activities: "I shot 40 made-up hours.", outputs: "A film.", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} }];
     await seed(st);
     r = await js(H + `await w(200); const a={}; a.roleHelp=((q('[id$="-roleLine-hp"]')||{}).textContent||'');
-      const rl=q('[data-f$="-roleLine"] .v7-box'); rl.focus(); setv(rl,'I directed and edited the film; a sound designer worked on one part.'); await w(80); a.role=qa('[data-f$="-roleLine"] .v4-flag').map(x=>x.textContent).join('|');
+      const rl=q('[data-f$="-roleLine"] .v7-box'); rl.focus(); setv(rl,'I directed and edited the film; a sound designer worked on one part.'); await w(80); a.role=qa('[data-f$="-roleLine"] .v4-flag').map(x=>x.textContent).join('|'); setv(rl,'I worked on the made-up analysis.'); await w(80); a.roleOwn=qa('[data-f$="-roleLine"] .v4-flag').map(x=>x.textContent).join('|');
       rail('Export').click(); await w(150);
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
       const cb=qa('button').find(b=>/^Copy working draft/.test(b.innerText)); if(cb){ cb.click(); await w(40); } a.txt=clip; navigator.clipboard.writeText=ow;
       return a;`);
-    check("creative role example; a vague verb about someone else's part is not flagged (r19-a-1, r19-a-7)", /sound designer composed the score/.test(r.roleHelp) && !/worked on/.test(r.role), { roleHelp: r.roleHelp.slice(-120), role: r.role });
+    check("creative role example; a vague verb about someone else's part is not flagged (r19-a-1, r19-a-7)", /sound designer composed the score/.test(r.roleHelp) && !/worked on/.test(r.role) && /worked on/.test(r.roleOwn), { roleHelp: r.roleHelp.slice(-120), role: r.role, roleOwn: r.roleOwn }); // AD-4: the positive case too
     check("an independent practice leaves the institution out of the first sentence; a common group noun is lowered (r19-a-6, AC-2)", /I am an independent media artist\. My work is in documentary\./.test(r.txt) && /3 postdoctoral fellows/.test(r.txt), r.txt.slice(0, 500));
+  }
+
+  console.log("Audit loop, round 20");
+  {
+    const st = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "mentor", ui: { profileNote: false } });
+    st.mentorCounts = Object.assign({}, st.mentorCounts || {}, { other: "3" }); st.mentorOtherLabel = "Technicians";
+    st.mentees = [{ stageKind: "other", stage: "PhD candidate", stageOther: "PhD candidate", kind: "university", org: "A made-up university", unit: "", recognition: "", why: "", folded: false }];
+    st.lens = Object.assign({}, st.lens, { workMode: ["team"] });
+    await seed(st);
+    r = await js(H + `await w(200); rail('Export').click(); await w(150);
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(cb){ cb.click(); await w(40); } navigator.clipboard.writeText=ow; return clip;`);
+    check("a common one-word group is lowered; 'PhD candidate' keeps its capitals (AD-1, AD-3)", /3 technicians/.test(r) && /A PhD candidate I trained/.test(r), r.slice(0, 300));
+    st.mentorOtherLabel = "Algonquin youth"; await seed(st);
+    r = await js(H + `await w(200); rail('Export').click(); await w(150);
+      let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
+      const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(cb){ cb.click(); await w(40); } navigator.clipboard.writeText=ow; return clip;`);
+    check("a people's name in a group stays as typed (AD-2)", /3 Algonquin youth/.test(r), r.slice(0, 200));
   }
 
   console.log("Register (W-57): the tool's prompt strings");

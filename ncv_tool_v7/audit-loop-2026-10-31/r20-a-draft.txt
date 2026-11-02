@@ -1,0 +1,35 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: SSHRC · Tri-agency CV · SSHRC Insight Grant (applying 2027) · Mid career · Humanities · Team-based]
+Before you submit: paste this into the current version of SSHRC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Arial in black type.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am an associate professor of history at a mid-sized Canadian university. My work is in nineteenth-century social history and digital editing.
+
+How do ordinary rural households, and the women in them, appear in the records they kept themselves, and how can digital methods make those records usable by scholars and the public? Three strands: a digital edition of a 19th-century diary, a co-authored study of household account books, and an undergraduate research program. The thread is that ordinary people kept records, and scholarship should be able to use them. I came to the diary through a graduate seminar in paleography, and moved from archival work into digital editing after a two-year postdoctoral fellowship in a humanities computing lab. A monograph with a university press, a digital edition of 1,400 pages that 30 researchers have used, two edited special journal issues, and a postdoctoral fellowship. The Insight Grant funds a sustained program of research of three to five years, which is the right scale to extend the edition method to two further diaries with a team. Next I plan to edit two more diaries from the same district and link the three editions so that readers can follow one household across decades.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Digital edition of the Harlow diary, 1851 to 1879
+   A 28-year private diary describes a rural household and its correspondents but has been available only as an uncatalogued manuscript, so historians could not cite or search it. I led the editorial team and wrote the transcription rules for the diary. We transcribed 1,400 diary pages from 28 notebooks held in two archives, encoded them in TEI XML with a team of 3 research assistants and 2 librarians, and built a searchable site. A public digital edition with 1,400 pages of transcription, a name and place index of about 600 entries, and an open-access dataset. Thirty researchers and 4 local history societies have cited or used the edition since its launch in 2023, and a county museum used it to rewrite its exhibition text. A retired schoolteacher in the village where the diarist lived found her great-grandmother named in the 1862 entries and brought the pages to a school assembly. Other 19th-century diaries could be encoded with the same method, and teachers could use the edition in schools. (a, b)
+   a. Harlow Diary Edition, open dataset of 1,400 transcribed pages in TEI XML, held at the university library repository  [Dataset / tool]
+      Other projects can reuse the encoding and the open data.
+   b. Exhibition "A Year in the Life of Harlow Farm", County Museum, 2024, built from the edition text  [Exhibition, performance or screening]
+      Shows the edition used by a museum audience.
+
+2. Co-authored book on women and household accounts in rural Ontario
+   Historians have described farm women as unpaid helpers, but household account books suggest that they managed credit and trade in the district, and no study has used them together. I co-wrote four of the seven chapters and the framing chapters, with two co-authors. We drew on 41 household account books from six townships, read 2,300 entries, and compared them with census returns, in a team of three authors. A scholarly monograph of 320 pages with eleven tables, published by a university press in 2022, and a related journal article. Fifteen scholars have cited it, and two history courses assigned it in 2023 and 2024. A regional archive reorganized its account-book holdings after the book appeared. Other regions could be re-examined with account books, which might change how credit in farm households is understood. (a)
+   a. Marlow, Okafor and Reyes. Ledgers and Looms: Farm Women and Credit in Rural Ontario. University Press, 2022. 320 pp.  [Peer-reviewed]
+      The main scholarly publication.
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 1 doctoral student, 3 master's students, 14 undergraduate researchers, 5 archive interns
+A doctoral student I trained now works at Provincial Museum (Curator of documents), received a national graduate scholarship and built the museum diary digitization program.
+[One thing you do] Each undergraduate in the research program transcribes and encodes a month of diary entries, then presents the results at a public reading at the local museum, so that every student leaves with a citable credit.
+[Who gets in] I post the openings in first-year history courses and on the college bulletin, and I stopped requiring a prior archives course, which had kept out students who had not taken the elective.
+[Who else you mentor] I advise two junior colleagues in other departments on archive access and grant applications.

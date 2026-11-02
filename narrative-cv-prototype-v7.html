@@ -1866,7 +1866,9 @@
       const ownership = iVerb || myWord;
       const weak = [];
       // r19-a-7: a vague verb counts only in a clause that speaks of the writer or the team ("a designer worked on one part" is not flagged).
-      const ownClause = (idx) => { const a = Math.max(t.lastIndexOf(";", idx), t.lastIndexOf(".", idx)) + 1, b2 = t.slice(idx).search(/[.;]/); const cl = t.slice(a, b2 < 0 ? t.length : idx + b2); return /\b(?:I|my|we|our)\b/i.test(cl); };
+      // AD-4: clauses end at a full stop or semicolon followed by a space; a clause is exempt only when it names another agent.
+      const ownClause = (idx) => { const before = t.slice(0, idx), m0 = before.match(/[\s\S]*[.;](?=\s)/), a = m0 ? m0[0].length + 1 : 0, b2 = t.slice(idx).search(/[.;](?=\s|$)/); const cl = t.slice(a, b2 < 0 ? t.length : idx + b2);
+        return /\b(?:I|my|we|our)\b/i.test(cl) || !/^\s*(?:a|an|the|their|two|three|four|five|several)\s+(?!candidate\b|applicant\b)/i.test(cl); };
       WEAK_PHRASES.forEach(p => { const ms = allMatches(t, p).filter(m => kind !== "roleLine" || ownClause(m.index)); if (ms.length) { weak.push(p); ms.forEach(m => out.hits.push({ text: m.text, rule: "weak" })); } });
       if (kind !== "stakes") { // r15-a-1: the problem or question is not where your role is praised
         if (ownership && weCount) out.strengths.push("Team voice and your own role are both visible.");
@@ -2576,7 +2578,7 @@
           } },
         translational: { q: "Which one occasion shows the work reaching a specific person or group?", variants: { community: "Which one occasion shows the work in use by a specific person or group?" }, help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
           helpVariants: {
-            health: "One scene in two sentences, such as a patient, a clinic, a classroom or a committee that used the work. One concrete instance of What already changed, told as a scene. Optional. Leave out details that could identify a patient or participant, and name a clinic or community only with its agreement.", // r18-b-11
+            health: "One scene in two sentences, such as a patient, a clinic, a classroom or a committee that used the work. One concrete instance of What already changed, told as a scene. Optional. Leave out details that could identify a person, and name a person, clinic or community only with their agreement.", // r18-b-11
             stem: "One scene in two sentences, such as a control room, a field site, a deployment, a release review, an inspection or a standards committee where the work was used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.", // r10-b-10
             humanities: "One scene in two sentences, such as a reader, a classroom, an archive, a museum or a community meeting that used the work. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
             creative: "One scene in two sentences, such as an audience, a venue, a classroom or a community meeting where the work was seen or used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement."
@@ -2652,7 +2654,7 @@
     const mentorTotal = () => Object.values(ns.mentorCounts).reduce((n, v) => n + (parseInt(cleanCount(v), 10) || 0), 0);
     // "14 doctoral students, 1 master's student": the totals line every output prints.
     // r5-b-5: the Other group prints under the name the researcher gives it ("7 community researchers").
-    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out.replace(/^(?!(?:Cree|Inuit|Inuk|Métis|First|Indigenous|Elders?|Knowledge|Black|Mohawk|Anishinaabe|Haudenosaunee|Ojibwe|Mi[’']kmaq|Innu|Dene|Québec|Quebec|Canadian|Ghanaian|Francophone|Anglophone)\b)([A-ZÀ-Ý])(?=[a-zà-ÿ]+\s+[a-zà-ÿ])/, ch => ch.toLowerCase()) /* AC-2, AB-1: "Postdoctoral fellows" lowered; "Cree youth" stays */ : countNoun(n, out))); // r11-a-10, r16-a-7: as typed, a phone's capital lowered
+    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out.replace(/^(Students?|Postdocs?|Postdoctoral|Fellows?|Clinical|Research|Residents?|Interns?|Trainees?|Researchers?|Nurses?|Teachers?|Technicians?|Assistants?|Apprentices?|Community|Staff|Coordinators?|Volunteers?|Undergraduates?|Graduate|Doctoral|Visiting|Lab|Industry|High|School|Summer|Peer|Youth|Co-op|Agents?|Assistantes?|Stagiaires?)\b/, w => w.toLowerCase()) /* AD-1, AD-2: only common words are lowered; "Algonquin youth" stays as typed */ : countNoun(n, out))); // r11-a-10, r16-a-7: as typed, a phone's capital lowered
     const menteesDescribed = () => ns.mentees.filter(menteeHasContent).length;
     const stageDone = (key) => {
       const v = !!ns.visited[key];
@@ -4411,7 +4413,7 @@
           const wrap = el("div");
           const lab = el("label", "v7-field-label", "Competition"); lab.htmlFor = "v7-comp";
           const inp = el("input", "v7-input"); inp.id = "v7-comp"; inp.type = "text";
-          inp.placeholder = "For example, the specific chair, grant or award";
+          inp.placeholder = "For example, a grant, chair or award";
           inp.value = L.program || ""; inp.disabled = !!L.undecided; // r17-a-3
           inp.addEventListener("input", e => {
             const before = !!(L.program || "").trim();
@@ -4585,7 +4587,7 @@
           UI.active = "c" + nc.cid + "-title"; UI.evCard = -1;
           saveState(); renderStage();
           focusField(UI.active);
-          announce("Contribution " + (i + 1) + " added." + (ns.contributions.length >= 10 ? " This is the most the format allows." : ""));
+          announce("Contribution " + (i + 1) + " added." + (ns.contributions.length >= 10 ? " This is the limit of ten." : ""));
         });
         c.appendChild(add);
       }
@@ -4721,7 +4723,7 @@
           // r13-b-1: work with a partner under an agreement may keep names and figures private.
           if ((f.k === "activities" || f.k === "outcomes") && (ns.lens.workMode || []).includes("industry")) helpExtra = " If an agreement keeps the partner or its figures private, describe the partner by its sector and size, give what you can, and say the rest is withheld.";
           // r16-b-11: in community-engaged work, who asked for the work and what may be named.
-          if (f.k === "translational" && d2 === "health" && ns.lens.discipline !== "health") helpExtra = " Or a ward, a clinic or a bedside, with details that could identify a patient left out."; // r19-b-2
+          if (f.k === "translational" && d2 === "health" && ns.lens.discipline !== "health") helpExtra = " A ward, a clinic or a bedside also fits; leave out details that could identify a patient."; /* AD-5 */ // r19-b-2
           if (f.k === "stakes" && isCommunity() && !/partners set it/.test(resolveHelp(f.def))) helpExtra /* AA-5: once */ = " If a partner or community asked for this work, say so. Name a partner, a community, its Elders or its protocols only as they agree."; // r18-a-5
           // r12-b-5: the second field adds a line to What you did and What already changed too.
           if ((f.k === "activities" || f.k === "outcomes") && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
@@ -4746,7 +4748,7 @@
             roleNamed: f.k === "roleLine" ? () => !!contrib.roleMode : () => !!contrib.roleMode || ownershipIn(contrib.roleLine).iVerb,
             has: () => cHas(contrib, f.k), onChange: f.role ? () => { update(); recheckCard(contrib.cid); } : update,
             noEnter: !!f.role,
-            shown: f.role ? () => { const lvl = (ROLE_LEVELS.find(x => x[0] === contrib.roleMode) || [])[1], line = one(contrib.roleLine); return (lvl && line && line.toLowerCase().startsWith(lvl.toLowerCase()) ? [line] : [lvl, contrib.roleLine]).filter(Boolean).join(" · "); } : null, // r15-a-6
+            shown: f.role ? () => { const lvl = (ROLE_LEVELS.find(x => x[0] === contrib.roleMode) || [])[1], line = one(contrib.roleLine); return (lvl && line && line.toLowerCase().startsWith(lvl.toLowerCase().replace(/ (?:it|a specific part)$/, "")) ? [line] : [lvl, contrib.roleLine]) /* r20-b-2 */.filter(Boolean).join(" · "); } : null, // r15-a-6
             before: f.role ? (inner) => {
               const lv = el("div", "v7-levels");
               const ll = el("span", "v7-field-label", "How were you involved?"); ll.id = id + "-lv";
@@ -4785,7 +4787,7 @@
         const ek = el("span", "v7-f-k", "Evidence"); evRow.appendChild(ek);
         const evs = liveEvidence(contrib);
         if (evs.length) evRow.appendChild(el("span", "v7-ev-s", evs.length + " item" + (evs.length > 1 ? "s" : "") + ": " + evs.map((e, j) => letter(j)).join(", ")));
-        const eb = el("button", "btn btn-outline v7-btn-small", evs.length ? "Edit evidence" : "+ Add evidence"); eb.type = "button"; eb.id = "ev-open-" + contrib.cid;
+        const eb = el("button", "btn btn-outline v7-btn-small", evs.length ? "Edit evidence" : "+ Add evidence"); eb.setAttribute("aria-label", (evs.length ? "Edit evidence for contribution " : "Add evidence to contribution ") + (i + 1)); /* r20-a-3 */ eb.type = "button"; eb.id = "ev-open-" + contrib.cid;
         eb.addEventListener("click", () => { UI.evCard = i; UI.active = ""; const fresh = !liveEvidence(contrib).length; if (fresh) contrib.evidence = [{ text: "", type: "", note: "" }]; saveState(); renderStage(); countEvent("evidenceOpen"); focusEvidence(contrib); announce(fresh ? "Evidence item a added. Choose its kind." : "Evidence for contribution " + (i + 1) + "."); });
         evRow.appendChild(eb);
         fields.appendChild(evRow);
@@ -4971,7 +4973,7 @@
         const NOTE_HINT = { "Exhibition, performance or screening": "What the work did or showed, and how it bears on your question", "Media / public": "What the piece says about the work, or whom it reached",
           "Community document": "What it records or agrees, and whom it serves", "Dataset / tool": "What it holds, who uses it, or why it was useful",
           "Policy / practice uptake": "Who adopted it (or its sector), when, and what changed in practice",
-          "Award / recognition": "Who selected it, from how many, and what it recognised", "Funding": "What the funding made possible", "Peer-reviewed": "What it argues, shows or makes available", "Replication / citation": "Who built on the work, and how", /* r19-a-4 */
+          "Award / recognition": "Who selected it, from how many, and what it recognized", "Funding": "What the funding made possible", "Peer-reviewed": "What it argues, shows or makes available", "Replication / citation": "Who built on the work, and how", /* r19-a-4 */
           "Other": "What it is and why it matters, such as who licensed a patent and for what" };
         wt.placeholder = NOTE_HINT[ev.type] || "What it found, or why it was useful, so a reviewer has the point without opening the source"; wt.value = ev.note || "";
         const wn = el("span", "v4-meta v7-ev-wc"); wn.id = wt.id + "-wc"; wt.setAttribute("aria-describedby", wn.id);
@@ -5098,7 +5100,7 @@
     const lcArticleSoft = (t) => String(t || "").replace(/^(A|An)(?=\s)|^The(?=\s+(?:[a-zà-ÿ]|Universit(?:y|é)(?=\s|$)))/, a => a.toLowerCase()); // U-7: "a"/"an" always; "the" before a lower-case word or a university
     function menteeSentence(m) {
       // G-3: a level typed under Other keeps its capitals ("MD-PhD trainee"); only a leading capital is lowered.
-      const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^(?:a|an|the)\s+/i, "").replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase()) || "person"; // r19-a-9 // r16-b-2: "a community interviewer" → "community interviewer"
+      const noun = MENTEE_NOUN[m.stageKind] || one(m.stageKind === "other" ? m.stageOther : m.stage).replace(/^(?:a|an|the)\s+/i, "").replace(/^[A-Z](?=[a-z]+(?:\s|$))/, ch => ch.toLowerCase()) || "person"; /* AD-3: "PhD candidate" keeps its capitals */ // r19-a-9 // r16-b-2: "a community interviewer" → "community interviewer"
       // r3-a-7: the unit or position follows the organization in brackets ("at a robotics firm (process engineer)").
       // r10-a-3: a phone's capital article mid-sentence ("at The provincial ministry") is lowered.
       const orgName = lcArticleSoft(one(m.org)), unit = one(m.unit), bracket = (u) => /[()]/.test(u) || /\)\s*$/.test(orgName) ? ", " + u : " (" + u + ")"; // r16-a-5: no two bracket groups side by side
@@ -5337,7 +5339,7 @@
         const uni = m.kind === "university";
         const p2 = el("div", "v7-pair");
         const a = input("v7-pg" + i, uni ? "University" : "Organization", false, m.org, v => { m.org = v; changed(); });
-        if (!uni && (ns.lens.workMode || []).includes("industry")) { const ai = a.querySelector("input"); if (ai) ai.placeholder = "If it cannot be named, leave this empty and give the sector below"; } /* r19-b-3 */
+        if (m.kind === "industry") { const ai = a.querySelector("input"); if (ai) ai.placeholder = "If the company cannot be named, give its sector instead (a medical-device company)"; } /* r19-b-3, AD-6 */
         const b = input("v7-pu" + i, uni ? "Department or discipline" : "Unit or position", false, m.unit, v => { m.unit = v; changed(); });
         a.className = ""; b.className = "";
         p2.appendChild(a); p2.appendChild(b); card.appendChild(p2);
@@ -5385,7 +5387,7 @@
       const r = /^(?:Postdoctoral|Assistant|Associate|Full|Adjunct|Senior|Junior|Doctoral|Research|Visiting|Clinical|Professor|Lecturer|Instructor|Scientist|Researcher|Fellow|Independent|Early-career|Tenured)\b/.test(role0) && !/\s[A-ZÀ-Ý]/.test(role0) ? role0.charAt(0).toLowerCase() + role0.slice(1) : role0;
       const inst = lcArticleSoft(one(ns.ps.institution)), fld = lcArticleSoft(one(ns.ps.field));
       if (!(r || inst || fld)) return "";
-      return "I am " + articleFor(r) + " " + (r || "___") + (inst || !r ? " at " + (inst || "___") : "") /* r19-a-6 */ + ". My work is in " + (fld || "___").replace(/[.\s]+$/, "") + ".";
+      return "I am " + articleFor(r) + " " + (r || "___") + (inst || !r || /\b(?:professor|lecturer|fellow|scientist|chair|researcher|instructor)\b/i.test(r) ? " at " + (inst || "___") : "") /* r19-a-6, AD-7: an academic rank keeps "at ___" */ + ". My work is in " + (fld || "___").replace(/[.\s]+$/, "") + ".";
     };
     const SF = () => {
       const a = [
@@ -5594,6 +5596,7 @@
       if (m.step === "contrib") ns.contributions.forEach((x, j) => { x.folded = j !== m.i; });
       if (m.step === "mentor" && m.person) ns.mentees.forEach((x, j) => { x.folded = j !== 0; });
       goStage(m.step);
+      if (m.label) setTimeout(() => announce(m.label + "."), 60); /* r20-a-2: the jump says where it landed */
       if (m.ev) { UI.evCard = m.i; const c2 = ns.contributions[m.i]; if (!liveEvidence(c2).length) c2.evidence = [{ text: "", type: "", note: "" }]; renderStage(); const n = document.getElementById("evt" + c2.cid + "-0"); if (n) { n.focus(); n.scrollIntoView({ block: "center" }); } return; }
       if (m.person) { const s = document.getElementById("v7-ps0"); if (s) { s.focus(); s.scrollIntoView({ block: "center" }); } return; }
       if (m.field) { UI.active = m.field; renderStage(); focusField(m.field); }

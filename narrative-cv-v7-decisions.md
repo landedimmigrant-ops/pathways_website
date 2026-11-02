@@ -773,4 +773,5 @@ Prem asked for a full audit, persona tests of researchers writing a narrative CV
 - INFERRED (round 18): listed under Round 18 in the loop log.
 - BUILT (round 19, 2026-11-02): a register pass over the text added in rounds 9 to 18 (21 rewrites); Fable's AC-1 to AC-4; field-fit fixes from personas r19-a (a solo media artist) and r19-b (a biomedical engineer with company and hospital partners).
 - INFERRED (round 19): the rewrites (part of Q-19); listed under Round 19 in the loop log.
+- BUILT (round 20, 2026-11-02): Fable's AD-1 to AD-8; fixes from the final screen-reader pass (r20-a) and a first-time tablet walk (r20-b). The 20-round audit loop is complete: 289 of 289 tests; summary and next steps at the end of `ncv_tool_v7/audit-loop-2026-10-31.md`.
 

@@ -426,3 +426,23 @@ _none yet_
 
 **Tests:** 287 of 287 (285 + 2).
 
+### Round 20 · Fable's final review and readiness verdict, a blind historian's final screen-reader pass, a first-time nurse-researcher on a tablet (2026-11-02)
+
+**Who walked it** (the round 20 snapshot = commit `684f857`), all findings in [r20-findings.md](audit-loop-2026-10-31/r20-findings.md)
+- **Fable** reviewed round 19 (AD-1 to AD-8, all minor or polish) and gave a readiness verdict.
+- **r20-a** Historian who is blind, SSHRC, keyboard and screen reader: 2 minor · 1 polish; no regressions ([draft](audit-loop-2026-10-31/r20-a-draft.txt)).
+- **r20-b** Community-engaged nurse-researcher, CIHR, first time, tablet: 2 minor · 2 polish; no regressions ([draft](audit-loop-2026-10-31/r20-b-draft.txt)).
+
+**Fixed this round:** group names (common words lowered, names as typed); "PhD candidate"; the own-clause rule with a positive test; the One moment health and agreement lines; the unnamed-company placeholder; "at ___" for academic ranks; Review jumps announced; evidence buttons named; the folded role; the Competition placeholder.
+
+**Tests:** 289 of 289 (287 + 2). One timing test (r10-a-11, a field brought into view after Tab in a short window) failed once and passed on rerun; it is timing-sensitive.
+
+## Loop summary (rounds 1 to 20, 2026-10-31 to 2026-11-02)
+
+- **Who walked it:** 40 researcher personas across all five fields, every work mode, three career stages, four agencies and both formats; desktop, phone (320 to 390 px), tablet, sideways phone; keyboard only, screen reader, voice control, 200% zoom and large browser text, Windows high contrast, reduced motion, a slow processor, offline, French text, pasted Word text, ten contributions, two tabs, V6 files; a committee member read the outputs twice. Fable reviewed the code after every round.
+- **Tests:** 132 at the start, 289 at the end, including a static check that fails on code hidden behind a trailing comment (three such slips reached a commit before the check existed).
+- **What the loop did not test:** browsers other than Chrome; the Word file in Word; a real researcher.
+- **Principles set by Prem during the loop:** field wording on the same data (Q-18); one running questions list (`questions-for-prem.md`), asked only when critical.
+- **Before the first real-researcher test** (Fable's order): Safari and Firefox; the .doc in Word (Q-5); Eli's four funder questions (Q-2, Q-3, Q-4, Q-27); Q-26; a one-page test protocol.
+- **After the loop:** remove about 200 lines of dead code (AB-7); one order for field and work-mode wording (AB-5, Q-22); one word counter and one page estimate; split the file into named sections; the open polish items in rounds 16 to 20.
+
