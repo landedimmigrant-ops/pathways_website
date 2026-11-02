@@ -16,6 +16,10 @@ and rebuilt from Prem's V6 walkthrough notes and the V7 mock-ups. This folder's 
 | **Test fixture** (made-up V6 draft) | [`fixtures/v6-draft.json`](fixtures/v6-draft.json) |
 | **Related versions** | V6 (frozen reference): [`../ncv_tool_v6/README.md`](../ncv_tool_v6/README.md) · V5 (frozen): [`../ncv_tool_v5/README.md`](../ncv_tool_v5/README.md) |
 
+**Frozen on 2026-11-02 at the version before the audit loop (commit `f852933`).** The 20-round audit loop's fixes
+are in V8 ([`../ncv_tool_v8/README.md`](../ncv_tool_v8/README.md)); the loop's log, findings and the questions list
+stay in this folder.
+
 The flow: start page (New draft or Continue draft) → **Set up your profile** → **My application** (Contributions,
 Mentorship, Personal statement) → **Draft** (Review, with the order of contributions; Export).
 
