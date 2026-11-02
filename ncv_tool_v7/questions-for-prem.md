@@ -10,7 +10,7 @@ One list of everything that waits on Prem or Eli, kept by Claude during the audi
 - Meanwhile the tool runs on Claude's recommended option, marked INFERRED in the loop log, so nothing stalls while a question waits.
 - Answer in any order, in chat or in the Answer column. An answered item moves to the end with the date.
 
-Last updated: 2026-11-01, after round 18.
+Last updated: 2026-11-02, after round 19.
 
 ## Critical
 
@@ -54,6 +54,8 @@ Last updated: 2026-11-01, after round 18.
 | Q-23 | French drafts: add a draft-language choice (English or Français) in Setup? With Français, the trainee sentences, the Totals line and the first sentence print in French, the checks use French word lists, the length verdict uses the 6-page French limit, the join words are French and the outputs carry `lang="fr"`. Today French text prints cleanly but those frames are English. | Yes. It matters for FRQ applicants and Concordia's francophone researchers; it is a sizeable build, best done as its own round. | `r11-findings.md` (r11-a-1, -2, -6, -7, -9, -11) | |
 | Q-24 | Evidence kinds: add "Preprint", "Conference talk or poster" and "Teaching or curriculum"? An early-career researcher had to file a preprint as Peer-reviewed; it now goes under Other. Adding kinds changes the saved data and the Review chart. | Yes to both. | `r14-findings.md` (r14-b-1) | |
 | Q-25 | A filled field shows its answer as a button hidden from assistive technology over a 2 px box (the shrink design, D-13). A voice-control user cannot name the visible text. Rework it so the visible answer is the named control? | Yes, in a round of its own; it touches every field. | `r14-findings.md` (r14-a-2) | |
+| Q-26 | Two wording choices to settle once: check messages say both "part" and "field" (the screens say "the six parts"); the rail says "Save draft" and Export says "Save a draft file". | "part" everywhere; "Save a draft file" everywhere. | `r19-findings.md` | |
+| Q-27 | **For Eli:** the tool says ten contributions is "the most the format allows". Is that the agencies' rule, and where is it written? | Send to Eli; keep the line until then. | `r19-findings.md` | |
 
 ## Calls Claude made for you (override any)
 

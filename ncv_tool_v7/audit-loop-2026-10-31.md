@@ -410,3 +410,19 @@ _none yet_
 
 **Tests:** 285 of 285 (282 + 3).
 
+### Round 19 · Fable's register audit of rounds 9 to 18 and review of round 18, a solo media artist, a biomedical engineer with two partners (2026-11-02)
+
+**Who walked it** (the round 19 snapshot = commit `c07c172`), all findings in [r19-findings.md](audit-loop-2026-10-31/r19-findings.md)
+- **Fable** read every string added in rounds 9 to 18 against the house register (22 flagged) and reviewed round 18 (AC-1 to AC-4).
+- **r19-a** Early-career media artist, SSHRC, Creative + Humanities, largely solo: 9 minor · 3 polish ([draft](audit-loop-2026-10-31/r19-a-draft.txt)).
+- **r19-b** Senior biomedical engineer, CIHR, STEM + Health, company and hospital partners: 3 minor · 4 polish ([draft](audit-loop-2026-10-31/r19-b-draft.txt)).
+
+**Fixed this round**
+- **Register:** 21 added strings rewritten to the house register; the empty What already changed wording made one across help, gap line and .txt.
+- **Code (AC-1 to AC-4):** the advisor packet's contribution test; group names (common nouns lowered, names of peoples and places kept); a mirrored Reset once; the hidden-code test widened to `else`, `catch` and `finally`.
+- **Field fit:** creative role example and note prompts by kind; an institution-free first sentence; vague verbs checked only in your own clauses; a line for minors; trial registrations, registries, a health scene in One moment, an unnamed-company hint, STEM Standing help.
+
+**Open for Prem from this round:** "part" or "field" in check messages, and one name for the save button; the source for "up to 10 contributions".
+
+**Tests:** 287 of 287 (285 + 2).
+

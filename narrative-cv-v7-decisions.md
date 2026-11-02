@@ -771,4 +771,6 @@ Prem asked for a full audit, persona tests of researchers writing a narrative CV
 - INFERRED (round 17): listed under Round 17 in the loop log.
 - BUILT (round 18, 2026-11-01): Fable's review of round 17 and a whole-file pass (AB-1 to AB-10); fixes from two end-to-end regression walks (r18-a desktop, r18-b phone), including the empty-field count bug (`/$^/` matched empty text and printed "$1").
 - INFERRED (round 18): listed under Round 18 in the loop log.
+- BUILT (round 19, 2026-11-02): a register pass over the text added in rounds 9 to 18 (21 rewrites); Fable's AC-1 to AC-4; field-fit fixes from personas r19-a (a solo media artist) and r19-b (a biomedical engineer with company and hospital partners).
+- INFERRED (round 19): the rewrites (part of Q-19); listed under Round 19 in the loop log.
 
