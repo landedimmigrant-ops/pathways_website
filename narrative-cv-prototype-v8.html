@@ -212,6 +212,20 @@
     .v7-ico { width: 1.05em; height: 1.05em; fill: currentColor; flex-shrink: 0; margin-top: 2px; }
     .v7-lede { max-width: 74ch; }
     .v7-note { display: flex; gap: 8px; align-items: flex-start; font-size: 0.85rem; color: var(--muted); margin: 0 0 12px; }
+    /* V8 testing: the tester sign-up on the start page and the three questions on Export */
+    .v8-tester { border-color: #e5a712; }
+    .v8-tq { border: 0; margin: 0 0 16px; padding: 0; min-width: 0; }
+    .v8-tq legend { padding: 0; margin-bottom: 6px; }
+    .v8-tq-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+    .v8-tq-opt { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 12px; border: 1px solid var(--v7-card-b); border-radius: 6px; cursor: pointer; font-size: 0.92rem; background: #fff; }
+    .v8-tq-opt input { width: 1.1em; height: 1.1em; margin: 0; flex: none; }
+    .v8-tq-opt:has(input:checked) { border-color: var(--v7-accent, #912338); box-shadow: inset 0 0 0 1px var(--v7-accent, #912338); }
+    .v8-tq-opt:has(input:focus-visible) { outline: 2px solid var(--v7-accent, #912338); outline-offset: 2px; }
+    .v8-tq-opts.is-scale .v8-tq-opt { min-width: 44px; justify-content: center; }
+    .v8-tq .v4-text-input { max-width: 28rem; width: 100%; }
+    .v8-tq-ta { width: 100%; min-height: 4.5em; }
+    .v8-tq-err { color: #a4161a; font-size: 0.85rem; margin: 4px 0 0; min-height: 0; }
+    .v8-tester-privacy { margin: 0 0 16px; max-width: 72ch; }
     .v7-quiet { font-size: 0.85rem; color: var(--muted); margin: 8px 0 0; }
     .v7-small { font-size: 0.78rem; }
     .v7-body { font-size: 0.92rem; max-width: 72ch; margin: 0 0 12px; }
@@ -930,6 +944,155 @@
       page: "ncv-tool-v8",
       email: "impact@concordia.ca"
     };
+    // V8 testing (Prem, 2026-11-02): testers sign up on the start page (email and three questions)
+    // and answer three more on Export. Rows go to the Neon `testers` table through the Worker that
+    // serves the tool (`ncv_tool_v8/worker/`), same origin, at /api/tester. It is on where the
+    // Worker serves the page (*.workers.dev) and, for the test script, with ?tester=1. The record
+    // lives under its own key, so Reset draft and Load your draft leave it alone. No draft text is sent.
+    const TESTER_ON = /\.workers\.dev$/.test(location.hostname) || /[?&]tester=1\b/.test(location.search);
+    const TESTER_API = "/api/tester";
+    const TESTER_KEY = "ncv-v8-tester";
+    const TESTER_START_QS = [
+      { id: "funding", type: "one", q: "Which funding opportunity are you preparing for?",
+        options: ["CIHR", "NSERC", "SSHRC", "FRQ (FRQNT, FRQS or FRQSC)", "Another funder", "Not decided yet"] },
+      { id: "before", type: "one", q: "Have you written a narrative CV before?",
+        options: ["Yes, for an application I submitted", "Yes, a draft only", "No"] },
+      { id: "want", type: "text", q: "What do you most want from this session?" }
+    ];
+    const TESTER_END_QS = [
+      { id: "useful", type: "one", q: "How useful was this for your narrative CV?", options: ["1", "2", "3", "4", "5"], ends: ["1 · Not useful", "5 · Very useful"] },
+      { id: "stuck", type: "text", q: "Where did you get stuck?" },
+      { id: "change", type: "text", q: "What one change would help most?" }
+    ];
+    const testerLoad = () => { try { const t = JSON.parse(localStorage.getItem(TESTER_KEY) || "null"); return t && typeof t === "object" ? t : {}; } catch (_) { return {}; } };
+    let tester = TESTER_ON ? testerLoad() : {};
+    const testerSave = () => { try { localStorage.setItem(TESTER_KEY, JSON.stringify(tester)); } catch (_) {} };
+    const testerId = () => {
+      if (!tester.id) tester.id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+      return tester.id;
+    };
+    const testerProfile = () => ({ agency: ns.lens.agency || "", field: ns.lens.discipline || "", stage: ns.lens.careerStage || "", workMode: ns.lens.workMode || [] });
+    async function testerPost(body) {
+      try {
+        const r = await fetch(TESTER_API, { method: "POST", headers: { "Content-Type": "application/json" }, keepalive: true,
+          body: JSON.stringify(Object.assign({ id: testerId(), version: TOOL_VERSION }, body)) });
+        return r.ok;
+      } catch (_) { return false; }
+    }
+    // A start or finish that did not reach the server is sent again on the next visit.
+    function testerRetry() {
+      if (!TESTER_ON) return;
+      if (tester.email && !tester.startSent) testerPost({ action: "start", email: tester.email, answers: tester.start || {}, profile: testerProfile() }).then(ok => { if (ok) { tester.startSent = true; testerSave(); } });
+      if (tester.endPending && !tester.endSent && tester.startSent) testerPost({ action: "finish", answers: tester.end, profile: testerProfile() }).then(ok => { if (ok) { tester.endSent = true; testerSave(); } });
+    }
+    // The step a tester last opened, so the team can see where a session stopped.
+    function testerStep(key) {
+      if (!TESTER_ON || !tester.startSent || tester.lastStep === key) return;
+      tester.lastStep = key; testerSave();
+      testerPost({ action: "step", step: key, profile: testerProfile() });
+    }
+    // One question as a native radio group or a text box, for the tester cards.
+    function testerQuestion(q, answers, prefix) {
+      const id = prefix + "-" + q.id;
+      if (q.type === "one") {
+        const fs = el("fieldset", "v8-tq");
+        fs.appendChild(el("legend", "v4-q", q.q));
+        const row = el("div", "v8-tq-opts" + (q.ends ? " is-scale" : ""));
+        q.options.forEach((o, j) => {
+          const lab = el("label", "v8-tq-opt");
+          const r = el("input"); r.type = "radio"; r.name = id; r.value = o; r.id = id + "-" + j;
+          r.checked = answers[q.id] === o;
+          r.addEventListener("change", () => { answers[q.id] = o; testerSave(); });
+          lab.appendChild(r); lab.appendChild(el("span", null, o));
+          row.appendChild(lab);
+        });
+        fs.appendChild(row);
+        if (q.ends) { const ends = el("p", "v4-fb-scale-ends"); ends.appendChild(el("span", null, q.ends[0])); ends.appendChild(el("span", null, q.ends[1])); fs.appendChild(ends); }
+        return fs;
+      }
+      const wrap = el("div", "v8-tq");
+      const lab = el("label", "v4-q", q.q); lab.htmlFor = id;
+      wrap.appendChild(lab);
+      const ta = el("textarea", "contribution-textarea v8-tq-ta"); ta.id = id; ta.maxLength = 2000; ta.rows = 3;
+      ta.value = answers[q.id] || "";
+      ta.addEventListener("input", () => { answers[q.id] = ta.value; testerSave(); });
+      wrap.appendChild(ta);
+      return wrap;
+    }
+    const TESTER_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    // Start page: the sign-up card shows until the tester signs up or chooses to start without it.
+    function renderTesterStart(c) {
+      const card = el("section", "v7-card v8-tester"); card.setAttribute("aria-labelledby", "v8-ts-t");
+      const h = el("h2", "v7-h3", "Before you start: you are testing this tool"); h.id = "v8-ts-t"; card.appendChild(h);
+      card.appendChild(el("p", "v7-body", "The Pathways to Impact team is testing this tool with researchers. Your email and three short answers tell us who tested it and what they came for. At the end, on the Export step, there are three more questions."));
+      card.appendChild(el("p", "v7-quiet v8-tester-privacy", "What is sent: your email, these answers, the profile you choose in Setup (agency, field, career stage, work mode), the steps you open and the time. Your draft text stays in this browser. The answers are stored in a database in the United States and are read only by the Pathways to Impact team. To have them removed, write to " + FEEDBACK.email + "."));
+      tester.start = tester.start || {};
+      const ew = el("div", "v8-tq");
+      const el1 = el("label", "v4-q", "Your email"); el1.htmlFor = "v8-ts-email"; ew.appendChild(el1);
+      const em = el("input", "v4-text-input"); em.type = "email"; em.id = "v8-ts-email"; em.autocomplete = "email"; em.maxLength = 254;
+      em.setAttribute("aria-describedby", "v8-ts-email-err"); em.value = tester.draftEmail || "";
+      em.addEventListener("input", () => { tester.draftEmail = em.value; testerSave(); });
+      ew.appendChild(em);
+      const err = el("p", "v8-tq-err"); err.id = "v8-ts-email-err"; ew.appendChild(err);
+      card.appendChild(ew);
+      TESTER_START_QS.forEach(q => card.appendChild(testerQuestion(q, tester.start, "v8-ts")));
+      const row = el("div", "v4-note-row");
+      const go = el("button", "btn btn-primary", "Sign up and start"); go.type = "button";
+      const skip = el("button", "btn btn-outline", "Start without signing up"); skip.type = "button";
+      const status = el("p", "v7-quiet"); status.setAttribute("aria-live", "polite");
+      go.addEventListener("click", async () => {
+        const v = em.value.trim();
+        if (!TESTER_EMAIL_RE.test(v)) {
+          err.textContent = v ? "This email looks incomplete. Check it and try again." : "Enter your email to sign up, or choose Start without signing up.";
+          em.setAttribute("aria-invalid", "true"); em.focus(); return;
+        }
+        em.removeAttribute("aria-invalid"); err.textContent = "";
+        tester.email = v; delete tester.draftEmail; testerSave();
+        go.disabled = true; status.textContent = "Signing you up…";
+        const ok = await testerPost({ action: "start", email: v, answers: tester.start, profile: testerProfile() });
+        tester.startSent = ok; testerSave();
+        if (ok) { tester.lastStep = "start"; testerSave(); }
+        testerNotice = ok ? "Thank you, you are signed up as a tester." : "Thank you. The sign-up did not reach the team yet; the tool sends it again the next time you open it.";
+        renderStage();
+        const g = root.querySelector(".v7-path-new, .v7-path-go"); if (g) g.focus();
+      });
+      skip.addEventListener("click", () => {
+        tester.skipped = true; testerSave(); renderStage();
+        const g = root.querySelector(".v7-path-new, .v7-path-go"); if (g) g.focus();
+      });
+      row.appendChild(go); row.appendChild(skip);
+      card.appendChild(row); card.appendChild(status);
+      c.appendChild(card);
+    }
+    let testerNotice = "";
+    const testerGate = () => TESTER_ON && !tester.email && !tester.skipped;
+    // Export: three questions for a signed-up tester, until they are sent.
+    function renderTesterEnd(c) {
+      if (!TESTER_ON || !tester.email) return;
+      const card = el("section", "v7-card v8-tester v8-tester-end"); card.setAttribute("aria-labelledby", "v8-te-t");
+      const h = el("h2", "v7-h3", "Three questions to finish your test"); h.id = "v8-te-t"; card.appendChild(h);
+      if (tester.endSent) {
+        card.appendChild(el("p", "v7-body", "Your answers reached the Pathways to Impact team. Thank you for testing the tool."));
+        c.appendChild(card); return;
+      }
+      card.appendChild(el("p", "v7-body", "Each one is optional. Your answers go to the Pathways to Impact team with your tester sign-up; your draft text stays in this browser."));
+      tester.end = tester.end || {};
+      TESTER_END_QS.forEach(q => card.appendChild(testerQuestion(q, tester.end, "v8-te")));
+      const row = el("div", "v4-note-row");
+      const send = el("button", "btn btn-primary", "Send my answers"); send.type = "button";
+      const status = el("p", "v7-quiet"); status.setAttribute("aria-live", "polite");
+      send.addEventListener("click", async () => {
+        send.disabled = true; status.textContent = "Sending…";
+        tester.endPending = true; testerSave();
+        if (!tester.startSent) tester.startSent = await testerPost({ action: "start", email: tester.email, answers: tester.start || {}, profile: testerProfile() });
+        const ok = tester.startSent && await testerPost({ action: "finish", answers: tester.end, profile: testerProfile() });
+        tester.endSent = !!ok; testerSave();
+        if (ok) { announce("Your answers reached the team. Thank you for testing the tool."); renderStage(); const t = document.getElementById("v8-te-t"); if (t) { t.tabIndex = -1; t.focus(); } }
+        else { send.disabled = false; status.textContent = "Your answers did not send, perhaps because the connection dropped. They are kept here. Try again, or email them to " + FEEDBACK.email + "."; }
+      });
+      row.appendChild(send); card.appendChild(row); card.appendChild(status);
+      c.appendChild(card);
+    }
     const DISCIPLINES = [
       { v: "stem", l: "STEM / engineering" }, { v: "health", l: "Health / clinical" },
       { v: "social", l: "Social sciences" }, { v: "humanities", l: "Humanities" },
@@ -2838,6 +3001,7 @@
       UI.railOpen = false;
       if (key !== "start" && !ns.mode) ns.mode = "compose";
       ns.stageKey = key; renderStage();
+      testerStep(key);
     };
     // The start page shows no rail; it fades in once the researcher picks Start, Continue or Load.
     const renderShell = (fromStart) => {
@@ -3466,6 +3630,8 @@
         box.appendChild(row);
         c.appendChild(box);
       }
+      if (testerGate()) { renderTesterStart(c); return; }
+      if (testerNotice) { const tn = el("p", "v7-note v8-tester-note", testerNotice); tn.setAttribute("role", "status"); c.appendChild(tn); testerNotice = ""; }
       const paths = el("div", "v7-paths");
       const started = !!ns.mode && draftHasContent(ns);
       // With a saved draft the card holds two buttons (Continue, Reset draft), so the card itself is a div.
@@ -6051,6 +6217,7 @@
       const font = /Arial/.test(PRINT_FONT[a] || "") ? "12-point Arial" : "12-point Times New Roman";
       tailoredBar(c, { lead: "Set up for:", text: unsure ? "Agency not chosen yet · Tri-agency CV layout · 12-point Times New Roman"
         : labelOf(AGENCIES, a) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV") + " · " + font });
+      renderTesterEnd(c);
       // r2-a-16: links the format does not allow are named here too, before anything is downloaded.
       { const dw = draftWords(), ol = overLimit(dw); if (ol) { const ov = el("p", "v7-note v7-unfinished-note v7-over-note", "Your draft is about " + roughWords(dw).toLocaleString("en-CA") + " words, " + pagesRange(dw) + " pages. The limit in English is " + PAGE_LIMIT_EN + " pages, " + (ol === 2 ? "so it needs cutting before it goes into the template." : "so it may need cutting; check the page count in the template.")); ov.setAttribute("role", "note"); c.appendChild(ov); } } // r6-a-4, M-4
       // r16-a-3: a draft written in French is told which sentences the tool still writes in English (Q-23).
@@ -6823,6 +6990,7 @@
     if (ns.mode && ns.profileConfirmed && ns.stageKey === "setup") ns.stageKey = "contrib";
     if (ns.mode && ns.profileConfirmed && ns.stageKey !== "start" && ns.stageKey !== "setup") reentryPending = true;
     renderStage();
+    testerRetry();
   })();
   </script>
 </body>

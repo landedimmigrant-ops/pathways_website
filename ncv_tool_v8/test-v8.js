@@ -16,6 +16,8 @@ const CHROME = process.env.CHROME || "/Applications/Google Chrome.app/Contents/M
 const CDP_PORT = 9351, PROFILE = fs.mkdtempSync(path.join(os.tmpdir(), "ncv-v8-test-"));
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png" };
 let server, port, chrome, ws, nextId = 1;
+// The tester endpoint the Worker serves in production, answered here: "ok" or "fail" (500).
+const apiPosts = []; let apiMode = "ok";
 const pending = new Map(), requests = [], consoleErrors = [];
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const send = (method, params) => new Promise((resolve, reject) => { const id = nextId++; pending.set(id, { resolve, reject }); ws.send(JSON.stringify({ id, method, params: params || {} })); });
@@ -47,6 +49,12 @@ async function seed(state, extra) {
 }
 (async () => {
   server = http.createServer((req, res) => {
+    if (req.url.split("?")[0] === "/api/tester") {
+      let body = ""; req.on("data", d => body += d);
+      req.on("end", () => { try { apiPosts.push(JSON.parse(body)); } catch (_) { apiPosts.push({ bad: body }); }
+        res.writeHead(apiMode === "ok" ? 200 : 500, { "Content-Type": "application/json" }); res.end(apiMode === "ok" ? '{"ok":true}' : '{"error":"server"}'); });
+      return;
+    }
     const p = path.join(ROOT, decodeURIComponent(req.url.split("?")[0]));
     if (!p.startsWith(ROOT) || !fs.existsSync(p) || fs.statSync(p).isDirectory()) { res.writeHead(404); return res.end(); }
     res.writeHead(200, { "Content-Type": TYPES[path.extname(p)] || "text/plain" }); fs.createReadStream(p).pipe(res);
@@ -1527,6 +1535,105 @@ async function seed(state, extra) {
       return a;`);
     check("Q15: an unchosen agency reads \"Agency not chosen yet\" in the Profile bar", /Agency not chosen yet/.test(r.pills || ""), r);
     check("Q12: the work-mode choice reads \"Partnered with industry, government or health systems\"; the old label is gone", !!r.mode && !r.old, r);
+  }
+
+  console.log("V8 testing: tester sign-up and the three questions on Export");
+  {
+    const TP = () => PAGE() + "?tester=1";
+    const tseed = async (state, tester) => {
+      await go(HOME());
+      await js("localStorage.clear();" + (state ? "localStorage.setItem('ncv-v8'," + JSON.stringify(JSON.stringify(state)) + ");" : "") + (tester ? "localStorage.setItem('ncv-v8-tester'," + JSON.stringify(JSON.stringify(tester)) + ");" : ""));
+      await go(TP());
+    };
+    // Off without the flag: the plain address shows the two path cards and no sign-up.
+    await seed(null);
+    r = await js(H + "return {card:!!q('.v8-tester'), paths:qa('.v7-path').length};");
+    check("tester sign-up is off on the plain address (no card, two path cards)", !r.card && r.paths === 2, r);
+
+    apiPosts.length = 0; apiMode = "ok";
+    await tseed(null);
+    r = await js(H + `await w(200); const card=q('.v8-tester'); const a={card:!!card, paths:qa('.v7-path').length, h:card&&card.querySelector('h2')?.innerText,
+      labelled:card&&document.getElementById(card.getAttribute('aria-labelledby'))?.tagName,
+      emailLab:q('label[for="v8-ts-email"]')?.innerText, emailType:q('#v8-ts-email')?.type, auto:q('#v8-ts-email')?.autocomplete,
+      sets:qa('.v8-tester fieldset').map(f=>({legend:f.querySelector('legend')?.innerText, radios:f.querySelectorAll('input[type=radio]').length, wrapped:[...f.querySelectorAll('input[type=radio]')].every(i=>i.closest('label'))})),
+      taLab:q('label[for="v8-ts-want"]')?.innerText, privacy:q('.v8-tester-privacy')?.innerText,
+      opts:qa('.v8-tq-opt').map(o=>o.getBoundingClientRect().height)};
+      a.minH=Math.min(...a.opts); return a;`);
+    check("with ?tester=1 a fresh visit shows the sign-up card in place of the path cards", r.card && r.paths === 0 && /you are testing this tool/.test(r.h || ""), r);
+    check("a11y: the card is named by its heading; email has a label, type email and autocomplete", r.labelled === "H2" && r.emailLab === "Your email" && r.emailType === "email" && r.auto === "email", r);
+    check("a11y: each choice question is a fieldset with a legend, every radio inside its label, targets at least 44 px", r.sets.length === 2 && r.sets.every(f => f.legend && f.radios >= 3 && f.wrapped) && r.minH >= 44 && /What do you most want/.test(r.taLab || ""), r);
+    check("the card says what is sent, where it is stored and how to have it removed", /draft text stays in this browser/.test(r.privacy) && /United States/.test(r.privacy) && /impact@concordia\.ca/.test(r.privacy), r.privacy);
+
+    r = await js(H + `const b=qa('.v8-tester .btn-primary')[0]; b.click(); await w(200);
+      const e=q('#v8-ts-email'); return {err:q('#v8-ts-email-err').innerText, inv:e.getAttribute('aria-invalid'), desc:e.getAttribute('aria-describedby'), focus:document.activeElement===e,
+        col:getComputedStyle(q('#v8-ts-email-err')).color};`);
+    check("a11y: an empty email is refused with a described error, aria-invalid and focus on the field; nothing is sent", /Enter your email/.test(r.err) && r.inv === "true" && r.desc === "v8-ts-email-err" && r.focus && apiPosts.length === 0, Object.assign(r, { posts: apiPosts.length }));
+
+    r = await js(H + `const e=q('#v8-ts-email'); setv(e,'tester@example.org');
+      qa('.v8-tester fieldset')[0].querySelectorAll('input')[1].click(); qa('.v8-tester fieldset')[1].querySelectorAll('input')[2].click();
+      setv(q('#v8-ts-want'),'An outline for a made-up grant.');
+      qa('.v8-tester .btn-primary')[0].click(); await w(500);
+      const t=JSON.parse(localStorage.getItem('ncv-v8-tester')||'{}');
+      return {card:!!q('.v8-tester'), paths:qa('.v7-path').length, note:q('.v8-tester-note')?.innerText, role:q('.v8-tester-note')?.getAttribute('role'),
+        focus:document.activeElement.className, t};`);
+    const st = apiPosts[0] || {};
+    check("Sign up and start sends one start row with the email and the three answers, and no draft text", apiPosts.length === 1 && st.action === "start" && st.email === "tester@example.org" && st.answers.funding === "NSERC" && st.answers.before === "No" && /made-up grant/.test(st.answers.want) && /^[0-9a-f-]{8,}$/.test(st.id) && !("contributions" in st) && !("ps" in st), st);
+    check("a11y: after sign-up the path cards return, a status note thanks the tester, focus moves to Start your draft", !r.card && r.paths === 2 && /signed up as a tester/.test(r.note || "") && r.role === "status" && /v7-path-new/.test(r.focus) && r.t.startSent === true, r);
+
+    r = await js(H + `qa('.v7-path-new')[0].click(); await w(400); return location.hash;`);
+    const stepPost = apiPosts.find(p => p.action === "step");
+    check("opening a step sends the step for the same tester", !!stepPost && stepPost.step === "setup" && stepPost.id === st.id, apiPosts.map(p => p.action + ":" + (p.step || "")));
+
+    // Reset draft leaves the sign-up alone; a reload asks nothing again.
+    await go(TP());
+    r = await js(H + `await w(200); return {card:!!q('.v8-tester'), id:JSON.parse(localStorage.getItem('ncv-v8-tester')).id};`);
+    check("a reload does not ask again; the tester id is kept", !r.card && r.id === st.id, r);
+
+    // Export: the three questions, sent against the same id.
+    const tstate = { id: "1234abcd-0000-4000-8000-000000000001", email: "tester@example.org", start: { funding: "SSHRC" }, startSent: true, lastStep: "review" };
+    apiPosts.length = 0;
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), tstate);
+    r = await js(H + `await w(300); const card=q('.v8-tester-end'); const a={card:!!card, h:card&&card.querySelector('h2')?.innerText, sets:card?card.querySelectorAll('fieldset').length:0,
+      scale:card?card.querySelectorAll('.is-scale input[type=radio]').length:0, tas:card?[...card.querySelectorAll('textarea')].map(t=>q('label[for="'+t.id+'"]')?.innerText):[],
+      first:card&&card===q('.v7-card')};
+      card.querySelectorAll('.is-scale input')[3].click(); setv(q('#v8-te-stuck'),'The made-up order step.'); setv(q('#v8-te-change'),'A made-up change.');
+      card.querySelector('.btn-primary').click(); await w(500);
+      a.after=q('.v8-tester-end')?.innerText; a.focus=document.activeElement.id; a.live=q('#v7-live').textContent; a.t=JSON.parse(localStorage.getItem('ncv-v8-tester')); return a;`);
+    const fin = apiPosts.find(p => p.action === "finish") || {};
+    check("Export shows the three questions for a signed-up tester: a 1 to 5 scale and two labelled boxes", r.card && /Three questions/.test(r.h || "") && r.sets === 1 && r.scale === 5 && r.tas.join("|") === "Where did you get stuck?|What one change would help most?", r);
+    check("opening Export sends nothing before Send my answers", apiPosts.filter(p => p.action === "finish").length === 1, apiPosts.map(p => p.action));
+    check("Send my answers sends a finish row for the same id with the three answers", fin.id === tstate.id && fin.answers.useful === "4" && /order step/.test(fin.answers.stuck) && /made-up change/.test(fin.answers.change), fin);
+    check("a11y: after sending, the card thanks the tester, the live region says so, focus is on the card heading", /reached the Pathways to Impact team/.test(r.after || "") && r.focus === "v8-te-t" && /reached the team/.test(r.live) && r.t.endSent === true, r);
+
+    // A failed send keeps the answers and says what to do; nothing is lost.
+    apiMode = "fail";
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { end: { stuck: "Kept text." } }));
+    r = await js(H + `await w(300); q('.v8-tester-end .btn-primary').click(); await w(500);
+      return {status:q('.v8-tester-end .v7-quiet[aria-live]')?.innerText, kept:q('#v8-te-stuck')?.value, dis:q('.v8-tester-end .btn-primary').disabled, t:JSON.parse(localStorage.getItem('ncv-v8-tester'))};`);
+    check("a failed send keeps the answers, re-enables Send and names the email fallback", /did not send/.test(r.status || "") && /impact@concordia\.ca/.test(r.status) && r.kept === "Kept text." && !r.dis && !r.t.endSent, r);
+    apiMode = "ok";
+
+    // Start without signing up: nothing is sent and Export asks nothing.
+    apiPosts.length = 0;
+    await tseed(null);
+    r = await js(H + `await w(200); qa('.v8-tester .btn-outline')[0].click(); await w(300); const a={paths:qa('.v7-path').length, focus:document.activeElement.className};
+      return a;`);
+    check("Start without signing up sends nothing and returns the path cards with focus on Start your draft", apiPosts.length === 0 && r.paths === 2 && /v7-path-new/.test(r.focus), r);
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), { skipped: true });
+    r = await js(H + `await w(300); return !!q('.v8-tester-end');`);
+    check("a tester who skipped sign-up sees no questions on Export", r === false && apiPosts.length === 0, { card: r, posts: apiPosts.length });
+
+    // A start that did not reach the server is sent on the next visit.
+    await tseed(null, { id: "1234abcd-0000-4000-8000-000000000002", email: "late@example.org", start: { before: "No" } });
+    await sleep(500);
+    check("a sign-up that did not send goes again on the next visit", apiPosts.some(p => p.action === "start" && p.email === "late@example.org"), apiPosts.map(p => p.action));
+
+    // Phone width and large text: no sideways scroll on the card.
+    await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 800, deviceScaleFactor: 1, mobile: true });
+    await tseed(null);
+    r = await js(H + `document.documentElement.style.fontSize='24px'; await w(300); return {sw:document.documentElement.scrollWidth, card:!!q('.v8-tester')};`);
+    check("a11y: the sign-up card at 320 px with 24 px text has no sideways scroll", r.card && r.sw <= 320, r);
+    await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
   }
 
   console.log("Network and errors");

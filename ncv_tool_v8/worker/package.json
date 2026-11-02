@@ -1,0 +1,11 @@
+{
+  "name": "ncv-tool-worker",
+  "private": true,
+  "scripts": {
+    "build": "sh build.sh",
+    "deploy": "sh build.sh && wrangler deploy"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.0"
+  }
+}

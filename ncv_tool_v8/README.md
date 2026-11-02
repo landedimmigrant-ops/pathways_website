@@ -19,3 +19,42 @@ This folder's `index.html` is a thin redirect.
 Storage: the draft lives in `localStorage` under `ncv-v8`, so V7 and V8 can be tested side by side in one browser.
 On a first visit, a V7 draft in the same browser (`ncv-v7`) is offered once; V7's copy is never changed. Draft files
 saved from V7 open in V8 with **Continue draft**.
+
+## Testing with researchers (Cloudflare and Neon), 2026-11-02
+
+**Address for testers:** https://ncv-tool.immigrant-empire.workers.dev/
+
+The same V8 file is served by a Cloudflare Worker (`worker/`), which also records testers in a Neon database.
+The GitHub Pages copy (`/ncv_tool_v8/`) keeps working with no sign-up and no network calls.
+
+- **Start page:** a sign-up card asks for an email and three questions:
+  - the funding opportunity;
+  - whether they have written a narrative CV before;
+  - what they want from the session.
+
+  "Start without signing up" sends nothing.
+- **While they work:** each step a signed-up tester opens is recorded as `last_step`, so drop-off is visible.
+- **Export:** three questions, sent against the same tester id:
+  - usefulness, from 1 to 5;
+  - where they got stuck;
+  - the one change that would help most.
+- **What is never sent:** draft text.
+- **Where the record lives in the browser:** under its own key, `ncv-v8-tester`, so Reset draft and Load your draft leave it alone.
+- **Database:** Neon project `ncv-testing` (`lucky-tree-08109926`, AWS US East 1).
+  - Table `testers`, with a `tester_summary` view; the schema is in [`worker/schema.sql`](worker/schema.sql).
+  - To see who tested: `select * from tester_summary;`
+- **Deploy:** `cd ncv_tool_v8/worker && npm run deploy`. This copies the V8 file and `styles.css` into `public/` and deploys.
+  - The Neon connection string is the Worker secret `DATABASE_URL` and is never in the repo.
+- **Where it is switched on:** the sign-up is on only on `*.workers.dev`, or with `?tester=1` (used by the test script).
+
+The endpoint is `POST /api/tester`:
+- it accepts the tool's own origin only;
+- it accepts posts of up to 16 KB;
+- it keeps only the known answer keys, each up to 2,000 characters.
+
+INFERRED, for Prem to confirm or change:
+- the six questions (the drafts were agreed in chat);
+- the sign-up card replaces the path cards until the tester signs up or skips;
+- the Export questions sit at the top of Export;
+- the privacy wording on the card;
+- the Worker name `ncv-tool`, which puts the account's `immigrant-empire` subdomain in the address.

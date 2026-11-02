@@ -1,0 +1,8 @@
+{
+  // The NCV V8 tool on Cloudflare: the page from public/ (see build.sh) and /api/tester.
+  "name": "ncv-tool",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/*"] }
+  // DATABASE_URL is a secret: wrangler secret put DATABASE_URL
+}
