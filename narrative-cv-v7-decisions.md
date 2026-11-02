@@ -763,4 +763,6 @@ Prem asked for a full audit, persona tests of researchers writing a narrative CV
 - INFERRED (round 13): listed under Round 13 in the loop log.
 - BUILT (round 14, 2026-11-01): Fable's review of round 13 (X-1 to X-11); voice-control fixes from persona r14-a (Undo with no time limit, lasting confirmations, names starting with the visible words); early-career fixes from persona r14-b (preprints, an honest empty What already changed, no "short" verdict at the early stage, co-supervision, early-career prompts).
 - INFERRED (round 14): Undo lasts until the next change (was ten seconds, r3-b-6 and r6-a-3); a Reset in another tab is mirrored; listed under Round 14 in the loop log.
+- BUILT (round 15, 2026-11-01): Fable's review of round 14 (Y-1 to Y-8, including a blocker); cognitive-load fixes from persona r15-a (a note for a role sentence in the problem part, short-line help, a Proofread self-check, no hyphenation); offline and print fixes from persona r15-b (a connection line, keep-with-next in print and Word, italic evidence notes).
+- INFERRED (round 15): listed under Round 15 in the loop log.
 

@@ -205,7 +205,7 @@ async function seed(state, extra) {
     return a;`);
   check("totals tiles keep the five-year wording (D-1) and add up", /five years/.test(r.tot) && r.sum === "3 in total", r);
   check("labels follow the sector; header builds", r.labels.join("|") === "Organization|Unit or position" && /Postdoctoral → A made-up ministry/.test(r.head), r);
-  check("people are lettered like evidence (Person A); the help says why names are left out", /^Person A\b/.test(r.head) && r.rm === "Remove person A" && /privacy/.test(r.help) && /leave out names/.test(r.help), r);
+  check("people are lettered like evidence (Person A); the help says why names are left out", /^Person A\b/.test(r.head) && r.rm === "Remove person A" && /privacy/.test(r.help) && /leave out names/i.test(r.help), r);
   check("Mentorship style arrives with one field open (D-4)", r.hm[0] === "is-open", r.hm);
 
   console.log("Background and skills (CV-FRQ)");
@@ -1357,6 +1357,26 @@ async function seed(state, extra) {
     const mir = await js(H + `await w(200); window.dispatchEvent(new StorageEvent('storage', { key: 'ncv-v7', oldValue: '{}', newValue: null })); await w(250);
       const wn=q('#v4-save-warning'); return { warn: wn && !wn.hidden ? wn.textContent : '', title: (q('h1, .proto-title')||{}).innerText || '' };`);
     check("a Reset in another tab is mirrored, with no outside-clear alert (X-6)", !/outside this tab/.test(mir.warn), mir);
+  }
+
+  console.log("Audit loop, round 15");
+  {
+    const base = () => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    const mk = (n) => ({ cid: "r15" + n, title: "Made-up contribution " + n, stakes: "A made-up gap.", roleMode: "led", roleLine: "", activities: "I ran " + n + " made-up sites.", outputs: "A report.", outcomes: "", impact: "", translational: "", evidence: [{ text: "Item " + n, type: "Peer-reviewed", note: "" }], flags: {}, notes: {}, folded: n !== 1 });
+    const st = base(); st.contributions = [mk(1), mk(2)];
+    await seed(st);
+    r = await js(H + `await w(200); const a={}; const box=(k)=>q('[data-f$="-'+k+'"] .v7-box'); const fl=(k)=>qa('[data-f$="-'+k+'"] .v4-flag, [data-f$="-'+k+'"] .v4-ok').map(x=>x.textContent).join('|');
+      box('stakes').focus(); setv(box('stakes'),'I led a team of four made-up nurses on six units.'); await w(80); a.stakes=fl('stakes');
+      box('activities').focus(); setv(box('activities'),'Encadrement de quinze stagiaires au laboratoire pendant trois ans.'); await w(80); a.fr=qa('[data-f$="-activities"] .v4-flag').map(x=>x.textContent).join('|');
+      setv(box('activities'),'I ran 3 made-up sites.'); await w(60);
+      q('#ev-open-r151').click(); await w(200);
+      const rm=qa('button').find(b=>/Remove evidence item a/.test(b.getAttribute('aria-label')||'')); rm.click(); await w(150); a.undo1=!!q('.v7-undo');
+      const add=qa('button').find(b=>b.innerText.trim().startsWith('+ Add') && /item/.test(b.innerText)); if (add) { add.click(); await w(150); } a.undo2=!!q('.v7-undo');
+      rail('Review').click(); await w(250); const up=q('[id^="mv-r151-up"]'); a.upDisabled=up ? up.disabled : null;
+      return a;`);
+    check("the first card's Move up is disabled (Y-1)", r.upDisabled === true, r);
+    check("adding an item ends the Undo on offer (Y-2)", r.undo1 && !r.undo2, r);
+    check("a role sentence in The problem or question gets a note, not praise; a French line with articles counts its numbers (r15-a-1, Y-3)", /reads like your role/.test(r.stakes) && !/Your own role is named/.test(r.stakes) && !/No numbers/.test(r.fr), { stakes: r.stakes, fr: r.fr });
   }
 
   console.log("Register (W-57): the tool's prompt strings");

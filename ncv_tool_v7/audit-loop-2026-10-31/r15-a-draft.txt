@@ -1,0 +1,36 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: CIHR · Tri-agency CV · CIHR Project Grant (applying 2027) · Mid career · Health / clinical · Team-based · Community-engaged]
+Before you submit: paste this into the current version of CIHR's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am a nurse scientist at a university school of nursing. My work is in long-term care nursing.
+
+How can nurses and care aides in long-term care prevent harm to residents using routines that residents, families and staff help design? My work has three strands: falls prevention, medication safety and the training of personal support workers. The thread is that front-line staff and residents shape the routines they use. I worked as a night-shift nurse in long-term care for nine years before my PhD, and the incidents I saw there set my questions. Two homes and a regional pharmacy committee have adopted my routines, and I lead a provincial falls-prevention network. A Project Grant would let me test the falls routine in 20 more homes, which a pilot-sized award cannot fund. Next I will study how homes keep the routines going after the first year, with residents and families on the team.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A nurse-led falls prevntion program in long-term care
+   Older adults in long-term care fall often, and falls cause hip fractures; care staff and families asked for a prevention routine that fits a unit shift. I co-led it with the unit managers; two care aides and a physiotherapist ran the daily routines. Over 20 months my team ran co-design sessions with residents, families and care aides, piloted a three-step falls routine on six units across two homes, and audited fall rates monthly. A falls-prevention routine manual, a one-page unit checklist, a 4-hour training module and a peer-reviewed evaluation paper in a nursing journal. Falls with injury on the pilot units fell by 31% over the 12 months after the routine started, and both homes have adopted it on all units. Other long-term care homes in the province could use the routine, and the regional health authority decides whether it becomes a standard. (a)
+   a. Reyes, A., Singh, P., and Tremblay, M. (2026). A nurse-led falls routine in two long-term care homes: a pilot study. Journal of Gerontological Nursing.  [Peer-reviewed]
+      Showed fewer injurious falls on the pilot units.
+
+2. A medication-safety checklist for nurses on night shift
+   Medication errors rise at night when staffing is thin, and night nurses asked for a short checklist they could use during rounds. I led the checklist design with five night nurses and a pharmacist. In 2024 we observed teh night medication pass on four units for 8 weeks, drafted a 12-item checklist and tested it in three rounds with 15 nurses. A 12-item bedside medication-safety checklist, a one-hour orientation for new night nurses and a short report to the hospital pharmacy committee. Medication-administration errors reported on the three pilot units fell from 14 to 6 per quarter, and the pharmacy committee has asked every unit to use the checklist. Hospitals with night shifts could adopt the checklist, and each hospital pharmacy committee would decide whether it becomes policy. (a)
+   a. Pharmacy and Therapeutics Committee minutes, March 2025, adopting the checklist on all adult units.  [Policy / practice uptake]
+
+3. Training personal support workers in dementia-informed falls response
+   Personal support workers give most hands-on care in long-term care but get little falls training, and the homes asked us to close that gap. I designed and taught the course with the homes education leads. From 2023 to 2025 we ran a 6-week blended course in four homes, with simulation practice and coaching on the unit. A 12-hour course, a trainers guide and a competency checklist that homes can reuse. Ninety-two personal support workers completed the course, and 86% showed the competencies at six months. Other provincial homes could take up the course if the regional training network funds it.
+   [Still missing: Evidence. Add one item a reviewer could check.]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 2 doctoral students, 4 master's students, 1 postdoctoral fellow, 6 undergraduate researchers, 5 research nurses and PSW trainees
+A doctoral student I trained now works in the health system and leads a falls-prevention program in a regional hospital.
+[One thing you do] I start each trainee with a shift on the unit beside a care aide, so their questions come from the care people actually give.
+[Who gets in] I opened paid research placements to personal support workers and internationally educated nurses, who were not reaching our team, and set the hiring panel with unit staff.
+[Who else you mentor] I mentor a new nurse manager in a partner home, and I helped her lead her first practice-change audit.

@@ -341,3 +341,21 @@ _none yet_
 
 **Tests:** 270 of 270 (267 + 3).
 
+### Round 15 · Fable's review of round 14, a nursing researcher with dyslexia and ADHD, a permafrost engineer working offline (2026-11-01)
+
+**Who walked it** (the round 15 snapshot = commit `21a07b8`), all findings in [r15-findings.md](audit-loop-2026-10-31/r15-findings.md)
+- **Fable review** of round 14: 1 blocker · 2 major · 5 minor (a comment-swallowed line broke Move up; Undo survived clicks; French lines with articles).
+- **r15-a** Mid-career nursing researcher with dyslexia and ADHD, CIHR, interrupted and returning: 1 major · 7 minor · 4 polish ([draft](audit-loop-2026-10-31/r15-a-draft.txt)).
+- **r15-b** Mid-career permafrost engineer, NSERC, writing offline, checking print and Word: 7 minor · 5 polish ([draft](audit-loop-2026-10-31/r15-b-draft.txt)).
+
+**Fixed this round**
+- **Review (Y-1 to Y-8):** Move up restored (and a whole-file scan for swallowed lines); Undo ends on clicks and choices; French articles; the gap line; one Export message per card; the cache-restored Reset; STEM preprint hints; the early-career equity question.
+- **Cognitive load (r15-a):** a note for a role sentence in the problem part; the people note in short lines; a shorter read across; no hyphenation; a Proofread self-check; a Welcome-back link that names the question; health outputs and destinations.
+- **Offline and print (r15-b):** the connection line; the print view's snapshot note; keep-with-next and unsplit evidence in print and Word; italic notes; First Nations, Inuit or Métis wording; design guides and standards.
+
+**INFERRED this round (for Prem to override):** Undo ending on any changing click; the Proofread self-check line; the copy changes above (part of Q-19).
+
+**Open for Prem from this round:** none new (the long help blocks join Q-6).
+
+**Tests:** 273 of 273 (270 + 3).
+
