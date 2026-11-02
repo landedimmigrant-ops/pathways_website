@@ -1,0 +1,41 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: SSHRC · Tri-agency CV · SSHRC Insight Development · Early career · Social sciences + STEM / engineering · Team-based]
+Before you submit: paste this into the current version of SSHRC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Arial in black type.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am an assistant professor at a mid-sized Canadian university. My work is in environmental studies, with a focus on urban heat and adaptation.
+
+My research asks how people living in dense cities adapt to heat they cannot build their way out of, and who is left without options. Three strands address it: a household survey and interview study of heat adaptation in apartments, an open urban tree-canopy dataset built with a city, and a project course that places students with municipal partners. Each treats heat as a problem that households and cities have to solve together. I trained in environmental science and moved into social science during my doctorate, when I saw that temperature data alone did not explain which households coped. Two papers from the apartment study, an open dataset used by a city parks department, and a course whose student briefs entered a municipal consultation. I have not chosen a competition yet. The expertise I bring is in studying heat adaptation with households and with city partners, which fits any program that funds research with an applied environmental focus. Next I will follow the apartment households through two more summers and test whether the canopy dataset predicts indoor heat risk.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Heat adaptation in apartment households
+   Apartment dwellers are among the people most exposed to indoor heat during summer heat waves, and little is known about how households adapt when they cannot change the building. I designed the household survey and led the interview study, working with two co-investigators and three graduate students. Over two summers I surveyed 420 households in 36 apartment buildings in two cities, interviewed 48 residents and logged indoor temperatures in 60 units. The study produced a household adaptation survey instrument, a dataset of indoor temperature logs and two papers, one first-authored. A municipal public health unit adopted the survey questions in its 2026 heat-season check-ins. Landlords and city housing offices could use the adaptation findings to plan cooling interventions that tenants can use without altering the building. (a, b)
+   a. Okafor, N., Lindqvist, M. and Reyes, T. (2026). Indoor heat and household adaptation in rental apartments. Building and Environment, 245.  [Peer-reviewed]
+      Shows that tenants rely on fans and night ventilation, which stop working above 30 C indoors.
+   b. Municipal Public Health Unit (2026). Heat-season check-in guide for apartment tenants. Published online, June 2026.  [Media / public]
+      Reuses the survey questions in the unit's tenant check-ins.
+
+2. An open urban tree-canopy dataset
+   Cities plan tree planting without a shared, current map of canopy cover, so shade is unevenly distributed across neighbourhoods and the gaps are hard to see. I led the canopy classification method and the data agreement with the city, and two students built the validation set. Working with the city's parks department, we classified 2.1 million trees across 94 neighbourhoods from aerial imagery and checked 5,000 against field counts, reaching 91 percent agreement. The work produced an open canopy dataset updated yearly, a classification tool and a technical report for the city. The parks department now uses the dataset to rank neighbourhoods for its 2026 planting program. Other municipalities could use the same method to find shade deficits and target planting where heat risk is highest. (a, b)
+   a. Urban tree canopy dataset, version 3, held by the city's open data portal and free to download.  [Dataset / tool]
+      Canopy cover by neighbourhood, used by the parks department and two university labs.
+   b. City parks department 2026 planting program, which ranks neighbourhoods using the canopy dataset.  [Policy / practice uptake]
+      Planting sites for 2026 were chosen from the lowest-canopy neighbourhoods.
+
+3. A project course on urban heat and adaptation
+   Environmental studies students seldom work with real municipal data before they graduate, so they enter planning jobs without practice in turning evidence into a recommendation. I designed the course and taught it alone for two terms, with one teaching assistant. I built a 13-week project course in which 62 students worked in teams of four on heat and canopy questions posed by three municipal partners, with a public presentation at the end. The course produced 15 student policy briefs, a shared set of teaching materials and a public showcase attended by city staff. Two student briefs were taken into the city's heat action plan consultation. Other environmental studies programs could adapt the course design to give students municipal project experience. (a)
+   a. City heat action plan consultation summary (2026), which cites two student briefs from the course.  [Policy / practice uptake]
+      Student recommendations on cooling centres and shade entered the public record.
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 1 doctoral student, 2 master's students, 4 undergraduate researchers
+A master's student I trained now works in government and works as a heat-planning analyst for a municipal environment department, using methods from our survey.
+[One thing you do] I give every student a written plan for the first term that names who owns which dataset, and we revisit it at the midpoint.
+[Who gets in] I pay all research assistants from the first week and post roles without a prior-experience requirement, so students without family connections to research can apply.

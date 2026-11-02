@@ -377,3 +377,21 @@ _none yet_
 
 **Tests:** 279 of 279 (273 + 6).
 
+### Round 17 · Fable's review of round 16, a new professor with no agency or competition yet, a low-vision researcher in high contrast with reduced motion (2026-11-01)
+
+**Who walked it** (the round 17 snapshot = commit `017af9c`), all findings in [r17-findings.md](audit-loop-2026-10-31/r17-findings.md)
+- **Fable review** of round 16: 1 blocker · 1 major · 6 minor (a comment hid the headline field's settings; Reset with a full store).
+- **r17-a** Assistant professor, agency "Not sure yet", competition Undecided, then SSHRC, then CV-FRQ and back: 1 major · 5 minor · 4 polish ([draft](audit-loop-2026-10-31/r17-a-draft.txt)).
+- **r17-b** Kinesiologist with low vision, CIHR, Windows high contrast, reduced motion, dark scheme: 1 major · 5 minor · 3 polish ([draft](audit-loop-2026-10-31/r17-b-draft.txt)).
+
+**Fixed this round**
+- **Review (AA-1 to AA-8):** the headline field restored, and a **static test that fails on code hidden behind a trailing comment**; Reset's removal independent of its mark; Reset told by its time; the French note per contribution; no doubled help; one-word group names; the number strip; no stale take-up behind a warning.
+- **No agency yet (r17-a):** both formats' rules on Export; the Word note; a disabled-looking Competition field; the agency hint; "select Undecided"; a blank draft counts 0 words.
+- **High contrast and reduced motion (r17-b):** example parts labelled, done and chosen states and field focus visible in forced colours; nothing animates with reduced motion; darker small-control borders.
+
+**INFERRED this round (for Prem to override):** the bracketed part labels in forced colours; the global reduced-motion rule.
+
+**Open for Prem from this round:** a dark scheme (not built); a line saying the team answer is kept and left out of the TCV.
+
+**Tests:** 282 of 282 (279 + 3).
+

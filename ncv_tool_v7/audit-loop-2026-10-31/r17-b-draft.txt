@@ -1,0 +1,40 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: CIHR · Tri-agency CV · CIHR Project Grant, spring 2027 competition (applying 2027) · Mid career · Health / clinical · Team-based · Partnered with industry, government or health systems]
+Before you submit: paste this into the current version of CIHR's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am a kinesiologist and associate professor at a Canadian university. My work is in exercise rehabilitation for people with chronic heart disease.
+
+For 12 years my research has asked one question: how can people with heart failure stay active when distance, fatigue and fear keep them out of rehabilitation? Three strands address it: a home-based exercise program, a wearable-activity dataset that measures what patients do, and coaching guidelines that carry the work into community practice. The thread is moving supervised exercise to where patients live. I trained as an exercise physiologist and worked in a hospital clinic, where I saw patients decline after discharge. That led me to a doctorate in kinesiology and then to leading trials, with two parental leaves in 2019 and 2022. I am the nominated principal investigator on two CIHR grants, I have 31 peer-reviewed papers, and I chair a national exercise guideline panel. A Project Grant fits a mature program that has pilot results, a dataset and a working partnership with provincial health authorities, and it can fund the multi-site trial that the guidelines now need. Next I will test the program in rural clinics and extend the dataset to COPD, with the provincial heart health program as partner.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A home-based exercise program that keeps adults with heart failure active and out of hospital
+   Adults with heart failure lose fitness quickly after discharge, and most cardiac rehabilitation programs are far from where they live, so about two in three never attend. As the lead kinesiologist I designed the exercise prescription and the coaching protocol, and I supervised the three program coordinators. A 24-week program delivered by video visit and wearable tracking to 412 adults at six community sites in Quebec and Ontario, with 14 cardiologists and nurses referring patients. A published exercise protocol, a coach training course taken by 58 clinicians, and two trial papers. The 24-week readmission rate fell from 31% to 19% among participants, and three regional health authorities now fund the program for their patients. In 2025 a 71-year-old farmer who lives three hours from the nearest hospital completed all 24 weeks and returned to working his fields. The model could extend rehabilitation to any chronic condition where travel limits access, such as COPD and kidney disease, reaching several hundred thousand people in rural Canada. (a, b)
+   a. Atlantic Health Authority cardiac rehabilitation policy, 2025: home-based program added to the covered services list  [Policy / practice uptake]
+      The authority adopted the protocol in 2025, which put the program in reach of about 9,000 patients with heart failure.
+   b. Okafor R, Tremblay J. Home-based exercise and 24-week readmission in heart failure: a randomized trial. Journal of Cardiac Rehabilitation, 2025.  [Peer-reviewed]
+      The trial found a 12-point drop in 24-week readmission and is the basis for the protocol that health authorities adopted.
+
+2. A wearable-activity dataset that shows how much people with heart failure really move each day
+   Clinicians prescribe exercise for heart failure without knowing how much daily activity predicts a hospital stay, because step counts have only been measured in short clinic visits. I led the data design, the cleaning pipeline and the first analysis, and two graduate students ran the site visits. Continuous wrist-worn accelerometer data from 1,150 adults across 11 sites for up to 18 months, linked to hospital records. An open, de-identified dataset of 2.1 million participant-days, a data dictionary, and four papers. Eight research groups in five countries have used the dataset, and a cardiology society cited it in its 2026 activity guidance. The dataset could let any trial team test activity targets in other cardiac conditions without collecting new data. (a)
+   a. Heart Failure Activity Dataset v2.0, open repository, held by the Montreal data trust  [Dataset / tool]
+      The dataset has been downloaded by 41 teams and is the reference sample in two guideline reviews.
+
+3. Coaching guidelines for exercise in heart failure, adopted by a provincial program
+   Community exercise instructors lacked clear safety limits for people with heart failure, so many refused to take them and patients stayed sedentary. I chaired the guideline panel and wrote the exertion limits and the red-flag symptom list. A 14-member panel of kinesiologists, cardiologists and patient partners met over 18 months and reviewed 96 studies. A 32-page coaching guideline, a one-page symptom card and a training day for instructors. The provincial heart health program adopted the guideline in 2025, and 240 instructors in 38 communities now use it. The guideline could be adopted by other provinces and by community centres that serve older adults with chronic conditions. (a)
+   a. Provincial Heart Health Program, instructor standards 2025, adopting the coaching guideline  [Policy / practice uptake]
+      The program now requires the guideline training for every instructor it certifies.
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 3 doctoral students, 5 master's students, 2 postdoctoral fellows, 6 undergraduate researchers, 4 clinical fellows and exercise physiology residents
+A doctoral student I trained now works in the health system, received a Canadian Institutes of Health Research doctoral award (2023) and leads cardiac rehabilitation research at a university hospital.
+[One thing you do] Every trainee writes a one-page plan with me in the first month that sets their own research questions, the authorship order for each paper, and the clinical hours they will keep, and we revise it every six months.
+[Who gets in] I removed the clinical-experience requirement from my trainee postings and added paid placement hours, because unpaid shadowing had been screening out applicants without family support. Four of the last six trainees are the first in their family to attend university.
+[Who else you mentor] I mentor two early-career physiotherapists at a community hospital, and I co-wrote a funding application with one of them that was awarded in 2025.

@@ -492,7 +492,7 @@ async function seed(state, extra) {
   await seed(Object.assign({}, fixture, { stageKey: "contrib", mode: "compose" }));
   await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
   r = await js("return getComputedStyle(document.querySelector('.v7-f')).transitionDuration;");
-  check("reduced motion turns field transitions off", /^0s/.test(r), r);
+  check("reduced motion turns field transitions off", String(r).split(",").every(x => parseFloat(x) < 0.001), r); // r17-b-5: 0.01 ms counts as off
   await send("Emulation.setEmulatedMedia", { features: [] });
 
   console.log("Focus and announcements (walkthrough batch 1)");
@@ -1413,6 +1413,26 @@ async function seed(state, extra) {
     await send("Page.setFontSizes", { fontSizes: { standard: 16, fixed: 13 } });
     await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
     check("Mentorship tiles at 320 px with 24 px text: no sideways scroll (r16-b-1)", tw <= 320, tw);
+  }
+
+  console.log("Audit loop, round 17");
+  {
+    // AA-1, Y-1: a trailing // comment must never hide code on the same line.
+    const src = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v7.html"), "utf8").split("\n");
+    const hidden = [];
+    const pats = [/,\s+[a-zA-Z_]\w*:\s+[a-zA-Z_][\w.]*\s*[,}]/, /;\s+[a-zA-Z_][\w.]*\s*=\s*[^=>\s]/, /\b[a-zA-Z_][\w.]*\([^)]*\)\s*;\s*$/];
+    src.forEach((l, n) => { const i = l.indexOf("// "); if (i < 1 || !l.slice(0, i).trim() || l[i - 1] === ":") return; const t = l.slice(i + 3); if (pats.some(p => p.test(t))) hidden.push((n + 1) + ": " + t.slice(0, 80)); });
+    check("no code is hidden behind a trailing comment (AA-1, Y-1)", hidden.length === 0, hidden);
+    const base = () => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    const st = base(); st.lens = Object.assign({}, st.lens, { agency: "other", format: "", program: "", undecided: true });
+    st.contributions = [{ cid: "r171", title: "", stakes: "", roleMode: "", roleLine: "", activities: "", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} },
+      { cid: "r172", title: "A made-up study", stakes: "A made-up gap.", roleMode: "led", roleLine: "I led it.", activities: "I ran 3 made-up sites.", outputs: "A report.", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} }];
+    await seed(st);
+    r = await js(H + `await w(200); const a={}; const hb=q('[data-f$="-title"] .v7-box, [data-f$="-title"] input'); a.rows=hb ? (hb.rows||1) : -1; a.ph=hb ? hb.placeholder : '';
+      rail('Export').click(); await w(200); a.dl=qa('.v7-card dt').map(x=>x.innerText).join('|'); a.word=(qa('.v7-fmt label, .v7-fmt').map(x=>x.innerText).join(' ')||'');
+      return a;`);
+    check("the headline is one line with its placeholder again (AA-1)", (r.rows === 1 || r.rows === -1 ? r.rows === 1 : false) && /headline a reviewer could repeat/i.test(r.ph), r);
+    check("with no agency, Export shows both formats' link and language rules and says which section names it uses (r17-a-1, r17-a-2)", /Links, Tri-agency CV/.test(r.dl) && /Links, CV-FRQ/.test(r.dl) && /until you choose an agency/.test(r.word + r.dl), { dl: r.dl, word: r.word.slice(0, 300) });
   }
 
   console.log("Register (W-57): the tool's prompt strings");

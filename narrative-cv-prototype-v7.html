@@ -800,6 +800,23 @@
     .v4-fb-status.is-ok { color: #2a6e2a; font-weight: 600; }
     .v4-fb-status.is-err { color: #7a1f15; }
     .v4-fb-nudge { border: 1px solid #f9ca24; background: #fff8e1; border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem 0 0; font-size: 0.9rem; }
+    /* r17-a-3: a disabled field looks disabled. */
+    .v7-input:disabled { background: #f0f0f0; color: #595959; cursor: not-allowed; }
+    /* r17-b-8: borders and glyphs of small controls at 3:1 and 4.5:1. */
+    .v7-mini { border-color: #767676; } .v7-icon-btn { color: #595959; border-color: #949494; }
+    /* r17-b-5 to r17-b-7: with reduced motion nothing animates, whatever a rule above says. */
+    @media (prefers-reduced-motion: reduce) {
+      #ncv-v4-root *, #ncv-v4-root *::before, #ncv-v4-root *::after, .v7-rail-grow { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+    /* r17-b-1 to r17-b-4: Windows high contrast keeps every state and the example's parts visible without colour. */
+    @media (forced-colors: active) {
+      .built .v7-seg-stakes::before { content: "[The problem or question] "; } .built .v7-seg-role::before { content: "[Your role] "; } .built .v7-seg-activities::before { content: "[What you did] "; }
+      .built .v7-seg-outputs::before { content: "[What resulted] "; } .built .v7-seg-outcomes::before { content: "[What already changed] "; } .built .v7-seg-impact::before { content: "[What could change] "; }
+      .built [class*="v7-seg-"]::before { font-weight: 700; }
+      .v7-ri.is-done .narrative-stage-dot, .v7-fsq.is-on i { forced-color-adjust: none; background: CanvasText; }
+      .v7-mini[aria-checked="true"]::before, .v7-mini[aria-pressed="true"]::before { content: "✓ "; }
+      .v7-input:focus, .v7-box:focus { outline: 2px solid CanvasText; outline-offset: 1px; }
+    }
   </style>
 </head>
 <body>
@@ -1887,7 +1904,7 @@
         // H5: the prestige metrics' own numbers are removed from this working copy first — they are
         // the very numbers the prestige flag asks you to cut. Numbers elsewhere still count.
         // r1-a-3: list markers on every line, DOIs and years are not specific numbers.
-        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[:;.]\s+)\d{1,2}\)\s/gm, " ").replace(inlineRun(t) ? /(^|[.;]\s+)[1-9][.)]\s+(?=[A-ZÀ-Ý])/gm : /$^/, "$1") /* X-11 */ /* r11-a-5, U-1: "1) un guide ; 2) …", not "(n = 45) " */.replace(/(\d+(?:[.,]\d+)?)[\u00a0\u202f]?[–—][\u00a0\u202f]?\d+(?:[.,]\d+)?/g, "$1") /* V-6: closed ranges only */ /* r12-a-6: "0.71–0.89", "3–5" count once */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
+        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[:;.]\s+)\d{1,2}\)\s/gm, " ").replace(inlineRun(t) ? /(^|[.;:]\s+)[1-9][.)]\s+(?=[A-Za-zÀ-ÿ])/gm : /$^/, "$1") /* X-11 */ /* r11-a-5, U-1: "1) un guide ; 2) …", not "(n = 45) " */.replace(/(\d+(?:[.,]\d+)?)[\u00a0\u202f]?[–—][\u00a0\u202f]?\d+(?:[.,]\d+)?/g, "$1") /* V-6: closed ranges only */ /* r12-a-6: "0.71–0.89", "3–5" count once */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
         metricHits.forEach(m => { forNums = forNums.split(m.text).join(" "); });
         links.forEach(l => { forNums = forNums.split(l.text).join(" "); });
         const enNums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
@@ -2323,7 +2340,7 @@
     }
     // r13-a-1, r13-a-2: this tab stops saving and keeps its copy; the warning is an alert that stays in view.
     function markCleared(msg) {
-      storeCleared = true;
+      storeCleared = true; try { otherTab = undefined; } catch (_) {} // AA-8: no stale take-up waits behind the warning
       const w = document.getElementById("v4-save-warning");
       if (w) { w.setAttribute("role", "alert"); w.textContent = msg || "Your browser data was cleared, so this draft is no longer saved here. Save a draft file now to keep it."; w.hidden = false; }
     }
@@ -2626,7 +2643,7 @@
     const mentorTotal = () => Object.values(ns.mentorCounts).reduce((n, v) => n + (parseInt(cleanCount(v), 10) || 0), 0);
     // "14 doctoral students, 1 master's student": the totals line every output prints.
     // r5-b-5: the Other group prints under the name the researcher gives it ("7 community researchers").
-    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out.replace(/^(?!(?:Elders?|Indigenous|First|Inuit|Métis|Knowledge)\b)([A-ZÀ-Ý])(?=[a-zà-ÿ]+\s)/, ch => ch.toLowerCase()) : countNoun(n, out))); // r11-a-10, r16-a-7: as typed, a phone's capital lowered
+    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out.replace(/^(?!(?:Elders?|Indigenous|First|Inuit|Métis|Knowledge)\b)([A-ZÀ-Ý])(?=[a-zà-ÿ]+(?:\s|$))/, ch => ch.toLowerCase()) : countNoun(n, out))); // r11-a-10, r16-a-7: as typed, a phone's capital lowered
     const menteesDescribed = () => ns.mentees.filter(menteeHasContent).length;
     const stageDone = (key) => {
       const v = !!ns.visited[key];
@@ -2723,6 +2740,8 @@
       saveMuted = false;
       if (spoken || raw === null) announce(raw === null ? "The draft was cleared in another tab." : "This tab now shows the changes made in another tab.");
     }
+    // AA-3: a Reset in another tab leaves a mark with its time; it counts when it is newer than this tab's last save.
+    const resetSince = () => { try { const m = +localStorage.getItem(NCV_KEY + "-reset"); return !!m && m > (ns.lastSavedAt || 0); } catch (_) { return false; } };
     window.addEventListener("storage", (e) => {
       if (e.key !== NCV_KEY && e.key !== null) return;
       // G-1 (review 2026-10-31): a tab that has stopped saving (outside clear, unreadable draft) may hold
@@ -2733,9 +2752,9 @@
       let incoming = null; try { incoming = e.key === null || e.newValue === null ? null : JSON.parse(e.newValue); } catch (_) {}
       // X-6: a Reset in another tab removes the draft (newValue null) and is mirrored, as before r13; a blank copy
       // written by a fresh start after the browser's data was cleared is refused.
-      let resetMark = null; try { resetMark = localStorage.getItem(NCV_KEY + "-reset"); } catch (_) {}
-      if ((e.newValue === null || e.key === null) && draftHasContent(ns) && !resetMark) { markCleared(); return; } // Z-6: cleared data, not a Reset
-      if (e.newValue !== null && e.key !== null && draftHasContent(ns) && !(incoming && draftHasContent(incoming))) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
+      const reset = resetSince();
+      if ((e.newValue === null || e.key === null) && draftHasContent(ns) && !reset) { markCleared(); return; } // Z-6: cleared data, not a Reset
+      if (e.newValue !== null && e.key !== null && draftHasContent(ns) && !(incoming && draftHasContent(incoming)) && !reset) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
       otherTab = e.key === null ? null : e.newValue;
       if (!document.hidden && !composing) takeUpOtherTab(false);
     });
@@ -2748,11 +2767,11 @@
       if (!e.persisted || storeCleared || loadFailed) return;
       try { const raw = localStorage.getItem(NCV_KEY);
         // Y-6, Z-6: a Reset elsewhere (it leaves a mark) is mirrored here too; a missing draft without the mark is cleared data.
-        if (raw === null && draftHasContent(ns)) { if (localStorage.getItem(NCV_KEY + "-reset")) { otherTab = null; takeUpOtherTab(true); } else markCleared(); return; }
+        if (raw === null && draftHasContent(ns)) { if (resetSince()) { otherTab = null; takeUpOtherTab(true); } else markCleared(); return; }
         if (raw !== null && raw !== JSON.stringify(ns)) {
         // X-5: the same rule as the storage event: a blank copy does not replace a written draft.
         let inc = null; try { inc = JSON.parse(raw); } catch (_) {}
-        if (draftHasContent(ns) && !(inc && draftHasContent(inc))) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
+        if (draftHasContent(ns) && !(inc && draftHasContent(inc)) && !resetSince()) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
         otherTab = raw; takeUpOtherTab(true); } } catch (_) {}
     });
     document.addEventListener("visibilitychange", () => {
@@ -3125,10 +3144,11 @@
         row("Font, CIHR", FONT_RULES.cihr);
         row("Font, CV-FRQ", FONT_RULES.frq);
       }
-      row("Links", LINK_RULES[isFrq() ? "cv-frq" : "tcv"]);
-      row("Language", LANGUAGE_RULES[isFrq() ? "cv-frq" : "tcv"] + " This tool works in English only for now.");
+      // r17-a-1: with no agency chosen, both formats are shown, as the font rows are.
+      if (known || isFrq()) { row("Links", LINK_RULES[isFrq() ? "cv-frq" : "tcv"]); row("Language", LANGUAGE_RULES[isFrq() ? "cv-frq" : "tcv"] + " This tool works in English only for now."); }
+      else { row("Links, Tri-agency CV", LINK_RULES.tcv); row("Links, CV-FRQ", LINK_RULES["cv-frq"]); row("Language, Tri-agency CV", LANGUAGE_RULES.tcv); row("Language, CV-FRQ", LANGUAGE_RULES["cv-frq"] + " This tool works in English only for now."); }
       const s = SECTION_NAMES[isFrq() ? "cv-frq" : "tcv"];
-      row("Section names", isFrq()
+      row(known || isFrq() ? "Section names" : "Section names (Tri-agency CV until you choose an agency)", isFrq()
         ? s.ps + " (" + s.psFr + ") · " + s.contrib + " (" + s.contribFr + ") · " + s.mentor + " (" + s.mentorFr + ")"
         : s.ps + " · " + s.contrib + " · " + s.mentor);
       const foot = el("p", "v4-format-foot", "The agencies do not accept condensed fonts, and each sets its own file-size limit. The instructions for your funding opportunity take precedence. ");
@@ -3880,14 +3900,14 @@
       const [cf] = field("Competition", "v7-chg-comp", "wide");
       const crow = el("div", "v7-chg-row");
       const inp = el("input", "v7-input"); inp.id = "v7-chg-comp"; inp.type = "text";
-      inp.value = d.program || ""; inp.disabled = !!d.undecided;
+      inp.value = d.program || ""; inp.disabled = !!d.undecided; if (d.undecided) inp.placeholder = "Undecided is on; turn it off to name a competition"; // r17-a-3
       const agNote = el("p", "v4-help v7-chg-note"); agNote.id = "v7-chg-comp-note"; inp.setAttribute("aria-describedby", agNote.id);
       // r1-b-7: a name that mentions another agency is pointed out, since the prompts quote it.
       const setAgNote = () => {
         const other = agenciesNamed(d.program).filter(v => v !== d.agency);
         const was = ns.lens.agency; // r12-b-2: a name entered for another agency is pointed out too
         agNote.textContent = !d.undecided && d.agency && d.agency !== "other" && other.length ? "This name mentions " + other.map(v => labelOf(AGENCIES, v)).join(" and ") + ". Update it if it no longer applies."
-          : !d.undecided && (d.program || "").trim() && (d.program || "").trim() === (ns.lens.program || "").trim() && was && was !== "other" && d.agency && d.agency !== was ? /* V-5 */ "This name was entered for " + labelOf(AGENCIES, was) + ". Update it if it no longer applies." : "";
+          : !d.undecided && (d.program || "").trim() && (d.program || "").trim() === (ns.lens.program || "").trim() && !agenciesNamed(d.program).includes(d.agency) && was && was !== "other" && d.agency && d.agency !== was ? /* V-5, r17-a-4 */ "This name was entered for " + labelOf(AGENCIES, was) + ". Update it if it no longer applies." : "";
         agNote.hidden = !agNote.textContent;
       };
       UI.chg.setAgNote = setAgNote;
@@ -4377,13 +4397,13 @@
         }
         if (i === 1) {
           h("Name the competition or funding you are applying for.");
-          blk.appendChild(explainBox("A narrative CV is written for a specific competition. If you name the competition here, the " + secName("ps").toLowerCase().replace(/^the /, "") + " prompt will ask about that competition by name."));
+          blk.appendChild(explainBox("A narrative CV is written for a specific competition. If you name the competition here, the " + secName("ps").toLowerCase().replace(/^the /, "") + " prompt will ask about that competition by name. If you have not chosen one, select Undecided."));
           const row = el("div", "v7-comp-row");
           const wrap = el("div");
           const lab = el("label", "v7-field-label", "Competition"); lab.htmlFor = "v7-comp";
           const inp = el("input", "v7-input"); inp.id = "v7-comp"; inp.type = "text";
           inp.placeholder = "For example, the specific chair, grant or award";
-          inp.value = L.program || ""; inp.disabled = !!L.undecided;
+          inp.value = L.program || ""; inp.disabled = !!L.undecided; if (L.undecided) inp.placeholder = "Undecided is on; turn it off to name a competition"; // r17-a-3
           inp.addEventListener("input", e => {
             const before = !!(L.program || "").trim();
             L.program = e.target.value; saveState();
@@ -4691,7 +4711,7 @@
           // r13-b-1: work with a partner under an agreement may keep names and figures private.
           if ((f.k === "activities" || f.k === "outcomes") && (ns.lens.workMode || []).includes("industry")) helpExtra = " If an agreement keeps the partner or its figures private, describe the partner by its sector and size, give what you can, and say the rest is withheld.";
           // r16-b-11: in community-engaged work, who asked for the work and what may be named.
-          if (f.k === "stakes" && isCommunity()) helpExtra = " If a community asked for this work, say so. Name a community, its Elders or its protocols only as they agree.";
+          if (f.k === "stakes" && isCommunity() && !/partners set it/.test(resolveHelp(f.def))) helpExtra /* AA-5: once */ = " If a community asked for this work, say so. Name a community, its Elders or its protocols only as they agree.";
           // r12-b-5: the second field adds a line to What you did and What already changed too.
           if ((f.k === "activities" || f.k === "outcomes") && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
             const SECOND = {
@@ -4708,7 +4728,7 @@
           }
           fields.appendChild(cardField({
             // The role help's community-engaged example (partners lead) comes before a field's own example.
-            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: f.role && isCommunity() && f.def.helpVariants && f.def.helpVariants.community ? interpolate(f.def.helpVariants.community).replace(/“The community organizations[^”]*”/, ({ humanities: "“The Elders’ council sets the questions and approves each recording; I lead the interviews and the archive design with a community archivist.”", stem: "“The department sets the standard and runs the road; I lead the design and the field measurements with its engineers.”" }[ns.lens.discipline] || "$&")) : resolveHelp(f.def) + helpExtra, // r16-b-8 line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
+            id, label: f.label || BEAT_LABEL[f.job], job: f.job, q, help: f.role && isCommunity() && f.def.helpVariants && f.def.helpVariants.community ? interpolate(f.def.helpVariants.community).replace(/“The community organizations[^”]*”/, ({ humanities: "“The Elders’ council sets the questions and approves each recording; I lead the interviews and the archive design with a community archivist.”", stem: "“The department sets the standard and runs the road; I lead the design and the field measurements with its engineers.”" }[ns.lens.discipline] || "$&")) : resolveHelp(f.def) + helpExtra, /* r16-b-8 */ line: f.line, placeholder: f.placeholder, wordHint: f.wordHint,
             lintKind: f.lint, get: () => contrib[f.k], set: (v) => { contrib[f.k] = v; },
             // r1-b-2: a role line that names your part covers the card, so "we" elsewhere in it is the team.
             // r1-b-2, r5-b-2: a chosen level or a written role line names your part for the whole card.
@@ -5861,7 +5881,7 @@
     // contribution numbers, evidence letters and letter groups; draftWords() is its total.
     const printedWords = (t) => gvCount([String(t || "").replace(/^\s*(?:\d+|[a-z])\.\s+/gm, "").replace(/\((?:[a-z], )*[a-z]\)/g, "")]);
     function glanceWordSplit() {
-      return { contrib: printedWords(sectionText("contrib")), mentor: printedWords(sectionText("mentor")), ps: printedWords(sectionText("ps")) };
+      return { contrib: liveContributions().length ? printedWords(sectionText("contrib")) : 0 /* r17-a-7 */, mentor: printedWords(sectionText("mentor")), ps: printedWords(sectionText("ps")) };
     }
     const GV_LEN_TONES = { contrib: "#912338", mentor: "#c27a88", ps: "#e7cfd3" };
     const roughWords = (n) => n > 100 ? Math.round(n / 10) * 10 : n;
@@ -6014,7 +6034,9 @@
       // r2-a-16: links the format does not allow are named here too, before anything is downloaded.
       { const dw = draftWords(), ol = overLimit(dw); if (ol) { const ov = el("p", "v7-note v7-unfinished-note v7-over-note", "Your draft is about " + roughWords(dw).toLocaleString("en-CA") + " words, " + pagesRange(dw) + " pages. The limit in English is " + PAGE_LIMIT_EN + " pages, " + (ol === 2 ? "so it needs cutting before it goes into the template." : "so it may need cutting; check the page count in the template.")); ov.setAttribute("role", "note"); c.appendChild(ov); } } // r6-a-4, M-4
       // r16-a-3: a draft written in French is told which sentences the tool still writes in English (Q-23).
-      if (looksFrench(ns.contributions.map(c => [c.stakes, c.activities, c.outputs].join(" ")).join(" ") + " " + Object.values(ns.ps || {}).join(" "))) {
+      // AA-4: decided per contribution and for the statement, so one French field does not mark an English draft.
+      const frC = ns.contributions.filter(c => cLive(c)), frN = frC.filter(c => looksFrench([c.stakes, c.activities, c.outputs, c.outcomes].join(" "))).length;
+      if ((frC.length && frN * 2 > frC.length) || looksFrench(Object.values(ns.ps || {}).filter(v => typeof v === "string").join(" ")) && frN * 2 >= frC.length) {
         const fr = el("div", "v7-note"); fr.setAttribute("role", "note");
         fr.appendChild(el("p", null, "Your draft reads as French. The sentences the tool writes around your text are in English for now: the first sentence of your statement, the trainee sentences and the totals line. Translate them before you paste."));
         c.appendChild(fr);
@@ -6060,7 +6082,7 @@
       const dlt = el("h3", "v7-h3", "Download or print"); dlt.id = "v7-dl-t"; dl.appendChild(dlt);
       const fmt = ns.ui.exportFmt || "doc";
       const fg = el("div", "v7-fmt"); fg.setAttribute("role", "radiogroup"); fg.setAttribute("aria-labelledby", "v7-dl-t");
-      [["doc", "Word (.doc)", "Set in " + (unsure ? "12-point Times New Roman" : font) + " on a Letter page with 2 cm margins, with your agency's section names.", true],
+      [["doc", "Word (.doc)", "Set in " + (unsure ? "12-point Times New Roman" : font) + " on a Letter page with 2 cm margins, with " + (unsure ? "the Tri-agency CV's section names until you choose an agency" : (ns.lens.agency === "frq" ? "the CV-FRQ's" : labelOf(AGENCIES, ns.lens.agency) + "'s") + " section names") + ".", true], // r17-a-2
        ["txt", "Plain text (.txt)", "The draft as plain text with the tool's notes to you, for working on it elsewhere.", false]].forEach(([v, l, n, rec]) => {
         const b = el("button", "v7-choice"); b.type = "button"; b.id = "v7-fmt-" + v;
         b.setAttribute("role", "radio"); b.setAttribute("aria-checked", fmt === v ? "true" : "false");
@@ -6724,7 +6746,8 @@
       if (e) e.preventDefault();
       setTimeout(() => { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); announce("Draft cleared."); }, 0);
       resumeStore();
-      try { localStorage.setItem(NCV_KEY + "-reset", String(Date.now())); localStorage.removeItem(NCV_KEY); } catch (_) {} // Z-6
+      try { localStorage.setItem(NCV_KEY + "-reset", String(Date.now())); } catch (_) {} // Z-6: the mark first, so other tabs see it
+      try { localStorage.removeItem(NCV_KEY); } catch (_) {} // AA-2: the removal never depends on the mark
       ns = defaultState(); ns.ui.histGen = Date.now(); // K-1
       setTimeout(() => { try { history.replaceState({ step: "start", n: histN, g: ns.ui.histGen }, "", "#start"); } catch (_) {} }, 0); // M-3
       resetUI();
