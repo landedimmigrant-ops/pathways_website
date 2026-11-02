@@ -1,0 +1,33 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: SSHRC · Tri-agency CV · SSHRC Insight Grant (applying 2026) · Mid career · Social sciences · Team-based · Community-engaged]
+Before you submit: paste this into the current version of SSHRC's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Arial in black type.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am an associate professor at a mid-sized Canadian university. My work is in human geography and flood-risk governance.
+
+For 12 years my research has asked why flood maps leave out what river communities already know, and who is harmed when planning rests on the partial picture. Three strands: participatory mapping with residents, flood-history archives held by Indigenous partners, and tools that municipal engineers use; the thread is that communities set what counts as evidence. I trained in hydrology, moved to participatory methods after a 2013 flood in a river town, and began working under the direction of a First Nation planning office in 2018. Two prior SSHRC grants, a community flood atlas used by three municipalities, and an award from a provincial emergency management association. An Insight Grant fits because the question needs sustained work across basins and a team that includes community researchers. Next I will test whether the archive and mapping toolkit hold up in two Prairie river basins, with partners who set the questions.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. A community-held archive of flood memory
+   Elders knowledge of past floods is held in interviews and photographs that are not part of any official flood record, and it is at risk of being lost. I lead the archive with an elders council, who decide what is shared and what stays restricted. Recorded interviews with 24 elders and digitized family photographs across two river communities, 2022 to 2025. A searchable archive with community access controls, and a short documentary shown at three community gatherings. Two communities now use the archive in school programs, and the council used it in a 2025 land-use submission. (a, b)
+   a. Data stewardship agreement between the project and the elders council, signed 2022, held by the council.  [Community document]
+   b. Community screening of the documentary, Fall 2025, with elders and municipal staff in attendance.  [Exhibition, performance or screening]
+   [Still missing: What could change. Who or what could this affect if it is taken up more widely? Hedged language is fine here.]
+
+2. Mapping flood risk with Indigenous and municipal partners
+   Flood maps used in emergency planning often leave out the places that residents and Indigenous partners know flood first, so planning decisions rest on partial knowledge. The First Nation planning office and the municipal engineers set the questions and the data rules; I co-lead the mapping design and the participatory workshops. Participatory mapping workshops with residents, a flood-history archive built from elders interviews, and hydrological modelling, 2021 to 2025. A community flood atlas, two peer-reviewed articles and an open-source mapping toolkit used by three municipalities. The municipality revised its flood-response plan in 2024 and added three evacuation routes the maps identified. Other First Nations and municipalities in flood-prone river basins could adopt the toolkit, and provincial emergency management offices decide whether it enters standard practice. (a)
+   a. Municipal flood-response plan, 2024 revision, adopting three evacuation routes identified through the community maps (council resolution 24-117).  [Policy / practice uptake]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 2 doctoral students, 3 master's students, 1 postdoctoral fellow, 4 undergraduate researchers, 3 community researchers
+A doctoral student I trained now works at a community agency and received a provincial graduate scholarship. Now leads flood-risk evaluation at a regional watershed nonprofit, using the mapping methods we developed together.
+[One thing you do] Each project begins with a written agreement with the community partner on authorship, data ownership and who speaks for the work, and students help draft it.
+[Who gets in] Students from the partner communities joined the team after we moved the training sessions to the community hall and paid for travel and childcare.
+[Who else you mentor] I mentor a municipal planner who is learning participatory mapping, and I co-run the working sessions on her own flood files.

@@ -323,3 +323,21 @@ _none yet_
 
 **Tests:** 267 of 267 (261 + 6).
 
+### Round 14 · Fable's review of round 13, a geographer who uses voice control, a postdoc with a thin record, a leave and a field switch (2026-11-01)
+
+**Who walked it** (the round 14 snapshot = commit `ad982cb`), all findings in [r14-findings.md](audit-loop-2026-10-31/r14-findings.md)
+- **Fable review** of round 13: 6 major · 5 minor (the phone alert, French names, the cache path, cross-tab Reset).
+- **r14-a** Mid-career geographer using voice control, SSHRC: 2 major · 5 minor · 3 polish ([draft](audit-loop-2026-10-31/r14-a-draft.txt)).
+- **r14-b** Early-career postdoc, CIHR, Health + Social sciences, a leave and a field switch: 2 major · 6 minor · 2 polish ([draft](audit-loop-2026-10-31/r14-b-draft.txt)).
+
+**Fixed this round**
+- **Review (X-1 to X-11):** the alert on phones, French name runs and homographs, spoken stage notes, the cache path refusal, a Reset in another tab mirrored, link wording.
+- **Voice control (r14-a):** Undo with no time limit (until the next change); confirmations that stay; names that start with the visible words; a larger Undo.
+- **Early career (r14-b):** preprints and talks under Other; an honest empty What already changed; no "short" verdict at the early stage; the leave note; co-supervision; early-career prompts.
+
+**INFERRED this round (for Prem to override):** Undo until the next change instead of ten seconds; Reset mirrored across tabs; the early-career wording (part of Q-19).
+
+**Open for Prem from this round:** preprint and talk kinds (Q-24); the filled-field design for voice users (Q-25).
+
+**Tests:** 270 of 270 (267 + 3).
+

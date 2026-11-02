@@ -175,6 +175,7 @@
     .v4-totals-grid label { font-size: 0.8rem; color: var(--muted); display: block; margin: 0 0 3px; }
     .v4-export-area { width: 100%; box-sizing: border-box; min-height: 260px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.75rem; line-height: 1.55; padding: 12px; border: 1px solid var(--border); border-radius: 8px; white-space: pre; overflow: auto; color: var(--text); }
     .v4-inline-link { display: inline-block; margin-top: 0.25rem; }
+    @media (max-width: 48em) { .v4-save-warning:not([hidden]):not(.v7-load-err) { position: static !important; } } /* X-1: the card header is sticky there */
     .v4-save-warning:not([hidden]):not(.v7-load-err) { position: sticky; top: calc(var(--v7-bar, 43px) + 4px); z-index: 60; } /* r13-a-2: in view while the writer scrolls */
     .v4-save-warning { margin: 0 0 0.6rem; padding: 0.6rem 0.9rem; border: 1px solid #c0392b; background: #fdecea; color: #7a1f15; border-radius: 4px; font-size: 0.85rem; line-height: 1.5; }
     .v4-anchor-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.95rem; color: var(--text); }
@@ -492,6 +493,7 @@
     .v7-counter { font-size: 0.85rem; color: var(--muted); }
     .v7-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5em), 1fr)); gap: 12px; }
     .v7-lv-note { margin: 6px 0 0; font-size: 0.8rem; }
+    .v7-undo .v7-linkbtn { min-height: 24px; padding: 2px 4px; } /* r14-a-6 */
     .v7-lv-clear { display: inline-flex; align-items: center; margin: 6px 0 0; font-size: 0.85rem; min-height: 32px; }
     .v7-lv-clear[hidden] { display: none; }
     .v7-tile { background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
@@ -1715,7 +1717,7 @@
     const PASSIVE_KINDS = ["roleLine", "activities", "generic"];
     // Guide sync (P-17, P-31): link rules differ by format. The format comes in through ctx so this
     // engine still runs on its own (scripts/ncv-v5-examples.js extracts it).
-    const LINK_RE = /\b(?:https?:\/\/|www\.|(?:github|gitlab|bitbucket)\.com\/|(?:pypi|arxiv|zenodo)\.org\/|osf\.io\/)[^\s<>()"“”]+/gi; // r13-b-5: repository addresses without "https://"
+    const LINK_RE = /\b(?:https?:\/\/|www\.|(?:github|gitlab)\.com\/(?=[^\s<>()"“”.,;:])|(?:pypi|arxiv|zenodo|bitbucket)\.org\/(?=[^\s<>()"“”.,;:])|osf\.io\/(?=[^\s<>()"“”.,;:]))[^\s<>()"“”]*/gi; // X-9 // r13-b-5: repository addresses without "https://"
     // H5: metric-with-a-number shapes the term list cannot see on its own — "IF 14.2",
     // "impact factor of 14.2", "h-index is 11". They flag like the listed terms, and their own
     // numbers come out of the text before specificity is counted: a JIF is not a research number.
@@ -1753,8 +1755,15 @@
     // and "La Trobe" do not), and "et al." does not; two hits suffice in a short field.
     const looksFrench = (t) => {
       const src = String(t || "").replace(/\bet\s+al\b/g, " "), w = src.match(/[A-Za-zÀ-ÿœŒ'’]+/g) || [];
-      const fr = w.filter(x => /^(?:le|la|les|des|du|de|une|un|est|sont|et|en|à|avec|pour|dans|nous|sur|qui|que|ont|été|aux|au|ce|cette|leurs|par|ne|pas|plus)$/.test(x) || /^(?:l|d|j|qu|n|s)['’]/i.test(x)).length;
-      return w.length >= 3 && fr >= (w.length < 15 ? 2 : 3) && fr / w.length > 0.12;
+      // X-2: an article inside a name run ("Centre de recherche du CHUM", "Institut national de la recherche")
+      // does not count, and at least one hit must be a verb, pronoun or preposition that only French uses.
+      let fr = 0, strong = 0;
+      w.forEach((x, k) => {
+        const art = /^(?:le|la|les|des|du|de|un|une|en|aux|au)$/.test(x), str = /^(?:est|sont|et|à|avec|pour|dans|nous|sur|qui|que|ont|été|ce|cette|leurs|par|ne|pas|plus)$/.test(x) || /^(?:l|d|j|qu|n|s)['’]/i.test(x);
+        if (art && k > 0 && /^[A-ZÀ-Ý]/.test(w[k - 1])) return;
+        if (art || str) fr++; if (str) strong++;
+      });
+      return w.length >= 3 && strong >= 1 && fr >= (w.length < 15 ? 2 : 3) && fr / w.length > 0.12;
     };
     // r8-a-5: "one" after each, every, no, any, this, that, the, or before "of" or "another", is a pronoun.
     const NUMBER_WORD_RE = (() => {
@@ -1869,12 +1878,12 @@
         // H5: the prestige metrics' own numbers are removed from this working copy first — they are
         // the very numbers the prestige flag asks you to cut. Numbers elsewhere still count.
         // r1-a-3: list markers on every line, DOIs and years are not specific numbers.
-        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[:;.]\s+)\d{1,2}\)\s/gm, " ") /* r11-a-5, U-1: "1) un guide ; 2) …", not "(n = 45) " */.replace(/(\d+(?:[.,]\d+)?)[\u00a0\u202f]?[–—][\u00a0\u202f]?\d+(?:[.,]\d+)?/g, "$1") /* V-6: closed ranges only */ /* r12-a-6: "0.71–0.89", "3–5" count once */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
+        let forNums = joinDigits(t).replace(/^\s*\d+[.)]\s+/gm, "").replace(/(?:^|[:;.]\s+)\d{1,2}\)\s/gm, " ").replace(inlineRun(t) ? /(^|[.;]\s+)[1-9][.)]\s+(?=[A-ZÀ-Ý])/gm : /$^/, "$1") /* X-11 */ /* r11-a-5, U-1: "1) un guide ; 2) …", not "(n = 45) " */.replace(/(\d+(?:[.,]\d+)?)[\u00a0\u202f]?[–—][\u00a0\u202f]?\d+(?:[.,]\d+)?/g, "$1") /* V-6: closed ranges only */ /* r12-a-6: "0.71–0.89", "3–5" count once */.replace(/\b(?:doi:?\s*)?10\.\d{4,9}\/\S+/gi, " ").replace(/\b(?:19|20)\d{2}\b/g, " ");
         metricHits.forEach(m => { forNums = forNums.split(m.text).join(" "); });
         links.forEach(l => { forNums = forNums.split(l.text).join(" "); });
         const enNums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
         // V-1: French number words count in French text, or in a short line with no other number and one French function word.
-        const nums = enNums + (looksFrench(t) || (!enNums && /\b(?:avec|dans|pour|les|des|une|est|sont|chez|auprès)\b/.test(t)) ? (forNums.match(FR_NUMBER_WORD_RE) || []).length : 0);
+        const nums = enNums + (looksFrench(t) || (!enNums && /\b(?:avec|dans|une|sont|chez|auprès)\b/.test(t)) /* X-3: unambiguous French words only */ ? (forNums.match(FR_NUMBER_WORD_RE) || []).length : 0);
         if (nums) { out.strengths.push(nums + " specific number" + (nums > 1 ? "s" : "")); out.score++; }
         else if ((kind === "activities" || kind === "outcomes") && !/\b(?:19|20)\d{2}\b/.test(t)) {
           // B-19 (amended): dropped off "outputs" — a list of things without numbers is a correct
@@ -2301,6 +2310,7 @@
       const c = document.getElementById("v4-stage-content"); if (!c) return;
       const old = c.querySelector(".v7-stage-note"); if (old) old.remove();
       const n = el("p", "narrative-session-banner v7-stage-note", t); c.insertBefore(n, c.firstChild);
+      announce(t); // X-4: read once, as well as shown
     }
     // r13-a-1, r13-a-2: this tab stops saving and keeps its copy; the warning is an alert that stays in view.
     function markCleared(msg) {
@@ -2429,10 +2439,12 @@
             humanities: "What is the central question your work keeps asking?",
             creative: "What question does your body of work keep asking?",
             social: "What problem or question does your research keep returning to?", // r11-b-15
-            community: "What question, raised with your partners, does your research program keep returning to?" // r9-b-7
+            community: "What question, raised with your partners, does your research program keep returning to?", // r9-b-7
+            early: "What problem or question does your work keep returning to?" // r14-b-7
           }
         },
-        streams: { q: "Name two to four strands of your work. What single thread connects them?", help: "A reviewer should see one coherent program." },
+        streams: { q: "Name two to four strands of your work. What single thread connects them?", help: "A reviewer should see one coherent program.",
+          helpVariants: { early: "A reviewer should see how the strands connect, including a change of field." } }, // r14-b-7
         pivot: { q: "How did you get here?", help: "Many strong statements name a turning point, such as a field you came from, a pivot or a defining collaboration. It explains why your work looks the way it does. If a leave, a move between institutions or another interruption shaped your record, say so here in one or two factual sentences: when it was, how long it lasted and what the work did in the meantime. The instructions for your funding opportunity say where the agency wants this and how much detail it asks for.", isNew: true },
         standing: {
           q: "List your strongest signals of standing.",
@@ -2545,7 +2557,8 @@
           q: "Who gets into your group, and what have you changed about how they get there?", help: "One change you made: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so describe what you changed.",
           variants: { community: "Who joins the research team, who decides, and what changed so that they could?",
             humanities: "How do students come to work with you, and what have you changed about how they get there?", // r10-a-8
-            solo: "How do students come to work with you, and what have you changed about how they get there?" },
+            solo: "How do students come to work with you, and what have you changed about how they get there?",
+            early: "Who gets into the group or lab you work in, and what have you changed about how they get there?" }, // r14-b-7
           // r5-b-9: in community-led work the partners often choose who joins.
           helpVariants: { community: "One change you made, such as a role the partners defined, a requirement you dropped or a way of paying community researchers from the start. Where the partners choose who joins, say so, and say what you changed to make that possible." }
         },
@@ -2693,7 +2706,7 @@
         replaceNext = true; // a take-up is not a step the researcher chose
         renderStage();
         if (chgClosed) { const b = document.getElementById("v7-chg"); if (b) b.focus({ preventScroll: true }); } // H-11
-        if (hadUndo || hadConfirm) stageNote("Another tab saved changes, so this page now shows them." + (hadUndo ? " The Undo offered here is no longer available." : "") + (hadConfirm ? " The question that was open here was closed." : ""));
+        if (hadUndo || hadConfirm) stageNote(/* X-4: stageNote also speaks it */"Another tab saved changes, so this page now shows them." + (hadUndo ? " The Undo offered here is no longer available." : "") + (hadConfirm ? " The question that was open here was closed." : ""));
         if (document.activeElement === document.body) { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); }
       } catch (_) { /* a copy this tab cannot read: keep the tab as it is */ }
       saveMuted = false;
@@ -2707,7 +2720,9 @@
       // r13-a-1: a blank draft written elsewhere (browser data cleared, then the tool opened again, or a Reset
       // in another tab) does not replace a draft this tab holds: this tab keeps it and stops saving.
       let incoming = null; try { incoming = e.key === null || e.newValue === null ? null : JSON.parse(e.newValue); } catch (_) {}
-      if (draftHasContent(ns) && !(incoming && draftHasContent(incoming))) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
+      // X-6: a Reset in another tab removes the draft (newValue null) and is mirrored, as before r13; a blank copy
+      // written by a fresh start after the browser's data was cleared is refused.
+      if (e.newValue !== null && e.key !== null && draftHasContent(ns) && !(incoming && draftHasContent(incoming))) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
       otherTab = e.key === null ? null : e.newValue;
       if (!document.hidden && !composing) takeUpOtherTab(false);
     });
@@ -2718,7 +2733,11 @@
     document.addEventListener("compositionend", () => { composing = false; if (!document.hidden) takeUpOtherTab(false); });
     window.addEventListener("pageshow", (e) => {
       if (!e.persisted || storeCleared || loadFailed) return;
-      try { const raw = localStorage.getItem(NCV_KEY); if (raw !== null && raw !== JSON.stringify(ns)) { otherTab = raw; takeUpOtherTab(true); } } catch (_) {}
+      try { const raw = localStorage.getItem(NCV_KEY); if (raw !== null && raw !== JSON.stringify(ns)) {
+        // X-5: the same rule as the storage event: a blank copy does not replace a written draft.
+        let inc = null; try { inc = JSON.parse(raw); } catch (_) {}
+        if (draftHasContent(ns) && !(inc && draftHasContent(inc))) { markCleared("This draft was cleared in this browser outside this tab, so it is no longer saved here. This tab still holds it: save a draft file now to keep it."); return; }
+        otherTab = raw; takeUpOtherTab(true); } } catch (_) {}
     });
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) { tickStageTime(); stageEnteredAt = 0; saveState(); }
@@ -2751,7 +2770,16 @@
       goStage("contrib");
       announce("Profile confirmed.");
     };
+    // r14-a-1: an Undo on offer ends with the next change anywhere (typing, choosing, adding, removing) or a
+    // step change; a change made with focus on the Undo row itself does not end it.
+    function endUndo() {
+      if (!UI.cUndo && !UI.evUndo) return;
+      UI.cUndo = null; UI.evUndo = null;
+      document.querySelectorAll(".v7-undo").forEach(r => { if (!r.contains(document.activeElement)) r.remove(); });
+    }
+    root.addEventListener("input", (e) => { if (!(e.target.closest && e.target.closest(".v7-undo"))) endUndo(); }, true);
     const goStage = (key) => {
+      endUndo();
       UI.railOpen = false;
       if (key !== "start" && !ns.mode) ns.mode = "compose";
       ns.stageKey = key; renderStage();
@@ -2927,7 +2955,7 @@
         // r2-a-9 (inferred): on a writing step, one button goes to the first part still to write.
         const nextUp = missingList().find(m => m.step === ns.stageKey && m.field);
         if (nextUp) {
-          const go = el("button", "v7-linkbtn v7-banner-go", "Go to the next part to write"); // r13-a-6 go.type = "button";
+          const go = el("button", "v7-linkbtn v7-banner-go", "Go to the next part to write"); go.type = "button"; // r13-a-6
           go.addEventListener("click", () => jumpTo(nextUp));
           banner.appendChild(document.createTextNode(" ")); banner.appendChild(go);
         }
@@ -3172,7 +3200,7 @@
       res.flags.forEach(f => host.appendChild(el("span", "v4-flag", "⚠ " + f)));
       let meta = res.words + (res.words === 1 ? " word" : " words");
       // r8-b-4: the length line says where the count sits against the usual range.
-      if (range) meta += res.words < range[0] ? ". The usual range here is " + range[0] + " to " + range[1] + ", so this is short." : res.words > range[1] ? ". The usual range here is " + range[0] + " to " + range[1] + ", so this is long." : ", within the usual range of " + range[0] + " to " + range[1] + ".";
+      if (range) meta += res.words < range[0] ? ". The usual range here is " + range[0] + " to " + range[1] + (ns.lens.careerStage === "early" ? ". A shorter answer that names what you have is fine at your stage." : ", so this is short.") : res.words > range[1] ? ". The usual range here is " + range[0] + " to " + range[1] + ", so this is long." : ", within the usual range of " + range[0] + " to " + range[1] + ".";
       host.appendChild(el("span", "v4-meta", meta));
       if (res.flags.length && res.hits && res.hits.length && (!conditional || readbackAddsInfo(res))) {
         // r11-b-5: the read-back repeats the answer, so screen readers skip it; the flags above name the words.
@@ -4513,7 +4541,7 @@
     function contribFold(contrib, i) {
       const b = el("button", "v7-fold");
       b.type = "button"; b.id = "fold-" + contrib.cid;
-      b.setAttribute("aria-label", "Contribution " + (i + 1) + ", " + ((contrib.title || "").trim() || "no headline") + ", " + cCount(contrib) + " of 9 answered. Select to open.");
+      b.setAttribute("aria-label", "Contribution " + (i + 1) + ", " + ((contrib.title || "").trim() || "no headline") + ", " + cCount(contrib) + " of 9 answered. Open."); // r14-a-3: the visible "Open"
       b.setAttribute("aria-expanded", "false");
       b.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
       const t = el("span", "v7-fold-t");
@@ -4567,8 +4595,8 @@
           if (only) { ns.contributions = [blankContribution()]; UI.active = null; }
           else { ns.contributions.splice(i, 1); if (!ns.contributions.some(x => !x.folded)) ns.contributions[Math.max(0, i - 1)].folded = false; }
           if (cLive(gone)) {
-            const un = UI.cUndo = { c: gone, i, until: Date.now() + 10000 };
-            setTimeout(() => { if (UI.cUndo !== un) return; UI.cUndo = null; const r = document.querySelector(".v7-cundo"); if (r) { const had = r.contains(document.activeElement); r.remove(); if (had) { const nc = ns.contributions[i] || ns.contributions[i - 1]; const a = (nc && (nc.folded ? document.getElementById("fold-" + nc.cid) : focusable(document.getElementById("ct" + nc.cid)))) || stepHeading(); if (a) a.focus({ preventScroll: true }); announce("Undo has ended."); } } }, 10000); // T-1
+            const un = UI.cUndo = { c: gone, i, until: Infinity };
+            // r14-a-1: Undo stays until the next change or a step change (endUndo), with no time limit (WCAG 2.2.1).
           }
           saveState(); renderStage();
           // W-04: focus goes to the card now in this place (else the one before), and the removal is spoken.
@@ -4576,7 +4604,7 @@
           const n = nc && (nc.folded ? document.getElementById("fold-" + nc.cid) : focusable(document.getElementById("ct" + nc.cid)));
           // r10-b-6: with Undo on offer, focus goes to it, so it is on screen and one key away for its ten seconds.
           ((UI.cUndo && document.getElementById("c-undo")) || n || document.getElementById("v7-add-contrib") || stepHeading()).focus();
-          announce("Contribution " + (i + 1) + " removed." + (only ? " A blank Contribution 1 is ready." : "") + (UI.cUndo ? " Undo is available for ten seconds." : ""));
+          announce("Contribution " + (i + 1) + " removed." + (only ? " A blank Contribution 1 is ready." : "") + (UI.cUndo ? " Undo is available until your next change." : ""));
         };
         // W-45 (inferred, option A): the inline warning, under the card's header.
         rm.addEventListener("click", () => {
@@ -4761,11 +4789,11 @@
     }
     // V7-25 + D-5, D-7: the evidence view. Kinds as a small grid of cards, none pre-selected.
     const EV_KIND_HINT = {
-      "Peer-reviewed": "an article, chapter or book, or a juried or curated selection", "Media / public": "coverage, a critical review, a public talk, a podcast",
+      "Peer-reviewed": "a published article, chapter or book, or a juried or curated selection; a preprint goes under Other", "Media / public": "coverage, a critical review, a public talk, a podcast",
       "Policy / practice uptake": "a policy, guideline or program that adopted your work", "Dataset / tool": "data, software, a catalogue or a collection, and who holds it",
       "Award / recognition": "a prize, fellowship or honour", "Funding": "a grant the work attracted",
       "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Community document": "a letter, resolution, agreement, report or plan a community or partner holds",
-      "Other": "anything else a reviewer could check"
+      "Other": "a preprint, a conference talk or poster, or anything else a reviewer could check"
     };
     // r10-b-8: a few kind hints follow the field.
     const EV_KIND_HINT_STEM = { "Peer-reviewed": "a journal article or conference paper", "Dataset / tool": "data or software, with its version and who holds it",
@@ -4799,17 +4827,12 @@
         // r3-b-6 (inferred): an item goes at once (W-45 keeps evidence instant) and Undo restores it for ten seconds.
         rm.addEventListener("click", () => {
           const gone = contrib.evidence.splice(j, 1)[0];
-          UI.evUndo = (gone.text || "").trim() || (gone.note || "").trim() ? { cid: contrib.cid, j, ev: gone, until: Date.now() + 10000 } : null;
+          UI.evUndo = (gone.text || "").trim() || (gone.note || "").trim() ? { cid: contrib.cid, j, ev: gone, until: Infinity } : null;
           UI.kindOpen = ""; // H-6: the open chooser is held by index
-          if (UI.evUndo) { const un0 = UI.evUndo; setTimeout(() => {
-            if (UI.evUndo !== un0) return; UI.evUndo = null;
-            const row = document.getElementById("ev-undo-" + un0.cid)?.closest(".v7-undo"); if (!row) return;
-            const had = row.contains(document.activeElement); row.remove();
-            if (had) { const a = document.getElementById("ev-add-" + un0.cid); if (a) a.focus(); }
-          }, 10000); }
+          // r14-a-1: the evidence Undo also stays until the next change.
           saveState(); renderStage();
           const a = document.getElementById(UI.evUndo ? "ev-undo-" + contrib.cid : "ev-add-" + contrib.cid) || document.getElementById("ev-add-" + contrib.cid); if (a) a.focus();
-          announce("Evidence item " + letter(j) + " removed." + (UI.evUndo ? " Undo is available for ten seconds." : ""));
+          announce("Evidence item " + letter(j) + " removed." + (UI.evUndo ? " Undo is available until your next change." : ""));
         });
         ehead.appendChild(rm);
         // r1-b-5 (inferred): once a kind is chosen the nine cards fold to one line, "Kind: Peer-reviewed ·
@@ -4868,7 +4891,7 @@
         const ITEM_HINT = { "Peer-reviewed": "The reference: authors, year, title and venue", "Media / public": "The outlet or platform, the title and the date; for your own series, its audience", "Policy / practice uptake": "The policy or program, who adopted it (or its sector, if it cannot be named) and when",
           "Dataset / tool": "Name, version, who holds it and how access is granted (a licence, a DOI, a data agreement or an archive's terms of use), in words", "Award / recognition": "The award, who gave it and the year", "Funding": "The funder, the program, the amount and the years",
           "Replication / citation": "The study, standard, guideline or code that repeated, cited or built on your work", "Exhibition, performance or screening": "The work, the venue, the city and the dates", "Community document": "What it is (a letter, resolution, agreement, report or plan), who holds it and its date" };
-        ti.placeholder = ITEM_HINT[ev.type] || "Name it so a reviewer can find it, or say who holds it: a reference, a patent and its licence, a performance, a policy, a dataset, an award or a letter"; ti.value = ev.text || "";
+        ti.placeholder = ITEM_HINT[ev.type] || "Name it so a reviewer can find it, or say who holds it: a reference, a preprint, a talk, a patent and its licence, a performance, a policy, a dataset, an award or a letter"; ti.value = ev.text || "";
         const ln = el("p", "v4-ev-note"); ln.id = "evln" + contrib.cid + "-" + j; ti.setAttribute("aria-describedby", ln.id);
         let lnSaid = !!evidenceLinkNote(ev.text, ev.type);
         // r3-b-4: an item past about 60 words is a paragraph; the note under it says so.
@@ -4937,7 +4960,7 @@
       if (!v || !new RegExp(LINK_RE.source, "i").test(v) || isFrq() || !ns.lens.format) return "";
       return creativeLinkOk(type)
         ? "The TCV permits a link only for an audio or visual creative output, where the funding opportunity allows it. Reviewers are not guaranteed to open it, so describe the work in words as well."
-        : "Links are not permitted in the TCV, which must be self-contained. Give the reference in words; for software, its name, version and where it is hosted. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it.";
+        : "Links are not permitted in the TCV, which must be self-contained. Give the reference in words; for software, its name, version and where it is hosted (such as GitHub or Zenodo), without the address. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it.";
     }
 
     // ── Weave: the contribution's material in reading order, with suggested joins ──
@@ -4960,7 +4983,7 @@
       const parts = order.map(k => ({ k, t: one(contrib[k]) })).filter(p => p.t);
       const gaps = [];
       if (!one(contrib.stakes)) gaps.push("The problem or question part is empty. " + resolveQ(PROMPTS.contrib.stakes)); // r9-a-12: the field's own question
-      if (!one(contrib.outcomes)) gaps.push("What already changed is empty. Is there something concrete you can name yet?");
+      if (!one(contrib.outcomes)) gaps.push("What already changed is empty, which is fine if nothing has changed yet; What could change carries the expectation. If something concrete has changed, name it.");
       if (!one(contrib.impact)) gaps.push("What could change is empty. Who or what could this affect if it is taken up more widely? Hedged language is fine here.");
       if (!refs.length) gaps.push("No evidence attached. Add one item a reviewer could check.");
       return { title: one(contrib.title), roleLine: one(contrib.roleLine), parts, refs, gaps };
@@ -5129,7 +5152,7 @@
         tiles.appendChild(tile);
       });
       dash.appendChild(tiles);
-      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Count " + ({ stem: "technicians, industry-embedded trainees", health: "research staff, residents, clinical fellows, community researchers", creative: "apprentices, assistant artists", humanities: "research assistants, archive interns" }[ns.lens.discipline] || "community researchers") + " and other trainees who are not students under Other, and name the group in its box. The instructions for your funding opportunity set the period for these totals; if a leave fell inside it, say so with its dates in one of the prompts below."));
+      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Count " + ({ stem: "technicians, industry-embedded trainees", health: "research staff, residents, clinical fellows, community researchers", creative: "apprentices, assistant artists", humanities: "research assistants, archive interns" }[ns.lens.discipline] || "community researchers") + " and other trainees who are not students under Other, and name the group in its box. The instructions for your funding opportunity set the period for these totals; if a leave fell inside it, say so with its dates in How you got here, in your statement."));
       c.appendChild(dash);
 
       const sh = el("div", "v7-section-t");
@@ -5138,7 +5161,7 @@
       // r4-a-6: more people described than counted reads as a gap, here and in Still missing.
       const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? (d > t ? d + " described, more than the " + t + " in the five-year totals. Check the totals, or keep an earlier trainee on purpose." : d + " of " + t + " described") : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); pc.classList.toggle("is-warn", !!t && d > t); };
       setPc(); sh.appendChild(pc); c.appendChild(sh);
-      c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers will read your CV, so leave out names to protect the privacy of the people you " + trainedWord() + ". Describe each person by their level and " + wentWord() + ", and add any " + (ns.lens.discipline === "creative" ? "prizes, residencies or major grants" : "best-paper prizes or major scholarships") + " they held or went on to win. In a small community an organization and a position can identify a person, so describe them only as closely as they agree to."));
+      c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers will read your CV, so leave out names to protect the privacy of the people you " + trainedWord() + ". Describe each person by their level and " + wentWord() + ", and add any " + (ns.lens.discipline === "creative" ? "prizes, residencies or major grants" : "best-paper prizes or major scholarships") + " they held or went on to win. Count students you co-supervise and say with whom; someone still training with you can be described by level and project. In a small community an organization and a position can identify a person, so describe them only as closely as they agree to."));
       ns.mentees.forEach((m, i) => c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)));
       const addP = el("button", "v7-add", "+ Add a person"); addP.type = "button"; addP.id = "v7-add-person";
       addP.addEventListener("click", () => {
@@ -5571,8 +5594,8 @@
             const target = keep && !keep.disabled ? keep : other; if (target) target.focus();
             announce("“" + name + "” moved to position " + (to + 1) + " of " + live.length + ".");
           };
-          const up = el("button", "btn btn-outline", "↑"); up.type = "button"; up.id = "mv-" + contrib.cid + "-up"; up.setAttribute("aria-label", "Move " + name + " up"); up.disabled = pos === 0;
-          const dn = el("button", "btn btn-outline", "↓"); dn.type = "button"; dn.id = "mv-" + contrib.cid + "-dn"; dn.setAttribute("aria-label", "Move " + name + " down"); dn.disabled = pos === live.length - 1;
+          const up = el("button", "btn btn-outline", "↑"); up.type = "button"; up.id = "mv-" + contrib.cid + "-up"; up.setAttribute("aria-label", "Move up: " + name); // r14-a-3: the visible words first up.disabled = pos === 0;
+          const dn = el("button", "btn btn-outline", "↓"); dn.type = "button"; dn.id = "mv-" + contrib.cid + "-dn"; dn.setAttribute("aria-label", "Move down: " + name); dn.disabled = pos === live.length - 1;
           up.addEventListener("click", () => swap(pos - 1, "up")); dn.addEventListener("click", () => swap(pos + 1, "dn"));
           mv.appendChild(up); mv.appendChild(dn); oc.appendChild(mv);
           os.appendChild(oc);
@@ -5987,7 +6010,7 @@
 
       // r2-a-4: a download names its file beside the button and aloud, and stays a little longer.
       // r3-a-4: the status span beside the button is the one live region for its message.
-      const done = (msg, node) => { ns.ui.exported = true; saveState(); refreshRail(); if (node) { node.textContent = msg; setTimeout(() => { if (node.textContent === msg) node.textContent = ""; }, /^Downloaded/.test(msg) ? 6000 : 2500); } };
+      const done = (msg, node) => { ns.ui.exported = true; saveState(); refreshRail(); if (node) { node.textContent = msg; /* r14-a-5: kept until the next action */ setTimeout(() => { if (false) node.textContent = ""; }, /^Downloaded/.test(msg) ? 6000 : 2500); } };
       const dl = el("section", "v7-card"); dl.setAttribute("aria-labelledby", "v7-dl-t");
       const dlt = el("h3", "v7-h3", "Download or print"); dlt.id = "v7-dl-t"; dl.appendChild(dlt);
       const fmt = ns.ui.exportFmt || "doc";
@@ -6074,6 +6097,7 @@
     // Before the personal statement: words that recur across contributions, and any contribution
     // that shares words with every other one. Counting only, on this device; no model involved.
     const CROSS_STOP = new Set(("university universities session sessions " + // r9-a-18
+      "conference conferences months weeks years talks poster posters " + // r14-b-8
       "pourrait pourraient produit produits avait avaient ayant étaient était entre aussi ainsi depuis selon comme toutes autres après avant chaque leurs cette notre nous avons dans pour avec plusieurs travail recherche " + // r11-a-8
       "about above after again along also among another around based because been before being below between both " +
       "built could during each early either every first found found from further given group have having into large later least level made " +
@@ -6141,7 +6165,7 @@
     }
     // W-19 (inferred): the .txt is the working copy. It carries the tool's notes in square brackets
     // (kinds, what is still missing, the mentorship prompts); the section copies hold the text to paste.
-    const GAP_HINT = { stakes: "What problem or question was this work answering?", outcomes: "Is there something concrete you can name yet?",
+    const GAP_HINT = { stakes: "What problem or question was this work answering?", outcomes: "Fine to leave empty if nothing has changed yet; What could change carries the expectation.",
       impact: "Who or what could this affect if it is taken up more widely? Hedged language is fine here.", /* r11-b-16 */ ev: "Add one item a reviewer could check." };
     function buildExportText() {
       const lines = [], rule = "=".repeat(60);
@@ -6688,7 +6712,7 @@
     // Reset: two steps in one warning (DECIDED: a double reset). Step one asks; step two replaces the
     // question in place; Clear my draft then clears. One wording wherever Reset draft appears.
     function resetWarning(container, question, trigger) {
-      const w = inlineConfirm(container, "Clear your draft from this browser? " + (ns.ui.fileSavedAt ? "This draft was saved to a file " + savedWhen(ns.ui.fileSavedAt) + (ns.ui.fileSavedSig === contentSig() ? " and has not changed since." : " and has changed since, so clearing it removes those changes.") + " " : "") + "Save a draft file first if you want to keep it.", /* r13-a-4 */ trigger, "Clear my draft", () => {});
+      const w = inlineConfirm(container, "Clear your draft from this browser? " + (ns.ui.fileSavedAt ? "This draft was saved to a file " + savedWhen(ns.ui.fileSavedAt) + (ns.ui.fileSavedSig === contentSig() ? " and has not changed since." : " and has changed since, so clearing it removes those changes.") + " " : "") + (ns.ui.fileSavedAt && ns.ui.fileSavedSig === contentSig() ? "" : "Save a draft file first if you want to keep it."), /* r13-a-4 */ trigger, "Clear my draft", () => {});
       const go = w.querySelector(".btn-primary");
       go._next = () => {
         w.querySelector("p").textContent = "Are you sure? This clears your draft from this browser. A draft file you saved stays where you saved it.";

@@ -1,0 +1,40 @@
+NARRATIVE CV, WORKING DRAFT (V7 beta)
+[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]
+[Profile, for tailoring and not for submission: CIHR · Tri-agency CV · CIHR Project Grant: Early Career (applying 2027) · Early career · Health / clinical + Social sciences · Team-based]
+Before you submit: paste this into the current version of CIHR's template and do not exceed the page limit (5 pages in English, 6 pages in French). Font: 12-point Times New Roman.
+
+============================================================
+PERSONAL STATEMENT  [first in the CV, written last in the tool]
+============================================================
+I am a postdoctoral fellow at Concordia University. My work is in developmental psychology, specifically infant sleep and parent stress.
+
+How early stress shapes development: what happens inside the cell, and what happens to sleep and stress in new parents and infants at home. Two strands: stress hormones and neuron growth in cell culture, and sleep and stress in parents of infants. The thread is the first year of life, when stress has lasting effects. I trained in cell biology and moved to developmental psychology two years ago, to study the family setting in which early stress occurs. I took a 12-month parental leave from March 2024 to February 2025; during that time my first-author paper was accepted and the lab research assistants continued the 64-family follow-up. I have one first-author paper, one first-author preprint under review, two conference talks, a dataset of 64 families that my lab now holds, and co-supervision of two undergraduate students. This competition funds researchers in the first years of an independent record. Mine began two years ago in psychology, and a project grant would let me run the next stage of the sleep study with my own team. The next step is to test, in a second cohort of 120 families, whether a short home sleep program lowers parent stress during the first year.
+
+============================================================
+MOST SIGNIFICANT CONTRIBUTIONS AND EXPERIENCES
+============================================================
+1. Stress hormones and early neuron growth in cell culture
+   Children exposed to high maternal stress hormones in pregnancy show altered stress responses, and the cellular route from hormone to altered neuron growth was not known. I ran the cell-culture experiments and wrote the first draft of the paper as first author, in a team of four. Over 14 months I grew cortical neurons from mice, exposed them to a stress hormone at three doses and measured how far their branches grew. I ran 48 culture batches. One first-author paper in a cell biology journal, and one conference talk at a neuroscience meeting. Two other students in the lab now use the culture protocol. If the dose-response pattern holds in human stem-cell neurons, other labs could use it to test how stress hormones affect early brain development. (a, b)
+   a. Okafor-Reyes, A., Lindqvist, S., Chen, M. (2024). Dose-dependent glucocorticoid effects on neurite outgrowth in cultured cortical neurons. Journal of Cellular Neuroscience, 18(3), 211-224.  [Peer-reviewed]
+      First-author paper from my PhD; the culture protocol is in the methods section.
+   b. Okafor-Reyes, A. (2023). Glucocorticoid dose and neurite outgrowth in cultured cortical neurons [Conference talk]. Annual Meeting of the Society for Neural Development, Montreal.  [Conference talk]
+      Selected for an oral session.
+
+2. Infant sleep and parent stress in the first year
+   Parents of infants report poor sleep and high stress in the first year, but few studies follow both together at home, so it is unclear which comes first. I co-designed the sleep protocol with my supervisor, analysed the first-year data and wrote the preprint as first author. We followed 64 families for 12 months with weekly sleep diaries and wrist sensors. I cleaned and analysed the data with two co-supervised undergraduates. The project produced one preprint under review, a cleaned dataset of 64 families that the lab now holds, and two conference talks, one given by me. If the preprint findings hold, home sleep support for parents could be tested in early-years clinics, and sleep could be tracked alongside parent mental health in public health follow-up. (a, b, c)
+   a. Okafor-Reyes, A., Haddad, L., Tremblay, J. (2026). Weekly sleep and parent stress across the first year: a 64-family cohort [Preprint, under review]. PsyArXiv.  [Peer-reviewed]
+      Preprint, not yet peer reviewed. First-year findings for the full cohort.
+   b. Cleaned sleep-diary and wrist-sensor dataset for 64 families, 12 months, held on the lab server, shared with lab members only.  [Dataset / tool]
+      Used so far by two undergraduate honours projects.
+   c. Okafor-Reyes, A. (2025). Sleep diaries and parent stress in the first six months [Conference talk]. Canadian Psychological Association annual convention, Winnipeg.  [Conference talk]
+   [Still missing: What already changed. Is there something concrete you can name yet?]
+
+============================================================
+SUPERVISORY AND MENTORSHIP ACTIVITIES
+============================================================
+Totals (last five years): 2 undergraduate researchers
+An undergraduate researcher I trained is now at a university (Psychology) and scored 40 weeks of sleep diaries under my guidance, co-supervised with the lab PI, and began a master of science in 2026.
+An undergraduate researcher I trained is still in the lab, and I co-supervise their honours thesis on parent sleep with the lab PI.
+[One thing you do] I hold a short first meeting with each student to agree who does what and who is named on any talk or paper, and I write the agreement down. I co-supervise two honours students with the lab PI.
+[Who gets in] I do not lead a group. In the lab I rewrote the call for undergraduate assistants to say that no research experience is needed and that the work is paid, and three of the five applicants then came from outside psychology.
+[Who else you mentor (optional)] I read a first-year PhD student's fellowship application twice and introduced them to a clinician who agreed to host their placement.

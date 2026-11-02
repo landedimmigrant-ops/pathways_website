@@ -293,7 +293,7 @@ async function seed(state, extra) {
     a.after=q('.v7-path-new h3')?.innerText; a.noReset=!q('.v7-path-reset'); a.saved=(JSON.parse(localStorage.getItem('ncv-v7')||'{}').contributions||[]).some(c=>(c.title||'').trim());
     return a;`);
   check("a saved draft puts Continue and Reset draft in one card", r.title === "Continue your draft" && r.tag === "DIV" && r.btns === 2 && r.rs, r);
-  check("Reset draft opens an inline warning first, Cancel and Clear my draft, and nothing is cleared yet", /^Clear your draft from this browser\? (?:This draft was saved to a file .+ since[^.]*\. )?Save a draft file first if you want to keep it\.$/.test(r.warn) && r.warnBtns.join("|") === "Cancel|Clear my draft" && r.keptWhileWarned, r);
+  check("Reset draft opens an inline warning first, Cancel and Clear my draft, and nothing is cleared yet", /^Clear your draft from this browser\? (?:This draft was saved to a file .+ has not changed since\.|(?:This draft was saved to a file .+ since[^.]*\. )?Save a draft file first if you want to keep it\.)$/.test(r.warn) && r.warnBtns.join("|") === "Cancel|Clear my draft" && r.keptWhileWarned, r);
   check("Clear my draft asks again in the same warning (W-45), then clears; the card reads Start your draft", /^Are you sure/.test(r.cmsg) && r.keptAfterOne && r.after === "Start your draft" && r.noReset && !r.saved, r);
 
   console.log("V6 draft and migrations");
@@ -1334,6 +1334,29 @@ async function seed(state, extra) {
     check("a blank draft written elsewhere does not replace this tab's draft; the tab says so in an alert (r13-a-1, r13-a-2)", kept.cards > 0 && /This tab still holds it/.test(kept.warn) && kept.role === "alert", kept);
     check("partnered work gets a line for a partner or figures kept private (r13-b-1)", /describe the partner by its sector and size/.test(kept.help), kept.help);
     check("'See Fig. 2. … Fig. 3.' is not a list; a closed range is one word (V-7, V-8)", !/reads as a list/.test(r.figs.flags) && /^5 words/.test(r.range.meta), { figs: r.figs.flags, range: r.range.meta });
+  }
+
+  console.log("Audit loop, round 14");
+  {
+    const base = () => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    const st = base(); st.lens = Object.assign({}, st.lens, { careerStage: "early" });
+    st.contributions = [{ cid: "r141", title: "A made-up study", stakes: "A made-up gap.", roleMode: "led", roleLine: "", activities: "I ran it.", outputs: "A report.", outcomes: "", impact: "", translational: "", evidence: [{ text: "A made-up article", type: "Peer-reviewed", note: "" }, { text: "A made-up preprint", type: "Other", note: "" }], flags: {}, notes: {} }];
+    await seed(st);
+    r = await js(H + `await w(200); const a={};
+      a.meta=qa('[data-f$="-activities"] .v4-meta').map(x=>x.textContent).join('|');
+      q('#ev-open-r141').click(); await w(200);
+      a.otherHint=(q('#evtr141-1')||{}).placeholder||'';
+      const rm=qa('button').find(b=>/Remove evidence item a/.test(b.getAttribute('aria-label')||'')); rm.click(); await w(150);
+      await w(10500); a.undoAfter=!!q('.v7-undo'); a.live=(q('#v7-live')||{}).textContent||'';
+      const box=q('[id^="evtr141"]'); if (box) { box.focus(); setv(box, box.value + ' more'); await w(120); } a.undoAfterEdit=!!q('.v7-undo');
+      return a;`);
+    check("Undo stays past ten seconds and ends with the next change (r14-a-1)", r.undoAfter && !r.undoAfterEdit, r);
+    check("early career: a short answer is fine; a preprint has a place under Other (r14-b-3, r14-b-1)", /A shorter answer that names what you have is fine/.test(r.meta) && /preprint/.test(r.otherHint), { meta: r.meta, otherHint: r.otherHint });
+    // X-6: a Reset in another tab (the draft removed) is mirrored; a blank copy written elsewhere is refused (r13-a-1).
+    await seed(base());
+    const mir = await js(H + `await w(200); window.dispatchEvent(new StorageEvent('storage', { key: 'ncv-v7', oldValue: '{}', newValue: null })); await w(250);
+      const wn=q('#v4-save-warning'); return { warn: wn && !wn.hidden ? wn.textContent : '', title: (q('h1, .proto-title')||{}).innerText || '' };`);
+    check("a Reset in another tab is mirrored, with no outside-clear alert (X-6)", !/outside this tab/.test(mir.warn), mir);
   }
 
   console.log("Register (W-57): the tool's prompt strings");
