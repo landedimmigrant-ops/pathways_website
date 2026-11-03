@@ -641,6 +641,7 @@
     p .v4-guide-link, .v7-lede .v4-guide-link, .v7-explain .v4-guide-link { font-size: inherit; }
     .v7-lede { font-size: 1rem; line-height: 1.6; }
     .v4-privacy { max-width: 70ch; display: flex; gap: 6px; align-items: flex-start; }
+    .v4-privacy[hidden] { display: none; }
     .narrative-nav .btn, .v7-actions .btn, .v7-card .btn:not(.v7-btn-small), .v7-nudge .btn { font-size: 0.875rem; min-height: 40px; padding: 9px 16px; line-height: 1.2; }
     .v7-choices { grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); } /* r10-b-3: tiles grow with the text size */
     .v7-mini[aria-checked="true"], .v7-mini[aria-pressed="true"] { background: var(--v7-open); border-color: #912338; color: #912338; font-weight: 600; }
@@ -1062,15 +1063,16 @@
     const TESTER_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     // Start page: on the tester address the sign-up card shows until the tester signs up (Prem, 2026-11-03: no skipping).
     function renderTesterStart(c) {
+      c.appendChild(el("p", "v7-intro v8-tester-summary", "This tool helps you build a first outline of your narrative CV in your own words: your contributions, your mentorship record and a personal statement."));
       const card = el("section", "v7-card v8-tester"); card.setAttribute("aria-labelledby", "v8-ts-t");
       const h = el("h2", "v7-h3", "Help us test this tool"); h.id = "v8-ts-t"; card.appendChild(h);
       // Wording from Prem, 2026-11-03.
-      card.appendChild(el("p", "v7-body", "We developed this tool to support you as you write your narrative CV, and it is now ready for testing. Your feedback shows us whether it works and how to improve it."));
-      card.appendChild(el("p", "v7-body", "Please enter your email address so we know who is using the tool and can check in about your experience. Three short questions follow here, and five more at the end."));
+      card.appendChild(el("p", "v7-body", "We developed this tool to support you as you write your narrative CV, and it is now ready for testing. Your feedback will help us to further develop and improve it."));
+      card.appendChild(el("p", "v7-body", "Please enter your email address so we know who is using the tool and can check in about your experience."));
       const promise = el("p", "v8-tester-promise"); promise.appendChild(el("strong", null, "We do not collect anything you write in your CV. Your draft stays in this browser."));
       card.appendChild(promise);
       card.appendChild(el("p", "v7-body", "If you would like to share your draft to help us improve the tool, please send it to " + FEEDBACK.email + "."));
-      card.appendChild(el("p", "v7-quiet v8-tester-privacy", "We receive your email, your answers, the profile you choose in Setup and the steps you open. They are stored in a database in the United States and read only by the Pathways to Impact team. To have them removed, write to " + FEEDBACK.email + "."));
+      card.appendChild(el("p", "v7-quiet v8-tester-privacy", "All the information we collect will be deleted when this version of the tool launches at the end of the year. If you have any questions or concerns, write to " + FEEDBACK.email + "."));
       tester.start = tester.start || {};
       const ew = el("div", "v8-tq");
       const el1 = el("label", "v4-q", "Your email"); el1.htmlFor = "v8-ts-email"; ew.appendChild(el1);
@@ -1082,12 +1084,12 @@
       card.appendChild(ew);
       TESTER_START_QS.forEach(q => card.appendChild(testerQuestion(q, tester.start, "v8-ts")));
       const row = el("div", "v4-note-row");
-      const go = el("button", "btn btn-primary", "Sign up and start"); go.type = "button";
+      const go = el("button", "btn btn-primary", "Start"); go.type = "button";
       const status = el("p", "v7-quiet"); status.setAttribute("aria-live", "polite");
       go.addEventListener("click", async () => {
         const v = em.value.trim();
         if (!TESTER_EMAIL_RE.test(v)) {
-          err.textContent = v ? "This email looks incomplete. Check it and try again." : "Enter your email to sign up and start.";
+          err.textContent = v ? "This email looks incomplete. Check it and try again." : "Enter your email to start.";
           em.setAttribute("aria-invalid", "true"); em.focus(); return;
         }
         em.removeAttribute("aria-invalid"); err.textContent = "";
@@ -3051,7 +3053,9 @@
     const renderShell = (fromStart) => {
       clear(root);
       const isStart = ns.stageKey === "start";
-      document.getElementById("v7-start-intro").hidden = !isStart;
+      // Before sign-up the page carries a one-line summary and the test card; the full intro and the privacy line follow it (Prem, 2026-11-03).
+      document.getElementById("v7-start-intro").hidden = !isStart || testerGate();
+      document.querySelector(".v4-privacy").hidden = testerGate();
       const shell = el("div", "narrative-module-shell" + (isStart ? " is-start" : ""));
       if (!isStart) {
         const panel = el("nav", "narrative-progress-panel" + (fromStart ? " v7-rail-in" : ""));

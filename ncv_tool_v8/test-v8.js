@@ -1573,7 +1573,7 @@ async function seed(state, extra) {
     check("a11y: the card is named by its heading; email has a label, type email and autocomplete", r.labelled === "H2" && r.emailLab === "Your email" && r.emailType === "email" && r.auto === "email", r);
     check("a11y: each choice question is a fieldset with a legend, every radio inside its label, targets at least 44 px", r.sets.length === 3 && r.sets.every(f => f.legend && f.radios >= 4 && f.wrapped) && r.minH >= 44 && r.tas === 0
       && r.sets.map(f => f.legend).join("|") === "What are you starting from?|When is your application due?|What concerns you most about writing a narrative CV?", r);
-    check("the card says what is sent, where it is stored and how to have it removed", /We receive your email, your answers/.test(r.privacy) && /United States/.test(r.privacy) && /impact@concordia\.ca/.test(r.privacy), r.privacy);
+    check("the card says the information is deleted at launch and how to reach the team", /deleted when this version of the tool launches at the end of the year/.test(r.privacy) && /questions or concerns, write to impact@concordia\.ca/.test(r.privacy), r.privacy);
     check("the card states in bold that nothing written in the CV is collected, and invites the tester to send the draft to help improve the tool",
       /^We do not collect anything you write in your CV\. Your draft stays in this browser\.$/.test(r.promise || "") && /share your draft to help us improve the tool, please send it to impact@concordia\.ca\./.test(r.review || ""), { promise: r.promise });
 
@@ -1588,9 +1588,10 @@ async function seed(state, extra) {
       qa('.v8-tester .btn-primary')[0].click(); await w(500);
       const t=JSON.parse(localStorage.getItem('ncv-v8-tester')||'{}');
       return {card:!!q('.v8-tester'), paths:qa('.v7-path').length, note:q('.v8-tester-note')?.innerText, role:q('.v8-tester-note')?.getAttribute('role'),
-        focus:document.activeElement.className, t};`);
+        focus:document.activeElement.className, t, intro:!document.getElementById('v7-start-intro').hidden, priv:!q('.v4-privacy').hidden, sum:!!q('.v8-tester-summary')};`);
     const st = apiPosts[0] || {};
-    check("Sign up and start sends one start row with the email and the three answers, and no draft text", apiPosts.length === 1 && st.action === "start" && st.email === "tester@example.org" && st.answers.source === "An earlier narrative CV" && st.answers.due === "Later than three months" && st.answers.concern === "Showing impact" && /^[0-9a-f-]{8,}$/.test(st.id) && !("contributions" in st) && !("ps" in st), st);
+    check("Start sends one start row with the email and the three answers, and no draft text", apiPosts.length === 1 && st.action === "start" && st.email === "tester@example.org" && st.answers.source === "An earlier narrative CV" && st.answers.due === "Later than three months" && st.answers.concern === "Showing impact" && /^[0-9a-f-]{8,}$/.test(st.id) && !("contributions" in st) && !("ps" in st), st);
+    check("after sign-up the full intro and the privacy line show on the start page", r.intro && r.priv && !r.sum, r);
     check("a11y: after sign-up the path cards return, a status note thanks the tester, focus moves to Start your draft", !r.card && r.paths === 2 && /signed up as a tester/.test(r.note || "") && r.role === "status" && /v7-path-new/.test(r.focus) && r.t.startSent === true, r);
 
     r = await js(H + `qa('.v7-path-new')[0].click(); await w(400); return location.hash;`);
@@ -1648,7 +1649,9 @@ async function seed(state, extra) {
     apiPosts.length = 0;
     await tseed(null);
     r = await js(H + `await w(200); return {btns:qa('.v8-tester button').map(b=>b.innerText), paths:qa('.v7-path').length};`);
-    check("the sign-up card has a single button, Sign up and start, and no way to skip", r.btns.join("|") === "Sign up and start" && r.paths === 0, r);
+    check("the sign-up card has a single button, Start, and no way to skip", r.btns.join("|") === "Start" && r.paths === 0, r);
+    r = await js(H + `const v=e=>e&&!e.hidden&&e.getBoundingClientRect().height>0; return {intro:v(document.getElementById('v7-start-intro')), priv:v(q('.v4-privacy')), sum:q('.v8-tester-summary')?.innerText};`);
+    check("before sign-up the page shows a one-line summary and the card; the intro and the privacy line wait until after", !r.intro && !r.priv && /build a first outline of your narrative CV/.test(r.sum || ""), r);
     await tseed(null, { skipped: true });
     r = await js(H + `await w(200); return {card:!!q('.v8-tester'), paths:qa('.v7-path').length};`);
     check("a browser that skipped sign-up before sees the sign-up card again", r.card && r.paths === 0 && apiPosts.length === 0, r);

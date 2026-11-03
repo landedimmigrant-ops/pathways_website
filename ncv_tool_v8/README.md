@@ -61,5 +61,5 @@ INFERRED, for Prem to confirm or change:
 - the wording of the answer options (the questions were agreed in chat on 2026-11-03);
 - the sign-up card replaces the path cards and every step until the tester signs up;
 - the Export questions sit at the top of Export;
-- the privacy wording on the card;
+- the privacy wording on the card (Prem, 2026-11-03: the line on what is sent and where it is stored was taken out; the card says the information is deleted when this version launches at the end of the year, and gives impact@concordia.ca for questions);
 - the address `research-8kh.pages.dev` (a custom domain can replace it later).
