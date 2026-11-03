@@ -10,14 +10,20 @@ import { neon } from "@neondatabase/serverless";
 const ID_RE = /^[0-9a-f-]{8,64}$/i;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const STEPS = ["start", "setup", "contrib", "mentor", "ps", "review", "export", "feedback"];
-const START_KEYS = ["funding", "before", "want"];
-const END_KEYS = ["useful", "stuck", "change"];
+// Answer keys from tester-questions-proposal-2026-11-03.md. Rows from the first set (funding, before,
+// want, useful, stuck) stay in the table as they were sent.
+const START_KEYS = ["source", "due", "concern"];
+const END_KEYS = ["concernHelp", "fit", "fitWhich", "next", "reuse", "reuseOther", "change"];
 
 const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
 const str = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const pick = (o, keys) => {
   const out = {};
-  if (o && typeof o === "object") keys.forEach(k => { const v = str(o[k], 2000); if (v) out[k] = v; });
+  if (o && typeof o === "object") keys.forEach(k => {
+    // A choose-any answer is a short list of the options picked.
+    const v = Array.isArray(o[k]) ? o[k].slice(0, 10).map(x => str(x, 200)).filter(Boolean) : str(o[k], 2000);
+    if (v.length) out[k] = v;
+  });
   return out;
 };
 const cleanProfile = (p) => {

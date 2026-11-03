@@ -952,16 +952,33 @@
     const TESTER_ON = /\.pages\.dev$/.test(location.hostname) || /[?&]tester=1\b/.test(location.search);
     const TESTER_API = "/api/tester";
     const TESTER_KEY = "ncv-v8-tester";
+    // The questions follow ncv_tool_v8/tester-questions-proposal-2026-11-03.md: each one answers an open
+    // question about the tool. Funder, field, stage, the last step and the time are recorded already.
     const TESTER_START_QS = [
-      { id: "funding", type: "one", q: "Which funding opportunity are you preparing for?",
-        options: ["CIHR", "NSERC", "SSHRC", "FRQ (FRQNT, FRQS or FRQSC)", "Another funder", "Not decided yet"] },
-      { id: "before", type: "one", q: "Have you written a narrative CV before?",
-        options: ["Yes, for an application I submitted", "Yes, a draft only", "No"] },
-      { id: "want", type: "text", q: "What do you most want from this session?" }
+      { id: "source", type: "one", q: "What are you starting from?",
+        options: ["Nothing written yet", "An earlier narrative CV", "A traditional CV or the Common CV", "Notes or a past application"] },
+      { id: "due", type: "one", q: "When is your application due?",
+        options: ["Within a month", "In one to three months", "Later than three months", "No specific application yet"] },
+      { id: "concern", type: "one", q: "What concerns you most about writing a narrative CV?",
+        options: ["Choosing what to include", "Showing impact", "Writing about myself", "The mentorship section", "Keeping to the page limit", "The funder's rules", "Something else"] }
     ];
+    // E1 quotes the concern chosen at the start; without one it asks about the concern in general.
+    const testerConcernQ = () => {
+      const c = (tester.start || {}).concern;
+      return c && c !== "Something else"
+        ? "At the start you said your main concern was: " + c.charAt(0).toLowerCase() + c.slice(1) + ". How much did the tool help with it?"
+        : "How much did the tool help with your main concern about writing a narrative CV?";
+    };
     const TESTER_END_QS = [
-      { id: "useful", type: "one", q: "How useful was this for your narrative CV?", options: ["1", "2", "3", "4", "5"], ends: ["1 · Not useful", "5 · Very useful"] },
-      { id: "stuck", type: "text", q: "Where did you get stuck?" },
+      { id: "concernHelp", type: "one", q: testerConcernQ, options: ["1", "2", "3", "4", "5"], ends: ["1 · Not at all", "5 · A great deal"] },
+      { id: "fit", type: "one", q: "Did the questions and examples fit your kind of work?",
+        options: ["They fit", "Mostly, with some wording from another field", "They read as written for another field"] },
+      { id: "fitWhich", type: "text", q: "Which ones?" },
+      { id: "next", type: "one", q: "What will you do with this draft next?",
+        options: ["Keep working on it in this tool", "Move it into Word or another document", "Paste it into the funder's form", "Show it to a colleague or advisor", "Set it aside"] },
+      { id: "reuse", type: "many", q: "Which parts of this draft would you reuse for your next application? Choose any.",
+        options: ["The contributions", "The evidence under each contribution", "The mentorship record and totals", "The personal statement"], none: "None, I would start again" },
+      { id: "reuseOther", type: "text", q: "Anything else you would keep?" },
       { id: "change", type: "text", q: "What one change would help most?" }
     ];
     const testerLoad = () => { try { const t = JSON.parse(localStorage.getItem(TESTER_KEY) || "null"); return t && typeof t === "object" ? t : {}; } catch (_) { return {}; } };
@@ -994,9 +1011,31 @@
     // One question as a native radio group or a text box, for the tester cards.
     function testerQuestion(q, answers, prefix) {
       const id = prefix + "-" + q.id;
+      const text = typeof q.q === "function" ? q.q() : q.q;
+      if (q.type === "many") {
+        // Choose any; the "none" answer clears the others, and any other answer clears it.
+        const fs = el("fieldset", "v8-tq");
+        fs.appendChild(el("legend", "v4-q", text));
+        const row = el("div", "v8-tq-opts");
+        const all = q.options.concat(q.none ? [q.none] : []);
+        const boxes = all.map((o, j) => {
+          const lab = el("label", "v8-tq-opt");
+          const b = el("input"); b.type = "checkbox"; b.name = id; b.value = o; b.id = id + "-" + j;
+          b.checked = Array.isArray(answers[q.id]) && answers[q.id].includes(o);
+          lab.appendChild(b); lab.appendChild(el("span", null, o));
+          row.appendChild(lab);
+          return b;
+        });
+        boxes.forEach(b => b.addEventListener("change", () => {
+          if (b.checked && q.none) boxes.forEach(x => { if (x !== b && (b.value === q.none || x.value === q.none)) x.checked = false; });
+          answers[q.id] = boxes.filter(x => x.checked).map(x => x.value); testerSave();
+        }));
+        fs.appendChild(row);
+        return fs;
+      }
       if (q.type === "one") {
         const fs = el("fieldset", "v8-tq");
-        fs.appendChild(el("legend", "v4-q", q.q));
+        fs.appendChild(el("legend", "v4-q", text));
         const row = el("div", "v8-tq-opts" + (q.ends ? " is-scale" : ""));
         q.options.forEach((o, j) => {
           const lab = el("label", "v8-tq-opt");
@@ -1011,7 +1050,7 @@
         return fs;
       }
       const wrap = el("div", "v8-tq");
-      const lab = el("label", "v4-q", q.q); lab.htmlFor = id;
+      const lab = el("label", "v4-q", text); lab.htmlFor = id;
       wrap.appendChild(lab);
       const ta = el("textarea", "contribution-textarea v8-tq-ta"); ta.id = id; ta.maxLength = 2000; ta.rows = 3;
       ta.value = answers[q.id] || "";
@@ -1024,7 +1063,7 @@
     function renderTesterStart(c) {
       const card = el("section", "v7-card v8-tester"); card.setAttribute("aria-labelledby", "v8-ts-t");
       const h = el("h2", "v7-h3", "Before you start: you are testing this tool"); h.id = "v8-ts-t"; card.appendChild(h);
-      card.appendChild(el("p", "v7-body", "The Pathways to Impact team is testing this tool with researchers. Your email and three short answers tell us who tested it and what they came for. At the end, on the Export step, there are three more questions."));
+      card.appendChild(el("p", "v7-body", "The Pathways to Impact team is testing this tool with researchers. Your email and three short answers tell us who tested it and what they came for. At the end, on the Export step, there are five more questions."));
       card.appendChild(el("p", "v7-quiet v8-tester-privacy", "What is sent: your email, these answers, the profile you choose in Setup (agency, field, career stage, work mode), the steps you open and the time. Your draft text stays in this browser. The answers are stored in a database in the United States and are read only by the Pathways to Impact team. To have them removed, write to " + FEEDBACK.email + "."));
       tester.start = tester.start || {};
       const ew = el("div", "v8-tq");
@@ -1066,11 +1105,11 @@
     }
     let testerNotice = "";
     const testerGate = () => TESTER_ON && !tester.email && !tester.skipped;
-    // Export: three questions for a signed-up tester, until they are sent.
+    // Export: five questions for a signed-up tester, until they are sent.
     function renderTesterEnd(c) {
       if (!TESTER_ON || !tester.email) return;
       const card = el("section", "v7-card v8-tester v8-tester-end"); card.setAttribute("aria-labelledby", "v8-te-t");
-      const h = el("h2", "v7-h3", "Three questions to finish your test"); h.id = "v8-te-t"; card.appendChild(h);
+      const h = el("h2", "v7-h3", "Five questions to finish your test"); h.id = "v8-te-t"; card.appendChild(h);
       if (tester.endSent) {
         card.appendChild(el("p", "v7-body", "Your answers reached the Pathways to Impact team. Thank you for testing the tool."));
         c.appendChild(card); return;

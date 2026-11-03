@@ -1546,7 +1546,7 @@ async function seed(state, extra) {
       !!re && re.test("research-8kh.pages.dev") && re.test("1951b557.research-8kh.pages.dev") && !re.test("concordia-pathways.github.io") && !re.test("ncv-tool.immigrant-empire.workers.dev"), m && m[1]);
   }
 
-  console.log("V8 testing: tester sign-up and the three questions on Export");
+  console.log("V8 testing: tester sign-up and the five questions on Export");
   {
     const TP = () => PAGE() + "?tester=1";
     const tseed = async (state, tester) => {
@@ -1565,12 +1565,13 @@ async function seed(state, extra) {
       labelled:card&&document.getElementById(card.getAttribute('aria-labelledby'))?.tagName,
       emailLab:q('label[for="v8-ts-email"]')?.innerText, emailType:q('#v8-ts-email')?.type, auto:q('#v8-ts-email')?.autocomplete,
       sets:qa('.v8-tester fieldset').map(f=>({legend:f.querySelector('legend')?.innerText, radios:f.querySelectorAll('input[type=radio]').length, wrapped:[...f.querySelectorAll('input[type=radio]')].every(i=>i.closest('label'))})),
-      taLab:q('label[for="v8-ts-want"]')?.innerText, privacy:q('.v8-tester-privacy')?.innerText,
+      tas:qa('.v8-tester textarea').length, privacy:q('.v8-tester-privacy')?.innerText,
       opts:qa('.v8-tq-opt').map(o=>o.getBoundingClientRect().height)};
       a.minH=Math.min(...a.opts); return a;`);
     check("with ?tester=1 a fresh visit shows the sign-up card in place of the path cards", r.card && r.paths === 0 && /you are testing this tool/.test(r.h || ""), r);
     check("a11y: the card is named by its heading; email has a label, type email and autocomplete", r.labelled === "H2" && r.emailLab === "Your email" && r.emailType === "email" && r.auto === "email", r);
-    check("a11y: each choice question is a fieldset with a legend, every radio inside its label, targets at least 44 px", r.sets.length === 2 && r.sets.every(f => f.legend && f.radios >= 3 && f.wrapped) && r.minH >= 44 && /What do you most want/.test(r.taLab || ""), r);
+    check("a11y: each choice question is a fieldset with a legend, every radio inside its label, targets at least 44 px", r.sets.length === 3 && r.sets.every(f => f.legend && f.radios >= 4 && f.wrapped) && r.minH >= 44 && r.tas === 0
+      && r.sets.map(f => f.legend).join("|") === "What are you starting from?|When is your application due?|What concerns you most about writing a narrative CV?", r);
     check("the card says what is sent, where it is stored and how to have it removed", /draft text stays in this browser/.test(r.privacy) && /United States/.test(r.privacy) && /impact@concordia\.ca/.test(r.privacy), r.privacy);
 
     r = await js(H + `const b=qa('.v8-tester .btn-primary')[0]; b.click(); await w(200);
@@ -1580,13 +1581,13 @@ async function seed(state, extra) {
 
     r = await js(H + `const e=q('#v8-ts-email'); setv(e,'tester@example.org');
       qa('.v8-tester fieldset')[0].querySelectorAll('input')[1].click(); qa('.v8-tester fieldset')[1].querySelectorAll('input')[2].click();
-      setv(q('#v8-ts-want'),'An outline for a made-up grant.');
+      qa('.v8-tester fieldset')[2].querySelectorAll('input')[1].click();
       qa('.v8-tester .btn-primary')[0].click(); await w(500);
       const t=JSON.parse(localStorage.getItem('ncv-v8-tester')||'{}');
       return {card:!!q('.v8-tester'), paths:qa('.v7-path').length, note:q('.v8-tester-note')?.innerText, role:q('.v8-tester-note')?.getAttribute('role'),
         focus:document.activeElement.className, t};`);
     const st = apiPosts[0] || {};
-    check("Sign up and start sends one start row with the email and the three answers, and no draft text", apiPosts.length === 1 && st.action === "start" && st.email === "tester@example.org" && st.answers.funding === "NSERC" && st.answers.before === "No" && /made-up grant/.test(st.answers.want) && /^[0-9a-f-]{8,}$/.test(st.id) && !("contributions" in st) && !("ps" in st), st);
+    check("Sign up and start sends one start row with the email and the three answers, and no draft text", apiPosts.length === 1 && st.action === "start" && st.email === "tester@example.org" && st.answers.source === "An earlier narrative CV" && st.answers.due === "Later than three months" && st.answers.concern === "Showing impact" && /^[0-9a-f-]{8,}$/.test(st.id) && !("contributions" in st) && !("ps" in st), st);
     check("a11y: after sign-up the path cards return, a status note thanks the tester, focus moves to Start your draft", !r.card && r.paths === 2 && /signed up as a tester/.test(r.note || "") && r.role === "status" && /v7-path-new/.test(r.focus) && r.t.startSent === true, r);
 
     r = await js(H + `qa('.v7-path-new')[0].click(); await w(400); return location.hash;`);
@@ -1599,28 +1600,46 @@ async function seed(state, extra) {
     check("a reload does not ask again; the tester id is kept", !r.card && r.id === st.id, r);
 
     // Export: the three questions, sent against the same id.
-    const tstate = { id: "1234abcd-0000-4000-8000-000000000001", email: "tester@example.org", start: { funding: "SSHRC" }, startSent: true, lastStep: "review" };
+    const tstate = { id: "1234abcd-0000-4000-8000-000000000001", email: "tester@example.org", start: { concern: "The funder's rules" }, startSent: true, lastStep: "review" };
     apiPosts.length = 0;
     await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), tstate);
-    r = await js(H + `await w(300); const card=q('.v8-tester-end'); const a={card:!!card, h:card&&card.querySelector('h2')?.innerText, sets:card?card.querySelectorAll('fieldset').length:0,
+    r = await js(H + `await w(300); const card=q('.v8-tester-end'); const sets=card?[...card.querySelectorAll('fieldset')]:[];
+      const a={card:!!card, h:card&&card.querySelector('h2')?.innerText, legends:sets.map(f=>f.querySelector('legend')?.innerText),
       scale:card?card.querySelectorAll('.is-scale input[type=radio]').length:0, tas:card?[...card.querySelectorAll('textarea')].map(t=>q('label[for="'+t.id+'"]')?.innerText):[],
-      first:card&&card===q('.v7-card')};
-      card.querySelectorAll('.is-scale input')[3].click(); setv(q('#v8-te-stuck'),'The made-up order step.'); setv(q('#v8-te-change'),'A made-up change.');
+      boxes:sets[3]?[...sets[3].querySelectorAll('input')].map(i=>i.type+(i.closest('label')?':wrapped':'')):[]};
+      card.querySelectorAll('.is-scale input')[3].click(); sets[1].querySelectorAll('input')[1].click(); setv(q('#v8-te-fitWhich'),'The made-up role line.');
+      sets[2].querySelectorAll('input')[1].click();
+      const bx=[...sets[3].querySelectorAll('input')];
+      bx[0].click(); bx[1].click(); bx[4].click(); a.afterNone=bx.map(b=>b.checked);
+      bx[0].click(); bx[3].click(); a.afterPick=bx.map(b=>b.checked);
+      setv(q('#v8-te-reuseOther'),'The made-up totals.'); setv(q('#v8-te-change'),'A made-up change.');
       card.querySelector('.btn-primary').click(); await w(500);
       a.after=q('.v8-tester-end')?.innerText; a.focus=document.activeElement.id; a.live=q('#v7-live').textContent; a.t=JSON.parse(localStorage.getItem('ncv-v8-tester')); return a;`);
     const fin = apiPosts.find(p => p.action === "finish") || {};
-    check("Export shows the three questions for a signed-up tester: a 1 to 5 scale and two labelled boxes", r.card && /Three questions/.test(r.h || "") && r.sets === 1 && r.scale === 5 && r.tas.join("|") === "Where did you get stuck?|What one change would help most?", r);
+    check("Export shows the five questions for a signed-up tester: the scale quotes the concern from the start, then fit, next and reuse, with three labelled boxes",
+      r.card && /Five questions/.test(r.h || "") && r.legends.length === 4 && /main concern was: the funder's rules\. How much did the tool help/.test(r.legends[0]) && r.scale === 5
+      && /fit your kind of work/.test(r.legends[1]) && /do with this draft next/.test(r.legends[2]) && /reuse for your next application\? Choose any/.test(r.legends[3])
+      && r.tas.join("|") === "Which ones?|Anything else you would keep?|What one change would help most?", r);
+    check("a11y: the reuse question is five checkboxes in its fieldset, each inside its label", r.boxes.length === 5 && r.boxes.every(b => b === "checkbox:wrapped"), r.boxes);
+    check("choosing None clears the other reuse answers, and choosing a part clears None", r.afterNone.join() === "false,false,false,false,true" && r.afterPick.join() === "true,false,false,true,false", { none: r.afterNone, pick: r.afterPick });
     check("opening Export sends nothing before Send my answers", apiPosts.filter(p => p.action === "finish").length === 1, apiPosts.map(p => p.action));
-    check("Send my answers sends a finish row for the same id with the three answers", fin.id === tstate.id && fin.answers.useful === "4" && /order step/.test(fin.answers.stuck) && /made-up change/.test(fin.answers.change), fin);
+    check("Send my answers sends a finish row for the same id with every answer, the reuse answer as a list", fin.id === tstate.id && fin.answers.concernHelp === "4" && fin.answers.fit === "Mostly, with some wording from another field" && /role line/.test(fin.answers.fitWhich)
+      && fin.answers.next === "Move it into Word or another document" && JSON.stringify(fin.answers.reuse) === JSON.stringify(["The contributions", "The personal statement"])
+      && /made-up totals/.test(fin.answers.reuseOther) && /made-up change/.test(fin.answers.change), fin);
     check("a11y: after sending, the card thanks the tester, the live region says so, focus is on the card heading", /reached the Pathways to Impact team/.test(r.after || "") && r.focus === "v8-te-t" && /reached the team/.test(r.live) && r.t.endSent === true, r);
 
     // A failed send keeps the answers and says what to do; nothing is lost.
     apiMode = "fail";
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { end: { stuck: "Kept text." } }));
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { end: { change: "Kept text." } }));
     r = await js(H + `await w(300); q('.v8-tester-end .btn-primary').click(); await w(500);
-      return {status:q('.v8-tester-end .v7-quiet[aria-live]')?.innerText, kept:q('#v8-te-stuck')?.value, dis:q('.v8-tester-end .btn-primary').disabled, t:JSON.parse(localStorage.getItem('ncv-v8-tester'))};`);
+      return {status:q('.v8-tester-end .v7-quiet[aria-live]')?.innerText, kept:q('#v8-te-change')?.value, dis:q('.v8-tester-end .btn-primary').disabled, t:JSON.parse(localStorage.getItem('ncv-v8-tester'))};`);
     check("a failed send keeps the answers, re-enables Send and names the email fallback", /did not send/.test(r.status || "") && /impact@concordia\.ca/.test(r.status) && r.kept === "Kept text." && !r.dis && !r.t.endSent, r);
     apiMode = "ok";
+
+    // A tester who chose no concern (or Something else) sees the general wording.
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { start: { concern: "Something else" } }));
+    r = await js(H + `await w(300); return q('.v8-tester-end legend')?.innerText;`);
+    check("with no concern to quote, the first Export question asks about the main concern in general", /^How much did the tool help with your main concern/.test(r || ""), r);
 
     // Start without signing up: nothing is sent and Export asks nothing.
     apiPosts.length = 0;
@@ -1633,7 +1652,7 @@ async function seed(state, extra) {
     check("a tester who skipped sign-up sees no questions on Export", r === false && apiPosts.length === 0, { card: r, posts: apiPosts.length });
 
     // A start that did not reach the server is sent on the next visit.
-    await tseed(null, { id: "1234abcd-0000-4000-8000-000000000002", email: "late@example.org", start: { before: "No" } });
+    await tseed(null, { id: "1234abcd-0000-4000-8000-000000000002", email: "late@example.org", start: { due: "Within a month" } });
     await sleep(500);
     check("a sign-up that did not send goes again on the next visit", apiPosts.some(p => p.action === "start" && p.email === "late@example.org"), apiPosts.map(p => p.action));
 

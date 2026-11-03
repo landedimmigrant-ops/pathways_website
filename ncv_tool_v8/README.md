@@ -27,16 +27,19 @@ saved from V7 open in V8 with **Continue draft**.
 The same V8 file is served by the Cloudflare Pages project `research` (`cloudflare/`). A Pages Function in the same project, `cloudflare/functions/api/tester.js`, records testers in a Neon database. The plain name `research.pages.dev` belonged to another account, so Cloudflare added the `-8kh` suffix. The project moved from a Worker to Pages on 2026-11-02 so the address could carry "research" without renaming the account's `immigrant-empire` Workers subdomain; the old `ncv-tool` Worker was deleted.
 The GitHub Pages copy (`/ncv_tool_v8/`) keeps working with no sign-up and no network calls.
 
+- **The questions** (since 2026-11-03) each answer an open question about the tool; the reasons are in [`tester-questions-proposal-2026-11-03.md`](tester-questions-proposal-2026-11-03.md).
 - **Start page:** a sign-up card asks for an email and three questions:
-  - the funding opportunity;
-  - whether they have written a narrative CV before;
-  - what they want from the session.
+  - what they are starting from;
+  - when the application is due;
+  - what concerns them most about writing a narrative CV.
 
   "Start without signing up" sends nothing.
 - **While they work:** each step a signed-up tester opens is recorded as `last_step`, so drop-off is visible.
-- **Export:** three questions, sent against the same tester id:
-  - usefulness, from 1 to 5;
-  - where they got stuck;
+- **Export:** five questions, sent against the same tester id:
+  - how much the tool helped with the concern they named at the start, from 1 to 5 (the question quotes it);
+  - whether the questions and examples fit their kind of work, with a box for which ones;
+  - what they will do with the draft next;
+  - which parts they would reuse for the next application (choose any; "None, I would start again" clears the others), with a box for anything else;
   - the one change that would help most.
 - **What is never sent:** draft text.
 - **Where the record lives in the browser:** under its own key, `ncv-v8-tester`, so Reset draft and Load your draft leave it alone.
@@ -50,10 +53,11 @@ The GitHub Pages copy (`/ncv_tool_v8/`) keeps working with no sign-up and no net
 The endpoint is `POST /api/tester`:
 - it accepts the tool's own origin only;
 - it accepts posts of up to 16 KB;
-- it keeps only the known answer keys, each up to 2,000 characters.
+- it keeps only the known answer keys, each up to 2,000 characters; a choose-any answer is kept as a list of up to ten options.
+- Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
 INFERRED, for Prem to confirm or change:
-- the six questions (the drafts were agreed in chat);
+- the wording of the answer options (the questions were agreed in chat on 2026-11-03);
 - the sign-up card replaces the path cards until the tester signs up or skips;
 - the Export questions sit at the top of Export;
 - the privacy wording on the card;
