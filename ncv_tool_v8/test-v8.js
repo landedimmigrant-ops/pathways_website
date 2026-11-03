@@ -1566,13 +1566,16 @@ async function seed(state, extra) {
       emailLab:q('label[for="v8-ts-email"]')?.innerText, emailType:q('#v8-ts-email')?.type, auto:q('#v8-ts-email')?.autocomplete,
       sets:qa('.v8-tester fieldset').map(f=>({legend:f.querySelector('legend')?.innerText, radios:f.querySelectorAll('input[type=radio]').length, wrapped:[...f.querySelectorAll('input[type=radio]')].every(i=>i.closest('label'))})),
       tas:qa('.v8-tester textarea').length, privacy:q('.v8-tester-privacy')?.innerText,
+      promise:q('.v8-tester-promise strong')?.innerText, review:card&&card.innerText,
       opts:qa('.v8-tq-opt').map(o=>o.getBoundingClientRect().height)};
       a.minH=Math.min(...a.opts); return a;`);
-    check("with ?tester=1 a fresh visit shows the sign-up card in place of the path cards", r.card && r.paths === 0 && /you are testing this tool/.test(r.h || ""), r);
+    check("with ?tester=1 a fresh visit shows the sign-up card in place of the path cards", r.card && r.paths === 0 && r.h === "Help us test this tool", r);
     check("a11y: the card is named by its heading; email has a label, type email and autocomplete", r.labelled === "H2" && r.emailLab === "Your email" && r.emailType === "email" && r.auto === "email", r);
     check("a11y: each choice question is a fieldset with a legend, every radio inside its label, targets at least 44 px", r.sets.length === 3 && r.sets.every(f => f.legend && f.radios >= 4 && f.wrapped) && r.minH >= 44 && r.tas === 0
       && r.sets.map(f => f.legend).join("|") === "What are you starting from?|When is your application due?|What concerns you most about writing a narrative CV?", r);
-    check("the card says what is sent, where it is stored and how to have it removed", /draft text stays in this browser/.test(r.privacy) && /United States/.test(r.privacy) && /impact@concordia\.ca/.test(r.privacy), r.privacy);
+    check("the card says what is sent, where it is stored and how to have it removed", /We receive your email, your answers/.test(r.privacy) && /United States/.test(r.privacy) && /impact@concordia\.ca/.test(r.privacy), r.privacy);
+    check("the card states in bold that nothing written in the CV is collected, and invites the tester to send the draft to help improve the tool",
+      /^We do not collect anything you write in your CV\. Your draft stays in this browser\.$/.test(r.promise || "") && /share your draft to help us improve the tool, please send it to impact@concordia\.ca\./.test(r.review || ""), { promise: r.promise });
 
     r = await js(H + `const b=qa('.v8-tester .btn-primary')[0]; b.click(); await w(200);
       const e=q('#v8-ts-email'); return {err:q('#v8-ts-email-err').innerText, inv:e.getAttribute('aria-invalid'), desc:e.getAttribute('aria-describedby'), focus:document.activeElement===e,
@@ -1641,15 +1644,17 @@ async function seed(state, extra) {
     r = await js(H + `await w(300); return q('.v8-tester-end legend')?.innerText;`);
     check("with no concern to quote, the first Export question asks about the main concern in general", /^How much did the tool help with your main concern/.test(r || ""), r);
 
-    // Start without signing up: nothing is sent and Export asks nothing.
+    // No skipping (Prem, 2026-11-03): the card has one button, and an earlier skip still asks for sign-up.
     apiPosts.length = 0;
     await tseed(null);
-    r = await js(H + `await w(200); qa('.v8-tester .btn-outline')[0].click(); await w(300); const a={paths:qa('.v7-path').length, focus:document.activeElement.className};
-      return a;`);
-    check("Start without signing up sends nothing and returns the path cards with focus on Start your draft", apiPosts.length === 0 && r.paths === 2 && /v7-path-new/.test(r.focus), r);
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), { skipped: true });
-    r = await js(H + `await w(300); return !!q('.v8-tester-end');`);
-    check("a tester who skipped sign-up sees no questions on Export", r === false && apiPosts.length === 0, { card: r, posts: apiPosts.length });
+    r = await js(H + `await w(200); return {btns:qa('.v8-tester button').map(b=>b.innerText), paths:qa('.v7-path').length};`);
+    check("the sign-up card has a single button, Sign up and start, and no way to skip", r.btns.join("|") === "Sign up and start" && r.paths === 0, r);
+    await tseed(null, { skipped: true });
+    r = await js(H + `await w(200); return {card:!!q('.v8-tester'), paths:qa('.v7-path').length};`);
+    check("a browser that skipped sign-up before sees the sign-up card again", r.card && r.paths === 0 && apiPosts.length === 0, r);
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }));
+    r = await js(H + `await w(300); return {card:!!q('.v8-tester'), exp:!!q('.v8-tester-end'), rail:!!q('.v7-rail')};`);
+    check("a saved draft on Export still opens on the sign-up card until the tester signs up", r.card && !r.exp, r);
 
     // A start that did not reach the server is sent on the next visit.
     await tseed(null, { id: "1234abcd-0000-4000-8000-000000000002", email: "late@example.org", start: { due: "Within a month" } });

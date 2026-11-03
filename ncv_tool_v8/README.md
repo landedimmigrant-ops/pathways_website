@@ -33,7 +33,8 @@ The GitHub Pages copy (`/ncv_tool_v8/`) keeps working with no sign-up and no net
   - when the application is due;
   - what concerns them most about writing a narrative CV.
 
-  "Start without signing up" sends nothing.
+  Sign-up is required (Prem, 2026-11-03): the card has no skip button, a browser that skipped before sees it again, and a saved draft opens no step until an email is entered.
+  The card states in bold that nothing written in the CV is collected, and invites testers to send their draft to impact@concordia.ca to help improve the tool; the thank-you after the Export questions repeats the invitation.
 - **While they work:** each step a signed-up tester opens is recorded as `last_step`, so drop-off is visible.
 - **Export:** five questions, sent against the same tester id:
   - how much the tool helped with the concern they named at the start, from 1 to 5 (the question quotes it);
@@ -58,7 +59,7 @@ The endpoint is `POST /api/tester`:
 
 INFERRED, for Prem to confirm or change:
 - the wording of the answer options (the questions were agreed in chat on 2026-11-03);
-- the sign-up card replaces the path cards until the tester signs up or skips;
+- the sign-up card replaces the path cards and every step until the tester signs up;
 - the Export questions sit at the top of Export;
 - the privacy wording on the card;
 - the address `research-8kh.pages.dev` (a custom domain can replace it later).
