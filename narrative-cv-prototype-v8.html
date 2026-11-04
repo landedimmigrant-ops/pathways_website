@@ -5300,10 +5300,9 @@
 
     // Guide sync (P-31): the TCV does not permit links, with one exception. The CV-FRQ permits them
     // as references tied to a contribution, which is what an evidence row is, so it gets no note.
-    // Eli, 2026-11-04: SSHRC allows a link to an audio or visual work, added as evidence. Any field may
-    // use it; the exhibition kind keeps it (r2-b-3). Other TCV agencies keep the full rule.
-    const AV_LINK_KINDS = ["Audio or visual work", "Exhibition, performance or screening"];
-    const creativeLinkOk = (type) => ns.lens.agency === "sshrc" && AV_LINK_KINDS.indexOf(type || "") !== -1;
+    // Eli, 2026-11-04 (Prem: audio-visual only): SSHRC allows a link on an Audio or visual work evidence row,
+    // in any discipline, and on no other kind. Other TCV agencies keep the full rule.
+    const creativeLinkOk = (type) => ns.lens.agency === "sshrc" && type === "Audio or visual work";
     function evidenceLinkNote(v, type) {
       if (!v || !new RegExp(LINK_RE.source, "i").test(v) || isFrq() || !ns.lens.format) return "";
       return creativeLinkOk(type)

@@ -1718,6 +1718,10 @@ async function seed(state, extra) {
     r = await js(H + `await w(150); return {links:qa('.v7-glance a').map(x=>x.innerText), body:(q('.v7-draft-body')||{}).innerText||''};`);
     check("Eli: with SSHRC, a link on an Audio or visual work evidence row is not listed to take out", !r.links.some(t => /^Contribution 1: Evidence$/.test(t)) && r.links.length > 0, r.links);
     check("Eli: the draft prints Totals: with no period", /Totals: /.test(r.body) && !/last five years/.test(r.body), r.body.slice(0, 400));
+    await seed(at("review", st => { st.lens = Object.assign({}, st.lens, { agency: "sshrc", format: "tcv" });
+      st.contributions[0].evidence = [{ id: "eex", type: "Exhibition, performance or screening", text: "A made-up show, https://example.org/venue", note: "" }]; }));
+    r = await js(H + `await w(150); return qa('.v7-glance a').map(x=>x.innerText);`);
+    check("Prem: with SSHRC, a link on any other kind (here an exhibition) is still listed to take out", r.some(t => /^Contribution 1: Evidence$/.test(t)), r);
     await seed(avSeed("cihr"));
     r = await js(H + `await w(150); return qa('.v7-glance a').map(x=>x.innerText);`);
     check("Eli: with CIHR, the same link is listed to take out", r.some(t => /^Contribution 1: Evidence$/.test(t)), r);

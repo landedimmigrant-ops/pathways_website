@@ -38,7 +38,7 @@ The line under the totals no longer mentions leaves.
 
 **V8.6:**
 - **New evidence kind:** "Audio or visual work", with its own hints (14 kinds).
-- **SSHRC:** a link on an Audio or visual work row, or on an Exhibition, performance or screening row, is allowed and is not listed to take out. This works in any field; before 8.6 the exception covered creative fields only.
+- **SSHRC:** a link is allowed only on an Audio or visual work row, and is not listed to take out. Any other kind of evidence, an exhibition included, keeps the no-links rule (Prem, 2026-11-04). The kind is open to every discipline; before 8.6 the exception covered creative fields only.
 - **CIHR and NSERC:** the full no-links rule now applies, including to audio and visual work. Before 8.6 the tool said "where the funding opportunity allows it".
 - **The TCV link rule in Format notes:** names the SSHRC exception and says a DOI can be written as plain text, without a link.
 - **Link checks:** when a flagged link is a doi.org address, the check adds "A DOI can stay as plain text, without the link." A plain DOI such as `10.1234/abc` was never flagged and still is not.
