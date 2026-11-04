@@ -4392,9 +4392,14 @@
         }
       };
       runChecks();
+      // Q-25 (Prem, 2026-11-03): a filled field that is closed shows its answer as the control, named by
+      // the part's keyword and the visible answer, so a voice-control user can say what they see. The shrunk
+      // box leaves the Tab order and the accessibility tree until the field opens.
       const ans = el("button", "v7-ans");
-      ans.type = "button"; ans.tabIndex = -1; ans.setAttribute("aria-hidden", "true");
-      const ansV = el("span", "v7-ans-v");
+      ans.type = "button";
+      const ansV = el("span", "v7-ans-v"); ansV.id = id + "-av";
+      ans.setAttribute("aria-labelledby", id + "-k " + ansV.id);
+      if (o.lintKind) ans.setAttribute("aria-describedby", id + "-ck");
       const setAns = () => { const v = o.shown ? o.shown() : (o.get() || ""); ansV.textContent = v; ansV.classList.toggle("is-long", v.length > 220); };
       setAns();
       ans.appendChild(ansV);
@@ -4403,6 +4408,13 @@
       const st = el("span", "v7-sr", has ? "Answered." : "Not answered yet."); st.id = id + "-st";
       f.appendChild(st);
       f._has = o.has;
+      f._syncAns = () => {
+        const shut = f.classList.contains("is-filled");
+        f.querySelectorAll(".v7-box").forEach(b => { if (shut) { b.tabIndex = -1; b.setAttribute("aria-hidden", "true"); } else { b.removeAttribute("tabindex"); b.removeAttribute("aria-hidden"); } });
+        ans.tabIndex = shut ? 0 : -1;
+        if (shut) ans.removeAttribute("aria-hidden"); else ans.setAttribute("aria-hidden", "true");
+      };
+      f._syncAns();
       f._refresh = () => { setAns(); st.textContent = o.has() ? "Answered." : "Not answered yet."; };
       f._recheck = () => runChecks(false);
       f.addEventListener("input", (e) => {
@@ -4460,6 +4472,7 @@
       const watch = f.classList.contains("is-filled") ? f.querySelector(".v7-ans") : f.querySelector(".v7-box");
       const top = watch ? watch.getBoundingClientRect().top : f.getBoundingClientRect().top;
       f.classList.remove("is-empty", "is-filled"); f.classList.add("is-open");
+      if (f._syncAns) f._syncAns(); // Q-25
       UI.active = f.dataset.f;
       holdSpy();
       prev.forEach(p => {
@@ -4467,6 +4480,7 @@
         const b = p.querySelector(".v7-box");
         const filled = p._has ? !!p._has() : [...p.querySelectorAll(".v7-box")].some(x => (x.value || "").trim());
         p.classList.add(filled ? "is-filled" : "is-empty");
+        if (p._syncAns) p._syncAns(); // Q-25
         if (p._refresh) p._refresh();
         fitBox(p);
         if (b) b.scrollTop = 0;

@@ -1793,6 +1793,41 @@ async function seed(state, extra) {
     check("Q-26: the locked Review note counts answered parts", /two more answered parts\./.test(r || ""), r);
   }
 
+  console.log("Q-25: a filled field's visible answer is its named control (voice control)");
+  {
+    const st = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
+    const c0 = st.contributions[0]; ["title", "stakes", "activities", "outputs"].forEach(k => { c0[k] = c0[k] || "Made-up text for " + k + "."; });
+    await seed(st);
+    const tabKey = async (shift) => { const m = shift ? 8 : 0; await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers: m }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers: m }); await sleep(150); };
+    r = await js(H + `await w(200); const f=q('.v7-card [data-f$="-stakes"]'); const a=f.querySelector('.v7-ans'), b=f.querySelector('.v7-box');
+      const name=(a.getAttribute('aria-labelledby')||'').split(' ').map(i=>document.getElementById(i)?.textContent.trim()).join(' ');
+      const vis=a.innerText.trim(), kw=f.querySelector('.v7-f-k').innerText.trim();
+      return {filled:f.classList.contains('is-filled'), ansHidden:a.getAttribute('aria-hidden'), ansTab:a.tabIndex, boxHidden:b.getAttribute('aria-hidden'), boxTab:b.tabIndex, name, vis, kw,
+        kwShown:getComputedStyle(f.querySelector('.v7-f-k')).position!=='absolute', type:a.type, desc:a.getAttribute('aria-describedby')};`);
+    check("Q-25: a closed filled field's answer is a button in the Tab order and the accessibility tree; its shrunk box is in neither",
+      r.filled && r.ansHidden === null && r.ansTab === 0 && r.boxHidden === "true" && r.boxTab === -1 && r.type === "button", r);
+    check("a11y (label in name): the answer button is named by the visible keyword and the visible answer", r.kwShown && r.name.indexOf(r.kw) === 0 && r.name.indexOf(r.vis) > 0 && /-ck$/.test(r.desc || ""), { name: r.name, vis: r.vis, kw: r.kw });
+    await send("Accessibility.enable");
+    const ax = await send("Accessibility.getFullAXTree");
+    const axNames = ax.nodes.filter(n => !n.ignored && n.role && n.role.value === "button" && n.name && /^The problem or question/.test(n.name.value)).map(n => n.name.value);
+    const axBoxes = ax.nodes.filter(n => !n.ignored && n.role && n.role.value === "textbox" && n.name && /problem/i.test(n.name.value || "")).length;
+    check("a11y (AX tree): the closed problem field shows as one button named with its answer, and no textbox", axNames.length >= 1 && axBoxes === 0, { axNames: axNames.slice(0, 2), axBoxes });
+    r = await js(H + `q('.v7-card [data-f$="-title"] .v7-ans').focus(); return document.activeElement.closest('.v7-f').dataset.f;`);
+    await tabKey(false);
+    r = await js(H + `const e=document.activeElement; return {cls:e.className, f:e.closest('.v7-f')?.dataset.f, open:!!e.closest('.v7-f.is-open')};`);
+    check("a11y (keyboard): Tab from one filled field lands on the next field's answer, without opening it", /v7-ans/.test(r.cls) && /-stakes$/.test(r.f || "") && !r.open, r);
+    r = await js(H + `document.activeElement.click(); await w(250); const f=q('.v7-card [data-f$="-stakes"]'), b=f.querySelector('.v7-box'), a=f.querySelector('.v7-ans');
+      return {open:f.classList.contains('is-open'), focus:document.activeElement===b, boxHidden:b.getAttribute('aria-hidden'), boxTab:b.getAttribute('tabindex'), ansHidden:a.getAttribute('aria-hidden'), ansTab:a.tabIndex};`);
+    check("Q-25: activating the answer (a voice command's click, or Enter) opens the field and focuses its box, which joins the tree; the answer leaves it",
+      r.open && r.focus && r.boxHidden === null && r.boxTab === null && r.ansHidden === "true" && r.ansTab === -1, r);
+    r = await js(H + `q('.v7-card [data-f$="-activities"] .v7-ans').click(); await w(250); const f=q('.v7-card [data-f$="-stakes"]');
+      return {filled:f.classList.contains('is-filled'), ansTab:f.querySelector('.v7-ans').tabIndex, boxHidden:f.querySelector('.v7-box').getAttribute('aria-hidden')};`);
+    check("Q-25: when focus moves on, the field closes and its answer is the control again", r.filled && r.ansTab === 0 && r.boxHidden === "true", r);
+    await tabKey(true);
+    r = await js(H + `const e=document.activeElement; return {f:e.closest('.v7-f')?.dataset.f, cls:e.className, before:(()=>{const fs=qa('.v7-card .v7-f'); const k=fs.findIndex(x=>/-activities$/.test(x.dataset.f)); return fs[k-1]?.dataset.f;})()};`);
+    check("a11y (keyboard): Shift+Tab from an open box reaches the field before it by its answer", r.f === r.before && /v7-ans/.test(r.cls), r);
+  }
+
   console.log("Network and errors");
   const foreign = requests.filter(u => !u.startsWith("http://127.0.0.1:" + port) && !u.startsWith("about:") && !u.startsWith("blob:") && !u.startsWith("data:"));
   check("no request leaves the device", foreign.length === 0, foreign);

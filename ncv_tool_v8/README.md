@@ -80,6 +80,7 @@ The answers are in [`../ncv_tool_v7/questions-for-prem.md`](../ncv_tool_v7/quest
   - Delete: asks first, then removes the contribution.
 - **Q-15:** Save a draft file in each step's bottom row (Export has its own).
 - **Q-14:** profile pills wrap on narrow screens.
+- **Q-25** (a commit of its own): a closed, filled field's visible answer is the control. It is a button in the Tab order, named by the part's keyword and the answer, so a voice-control user can say what they see. The shrunk box leaves the Tab order and the accessibility tree until the field opens. Tab moves from answer to answer; Enter or a click opens the field on its box.
 - **Q-17:** the start page's path cards are h2, so no heading level skips. They look the same as before, and `styles.css` is unchanged.
 
 INFERRED, for Prem to confirm or change:
