@@ -298,7 +298,10 @@
     @media (max-width: 48em) {
       .v7-qcount { position: sticky; top: var(--v7-bar, 43px); z-index: 5; background: #fff; padding: 8px 0; margin: 0 0 4px; }
     }
-    .v7-prog { display: inline-flex; align-items: center; }
+    .v7-prog { display: inline-flex; align-items: center; gap: 6px; }
+    .v7-draft-name { display: flex; flex-direction: column; gap: 4px; padding: 0 28px 14px; max-width: 40rem; }
+    .v7-draft-name input { font: inherit; padding: 8px 10px; border: 1px solid var(--v7-field); border-radius: 6px; min-height: 44px; }
+    .v7-prog-n { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
     .v7-warn { border: 1px solid #912338; border-radius: 6px; background: #fff; padding: 10px 14px; margin: 12px 0 0; font-size: 0.9rem; }
     .v7-warn p { margin: 0 0 8px; }
     .v7-warn-actions { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -480,6 +483,10 @@
     .v7-v6-offer { margin-bottom: 16px; }
     .v7-shared-note { margin: 10px 0 0; }
     .v7-ow { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .v7-oacts { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 6px; }
+    .v7-later { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--v7-card-b); }
+    .v7-later-t { font-size: 1rem; margin: 0 0 4px; }
+    .v7-ocard.is-later { background: #f7f7f7; }
     .v7-select-note { display: block; margin: 0 0 12px; color: var(--text); }
     .v7-rail-wc.is-over { color: #912338; font-weight: 600; }
     .v7-tile input.v7-tile-name { order: 3; font-size: 0.8rem; font-weight: 400; min-height: 30px; padding: 4px 6px; margin-top: 6px; border: 1px solid var(--v7-field); border-radius: 4px; }
@@ -610,7 +617,7 @@
     @media (prefers-reduced-motion: reduce) { .v7-rail-in { animation: none; } }
     @media (max-width: 48em) {
       .narrative-module-shell { grid-template-columns: minmax(0, 1fr); }
-      .v7-tailored-pills { flex-wrap: nowrap; overflow: hidden; white-space: nowrap; }
+      .v7-tailored-pills { flex-wrap: wrap; } /* Q-14 (Prem, 2026-11-03): pills wrap onto a second line */
       .v7-qblock, .v7-card, .v7-dash { padding: 14px 14px 16px; }
       .v7-choices { grid-template-columns: 1fr 1fr; }
       .v7-comp-row, .v7-pair, .v7-glance, .v7-fmt { grid-template-columns: 1fr; }
@@ -653,7 +660,6 @@
       .narrative-nav .v7-nav-note { flex-basis: 100%; order: -1; margin: 0; }
       .narrative-nav .btn { white-space: nowrap; }
       .v7-tailored { flex-wrap: nowrap; }
-      .v7-tailored-pills { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
       .v7-mini, .v7-btn-small, .v7-ri, .v7-linkbtn, .v7-ex-btn { min-height: 44px; }
     }
     /* V7 Phase 1: start page, rail, accent line (D-18, borrowed from the live Pathways page) */
@@ -666,11 +672,11 @@
     /* One box language (2026-10-28): resting = 1.5px grey hairline on white; active or selected = 1.5px burgundy hairline on --v7-open. No accent bars. */
     .v7-path-new { background: #fff; color: var(--text); border: 1.5px solid var(--v7-card-b); padding: 32px 28px; }
     .v7-path-new:hover, .v7-path-new:focus-within { border-color: #912338; background: var(--v7-open); }
-    .v7-path-new h3 { font-size: 1.6rem; margin: 0 0 10px; line-height: 1.25; color: #912338; }
+    .v7-path-new h2 { font-size: 1.6rem; margin: 0 0 10px; line-height: 1.25; color: #912338; }
     .v7-path-new p { margin: 0; font-size: 0.95rem; line-height: 1.55; color: var(--text); max-width: 58ch; }
     .v7-path-cont { background: #fff; border: 1.5px solid var(--v7-card-b); color: var(--text); padding: 18px 18px 16px; }
     .v7-path-cont:hover, .v7-path-cont:focus-visible { border-color: #912338; background: var(--v7-open); }
-    .v7-path-cont h3 { font-size: 1rem; margin: 0 0 4px; color: var(--text); }
+    .v7-path-cont h2 { font-size: 1rem; margin: 0 0 4px; color: var(--text); }
     .v7-path-cont p { margin: 0; font-size: 0.82rem; color: var(--muted); line-height: 1.45; }
     .v7-path-new.is-started { cursor: default; padding: 0; }
         .v7-path-go { display: flex; flex-direction: column; align-items: flex-start; text-align: left; width: 100%; flex: 1 1 auto; background: none; border: 0; border-radius: 10px 10px 0 0; padding: 32px 28px 12px; font: inherit; color: inherit; cursor: pointer; }
@@ -741,6 +747,8 @@
     }
     .narrative-stage-header .v4-kicker { color: #912338; letter-spacing: 0.06em; font-weight: 600; }
     .narrative-nav .v7-nav-note { flex: 1 1 240px; margin: 0 12px; align-self: center; }
+    .v7-nav-end { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 10px; margin-left: auto; }
+    .v7-nav-saved:empty { display: none; }
     #ncv-v4-root .narrative-nav { flex-wrap: wrap; gap: 10px; } /* R-2: the step buttons wrap at large text instead of running off the page */
     @media (max-width: 48em) {
       .v7-paths { grid-template-columns: 1fr; }
@@ -859,7 +867,7 @@
       <p class="v7-intro">We recommend reading the <a id="v4-guide-top" href="https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html" target="_blank" rel="noopener">narrative CV guide</a> before you start, and consulting it as you go.</p>
     </div>
     <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The checks are fixed rules. Your draft leaves this device only if you send it by email. A connection is needed to open the tool; after that it runs offline. If you close the tab, save a draft file first.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
-    <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Use Save draft to keep a draft file, or copy your draft on the Export page, before you close this tab.</p>
+    <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Use Save a draft file, or copy your draft on the Export page, before you close this tab.</p>
     <div id="ncv-v4-root"></div>
   </div>
   <div id="v7-live" class="v7-sr" aria-live="polite" aria-atomic="true"></div>
@@ -908,7 +916,7 @@
     // wider focus (P-48); its English names are the FRQ's own, the French ones are the template's.
     const SECTION_NAMES = {
       tcv: { ps: "Personal statement", contrib: "Most significant contributions and experiences", mentor: "Supervisory and mentorship activities" },
-      "cv-frq": { ps: "The candidate's background and skills", contrib: "Most significant contributions and experiences", mentor: "Supervisory and mentoring activities",
+      "cv-frq": { ps: "The candidate’s background and skills", contrib: "Most significant contributions and experiences", mentor: "Supervisory and mentoring activities",
         psFr: "Parcours et compétences de la personne candidate", contribFr: "Contributions et expériences les plus importantes", mentorFr: "Activités de supervision et de mentorat" }
     };
 
@@ -962,7 +970,7 @@
       { id: "due", type: "one", q: "When is your application due?",
         options: ["Within a month", "In one to three months", "Later than three months", "No specific application yet"] },
       { id: "concern", type: "one", q: "What concerns you most about writing a narrative CV?",
-        options: ["Choosing what to include", "Showing impact", "Writing about myself", "The mentorship section", "Keeping to the page limit", "The funder's rules", "Something else"] }
+        options: ["Choosing what to include", "Showing impact", "Writing about myself", "The mentorship section", "Keeping to the page limit", "The funder’s rules", "Something else"] }
     ];
     // E1 quotes the concern chosen at the start; without one it asks about the concern in general.
     const testerConcernQ = () => {
@@ -977,7 +985,7 @@
         options: ["They fit", "Mostly, with some wording from another field", "They read as written for another field"] },
       { id: "fitWhich", type: "text", q: "Which ones?" },
       { id: "next", type: "one", q: "What will you do with this draft next?",
-        options: ["Keep working on it in this tool", "Move it into Word or another document", "Paste it into the funder's form", "Show it to a colleague or advisor", "Set it aside"] },
+        options: ["Keep working on it in this tool", "Move it into Word or another document", "Paste it into the funder’s form", "Show it to a colleague or advisor", "Set it aside"] },
       { id: "reuse", type: "many", q: "Which parts of this draft would you reuse for your next application? Choose any.",
         options: ["The contributions", "The evidence under each contribution", "The mentorship record and totals", "The personal statement"], none: "None, I would start again" },
       { id: "reuseOther", type: "text", q: "Anything else you would keep?" },
@@ -1157,7 +1165,9 @@
       // Q13 / r2-b-6 (inferred): a kind for work shown to an audience, for every field.
       "Exhibition, performance or screening",
       // r5-b-8 (inferred): letters, resolutions and agreements a community holds.
-      "Community document", "Other"
+      "Community document",
+      // Q-24 (Prem, 2026-11-03): three more kinds; a preprint no longer goes under Other.
+      "Preprint", "Conference talk or poster", "Teaching or curriculum", "Other"
     ];
     const labelOf = (list, v) => { const m = list.find(x => x.v === v); return m ? m.l : ""; };
 
@@ -1783,7 +1793,7 @@
       ] },
       "stem+humanities": { topic: "Computer scientist working with historians; handwriting recognition for water-damaged parish registers", segments: [
         { r: "stakes", t: "Thousands of eighteenth-century parish registers in Quebec are water-damaged, and historians transcribe them by hand at about 300 pages a year." },
-        { r: "role", t: "I lead the recognition work in a project with three historians, and I designed the training method that uses their transcriptions to teach the model each scribe's hand." },
+        { r: "role", t: "I lead the recognition work in a project with three historians, and I designed the training method that uses their transcriptions to teach the model each scribe’s hand." },
         { r: "activities", t: "Since 2021 I have trained models on 9,000 transcribed pages from 40 parishes and measured their error rates against a second team of transcribers." },
         { r: "outputs", t: "The project produced a searchable corpus of 210,000 register pages, an open recognition model and four papers in computing and history venues.", keys: ["a","b"] },
         { r: "outcomes", t: "Two provincial archives now offer the corpus in their reading rooms, and researchers and genealogists ran 50,000 searches in its first year.", keys: ["c"] },
@@ -1792,10 +1802,10 @@
       "stem+creative": { topic: "Acoustical engineer and composer; adjustable hall acoustics tuned with the musicians who play in the room", segments: [
         { r: "stakes", t: "Small concert halls are tuned for one kind of music, and ensembles that play other repertoire adapt to a room that works against them." },
         { r: "role", t: "As an acoustical engineer and a composer, I designed the adjustable panel system and wrote the test pieces the resident musicians played during tuning." },
-        { r: "activities", t: "Over 18 months I ran 70 tuning sessions with four ensembles, recording each setting and the players' ratings of how well they heard one another." },
+        { r: "activities", t: "Over 18 months I ran 70 tuning sessions with four ensembles, recording each setting and the players’ ratings of how well they heard one another." },
         { r: "outputs", t: "The work produced a panel system installed in the hall, a set of six test compositions and two papers on tuning a room with its performers.", keys: ["a","b"] },
         { r: "outcomes", t: "The hall now changes its acoustics between programs, and two other venues have commissioned the panel system for their 2026 renovations.", keys: ["c"] },
-        { r: "impact", t: "If musicians' ratings prove reliable as tuning data, small venues could host chamber, choral and jazz programs in one room, and acoustic design could include performers from the start." }
+        { r: "impact", t: "If musicians’ ratings prove reliable as tuning data, small venues could host chamber, choral and jazz programs in one room, and acoustic design could include performers from the start." }
       ] },
       "health+social": { topic: "Public health researcher working with a sociologist; food insecurity among older adults who live alone", segments: [
         { r: "stakes", t: "Food insecurity among older adults who live alone is undercounted, because household surveys reach few people over 75." },
@@ -1830,12 +1840,12 @@
         { r: "impact", t: "If the coding scheme extends to other provinces, research on local democracy could follow change over a century and test claims about participation against the long record." }
       ] },
       "social+creative": { topic: "Sociologist and documentary filmmaker; eviction research made into films with tenant co-authors", segments: [
-        { r: "stakes", t: "Research on eviction reaches policy makers in reports that tenants seldom see, and tenants' own accounts reach the public in forms that researchers seldom cite." },
+        { r: "stakes", t: "Research on eviction reaches policy makers in reports that tenants seldom see, and tenants’ own accounts reach the public in forms that researchers seldom cite." },
         { r: "role", t: "I lead a project that pairs interview research with documentary film, and I directed the films with tenant co-authors who shaped each story." },
         { r: "activities", t: "Over three years I interviewed 80 tenants facing eviction in two cities and made four short films with eight of them." },
-        { r: "outputs", t: "The project produced four films, an interview archive held with the tenants' association and two articles on co-authored documentary method.", keys: ["a","b"] },
+        { r: "outputs", t: "The project produced four films, an interview archive held with the tenants’ association and two articles on co-authored documentary method.", keys: ["a","b"] },
         { r: "outcomes", t: "The films have been screened 60 times, and a provincial housing tribunal now shows one of them when it trains new adjudicators.", keys: ["c"] },
-        { r: "impact", t: "If co-authored film proves a reliable research method, tenants could shape how housing evidence reaches decision makers, and adjudicators could hear eviction from the tenant's side." }
+        { r: "impact", t: "If co-authored film proves a reliable research method, tenants could shape how housing evidence reaches decision makers, and adjudicators could hear eviction from the tenant’s side." }
       ] },
       "humanities+creative": { topic: "Literary scholar and novelist; the letters of Montreal garment workers, edited and retold in fiction", segments: [
         { r: "stakes", t: "The letters of immigrant garment workers in Montreal survive in family collections, and few have been read outside the families who kept them." },
@@ -1888,20 +1898,20 @@
       segments: [
         { r: "anchor", untinted: true, t: "I am an associate professor at a mid-sized Canadian university. My work is in the sociology of work and economic insecurity." },
         { r: "challenge", t: "For 15 years my research has addressed a single question, why unpredictable work scheduling imposes the greatest costs on the workers least able to absorb them." },
-        { r: "streams", t: "Three strands of work address it: an ethnography of shift assignment in retail and warehousing, a repeated survey of household income volatility and a partnership with a workers' centre that tests the effects of posting schedules two weeks ahead. All three show that the cost of uncertainty is borne by the household." },
+        { r: "streams", t: "Three strands of work address it: an ethnography of shift assignment in retail and warehousing, a repeated survey of household income volatility and a partnership with a workers’ centre that tests the effects of posting schedules two weeks ahead. All three show that the cost of uncertainty is borne by the household." },
         { r: "pivot", t: "I came to this work from labour law, which I practised for six years before returning to graduate school. That background is why my analysis starts from the effect a rule has in a workplace." },
-        { r: "standing", t: "I hold two consecutive operating grants and have built a longitudinal dataset that four other research teams now use. A provincial ministry reviewing employment standards has asked for my analysis twice, and the workers' centre has kept the partnership running for seven years." },
+        { r: "standing", t: "I hold two consecutive operating grants and have built a longitudinal dataset that four other research teams now use. A provincial ministry reviewing employment standards has asked for my analysis twice, and the workers’ centre has kept the partnership running for seven years." },
         { r: "programFit", t: "I am applying to a competition that funds research designed with the sector it studies. That is how this work has been built since 2019, and sustained partnership is where my record is strongest." },
         { r: "horizon", t: "The next phase follows the same households into care work, where scheduling volatility is growing fastest and longitudinal data are scarce." }
       ],
-      legend: ["Anchor", "The problem or question", "Strands", "How you got here", "Standing", "Why this competition", "What's next"]
+      legend: ["Anchor", "The problem or question", "Strands", "How you got here", "Standing", "Why this competition", "What’s next"]
     };
     // Kickers for the PS fields below the example — same names as the legend, so the box's
     // vocabulary is the one the stage repeats (engineer note under S196).
-    const PS_KICKER = { challenge: "The problem or question", streams: "Strands", pivot: "How you got here", standing: "Standing", programFit: "Why this competition", teamFit: "How you complement the team", horizon: "What's next" };
+    const PS_KICKER = { challenge: "The problem or question", streams: "Strands", pivot: "How you got here", standing: "Standing", programFit: "Why this competition", teamFit: "How you complement the team", horizon: "What’s next" };
     // Guide sync (P-25): master's and doctoral are graduate supervision; postdoctoral is its own line.
     // [state key, label in the grid, label in the exports]
-    const MENTOR_COUNT_LABELS = [["phd", "Doctoral", "doctoral students"], ["masters", "Master's", "master's students"],
+    const MENTOR_COUNT_LABELS = [["phd", "Doctoral", "doctoral students"], ["masters", "Master’s", "master’s students"],
       ["postdoc", "Postdoctoral", "postdoctoral fellows"], ["undergrad", "Undergraduate research", "undergraduate researchers"],
       // W-23 (inferred, option A): trainees at level Other (community trainees, clinical fellows) count too.
       ["other", "Other", "other trainees"]];
@@ -1909,8 +1919,8 @@
     const countNoun = (n, plural) => String(n).trim() === "1" ? plural.replace(/s$/, "") : plural;
     const MENTOR_EXAMPLE = {
       segments: [
-        { r: "totals", t: "Over the last five years I have supervised four PhD students, nine master's students, two postdocs and 11 undergraduate research assistants." },
-        { r: "people", t: "One PhD student now leads evaluation at a national non-profit, and the role is built on methods I developed with that student, who won a best-paper prize at the field's main conference in 2024. A master's student moved to a provincial statistics unit and still co-authors with the group." },
+        { r: "totals", t: "Over the last five years I have supervised four PhD students, nine master’s students, two postdocs and 11 undergraduate research assistants." },
+        { r: "people", t: "One PhD student now leads evaluation at a national non-profit, and the role is built on methods I developed with that student, who won a best-paper prize at the field’s main conference in 2024. A master’s student moved to a provincial statistics unit and still co-authors with the group." },
         { r: "practice", t: "Every project in my group begins with a written agreement on authorship, data and ownership, revisited at the midpoint. The agreement takes an hour to draft, and authorship disputes, once common in my group, have stopped." },
         { r: "access", t: "Three years ago I removed the prior-experience requirement from my assistantship postings and began paying from the first week, because unpaid trial periods had been screening out applicants without family support. Two-thirds of the assistants hired since are the first in their family to attend university." },
         { r: "crossStage", t: "I also mentor two early-career colleagues in other departments and run a monthly writing group that anyone in the faculty can join." }
@@ -2131,7 +2141,7 @@
         else if ((kind === "activities" || kind === "outcomes") && !/\b(?:19|20)\d{2}\b/.test(t)) {
           // B-19 (amended): dropped off "outputs" — a list of things without numbers is a correct
           // answer there. The check now fires only where the prompt actually asked for a quantity.
-          out.flags.push("No numbers or dates in this field. Is that right for this one?");
+          out.flags.push("No numbers or dates in this part. Is that right for this one?");
         } else out.score++;
       }
 
@@ -2165,7 +2175,7 @@
       const journalTerms = prestige.filter(p => !AUTHOR_METRIC_RE.test(p) && !/^prestigious$/i.test(p));
       const authorTerms = prestige.filter(p => AUTHOR_METRIC_RE.test(p));
       if (journalTerms.length) out.flags.push(journalTerms.map(p => "“" + p + "”").join(", ") + ". Reviewers of Tri-agency applications are asked to disregard the Journal Impact Factor and other journal-based metrics. Say what the work changed.");
-      if (authorTerms.length) out.flags.push(authorTerms.map(p => "“" + p + "”").join(", ") + ". DORA treats the h-index as an unreliable measure of an individual's work. The citation count for a single article or book can support what you say about that work.");
+      if (authorTerms.length) out.flags.push(authorTerms.map(p => "“" + p + "”").join(", ") + ". DORA treats the h-index as an unreliable measure of an individual’s work. The citation count for a single article or book can support what you say about that work.");
 
       // Guide sync (P-17, P-31): links, by format. Evidence rows get their own note (see renderEvidence).
       if (links.length && ctx.format) {
@@ -2227,7 +2237,9 @@
     // discipline (university) or the subdivision (everything else).
     const blankMentee = () => ({ stage: "", stageKind: "", stageOther: "", kind: "", org: "", unit: "", recognition: "", why: "", folded: false });
     // r2-b-6 (inferred): arts and cultural organizations are a destination of their own.
-    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["health", "Health system or clinic (hospital, long-term care, public health, CISSS/CIUSSS)"], ["indigenous", "First Nations, Inuit or Métis government or organization"], ["arts", "Arts, cultural or heritage organization (museum, library, archive)"], ["other", "Other"]];
+    const MENTEE_KINDS = [["university", "University"], ["industry", "Industry"], ["community", "Community agency"], ["government", "Government"], ["health", "Health system or clinic (hospital, public health, CISSS/CIUSSS)"], ["indigenous", "First Nations, Inuit or Métis government or organization"], ["arts", "Arts, cultural or heritage organization (museum, library, archive)"],
+      // Q-21 (Prem, 2026-11-03): four more destinations, for every field. Long-term care moved out of the health label into its own.
+      ["artist", "Independent or self-employed artist"], ["college", "College, CEGEP or school"], ["school", "School or school board"], ["ltc", "Long-term care or seniors’ organization"], ["other", "Other"]];
     const menteeKindLabel = (k) => { const m = MENTEE_KINDS.find(x => x[0] === k); return m ? m[1] : ""; };
     // Drafts saved before this change held `who` (dropped on purpose) and a free-text
     // `destination` (kept, moved to `org`).
@@ -2241,7 +2253,7 @@
       }
       return out;
     };
-    const MENTEE_STAGES = [["doctoral", "Doctoral"], ["masters", "Master's"], ["postdoc", "Postdoctoral"], ["undergrad", "Undergraduate research"], ["other", "Other"]];
+    const MENTEE_STAGES = [["doctoral", "Doctoral"], ["masters", "Master’s"], ["postdoc", "Postdoctoral"], ["undergrad", "Undergraduate research"], ["other", "Other"]];
     function classifyMenteeStage(t) {
       t = (t || "").toLowerCase();
       if (/post-?\s?doc/.test(t)) return "postdoc";
@@ -2288,6 +2300,7 @@
       mentorPhilosophy: "", mentorEDI: "", mentorCrossStage: "", mentorOtherLabel: "",
       ps: { role: "", institution: "", field: "", challenge: "", streams: "", pivot: "", standing: "", programFit: "", teamFit: "", horizon: "" },
       consultQuestions: "", selfCheck: {}, lastSavedAt: 0, visited: {},
+      draftName: "", contentAt: 0, // Q-10: an optional name, and when the draft's content last changed
       // Feedback for the team: answers, notes taken during the session, and a local session log
       // (steps, time, exports). All of it stays on this device until the researcher sends it.
       feedback: { answers: {}, includeSummary: true, sent: [] },
@@ -2306,7 +2319,7 @@
     function normalizeDraft(raw) {
       if (!isObj(raw)) throw new Error("not a draft");
       const d = JSON.parse(JSON.stringify(raw));
-      ["mode", "stageKey", "consultQuestions", "mentorOtherLabel"].concat(MENTOR_TEXT_KEYS).forEach(k => { if (k in d) d[k] = str(d[k]); });
+      ["mode", "stageKey", "consultQuestions", "mentorOtherLabel", "draftName"].concat(MENTOR_TEXT_KEYS).forEach(k => { if (k in d) d[k] = str(d[k]); });
       ["ui", "ps", "mentorCounts", "visited", "selfCheck", "xray", "feedback", "session"].forEach(k => { if (k in d && !isObj(d[k])) delete d[k]; });
       if ("lens" in d && !isObj(d.lens)) delete d.lens;
       const L = d.lens || {};
@@ -2325,6 +2338,7 @@
         strKeys(c, CONTRIB_TEXT_KEYS.concat(["cid"]));
         c.roleMode = inList(c.roleMode, ROLE_LEVELS) ? c.roleMode : "";
         if ("folded" in c && typeof c.folded !== "boolean") c.folded = !!c.folded;
+        if ("later" in c) c.later = c.later === true; // Q-11: saved for later, kept and not printed
         if (!isObj(c.flags)) c.flags = {};
         if (!isObj(c.notes)) c.notes = {};
         c.evidence = (Array.isArray(c.evidence) ? c.evidence : []).filter(isObj).map(e => { strKeys(e, ["text", "type", "note", "otherLabel"]); if (e.type === "Exhibition / performance") e.type = "Exhibition, performance or screening"; return e; });
@@ -2465,11 +2479,12 @@
     // r5-a-2: the time of day in the name, so two saves on one day (or two researchers) do not share a name.
     function draftFileName() {
       const d = new Date(), pad = (n) => String(n).padStart(2, "0");
-      return "narrative-cv-draft" + (ns.lens.agency && ns.lens.agency !== "other" ? "-" + ns.lens.agency : "") +
+      const nm = one(ns.draftName).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40); // Q-10
+      return "narrative-cv-draft" + (nm ? "-" + nm : "") + (ns.lens.agency && ns.lens.agency !== "other" ? "-" + ns.lens.agency : "") +
         "-" + d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + "-" + pad(d.getHours()) + pad(d.getMinutes()) + ".json";
     }
     // r5-a-3: what the draft says, without the tool's own state, to tell whether it changed since a file save.
-    const contentSig = () => JSON.stringify([ns.lens, ns.contributions.map(c => CONTRIB_TEXT_KEYS.map(k => c[k] || "").concat([c.roleMode || "", JSON.stringify((c.evidence || []).filter(e => (e.text || "").trim() || (e.note || "").trim()))])), ns.mentorCounts, ns.mentorOtherLabel || "", ns.consultQuestions || "", ns.mentees.map(m => [m.stageKind, m.stageOther, m.kind, m.org, m.unit, m.recognition, m.why]), MENTOR_TEXT_KEYS.map(k => ns[k] || ""), ns.ps]);
+    const contentSig = () => JSON.stringify([ns.lens, ns.contributions.map(c => CONTRIB_TEXT_KEYS.map(k => c[k] || "").concat([c.roleMode || "", c.later ? "later" : "", JSON.stringify((c.evidence || []).filter(e => (e.text || "").trim() || (e.note || "").trim()))])), ns.mentorCounts, ns.mentorOtherLabel || "", ns.consultQuestions || "", ns.mentees.map(m => [m.stageKind, m.stageOther, m.kind, m.org, m.unit, m.recognition, m.why]), MENTOR_TEXT_KEYS.map(k => ns[k] || ""), ns.ps]);
     const hhmm = (t) => new Date(t).toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: false });
     // K-8: "at 09:08" today, "on 24 October at 09:08" on another day.
     const savedWhen = (t) => { const d = new Date(t), now = new Date(); return d.toDateString() === now.toDateString() ? "at " + hhmm(t) : "on " + d.toLocaleDateString("en-GB", d.getFullYear() === now.getFullYear() ? { day: "numeric", month: "long" } : { day: "numeric", month: "long", year: "numeric" }) + " at " + hhmm(t); };
@@ -2487,17 +2502,17 @@
     // into a file (no wrapper) is accepted too, since testers may hold one.
     function readDraftFile(text) {
       let obj;
-      try { obj = JSON.parse(text); } catch (_) { return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft."; }
+      try { obj = JSON.parse(text); } catch (_) { return "This file is not a draft saved from this tool. Choose a .json file saved with Save a draft file."; }
       let draft = null;
       if (obj && obj.format === DRAFT_FORMAT) {
         if (typeof obj.version !== "number" || obj.version > DRAFT_VERSION) return "This draft was saved by a newer version of the tool, so this version cannot open it.";
         draft = obj.draft;
       } else if (obj && Array.isArray(obj.contributions) && obj.lens) draft = obj;
-      if (!draft || typeof draft !== "object") return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft.";
+      if (!draft || typeof draft !== "object") return "This file is not a draft saved from this tool. Choose a .json file saved with Save a draft file.";
       const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session };
       // W-46: the step it opens on says which draft it opened.
       const when = obj && obj.savedAt && !isNaN(Date.parse(obj.savedAt)) ? new Date(obj.savedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + " at " + hhmm(obj.savedAt) : "";
-      try { applySaved(draft); } catch (_) { return "This file is not a draft saved from this tool. Choose a .json file saved with Save draft."; }
+      try { applySaved(draft); } catch (_) { return "This file is not a draft saved from this tool. Choose a .json file saved with Save a draft file."; }
       resetUI(); // r5-a-1: nothing from the draft that was on screen (an Undo, an open view) carries over
       ns.ui.histGen = Date.now(); // K-1: a new draft for the history
       // K-8: an opened file counts as saved at the time it was saved, with this content.
@@ -2564,13 +2579,17 @@
       if (w) { w.setAttribute("role", "alert"); w.textContent = msg || "Your browser data was cleared, so this draft is no longer saved here. Save a draft file now to keep it."; w.hidden = false; }
     }
     // Opening a draft file or resetting is a fresh start, so saving resumes.
+    let lastSig = null; // Q-10: the content last seen by saveState, so contentAt moves only when the draft changes
     const resumeStore = () => {
+      lastSig = null;
       storeSeen = false; profileShown = 0; Object.keys(profileSaid).forEach(k => { delete profileSaid[k]; }); // U-4
       if (loadFailed) { loadFailed = false; const w = document.getElementById("v4-save-warning"); if (w) w.hidden = true; }
       if (storeCleared) { storeCleared = false; const w = document.getElementById("v4-save-warning"); if (w) w.hidden = true; }
     };
     const saveState = () => {
       ns.lastSavedAt = Date.now();
+      const sig = contentSig();
+      if (sig !== lastSig) { if (lastSig !== null || !ns.contentAt) ns.contentAt = Date.now(); lastSig = sig; }
       if (storeCleared || loadFailed || saveMuted) return;
       try {
         if (storeSeen && localStorage.getItem(NCV_KEY) === null) { markCleared(); return; }
@@ -2585,7 +2604,7 @@
         if (!saveFailed) {
           saveFailed = true;
           const w = document.getElementById("v4-save-warning");
-          if (w) { w.textContent = "Saving has stopped working in this browser, so your latest changes are at risk. Use Save draft to keep a draft file, or copy your draft on the Export page, before you close this tab."; w.hidden = false; }
+          if (w) { w.textContent = "Saving has stopped working in this browser, so your latest changes are at risk. Use Save a draft file, or copy your draft on the Export page, before you close this tab."; w.hidden = false; }
         }
       }
     };
@@ -2694,7 +2713,7 @@
         pivot: { q: "How did you get here?", help: "Many strong statements name a turning point, such as a field you came from, a pivot or a defining collaboration. It explains why your work looks the way it does. If a leave, a move between institutions or another interruption shaped your record, say so here in one or two factual sentences: when it was, how long it lasted and what the work did in the meantime. The instructions for your funding opportunity say where the agency wants this and how much detail it asks for.", isNew: true },
         standing: {
           q: "List your strongest signals of standing.",
-          help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual's work. The citation count for a single article or book can support what you say about it.",
+          help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual’s work. The citation count for a single article or book can support what you say about it.",
           isNew: true,
           variants: { creative: "List your strongest signals of standing, such as work shown, performed or published, residencies, commissions, grants or awards.",
             humanities: "List your strongest signals of standing, such as books and articles, editions, fellowships, awards or an archive or collection you built.", // r10-a-10
@@ -2702,8 +2721,8 @@
           // r9-a-6, r9-b-7: the signals follow the field and the work mode.
           helpVariants: {
             creative: "Work shown or performed, commissions, residencies, awards, juried selections, critical reviews and the venues that programmed you. List them first, then gather them into one confident paragraph. Leave out journal-based metrics, which reviewers are asked to disregard.",
-            stem: "Funding, licences, products or tools in use, roles on standards bodies, industry co-funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual's work.", // r19-b-6
-            community: "Funding, partnerships and agreements, recognition from partners and peers, reach. List them first, then gather them into one confident paragraph that names the partners’ part. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual's work."
+            stem: "Funding, licences, products or tools in use, roles on standards bodies, industry co-funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual’s work.", // r19-b-6
+            community: "Funding, partnerships and agreements, recognition from partners and peers, reach. List them first, then gather them into one confident paragraph that names the partners’ part. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual’s work."
           }
         },
         // Approved fix: with no competition named in Setup, ask about the competition itself
@@ -2713,13 +2732,13 @@
         // opportunity; the CV-FRQ's adds fit with the program's objectives (and the team, below).
         programFit: { q: "You are aiming at “{program}” ({agency}). Why is this the right competition for where you are?", noProgramQ: "Which competition do you have in mind, and why does it fit where you are?",
           help: "The TCV asks this section to show your expertise relative to this specific opportunity or project. Name what the competition funds and the expertise you bring to it.",
-          helpVariants: { "cv-frq": "The CV-FRQ asks this section to show your expertise relative to this specific opportunity or project and your fit with the program's objectives. Name the objectives and where your work meets them." },
+          helpVariants: { "cv-frq": "The CV-FRQ asks this section to show your expertise relative to this specific opportunity or project and your fit with the program’s objectives. Name the objectives and where your work meets them." },
           isNew: true },
-        teamFit: { q: "How does your work complement the rest of the team on this application?", help: "The CV-FRQ asks for this in its first section. Name what you bring to the team: a method, a site, a population, a partnership or a stage of the work. If you are applying on your own, say how your work serves the program's objectives." },
+        teamFit: { q: "How does your work complement the rest of the team on this application?", help: "The CV-FRQ asks for this in its first section. Name what you bring to the team: a method, a site, a population, a partnership or a stage of the work. If you are applying on your own, say how your work serves the program’s objectives." },
         horizon: { q: "Where is this heading next?", help: "Name the direction of the work in the final sentence." }
       },
       contrib: {
-        title: { q: "What one line would let a reviewer recall this work?", help: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the paper's title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
+        title: { q: "What one line would let a reviewer recall this work?", help: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the paper’s title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
           helpVariants: { creative: "Short, plain and memorable. Name what the work was for; the title of the exhibition or work belongs in the evidence list.",
             humanities: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the title of the book or article belongs in the evidence list.",
             stem: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the title of the paper, release or patent belongs in the evidence list." } },
@@ -2777,7 +2796,7 @@
             social: "Who took this up, whether scholars, practitioners, communities, the public or policy makers, and what shifted?"
           }
         },
-        impact: { q: "If the work is taken up more widely, which field, sector or population could it affect, and how?", help: "Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems and questions get framed.", academicTag: true,
+        impact: { q: "If the work is taken up more widely, which field, sector or population could it affect, and how?", help: "Hedged language belongs in this part, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems and questions get framed.", academicTag: true,
           // r9-a-4, r9-b-4: the reach follows the field; partners decide whether community-held work goes further.
           variants: {
             creative: "If the work is taken up more widely, which practice, audience or community could it reach, and how?",
@@ -2785,7 +2804,7 @@
             community: "If the work goes further, who could use it? Name who decides whether it does."
           },
           helpVariants: {
-            creative: "Hedged language belongs in this field, where you say what could follow; what has already happened belongs under What already changed. Influence on a practice counts fully here: how a form is made, taught, credited or funded."
+            creative: "Hedged language belongs in this part, where you say what could follow; what has already happened belongs under What already changed. Influence on a practice counts fully here: how a form is made, taught, credited or funded."
           } },
         translational: { q: "Which one occasion shows the work reaching a specific person or group?", variants: { community: "Which one occasion shows the work in use by a specific person or group?" }, help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
           helpVariants: {
@@ -2848,7 +2867,7 @@
     // Minimum to review (Prem, 2026-10-28): Review and Export stay ghosted until one contribution
     // has a headline, your role and at least two of the five job fields.
     const REVIEW_MIN_JOBS = ["stakes", "activities", "outputs", "outcomes", "impact"];
-    const REVIEW_MIN_NOTE = "Review and Export open once one contribution has a headline, your role and two more answered fields.";
+    const REVIEW_MIN_NOTE = "Review and Export open once one contribution has a headline, your role and two more answered parts.";
     const reviewReady = () => ns.contributions.some(c => {
       const t = (k) => !!(c[k] || "").trim();
       return t("title") && (t("roleLine") || !!c.roleMode) && REVIEW_MIN_JOBS.filter(t).length >= 2;
@@ -3169,7 +3188,7 @@
       }
       // V7-6 / V7-29: Save draft works from any step; the file is how a draft moves between browsers.
       const foot = el("div", "v7-rail-foot");
-      const save = el("button", null, "Save draft");
+      const save = el("button", null, "Save a draft file");
       save.type = "button"; save.id = "v7-rail-save";
       save.title = "Download your draft as a file you can open here later";
       const savedNote = el("p", "v7-rail-saved", UI.railSaved && UI.railSaved > Date.now() ? "Saved to your downloads." : "");
@@ -3356,11 +3375,11 @@
       const agencyLabel = labelOf(AGENCIES, L.agency);
       const known = L.agency && L.agency !== "other";
       const cvName = isFrq() ? "CV-FRQ" : "TCV";
-      box.appendChild(el("p", "v4-format-must", "You must use the agency's template."));
+      box.appendChild(el("p", "v4-format-must", "You must use the agency’s template."));
       box.appendChild(el("p", null, known
         ? (isFrq() ? "The FRQ requires the CV-FRQ for all grant applications. " : "") +
           "Prepare your " + cvName + " in the current version of the template " + (L.agency === "frq" ? "the FRQ" : agencyLabel) + " provides, and keep the formatting it sets. Do not exceed the page limit: " + PAGE_LIMIT + "." + (isFrq() ? " The FRQ is especially strict about formatting and page limits." : "")
-        : "Prepare your CV in the current version of the template your agency provides, and keep the formatting it sets. Do not exceed the page limit: " + PAGE_LIMIT + ". Not sure whether you need the TCV or the CV-FRQ? Check the program's application guide."));
+        : "Prepare your CV in the current version of the template your agency provides, and keep the formatting it sets. Do not exceed the page limit: " + PAGE_LIMIT + ". Not sure whether you need the TCV or the CV-FRQ? Check the program’s application guide."));
       const dl = el("dl");
       const row = (k, v) => { dl.appendChild(el("dt", null, k)); dl.appendChild(el("dd", null, v)); };
       if (known) row("Font", FONT_RULES[L.agency]);
@@ -3621,6 +3640,14 @@
       back.addEventListener("click", () => { if (prev) goStage(prev.key); });
       nav.appendChild(back);
       if (opts.note) nav.appendChild(el("p", "v4-help v7-nav-note", opts.note));
+      // Q-15 (Prem, 2026-11-03): Save a draft file sits in every step's bottom row too, so it is in reach on a phone mid-step.
+      const end = el("span", "v7-nav-end");
+      if (ns.stageKey !== "export") {
+        const sv = el("button", "btn btn-outline v7-nav-save", "Save a draft file"); sv.type = "button";
+        const svn = el("span", "v4-meta v7-nav-saved"); svn.setAttribute("aria-live", "polite");
+        sv.addEventListener("click", () => { saveDraftFile(); svn.textContent = "Saved " + draftFileName() + " to your downloads."; });
+        end.appendChild(svn); end.appendChild(sv);
+      }
       if (nxt) {
         const next = el("button", "btn btn-primary", opts.nextLabel || (nxt.key === "review" ? "Review your CV →" : nxt.short + " →"));
         next.addEventListener("click", () => {
@@ -3633,8 +3660,9 @@
           next.setAttribute("aria-describedby", why.id);
           nav.appendChild(why);
         }
-        nav.appendChild(next);
-      } else nav.appendChild(el("span"));
+        end.appendChild(next);
+      }
+      nav.appendChild(end);
       parent.appendChild(nav);
     };
 
@@ -3689,7 +3717,7 @@
       const go = started ? el("button", "v7-path-go") : nw;
       if (started) go.type = "button";
       const nwText = el("span");
-      nwText.appendChild(el("h3", null, started ? "Continue your draft" : "Start your draft"));
+      nwText.appendChild(el("h2", null, started ? (one(ns.draftName) ? "Continue " + gvCut(one(ns.draftName), 60) : "Continue your draft") : "Start your draft"));
       nwText.appendChild(el("p", null, started
         ? "Your draft is saved in this browser" + (one((liveContributions()[0] || {}).c?.title) ? ", starting with “" + gvCut(one(liveContributions()[0].c.title), 70) + "”" : "") + ". You pick up where you left off."
         : "You answer a series of prompts, one section at a time. At the end, you review your draft and set the order of your contributions."));
@@ -3706,6 +3734,17 @@
         const foot = el("div", "v7-path-foot");
         const rs = el("button", "btn btn-outline v7-path-reset", "Reset draft"); rs.type = "button";
         rs.addEventListener("click", () => resetWarning(foot, "Reset your work in progress and start a new draft?", rs));
+        // Q-10 (Prem, 2026-11-03): an optional name, shown with the date the draft last changed, so the name stays current.
+        const nmW = el("div", "v7-draft-name");
+        const nmL = el("label", "v7-field-label", "Draft name (optional)"); nmL.htmlFor = "v7-draft-name";
+        const nmI = el("input"); nmI.id = "v7-draft-name"; nmI.type = "text"; nmI.maxLength = 80; nmI.value = ns.draftName || ""; nmI.autocomplete = "off";
+        nmI.placeholder = "For example, SSHRC Insight Grant, fall";
+        const upd = ns.contentAt || ns.lastSavedAt;
+        const nmD = el("span", "v4-meta v7-draft-updated", upd ? "Last updated " + new Date(upd).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + "." : ""); nmD.id = "v7-draft-updated";
+        nmI.setAttribute("aria-describedby", nmD.id);
+        nmI.addEventListener("input", () => { ns.draftName = nmI.value; saveState(); });
+        nmW.appendChild(nmL); nmW.appendChild(nmI); nmW.appendChild(nmD);
+        nw.insertBefore(nmW, null);
         foot.appendChild(rs);
         foot.appendChild(el("span", "v7-path-foot-note", "Clears the draft saved in this browser and starts again."));
         nw.appendChild(foot);
@@ -3713,7 +3752,7 @@
       const ct = el("button", "v7-path v7-path-cont");
       ct.type = "button";
       const ctText = el("span");
-      ctText.appendChild(el("h3", null, "Load your draft"));
+      ctText.appendChild(el("h2", null, "Load your draft")); // Q-17: the path cards sit under the h1
       ctText.appendChild(el("p", null, "Open a draft file you saved from this tool."));
       ct.appendChild(ctText);
       const arrow = el("span", "v7-arrow", "→"); arrow.setAttribute("aria-hidden", "true");
@@ -3796,7 +3835,7 @@
 
     function renderXray(c) {
       tailoredBar(c);
-      stageHead(c, "Structural read", "What your draft already has, and what it doesn't",
+      stageHead(c, "Structural read", "What your draft already has, and what it doesn’t",
         "Paste your existing draft. The tool splits it into paragraphs, runs the same fixed-rule checks on each, then maps it against the moves a developed narrative CV makes. It is a rough reading. Anything you paste stays here, with the rest of your draft.",
         "What the format expects in each section", "three");
 
@@ -3921,7 +3960,9 @@
     function progress(n, t) {
       const w = el("span", "v7-prog");
       w.appendChild(dots(n, t));
-      w.appendChild(el("span", "v7-sr", n + " of " + t + " answered"));
+      // Q-13: the count shows as text beside the squares; "answered" is read out only.
+      const tx = el("span", "v7-prog-n", n + " of " + t); tx.appendChild(el("span", "v7-sr", " answered"));
+      w.appendChild(tx);
       return w;
     }
     // Pass D (Prem, option B): the card's progress as a column of squares on its right edge, one per
@@ -4342,7 +4383,7 @@
           if (!f.isConnected) return;
           flagsSaid = nf;
           const first = checks.querySelector(".v4-flag");
-          announce(nf ? nf + (nf === 1 ? " suggestion" : " suggestions") + " under this field. " + first.textContent.replace(/^⚠\s*/, "") : "No suggestions under this field.");
+          announce(nf ? nf + (nf === 1 ? " suggestion" : " suggestions") + " under this part. " + first.textContent.replace(/^⚠\s*/, "") : "No suggestions under this part.");
         }, 1500);
         // V7-23: the note that checks are suggestions, the first time a check fires, once per draft.
         if (checks.querySelector(".v4-flag") && (!ns.ui.checksNoteSeen || ns.ui.checksNoteField === id)) {
@@ -4612,13 +4653,13 @@
         const h = (t) => { const x = el("h3", "v7-q v7-q-lg", t); x.id = "pq" + i; blk.appendChild(x); };
         if (i === 0) {
           h("Choose the agency you are applying to.");
-          blk.appendChild(explainBox("This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec (FRQ), which now requires it for all grant applications in its three sectors. It also sets the format notes on Export, since font rules differ between agencies. If you are not sure which applies, the program's application guide names the format."));
+          blk.appendChild(explainBox("This sets the format: the Tri-agency CV (TCV) for SSHRC, NSERC and CIHR, or the CV-FRQ for the Fonds de recherche du Québec (FRQ), which now requires it for all grant applications in its three sectors. It also sets the format notes on Export, since font rules differ between agencies. If you are not sure which applies, the program’s application guide names the format."));
           blk.appendChild(choiceGrid(AGENCIES.map(a => ({ v: a.v, l: a.v === "other" ? "Not sure yet" : a.l, n: agencyFull[a.v] })), v => L.agency === v,
             v => pick(() => { L.agency = v; const a = AGENCIES.find(x => x.v === v); L.format = a ? a.fmt : ""; }, 0), { labelledby: "pq0", idp: "ag" }));
           if (L.agency) {
             const fb = el("p", "v7-feedback");
             fb.textContent = "✓ " + (L.agency === "frq" ? "Format: the CV-FRQ."
-              : L.agency === "other" ? "Format: the Tri-agency CV layout for now. The format notes show every agency's font rule until you choose."
+              : L.agency === "other" ? "Format: the Tri-agency CV layout for now. The format notes show every agency’s font rule until you choose."
               : "Format: the Tri-agency CV (TCV), with " + labelOf(AGENCIES, L.agency) + "'s font rules.");
             blk.appendChild(fb);
           }
@@ -4725,9 +4766,14 @@
       { k: "impact", job: "impact", def: PROMPTS.contrib.impact, lint: "impact" },
       { k: "translational", label: "One moment (optional)", def: PROMPTS.contrib.translational, optional: true }
     ];
-    const ROLE_LEVELS = [["led", "I led it"], ["coled", "I co-led it"], ["part", "I contributed a specific part"]];
+    // Q-20 (Prem, 2026-11-03): three more levels, shown to every researcher whatever the profile.
+    const ROLE_LEVELS = [["led", "I led it"], ["coled", "I co-led it"], ["part", "I contributed a specific part"],
+      ["partnerled", "The partners led it, and I took part"], ["cocreated", "I made it with others"], ["alone", "I did it on my own"]];
     const cHas = (c, k) => k === "roleLine" ? !!((c.roleLine || "").trim() || c.roleMode) : !!(c[k] || "").trim();
-    const cCount = (c) => CF().filter(f => cHas(c, f.k)).length + (liveEvidence(c).length ? 1 : 0);
+    // Q-13 (Prem, 2026-11-03): the count covers the required parts only, so a finished card reads "8 of 8"; One moment is optional.
+    const cCount = (c) => CF().filter(f => !f.optional && cHas(c, f.k)).length + (liveEvidence(c).length ? 1 : 0);
+    const C_TOTAL = 8; // the headline, the six parts and the evidence
+    const cAny = (c) => CF().some(f => cHas(c, f.k)) || liveEvidence(c).length > 0;
     const cLive = (c) => CONTRIB_TEXT_KEYS.some(k => (c[k] || "").trim()) || liveEvidence(c).length > 0;
     function renderContributions(c) {
       tailoredBar(c);
@@ -4813,7 +4859,7 @@
     function contribFold(contrib, i) {
       const b = el("button", "v7-fold");
       b.type = "button"; b.id = "fold-" + contrib.cid;
-      b.setAttribute("aria-label", "Contribution " + (i + 1) + ", " + ((contrib.title || "").trim() || "no headline") + ", " + cCount(contrib) + " of 9 answered. Open."); // r14-a-3: the visible "Open"
+      b.setAttribute("aria-label", "Contribution " + (i + 1) + ", " + ((contrib.title || "").trim() || "no headline") + ", " + (contrib.later ? "saved for later, " : "") + cCount(contrib) + " of " + C_TOTAL + " answered. Open."); // r14-a-3: the visible "Open"
       b.setAttribute("aria-expanded", "false");
       b.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
       const t = el("span", "v7-fold-t");
@@ -4821,10 +4867,11 @@
       t.appendChild(document.createTextNode(" · " + ((contrib.title || "").trim() || "No headline yet")));
       b.appendChild(t);
       // Pass D: the folded row uses the standard progress squares (one per field, green when written).
-      const jobs = dots(cCount(contrib), 9); jobs.classList.add("v7-jobs");
+      const jobs = dots(cCount(contrib), C_TOTAL); jobs.classList.add("v7-jobs");
       b.appendChild(jobs);
+      b.appendChild(el("span", "v7-prog-n", cCount(contrib) + " of " + C_TOTAL)).setAttribute("aria-hidden", "true"); // Q-13; the row's label says it
       const ne = liveEvidence(contrib).length;
-      b.appendChild(el("span", "v7-fold-meta", (ne ? ne + " evidence" : "No evidence") + " · " + cWords(contrib).toLocaleString("en-CA") + " w"));
+      b.appendChild(el("span", "v7-fold-meta", (contrib.later ? "Saved for later · " : "") + (ne ? ne + " evidence" : "No evidence") + " · " + cWords(contrib).toLocaleString("en-CA") + " w")); // Q-11
       b.appendChild(el("span", "v7-fold-op", "Open")).setAttribute("aria-hidden", "true");
       b.addEventListener("click", () => {
         ns.contributions.forEach((x, j) => { x.folded = j !== i; });
@@ -4847,7 +4894,7 @@
       title.appendChild(tt);
       head.appendChild(title);
       const side = el("span", "v7-card-side");
-      let dt = progress(cCount(contrib), 9); side.appendChild(dt);
+      let dt = progress(cCount(contrib), C_TOTAL); side.appendChild(dt);
       if (ns.contributions.length > 1) {
         const fold = el("button", "v7-icon-btn"); fold.type = "button"; fold.id = "fold-" + contrib.cid;
         fold.appendChild(el("span", "v7-tri is-down", "▸")).setAttribute("aria-hidden", "true");
@@ -4881,7 +4928,7 @@
         // W-45 (inferred, option A): the inline warning, under the card's header.
         rm.addEventListener("click", () => {
           const ht = (contrib.title || "").trim();
-          if (only && !cCount(contrib)) return announce("Contribution 1 is already blank.");
+          if (only && !cAny(contrib)) return announce("Contribution 1 is already blank.");
           if (!cLive(contrib)) return removeC();
           const nw = cWords(contrib), ne = liveEvidence(contrib).length;
           inlineConfirm(card, "Remove contribution " + (i + 1) + (ht ? ", “" + gvCut(ht, 60) + "”," : "") + " with its " + nw.toLocaleString("en-CA") + (nw === 1 ? " word" : " words") + (ne ? " and " + ne + " evidence " + (ne === 1 ? "item" : "items") : "") + "?", rm, "Remove", removeC, { after: head });
@@ -4890,6 +4937,7 @@
       }
       head.appendChild(side);
       card.appendChild(head);
+      if (contrib.later) card.appendChild(el("p", "v7-note v7-later-note", "Saved for later: this contribution stays in your draft and does not print. Put it back under Order of contributions, on Review.")); // Q-11
       const colItems = CF().map(f => ({ id: "c" + contrib.cid + "-" + f.k, label: f.label || BEAT_LABEL[f.job], has: () => cHas(contrib, f.k) }))
         .concat([{ id: "ev", label: "Evidence", has: () => liveEvidence(contrib).length > 0 }]);
       // W-10 (inferred): the column is built here and placed after the fields, so the Tab order reads
@@ -4916,8 +4964,8 @@
       card._update = () => update();
       const update = () => {
         tt.textContent = (contrib.title || "").trim() ? " · " + contrib.title.trim() : "";
-        const nd = progress(cCount(contrib), 9); side.replaceChild(nd, dt); dt = nd;
-        announceCount(cCount(contrib) + " of 9 answered");
+        const nd = progress(cCount(contrib), C_TOTAL); side.replaceChild(nd, dt); dt = nd;
+        announceCount(cCount(contrib) + " of " + C_TOTAL + " answered");
         if (strip) { const ns2 = contribStrip(contrib, UI.evCard === i, i); card.replaceChild(ns2, strip); strip = ns2; }
       };
       let strip = null;
@@ -4965,7 +5013,7 @@
             roleNamed: f.k === "roleLine" ? () => !!contrib.roleMode : () => !!contrib.roleMode || ownershipIn(contrib.roleLine).iVerb,
             has: () => cHas(contrib, f.k), onChange: f.role ? () => { update(); recheckCard(contrib.cid); } : update,
             noEnter: !!f.role,
-            shown: f.role ? () => { const lvl = (ROLE_LEVELS.find(x => x[0] === contrib.roleMode) || [])[1], line = one(contrib.roleLine); return (lvl && line && line.toLowerCase().startsWith(lvl.toLowerCase().replace(/ (?:it|a specific part)$/, "")) ? [line] : [lvl, contrib.roleLine]) /* r20-b-2 */.filter(Boolean).join(" · "); } : null, // r15-a-6
+            shown: f.role ? () => { const lvl = (ROLE_LEVELS.find(x => x[0] === contrib.roleMode) || [])[1], line = one(contrib.roleLine); return (lvl && line && line.toLowerCase().startsWith(lvl.toLowerCase().replace(/ (?:it|a specific part|it, and i took part|it with others|it on my own)$/, "")) ? [line] : [lvl, contrib.roleLine]) /* r20-b-2 */.filter(Boolean).join(" · "); } : null, // r15-a-6
             before: f.role ? (inner) => {
               const lv = el("div", "v7-levels");
               const ll = el("span", "v7-field-label", "How were you involved?"); ll.id = id + "-lv";
@@ -5064,15 +5112,17 @@
     }
     // V7-25 + D-5, D-7: the evidence view. Kinds as a small grid of cards, none pre-selected.
     const EV_KIND_HINT = {
-      "Peer-reviewed": "a published article, chapter or book, or a juried or curated selection; a preprint goes under Other", "Media / public": "coverage, a critical review, a public talk, a podcast",
+      "Peer-reviewed": "a published article, chapter or book, or a juried or curated selection", "Media / public": "coverage, a critical review, a public talk, a podcast",
       "Policy / practice uptake": "a policy, guideline, registry or program that adopted your work", "Dataset / tool": "data, software, a catalogue or a collection, and who holds it",
       "Award / recognition": "a prize, fellowship or honour", "Funding": "a grant the work attracted",
       "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Community document": "a letter, resolution, agreement, report or plan a community or partner holds",
-      "Other": "a preprint, a conference talk or poster, a trial registration, or anything else a reviewer could check"
+      "Preprint": "a paper posted before peer review, on a preprint server or a repository", "Conference talk or poster": "a talk, poster or panel at a conference or a workshop",
+      "Teaching or curriculum": "a course, syllabus, training program or curriculum built from your work",
+      "Other": "a trial registration, a technical report, or anything else a reviewer could check"
     };
     // r10-b-8: a few kind hints follow the field.
-    const EV_KIND_HINT_STEM = { "Peer-reviewed": "a published journal article or conference paper; a preprint goes under Other", "Dataset / tool": "data or software, with its version and who holds it",
-      "Replication / citation": "a study that repeated or cited your work, or a standard, code or guideline that cites it", "Other": "a preprint, a patent, a licence, a trial registration, a technical report, or anything else a reviewer could check" };
+    const EV_KIND_HINT_STEM = { "Peer-reviewed": "a published journal article or conference paper", "Dataset / tool": "data or software, with its version and who holds it",
+      "Replication / citation": "a study that repeated or cited your work, or a standard, code or guideline that cites it", "Other": "a patent, a licence, a trial registration, a technical report, or anything else a reviewer could check" };
     const evKindHint = (t) => (ns.lens.discipline === "stem" && EV_KIND_HINT_STEM[t]) || (ns.lens.discipline === "creative" && t === "Replication / citation" && "a study or review that cited your work, or a work restaged or adapted") || EV_KIND_HINT[t];
     const EV_INTRO_ITEMS = {
       stem: "a journal article or conference paper, a patent or licence, a standard or guideline that cites your work, a software or data release, a technical report, coverage, an award",
@@ -5110,7 +5160,7 @@
           announce("Evidence item " + letter(j) + " removed." + (UI.evUndo ? " Undo is available until your next change." : ""));
         });
         ehead.appendChild(rm);
-        // r1-b-5 (inferred): once a kind is chosen the nine cards fold to one line, "Kind: Peer-reviewed ·
+        // r1-b-5 (inferred): once a kind is chosen the kind cards fold to one line, "Kind: Peer-reviewed ·
         // Change", as an answered field does; Change opens them again.
         const kKey = contrib.cid + "-" + j;
         if (ev.type && UI.kindOpen !== kKey) {
@@ -5163,7 +5213,7 @@
         const ti = el("textarea", "v7-input v7-grow"); ti.id = tl.htmlFor; ti.rows = 1;
         ti.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
         // r7-b-10: what to write for each kind of item.
-        const ITEM_HINT = { "Peer-reviewed": "The reference: authors, year, title and venue", "Media / public": "The outlet or platform, the title and the date; for your own series, its audience", "Policy / practice uptake": "The policy or program, who adopted it (or its sector, if it cannot be named) and when",
+        const ITEM_HINT = { "Peer-reviewed": "The reference: authors, year, title and venue", "Preprint": "The reference: authors, year, title and the server or repository", "Conference talk or poster": "The title, the conference, the city and the date", "Teaching or curriculum": "The course or program, who offers it and since when", "Media / public": "The outlet or platform, the title and the date; for your own series, its audience", "Policy / practice uptake": "The policy or program, who adopted it (or its sector, if it cannot be named) and when",
           "Dataset / tool": "Name, version, who holds it and how to access it, in words", "Award / recognition": "The award, who gave it and the year", "Funding": "The funder, the program, the amount and the years",
           "Replication / citation": "The study, standard, guideline or code that repeated, cited or built on your work", "Exhibition, performance or screening": "The work, the venue, the city and the dates", "Community document": "What it is (a letter, resolution, agreement, report or plan), who holds it and its date" };
         ti.placeholder = ITEM_HINT[ev.type] || "Name it so a reviewer can find it, or say who holds it: a reference, a preprint, a talk, a patent and its licence, a performance, a policy, a dataset, an award or a letter"; ti.value = ev.text || "";
@@ -5188,7 +5238,7 @@
         const wt = el("textarea", "v7-input v7-two v7-grow"); wt.id = wl.htmlFor;
         // r9-a-7: the note's prompt follows the kind.
         const NOTE_HINT = { "Exhibition, performance or screening": "What the work did or showed, and how it bears on your question", "Media / public": "What the piece says about the work, or whom it reached",
-          "Community document": "What it records or agrees, and whom it serves", "Dataset / tool": "What it holds, who uses it, or why it was useful",
+          "Community document": "What it records or agrees, and whom it serves", "Preprint": "What it argues or shows", "Conference talk or poster": "What it presented, and to whom", "Teaching or curriculum": "What it teaches, and how many learners it reaches", "Dataset / tool": "What it holds, who uses it, or why it was useful",
           "Policy / practice uptake": "Who adopted it (or its sector), when, and what changed in practice",
           "Award / recognition": "Who selected it, from how many, and what it recognized", "Funding": "What the funding made possible", "Peer-reviewed": "What it argues, shows or makes available", "Replication / citation": "Who built on the work, and how", /* r19-a-4 */
           "Other": "What it is and why it matters, such as who licensed a patent and for what" };
@@ -5281,7 +5331,7 @@
     // r2-a-11: the Mentorship and statement steps have one example, written for Social sciences.
     const oneExampleNote = () => ns.lens.discipline && ns.lens.discipline !== "social"
       ? "There is no " + labelOf(DISCIPLINES, ns.lens.discipline) + " example yet. This one is written for Social sciences." : "One example for now, written for Social sciences.";
-    const MENTEE_NOUN = { doctoral: "doctoral student", masters: "master's student", postdoc: "postdoctoral fellow", undergrad: "undergraduate researcher" };
+    const MENTEE_NOUN = { doctoral: "doctoral student", masters: "master’s student", postdoc: "postdoctoral fellow", undergrad: "undergraduate researcher" };
     // r6-a-2: the words one contribution prints (headline, paragraph, evidence and notes).
     const cWords = (c) => { const w = assembleContribution(c); return countWords([w.title, w.body].concat(w.refs.map(r => r.text + " " + r.note)).join(" ")); };
     // r6-a-4: over the English page limit, by the tool's 500-words-a-page rule.
@@ -5289,7 +5339,7 @@
     const overLimit = (w) => w / 600 > PAGE_LIMIT_EN ? 2 : w / WORDS_PER_PAGE > PAGE_LIMIT_EN ? 1 : 0;
     function selectionNote(onReview) {
       const n = liveContributions().length;
-      return el("p", "v7-note v7-select-note", "You have " + n + " contributions. Reviewers read each one closely, and four or five written in full usually carry more weight than " + n + " in outline. Finish the ones that relate most to this application; " + (onReview ? "the order cards below show each one's length and evidence." : "Review shows each one's length and evidence."));
+      return el("p", "v7-note v7-select-note", "You have " + n + " contributions. Reviewers read each one closely, and four or five written in full usually carry more weight than " + n + " in outline. Finish the ones that relate most to this application; " + (onReview ? "the order cards below show each one’s length and evidence." : "Review shows each one’s length and evidence."));
     }
     // r6-a-3 (inferred): a removed contribution can be restored for ten seconds, as an evidence item can.
     function renderContribUndo(c) {
@@ -5328,6 +5378,10 @@
         : m.kind === "arts" ? (org && /museum|gallery|theat|\barts?\b|danc|dans|ballet|compan|ensemble|studio|collective|troupe|\bfilm|cinema|music|musique|choir|opera|presenter|festival|orchestra|cultur|librar/i.test(org) ? "now works at " + org : "now works at an arts, cultural or heritage organization" + (org ? ", " + org : ""))
         : m.kind === "indigenous" ? (org ? "now works at " + org : "now works in a First Nations, Inuit or Métis organization")
         : m.kind === "health" ? (org && /health|hospital|clinic|medical|care\b/i.test(org) ? "now works at " + org : "now works in the health system" + (org ? " at " + org : ""))
+        : m.kind === "artist" ? "now works as an independent artist" + (org ? ", " + org : "")
+        : m.kind === "college" ? (org ? "now works at " + org : "now works at a college, CEGEP or school")
+        : m.kind === "school" ? (org ? "now works at " + org : "now works in a school or school board")
+        : m.kind === "ltc" ? (org ? "now works at " + org : "now works in long-term care or a seniors’ organization")
         : org ? "is now at " + org : "";
       // r10-a-1: a unit with no organization follows the sector in brackets ("is now at a university (History)").
       if (!orgName && unit) where = !m.kind || m.kind === "other" ? "is now in " + unit : m.kind === "university" ? "is now at a university" + bracket(unit) : where + bracket(unit);
@@ -5641,7 +5695,7 @@
       tailoredBar(c);
       stageHead(c, "", secName("ps"), "", false);
       const lede = el("p", "narrative-intro-text v7-lede", "Who you are, and the thread through your work. " +
-        (isFrq() ? "In the CV-FRQ this first section asks for your expertise relative to this specific opportunity or project, your fit with the program's objectives and how your work complements the team. " : "") +
+        (isFrq() ? "In the CV-FRQ this first section asks for your expertise relative to this specific opportunity or project, your fit with the program’s objectives and how your work complements the team. " : "") +
         "It appears first in the finished CV and is written last, because it gathers what you wrote in your contributions. ");
       lede.appendChild(guideLink("What the first section asks for, TCV and CV-FRQ", "compare"));
       c.appendChild(lede);
@@ -5730,7 +5784,56 @@
     }
 
     // ── Stage: Review (V7-30 to V7-32) ─────────────────────────────────────
-    const liveContributions = () => ns.contributions.map((c, i) => ({ c, i })).filter(({ c }) => cLive(c));
+    // Q-12 (Prem, 2026-11-03): each contribution's share of the page budget, on the order cards only.
+    const pageShare = (nw) => { const pct = nw / (WORDS_PER_PAGE * PAGE_LIMIT_EN) * 100; return (pct > 0 && pct < 1 ? "under 1%" : "about " + Math.round(pct) + "%") + " of the " + PAGE_LIMIT_EN + "-page budget"; };
+    // Q-11: Save for later and Delete, under each order card; a saved contribution can be put back.
+    function deleteContribution(contrib, i, wrap, after, trigger) {
+      const name = gvCut(one(contrib.title), 60), nw = cWords(contrib);
+      inlineConfirm(wrap, "Delete " + (name ? "“" + name + "”" : "this contribution") + " with its " + nw.toLocaleString("en-CA") + (nw === 1 ? " word" : " words") + "? It leaves the draft.", trigger, "Delete", () => {
+        ns.contributions.splice(i, 1);
+        if (!ns.contributions.length) ns.contributions = [blankContribution()];
+        ns.ui.orderDone = true; saveState(); renderStage();
+        const h = document.getElementById("v7-oc-t"); if (h) { h.tabIndex = -1; h.focus(); }
+        announce((name ? "“" + name + "”" : "The contribution") + " deleted.");
+      }, { after });
+    }
+    function orderActions(contrib, i, oc, wrap) {
+      const name = gvCut(one(contrib.title), 60) || "this contribution";
+      const row = el("div", "v7-oacts");
+      const lt = el("button", "v7-linkbtn", contrib.later ? "Put back" : "Save for later"); lt.type = "button";
+      lt.setAttribute("aria-label", (contrib.later ? "Put back: " : "Save for later: ") + name);
+      lt.addEventListener("click", () => {
+        contrib.later = !contrib.later; contrib.folded = true; ns.ui.orderDone = true;
+        if (!contrib.later) { const k = ns.contributions.indexOf(contrib); ns.contributions.splice(k, 1); ns.contributions.push(contrib); } // back in last place
+        saveState(); renderStage();
+        const b = document.getElementById("oa-" + contrib.cid); if (b) b.focus();
+        announce(contrib.later ? "“" + name + "” saved for later. It stays in your draft and does not print." : "“" + name + "” put back, last in the order.");
+      });
+      lt.id = "oa-" + contrib.cid;
+      const del = el("button", "v7-linkbtn v7-odel", "Delete"); del.type = "button"; del.setAttribute("aria-label", "Delete: " + name);
+      del.addEventListener("click", () => deleteContribution(contrib, i, wrap, oc, del));
+      row.appendChild(lt); row.appendChild(del);
+      return row;
+    }
+    function renderLater(os) {
+      const later = laterContributions();
+      if (!later.length) return;
+      const box = el("div", "v7-later"); box.setAttribute("role", "group"); box.setAttribute("aria-labelledby", "v7-later-t");
+      const h = el("h4", "v7-later-t", "Saved for later"); h.id = "v7-later-t"; box.appendChild(h);
+      box.appendChild(el("p", "v7-quiet", "These stay in your draft and do not print or count toward the length. Put one back to place it last in the order."));
+      later.forEach(({ c: contrib, i }) => {
+        const oc = el("div", "v7-ocard is-later");
+        const txt = el("div", "v7-otxt");
+        txt.appendChild(el("div", "v7-ot", one(contrib.title) || "Untitled contribution"));
+        const nw = cWords(contrib); txt.appendChild(el("div", "v7-ow", nw.toLocaleString("en-CA") + (nw === 1 ? " word" : " words") + " · " + pageShare(nw) + " if put back"));
+        txt.appendChild(orderActions(contrib, i, oc, box));
+        oc.appendChild(txt); box.appendChild(oc);
+      });
+      os.appendChild(box);
+    }
+    // Q-11 (Prem, 2026-11-03): a contribution saved for later stays in the draft and leaves everything that prints or counts.
+    const liveContributions = () => ns.contributions.map((c, i) => ({ c, i })).filter(({ c }) => cLive(c) && !c.later);
+    const laterContributions = () => ns.contributions.map((c, i) => ({ c, i })).filter(({ c }) => cLive(c) && c.later);
     // The draft as the reader meets it: statement first, contributions in order, mentorship.
     function draftPreview(cls, label) {
       const wrap = el("div", "v7-draft");
@@ -5869,7 +5972,8 @@
           txt.appendChild(el("div", "v7-ot", one(contrib.title) || "Untitled contribution"));
           const gist = (contrib.stakes || contrib.activities || "").trim();
           if (gist) txt.appendChild(el("div", "v7-og", gist));
-          { const nw = cWords(contrib); txt.appendChild(el("div", "v7-ow", nw.toLocaleString("en-CA") + (nw === 1 ? " word" : " words") + " · " + liveEvidence(contrib).length + " evidence")); } // r6-a-2
+          { const nw = cWords(contrib); txt.appendChild(el("div", "v7-ow", nw.toLocaleString("en-CA") + (nw === 1 ? " word" : " words") + " · " + pageShare(nw) + " · " + liveEvidence(contrib).length + " evidence")); } // r6-a-2, Q-12
+          txt.appendChild(orderActions(contrib, i, oc, os));
           oc.appendChild(txt);
           const mv = el("div", "v7-mv");
           // r3-b-2: the buttons and the announcement use the shortened headline, as the remove warning does.
@@ -5890,6 +5994,8 @@
           os.appendChild(oc);
         });
       }
+
+      renderLater(os);
 
       // At a glance: only what is missing, each a link to its field; the length.
       const miss = missingList(), w = draftWords();
@@ -5949,7 +6055,7 @@
       const sc = el("section", "v7-card v7-selfcheck"); sc.setAttribute("aria-labelledby", "v7-sc-t");
       const sct = el("h3", "v7-h3", "Self-check before you export"); sct.id = "v7-sc-t"; sc.appendChild(sct);
       [
-        ["ownership", isCommunity() ? "Ownership: each contribution makes my own part clear and names the parts the partners led or hold." : "Ownership: each contribution makes my own role clear, even where the work was a team's."], // r9-b-11
+        ["ownership", isCommunity() ? "Ownership: each contribution makes my own part clear and names the parts the partners led or hold." : "Ownership: each contribution makes my own role clear, even where the work was a team’s."], // r9-b-11
         ["specificity", "Specificity: my claims name outcomes, organizations and numbers where I am free to give them, and leave out journal-based metrics."], // r13-b-1
         ["significance", "Significance: each contribution says what changed, and keeps what already changed apart from what could change."],
         ["coherence", "Coherence: my " + (isFrq() ? "background and skills section" : "personal statement") + " frames the whole and ends pointed forward."],
@@ -6012,7 +6118,7 @@
     // 1. Evidence by type, across all contributions' live evidence items.
     function glanceEvidence() {
       const counts = EVIDENCE_TYPES.map(t => [t, 0]); let untyped = 0;
-      ns.contributions.forEach(c => liveEvidence(c).forEach(e => {
+      ns.contributions.filter(c => !c.later).forEach(c => liveEvidence(c).forEach(e => {
         const row = counts.find(r => r[0] === e.type);
         if (row) row[1]++; else untyped++;
       }));
@@ -6064,8 +6170,8 @@
       return { key: "parts", title, summary: label, svg: gvSvg(headH + live.length * rh + 6, label, body) };
     }
 
-    // 3. Your role: led, co-led, contributed a part, across live contributions.
-    const GV_ROLE = { led: "Led", coled: "Co-led", part: "Contributed a specific part" };
+    // 3. Your role: the six levels (Q-20), across live contributions.
+    const GV_ROLE = { led: "Led", coled: "Co-led", part: "Contributed a specific part", partnerled: "Partners led, I took part", cocreated: "Made with others", alone: "On my own" };
     function glanceRole() {
       const live = liveContributions();
       const rows = ROLE_LEVELS.map(([v]) => [GV_ROLE[v] || v, live.filter(({ c }) => c.roleMode === v).length]);
@@ -6086,7 +6192,7 @@
       const levels = MENTOR_COUNT_LABELS.map(([k, l]) => [l, parseInt(cleanCount(ns.mentorCounts[k]), 10) || 0]);
       const withContent = ns.mentees.filter(menteeHasContent);
       // r3-b: short sector names, so a label fits the chart ("Health system", not the full option).
-      const kinds = MENTEE_KINDS.map(([k, l]) => [{ health: "Health system", arts: "Arts, culture or heritage", community: "Community agency", indigenous: "First Nations, Inuit or Métis" }[k] || l, withContent.filter(m => m.kind === k).length]);
+      const kinds = MENTEE_KINDS.map(([k, l]) => [{ health: "Health system", arts: "Arts, culture or heritage", community: "Community agency", indigenous: "First Nations, Inuit or Métis", artist: "Self-employed artist", college: "College, CEGEP or school", ltc: "Long-term care or seniors" }[k] || l, withContent.filter(m => m.kind === k).length]);
       const nL = levels.reduce((n, r) => n + r[1], 0), nK = kinds.reduce((n, r) => n + r[1], 0);
       if (!nL && !nK) return null;
       const title = "People " + trainedWord() + " and " + wentWord();
@@ -6320,8 +6426,8 @@
       const dlt = el("h3", "v7-h3", "Download or print"); dlt.id = "v7-dl-t"; dl.appendChild(dlt);
       const fmt = ns.ui.exportFmt || "doc";
       const fg = el("div", "v7-fmt"); fg.setAttribute("role", "radiogroup"); fg.setAttribute("aria-labelledby", "v7-dl-t");
-      [["doc", "Word (.doc)", "Set in " + (unsure ? "12-point Times New Roman" : font) + " on a Letter page with 2 cm margins, with " + (unsure ? "the Tri-agency CV's section names until you choose an agency" : (ns.lens.agency === "frq" ? "the CV-FRQ's" : labelOf(AGENCIES, ns.lens.agency) + "'s") + " section names") + ".", true], // r17-a-2
-       ["txt", "Plain text (.txt)", "The draft as plain text with the tool's notes to you, for working on it elsewhere.", false]].forEach(([v, l, n, rec]) => {
+      [["doc", "Word (.doc)", "Set in " + (unsure ? "12-point Times New Roman" : font) + " on a Letter page with 2 cm margins, with " + (unsure ? "the Tri-agency CV’s section names until you choose an agency" : (ns.lens.agency === "frq" ? "the CV-FRQ’s" : labelOf(AGENCIES, ns.lens.agency) + "'s") + " section names") + ".", true], // r17-a-2
+       ["txt", "Plain text (.txt)", "The draft as plain text with the tool’s notes to you, for working on it elsewhere.", false]].forEach(([v, l, n, rec]) => {
         const b = el("button", "v7-choice"); b.type = "button"; b.id = "v7-fmt-" + v;
         b.setAttribute("role", "radio"); b.setAttribute("aria-checked", fmt === v ? "true" : "false");
         const tick = el("span", "v7-tick", "✓"); tick.setAttribute("aria-hidden", "true"); b.appendChild(tick);
@@ -6358,8 +6464,8 @@
 
       const pt2 = el("section", "v7-card"); pt2.setAttribute("aria-labelledby", "v7-pt-t");
       const ptt = el("h3", "v7-h3", "Paste into the template, one section at a time"); ptt.id = "v7-pt-t"; pt2.appendChild(ptt);
-      const whose = a === "frq" ? "the FRQ's" : (!unsure ? labelOf(AGENCIES, a) + "'s" : "your agency's");
-      pt2.appendChild(el("p", "v7-quiet v7-gap-b", "Each button copies one section as plain text, in the order the template sets, without the tool's notes. Paste it into the matching section of " + whose + " template."));
+      const whose = a === "frq" ? "the FRQ’s" : (!unsure ? labelOf(AGENCIES, a) + "'s" : "your agency’s");
+      pt2.appendChild(el("p", "v7-quiet v7-gap-b", "Each button copies one section as plain text, in the order the template sets, without the tool’s notes. Paste it into the matching section of " + whose + " template."));
       const row = el("div", "v7-copy-row");
       ["ps", "contrib", "mentor"].forEach(k => {
         const w = el("div");
@@ -6457,10 +6563,10 @@
     // r7-a-9: in Word and Print the French name is marked as French, for spellcheck and screen readers.
     const htmlHeading = (k) => { const s = SECTION_NAMES[isFrq() ? "cv-frq" : "tcv"], e = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;"); return e(s[k]) + (isFrq() ? " / <span lang='fr'>" + e(s[k + "Fr"]) + "</span>" : ""); };
     // "SSHRC's", "the FRQ's", or "your agency's" when the agency is not chosen.
-    const templateOf = () => { const a = ns.lens.agency; return a === "frq" ? "the FRQ's" : (a && a !== "other" ? labelOf(AGENCIES, a) + "'s" : "your agency's"); };
+    const templateOf = () => { const a = ns.lens.agency; return a === "frq" ? "the FRQ’s" : (a && a !== "other" ? labelOf(AGENCIES, a) + "'s" : "your agency’s"); };
     function formatReminder() {
       const a = ns.lens.agency, known = a && a !== "other";
-      return "Before you submit: paste this into the current version of " + (known ? (a === "frq" ? "the FRQ's" : labelOf(AGENCIES, a) + "'s") : "your agency's") +
+      return "Before you submit: paste this into the current version of " + (known ? (a === "frq" ? "the FRQ’s" : labelOf(AGENCIES, a) + "'s") : "your agency’s") +
         " template and do not exceed the page limit (" + PAGE_LIMIT + ")." + (known ? " Font: " + FONT_RULES[a].split(".")[0] + "." : "");
     }
     // The first section, in export order; the CV-FRQ adds the team answer after program fit.
@@ -6475,7 +6581,7 @@
     function buildExportText() {
       const lines = [], rule = "=".repeat(60);
       lines.push("NARRATIVE CV, WORKING DRAFT (" + TOOL_LABEL + ")");
-      lines.push("[The draft with the tool's notes to you in square brackets. The section copies on the Export page hold the text to paste.]");
+      lines.push("[The draft with the tool’s notes to you in square brackets. The section copies on the Export page hold the text to paste.]");
       const ctx = profilePills();
       if (ctx.length) lines.push("[Profile, for tailoring and not for submission: " + ctx.join(" · ") + "]");
       if (overLimit(draftWords())) lines.push((overLimit(draftWords()) === 2 ? "[Over the limit:" : "[Possibly over the limit:") + " about " + roughWords(draftWords()).toLocaleString("en-CA") + " words, " + pagesRange(draftWords()) + " pages, against " + PAGE_LIMIT_EN + " in English.]"); // r6-a-4
@@ -6519,7 +6625,7 @@
       const lines = [];
       const rule = "=".repeat(60);
       lines.push("NARRATIVE CV — ADVISOR PACKET");
-      lines.push("Written by the researcher. It lists the questions they want to discuss and the fields they marked themselves.");
+      lines.push("Written by the researcher. It lists the questions they want to discuss and the parts they marked themselves.");
       lines.push(formatReminder());
       lines.push("");
       lines.push(rule); lines.push("QUESTIONS I WANT TO DISCUSS"); lines.push(rule);
@@ -6537,7 +6643,7 @@
           }
         });
       });
-      if (!any) lines.push("(no fields flagged)");
+      if (!any) lines.push("(no parts flagged)");
       lines.push("");
       lines.push(rule); lines.push("AUTO-CHECK SUMMARY (suggestions from the tool)"); lines.push(rule);
       ns.contributions.forEach((c2, i) => {
@@ -6582,7 +6688,7 @@
         ".screen-note button{display:block;margin:8px 0 0;font:600 14px system-ui,sans-serif;padding:8px 18px;min-height:44px;border:0;border-radius:6px;background:#912338;color:#fff;cursor:pointer;}" +
         ".screen-note button:focus-visible{outline:2px solid #912338;outline-offset:2px;}" +
         "@media print{.screen-note{display:none;} body{margin:0;padding:0;max-width:none;}}</style></head><body>";
-      const whose = ns.lens.agency === "frq" ? "the FRQ's" : (ns.lens.agency && ns.lens.agency !== "other" ? labelOf(AGENCIES, ns.lens.agency) + "'s" : "your agency's");
+      const whose = ns.lens.agency === "frq" ? "the FRQ’s" : (ns.lens.agency && ns.lens.agency !== "other" ? labelOf(AGENCIES, ns.lens.agency) + "'s" : "your agency’s");
       html += forWord
         ? "<div class='Section1'><p class='word-note'>Working draft from the Pathways narrative CV tool (" + esc(TOOL_LABEL) + "), set in " + fontName + " and headed with the section names of " + esc(whose) + " template. Paste each section into the matching section of the current version of " + esc(whose) + " template, keep within the page limit (" + PAGE_LIMIT + "), then delete this paragraph." + (ns.lens.agency === "frq" ? " The CV-FRQ also asks for your name in the header and the document title in the footer; the template has room for both." : "") + "</p>"
         : "<div class='screen-note'><p>Working draft from the Pathways narrative CV tool (" + esc(TOOL_LABEL) + "), set in " + fontName + ". Paste your text into the current version of " + esc(whose) + " template before you submit, and keep within the page limit (" + PAGE_LIMIT + "). This view shows the draft as it was when you opened it; after changes, choose Print view again. This note does not print.</p><button type='button' onclick='window.print()'>Print</button></div>";
@@ -6660,7 +6766,7 @@
     // ── Feedback: questions, session summary, send ─────────────────────────
     // Every question is optional. Answers, notes and the summary stay in ns until the researcher
     // sends them; the draft text itself is never part of what is sent.
-    const FB_PARTS = ["Worked examples", "Checks under each field", "Prompts and help text", "Assembled paragraph",
+    const FB_PARTS = ["Worked examples", "Checks under each part", "Prompts and help text", "Assembled paragraph",
       "Structural read", "Format notes", "Advisor packet", "Guide links"];
     const FB_QUESTIONS = [
       { id: "useful", type: "scale", q: "How useful was this session for starting your narrative CV?", ends: ["1 · Not useful", "5 · Very useful"] },
@@ -6669,9 +6775,9 @@
       { id: "helped", type: "many", q: "Which parts helped? Choose any.", options: FB_PARTS },
       { id: "hindered", type: "many", q: "Which parts got in your way? Choose any.", options: FB_PARTS },
       { id: "example", type: "one", q: "Did the worked example fit your field and the way you work?", options: ["Yes", "Partly", "No", "I did not look at it"] },
-      { id: "checks", type: "one", q: "The checks under each field were…", options: ["Mostly right", "Mixed", "Mostly wrong", "I did not notice them"] },
+      { id: "checks", type: "one", q: "The checks under each part were…", options: ["Mostly right", "Mixed", "Mostly wrong", "I did not notice them"] },
       { id: "stuck", type: "text", q: "Where did you get stuck, or what was unclear?" },
-      { id: "rules", type: "text", q: "Did anything in the tool differ from what you know of your agency's rules?", help: "For example the font, the page limit, links, the section names or what counts as a contribution." },
+      { id: "rules", type: "text", q: "Did anything in the tool differ from what you know of your agency’s rules?", help: "For example the font, the page limit, links, the section names or what counts as a contribution." },
       { id: "change", type: "text", q: "What one change would help most?" },
       { id: "other", type: "text", q: "Anything else you want the team to know?" },
       { id: "name", type: "line", q: "Your name (optional)", help: "Leave it blank to send without a name." }
@@ -6916,7 +7022,7 @@
       c.appendChild(actions);
       c.appendChild(status);
       const mailLine = el("p", "v4-help");
-      mailLine.appendChild(document.createTextNode("Feedback goes to the Pathways to Impact team's project sheet. You can also email it to "));
+      mailLine.appendChild(document.createTextNode("Feedback goes to the Pathways to Impact team’s project sheet. You can also email it to "));
       const mail = el("a", null, FEEDBACK.email); mail.href = "mailto:" + FEEDBACK.email + "?subject=" + encodeURIComponent("Narrative CV tool feedback");
       mailLine.appendChild(mail);
       mailLine.appendChild(document.createTextNode("."));

@@ -80,7 +80,7 @@ async function seed(state, extra) {
 
   console.log("Start page");
   await seed(null);
-  let r = await js(H + "return {intro:!q('#v7-start-intro').hidden, cards:qa('.v7-path').length, title:q('.v7-path-new h3').innerText, load:q('.v7-path-cont h3').innerText, arrows:qa('.v7-path > .v7-arrow').length, rail:!!q('.narrative-progress-panel')};");
+  let r = await js(H + "return {intro:!q('#v7-start-intro').hidden, cards:qa('.v7-path').length, title:q('.v7-path-new h2').innerText, load:q('.v7-path-cont h2').innerText, arrows:qa('.v7-path > .v7-arrow').length, rail:!!q('.narrative-progress-panel')};");
   check("intro shows, two path cards", r.intro && r.cards === 2, r);
   check("cards read Start your draft and Load your draft, one arrow each", r.title === "Start your draft" && r.load === "Load your draft" && r.arrows === 2, r);
   check("no rail on the start page", !r.rail, r);
@@ -98,7 +98,7 @@ async function seed(state, extra) {
     q('#v7-year-' + (new Date().getFullYear()+1)).click(); await w(60);
     q('#st-mid').click(); await w(60); q('#di-health').click(); await w(60); q('#d2-none').click(); await w(60);
     q('#wm-team').click(); await w(60);
-    a.count=q('.v7-qcount .v7-sr').textContent; a.dots=qa('.v7-qcount .v7-dots i').length; a.on=qa('.v7-qcount .v7-dots i.on').length; a.vis=q('.v7-qcount').innerText; a.next=!!nav(/Confirm profile/); a.nextC=!!nav(/Contributions/); a.folded=qa('.v7-ans').length;
+    a.count=q('.v7-qcount .v7-prog-n').textContent; a.dots=qa('.v7-qcount .v7-dots i').length; a.on=qa('.v7-qcount .v7-dots i.on').length; a.vis=q('.v7-qcount').innerText; a.next=!!nav(/Confirm profile/); a.nextC=!!nav(/Contributions/); a.folded=qa('.v7-ans').length;
     setv(q('#v7-comp'),''); await w(60); a.afterClear=qa('.v7-qblock').length; setv(q('#v7-comp'),'Made-up Team Grants'); await w(60);
     return a;`);
   check("rail fades in once Start is chosen, empty, and holds only Set up your profile before confirming", r.railIn && r.done === 0 && r.rail.join("|") === "Set up your profile" && r.groups === 0 && !r.caption && !r.wc, r);
@@ -113,7 +113,7 @@ async function seed(state, extra) {
   check("progress squares: six, all filled, the count is hidden text only", r.dots === 6 && r.on === 6, r);
   check("clearing an answer keeps the questions below it on screen", r.afterClear === 6, r.afterClear);
   r = await js(H + `setv(q('#v7-comp'),''); await w(80); const b=()=>qa('.v7-prof-col .v7-fsq');
-    const a={n:b().length, dis:b().filter(x=>x.disabled).length, on:b().filter(x=>x.classList.contains('is-on')).length, sr:q('.v7-qcount .v7-sr').textContent, cur:qa('.v7-prof-col .v7-fsq[aria-current]').map(x=>x.dataset.for), curBlk:q('.v7-qblock.is-current')?.dataset.pq, tri:getComputedStyle(q('.v7-prof-col .v7-fsq.is-cur i')).borderRightWidth};
+    const a={n:b().length, dis:b().filter(x=>x.disabled).length, on:b().filter(x=>x.classList.contains('is-on')).length, sr:q('.v7-qcount .v7-prog-n').textContent, cur:qa('.v7-prof-col .v7-fsq[aria-current]').map(x=>x.dataset.for), curBlk:q('.v7-qblock.is-current')?.dataset.pq, tri:getComputedStyle(q('.v7-prof-col .v7-fsq.is-cur i')).borderRightWidth};
     a.greenOk=b().filter(x=>x.classList.contains('is-on')&&!x.classList.contains('is-cur')).every(x=>getComputedStyle(x.querySelector('i')).backgroundColor==='rgb(42, 110, 42)');
     const col=q('.v7-prof-col nav.v7-fcol'), lr=q('.v7-prof-list').getBoundingClientRect(); a.clear=col.getBoundingClientRect().left>=lr.right;
     window.scrollTo(0,0); await w(60); b()[3].click(); await w(700);
@@ -143,7 +143,7 @@ async function seed(state, extra) {
   check("scrolling moves the triangle to the question level with its square; the column stays put; a square click brings its question level", r.mid === "pq-2" && r.navTop >= 0 && r.navTop <= 24 && r.click === "pq-4" && Math.abs(r.d) <= 8 && r.on === 6, r);
 
   console.log("Contributions: card pattern");
-  r = await js(H + `const sr0=getComputedStyle(q('.v7-qcount .v7-sr')).position; nav(/Confirm profile/).click(); await w(150);
+  r = await js(H + `const sr0=getComputedStyle(q('.v7-qcount .v7-prog-n .v7-sr')).position; nav(/Confirm profile/).click(); await w(150);
     const a={sr0, h:q('.narrative-stage-header h2').innerText, kick:q('.v4-kicker').innerText, startline:q('.v7-startline')?.innerText, rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]), groups:qa('.v7-rail-group').map(x=>x.innerText.split('\\n')[0]), saved:JSON.parse(localStorage.getItem('ncv-v8')).profileConfirmed, back:getComputedStyle(qa('.narrative-nav .btn')[0]).visibility, primary:q('.v7-ex-btn.is-primary').innerText.replace(/\\n/g,' '), exArrive:!!q('#v7-exbox'), sw:!!q('.v7-switch'), tri:!!q('.v7-ex-btn.is-primary .v7-tri'), built:q('#v7-exbox')?.classList.contains('built'), swatches:qa('#v7-exbox .v7-exbox, #v7-exbox [class*=seg]').length, six:/six parts/.test(document.body.innerText), jobs:/six jobs/i.test(document.body.innerText), states:qa('.v7-card .v7-f').map(f=>f.className.split(' ')[1])};
     a.marks=qa('.v4-flag-btn').length; a.tailored=!!q('.v7-tailored .btn');
     const h=q('[data-f$="-title"] .v7-box'); h.focus(); setv(h,'Made-up headline about a clinic protocol');
@@ -154,7 +154,7 @@ async function seed(state, extra) {
     const ta=q('[data-f$="-title"] .v7-ans'), y1=ta.getBoundingClientRect().top; q('[data-f$="-title"] .v7-box').focus({preventScroll:true}); await w(700);
     a.reopenMove=Math.round(q('[data-f$="-title"] .v7-box').getBoundingClientRect().top-y1); a.qReopen=q('[data-f$="-title"] .v7-q').offsetHeight>0;
     s.focus({preventScroll:true}); await w(700);
-    a.header=q('.v7-card-t').innerText; a.count=q('.v7-card-side .v7-sr').textContent; a.cdots=qa('.v7-card-side .v7-dots i').length; a.con=qa('.v7-card-side .v7-dots i.on').length;
+    a.header=q('.v7-card-t').innerText; a.count=q('.v7-card-side .v7-prog-n').textContent; a.cdots=qa('.v7-card-side .v7-dots i').length; a.con=qa('.v7-card-side .v7-dots i.on').length;
     setv(s,'We think we helped many patients.'); await w(60);
     a.checks=q('[data-f$="-stakes"] .v7-f-checks').innerText;
     setv(s,'A made-up line.\\nA second.\\nA third.\\nA fourth.\\nA fifth.\\nA sixth.'); await w(60); a.h1=s.offsetHeight; setv(s,'We think we helped many patients.'); await w(60);
@@ -181,7 +181,7 @@ async function seed(state, extra) {
   check("the open box starts at three lines and grows with the text", r.h0 < 100 && r.h1 > r.h0, r);
   check("Review and Export stay ghosted and closed below the minimum", r.ghost.join("|") === "Review|Export" && /headline, your role and two more/.test(r.cap || "") && r.stayed && r.ghost3 === 2, r);
   check("they open once one card has a headline, role and two job fields", r.ghostAfter === 0 && !r.capAfter, r);
-  check("header and counter build as you type", /Made-up headline/.test(r.header) && r.count === "1 of 9 answered" && r.cdots === 9 && r.con === 1, r);
+  check("header and counter build as you type", /Made-up headline/.test(r.header) && r.count === "1 of 8 answered" && r.cdots === 8 && r.con === 1, r);
   check("wording checks fire in the open field, with the suggestions note", /we|our/i.test(r.checks) && /suggestions/.test(r.checks), r.checks);
   check("example reopens from its button, coloured", r.exOpen && r.built2, r);
   check("focus stays on the example button after it opens", r.exFocus === "v7-ex-finished", r.exFocus);
@@ -198,7 +198,7 @@ async function seed(state, extra) {
     q('.v7-cards ~ .v7-add').click(); await w(150);
     const st3=q('.v7-card [data-f$="-stakes"] .v7-box'); st3.focus(); setv(st3,'A made-up stakes-only card.'); await w(60);
     return a;`);
-  check("evidence view: What you wrote on top, ten kinds (Exhibition, performance or screening; Community document), none pre-selected", r.top.toLowerCase() === "what you wrote" && r.kinds === 10 && r.pre === 0, r);
+  check("evidence view: What you wrote on top, thirteen kinds (Exhibition, performance or screening; Community document; Preprint; Conference talk or poster; Teaching or curriculum), none pre-selected", r.top.toLowerCase() === "what you wrote" && r.kinds === 13 && r.pre === 0, r);
   check("evidence item saved with its letter", r.row === "1 item: a", r.row);
   check("Add a contribution folds the others and focuses the new headline", r.folds === 1 && r.cards === 1 && /-title$/.test(r.focus || ""), r);
 
@@ -268,7 +268,7 @@ async function seed(state, extra) {
   check("three export cards", r.cards.join("|") === "Download or print|Paste into the template, one section at a time|Keep your work", r.cards);
   check("email nudge with the address printed as text", /impact@concordia\.ca about your experience/.test(r.nudge) && /Email us\s+impact@concordia\.ca/.test(r.nudge), r.nudge);
   check("downloads: Word, text and draft file", r.names[0] === "narrative-cv-draft-frq.doc" && r.names[1] === "narrative-cv-draft-frq.txt" && /^narrative-cv-draft-frq-\d{4}-\d{2}-\d{2}-\d{4}\.json$/.test(r.names[2]), r.names);
-  const psDoc = (r.doc.match(/<h2>The candidate's background and skills \/ <span lang='fr'>Parcours et compétences de la personne candidate<\/span><\/h2>(.*?)<h2>/s) || [])[1] || "";
+  const psDoc = (r.doc.match(/<h2>The candidate’s background and skills \/ <span lang='fr'>Parcours et compétences de la personne candidate<\/span><\/h2>(.*?)<h2>/s) || [])[1] || "";
   check("Word file: the first line, then the statement as one paragraph (V7-34)", (psDoc.match(/<p>/g) || []).length === 2 && /Why clinics drop the protocol\. Two strands carry it\./.test(psDoc), psDoc);
   check("text file: the statement as one paragraph", /Why clinics drop the protocol\. Two strands carry it\./.test(r.txt), r.txt.slice(0, 500));
   check("a contribution with no headline still reaches the Word and text files", /A made-up stakes-only card\./.test(r.doc) && /A made-up stakes-only card\./.test(r.txt), "");
@@ -291,14 +291,14 @@ async function seed(state, extra) {
   check("Load your draft over a draft asks inline first (W-45), then reopens the file on its saved step", /replaces the draft in this browser/.test(r.warn) && r.n === 3 && r.comp === "Made-up Team Grants" && /Export your draft/.test(r.h) && !r.alert, r);
 
   r = await js(H + `window.confirm=()=>true; document.getElementById('v7-home').click(); await w(150);
-    const a={title:q('.v7-path-new h3').innerText, tag:q('.v7-path-new').tagName, btns:qa('.v7-path-new button').length, rs:!!q('.v7-path-reset')};
+    const a={title:q('.v7-path-new h2').innerText, tag:q('.v7-path-new').tagName, btns:qa('.v7-path-new button').length, rs:!!q('.v7-path-reset')};
     q('.v7-path-reset').click(); await w(150);
     a.warn=q('.v7-path-new .v7-warn p, .v7-warn p')?.innerText; a.warnBtns=qa('.v7-warn .btn').map(b=>b.innerText);
     a.keptWhileWarned=(JSON.parse(localStorage.getItem('ncv-v8')||'{}').contributions||[]).some(c=>(c.title||'').trim());
     qa('.v7-warn .btn').find(b=>/Clear my draft/.test(b.innerText)).click(); await w(150); a.cmsg=q('.v7-warn p').innerText;
     a.keptAfterOne=(JSON.parse(localStorage.getItem('ncv-v8')||'{}').contributions||[]).some(c=>(c.title||'').trim());
     qa('.v7-warn .btn').find(b=>/Clear my draft/.test(b.innerText)).click(); await w(250);
-    a.after=q('.v7-path-new h3')?.innerText; a.noReset=!q('.v7-path-reset'); a.saved=(JSON.parse(localStorage.getItem('ncv-v8')||'{}').contributions||[]).some(c=>(c.title||'').trim());
+    a.after=q('.v7-path-new h2')?.innerText; a.noReset=!q('.v7-path-reset'); a.saved=(JSON.parse(localStorage.getItem('ncv-v8')||'{}').contributions||[]).some(c=>(c.title||'').trim());
     return a;`);
   check("a saved draft puts Continue and Reset draft in one card", r.title === "Continue your draft" && r.tag === "DIV" && r.btns === 2 && r.rs, r);
   check("Reset draft opens an inline warning first, Cancel and Clear my draft, and nothing is cleared yet", /^Clear your draft from this browser\? (?:This draft was saved to a file .+ has not changed since\.|(?:This draft was saved to a file .+ since[^.]*\. )?Save a draft file first if you want to keep it\.)$/.test(r.warn) && r.warnBtns.join("|") === "Cancel|Clear my draft" && r.keptWhileWarned, r);
@@ -364,7 +364,7 @@ async function seed(state, extra) {
   check("opening a second example leaves only that one expanded, outlined and shaded, triangle down", r.after[0].exp === "false" && r.after[0].white && r.after[0].border !== "rgb(145, 35, 56)" && r.after[1].exp === "true" && !r.after[1].white && r.after[1].border === "rgb(145, 35, 56)" && /matrix\(0(\.0\d*)?, 1/.test(r.after[1].tri) && r.after[0].tri === "none", r);
   check("the bar reads Profile:, and Change carries a triangle that turns with aria-expanded, no fill at rest", r.prof === "Profile:" && !r.tailored && r.chg0.exp === "false" && r.chg0.tri === "none" && r.chg0.white && r.chg1.exp === "true" && /matrix\(0(\.0\d*)?, 1/.test(r.chg1.tri) && r.chg1.shade !== "rgb(255, 255, 255)" && r.chg2.exp === "false" && r.chg2.tri === "none", r);
   r = await js(H + `const card=q('.v7-card-col'), col=card.querySelector('nav.v7-fcol'), b=()=>qa('.v7-card-col .v7-fsq');
-    const a={label:col.getAttribute('aria-label'), n:b().length, fields:card.querySelectorAll('.v7-f').length, on:b().filter(x=>x.classList.contains('is-on')).length, sr:card.querySelector('.v7-card-side .v7-sr').textContent, names:b().map(x=>x.getAttribute('aria-label'))};
+    const a={label:col.getAttribute('aria-label'), n:b().length, fields:card.querySelectorAll('.v7-f').length, on:b().filter(x=>x.classList.contains('is-on')).length, sr:card.querySelector('.v7-card-side .v7-prog-n').textContent, names:b().map(x=>x.getAttribute('aria-label'))};
     a.written=[...card.querySelectorAll('.v7-f')].filter(f=>f._has()).length + (/item/.test(card.querySelector('.v7-ev-s')?.innerText||'')?1:0);
     a.greenOk=b().filter(x=>x.classList.contains('is-on')&&!x.classList.contains('is-cur')).every(x=>getComputedStyle(x.querySelector('i')).backgroundColor==='rgb(42, 110, 42)');
     a.greyOk=b().filter(x=>!x.classList.contains('is-on')&&!x.classList.contains('is-cur')).every(x=>getComputedStyle(x.querySelector('i')).backgroundColor==='rgb(255, 255, 255)');
@@ -373,7 +373,7 @@ async function seed(state, extra) {
     a.open=q('.v7-f.is-open')?.dataset.f; a.want=tgt.dataset.for; a.focus=document.activeElement.id; a.cur=qa('.v7-card-col .v7-fsq[aria-current]').map(x=>x.dataset.for); a.tri=getComputedStyle(tgt.querySelector('i')).borderRightWidth; a.inView=(()=>{const r=q('.v7-f.is-open').getBoundingClientRect(); return r.top>=0&&r.top<innerHeight;})();
     window.scrollTo(0, card.getBoundingClientRect().top+scrollY+300); await w(100); a.sticky=Math.round(col.getBoundingClientRect().top)-q('.proto-banner').offsetHeight; a.pos=getComputedStyle(col).position;
     return a;`);
-  check("desktop card column: a labelled nav with one button per field, named with its state; the spoken count stays", r.label === "Fields in contribution 1" && r.n === 9 && r.fields === 8 && /^Headline, (written|not written yet)$/.test(r.names[0]) && /^Evidence, /.test(r.names[8]) && /of 9 answered/.test(r.sr), r);
+  check("desktop card column: a labelled nav with one button per field, named with its state; the spoken count stays", r.label === "Fields in contribution 1" && r.n === 9 && r.fields === 8 && /^Headline, (written|not written yet)$/.test(r.names[0]) && /^Evidence, /.test(r.names[8]) && /of 8 answered/.test(r.sr), r);
   check("green squares match the written fields; unwritten squares are grey outlines; the column sits clear of the writing", r.on === r.written && r.greenOk && r.greyOk && r.clear && r.inCard, r);
   check("clicking a square opens and focuses that field; it shows the triangle and aria-current", r.open === r.want && r.focus === r.want && r.cur.join() === r.want && r.tri === "10px" && r.inView, r);
   check("the column is sticky below the top bar while the card is on screen", r.pos === "sticky" && r.sticky >= 0 && r.sticky <= 24, r);
@@ -395,7 +395,7 @@ async function seed(state, extra) {
   // Continue and Load land on Contributions for a confirmed profile (no saved application step).
   await seed(Object.assign({}, fixture, { stageKey: "setup", mode: "compose" }));
   r = await js(H + `const a={conf:JSON.parse(localStorage.getItem('ncv-v8')).profileConfirmed, h0:q('.narrative-stage-header h2')?.innerText, rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]).length};
-    document.getElementById('v7-home').click(); await w(150); a.card=q('.v7-path-new h3').innerText; a.welcome=!!q('.v7-welcome, .v7-back-banner');
+    document.getElementById('v7-home').click(); await w(150); a.card=q('.v7-path-new h2').innerText; a.welcome=!!q('.v7-welcome, .v7-back-banner');
     q('.v7-path-go').click(); await w(200); a.h=q('.narrative-stage-header h2').innerText; return a;`);
   check("an old draft with application content migrates to a confirmed profile, rail shows the application", r.conf === true && /Most significant/.test(r.h0) && r.rail === 5, r);
   check("Continue resumes to Contributions for a confirmed profile", r.card === "Continue your draft" && /Most significant/.test(r.h), r);
@@ -450,7 +450,7 @@ async function seed(state, extra) {
   r = await js(H + `rail('Contributions').click(); await w(150); const card=q('.v7-card-col'), h=card.querySelector('.v7-card-h');
     window.scrollTo(0, card.getBoundingClientRect().top+scrollY+300); await w(150);
     return {col:getComputedStyle(card.querySelector('.v7-fcol')).display, pos:getComputedStyle(h).position, top:Math.round(h.getBoundingClientRect().top), bar:q('.proto-banner').offsetHeight, dots:h.querySelectorAll('.v7-dots i').length, sw:document.documentElement.scrollWidth, right:Math.round(h.getBoundingClientRect().right)};`);
-  check("phone: the card header row (title and squares) sticks under the top bar, no column, no sideways scroll", r.col === "none" && r.pos === "sticky" && Math.abs(r.top - r.bar) <= 1 && r.dots === 9 && r.sw <= 375 && r.right <= 375, r);
+  check("phone: the card header row (title and squares) sticks under the top bar, no column, no sideways scroll", r.col === "none" && r.pos === "sticky" && Math.abs(r.top - r.bar) <= 1 && r.dots === 8 && r.sw <= 375 && r.right <= 375, r);
   console.log("Phone layout and CSS (walkthrough batch 2)");
   r = await js(H + `rail('Contributions').click(); await w(150); const word='https://example.org/'+'x'.repeat(100); const a={len:word.length};
     const st=q('.v7-card [data-f$="-stakes"] .v7-box'); st.focus(); setv(st,word); await w(100);
@@ -542,8 +542,8 @@ async function seed(state, extra) {
     a.rmP={focus:document.activeElement.id, live:q('#v7-live').textContent};
     return a;`);
   check("the card's column comes after its fields in the Tab order", r.colLast, r);
-  check("no focusable control inside a closed field; the role levels show once the field opens", r.levels === 3 && r.hidden.length >= 3 && r.hidden.every(v => v === "hidden") && r.openLevels.every(v => v === "visible"), r);
-  check("the last count is announced after the throttle window", r.count === "2 of 9 answered", r.count);
+  check("no focusable control inside a closed field; the role levels show once the field opens", r.levels === 6 && r.hidden.length >= 3 && r.hidden.every(v => v === "hidden") && r.openLevels.every(v => v === "visible"), r);
+  check("the last count is announced after the throttle window", r.count === "2 of 8 answered", r.count);
   check("+ Add evidence focuses the first kind card; the strip's Edit has its own id and name", r.ev.kind && r.ev.first && /^ev-edit-/.test(r.ev.editId) && r.ev.dupe === 0 && /^Edit the writing for contribution 1$/.test(r.ev.editName), r.ev);
   check("+ Add another item focuses the new item's first kind card; removing an item is announced", r.add.kind && r.add.item === 1 && r.evRm === "Evidence item b removed.", r);
   check("the strip's Edit closes the evidence view with focus in the open field", r.editBack, r);
@@ -706,8 +706,8 @@ async function seed(state, extra) {
       rail('Mentorship').click(); await w(150); a.h=q('h2').innerText; a.ks=qa('[data-f^="m-"] .v7-f-k').map(x=>x.textContent); a.optional=a.ks.includes('Who else you mentor (optional)');
       rail('Background and skills').click(); await w(150); a.fit=(q('[data-f="ps-programFit"] .v7-q')||{}).innerText||'';
       return a;`);
-    check("CV-FRQ: the Contributions note names the background and skills section, not the personal statement (r2-b-1)", /after the candidate's background and skills/.test(r.nav) && !/personal statement/i.test(r.nav), r.nav);
-    check("a chosen kind folds to one line with Change, which reopens the ten cards on the chosen one (r1-b-5)", r.rows.length === 2 && /^Kind: Exhibition, performance or screening · Change$/.test(r.rows[0]) && r.grid === 0 && r.open === 10 && r.focus === "true", r);
+    check("CV-FRQ: the Contributions note names the background and skills section, not the personal statement (r2-b-1)", /after the candidate’s background and skills/.test(r.nav) && !/personal statement/i.test(r.nav), r.nav);
+    check("a chosen kind folds to one line with Change, which reopens the kind cards on the chosen one (r1-b-5)", r.rows.length === 2 && /^Kind: Exhibition, performance or screening · Change$/.test(r.rows[0]) && r.grid === 0 && r.open === 13 && r.focus === "true", r);
     check("early career: Who else you mentor is optional (r2-b-8); a competition naming FRQSC gets no (FRQ) bracket (r2-b-10)", r.optional && !/\(FRQ\)/.test(r.fit), r);
     await seed(Object.assign({}, st3, { lens: Object.assign({}, st3.lens, { agency: "sshrc", format: "tcv" }), stageKey: "review" }));
     r = await js(H + `await w(150); const a={links:qa('.v7-glance a').map(x=>x.innerText)};
@@ -720,7 +720,7 @@ async function seed(state, extra) {
       return a;`);
     check("TCV in a creative field: a press link is listed to take out, the video of the work is not (r2-b-3)", r.links.some(t => /^Contribution 1: Evidence$/.test(t)) && /Contribution 1: Evidence/.test(r.note), r);
     check("Export names the links still in the draft (r2-a-16) and a download names its file (r2-a-4)", /still in your draft/.test(r.note) && /^Downloaded narrative-cv-draft-sshrc\.doc\.$/.test(r.dl), r);
-    check("a trainee in the health system prints as a sentence (r2-a-2)", /A master's student I trained now works at a made-up health authority \(Nurse manager\)\./.test(r.mentor), r.mentor);
+    check("a trainee in the health system prints as a sentence (r2-a-2)", /A master’s student I trained now works at a made-up health authority \(Nurse manager\)\./.test(r.mentor), r.mentor);
   }
 
   console.log("Audit loop, round 3: the walkthrough's remaining items");
@@ -797,7 +797,7 @@ async function seed(state, extra) {
       qa('#v7-chg-panel .btn-primary').find(b=>/Confirm/.test(b.innerText)).click(); await w(150);
       a.need=!!q('.v7-chg-need') && !!q('#v7-chg-panel');
       return a;`);
-    check("arrow keys move through the evidence kinds with the chooser open and say the kind; Enter folds it (r3-a-1)", r.stillOpen === 10 && r.focusKind === "radio" && r.checked === "true" && r.folded && /Kind: /.test(r.live), r);
+    check("arrow keys move through the evidence kinds with the chooser open and say the kind; Enter folds it (r3-a-1)", r.stillOpen === 13 && r.focusKind === "radio" && r.checked === "true" && r.folded && /Kind: /.test(r.live), r);
     check("a removed evidence item can be restored with Undo (r3-b-6); boxes take the text's direction (r3-b-13)", r.undo && r.items1 === 1 && r.items2 === 2 && r.dir === "auto", r);
     check("an unbroken 250-character headline wraps on Review and the move buttons use a short name (r3-b-1, r3-b-2)", r.sw && r.mv < 90, r);
     check("the Change panel asks for a work mode before it confirms (r3-b-9)", r.need, r);
@@ -812,13 +812,13 @@ async function seed(state, extra) {
       q('#wm-team').click(); await w(100); q('#wm-solo').click(); await w(120);
       const a={wm:JSON.parse(localStorage.getItem('ncv-v8')).lens.workMode.join(','), live1:q('#v7-live').textContent};
       qa('.narrative-nav .btn').find(b=>/Confirm profile/.test(b.innerText)).click(); await w(200);
-      history.back(); await w(300); a.back=(q('.v7-path-new h3')||{}).innerText||'';
+      history.back(); await w(300); a.back=(q('.v7-path-new h2')||{}).innerText||'';
       history.forward(); await w(300); a.fwd=q('h2').innerText;
       history.pushState(null,'','#profile'); history.back(); await w(250); history.forward(); await w(300);
       a.after=q('h2').innerText; a.focus=document.activeElement.tagName; a.live=q('#v7-live').textContent; a.hash=location.hash;
       document.getElementById('v7-home').click(); await w(150); q('.v7-path-reset').click(); await w(100);
       qa('.v7-warn .btn-primary')[0].click(); await w(100); qa('.v7-warn .btn-primary')[0].click(); await w(250);
-      history.back(); await w(300); a.afterReset=(q('.v7-path-new h3')||{}).innerText; a.mode=JSON.parse(localStorage.getItem('ncv-v8')||'{}').mode;
+      history.back(); await w(300); a.afterReset=(q('.v7-path-new h2')||{}).innerText; a.mode=JSON.parse(localStorage.getItem('ncv-v8')||'{}').mode;
       return a;`);
     check("Team-based and Largely solo replace each other, and the change is spoken (r4-a-4)", r.wm === "solo" && /Team-based cleared/.test(r.live1), r);
     check("Confirm profile replaces Setup's history entry, so Back goes to the start page and Forward returns (H-1)", r.back === "Continue your draft" && /Most significant/.test(r.fwd), r);
@@ -929,9 +929,9 @@ async function seed(state, extra) {
       qa('.v7-warn .btn-primary')[0].click(); await w(100); qa('.v7-warn .btn-primary')[0].click(); await w(250); L('reset');
       q('.v7-path-new').click(); await w(200); L('new'); return {log, h0:q('h2').innerText, len:history.length, st:JSON.stringify(history.state)};`);
     await js(`history.back(); return 1;`); await sleep(500);
-    r = Object.assign(r, await js(H + `return {b1:(q('.v7-path-new h3')||{}).innerText||q('h2')?.innerText, st1:JSON.stringify(history.state), hash1:location.hash};`));
+    r = Object.assign(r, await js(H + `return {b1:(q('.v7-path-new h2')||{}).innerText||q('h2')?.innerText, st1:JSON.stringify(history.state), hash1:location.hash};`));
     await js(`history.back(); return 1;`); await sleep(700);
-    r = Object.assign(r, await js(H + `return {b2:(q('.v7-path-new h3')||{}).innerText||q('h2')?.innerText, live:q('#v7-live').textContent, here:location.pathname};`));
+    r = Object.assign(r, await js(H + `return {b2:(q('.v7-path-new h2')||{}).innerText||q('h2')?.innerText, live:q('#v7-live').textContent, here:location.pathname};`));
     check("after a reset and a new draft, Back never re-enters the earlier draft's steps or leaves the tool (K-1)", /Set up your profile/.test(r.h0) && /draft/.test(r.b1) && /draft/.test(r.b2) && /narrative-cv-prototype-v8/.test(r.here), r);
     const stA = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
     stA.contributions[0].roleLine = "We co-designed the made-up survey with the partners.";
@@ -1197,7 +1197,7 @@ async function seed(state, extra) {
     check("trainee sentences: a unit with no organization, a lowered article, 'Now a…', 'Works at…' and 'Teaching…' all print as sentences (r10-a-1, r10-a-3, r10-a-4)",
       /is now at a university \(History\) and received a provincial made-up scholarship \(2022\)\./.test(r.txt) && /now works in government and is a lecturer at a made-up CEGEP\./.test(r.txt)
       && /An undergraduate researcher I trained now works at the made-up provincial archives\./.test(r.txt) && /A doctoral student I trained is teaching history at a made-up CEGEP\./.test(r.txt), r.txt.slice(r.txt.indexOf("Totals"), r.txt.indexOf("Totals") + 700));
-    check("each person card shows how its sentence prints; the prize instruction is a help line and the box takes no phone capital (r10-a-4, r10-a-12)", /Prints as: A master's student I trained is now at a university \(History\)/.test(r.pv) && r.pzHelp && r.cap === "none", { pv: r.pv.slice(0, 300), pzHelp: r.pzHelp, cap: r.cap });
+    check("each person card shows how its sentence prints; the prize instruction is a help line and the box takes no phone capital (r10-a-4, r10-a-12)", /Prints as: A master’s student I trained is now at a university \(History\)/.test(r.pv) && r.pzHelp && r.cap === "none", { pv: r.pv.slice(0, 300), pzHelp: r.pzHelp, cap: r.cap });
     check("'us' is not read as 'we'; largely solo work with a partner asks for your part and the partner (r10-a-5, r10-a-6)", !/“we”/.test(r.us) && /who was the partner\?$/.test(r.role), { us: r.us, role: r.role });
     // r10-b: a low-vision engineer with the browser's text size at 28 px.
     const se = base(); se.lens = Object.assign({}, se.lens, { discipline: "stem", discipline2: "", workMode: ["team", "industry"] });
@@ -1670,6 +1670,127 @@ async function seed(state, extra) {
     r = await js(H + `document.documentElement.style.fontSize='24px'; await w(300); return {sw:document.documentElement.scrollWidth, card:!!q('.v8-tester')};`);
     check("a11y: the sign-up card at 320 px with 24 px text has no sideways scroll", r.card && r.sw <= 320, r);
     await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
+  }
+
+  console.log("Prem's answers of 2026-11-03 (Q-7, Q-10 to Q-15, Q-17, Q-20, Q-21, Q-24, Q-26)");
+  {
+    const at = (stageKey, patch) => { const st = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey, ui: { profileNote: false } }); if (patch) patch(st); return st; };
+    const labels = `return qa('svg[role=img]').map(x=>x.getAttribute('aria-label'));`;
+
+    // Q-20: six role levels for every researcher, saved by their value; the Your role chart names them.
+    await seed(at("contrib"));
+    r = await js(H + `const rl=q('[data-f$="-roleLine"] .v7-box'); rl.focus(); await w(300);
+      const ms=qa('[data-f$="-roleLine"] .v7-mini'); const a={labels:ms.map(m=>m.innerText), roles:ms.map(m=>m.getAttribute('role')), group:q('[data-f$="-roleLine"] .v7-minis')?.getAttribute('role')};
+      ms[3].click(); await w(150); a.saved=JSON.parse(localStorage.getItem('ncv-v8')).contributions[0].roleMode;
+      a.checked=qa('[data-f$="-roleLine"] .v7-mini').map(m=>m.getAttribute('aria-checked')); return a;`);
+    check("Q-20: the role question offers six levels, the three new ones included, as radios in a radio group",
+      r.labels.join("|") === "I led it|I co-led it|I contributed a specific part|The partners led it, and I took part|I made it with others|I did it on my own" && r.roles.every(x => x === "radio") && r.group === "radiogroup", r);
+    check("Q-20: choosing a new level saves its value and checks only that radio", r.saved === "partnerled" && r.checked.filter(x => x === "true").length === 1 && r.checked[3] === "true", r);
+    await seed(at("review", st => { st.contributions[0].roleMode = "cocreated"; st.contributions[1].roleMode = "led"; st.contributions[1].roleLine = st.contributions[1].roleLine || "Made-up role line."; }));
+    r = await js(H + labels);
+    check("Q-20: the Your role chart counts a new level beside an old one, and an older draft's level still loads", r.some(l => /^Your role: .*Led 1.*Made with others 1/.test(l || "")), r.filter(l => /Your role/.test(l)));
+
+    // Q-21: four more destinations, for every field; the sentence and the chart use them.
+    await seed(at("mentor", st => { st.lens.discipline = "stem"; }));
+    r = await js(H + `return [...q('#v7-pw0').options].map(o=>o.text);`);
+    check("Q-21: Where are they now? lists the four new destinations, before Other, in a STEM profile too",
+      ["Independent or self-employed artist", "College, CEGEP or school", "School or school board", "Long-term care or seniors’ organization"].every(t => r.includes(t)) && r[r.length - 1] === "Other" && !r.some(t => /long-term care, public health/.test(t)), r);
+    await seed(at("review", st => { st.mentees[1].kind = "artist"; st.mentees[1].org = ""; st.mentees[1].unit = ""; st.mentees[2].kind = "ltc"; st.mentees[2].org = ""; st.mentees[2].unit = ""; }));
+    r = await js(H + `return {text:q('.v7-draft-body').innerText, labels:qa('svg[role=img]').map(x=>x.getAttribute('aria-label'))};`);
+    check("Q-21: a trainee in a new destination reads as a sentence in the draft, and the chart counts it",
+      /now works as an independent artist/.test(r.text) && /now works in long-term care or a seniors’ organization/.test(r.text) && r.labels.some(l => /Self-employed artist 1/.test(l || "") && /Long-term care or seniors 1/.test(l || "")), { labels: r.labels });
+
+    // Q-24: three more evidence kinds; a preprint has its own; the Review chart counts them.
+    await seed(at("contrib"));
+    r = await js(H + `const o=q('[id^=ev-open-]'); if(o){o.click(); await w(200);} const ad=q('[id^=ev-add-]'); if(ad){ad.click(); await w(200);} return qa('.v7-ev-item:last-child .v7-kind, .v7-ev-item .v7-kind').filter((k,i,arr)=>k.closest('.v7-ev-item')===arr[arr.length-1].closest('.v7-ev-item')).map(k=>k.innerText.split(String.fromCharCode(10))[0]);`);
+    check("Q-24: the evidence view offers Preprint, Conference talk or poster and Teaching or curriculum, before Other",
+      ["Preprint", "Conference talk or poster", "Teaching or curriculum"].every(t => r.some(x => x.indexOf(t) === 0)) && /^Other/.test(r[r.length - 1]) && r.length === 13, r);
+    await seed(at("review", st => { st.contributions[0].evidence = [{ id: "e1", type: "Preprint", text: "A made-up preprint, 2026.", note: "" }, { id: "e2", type: "Teaching or curriculum", text: "A made-up course, since 2024.", note: "" }]; }));
+    r = await js(H + labels);
+    check("Q-24: the Evidence by type chart counts the new kinds", r.some(l => /^Evidence by type: .*Preprint 1.*Teaching or curriculum 1/.test(l || "")), r.filter(l => /Evidence/.test(l || "")));
+
+    // Q-13: the count covers the required parts, so a finished card reads "8 of 8", as text beside the squares.
+    await seed(at("contrib", st => { const c = st.contributions[0]; ["title", "stakes", "roleLine", "activities", "outputs", "outcomes", "impact"].forEach(k => { c[k] = c[k] || "Made-up text for " + k + "."; }); c.translational = ""; c.evidence = [{ id: "e1", type: "Funding", text: "A made-up grant.", note: "" }]; }));
+    r = await js(H + `const p=q('.v7-card .v7-prog'); return {txt:p.querySelector('.v7-prog-n')?.textContent, sr:p.querySelector('.v7-prog-n .v7-sr')?.textContent, sq:p.querySelector('.v7-dots')?.getAttribute('aria-hidden'), n:p.querySelectorAll('.v7-dots i').length, vis:getComputedStyle(p.querySelector('.v7-prog-n')).display};`);
+    check("Q-13: a card with every required part and no One moment reads 8 of 8 beside eight squares; the squares are hidden from screen readers, the text says answered", r.txt === "8 of 8 answered" && r.sr === " answered" && r.sq === "true" && r.n === 8 && r.vis !== "none", r);
+    r = await js(H + `const s=q('.v7-card .v7-prog-n .v7-sr'); return getComputedStyle(s).position;`);
+    check("Q-13: the word answered is read out only (visually hidden)", r === "absolute", r);
+
+    // Q-10: an optional Draft name on the Start card, with the date the draft last changed.
+    await seed(at("start", st => { st.contentAt = Date.UTC(2026, 0, 15, 12); }));
+    r = await js(H + `const i=q('#v7-draft-name'); const a={lab:q('label[for="v7-draft-name"]')?.innerText, desc:i&&document.getElementById(i.getAttribute('aria-describedby'))?.innerText, h:q('.v7-path-new h2').innerText};
+      setv(i,'SSHRC Insight Grant, fall'); await w(100); a.saved=JSON.parse(localStorage.getItem('ncv-v8')); return a;`);
+    check("Q-10: the Start card has a labelled, optional Draft name, described by the date the draft was last updated", r.lab === "Draft name (optional)" && r.desc === "Last updated 15 January 2026." && r.h === "Continue your draft", { lab: r.lab, desc: r.desc, h: r.h });
+    check("Q-10: typing a name saves it and leaves the last-updated date alone", r.saved.draftName === "SSHRC Insight Grant, fall" && r.saved.contentAt === Date.UTC(2026, 0, 15, 12), { name: r.saved.draftName, at: r.saved.contentAt });
+    await go(PAGE());
+    r = await js(H + `await w(200); return q('.v7-path-new h2').innerText;`);
+    check("Q-10: after a reload the card is headed with the name", r === "Continue SSHRC Insight Grant, fall", r);
+
+    // Q-15, Q-26: Save a draft file in every step's bottom row (Export has its own), with the draft name in the file name.
+    const saves = {};
+    for (const k of ["contrib", "mentor", "ps", "review", "export"]) {
+      await seed(at(k, st => { st.draftName = "SSHRC Insight Grant, fall"; }));
+      saves[k] = await js(H + `await w(150); const b=q('.narrative-nav .v7-nav-save'); if(!b) return null; URL.createObjectURL=()=>'blob:x'; HTMLAnchorElement.prototype.click=function(){}; b.click(); await w(100);
+        return {label:b.innerText, note:q('.narrative-nav .v7-nav-saved').innerText, live:q('.narrative-nav .v7-nav-saved').getAttribute('aria-live'), rail:qa('.v7-rail-foot button, .narrative-progress-panel button').map(x=>x.innerText).filter(t=>/Save/.test(t))};`);
+    }
+    check("Q-15: every step but Export has Save a draft file in its bottom row; saving says so in a polite live note", ["contrib", "mentor", "ps", "review"].every(k => saves[k] && saves[k].label === "Save a draft file" && saves[k].live === "polite") && saves.export === null, saves);
+    check("Q-10: the saved file is named with the draft name", /^Saved narrative-cv-draft-sshrc-insight-grant-fall-.*\.json to your downloads\.$/.test(saves.contrib.note), saves.contrib.note);
+    check("Q-26: the rail's button reads Save a draft file too", saves.review.rail.length >= 1 && saves.review.rail.every(t => t === "Save a draft file"), saves.review.rail);
+
+    // Q-11, Q-12: on Review, each order card shows its words and its share of the page budget, with Save for later and Delete.
+    await seed(at("review"));
+    r = await js(H + `const oc=qa('.v7-order .v7-ocard'); const t0=oc[0].querySelector('.v7-ot').innerText;
+      const a={n:oc.length, ow:oc[0].querySelector('.v7-ow').innerText, btns:[...oc[0].querySelectorAll('.v7-oacts button')].map(b=>b.innerText+'|'+b.getAttribute('aria-label')), t0};
+      oc[0].querySelector('.v7-oacts button').click(); await w(200);
+      a.focus=document.activeElement.innerText; a.focusIn=!!document.activeElement.closest('.v7-later'); a.live=q('#v7-live').textContent;
+      window.__t0=t0; a.later=qa('.v7-later .v7-ot').map(x=>x.innerText); a.order=qa('.v7-order > .v7-ocard').length; a.draft=q('.v7-draft-body').innerText.includes(t0);
+      a.st=JSON.parse(localStorage.getItem('ncv-v8')).contributions.map(c=>!!c.later); a.lh=q('.v7-later h4')?.innerText; return a;`);
+    check("Q-12: an order card shows its words and its share of the five-page budget", r.n === 2 && /^[\d,]+ words? · (about \d+%|under 1%) of the 5-page budget · \d+ evidence$/.test(r.ow), r.ow);
+    check("a11y: Save for later and Delete name the contribution they act on", r.btns.length === 2 && /^Save for later\|Save for later: /.test(r.btns[0]) && /^Delete\|Delete: /.test(r.btns[1]), r.btns);
+    check("Q-11: Save for later keeps the contribution, takes it out of the order and the draft, and lists it under Saved for later",
+      r.later.length === 1 && r.later[0] === r.t0 && r.order === 0 && !r.draft && r.st.join() === "true,false" && r.lh === "Saved for later", r);
+    check("a11y: after Save for later, focus is on its Put back button and the live region says it does not print", r.focus === "Put back" && r.focusIn && /saved for later\. It stays in your draft and does not print/.test(r.live), r);
+    r = await js(H + `q('.v7-later .v7-oacts button').click(); await w(200); const st=JSON.parse(localStorage.getItem('ncv-v8')).contributions;
+      return {t0:window.__t0, later:!!q('.v7-later'), order:qa('.v7-order > .v7-ocard').map(x=>x.querySelector('.v7-ot').innerText), st:st.map(c=>!!c.later), live:q('#v7-live').textContent, focus:document.activeElement.innerText};`);
+    check("Q-11: Put back returns it to the order, in last place", !r.later && r.order.length === 2 && r.order[1] === r.t0 && r.st.join() === "false,false" && /put back, last in the order/.test(r.live) && r.focus === "Save for later", r);
+    r = await js(H + `const oc=qa('.v7-order > .v7-ocard')[0]; const t=oc.querySelector('.v7-ot').innerText; oc.querySelector('.v7-odel').click(); await w(100);
+      const wq=q('.v7-warn p')?.innerText, wf=document.activeElement.classList.contains('v7-warn'); q('.v7-warn .btn-primary').click(); await w(200);
+      return {t, wq, wf, n:JSON.parse(localStorage.getItem('ncv-v8')).contributions.length, focus:document.activeElement.id, live:q('#v7-live').textContent};`);
+    check("Q-11: Delete asks first, naming the words, then removes the contribution; focus goes to the order heading", /^Delete “.*” with its [\d,]+ words?\? It leaves the draft\.$/.test(r.wq || "") && r.wf && r.n === 1 && r.focus === "v7-oc-t" && /deleted\./.test(r.live), r);
+    await seed(at("contrib", st => { st.contributions[1].later = true; }));
+    r = await js(H + `return {fold:qa('.v7-fold').map(f=>f.getAttribute('aria-label')+' / '+(f.querySelector('.v7-fold-meta')||{}).innerText)};`);
+    check("Q-11: in Contributions a contribution saved for later says so on its row", r.fold.some(t => /saved for later/.test(t) && /Saved for later ·/.test(t)), r);
+    await seed(at("review", st => { st.contributions[0].later = "yes"; }));
+    r = await js(H + `return {order:qa('.v7-order > .v7-ocard').length, later:!!q('.v7-later')};`);
+    check("Q-11: a later flag that is not true (a hand-edited file) is read as not saved for later", r.order === 2 && !r.later, r);
+
+    // Q-14: profile pills wrap onto a second line on a narrow screen, with no fade.
+    await send("Emulation.setDeviceMetricsOverride", { width: 360, height: 800, deviceScaleFactor: 1, mobile: true });
+    await seed(at("contrib", st => { st.lens.workMode = ["community", "team"]; st.lens.discipline2 = "humanities"; }));
+    r = await js(H + `await w(200); const p=q('.v7-tailored-pills'); const c=getComputedStyle(p); const tops=[...new Set([...p.querySelectorAll('.v7-pill')].map(x=>Math.round(x.getBoundingClientRect().top)))];
+      return {wrap:c.flexWrap, mask:c.maskImage||c.webkitMaskImage, lines:tops.length, over:p.scrollWidth>p.clientWidth+1, sw:document.documentElement.scrollWidth};`);
+    check("Q-14: at 360 px the profile pills wrap onto more lines, unclipped and with no fade", r.wrap === "wrap" && (!r.mask || r.mask === "none") && r.lines >= 2 && !r.over && r.sw <= 360, r);
+    await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
+
+    // Q-17: no heading level skips on any page of the tool.
+    const HS = `const v=e=>e.getClientRects().length>0; return [...document.querySelectorAll('h1,h2,h3,h4,h5,h6')].filter(v).map(h=>+h.tagName[1]);`;
+    const skips = {};
+    await seed(null); skips.start = await js(HS);
+    for (const k of ["setup", "contrib", "mentor", "ps", "review", "export"]) { await seed(at(k, st => { if (k === "setup") st.profileConfirmed = false; })); skips[k] = await js(HS); }
+    const bad = Object.entries(skips).filter(([, hs]) => hs.some((l, i) => l > (i ? hs[i - 1] : 0) + 1)).map(([k]) => k);
+    check("Q-17: from the start page to Export, no heading level is skipped; the path cards are h2 under the h1", !bad.length && skips.start.join() === "1,2,2", { bad, start: skips.start });
+
+    // Q-7: the tool's own words use curly apostrophes.
+    await seed(at("mentor"));
+    r = await js(H + `return [...document.querySelectorAll('label, legend, option, button, h1, h2, h3, h4, .v4-help, .v7-help, .v7-quiet, .v7-field-label')].map(e=>e.innerText).filter(t=>/[A-Za-z]'[A-Za-z]/.test(t));`);
+    check("Q-7: no straight apostrophe in the Mentorship step's labels, options, buttons and help", r.length === 0, r.slice(0, 5));
+    r = await js(H + `return [...q('#v7-ps0').options].map(o=>o.text).filter(t=>/Master/.test(t));`);
+    check("Q-7: Master’s is written with a curly apostrophe", r.length === 1 && r[0] === "Master’s", r);
+
+    // Q-26: the check messages say part, not field.
+    await seed(at("ps", st => { st.contributions = [Object.assign({}, st.contributions[0], { title: "", stakes: "", roleLine: "", roleMode: "", activities: "", outputs: "", outcomes: "", impact: "", evidence: [] })]; }));
+    r = await js(H + `return (q('#v7-next-why')||{}).innerText;`);
+    check("Q-26: the locked Review note counts answered parts", /two more answered parts\./.test(r || ""), r);
   }
 
   console.log("Network and errors");

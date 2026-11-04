@@ -63,3 +63,29 @@ INFERRED, for Prem to confirm or change:
 - the Export questions sit at the top of Export;
 - the privacy wording on the card (Prem, 2026-11-03: the line on what is sent and where it is stored was taken out; the card says the information is deleted when this version launches at the end of the year, and gives impact@concordia.ca for questions);
 - the address `research-8kh.pages.dev` (a custom domain can replace it later).
+
+## Prem's answers of 2026-11-03, built in V8
+
+The answers are in [`../ncv_tool_v7/questions-for-prem.md`](../ncv_tool_v7/questions-for-prem.md), under Answered.
+
+- **Q-26:** check messages say "part"; every save button reads "Save a draft file".
+- **Q-7:** the tool's own strings use curly apostrophes. The prestige-term patterns keep straight ones, so they still match what a researcher types.
+- **Q-20:** three more role levels for every researcher: "The partners led it, and I took part" (`partnerled`), "I made it with others" (`cocreated`) and "I did it on my own" (`alone`). The Your role chart lists all six.
+- **Q-21:** four more destinations for every field. Long-term care moved out of the health-system label into its own option.
+- **Q-24:** Preprint, Conference talk or poster, and Teaching or curriculum. They have their own hints, and the Peer-reviewed and Other hints no longer send preprints to Other.
+- **Q-13:** a card counts its required parts only (8), shown as "8 of 8" beside the squares.
+- **Q-10:** an optional Draft name on the Continue card, described by "Last updated" and the date the draft's content last changed (`contentAt`). The name heads the card and goes into the draft file's name.
+- **Q-11, Q-12:** on Review, each order card shows its words and its share of the five-page budget, with two choices:
+  - Save for later: the contribution is kept, does not print or count, and is listed under Saved for later. Put back returns it last in the order.
+  - Delete: asks first, then removes the contribution.
+- **Q-15:** Save a draft file in each step's bottom row (Export has its own).
+- **Q-14:** profile pills wrap on narrow screens.
+- **Q-17:** the start page's path cards are h2, so no heading level skips. They look the same as before, and `styles.css` is unchanged.
+
+INFERRED, for Prem to confirm or change:
+- the short chart labels for the new levels and destinations;
+- the hint wording for the new evidence kinds;
+- "College, CEGEP or school" and "School or school board" both name schools; they are kept as Prem approved them;
+- the Draft name sits on the Continue card, once a draft exists;
+- the share is of the whole five-page budget;
+- Delete has no Undo; it asks first instead.
