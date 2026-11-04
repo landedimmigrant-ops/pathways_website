@@ -14,6 +14,7 @@ This folder's `index.html` is a thin redirect.
 | **Decisions so far** (DECIDED vs INFERRED) | [`../narrative-cv-v7-decisions.md`](../narrative-cv-v7-decisions.md) |
 | **Audit loop log and findings** | [`../ncv_tool_v7/audit-loop-2026-10-31.md`](../ncv_tool_v7/audit-loop-2026-10-31.md) |
 | **Open questions for Prem** | [`../ncv_tool_v7/questions-for-prem.md`](../ncv_tool_v7/questions-for-prem.md) |
+| **Version history** (8.0 to 8.5; which one is on Cloudflare) | [`CHANGELOG.md`](CHANGELOG.md) |
 | **Related versions** | V7 (frozen, the version before the audit loop): [`../ncv_tool_v7/README.md`](../ncv_tool_v7/README.md) |
 
 Storage: the draft lives in `localStorage` under `ncv-v8`, so V7 and V8 can be tested side by side in one browser.

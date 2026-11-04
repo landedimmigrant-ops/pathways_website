@@ -639,8 +639,10 @@ async function seed(state, extra) {
     r = await js(H + `rail('Export').click(); await w(150); const ow=window.open; let doc='';
       window.open=()=>({document:{write:(h)=>{doc=h;}, close(){}}}); qa('.v7-quiet-btn').find(b=>/Print view/.test(b.innerText)).click(); await w(50);
       window.open=()=>null; qa('.v7-quiet-btn').find(b=>/Print view/.test(b.innerText)).click(); await w(50); const blocked=q('.v7-actions .v7-copied').innerText; window.open=ow;
-      return {vp:/name='viewport'/.test(doc), lang:/<html lang='en'>/.test(doc), btn:/window.print\(\)/.test(doc), label:/\(V8 beta\)/.test(doc) && !/forked/.test(doc), blocked};`);
+      return {vp:/name='viewport'/.test(doc), lang:/<html lang='en'>/.test(doc), btn:/window.print\(\)/.test(doc), label:/\\(V8\\.\\d+ beta\\)/.test(doc) && !/forked/.test(doc), blocked};`);
     check("print view: viewport, lang, a Print button and the short tool label; a blocked window says so (W-21, F-7)", r.vp && r.lang && r.btn && r.label && /blocked the print view/.test(r.blocked), r);
+    r = await js(`const t = document.getElementById('v8-version'); return { text: t && t.textContent, shown: !!t && t.offsetParent !== null, title: document.title };`);
+    check("the version number shows under the tool and in the tab title", /^Version 8\.\d+ beta, \d{1,2} [A-Z][a-z]+ 20\d\d$/.test(r.text) && r.shown && /V8\.\d+ beta/.test(r.title), r);
     // Checks under fields: a pasted list is flagged; "could not" is not a hedge; the role line covers "we".
     await seed(base);
     r = await js(H + `await w(150); const card=q('.v7-card-col'); const box=(k)=>card.querySelector('[data-f$="-'+k+'"] .v7-box');
@@ -685,7 +687,7 @@ async function seed(state, extra) {
     check("Word: the headline on its own line, The problem or question then the role line in roman, superscript a, b, no kind labels (W-14, W-16, W-17)", r.doc.includes("<p class='ctitle' style='margin:0'>1. Made-up T</p><p>" + body + "<sup>a, b</sup>") && !/Peer-reviewed|\(Other\)|<em>/.test(r.doc), r.doc.slice(r.doc.indexOf("ctitle"), r.doc.indexOf("ctitle") + 300));
     check("on-screen draft: the same order with superscript letters and no kind labels", r.sup === "a, b" && r.prev.includes(body) && !/Peer-reviewed/.test(r.prev), r.prev.slice(0, 400));
     check("section copy: the same paragraph with (a, b), no kind labels", r.sec.includes(body + " (a, b)") && !/Peer-reviewed|Other/.test(r.sec), r.sec);
-    check(".txt: the working copy keeps the kind in brackets, never [Other], and lists what is still missing (W-19)", r.txt.includes("   " + body + " (a, b)") && /\[Peer-reviewed\]/.test(r.txt) && !/\[Other\]/.test(r.txt) && /\[Still missing: Your role\./.test(r.txt) && /^NARRATIVE CV, WORKING DRAFT \(V8 beta\)/.test(r.txt) && !/—/.test(r.txt), r.txt.slice(0, 900));
+    check(".txt: the working copy keeps the kind in brackets, never [Other], and lists what is still missing (W-19)", r.txt.includes("   " + body + " (a, b)") && /\[Peer-reviewed\]/.test(r.txt) && !/\[Other\]/.test(r.txt) && /\[Still missing: Your role\./.test(r.txt) && /^NARRATIVE CV, WORKING DRAFT \(V8\.\d+ beta\)/.test(r.txt) && !/—/.test(r.txt), r.txt.slice(0, 900));
     check("a trainee prints as a sentence with the sector named; the Other tile counts in the totals (W-20, W-23)", /A doctoral student I trained now works in government at Made-up Ministry and received a made-up scholarship \(2024\)\./.test(r.mentor) && /1 doctoral student, 2 other trainees/.test(r.mentor) && !/→/.test(r.mentor), r.mentor);
     check("Still missing names Your role when only a level is chosen (W-14)", r.miss.some(t => /^Contribution 2: .*Your role/.test(t)), r.miss);
   }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8 beta</title>
+  <title>Narrative CV — V8.5 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -179,6 +179,7 @@
     .v4-inline-link { display: inline-block; margin-top: 0.25rem; }
     @media (max-width: 48em) { .v4-save-warning:not([hidden]):not(.v7-load-err) { position: static !important; } } /* X-1: the card header is sticky there */
     .v4-save-warning:not([hidden]):not(.v7-load-err) { position: sticky; top: calc(var(--v7-bar, 43px) + 4px); z-index: 60; } /* r13-a-2: in view while the writer scrolls */
+    .v8-version { margin: 2rem 0 0; color: var(--muted); font-size: 0.8rem; }
     .v4-save-warning { margin: 0 0 0.6rem; padding: 0.6rem 0.9rem; border: 1px solid #c0392b; background: #fdecea; color: #7a1f15; border-radius: 4px; font-size: 0.85rem; line-height: 1.5; }
     .v4-anchor-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.95rem; color: var(--text); }
     .v4-anchor-line .v4-text-input { flex: 1 1 160px; width: auto; }
@@ -869,6 +870,7 @@
     <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The checks are fixed rules. Your draft leaves this device only if you send it by email. A connection is needed to open the tool; after that it runs offline. If you close the tab, save a draft file first.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
     <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Use Save a draft file, or copy your draft on the Export page, before you close this tab.</p>
     <div id="ncv-v4-root"></div>
+    <p class="v8-version" id="v8-version"></p>
   </div>
   <div id="v7-live" class="v7-sr" aria-live="polite" aria-atomic="true"></div>
 
@@ -908,9 +910,12 @@
     // V7-1: every guide link opens the official page on concordia.ca. Its anchors (why, three,
     // compare, difference, concerns, reviewers) were checked live on 2026-10-27.
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
-    const TOOL_VERSION = "V8 beta, 2026-11-02 (forked from V7)";
+    // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
+    // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
+    const VERSION_NUM = "8.5", VERSION_DATE = "2026-11-04";
+    const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
-    const TOOL_LABEL = "V8 beta";
+    const TOOL_LABEL = "V" + VERSION_NUM + " beta";
 
     // Official section names (guide P-9, P-41). The CV-FRQ's first section has its own name and a
     // wider focus (P-48); its English names are the FRQ's own, the French ones are the template's.
@@ -3270,7 +3275,7 @@
         if (h) { h.focus({ preventScroll: true }); const hr = h.getBoundingClientRect(); if (hr.top < 0 || (matchMedia("(max-width: 48em)").matches && hr.top > window.innerHeight * 0.4) || hr.bottom > window.innerHeight - 24) /* T-6: the 0.4 rule in the folded layout only */ (h.closest(".narrative-stage-header") || h).scrollIntoView({ block: "start" }); }
       }
       lastStageKey = ns.stageKey;
-      { const sn = (stages().find(x => x.key === ns.stageKey) || {}).short; document.title = (sn && ns.stageKey !== "start" ? sn + " · " : "") + "Narrative CV — V8 beta"; } // r11-b-14
+      { const sn = (stages().find(x => x.key === ns.stageKey) || {}).short; document.title = (sn && ns.stageKey !== "start" ? sn + " · " : "") + "Narrative CV — " + TOOL_LABEL; } // r11-b-14
       // W-47 (inferred, option A): each step is a history entry with its own address (#contributions),
       // so the browser's Back and Forward move between steps; a step the gates send elsewhere is replaced.
       // J-1: every entry carries a number that grows with time, so a Back or Forward knows its direction.
@@ -7158,6 +7163,8 @@
     // H-8: the same gates renderStage applies, so a reload at #profile after Confirm still says Welcome back.
     if (ns.mode && ns.profileConfirmed && ns.stageKey === "setup") ns.stageKey = "contrib";
     if (ns.mode && ns.profileConfirmed && ns.stageKey !== "start" && ns.stageKey !== "setup") reentryPending = true;
+    { const [y, m, d] = VERSION_DATE.split("-").map(Number); const mo = ["January","February","March","April","May","June","July","August","September","October","November","December"][m - 1];
+      document.getElementById("v8-version").textContent = "Version " + VERSION_NUM + " beta, " + d + " " + mo + " " + y; }
     renderStage();
     testerRetry();
   })();
