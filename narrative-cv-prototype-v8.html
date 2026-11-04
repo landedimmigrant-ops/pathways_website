@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.5 beta</title>
+  <title>Narrative CV — V8.6 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -912,7 +912,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.5", VERSION_DATE = "2026-11-04";
+    const VERSION_NUM = "8.6", VERSION_DATE = "2026-11-04";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -935,7 +935,7 @@
       frq: "12-point Times New Roman, with margins of at least 2 cm, your name in the header and the document title in the footer."
     };
     const LINK_RULES = {
-      tcv: "Not permitted: the CV must be self-contained. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it. Reviewers are not guaranteed to open it.",
+      tcv: "Not permitted: the CV must be self-contained. SSHRC allows one exception: a link to an audio or visual work, where you need to show it, added as evidence on the contribution it supports. Reviewers are not guaranteed to open it. A DOI can be written as plain text, without a link.",
       "cv-frq": "Permitted as bibliographic references when directly related to a contribution. Links cannot replace information that belongs in the application."
     };
     const LANGUAGE_RULES = {
@@ -1169,6 +1169,8 @@
       "Dataset / tool", "Award / recognition", "Funding", "Replication / citation",
       // Q13 / r2-b-6 (inferred): a kind for work shown to an audience, for every field.
       "Exhibition, performance or screening",
+      // Eli, 2026-11-04: SSHRC allows a link to an audio or visual work, added as evidence.
+      "Audio or visual work",
       // r5-b-8 (inferred): letters, resolutions and agreements a community holds.
       "Community document",
       // Q-24 (Prem, 2026-11-03): three more kinds; a preprint no longer goes under Other.
@@ -2185,7 +2187,7 @@
       // Guide sync (P-17, P-31): links, by format. Evidence rows get their own note (see renderEvidence).
       if (links.length && ctx.format) {
         links.forEach(l => out.hits.push({ text: l.text, rule: "link" }));
-        if (ctx.format === "tcv") out.flags.push("Links are not permitted in the TCV, which must be self-contained. The one exception is a link to an audio or visual creative output, where the funding opportunity allows it.");
+        if (ctx.format === "tcv") out.flags.push("Links are not permitted in the TCV, which must be self-contained. SSHRC allows a link to an audio or visual work, added as evidence on the contribution it supports." + (links.some(l => /doi\.org\//i.test(l.text)) ? " A DOI can stay as plain text, without the link." : ""));
         // r2-b-4: the statement and Mentorship have no evidence list of their own.
         else if (ctx.format === "cv-frq") out.flags.push(kind === "prose" ? "In the CV-FRQ, links belong with your references. Add this link to the evidence list of the contribution it supports, or give the reference in words."
           : "In the CV-FRQ, links belong with your references, tied to a contribution. Move this one to the evidence list and keep the information itself in your sentence.");
@@ -2715,7 +2717,7 @@
         },
         streams: { q: "Name two to four strands of your work. What single thread connects them?", help: "A reviewer should see one coherent program.",
           helpVariants: { early: "A reviewer should see how the strands connect, including a change of field." } }, // r14-b-7
-        pivot: { q: "How did you get here?", help: "Many strong statements name a turning point, such as a field you came from, a pivot or a defining collaboration. It explains why your work looks the way it does. If a leave, a move between institutions or another interruption shaped your record, say so here in one or two factual sentences: when it was, how long it lasted and what the work did in the meantime. The instructions for your funding opportunity say where the agency wants this and how much detail it asks for.", isNew: true },
+        pivot: { q: "How did you get here?", help: "Many strong statements name a turning point, such as a field you came from, a pivot or a defining collaboration. It explains why your work looks the way it does. Leaves and other career interruptions usually go in the appendix of the application. Check the instructions and eligibility criteria for your funding opportunity, especially if you apply as an early-career researcher, and ask your research advisor. If a leave, a move between institutions or another interruption shaped your record and you want to discuss it, you can say so here in one or two factual sentences: when it was, how long it lasted and what the work did in the meantime.", isNew: true },
         standing: {
           q: "List your strongest signals of standing.",
           help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual’s work. The citation count for a single article or book can support what you say about it.",
@@ -5134,7 +5136,7 @@
       "Peer-reviewed": "a published article, chapter or book, or a juried or curated selection", "Media / public": "coverage, a critical review, a public talk, a podcast",
       "Policy / practice uptake": "a policy, guideline, registry or program that adopted your work", "Dataset / tool": "data, software, a catalogue or a collection, and who holds it",
       "Award / recognition": "a prize, fellowship or honour", "Funding": "a grant the work attracted",
-      "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Community document": "a letter, resolution, agreement, report or plan a community or partner holds",
+      "Replication / citation": "a study that repeated or cited your work, or scholarship that built on it", "Exhibition, performance or screening": "a show, a screening, a commission or an acquisition", "Audio or visual work": "a recording, a video or an image of the work; SSHRC allows a link to it", "Community document": "a letter, resolution, agreement, report or plan a community or partner holds",
       "Preprint": "a paper posted before peer review, on a preprint server or a repository", "Conference talk or poster": "a talk, poster or panel at a conference or a workshop",
       "Teaching or curriculum": "a course, syllabus, training program or curriculum built from your work",
       "Other": "a trial registration, a technical report, or anything else a reviewer could check"
@@ -5234,7 +5236,7 @@
         // r7-b-10: what to write for each kind of item.
         const ITEM_HINT = { "Peer-reviewed": "The reference: authors, year, title and venue", "Preprint": "The reference: authors, year, title and the server or repository", "Conference talk or poster": "The title, the conference, the city and the date", "Teaching or curriculum": "The course or program, who offers it and since when", "Media / public": "The outlet or platform, the title and the date; for your own series, its audience", "Policy / practice uptake": "The policy or program, who adopted it (or its sector, if it cannot be named) and when",
           "Dataset / tool": "Name, version, who holds it and how to access it, in words", "Award / recognition": "The award, who gave it and the year", "Funding": "The funder, the program, the amount and the years",
-          "Replication / citation": "The study, standard, guideline or code that repeated, cited or built on your work", "Exhibition, performance or screening": "The work, the venue, the city and the dates", "Community document": "What it is (a letter, resolution, agreement, report or plan), who holds it and its date" };
+          "Replication / citation": "The study, standard, guideline or code that repeated, cited or built on your work", "Exhibition, performance or screening": "The work, the venue, the city and the dates", "Audio or visual work": "The title, the medium and the date; with SSHRC, the link", "Community document": "What it is (a letter, resolution, agreement, report or plan), who holds it and its date" };
         ti.placeholder = ITEM_HINT[ev.type] || "Name it so a reviewer can find it, or say who holds it: a reference, a preprint, a talk, a patent and its licence, a performance, a policy, a dataset, an award or a letter"; ti.value = ev.text || "";
         const ln = el("p", "v4-ev-note"); ln.id = "evln" + contrib.cid + "-" + j; ti.setAttribute("aria-describedby", ln.id);
         let lnSaid = !!evidenceLinkNote(ev.text, ev.type);
@@ -5256,7 +5258,7 @@
         wl.appendChild(el("span", "v7-sr", "Evidence item " + letter(j) + ": ")); wl.appendChild(document.createTextNode("Why it matters ")); wl.appendChild(el("span", "v7-opt", "(two lines, optional)"));
         const wt = el("textarea", "v7-input v7-two v7-grow"); wt.id = wl.htmlFor;
         // r9-a-7: the note's prompt follows the kind.
-        const NOTE_HINT = { "Exhibition, performance or screening": "What the work did or showed, and how it bears on your question", "Media / public": "What the piece says about the work, or whom it reached",
+        const NOTE_HINT = { "Exhibition, performance or screening": "What the work did or showed, and how it bears on your question", "Audio or visual work": "What a reviewer will see or hear, and how it bears on your question", "Media / public": "What the piece says about the work, or whom it reached",
           "Community document": "What it records or agrees, and whom it serves", "Preprint": "What it argues or shows", "Conference talk or poster": "What it presented, and to whom", "Teaching or curriculum": "What it teaches, and how many learners it reaches", "Dataset / tool": "What it holds, who uses it, or why it was useful",
           "Policy / practice uptake": "Who adopted it (or its sector), when, and what changed in practice",
           "Award / recognition": "Who selected it, from how many, and what it recognized", "Funding": "What the funding made possible", "Peer-reviewed": "What it argues, shows or makes available", "Replication / citation": "Who built on the work, and how", /* r19-a-4 */
@@ -5298,15 +5300,17 @@
 
     // Guide sync (P-31): the TCV does not permit links, with one exception. The CV-FRQ permits them
     // as references tied to a contribution, which is what an evidence row is, so it gets no note.
-    // r2-b-3 (inferred): in a creative field the TCV's exception covers the work itself (an exhibition,
-    // a performance, or an item of its own kind); a press article or a paper keeps the full rule.
-    const CREATIVE_LINK_KINDS = ["Exhibition, performance or screening", "Other", ""];
-    const creativeLinkOk = (type) => ns.lens.discipline === "creative" && CREATIVE_LINK_KINDS.indexOf(type || "") !== -1;
+    // Eli, 2026-11-04: SSHRC allows a link to an audio or visual work, added as evidence. Any field may
+    // use it; the exhibition kind keeps it (r2-b-3). Other TCV agencies keep the full rule.
+    const AV_LINK_KINDS = ["Audio or visual work", "Exhibition, performance or screening"];
+    const creativeLinkOk = (type) => ns.lens.agency === "sshrc" && AV_LINK_KINDS.indexOf(type || "") !== -1;
     function evidenceLinkNote(v, type) {
       if (!v || !new RegExp(LINK_RE.source, "i").test(v) || isFrq() || !ns.lens.format) return "";
       return creativeLinkOk(type)
-        ? "The TCV permits a link only for an audio or visual creative output, where the funding opportunity allows it. Reviewers are not guaranteed to open it, so describe the work in words as well."
-        : "Links are not permitted in the TCV, which must be self-contained. Give the reference in words; for software, its name, version and host (such as GitHub or Zenodo). The one exception is a link to an audio or visual creative output, where the funding opportunity allows it.";
+        ? "SSHRC allows a link to an audio or visual work where you need to show it. Reviewers are not guaranteed to open it, so describe the work in words as well."
+        : "Links are not permitted in the TCV, which must be self-contained. Give the reference in words; for software, its name, version and host (such as GitHub or Zenodo)." +
+          (/doi\.org\//i.test(v) ? " A DOI can stay as plain text, without the link." : "") +
+          (ns.lens.agency === "sshrc" ? " SSHRC allows a link to an audio or visual work: choose that kind for it." : "");
     }
 
     // ── Weave: the contribution's material in reading order, with suggested joins ──
@@ -5474,10 +5478,10 @@
           foot: "The content is fictional: the people, the places and the numbers are invented. In the finished section these parts run together as one passage." });
       });
 
-      // Totals: four large-number tiles (D-1 keeps "the last five years" until Eli answers #1).
+      // Totals: four large-number tiles. Eli, 2026-11-04: there is no set period unless the funding opportunity sets one.
       const dash = el("section", "v7-dash"); dash.setAttribute("aria-labelledby", "v7-tot-t");
       const dh = el("div", "v7-dash-h");
-      const dt = el("h3", "v7-h3", "People you have " + trainedWord() + " in the last five years"); dt.id = "v7-tot-t";
+      const dt = el("h3", "v7-h3", "People you have " + trainedWord()); dt.id = "v7-tot-t";
       dh.appendChild(dt);
       const sum = el("span", "v7-counter");
       const setSum = () => { const t = mentorTotal(); sum.textContent = t ? t.toLocaleString("en-CA") + " in total" : "Type a number in each box that applies"; };
@@ -5503,14 +5507,14 @@
         tiles.appendChild(tile);
       });
       dash.appendChild(tiles);
-      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Under Other, count " + ({ stem: "technicians, industry-embedded trainees", health: "research staff, residents, clinical fellows, community researchers", creative: "apprentices, assistant artists", humanities: "research assistants, archive interns" }[ns.lens.discipline] || "community researchers") + " and other trainees who are not students, and name the group in its box. The instructions for your funding opportunity set the period for these totals; if a leave fell inside it, say so with its dates in How you got here, in your statement."));
+      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Under Other, count " + ({ stem: "technicians, industry-embedded trainees", health: "research staff, residents, clinical fellows, community researchers", creative: "apprentices, assistant artists", humanities: "research assistants, archive interns" }[ns.lens.discipline] || "community researchers") + " and other trainees who are not students, and name the group in its box. These totals have no set period. Check the instructions for your funding opportunity in case it sets one."));
       c.appendChild(dash);
 
       const sh = el("div", "v7-section-t");
       sh.appendChild(el("h3", "v7-h3", "A few of the people you " + trainedWord() + ", and " + wentWord() + "."));
       const pc = el("span", "v7-counter");
       // r4-a-6: more people described than counted reads as a gap, here and in Still missing.
-      const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? (d > t ? d + " described, more than the " + t + " in the five-year totals. Check the totals, or keep an earlier trainee on purpose." : d + " of " + t + " described") : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); pc.classList.toggle("is-warn", !!t && d > t); };
+      const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? (d > t ? d + " described, more than the " + t + " in your totals. Check the totals." : d + " of " + t + " described") : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); pc.classList.toggle("is-warn", !!t && d > t); };
       setPc(); sh.appendChild(pc); c.appendChild(sh);
       { // r15-a-2: the people note as short lines, one point each.
         const ul = el("ul", "v7-quiet v7-people-help v7-short-lines");
@@ -6631,7 +6635,7 @@
       });
       lines.push(rule); lines.push(exportHeading("mentor")); lines.push(rule);
       const totals = mentorTotalsParts();
-      if (totals.length) lines.push("Totals (last five years): " + totals.join(", "));
+      if (totals.length) lines.push("Totals: " + totals.join(", "));
       ns.mentees.filter(menteeHasContent).forEach(m => lines.push(menteeSentence(m)));
       PF().forEach(f => { if (one(ns[f.k])) lines.push("[" + f.label + "] " + one(ns[f.k])); });
       const rest = miss.filter(m => m.step !== "contrib");
@@ -6732,7 +6736,7 @@
       });
       html += "<h2>" + htmlHeading("mentor") + "</h2>";
       const totals = mentorTotalsParts();
-      if (totals.length) html += "<p><b>Totals (last five years):</b> " + totals.join(", ") + "</p>";
+      if (totals.length) html += "<p><b>Totals:</b> " + totals.join(", ") + "</p>";
       const traj = ns.mentees.filter(menteeHasContent);
       traj.forEach(m => { html += "<p>" + esc(menteeSentence(m)) + "</p>"; });
       [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].map(one).filter(Boolean).forEach(s => { html += "<p>" + esc(s) + "</p>"; });
@@ -6775,7 +6779,7 @@
         return out.join("\n\n");
       }
       const totals = mentorTotalsParts();
-      if (totals.length) out.push("Totals (last five years): " + totals.join(", "));
+      if (totals.length) out.push("Totals: " + totals.join(", "));
       const traj = ns.mentees.filter(menteeHasContent);
       traj.forEach(m => out.push(menteeSentence(m)));
       [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].map(one).filter(Boolean).forEach(t => out.push(t));

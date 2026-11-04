@@ -243,6 +243,7 @@ The mock-ups are in `ncv-v7-design/` (reference, not product code). The advisor'
 (INFERRED unless marked), applied when the screens are built:
 
 - **D-1** Totals label keeps "last five years" until Eli answers #1 (the mock-up dropped it; V7-27 stands).
+  - **DECIDED (Eli, 2026-11-04, built in V8.6):** no set period unless the funding opportunity sets one; the label is now "Totals". See `ncv_tool_v8/eli-answers-2026-11-04.md`.
 - **D-2** The discipline question keeps one line pointing a researcher whose field is missing to Email us (V7-17 stands).
 - **D-3** Reset draft stays reachable on every width: beside Save draft at the rail foot on phone.
 - **D-4** Every card arrives with one field open: the first unanswered one ("How you mentor" opened with none in the mock-up).

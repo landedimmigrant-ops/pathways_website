@@ -198,7 +198,7 @@ async function seed(state, extra) {
     q('.v7-cards ~ .v7-add').click(); await w(150);
     const st3=q('.v7-card [data-f$="-stakes"] .v7-box'); st3.focus(); setv(st3,'A made-up stakes-only card.'); await w(60);
     return a;`);
-  check("evidence view: What you wrote on top, thirteen kinds (Exhibition, performance or screening; Community document; Preprint; Conference talk or poster; Teaching or curriculum), none pre-selected", r.top.toLowerCase() === "what you wrote" && r.kinds === 13 && r.pre === 0, r);
+  check("evidence view: What you wrote on top, fourteen kinds (Exhibition, performance or screening; Audio or visual work; Community document; Preprint; Conference talk or poster; Teaching or curriculum), none pre-selected", r.top.toLowerCase() === "what you wrote" && r.kinds === 14 && r.pre === 0, r);
   check("evidence item saved with its letter", r.row === "1 item: a", r.row);
   check("Add a contribution folds the others and focuses the new headline", r.folds === 1 && r.cards === 1 && /-title$/.test(r.focus || ""), r);
 
@@ -211,7 +211,7 @@ async function seed(state, extra) {
     setv(q('#v7-pg0'),'A made-up ministry'); a.head=q('#v7-ph0').innerText; a.help=q('.v7-people-help').innerText; a.rm=q('[aria-label^="Remove person"]')?.getAttribute('aria-label');
     a.hm=qa('[data-f^="m-"]').map(f=>f.className.split(' ')[1]);
     return a;`);
-  check("totals tiles keep the five-year wording (D-1) and add up", /five years/.test(r.tot) && r.sum === "3 in total", r);
+  check("totals tiles have no set period (Eli, 2026-11-04) and add up", /^People you have/.test(r.tot) && !/five years/.test(r.tot) && r.sum === "3 in total", r);
   check("labels follow the sector; header builds", r.labels.join("|") === "Organization|Unit or position" && /Postdoctoral → A made-up ministry/.test(r.head), r);
   check("people are lettered like evidence (Person A); the help says why names are left out", /^Person A\b/.test(r.head) && r.rm === "Remove person A" && /privacy/.test(r.help) && /leave out names/i.test(r.help), r);
   check("Mentorship style arrives with one field open (D-4)", r.hm[0] === "is-open", r.hm);
@@ -709,7 +709,7 @@ async function seed(state, extra) {
       rail('Background and skills').click(); await w(150); a.fit=(q('[data-f="ps-programFit"] .v7-q')||{}).innerText||'';
       return a;`);
     check("CV-FRQ: the Contributions note names the background and skills section, not the personal statement (r2-b-1)", /after the candidate’s background and skills/.test(r.nav) && !/personal statement/i.test(r.nav), r.nav);
-    check("a chosen kind folds to one line with Change, which reopens the kind cards on the chosen one (r1-b-5)", r.rows.length === 2 && /^Kind: Exhibition, performance or screening · Change$/.test(r.rows[0]) && r.grid === 0 && r.open === 13 && r.focus === "true", r);
+    check("a chosen kind folds to one line with Change, which reopens the kind cards on the chosen one (r1-b-5)", r.rows.length === 2 && /^Kind: Exhibition, performance or screening · Change$/.test(r.rows[0]) && r.grid === 0 && r.open === 14 && r.focus === "true", r);
     check("early career: Who else you mentor is optional (r2-b-8); a competition naming FRQSC gets no (FRQ) bracket (r2-b-10)", r.optional && !/\(FRQ\)/.test(r.fit), r);
     await seed(Object.assign({}, st3, { lens: Object.assign({}, st3.lens, { agency: "sshrc", format: "tcv" }), stageKey: "review" }));
     r = await js(H + `await w(150); const a={links:qa('.v7-glance a').map(x=>x.innerText)};
@@ -799,7 +799,7 @@ async function seed(state, extra) {
       qa('#v7-chg-panel .btn-primary').find(b=>/Confirm/.test(b.innerText)).click(); await w(150);
       a.need=!!q('.v7-chg-need') && !!q('#v7-chg-panel');
       return a;`);
-    check("arrow keys move through the evidence kinds with the chooser open and say the kind; Enter folds it (r3-a-1)", r.stillOpen === 13 && r.focusKind === "radio" && r.checked === "true" && r.folded && /Kind: /.test(r.live), r);
+    check("arrow keys move through the evidence kinds with the chooser open and say the kind; Enter folds it (r3-a-1)", r.stillOpen === 14 && r.focusKind === "radio" && r.checked === "true" && r.folded && /Kind: /.test(r.live), r);
     check("a removed evidence item can be restored with Undo (r3-b-6); boxes take the text's direction (r3-b-13)", r.undo && r.items1 === 1 && r.items2 === 2 && r.dir === "auto", r);
     check("an unbroken 250-character headline wraps on Review and the move buttons use a short name (r3-b-1, r3-b-2)", r.sw && r.mv < 90, r);
     check("the Change panel asks for a work mode before it confirms (r3-b-9)", r.need, r);
@@ -842,7 +842,7 @@ async function seed(state, extra) {
       qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)).click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
     check("'could learn' in The problem or question is a past inability, not a hedge (r4-a-5)", !/hedge/.test(r.hedge), r.hedge);
-    check("more people described than counted is named beside the count as a check, not a gap (r4-a-6, J-4)", /2 described, more than the 1 in the five-year totals/.test(r.pc) && !/totals lower/.test(r.miss), r);
+    check("more people described than counted is named beside the count as a check, not a gap (r4-a-6, J-4)", /2 described, more than the 1 in your totals/.test(r.pc) && !/totals lower/.test(r.miss), r);
     check("Review has the Profile bar with Change (r4-a-1); Export names unfinished contributions (r3-b-5)", r.bar && /still missing parts/.test(r.unf), r);
     check("each person is its own paragraph in the section copy (r4-a-9); an organization that names its sector is not given it twice (r4-b-7)", /\(\d|\.\n\nAn undergraduate researcher I trained now works at a made-up science museum\./.test(r.mentor), r.mentor);
     check("the scroll padding follows the top bar (r4-b-1); empty progress squares have an edge (r4-b-4)", /px/.test(r.pad) && parseFloat(r.pad) >= 50 && /inset/.test(r.dot), r);
@@ -913,7 +913,7 @@ async function seed(state, extra) {
     check("the rail says when the draft is over the limit; Export says so too (r6-a-4)", /over 5 p/.test(r.wc) && r.wcOver && /needs cutting/.test(r.over), r);
     check("removing a written contribution names its words and can be undone for ten seconds (r6-a-3)", /with its [\d,]+ words/.test(r.warn) && r.undo && r.n1 === 5 && r.n2 === 6 && r.first === "cr1", r);
     check("'my team ran it' is not your own role; a pause and a counterfactual are not flagged; a year counts as a date (r6-b-6, r6-b-4, r6-b-5)", !/Your own role is named/.test(r.roleTick) && !/hedge|does not say who|No numbers or dates/.test(r.actFlags), r);
-    check("the totals and How you got here say where a leave goes, without stating an agency's rule (r6-b-1, r6-b-2)", /if a leave fell inside it/.test(r.tilesHelp) && /If a leave, a move between institutions/.test(r.pivot), r);
+    check("the totals have no set period; How you got here sends leaves to the appendix and the research advisor, and allows a mention (Eli, 2026-11-04)", /no set period/.test(r.tilesHelp) && /Check the instructions for your funding opportunity in case it sets one/.test(r.tilesHelp) && !/five years/.test(r.tilesHelp) && /usually go in the appendix/.test(r.pivot) && /eligibility criteria/.test(r.pivot) && /research advisor/.test(r.pivot) && /you want to discuss it, you can say so here/.test(r.pivot), r);
     check("a 'went on to do' answer that starts with a verb joins the sentence, without a second “now” (r6-a-7, r9-a-13); a profile change names what changed (r6-b-7)", /made-up health authority and leads the made-up analytics team\./.test(r.mentor) && /Profile updated: career stage/.test(r.live), r);
   }
 
@@ -1116,7 +1116,7 @@ async function seed(state, extra) {
     check("the field column is one Tab stop (r9-b-14)", r.tabStops === 1 && r.sq > 5, { tabStops: r.tabStops, sq: r.sq });
     check("community-engaged wording: What you did, One moment, the join, Mentorship headings and the self-check; the main field's own statement wording comes first (r9-b-1, r9-b-4, r9-b-11)",
       /communities or partners/.test(r.q.act) && /in use by a specific person/.test(r.q.tr) && /in response/.test(r.join) && /keep returning to/.test(r.ps)
-      && /People you have trained or mentored in the last five years/.test(r.mhead) && /where they are now/.test(r.mhead) && /names the parts the partners led or hold/.test(r.self) && /their data/.test(r.self),
+      && /People you have trained or mentored/.test(r.mhead) && !/five years/.test(r.mhead) && /where they are now/.test(r.mhead) && /names the parts the partners led or hold/.test(r.self) && /their data/.test(r.self),
       { q: r.q, join: r.join, ps: r.ps, mhead: r.mhead });
     check("trainee answers: 'Now leads…' joins, a name before 'now' stays whole, a community researcher is one you mentored (R-3, r9-b-1)",
       /A doctoral student I trained now works at a made-up hospital and leads a made-up hospital program\./.test(r.mentor) && /I trained\. Rose now runs a made-up lab\./.test(r.mentor) && /A community researcher I mentored/.test(r.mentor), r.mentor);
@@ -1706,10 +1706,21 @@ async function seed(state, extra) {
     await seed(at("contrib"));
     r = await js(H + `const o=q('[id^=ev-open-]'); if(o){o.click(); await w(200);} const ad=q('[id^=ev-add-]'); if(ad){ad.click(); await w(200);} return qa('.v7-ev-item:last-child .v7-kind, .v7-ev-item .v7-kind').filter((k,i,arr)=>k.closest('.v7-ev-item')===arr[arr.length-1].closest('.v7-ev-item')).map(k=>k.innerText.split(String.fromCharCode(10))[0]);`);
     check("Q-24: the evidence view offers Preprint, Conference talk or poster and Teaching or curriculum, before Other",
-      ["Preprint", "Conference talk or poster", "Teaching or curriculum"].every(t => r.some(x => x.indexOf(t) === 0)) && /^Other/.test(r[r.length - 1]) && r.length === 13, r);
+      ["Preprint", "Conference talk or poster", "Teaching or curriculum"].every(t => r.some(x => x.indexOf(t) === 0)) && /^Other/.test(r[r.length - 1]) && r.length === 14, r);
     await seed(at("review", st => { st.contributions[0].evidence = [{ id: "e1", type: "Preprint", text: "A made-up preprint, 2026.", note: "" }, { id: "e2", type: "Teaching or curriculum", text: "A made-up course, since 2024.", note: "" }]; }));
     r = await js(H + labels);
     check("Q-24: the Evidence by type chart counts the new kinds", r.some(l => /^Evidence by type: .*Preprint 1.*Teaching or curriculum 1/.test(l || "")), r.filter(l => /Evidence/.test(l || "")));
+
+    // Eli, 2026-11-04: SSHRC allows a link to an audio or visual work, as evidence; other TCV agencies do not.
+    const avSeed = (agency) => at("review", st => { st.lens = Object.assign({}, st.lens, { agency, format: agency === "frq" ? "cv-frq" : "tcv" });
+      st.contributions[0].evidence = [{ id: "eav", type: "Audio or visual work", text: "A made-up recording, https://example.org/clip", note: "" }]; st.mentorCounts = { phd: "2", masters: "", undergrad: "", postdoc: "", other: "" }; });
+    await seed(avSeed("sshrc"));
+    r = await js(H + `await w(150); return {links:qa('.v7-glance a').map(x=>x.innerText), body:(q('.v7-draft-body')||{}).innerText||''};`);
+    check("Eli: with SSHRC, a link on an Audio or visual work evidence row is not listed to take out", !r.links.some(t => /^Contribution 1: Evidence$/.test(t)) && r.links.length > 0, r.links);
+    check("Eli: the draft prints Totals: with no period", /Totals: /.test(r.body) && !/last five years/.test(r.body), r.body.slice(0, 400));
+    await seed(avSeed("cihr"));
+    r = await js(H + `await w(150); return qa('.v7-glance a').map(x=>x.innerText);`);
+    check("Eli: with CIHR, the same link is listed to take out", r.some(t => /^Contribution 1: Evidence$/.test(t)), r);
 
     // Q-13: the count covers the required parts, so a finished card reads "8 of 8", as text beside the squares.
     await seed(at("contrib", st => { const c = st.contributions[0]; ["title", "stakes", "roleLine", "activities", "outputs", "outcomes", "impact"].forEach(k => { c[k] = c[k] || "Made-up text for " + k + "."; }); c.translational = ""; c.evidence = [{ id: "e1", type: "Funding", text: "A made-up grant.", note: "" }]; }));
