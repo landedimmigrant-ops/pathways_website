@@ -37,13 +37,13 @@ The GitHub Pages copy (`/ncv_tool_v8/`) keeps working with no sign-up and no net
   Sign-up is required (Prem, 2026-11-03): the card has no skip button, a browser that skipped before sees it again, and a saved draft opens no step until an email is entered.
   The card states in bold that nothing written in the CV is collected, and invites testers to send their draft to impact@concordia.ca to help improve the tool; the thank-you after the Export questions repeats the invitation.
 - **While they work:** each step a signed-up tester opens is recorded as `last_step`, so drop-off is visible.
-- **Finish your test** (a step after Export, for signed-up testers only, since V8.8): five questions, sent against the same tester id:
+- **Export** (since V8.9, Prem 2026-11-12): at the foot of the page, after the email note, a card "Help us improve the tool" with a "Complete your feedback" button that opens five questions, sent against the same tester id (V8.8 had them on a Finish your test step, which is gone):
   - how much the tool helped with the concern they named at the start, from 1 to 5 (the question quotes it);
   - whether the questions and examples fit their kind of work, with a box for which ones (shown only after an answer other than "They fit");
   - what they will do with the draft next;
   - which parts they would reuse for the next application (choose any; "None, I would start again" clears the others), with a box for anything else;
   - the one change that would help most.
-- **Feedback on each step** (V8.7, Prem 2026-11-12): a "?" Feedback on this step button sits above each step’s bottom row (not on the start page). It opens a box with the reminder "This note goes to the Pathways to Impact team to help improve the tool. It is not part of your CV." Each note is sent as `note` with the step and the profile to the table `tester_notes`, at most 50 per tester. An unsent note is kept in the tester record. Since V8.8 the box closes after a send, focus returns to the button and a status line beside it thanks the tester and counts the notes. To read them: `select * from notes_by_step;`
+- **Feedback on each step** (V8.7, Prem 2026-11-12): a "?" Feedback on this step button sits above each step’s bottom row (not on the start page, and not on Export, which has the end questions). It opens a box with the reminder "This note goes to the Pathways to Impact team to help improve the tool. It is not part of your CV." Each note is sent as `note` with the step and the profile to the table `tester_notes`, at most 50 per tester. An unsent note is kept in the tester record. Since V8.8 the box closes after a send, focus returns to the button and a status line beside it thanks the tester and counts the notes. To read them: `select * from notes_by_step;`
 - **What is never sent:** draft text.
 - **Where the record lives in the browser:** under its own key, `ncv-v8-tester`, so Reset draft and Load your draft leave it alone.
 - **Database:** Neon project `ncv-testing` (`lucky-tree-08109926`, AWS US East 1).
@@ -70,7 +70,7 @@ INFERRED, for Prem to confirm or change:
 - the feedback box: its question ("What was clear or confusing in this step, and what would help?"), the reminder wording, a tester may send several notes per step, and the box shows on testers’ copies only;
 - the wording of the answer options (the questions were agreed in chat on 2026-11-03);
 - the sign-up card replaces the path cards and every step until the tester signs up;
-- the Finish your test step after Export holds the end questions (Prem, 2026-11-12: they confused testers at the top of Export);
+- the end questions sit at the foot of Export behind "Complete your feedback" (Prem, 2026-11-12); the card heading "Help us improve the tool" and its one-line intro are INFERRED;
 - the privacy wording on the card (Prem, 2026-11-03: the line on what is sent and where it is stored was taken out; the card says the information is deleted when this version launches at the end of the year, and gives impact@concordia.ca for questions);
 - the address `research-8kh.pages.dev` (a custom domain can replace it later).
 

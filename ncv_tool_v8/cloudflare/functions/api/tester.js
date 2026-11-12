@@ -74,7 +74,7 @@ async function tester(request, env) {
   }
   if (b.action === "finish") {
     const r = await sql`update testers set end_answers = ${JSON.stringify(pick(b.answers, END_KEYS))}::jsonb, finished_at = now(),
-      last_step = 'finish', profile = ${profile}::jsonb where tester_id = ${b.id} returning tester_id`;
+      last_step = 'export', profile = ${profile}::jsonb where tester_id = ${b.id} returning tester_id`;
     return r.length ? json(200, { ok: true }) : json(404, { error: "unknown tester" });
   }
   return json(400, { error: "action" });

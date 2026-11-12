@@ -1609,27 +1609,32 @@ async function seed(state, extra) {
     // Export: the three questions, sent against the same id.
     const tstate = { id: "1234abcd-0000-4000-8000-000000000001", email: "tester@example.org", start: { concern: "The funder's rules" }, startSent: true, lastStep: "review" };
     apiPosts.length = 0;
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "finish", ui: { profileNote: false } }), tstate);
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), tstate);
     r = await js(H + `await w(300); const card=q('.v8-tester-end'); const sets=card?[...card.querySelectorAll('fieldset')]:[];
-      const a={card:!!card, h:card&&card.querySelector('h2')?.innerText, legends:sets.map(f=>f.querySelector('legend')?.innerText),
+      const tg=q('#v8-te-open'); const a={card:!!card, h:card&&card.querySelector('h3')?.innerText, tg:tg&&tg.innerText.trim(), exp0:tg&&tg.getAttribute('aria-expanded'), body0:q('#v8-te-body').hidden,
+        last:card&&card.previousElementSibling?.classList.contains('v7-nudge'), stepBox:!!q('.v8-fb')};
+      tg.click(); await w(100); a.exp1=tg.getAttribute('aria-expanded'); a.body1=q('#v8-te-body').hidden; a.focus1=document.activeElement.closest('fieldset')===sets[0];
+      Object.assign(a, { legends:sets.map(f=>f.querySelector('legend')?.innerText),
       scale:card?card.querySelectorAll('.is-scale input[type=radio]').length:0, tas:card?[...card.querySelectorAll('textarea')].map(t=>q('label[for="'+t.id+'"]')?.innerText):[],
-      boxes:sets[3]?[...sets[3].querySelectorAll('input')].map(i=>i.type+(i.closest('label')?':wrapped':'')):[]};
+      boxes:sets[3]?[...sets[3].querySelectorAll('input')].map(i=>i.type+(i.closest('label')?':wrapped':'')):[]});
       card.querySelectorAll('.is-scale input')[3].click(); sets[1].querySelectorAll('input')[1].click(); setv(q('#v8-te-fitWhich'),'The made-up role line.');
       sets[2].querySelectorAll('input')[1].click();
       const bx=[...sets[3].querySelectorAll('input')];
       bx[0].click(); bx[1].click(); bx[4].click(); a.afterNone=bx.map(b=>b.checked);
       bx[0].click(); bx[3].click(); a.afterPick=bx.map(b=>b.checked);
       setv(q('#v8-te-reuseOther'),'The made-up totals.'); setv(q('#v8-te-change'),'A made-up change.');
-      card.querySelector('.btn-primary').click(); await w(500);
+      q('#v8-te-send').click(); await w(500);
       a.after=q('.v8-tester-end')?.innerText; a.focus=document.activeElement.id; a.live=q('#v7-live').textContent; a.t=JSON.parse(localStorage.getItem('ncv-v8-tester')); return a;`);
     const fin = apiPosts.find(p => p.action === "finish") || {};
-    check("Finish your test shows the five questions for a signed-up tester: the scale quotes the concern from the start, then fit, next and reuse, with three labelled boxes",
-      r.card && /Five questions/.test(r.h || "") && r.legends.length === 4 && /main concern was: the funder's rules\. How much did the tool help/.test(r.legends[0]) && r.scale === 5
+    check("V8.9: Export ends with the feedback card after the email note, and has no per-step feedback box", r.card && r.last && !r.stepBox && r.h === "Help us improve the tool", r);
+    check("a11y: Complete your feedback is a collapsed disclosure; opening it shows the questions and moves focus to the first", /Complete your feedback$/.test(r.tg || "") && r.exp0 === "false" && r.body0 && r.exp1 === "true" && !r.body1 && r.focus1, r);
+    check("the questions for a signed-up tester: the scale quotes the concern from the start, then fit, next and reuse, with three labelled boxes",
+      r.card && r.legends.length === 4 && /main concern was: the funder's rules\. How much did the tool help/.test(r.legends[0]) && r.scale === 5
       && /fit your kind of work/.test(r.legends[1]) && /do with this draft next/.test(r.legends[2]) && /reuse for your next application\? Choose any/.test(r.legends[3])
       && r.tas.join("|") === "Which ones?|Anything else you would keep?|What one change would help most?", r);
     check("a11y: the reuse question is five checkboxes in its fieldset, each inside its label", r.boxes.length === 5 && r.boxes.every(b => b === "checkbox:wrapped"), r.boxes);
     check("choosing None clears the other reuse answers, and choosing a part clears None", r.afterNone.join() === "false,false,false,false,true" && r.afterPick.join() === "true,false,false,true,false", { none: r.afterNone, pick: r.afterPick });
-    check("opening Finish your test sends nothing before Send my answers", apiPosts.filter(p => p.action === "finish").length === 1, apiPosts.map(p => p.action));
+    check("opening Export sends nothing before Send my answers", apiPosts.filter(p => p.action === "finish").length === 1, apiPosts.map(p => p.action));
     check("Send my answers sends a finish row for the same id with every answer, the reuse answer as a list", fin.id === tstate.id && fin.answers.concernHelp === "4" && fin.answers.fit === "Mostly, with some wording from another field" && /role line/.test(fin.answers.fitWhich)
       && fin.answers.next === "Move it into Word or another document" && JSON.stringify(fin.answers.reuse) === JSON.stringify(["The contributions", "The personal statement"])
       && /made-up totals/.test(fin.answers.reuseOther) && /made-up change/.test(fin.answers.change), fin);
@@ -1637,14 +1642,14 @@ async function seed(state, extra) {
 
     // A failed send keeps the answers and says what to do; nothing is lost.
     apiMode = "fail";
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "finish", ui: { profileNote: false } }), Object.assign({}, tstate, { end: { change: "Kept text." } }));
-    r = await js(H + `await w(300); q('.v8-tester-end .btn-primary').click(); await w(500);
-      return {status:q('.v8-tester-end .v7-quiet[aria-live]')?.innerText, kept:q('#v8-te-change')?.value, dis:q('.v8-tester-end .btn-primary').disabled, t:JSON.parse(localStorage.getItem('ncv-v8-tester'))};`);
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { end: { change: "Kept text." } }));
+    r = await js(H + `await w(300); q('#v8-te-open').click(); await w(80); q('#v8-te-send').click(); await w(500);
+      return {status:q('.v8-tester-end .v7-quiet[aria-live]')?.innerText, kept:q('#v8-te-change')?.value, dis:q('#v8-te-send').disabled, t:JSON.parse(localStorage.getItem('ncv-v8-tester'))};`);
     check("a failed send keeps the answers, re-enables Send and names the email fallback", /did not send/.test(r.status || "") && /impact@concordia\.ca/.test(r.status) && r.kept === "Kept text." && !r.dis && !r.t.endSent, r);
     apiMode = "ok";
 
     // A tester who chose no concern (or Something else) sees the general wording.
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "finish", ui: { profileNote: false } }), Object.assign({}, tstate, { start: { concern: "Something else" } }));
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { start: { concern: "Something else" } }));
     r = await js(H + `await w(300); return q('.v8-tester-end legend')?.innerText;`);
     check("with no concern to quote, the first Export question asks about the main concern in general", /^How much did the tool help with your main concern/.test(r || ""), r);
 
@@ -1658,7 +1663,7 @@ async function seed(state, extra) {
     await tseed(null, { skipped: true });
     r = await js(H + `await w(200); return {card:!!q('.v8-tester'), paths:qa('.v7-path').length};`);
     check("a browser that skipped sign-up before sees the sign-up card again", r.card && r.paths === 0 && apiPosts.length === 0, r);
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "finish", ui: { profileNote: false } }));
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }));
     r = await js(H + `await w(300); return {card:!!q('.v8-tester'), exp:!!q('.v8-tester-end'), rail:!!q('.v7-rail')};`);
     check("a saved draft on Export still opens on the sign-up card until the tester signs up", r.card && !r.exp, r);
 
@@ -1902,11 +1907,11 @@ async function seed(state, extra) {
 
     // One box on every step, named for the step.
     const seen = [];
-    for (const k of ["setup", "mentor", "ps", "review", "export"]) {
+    for (const k of ["setup", "mentor", "ps", "review"]) {
       await tseed(Object.assign(draft(k), k === "setup" ? { profileConfirmed: false } : {}), tstate);
       seen.push(await js(H + `await w(300); const b=q('.v8-fb-btn'); if(!b) return 'none'; b.click(); await w(100); return qa('.v8-fb').length + ':' + q('.v8-fb-panel h3').innerText;`));
     }
-    check("each step has one feedback box, headed with the step's name", seen.every(x => /^1:Your feedback on /.test(x)) && /Mentorship/.test(seen[1]) && /Review/.test(seen[3]) && /Export/.test(seen[4]), seen);
+    check("each step has one feedback box, headed with the step's name", seen.every(x => /^1:Your feedback on /.test(x)) && /Mentorship/.test(seen[1]) && /Review/.test(seen[3]), seen);
 
     // The start page has none, before or after sign-up.
     await tseed(null, tstate);
@@ -1974,21 +1979,19 @@ async function seed(state, extra) {
     await go(HOME());
     await js("localStorage.clear();localStorage.setItem('ncv-v8'," + JSON.stringify(JSON.stringify(draft("export"))) + ");localStorage.setItem('ncv-v8-tester'," + JSON.stringify(JSON.stringify(tstate)) + ");");
     await go(PAGE() + "?tester=1");
-    r = await js(H + `await w(300); const a={endOnExport:!!q('.v8-tester-end'), rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]).slice(-2).join('|'), next:nav(/Finish your test/)?.innerText};
-      nav(/Finish your test/).click(); await w(300);
-      a.h=q('.narrative-stage-header h2')?.innerText; a.card=!!q('.v8-tester-end'); a.hash=location.hash;
+    r = await js(H + `await w(300); const a={endOnExport:!!q('.v8-tester-end'), rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]).slice(-1).join('|'), next:!!nav(/Finish your test/)};
+      q('#v8-te-open').click(); await w(150);
       const which=q('#v8-te-fitWhich')?.closest('.v8-tq'); a.which0=which.hidden;
       const fs=qa('.v8-tester-end fieldset'); fs[1].querySelectorAll('input')[0].click(); await w(50); a.whichFit=which.hidden;
       fs[1].querySelectorAll('input')[1].click(); await w(50); a.whichMostly=which.hidden;
       const opts=[...fs[0].querySelectorAll('.v8-tq-opt')], ends=[...fs[0].querySelectorAll('.v4-fb-scale-ends span')];
       a.endR=Math.round(ends[1].getBoundingClientRect().right-opts[4].getBoundingClientRect().right); a.endL=Math.round(ends[0].getBoundingClientRect().left-opts[0].getBoundingClientRect().left);
       return a;`);
-    check("note 10: Export has no end questions; the rail ends with Finish your test, and Export's next button goes there", !r.endOnExport && r.rail === "Export|Finish your test" && /^Finish your test →$/.test(r.next || ""), r);
-    check("note 10: the Finish your test step holds the five questions at its own address", r.h === "Finish your test" && r.card && r.hash === "#finish-test", r);
+    check("V8.9: the questions are on Export; the rail ends with Export, with no Finish your test step or button", r.endOnExport && r.rail === "Export" && !r.next, r);
     check("note 10: “Which ones?” shows only after an answer other than They fit; the scale's end labels sit under 1 and under 5", r.which0 && r.whichFit && !r.whichMostly && Math.abs(r.endR) <= 2 && Math.abs(r.endL) <= 2, r);
     await seed(draft("export"));
     r = await js(H + "await w(200); return {rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]).includes('Finish your test'), card:!!q('.v8-tester-end')};");
-    check("note 10: the plain address has no Finish your test step", !r.rail && !r.card, r);
+    check("the plain address has no feedback questions on Export", !r.rail && !r.card, r);
     await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
   }
 
@@ -2002,7 +2005,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "The six parts in each contribution", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.8 in the script and the tab title", /VERSION_NUM = "8\.8"/.test(src) && /<title>Narrative CV — V8\.8 beta/.test(src));
+    check("the version is 8.9 in the script and the tab title", /VERSION_NUM = "8\.9"/.test(src) && /<title>Narrative CV — V8\.9 beta/.test(src));
   }
 
   console.log("Network and errors");

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.8 beta</title>
+  <title>Narrative CV — V8.9 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -934,7 +934,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.8", VERSION_DATE = "2026-11-12";
+    const VERSION_NUM = "8.9", VERSION_DATE = "2026-11-12";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -1145,33 +1145,41 @@
       c.appendChild(card);
     }
     let testerNotice = "";
+    const UI_FB = {}; // open state of the feedback boxes, by step (and __end for the Export questions)
     // An earlier "skipped" flag no longer opens the tool; every tester signs up.
     const testerGate = () => TESTER_ON && !tester.email;
-    // V8.8: the Finish your test step holds the five questions.
-    function renderFinish(c) {
-      stageHead(c, "", "Finish your test", "Five questions about how the tool worked for you. Your answers help the Pathways to Impact team improve it.", false);
-      renderTesterEnd(c);
-      navRow(c);
-    }
-    // Finish your test: five questions for a signed-up tester, until they are sent.
+    // V8.9 (Prem, 2026-11-12): the five questions sit at the foot of Export, after the email note,
+    // behind a "Complete your feedback" button, for signed-up testers only.
     function renderTesterEnd(c) {
       if (!TESTER_ON || !tester.email) return;
       const card = el("section", "v7-card v8-tester v8-tester-end"); card.setAttribute("aria-labelledby", "v8-te-t");
-      const h = el("h2", "v7-h3", "Five questions"); h.id = "v8-te-t"; card.appendChild(h);
+      const h = el("h3", "v7-h3", "Help us improve the tool"); h.id = "v8-te-t"; card.appendChild(h);
       if (tester.endSent) {
         card.appendChild(el("p", "v7-body", "Your answers reached the Pathways to Impact team. Thank you for testing the tool."));
         card.appendChild(el("p", "v7-body", "If you would like to share your draft to help us improve the tool, please send it to " + FEEDBACK.email + "."));
         c.appendChild(card); return;
       }
-      card.appendChild(el("p", "v7-body", "Each question is optional."));
+      card.appendChild(el("p", "v7-body", "Five short questions about how the tool worked for you. Each one is optional."));
+      const open = !!UI_FB.__end;
+      const tg = el("button", "btn btn-primary v7-disc", ""); tg.type = "button"; tg.id = "v8-te-open";
+      tg.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
+      tg.appendChild(document.createTextNode("Complete your feedback"));
+      tg.setAttribute("aria-expanded", open ? "true" : "false"); tg.setAttribute("aria-controls", "v8-te-body");
+      card.appendChild(tg);
+      const body = el("div", "v8-te-body"); body.id = "v8-te-body"; body.hidden = !open;
+      tg.addEventListener("click", () => {
+        UI_FB.__end = !UI_FB.__end; body.hidden = !UI_FB.__end; tg.setAttribute("aria-expanded", UI_FB.__end ? "true" : "false");
+        if (UI_FB.__end) { const first = body.querySelector("input, textarea"); if (first) first.focus(); }
+      });
+      card.appendChild(body);
       const promise = el("p", "v8-tester-promise"); promise.appendChild(el("strong", null, "We do not collect anything you write in your CV."));
-      card.appendChild(promise);
+      body.appendChild(promise);
       tester.end = tester.end || {};
       const conds = [];
-      TESTER_END_QS.forEach(q => { const n = testerQuestion(q, tester.end, "v8-te"); card.appendChild(n); if (q.showIf) { conds.push([q, n]); n.hidden = !q.showIf(tester.end); } });
+      TESTER_END_QS.forEach(q => { const n = testerQuestion(q, tester.end, "v8-te"); body.appendChild(n); if (q.showIf) { conds.push([q, n]); n.hidden = !q.showIf(tester.end); } });
       card.addEventListener("change", () => conds.forEach(([q, n]) => { n.hidden = !q.showIf(tester.end); }));
       const row = el("div", "v4-note-row");
-      const send = el("button", "btn btn-primary", "Send my answers"); send.type = "button";
+      const send = el("button", "btn btn-primary", "Send my answers"); send.type = "button"; send.id = "v8-te-send";
       const status = el("p", "v7-quiet"); status.setAttribute("aria-live", "polite");
       send.addEventListener("click", async () => {
         send.disabled = true; status.textContent = "Sending…";
@@ -1182,16 +1190,16 @@
         if (ok) { announce("Your answers reached the team. Thank you for testing the tool."); renderStage(); const t = document.getElementById("v8-te-t"); if (t) { t.tabIndex = -1; t.focus(); } }
         else { send.disabled = false; status.textContent = "Your answers did not send, perhaps because the connection dropped. They are kept here. Try again, or email them to " + FEEDBACK.email + "."; }
       });
-      row.appendChild(send); card.appendChild(row); card.appendChild(status);
+      row.appendChild(send); body.appendChild(row); body.appendChild(status);
       c.appendChild(card);
     }
     // V8.7 (Prem, 2026-11-12): a feedback box at the foot of each step. A signed-up tester opens it with
     // the "?" button and sends a note on that step; notes go to the Neon `tester_notes` table with the
     // step and the profile. The box reminds the tester that the note is not part of the CV. An unsent
     // note is kept with the tester record, so a redraw or a reload keeps it.
-    const UI_FB = {};
+
     function testerNoteBox() {
-      if (!TESTER_ON || !tester.email || !ns.stageKey || ns.stageKey === "start") return null;
+      if (!TESTER_ON || !tester.email || !ns.stageKey || ns.stageKey === "start" || ns.stageKey === "export") return null; // V8.9: Export has the feedback questions instead
       const key = ns.stageKey;
       const st = (stages().find(x => x.key === key) || {}).short || "this step";
       tester.notes = tester.notes || {};
@@ -2557,7 +2565,7 @@
     const MENTOR_TEXT_KEYS = ["mentorPhilosophy", "mentorEDI", "mentorCrossStage"];
     // V7-38: a saved step V7 no longer has is sent to the step that took over its job. A target
     // that is not built yet (Export) falls back to Review.
-    const STEP_REMAP = { xray: "contrib", order: "review", feedback: "export" };
+    const STEP_REMAP = { xray: "contrib", order: "review", feedback: "export", finish: "export" }; // V8.9: a draft saved on the 8.8 Finish step opens on Export
     function remapStageKey() {
       const keys = stages().map(s => s.key);
       if (keys.indexOf(ns.stageKey) !== -1) return;
@@ -2976,8 +2984,6 @@
       s.push({ key: "ps", short: isFrq() ? "Background and skills" : "Personal statement", group: "app" });
       s.push({ key: "review", short: "Review", group: "draft" });
       s.push({ key: "export", short: "Export", group: "draft" });
-      // V8.8 (Prem, 2026-11-12): the end questions are a step of their own after Export, for testers only.
-      if (TESTER_ON && tester.email) s.push({ key: "finish", short: "Finish your test", group: "draft" });
       if (FEEDBACK_ON) s.push({ key: "feedback", short: "Feedback", group: "draft" });
       return s;
     };
@@ -2987,7 +2993,7 @@
     const RENDERERS = {
       start: (c) => renderStart(c), setup: (c) => renderSetup(c), xray: (c) => renderXray(c),
       contrib: (c) => renderContributions(c), mentor: (c) => renderMentorship(c),
-      ps: (c) => renderPersonal(c), review: (c) => renderReview(c), export: (c) => renderExport(c), finish: (c) => renderFinish(c),
+      ps: (c) => renderPersonal(c), review: (c) => renderReview(c), export: (c) => renderExport(c),
       feedback: (c) => renderFeedback(c)
     };
     // V7-5: a step turns green once it has been opened and something entered in it (no funder sets
@@ -3001,7 +3007,7 @@
       const t = (k) => !!(c[k] || "").trim();
       return t("title") && (t("roleLine") || !!c.roleMode) && REVIEW_MIN_JOBS.filter(t).length >= 2;
     });
-    const isLockedStage = (key) => (key === "review" || key === "export" || key === "finish") && !reviewReady();
+    const isLockedStage = (key) => (key === "review" || key === "export") && !reviewReady();
     const PS_ANSWER_KEYS = () => ["challenge", "streams", "pivot", "standing", "programFit"].concat(isFrq() ? ["teamFit"] : [], ["horizon"]);
     const psAnswered = () => {
       const p = ns.ps;
@@ -3024,7 +3030,6 @@
       if (key === "review") return v;
       if (key === "export") return v && !!ns.ui.exported;
       if (key === "feedback") return ns.feedback.sent.length > 0;
-      if (key === "finish") return !!tester.endSent;
       return false;
     };
     // V7-6, pass B: a plain number beside a rail item and an optional sub-row joined by an L line.
@@ -3414,7 +3419,7 @@
       }
       saveState();
     };
-    const STEP_HASH = { start: "start", setup: "profile", contrib: "contributions", mentor: "mentorship", ps: "statement", review: "review", export: "export", finish: "finish-test", feedback: "feedback" };
+    const STEP_HASH = { start: "start", setup: "profile", contrib: "contributions", mentor: "mentorship", ps: "statement", review: "review", export: "export", feedback: "feedback" };
     const stepFromHash = () => { const h = location.hash.slice(1); return Object.keys(STEP_HASH).find(k => STEP_HASH[k] === h) || ""; };
     let popping = false, replaceNext = false, histN = 0, skipping = 0;
     const stepName = (k) => k === "start" ? "the start page" : ((stages().find(x => x.key === k) || {}).short || "this step"); // J-2
@@ -3772,7 +3777,7 @@
       if (opts.note) nav.appendChild(el("p", "v4-help v7-nav-note", opts.note));
       // Q-15 (Prem, 2026-11-03): Save a draft file sits in every step's bottom row too, so it is in reach on a phone mid-step.
       const end = el("span", "v7-nav-end");
-      if (ns.stageKey !== "export" && ns.stageKey !== "finish") {
+      if (ns.stageKey !== "export") {
         const sv = el("button", "btn btn-outline v7-nav-save", "Save a draft file"); sv.type = "button";
         const svn = el("span", "v4-meta v7-nav-saved"); svn.setAttribute("aria-live", "polite");
         sv.addEventListener("click", () => { saveDraftFile(); svn.textContent = "Saved " + draftFileName() + " to your downloads."; });
@@ -6694,6 +6699,7 @@
       addr.appendChild(em); addr.appendChild(el("code", null, FEEDBACK.email));
       nudge.appendChild(addr);
       c.appendChild(nudge);
+      renderTesterEnd(c);
       navRow(c);
     }
 
