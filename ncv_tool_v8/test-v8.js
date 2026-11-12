@@ -108,7 +108,7 @@ async function seed(state, extra) {
   check("unrevealed questions are grey, disabled and aria-disabled, and clicking one does nothing", r.col0.dis.join() === "pq-1,pq-2,pq-3,pq-4,pq-5" && /, not open yet$/.test(r.col0.name5) && r.col0.lockedClick === 1, r.col0);
   check("one question at a time", r.blocks === 1 && r.b2 === 2 && r.b3 === 3, r);
   check("choice stays selected in place, format feedback", r.stay === "true" && /CV-FRQ/.test(r.fb), r);
-  check("after an answer the next question scrolls up level with its square, which carries the triangle", r.lvl.y > 0 && Math.abs(r.lvl.d) <= 8 && r.lvl.cur === "pq-1", r.lvl);
+  check("after an answer the next question scrolls into view; its square sits beside it and carries the triangle (V8.8)", r.lvl.y > 0 && r.lvl.d <= 0 && r.lvl.d >= -30 && r.lvl.cur === "pq-1", r.lvl);
   check("all six answered: Confirm profile button (no Contributions button), nothing folds", /^6 of 6 answered$/.test(r.count) && r.next && !r.nextC && r.folded === 0, r);
   check("progress squares: six, all filled, the count is hidden text only", r.dots === 6 && r.on === 6, r);
   check("clearing an answer keeps the questions below it on screen", r.afterClear === 6, r.afterClear);
@@ -122,7 +122,7 @@ async function seed(state, extra) {
     setv(q('#v7-comp'),'Made-up Team Grants'); await w(60); window.scrollTo(0,0);
     return a;`);
   check("Setup column: green squares match the answers, one triangle, the current question outlined, the spoken count stays", r.n === 6 && r.dis === 0 && r.on === 5 && r.greenOk && /^5 of 6 answered$/.test(r.sr) &&  r.cur.length === 1 && r.curBlk === "1" && r.tri === "10px" && r.clear, r);
-  check("clicking an answered square scrolls to and focuses its question; the column is sticky below the top bar", r.focus === "pq3" && r.inView && r.pos === "sticky" && r.sticky >= 0 && r.sticky <= 24, r);
+  check("clicking an answered square scrolls to and focuses its question; the column scrolls with the page (V8.8)", r.focus === "pq3" && r.inView && r.pos === "relative", r);
   // Keyword or question, never both (Prem, 2026-10-30).
   r = await js(H + `const seen=e=>!!e&&e.getBoundingClientRect().width>2; const blk=i=>q('.v7-qblock[data-pq="'+i+'"]');
     document.activeElement.blur(); await w(60);
@@ -140,7 +140,7 @@ async function seed(state, extra) {
     sq(4).click(); await w(700); a.click=q('.v7-prof-col .v7-fsq.is-cur')?.dataset.for; a.d=Math.round(bk(4).getBoundingClientRect().top-sq(4).getBoundingClientRect().top);
     a.on=qa('.v7-prof-col .v7-fsq.is-on').length; window.scrollTo(0,0); await w(100);
     return a;`);
-  check("scrolling moves the triangle to the question level with its square; the column stays put; a square click brings its question level", r.mid === "pq-2" && r.navTop >= 0 && r.navTop <= 24 && r.click === "pq-4" && Math.abs(r.d) <= 8 && r.on === 6, r);
+  check("scrolling leaves the triangle on the current question; a square click moves it there, and the square sits beside its question (V8.8)", r.mid === r.top && r.click === "pq-4" && r.d <= 0 && r.d >= -30 && r.on === 6, r);
 
   console.log("Contributions: card pattern");
   r = await js(H + `const sr0=getComputedStyle(q('.v7-qcount .v7-prog-n .v7-sr')).position; nav(/Confirm profile/).click(); await w(150);
@@ -213,7 +213,7 @@ async function seed(state, extra) {
     return a;`);
   check("totals tiles have no set period (Eli, 2026-11-04) and add up", /^People you have/.test(r.tot) && !/five years/.test(r.tot) && r.sum === "3 in total", r);
   check("labels follow the sector; header builds", r.labels.join("|") === "Organization|Unit or position" && /Postdoctoral → A made-up ministry/.test(r.head), r);
-  check("people are lettered like evidence (Person A); the help says why names are left out", /^Person A\b/.test(r.head) && r.rm === "Remove person A" && /privacy/.test(r.help) && /leave out names/i.test(r.help), r);
+  check("people are lettered like evidence (Person A); the help says why names are left out", /^Person A\b/.test(r.head) && r.rm === "Remove person A" && /where your trainees went next/.test(r.help), r);
   check("Mentorship style arrives with one field open (D-4)", r.hm[0] === "is-open", r.hm);
 
   console.log("Background and skills (CV-FRQ)");
@@ -247,7 +247,7 @@ async function seed(state, extra) {
   check("Order is part of Review, not the rail", r.rail.indexOf("Order of contributions") === -1 && r.rail.indexOf("Export") !== -1, r.rail);
   check("↑ ↓ reorder, the draft follows, focus stays on the moved card", r.after[0] === r.order[1] && r.first.indexOf(r.order[1]) !== -1 && r.focusOk, r);
   check("Review has a What your draft contains section below the draft, with a Download image button on each visual", r.gvHead === "What your draft contains" && r.gvBelow && r.gv.length >= 3 && r.gvDl.length === r.gv.length && r.gvDl.every(x => /Download image/.test(x)), r);
-  check("visuals drawn from the draft: evidence, parts, trained and length; each an SVG image whose label carries numbers", r.gv.join(",") === "evidence,parts,trained,length" && r.gvAria.every(x => /^img\|.+\d/.test(x)) && /Policy \/ practice uptake 1/.test(r.gvAria[0]) && /Doctoral 2, Postdoctoral 1/.test(r.gvAria[2]), r.gvAria);
+  check("visuals drawn from the draft: evidence, parts, trained and length; each an SVG image whose label carries numbers", r.gv.join(",") === "evidence,parts,trained,length" && r.gvAria.every(x => /^img\|.+\d/.test(x)) && /Policy \/ practice uptake 1/.test(r.gvAria[0]) && /Postdoctoral 1, Doctoral 2/.test(r.gvAria[2]), r.gvAria);
   check("the parts visual names contributions, and the word job does not appear in the section", /Contribution 3 has/.test(r.gvAria[1]) && !/\bjobs?\b/i.test(r.gvText + r.gvAria.join(" ")), r.gvAria[1]);
   check("Download image runs without a request (file name set)", /^narrative-cv-.+\.png$/.test(r.gvNames[0] || ""), r.gvNames);
   check("At a glance: one line per contribution, linked to its first missing part, which opens with focus (r1-b-10)", r.missing > 0 && /^Contribution 1: The problem or question, .*What you did.* and Evidence$/.test(r.link) && /Most significant/.test(r.jump.h) && r.jump.focus === r.jump.open && /-stakes$/.test(r.jump.focus || ""), r);
@@ -371,17 +371,18 @@ async function seed(state, extra) {
     const cr=col.getBoundingClientRect(), fr=card.querySelector('.v7-fields').getBoundingClientRect(); a.clear=cr.left>=fr.right; a.inCard=cr.right<=card.getBoundingClientRect().right;
     const tgt=b()[5]; tgt.click(); await w(700);
     a.open=q('.v7-f.is-open')?.dataset.f; a.want=tgt.dataset.for; a.focus=document.activeElement.id; a.cur=qa('.v7-card-col .v7-fsq[aria-current]').map(x=>x.dataset.for); a.tri=getComputedStyle(tgt.querySelector('i')).borderRightWidth; a.inView=(()=>{const r=q('.v7-f.is-open').getBoundingClientRect(); return r.top>=0&&r.top<innerHeight;})();
-    window.scrollTo(0, card.getBoundingClientRect().top+scrollY+300); await w(100); a.sticky=Math.round(col.getBoundingClientRect().top)-q('.proto-banner').offsetHeight; a.pos=getComputedStyle(col).position;
+    await w(100); a.pos=getComputedStyle(col).position; a.ds=b().map(x=>{const id=x.dataset.for; const f=card.querySelector('.v7-f[data-f="'+id+'"]')||card.querySelector('.v7-ev-row, .v7-ev-area'); return f?Math.round(x.getBoundingClientRect().top-f.getBoundingClientRect().top):null;});
+    const cq=card.querySelector('.v7-fsq.is-cur'), of=q('.v7-f.is-open .v7-q'); a.triQ=cq&&of?Math.round((cq.getBoundingClientRect().top+12)-(of.getBoundingClientRect().top+of.getBoundingClientRect().height/2)):null;
     return a;`);
   check("desktop card column: a labelled nav with one button per field, named with its state; the spoken count stays", r.label === "Fields in contribution 1" && r.n === 9 && r.fields === 8 && /^Headline, (written|not written yet)$/.test(r.names[0]) && /^Evidence, /.test(r.names[8]) && /of 8 answered/.test(r.sr), r);
   check("green squares match the written fields; unwritten squares are grey outlines; the column sits clear of the writing", r.on === r.written && r.greenOk && r.greyOk && r.clear && r.inCard, r);
   check("clicking a square opens and focuses that field; it shows the triangle and aria-current", r.open === r.want && r.focus === r.want && r.cur.join() === r.want && r.tri === "10px" && r.inView, r);
-  check("the column is sticky below the top bar while the card is on screen", r.pos === "sticky" && r.sticky >= 0 && r.sticky <= 24, r);
+  check("each square sits beside its own field, and the triangle is level with the open field's question (V8.8)", r.pos === "relative" && r.ds.every(d => d !== null && d >= -4 && d <= 32) && r.triQ !== null && Math.abs(r.triQ) <= 14, { ds: r.ds, triQ: r.triQ });
   r = await js(H + `const card=q('.v7-card.v7-card-col'), sq=()=>qa('.v7-card-col .v7-fsq', card); await w(900);
     const id=sq()[4].dataset.for; card._level(id); await w(600);
     const a={id, cur:card.querySelector('.v7-fsq.is-cur')?.dataset.for, open:q('.v7-f.is-open')?.dataset.f, d:Math.round(q('.v7-f[data-f="'+id+'"]').getBoundingClientRect().top-sq()[4].getBoundingClientRect().top)};
     window.scrollTo(0,0); await w(100); return a;`);
-  check("cards: scrolling a field level with its square moves the triangle there; the open field keeps its outline", r.cur === r.id && r.open !== r.id && Math.abs(r.d) <= 8, r);
+  check("cards: scrolling leaves the triangle on the open field (V8.8)", r.cur === r.open, r);
   r = await js(H + `rail('Mentorship').click(); await w(150); const m=qa('.v7-card-col').length, hm=q('#v7-hm-t')?.innerText, hd=q('#v7-hm-t').closest('.v7-card').querySelector('.v7-card-h .v7-dots'), mn=hd?hd.children.length:0, mv=!!hd&&hd.getBoundingClientRect().width>2;
     rail('Personal statement').click(); await w(150); const p=q('.v7-card-col nav')?.getAttribute('aria-label'), pn=qa('.v7-card-col .v7-fsq').length;
     rail('Contributions').click(); await w(150); return {m, hm, mn, mv, p, pn};`);
@@ -912,7 +913,7 @@ async function seed(state, extra) {
     check("past five contributions a line on choosing appears; each folded row shows its length (r6-a-1, r6-a-2)", /You have 6 contributions/.test(r.sel) && r.meta.every(m => /\d+ w$/.test(m)), r);
     check("the rail says when the draft is over the limit; Export says so too (r6-a-4)", /over 5 p/.test(r.wc) && r.wcOver && /needs cutting/.test(r.over), r);
     check("removing a written contribution names its words and can be undone for ten seconds (r6-a-3)", /with its [\d,]+ words/.test(r.warn) && r.undo && r.n1 === 5 && r.n2 === 6 && r.first === "cr1", r);
-    check("'my team ran it' is not your own role; a pause and a counterfactual are not flagged; a year counts as a date (r6-b-6, r6-b-4, r6-b-5)", !/Your own role is named/.test(r.roleTick) && !/hedge|does not say who|No numbers or dates/.test(r.actFlags), r);
+    check("'my team ran it' is not your own role; a pause and a counterfactual are not flagged; a year counts as a date (r6-b-6, r6-b-4, r6-b-5)", !/Your own role is named/.test(r.roleTick) && !/hedge|does not say who|Add the numbers if you have them|give a number for what changed/.test(r.actFlags), r);
     check("the totals have no set period; How you got here sends leaves to the appendix and the research advisor, and allows a mention (Eli, 2026-11-04)", /no set period/.test(r.tilesHelp) && /Check the instructions for your funding opportunity in case it sets one/.test(r.tilesHelp) && !/five years/.test(r.tilesHelp) && /usually go in the appendix/.test(r.pivot) && /eligibility criteria/.test(r.pivot) && /research advisor/.test(r.pivot) && /you want to discuss it, you can say so here/.test(r.pivot), r);
     check("a 'went on to do' answer that starts with a verb joins the sentence, without a second “now” (r6-a-7, r9-a-13); a profile change names what changed (r6-b-7)", /made-up health authority and leads the made-up analytics team\./.test(r.mentor) && /Profile updated: career stage/.test(r.live), r);
   }
@@ -1008,7 +1009,7 @@ async function seed(state, extra) {
     check("'our region' in The problem or question is not asked for your own part (r8-b-2)", !/“we”/.test(r.stakes), r);
     check("a role line saying 'I am the principal investigator' names your part for the card (r8-b-1)", !/“we”/.test(r.act), r);
     check("the length line gives a verdict against the usual range (r8-b-4)", /The usual range here is \d+ to \d+, so this is short\./.test(r.meta), r.meta);
-    check("'could walk' is a past ability, and 'each one' is not a number (r8-b-3, r8-a-5)", !/hedge/.test(r.walk) && /No numbers or dates/.test(r.each), r);
+    check("'could walk' is a past ability, and 'each one' is not a number (r8-b-3, r8-a-5)", !/hedge/.test(r.walk) && /Add the numbers if you have them|give a number for what changed/.test(r.each), r);
     check("a part typed in lower case starts with a capital where it prints (N-2)", /In our region about 1,900/.test(r.prev), r.prev.slice(0, 200));
     check("'prestigious' gets its own message, and the people note no longer uses the word (r8-b-7)", /is an opinion/.test(r.prest) && !/Journal Impact Factor/.test(r.prest) && !/prestigious/.test(r.help), r);
     check("a trainee answer that starts with a name stays whole as its own sentence (N-1)", /A doctoral student I trained now works at a made-up hospital\. James now leads the made-up clinic\./.test(r.mentor), r.mentor);
@@ -1023,7 +1024,7 @@ async function seed(state, extra) {
     await send("Emulation.setDeviceMetricsOverride", { width: 812, height: 375, deviceScaleFactor: 1, mobile: true });
     await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await seed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "mentor", ui: { profileNote: false } }));
-    r = await js(H + `await w(300); window.scrollTo(0,0); const nm=q('#v7-t-other-name');
+    r = await js(H + `await w(300); window.scrollTo(0,0); const nm=q('#v7-t-other-kind');
       return {coarse:matchMedia('(pointer: coarse)').matches, toggle:getComputedStyle(q('#v7-rail-toggle')).display, railH:Math.round(q('.narrative-progress-panel').getBoundingClientRect().height), sw:document.documentElement.scrollWidth, nmH:nm?Math.round(nm.getBoundingClientRect().height):0, nmF:nm?getComputedStyle(nm).fontSize:''};`);
     await send("Emulation.setTouchEmulationEnabled", { enabled: false, maxTouchPoints: 1 });
     await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
@@ -1036,7 +1037,7 @@ async function seed(state, extra) {
       document.documentElement.style.fontSize=''; return a;`);
     await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
     check("at 150% text on a laptop the rail column grows and keeps 'Contributions' whole (N-5)", r150.lines === 1 && r150.rail > 300 && r150.sw <= 1280, r150);
-    check("a phone held sideways folds the rail to one row, with no sideways scroll; the Other name box is a 44 px, 16 px field (r8-a-1, r8-a-3)", r.coarse && r.toggle !== "none" && r.railH <= 80 && r.sw <= 812 && r.nmH >= 44 && r.nmF === "16px", r);
+    check("a phone held sideways folds the rail to one row, with no sideways scroll; the Other list is a 44 px, 16 px field (r8-a-1, r8-a-3)", r.coarse && r.toggle !== "none" && r.railH <= 80 && r.sw <= 812 && r.nmH >= 44 && r.nmF === "16px", r);
     // P-1, Q-18 (Prem, 2026-11-01): the first part is called "The problem or question".
     await seed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false },
       contributions: [{ cid: "cp1", title: "Made-up contribution", stakes: "", roleMode: "led", roleLine: "I led it.", activities: "I ran three made-up sites.", outputs: "", outcomes: "", impact: "", translational: "", evidence: [], flags: {}, notes: {} }] }));
@@ -1105,7 +1106,7 @@ async function seed(state, extra) {
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
       const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(!cb) return {err:'no copy', btns:qa('.btn').map(b=>b.innerText).join('|')}; cb.click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
-    check("spelled-out numbers after 'the' count again; 'I was a child' does not name your part (R-1, R-6)", !/No numbers or dates/.test(r.twelve) && /“we”/.test(r.child), { twelve: r.twelve, child: r.child });
+    check("spelled-out numbers after 'the' count again; 'I was a child' does not name your part (R-1, R-6)", !/Add the numbers if you have them|give a number for what changed/.test(r.twelve) && /“we”/.test(r.child), { twelve: r.twelve, child: r.child });
     check("one list detector: year-led lines are not a list, dash lines are (R-5)", !/reads as a list/.test(r.years) && /reads as a list/.test(r.dash), { years: r.years, dash: r.dash });
     check("a passive with its agent named by 'by' or 'with' people is not flagged; a bare one is (r9-b-2, r9-a-11)", !/does not say who/.test(r.by) && !/does not say who/.test(r.withC) && /does not say who/.test(r.bare), { by: r.by, withC: r.withC, bare: r.bare });
     check("'how many' is not vague; 'could' in a reported question is not a hedge (r9-b-16, r9-b-10)", !/how many\?/.test(r.howMany) && !/hedge/.test(r.asked), { howMany: r.howMany, asked: r.asked });
@@ -1116,7 +1117,7 @@ async function seed(state, extra) {
     check("the field column is one Tab stop (r9-b-14)", r.tabStops === 1 && r.sq > 5, { tabStops: r.tabStops, sq: r.sq });
     check("community-engaged wording: What you did, One moment, the join, Mentorship headings and the self-check; the main field's own statement wording comes first (r9-b-1, r9-b-4, r9-b-11)",
       /communities or partners/.test(r.q.act) && /in use by a specific person/.test(r.q.tr) && /in response/.test(r.join) && /keep returning to/.test(r.ps)
-      && /People you have trained or mentored/.test(r.mhead) && !/five years/.test(r.mhead) && /where they are now/.test(r.mhead) && /names the parts the partners led or hold/.test(r.self) && /their data/.test(r.self),
+      && /People you have trained or mentored/.test(r.mhead) && !/five years/.test(r.mhead) && /Highlight a few people you trained or mentored/.test(r.mhead) && /names the parts the partners led or hold/.test(r.self) && /their data/.test(r.self),
       { q: r.q, join: r.join, ps: r.ps, mhead: r.mhead });
     check("trainee answers: 'Now leads…' joins, a name before 'now' stays whole, a community researcher is one you mentored (R-3, r9-b-1)",
       /A doctoral student I trained now works at a made-up hospital and leads a made-up hospital program\./.test(r.mentor) && /I trained\. Rose now runs a made-up lab\./.test(r.mentor) && /A community researcher I mentored/.test(r.mentor), r.mentor);
@@ -1260,7 +1261,7 @@ async function seed(state, extra) {
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
       const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(cb){ cb.click(); await w(40); } a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
-    check("French: number words and '3 200' count, 'facteur d'impact' is caught, the note says the checks read English (r11-a-1, r11-a-4, r11-a-5)", !/No numbers/.test(r.fr) && /impact/i.test(r.frIf) && /written for English/.test(r.note), { fr: r.fr, frMeta: r.frMeta, frIf: r.frIf });
+    check("French: number words and '3 200' count, 'facteur d'impact' is caught, the note says only some suggestions apply in French (r11-a-1, r11-a-4, r11-a-5)", !/Add the numbers if you have them|give a number for what changed/.test(r.fr) && /impact/i.test(r.frIf) && /in French text only some of them apply/.test(r.note), { fr: r.fr, frMeta: r.frMeta, frIf: r.frIf });
     check("an elided French start takes a capital (r11-a-3); 'by the end-users' names an agent (T-15)", /L’équipe a tenu 24/.test(r.prev) && !/does not say who/.test(r.byEnd), { byEnd: r.byEnd, prev: r.prev.slice(0, 300) });
     check("the equity question follows community-engaged first, whatever the order (T-11)", /^Who joins the research team/.test(r.edi), r.edi);
     check("trainee sentences keep a typed organization, join a listed verb before a name, leave titles whole, keep 'The Ottawa Hospital', and say 'in Marketing' (T-2, T-4, T-5, T-13, T-14)",
@@ -1304,7 +1305,7 @@ async function seed(state, extra) {
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
       const cb=qa('button').find(b=>/^Copy working draft/.test(b.innerText)); if(cb){ cb.click(); await w(40); } a.txt=clip; navigator.clipboard.writeText=ow;
       return a;`);
-    check("'(n = 45)' keeps its number; 'seize' in English is not a number (U-1, U-2)", !/No numbers/.test(r.n45) && /No numbers/.test(r.seize), { n45: r.n45, seize: r.seize });
+    check("'(n = 45)' keeps its number; 'seize' in English is not a number (U-1, U-2)", !/Add the numbers if you have them|give a number for what changed/.test(r.n45) && /Add the numbers if you have them|give a number for what changed/.test(r.seize), { n45: r.n45, seize: r.seize });
     check("an inline numbered list on one line is a list (r12-a-1)", /reads as a list/.test(r.inl), r.inl);
     check("a second field adds a line to What you did and What already changed (r12-b-5)", /on the health side too\./.test(r.qAct) && /care practice or guidelines that took it up too\./.test(r.qOut), { qAct: r.qAct, qOut: r.qOut });
     check("the field panel keeps the field's cue and adds the partners (r12-b-4)", /where a partner raised the question, say so/.test(r.hints) && !/^The problem or question\. A question a partner raised/m.test(r.hints), r.hints.slice(0, 300));
@@ -1330,8 +1331,8 @@ async function seed(state, extra) {
       for (const [k,v] of Object.entries(${JSON.stringify(SENT)})) { setv(box, v); await w(70); out[k]={flags:qa('[data-f$="-activities"] .v4-flag').map(x=>x.textContent).join('|'), meta:qa('[data-f$="-activities"] .v4-meta').map(x=>x.textContent).join('|')}; }
       return out;`);
     check("H1: 'My research… We… our team…' still asks for your own part (V-2)", /“we”/.test(r.h1.flags), r.h1);
-    check("short French fields with curly apostrophes count their number words (V-1)", !/No numbers/.test(r.frShort.flags) && !/No numbers/.test(r.frCinq.flags), { frShort: r.frShort.flags, frCinq: r.frCinq.flags });
-    check("English with French-derived names is not French; a number after a spaced dash counts (V-3, V-6)", /No numbers/.test(r.enNames.flags) && !/No numbers/.test(r.dashNum.flags), { enNames: r.enNames.flags, dashNum: r.dashNum.flags });
+    check("short French fields with curly apostrophes count their number words (V-1)", !/Add the numbers if you have them|give a number for what changed/.test(r.frShort.flags) && !/Add the numbers if you have them|give a number for what changed/.test(r.frCinq.flags), { frShort: r.frShort.flags, frCinq: r.frCinq.flags });
+    check("English with French-derived names is not French; a number after a spaced dash counts (V-3, V-6)", /Add the numbers if you have them|give a number for what changed/.test(r.enNames.flags) && !/Add the numbers if you have them|give a number for what changed/.test(r.dashNum.flags), { enNames: r.enNames.flags, dashNum: r.dashNum.flags });
     // r13-a-1, r13-a-2, r13-b-1: a blank draft from elsewhere does not replace this tab's draft; the warning is an alert.
     const sx = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "contrib", ui: { profileNote: false } });
     sx.lens = Object.assign({}, sx.lens, { workMode: ["industry"] });
@@ -1386,7 +1387,7 @@ async function seed(state, extra) {
       return a;`);
     check("the first card's Move up is disabled (Y-1)", r.upDisabled === true, r);
     check("adding an item ends the Undo on offer (Y-2)", r.undo1 && !r.undo2, r);
-    check("a role sentence in The problem or question gets a note, not praise; a French line with articles counts its numbers (r15-a-1, Y-3)", /reads like your role/.test(r.stakes) && !/Your own role is named/.test(r.stakes) && !/No numbers/.test(r.fr), { stakes: r.stakes, fr: r.fr });
+    check("a role sentence in The problem or question gets a note, not praise; a French line with articles counts its numbers (r15-a-1, Y-3)", /reads like your role/.test(r.stakes) && !/Your own role is named/.test(r.stakes) && !/Add the numbers if you have them|give a number for what changed/.test(r.fr), { stakes: r.stakes, fr: r.fr });
   }
 
   console.log("Audit loop, round 16");
@@ -1460,7 +1461,7 @@ async function seed(state, extra) {
       const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(cb){ cb.click(); await w(40); } a.mentor=clip; navigator.clipboard.writeText=ow;
       return a;`);
     check("an empty note shows no count (the /$^/ bug, r18-a-1)", !/1 word/.test(r.noteCount), r.noteCount);
-    check("'Grade 9' is not a figure; no hedge check on the role line (r18-a-3, r18-a-4)", /No numbers/.test(r.grade) && !/hedge/.test(r.role), { grade: r.grade, role: r.role });
+    check("'Grade 9' is not a figure; no hedge check on the role line (r18-a-3, r18-a-4)", /Add the numbers if you have them|give a number for what changed/.test(r.grade) && !/hedge/.test(r.role), { grade: r.grade, role: r.role });
     check("a community group name keeps its capital (AB-1)", /5 Cree youth/.test(r.mentor), r.mentor.slice(0, 200));
   }
 
@@ -1608,7 +1609,7 @@ async function seed(state, extra) {
     // Export: the three questions, sent against the same id.
     const tstate = { id: "1234abcd-0000-4000-8000-000000000001", email: "tester@example.org", start: { concern: "The funder's rules" }, startSent: true, lastStep: "review" };
     apiPosts.length = 0;
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), tstate);
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "finish", ui: { profileNote: false } }), tstate);
     r = await js(H + `await w(300); const card=q('.v8-tester-end'); const sets=card?[...card.querySelectorAll('fieldset')]:[];
       const a={card:!!card, h:card&&card.querySelector('h2')?.innerText, legends:sets.map(f=>f.querySelector('legend')?.innerText),
       scale:card?card.querySelectorAll('.is-scale input[type=radio]').length:0, tas:card?[...card.querySelectorAll('textarea')].map(t=>q('label[for="'+t.id+'"]')?.innerText):[],
@@ -1622,13 +1623,13 @@ async function seed(state, extra) {
       card.querySelector('.btn-primary').click(); await w(500);
       a.after=q('.v8-tester-end')?.innerText; a.focus=document.activeElement.id; a.live=q('#v7-live').textContent; a.t=JSON.parse(localStorage.getItem('ncv-v8-tester')); return a;`);
     const fin = apiPosts.find(p => p.action === "finish") || {};
-    check("Export shows the five questions for a signed-up tester: the scale quotes the concern from the start, then fit, next and reuse, with three labelled boxes",
+    check("Finish your test shows the five questions for a signed-up tester: the scale quotes the concern from the start, then fit, next and reuse, with three labelled boxes",
       r.card && /Five questions/.test(r.h || "") && r.legends.length === 4 && /main concern was: the funder's rules\. How much did the tool help/.test(r.legends[0]) && r.scale === 5
       && /fit your kind of work/.test(r.legends[1]) && /do with this draft next/.test(r.legends[2]) && /reuse for your next application\? Choose any/.test(r.legends[3])
       && r.tas.join("|") === "Which ones?|Anything else you would keep?|What one change would help most?", r);
     check("a11y: the reuse question is five checkboxes in its fieldset, each inside its label", r.boxes.length === 5 && r.boxes.every(b => b === "checkbox:wrapped"), r.boxes);
     check("choosing None clears the other reuse answers, and choosing a part clears None", r.afterNone.join() === "false,false,false,false,true" && r.afterPick.join() === "true,false,false,true,false", { none: r.afterNone, pick: r.afterPick });
-    check("opening Export sends nothing before Send my answers", apiPosts.filter(p => p.action === "finish").length === 1, apiPosts.map(p => p.action));
+    check("opening Finish your test sends nothing before Send my answers", apiPosts.filter(p => p.action === "finish").length === 1, apiPosts.map(p => p.action));
     check("Send my answers sends a finish row for the same id with every answer, the reuse answer as a list", fin.id === tstate.id && fin.answers.concernHelp === "4" && fin.answers.fit === "Mostly, with some wording from another field" && /role line/.test(fin.answers.fitWhich)
       && fin.answers.next === "Move it into Word or another document" && JSON.stringify(fin.answers.reuse) === JSON.stringify(["The contributions", "The personal statement"])
       && /made-up totals/.test(fin.answers.reuseOther) && /made-up change/.test(fin.answers.change), fin);
@@ -1636,14 +1637,14 @@ async function seed(state, extra) {
 
     // A failed send keeps the answers and says what to do; nothing is lost.
     apiMode = "fail";
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { end: { change: "Kept text." } }));
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "finish", ui: { profileNote: false } }), Object.assign({}, tstate, { end: { change: "Kept text." } }));
     r = await js(H + `await w(300); q('.v8-tester-end .btn-primary').click(); await w(500);
       return {status:q('.v8-tester-end .v7-quiet[aria-live]')?.innerText, kept:q('#v8-te-change')?.value, dis:q('.v8-tester-end .btn-primary').disabled, t:JSON.parse(localStorage.getItem('ncv-v8-tester'))};`);
     check("a failed send keeps the answers, re-enables Send and names the email fallback", /did not send/.test(r.status || "") && /impact@concordia\.ca/.test(r.status) && r.kept === "Kept text." && !r.dis && !r.t.endSent, r);
     apiMode = "ok";
 
     // A tester who chose no concern (or Something else) sees the general wording.
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { start: { concern: "Something else" } }));
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "finish", ui: { profileNote: false } }), Object.assign({}, tstate, { start: { concern: "Something else" } }));
     r = await js(H + `await w(300); return q('.v8-tester-end legend')?.innerText;`);
     check("with no concern to quote, the first Export question asks about the main concern in general", /^How much did the tool help with your main concern/.test(r || ""), r);
 
@@ -1657,7 +1658,7 @@ async function seed(state, extra) {
     await tseed(null, { skipped: true });
     r = await js(H + `await w(200); return {card:!!q('.v8-tester'), paths:qa('.v7-path').length};`);
     check("a browser that skipped sign-up before sees the sign-up card again", r.card && r.paths === 0 && apiPosts.length === 0, r);
-    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }));
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "finish", ui: { profileNote: false } }));
     r = await js(H + `await w(300); return {card:!!q('.v8-tester'), exp:!!q('.v8-tester-end'), rail:!!q('.v7-rail')};`);
     check("a saved draft on Export still opens on the sign-up card until the tester signs up", r.card && !r.exp, r);
 
@@ -1881,18 +1882,19 @@ async function seed(state, extra) {
 
     r = await js(H + `const p=q('.v8-fb-panel'), ta=p.querySelector('textarea'); setv(ta,'A made-up note on the role line.');
       p.querySelector('.btn-primary').click(); await w(400);
-      return {status:p.querySelector('[aria-live]').innerText, ta:ta.value, sent:p.querySelector('.v8-fb-sent').innerText, focus:document.activeElement===ta,
+      const b=q('.v8-fb-btn'), sl=q('.v8-fb-sent');
+      return {hidden:p.hidden, exp:b.getAttribute('aria-expanded'), ta:ta.value, sent:sl.innerText, role:sl.getAttribute('role'), focus:document.activeElement===b,
         t:JSON.parse(localStorage.getItem('ncv-v8-tester')).notes};`);
     const note = apiPosts.find(p => p.action === "note") || {};
     check("Send feedback posts one note for this tester and step, with the profile and no draft text", note.id === tstate.id && note.step === "contrib" && note.note === "A made-up note on the role line."
       && note.profile && !("contributions" in note) && !("text" in note) && Object.keys(note).sort().join() === "action,id,note,profile,step,version", note);
-    check("after sending, the status thanks the tester, the box clears and keeps focus, and a line counts the notes sent", /reached the team/.test(r.status) && r.ta === "" && r.focus && /sent 1 note on this step/.test(r.sent) && r.t.contrib.sent === 1, r);
+    check("a11y: after sending, the box closes, focus returns to the button, and a status line beside it thanks the tester and counts the notes (V8.8)", r.hidden && r.exp === "false" && r.ta === "" && r.focus && r.role === "status" && /reached the team/.test(r.sent) && /1 note sent on this step/.test(r.sent) && r.t.contrib.sent === 1, r);
 
     // A failed send keeps the note; a reload keeps an unsent note.
     apiMode = "fail";
-    r = await js(H + `const p=q('.v8-fb-panel'), ta=p.querySelector('textarea'); setv(ta,'Kept note.'); p.querySelector('.btn-primary').click(); await w(400);
-      return {status:p.querySelector('[aria-live]').innerText, ta:ta.value};`);
-    check("a failed send keeps the note and gives the team's email", r.ta === "Kept note." && /did not send/.test(r.status) && /impact@concordia\.ca/.test(r.status), r);
+    r = await js(H + `q('.v8-fb-btn').click(); await w(100); const p=q('.v8-fb-panel'), ta=p.querySelector('textarea'); setv(ta,'Kept note.'); p.querySelector('.btn-primary').click(); await w(400);
+      return {status:p.querySelector('[aria-live]').innerText, ta:ta.value, open:!p.hidden};`);
+    check("a failed send keeps the box open with the note, and gives the team's email", r.open && r.ta === "Kept note." && /did not send/.test(r.status) && /impact@concordia\.ca/.test(r.status), r);
     apiMode = "ok";
     await go(TP());
     r = await js(H + `await w(300); q('.v8-fb-btn').click(); await w(100); return q('.v8-fb-panel textarea').value;`);
@@ -1912,6 +1914,84 @@ async function seed(state, extra) {
     check("the start page has no feedback box", r === 0, r);
   }
 
+  console.log("V8.8: Prem's notes of 2026-11-12");
+  {
+    const draft = (key, extra) => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: key, ui: { profileNote: false } }, extra || {});
+    await send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
+
+    // Note 1: the Profile box.
+    await seed(draft("contrib"));
+    r = await js(H + `await w(250); const bar=q('.v7-tailored'), head=bar.querySelector('.v7-tailored-head'), k=head&&head.querySelector('.v7-tailored-k'), ch=head&&head.querySelector('#v7-chg'), pills=bar.querySelector('.v7-tailored-pills');
+      return {head:!!head, k:k&&k.innerText, ch:!!ch, row:k&&ch?Math.abs(k.getBoundingClientRect().top+k.offsetHeight/2-(ch.getBoundingClientRect().top+ch.offsetHeight/2))<6:false,
+        right:k&&ch?ch.getBoundingClientRect().left>k.getBoundingClientRect().right:false, below:pills&&ch?pills.getBoundingClientRect().top>=ch.getBoundingClientRect().bottom-1:false,
+        order:[...bar.querySelectorAll('.v7-tailored-k, #v7-chg, .v7-pill')].map(x=>x.id||x.className.split(' ')[0]).slice(0,3).join(','), radius:getComputedStyle(bar).borderRadius};`);
+    check("note 1: the Profile box puts Change on the label's row, to its right, with the pills below, in card style; Tab reaches Change before the pills", r.head && r.k === "Profile:" && r.ch && r.row && r.right && r.below && r.order === "v7-tailored-k,v7-chg,v7-pill" && r.radius === "10px", r);
+
+    // Note 3 is in the feedback-box block. Note 6: estimates and decades.
+    r = await js(H + `await w(200); const box=(k)=>q('[data-f$="-'+k+'"] .v7-box'); const fl=(k)=>qa('[data-f$="-'+k+'"] .v4-flag').map(x=>x.textContent).join('|');
+      const put=async(k,v)=>{ box(k).focus(); setv(box(k),v); await w(80); return fl(k); };
+      const a={}; a.s100=await put('activities','I worked with 100s of tenants.'); a.hund=await put('activities','Hundreds of tenants took part.');
+      a.dec=await put('activities','Interviews with tenants who arrived in the 1990s.'); a.none=await put('activities','I worked with tenants.'); a.exact=await put('activities','I worked with 140 tenants.');
+      a.out=await put('outcomes','Tenants use the toolkit.'); return a;`);
+    check("note 6: “100s” and “hundreds” are estimates: the message names the word and asks for the number", /“100s” is an estimate\. If you know the number, give it/.test(r.s100) && /“Hundreds” is an estimate/.test(r.hund), r);
+    check("note 6: a decade counts as a date; with no number, the message says what the question asked; an exact number gives no message", !/estimate|Add the numbers/.test(r.dec) && /This part asks how large the work was: how many people, sites or sources, and over what period\. Add the numbers if you have them\./.test(r.none) && !/estimate|Add the numbers/.test(r.exact) && /give a number for what changed/.test(r.out), r);
+
+    // Notes 4, 5 and 7: help that only repeats the question is gone; no tool machinery; no specialist terms.
+    r = await js(H + `await w(100); const f=q('[data-f$="-stakes"]'); f.querySelector('.v7-box').focus(); await w(250);
+      const t=q('[data-f$="-title"]'); t.querySelector('.v7-box').focus(); await w(250); const th=[...t.querySelectorAll('.v4-help, .v7-explain, .v7-info')].map(x=>x.innerText).join('|');
+      const rl=q('[data-f$="-roleLine"]'); rl.querySelector('.v7-box').focus(); await w(250);
+      return {stakesHelp:[...f.querySelectorAll('.v7-explain, .v7-info')].map(x=>x.innerText).join('|'), title:th, lv:(rl.querySelector('.v7-lv-note')||{}).innerText||'', clear:qa('button').some(b=>/Clear the level/.test(b.innerText))};`);
+    check("note 4: the problem field has no help line that restates it (social sciences); the headline help keeps only what is new", !/Strong contributions open/.test(r.stakesHelp) && !/Short, plain/.test(r.title) && /evidence list/.test(r.title), r);
+    check("note 5: the role level says what Review does with it, in plain words", /^Review uses your choice to show your role across all your contributions\. Only the line you write in the box appears in your draft\.$/.test(r.lv) && !r.clear, r);
+    {
+      const src = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v8.html"), "utf8").split("\n").filter(l => !/^\s*\/\//.test(l)).join("\n");
+      const bad = ["care pathways", "next field", "the checks refer", "The checks under each field", "The checks are fixed rules", "Clear the level", "appears in the charts and the checks", "Strong contributions open with", "Short, plain and easy to remember", "A reviewer should see one coherent program", "described concretely", "a dataset the health authority holds", "Over the last five years"].filter(x => src.includes(x));
+      check("notes 4, 5 and 7: the cut wording is gone from the tool (and the mentorship example gives no five-year period)", bad.length === 0, bad);
+    }
+
+    // Notes 8 and 9: the totals and the people section.
+    await seed(draft("mentor", { mentorOtherLabel: "Lab technicians", mentorCounts: { phd: "2", masters: "1", postdoc: "1", undergrad: "", other: "3" } }));
+    r = await js(H + `await w(300); const tiles=qa('.v7-tile').filter(x=>x.closest('.v7-tiles'));
+      const a={labels:tiles.map(t=>t.querySelector('label').innerText).join('|'), tops:new Set(tiles.map(t=>Math.round(t.getBoundingClientRect().top))).size,
+        sel:!!q('#v7-t-other-kind'), selName:q('label[for="v7-t-other-kind"]')?.innerText, selVal:q('#v7-t-other-kind')?.value, name:q('#v7-t-other-name')?.value, nameShown:!q('#v7-t-other-name')?.hidden,
+        opts:[...q('#v7-t-other-kind').options].map(o=>o.text).join('|'), help:q('.v7-tiles-help')?.innerText,
+        h:qa('.v7-section-t h3').map(x=>x.innerText).join('|'), people:qa('.v7-people-help').map(x=>x.innerText), bullets:qa('.v7-people-help li').length,
+        lvlOpts:[...(q('[id^=v7-ps]')||{options:[]}).options].map(o=>o.text).filter(Boolean).join('|'), co:(q('.v7-lvl-help')||{}).innerText||''};
+      const sel=q('#v7-t-other-kind'); sel.value='community'; sel.dispatchEvent(new Event('change',{bubbles:true})); await w(80);
+      a.afterHidden=q('#v7-t-other-name').hidden; a.st=JSON.parse(localStorage.getItem('ncv-v8')); a.afterLabel=a.st.mentorOtherLabel; a.afterKind=a.st.mentorOtherKind;
+      sel.value='else'; sel.dispatchEvent(new Event('change',{bubbles:true})); await w(80); a.elseFocus=document.activeElement.id; delete a.st; return a;`);
+    check("note 8: the boxes run Postdoctoral, Doctoral, Master’s, Undergraduate research, Other, all on one row, and the Level list follows the same order",
+      r.labels === "Postdoctoral|Doctoral|Master’s|Undergraduate research|Other" && r.tops === 1 && /^Choose…\|Postdoctoral\|Doctoral\|Master’s\|Undergraduate research\|Other$/.test(r.lvlOpts), r);
+    check("note 8: Other has a labelled list on its own row under the boxes; a name typed before 8.8 opens as Something else with the name kept; choosing a group hides the box and saves the group",
+      r.sel && /Who are the Other trainees/.test(r.selName) && r.opts === "Choose (optional)|Research staff|Residents or clinical fellows|Community researchers|Visiting researchers|A mix of these|Something else"
+      && r.selVal === "else" && r.name === "Lab technicians" && r.nameShown && r.afterHidden && r.afterLabel === "community researchers" && r.afterKind === "community" && r.elseFocus === "v7-t-other-name", r);
+    check("note 8: the help under the boxes keeps only the point on the period", r.help === "These totals have no set period. Check the instructions for your funding opportunity in case it sets one.", r.help);
+    check("note 9: the people heading says Highlight; one context line and one privacy line replace the six bullets; co-supervision sits on the card",
+      /Highlight a few people you trained/.test(r.h) && r.people.length === 2 && r.bullets === 0 && /where your trainees went next/.test(r.people[0]) && /relates to this application/.test(r.people[0]) && /^Leave out names\./.test(r.people[1]) && /co-supervise/.test(r.co), r);
+
+    // Note 10: the end questions get their own step.
+    const tstate = { id: "1234abcd-0000-4000-8000-000000000003", email: "tester@example.org", start: {}, startSent: true, lastStep: "export" };
+    await go(HOME());
+    await js("localStorage.clear();localStorage.setItem('ncv-v8'," + JSON.stringify(JSON.stringify(draft("export"))) + ");localStorage.setItem('ncv-v8-tester'," + JSON.stringify(JSON.stringify(tstate)) + ");");
+    await go(PAGE() + "?tester=1");
+    r = await js(H + `await w(300); const a={endOnExport:!!q('.v8-tester-end'), rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]).slice(-2).join('|'), next:nav(/Finish your test/)?.innerText};
+      nav(/Finish your test/).click(); await w(300);
+      a.h=q('.narrative-stage-header h2')?.innerText; a.card=!!q('.v8-tester-end'); a.hash=location.hash;
+      const which=q('#v8-te-fitWhich')?.closest('.v8-tq'); a.which0=which.hidden;
+      const fs=qa('.v8-tester-end fieldset'); fs[1].querySelectorAll('input')[0].click(); await w(50); a.whichFit=which.hidden;
+      fs[1].querySelectorAll('input')[1].click(); await w(50); a.whichMostly=which.hidden;
+      const opts=[...fs[0].querySelectorAll('.v8-tq-opt')], ends=[...fs[0].querySelectorAll('.v4-fb-scale-ends span')];
+      a.endR=Math.round(ends[1].getBoundingClientRect().right-opts[4].getBoundingClientRect().right); a.endL=Math.round(ends[0].getBoundingClientRect().left-opts[0].getBoundingClientRect().left);
+      return a;`);
+    check("note 10: Export has no end questions; the rail ends with Finish your test, and Export's next button goes there", !r.endOnExport && r.rail === "Export|Finish your test" && /^Finish your test →$/.test(r.next || ""), r);
+    check("note 10: the Finish your test step holds the five questions at its own address", r.h === "Finish your test" && r.card && r.hash === "#finish-test", r);
+    check("note 10: “Which ones?” shows only after an answer other than They fit; the scale's end labels sit under 1 and under 5", r.which0 && r.whichFit && !r.whichMostly && Math.abs(r.endR) <= 2 && Math.abs(r.endL) <= 2, r);
+    await seed(draft("export"));
+    r = await js(H + "await w(200); return {rail:qa('.v7-ri').map(b=>b.innerText.split('\\n')[0]).includes('Finish your test'), card:!!q('.v8-tester-end')};");
+    check("note 10: the plain address has no Finish your test step", !r.rail && !r.card, r);
+    await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
+  }
+
   console.log("Plain-language rewrites (Q-6, V8.7)");
   {
     const src = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v8.html"), "utf8");
@@ -1922,7 +2002,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "The six parts in each contribution", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("Q-6: the version is 8.7 in the script and the tab title", /VERSION_NUM = "8\.7"/.test(src) && /<title>Narrative CV — V8\.7 beta/.test(src));
+    check("the version is 8.8 in the script and the tab title", /VERSION_NUM = "8\.8"/.test(src) && /<title>Narrative CV — V8\.8 beta/.test(src));
   }
 
   console.log("Network and errors");

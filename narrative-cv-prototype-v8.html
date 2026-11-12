@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.7 beta</title>
+  <title>Narrative CV — V8.8 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -223,6 +223,8 @@
     .v8-tq-opt:has(input:checked) { border-color: var(--v7-accent, #912338); box-shadow: inset 0 0 0 1px var(--v7-accent, #912338); }
     .v8-tq-opt:has(input:focus-visible) { outline: 2px solid var(--v7-accent, #912338); outline-offset: 2px; }
     .v8-tq-opts.is-scale .v8-tq-opt { min-width: 44px; justify-content: center; }
+    .v8-scale { display: inline-block; max-width: 100%; }
+    .v8-scale .v8-scale-ends { max-width: none; }
     .v8-tq .v4-text-input { max-width: 28rem; width: 100%; }
     .v8-tq-ta { width: 100%; min-height: 4.5em; }
     .v8-tq-err { color: #a4161a; font-size: 0.85rem; margin: 4px 0 0; min-height: 0; }
@@ -236,7 +238,8 @@
     .v8-fb-panel { margin-top: 12px; padding: 14px 16px; border: 1px solid #e5a712; border-radius: 8px; background: #fff; max-width: 72ch; }
     .v8-fb-panel[hidden] { display: none; }
     .v8-fb-panel .v8-tester-promise { margin-bottom: 12px; }
-    .v8-fb-sent { font-size: 0.85rem; color: var(--v7-done); margin: 8px 0 0; }
+    .v8-fb-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+    .v8-fb-sent { font-size: 0.85rem; color: var(--v7-done); }
     .v8-tester-promise { margin: 0 0 12px; padding: 8px 12px; border-left: 4px solid #e5a712; background: #fff8e6; max-width: 72ch; }
     .v7-quiet { font-size: 0.85rem; color: var(--muted); margin: 8px 0 0; }
     .v7-small { font-size: 0.78rem; }
@@ -263,13 +266,15 @@
     @keyframes v7reveal { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
     /* Tailored for bar (V7-19 update, D-16, D-18) */
-    .v7-tailored { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 8px; padding: 10px 14px; margin: 0 0 18px; font-size: 0.85rem; }
+    .v7-tailored { display: block; background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 14px 22px 16px; margin: 0 0 18px; font-size: 0.85rem; }
+    /* V8.8 (Prem): the label and Change share the first row; the pills follow, as in the other cards */
+    .v7-tailored-head { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; }
     .v7-tailored-k { font-weight: 700; color: #333; }
-    .v7-tailored-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 auto; min-width: 0; }
+    .v7-tailored-pills { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
     .v7-tailored-pills.v7-tailored-text { display: block; color: #333; font-size: 0.88rem; }
     .v7-pill { display: inline-block; background: var(--v7-tint); color: #912338; border-radius: 12px; padding: 2px 10px; font-size: 0.8rem; }
     /* Pass B: the Change panel opens inside the bar */
-    .v7-tailored.is-open { flex-wrap: wrap; border-color: #912338; background: var(--v7-open); }
+    .v7-tailored.is-open { border-color: #912338; background: var(--v7-open); }
     .v7-chg { flex: 1 1 100%; border-top: 1px solid var(--v7-card-b); padding-top: 12px; margin-top: 2px; }
     .v7-chg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 13em), 1fr)); gap: 10px 14px; }
     .v7-chg-f.wide { grid-column: 1 / -1; }
@@ -303,7 +308,7 @@
       .v7-qcount .v7-dots { display: none; }
       .v7-prof-col { display: grid; grid-template-columns: minmax(0, 1fr) 24px; column-gap: 12px; }
       .v7-prof-col > .v7-prof-list { grid-column: 1; grid-row: 1; }
-      .v7-prof-col > .v7-fcol { grid-column: 2; grid-row: 1; align-self: start; position: sticky; top: calc(var(--v7-bar, 43px) + 16px); }
+      .v7-prof-col > .v7-fcol { grid-column: 2; grid-row: 1; align-self: stretch; position: relative; }
       .v7-fsq:disabled { cursor: default; }
     }
     @media (max-width: 48em) {
@@ -398,7 +403,10 @@
     @media (min-width: 48.001em) {
       .v7-card.v7-card-col { display: grid; grid-template-columns: minmax(0, 1fr) 24px; column-gap: 12px; padding-right: 12px; }
       .v7-card.v7-card-col > * { grid-column: 1; }
-      .v7-card.v7-card-col > .v7-fcol { grid-column: 2; grid-row: 2 / span 30; align-self: start; position: sticky; top: calc(var(--v7-bar, 43px) + 16px); }
+      .v7-card.v7-card-col > .v7-fcol { grid-column: 2; grid-row: 2 / span 30; align-self: stretch; position: relative; }
+      /* V8.8 (Prem, 2026-11-12): each marker sits level with its own field, so the triangle points at the open box. */
+      .v7-fcol.is-placed ol { position: absolute; inset: 0; display: block; }
+      .v7-fcol.is-placed li { position: absolute; left: 0; }
       .v7-card.v7-card-col > .v7-card-h .v7-dots { display: none; }
     }
     @media (max-width: 48em) {
@@ -500,7 +508,12 @@
     .v7-ocard.is-later { background: #f7f7f7; }
     .v7-select-note { display: block; margin: 0 0 12px; color: var(--text); }
     .v7-rail-wc.is-over { color: #912338; font-weight: 600; }
-    .v7-tile input.v7-tile-name { order: 3; font-size: 0.8rem; font-weight: 400; min-height: 30px; padding: 4px 6px; margin-top: 6px; border: 1px solid var(--v7-field); border-radius: 4px; }
+    .v7-other-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 0; }
+    .v7-other-lab { font-size: 0.85rem; font-weight: 600; }
+    .v7-other-sel { width: auto; min-width: min(16rem, 100%); max-width: 100%; }
+    .v7-other-name { flex: 1 1 min(14rem, 100%); max-width: 22rem; min-width: 0; }
+    .v7-other-name[hidden] { display: none; }
+    .v7-tile input.v7-tile-name { order: 4; font-size: 0.8rem; font-weight: 400; min-height: 30px; padding: 4px 6px; margin-top: 6px; border: 1px solid var(--v7-field); border-radius: 4px; }
     .v7-tiles-help { margin: 8px 0 0; }
     .v7-rail-toggle { display: none; }
     .v7-kinds { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 8px; margin: 0 0 14px; }
@@ -526,7 +539,7 @@
     .v7-dash-h, .v7-section-t { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
     .v7-dash-h .v7-h3, .v7-section-t .v7-h3 { margin: 0; }
     .v7-counter { font-size: 0.85rem; color: var(--muted); }
-    .v7-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5em), 1fr)); gap: 12px; }
+    .v7-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; } /* V8.8 (Prem): one row of five, no gap under the first four */
     .v7-lv-note { margin: 6px 0 0; font-size: 0.8rem; }
     .v7-undo .v7-linkbtn { min-height: 24px; padding: 2px 4px; } /* r14-a-6 */
     .v7-lv-clear { display: inline-flex; align-items: center; margin: 6px 0 0; font-size: 0.85rem; min-height: 32px; }
@@ -538,7 +551,7 @@
     .v7-tile input:focus { outline: none; border-bottom-color: #912338; }
     .v7-tile input:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
     .v7-tile input::placeholder { color: #b5b5b5; font-weight: 400; }
-    .v7-people-help { margin: -6px 0 12px; }
+    .v7-people-help { margin: 0 0 10px; max-width: 72ch; }
     .v7-short-lines { margin: -6px 0 12px; padding-left: 1.2em; } .v7-short-lines li { margin: 2px 0; }
     .v7-person-preview { margin: 10px 0 0; font-size: 0.85rem; }
     .v7-person-preview:empty { display: none; }
@@ -670,7 +683,6 @@
       .narrative-nav { flex-wrap: wrap; gap: 10px; }
       .narrative-nav .v7-nav-note { flex-basis: 100%; order: -1; margin: 0; }
       .narrative-nav .btn { white-space: nowrap; }
-      .v7-tailored { flex-wrap: nowrap; }
       .v7-mini, .v7-btn-small, .v7-ri, .v7-linkbtn, .v7-ex-btn { min-height: 44px; }
     }
     /* V7 Phase 1: start page, rail, accent line (D-18, borrowed from the live Pathways page) */
@@ -798,7 +810,7 @@
       .btn, .narrative-nav .btn, .v7-actions .btn, .v7-card .btn:not(.v7-btn-small), .v7-nudge .btn { min-height: 44px; } /* r16-b-5 */
       .v7-icon-btn { width: 44px; height: 44px; }
       .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
-      .v7-tile input.v7-tile-name { font-size: max(16px, 0.92rem); min-height: 44px; }
+      .v7-tile input.v7-tile-name, .v7-tile select.v7-tile-name { font-size: max(16px, 0.92rem); min-height: 44px; }
       .v7-glance li a { display: inline-block; padding: 12px 0; }
       .proto-banner a { display: inline-flex; align-items: center; min-height: 44px; }
       .v7-gv-art { overflow-x: auto; }
@@ -815,7 +827,7 @@
       .proto-banner a { display: inline-flex; align-items: center; min-height: 44px; }
       .v7-icon-btn { width: 44px; height: 44px; }
       .v7-rail-home { display: flex; align-items: center; min-height: 44px; }
-      .v7-tile input.v7-tile-name { font-size: max(16px, 0.92rem); min-height: 44px; }
+      .v7-tile input.v7-tile-name, .v7-tile select.v7-tile-name { font-size: max(16px, 0.92rem); min-height: 44px; }
     }
     /* r1-b-4: below about 1100 px two charts side by side shrink their labels to 5 px; one per row. */
     /* r6-a-6 (inferred): one chart per row at every width, so their text is not scaled down to 8 px. */
@@ -877,7 +889,7 @@
       <p class="v7-intro">This tool helps you get familiar with how a narrative CV asks you to think about your work and describe it. You build a first outline in your own words: your contributions, your mentorship record and a personal statement. A full first draft can take a day or more, so start well before your deadline. English only for now.</p>
       <p class="v7-intro">We recommend reading the <a id="v4-guide-top" href="https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html" target="_blank" rel="noopener">narrative CV guide</a> before you start, and consulting it as you go.</p>
     </div>
-    <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The checks are fixed rules. Your draft leaves this device only if you send it by email. A connection is needed to open the tool; after that it runs offline. If you close the tab, save a draft file first.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
+    <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The suggestions under your answers come from fixed rules. Your draft leaves this device only if you send it by email. A connection is needed to open the tool; after that it runs offline. If you close the tab, save a draft file first.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
     <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Use Save a draft file, or copy your draft on the Export page, before you close this tab.</p>
     <div id="ncv-v4-root"></div>
     <p class="v8-version" id="v8-version"></p>
@@ -922,7 +934,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.7", VERSION_DATE = "2026-11-12";
+    const VERSION_NUM = "8.8", VERSION_DATE = "2026-11-12";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -998,7 +1010,7 @@
       { id: "concernHelp", type: "one", q: testerConcernQ, options: ["1", "2", "3", "4", "5"], ends: ["1 · Not at all", "5 · A great deal"] },
       { id: "fit", type: "one", q: "Did the questions and examples fit your kind of work?",
         options: ["They fit", "Mostly, with some wording from another field", "They read as written for another field"] },
-      { id: "fitWhich", type: "text", q: "Which ones?" },
+      { id: "fitWhich", type: "text", q: "Which ones?", showIf: a => !!a.fit && a.fit !== "They fit" },
       { id: "next", type: "one", q: "What will you do with this draft next?",
         options: ["Keep working on it in this tool", "Move it into Word or another document", "Paste it into the funder’s form", "Show it to a colleague or advisor", "Set it aside"] },
       { id: "reuse", type: "many", q: "Which parts of this draft would you reuse for your next application? Choose any.",
@@ -1062,6 +1074,7 @@
         const fs = el("fieldset", "v8-tq");
         fs.appendChild(el("legend", "v4-q", text));
         const row = el("div", "v8-tq-opts" + (q.ends ? " is-scale" : ""));
+        const holder = q.ends ? el("div", "v8-scale") : null;
         q.options.forEach((o, j) => {
           const lab = el("label", "v8-tq-opt");
           const r = el("input"); r.type = "radio"; r.name = id; r.value = o; r.id = id + "-" + j;
@@ -1070,8 +1083,10 @@
           lab.appendChild(r); lab.appendChild(el("span", null, o));
           row.appendChild(lab);
         });
-        fs.appendChild(row);
-        if (q.ends) { const ends = el("p", "v4-fb-scale-ends"); ends.appendChild(el("span", null, q.ends[0])); ends.appendChild(el("span", null, q.ends[1])); fs.appendChild(ends); }
+        if (holder) {
+          const ends = el("p", "v4-fb-scale-ends v8-scale-ends"); ends.appendChild(el("span", null, q.ends[0])); ends.appendChild(el("span", null, q.ends[1]));
+          holder.appendChild(row); holder.appendChild(ends); fs.appendChild(holder);
+        } else fs.appendChild(row);
         return fs;
       }
       const wrap = el("div", "v8-tq");
@@ -1132,11 +1147,17 @@
     let testerNotice = "";
     // An earlier "skipped" flag no longer opens the tool; every tester signs up.
     const testerGate = () => TESTER_ON && !tester.email;
-    // Export: five questions for a signed-up tester, until they are sent.
+    // V8.8: the Finish your test step holds the five questions.
+    function renderFinish(c) {
+      stageHead(c, "", "Finish your test", "Five questions about how the tool worked for you. Your answers help the Pathways to Impact team improve it.", false);
+      renderTesterEnd(c);
+      navRow(c);
+    }
+    // Finish your test: five questions for a signed-up tester, until they are sent.
     function renderTesterEnd(c) {
       if (!TESTER_ON || !tester.email) return;
       const card = el("section", "v7-card v8-tester v8-tester-end"); card.setAttribute("aria-labelledby", "v8-te-t");
-      const h = el("h2", "v7-h3", "Five questions to finish your test"); h.id = "v8-te-t"; card.appendChild(h);
+      const h = el("h2", "v7-h3", "Five questions"); h.id = "v8-te-t"; card.appendChild(h);
       if (tester.endSent) {
         card.appendChild(el("p", "v7-body", "Your answers reached the Pathways to Impact team. Thank you for testing the tool."));
         card.appendChild(el("p", "v7-body", "If you would like to share your draft to help us improve the tool, please send it to " + FEEDBACK.email + "."));
@@ -1146,7 +1167,9 @@
       const promise = el("p", "v8-tester-promise"); promise.appendChild(el("strong", null, "We do not collect anything you write in your CV."));
       card.appendChild(promise);
       tester.end = tester.end || {};
-      TESTER_END_QS.forEach(q => card.appendChild(testerQuestion(q, tester.end, "v8-te")));
+      const conds = [];
+      TESTER_END_QS.forEach(q => { const n = testerQuestion(q, tester.end, "v8-te"); card.appendChild(n); if (q.showIf) { conds.push([q, n]); n.hidden = !q.showIf(tester.end); } });
+      card.addEventListener("change", () => conds.forEach(([q, n]) => { n.hidden = !q.showIf(tester.end); }));
       const row = el("div", "v4-note-row");
       const send = el("button", "btn btn-primary", "Send my answers"); send.type = "button";
       const status = el("p", "v7-quiet"); status.setAttribute("aria-live", "polite");
@@ -1199,9 +1222,10 @@
       const send = el("button", "btn btn-primary", "Send feedback"); send.type = "button";
       row.appendChild(send); panel.appendChild(row);
       const status = el("p", "v7-quiet"); status.setAttribute("aria-live", "polite"); panel.appendChild(status);
-      const sentLine = el("p", "v8-fb-sent", rec.sent ? (rec.sent === 1 ? "You have sent 1 note on this step. You can send another." : "You have sent " + rec.sent + " notes on this step. You can send another.") : "");
-      if (!rec.sent) sentLine.hidden = true;
-      panel.appendChild(sentLine);
+      // V8.8 (Prem): after a send the box closes; the thanks and the count sit beside the button.
+      const sentWords = () => rec.sent === 1 ? "1 note sent on this step" : rec.sent + " notes sent on this step";
+      const sentLine = el("span", "v8-fb-sent"); sentLine.setAttribute("role", "status");
+      if (rec.sent) sentLine.textContent = sentWords();
       btn.addEventListener("click", () => {
         UI_FB[key] = !UI_FB[key];
         btn.setAttribute("aria-expanded", UI_FB[key] ? "true" : "false"); panel.hidden = !UI_FB[key];
@@ -1216,16 +1240,16 @@
         send.disabled = false;
         if (ok) {
           rec.sent = (rec.sent || 0) + 1; rec.draft = ""; testerSave();
-          ta.value = "";
-          status.textContent = "Your note reached the team. Thank you.";
-          sentLine.hidden = false;
-          sentLine.textContent = rec.sent === 1 ? "You have sent 1 note on this step. You can send another." : "You have sent " + rec.sent + " notes on this step. You can send another.";
-          ta.focus();
+          ta.value = ""; status.textContent = "";
+          UI_FB[key] = false; panel.hidden = true; btn.setAttribute("aria-expanded", "false");
+          sentLine.textContent = "Your note reached the team. Thank you. (" + sentWords() + ")";
+          btn.focus();
         } else {
           status.textContent = "Your note did not send, perhaps because the connection dropped. It is kept here. Try again, or email it to " + FEEDBACK.email + ".";
         }
       });
-      box.appendChild(btn); box.appendChild(panel);
+      const head = el("div", "v8-fb-head"); head.appendChild(btn); head.appendChild(sentLine);
+      box.appendChild(head); box.appendChild(panel);
       return box;
     }
     const DISCIPLINES = [
@@ -1994,15 +2018,16 @@
     const PS_KICKER = { challenge: "The problem or question", streams: "Strands", pivot: "How you got here", standing: "Recognition", programFit: "Why this competition", teamFit: "How you complement the team", horizon: "What’s next" };
     // Guide sync (P-25): master's and doctoral are graduate supervision; postdoctoral is its own line.
     // [state key, label in the grid, label in the exports]
-    const MENTOR_COUNT_LABELS = [["phd", "Doctoral", "doctoral students"], ["masters", "Master’s", "master’s students"],
-      ["postdoc", "Postdoctoral", "postdoctoral fellows"], ["undergrad", "Undergraduate research", "undergraduate researchers"],
+    // V8.8 (Prem, 2026-11-12): the levels run from postdoctoral down, in the boxes, the Level list and the Totals line.
+    const MENTOR_COUNT_LABELS = [["postdoc", "Postdoctoral", "postdoctoral fellows"], ["phd", "Doctoral", "doctoral students"],
+      ["masters", "Master’s", "master’s students"], ["undergrad", "Undergraduate research", "undergraduate researchers"],
       // W-23 (inferred, option A): trainees at level Other (community trainees, clinical fellows) count too.
       ["other", "Other", "other trainees"]];
     // "1 postdoctoral fellow", "3 postdoctoral fellows".
     const countNoun = (n, plural) => String(n).trim() === "1" ? plural.replace(/s$/, "") : plural;
     const MENTOR_EXAMPLE = {
       segments: [
-        { r: "totals", t: "Over the last five years I have supervised four PhD students, nine master’s students, two postdocs and 11 undergraduate research assistants." },
+        { r: "totals", t: "To date I have supervised two postdoctoral fellows, four PhD students, nine master’s students and 11 undergraduate research assistants." },
         { r: "people", t: "One PhD student now leads evaluation at a national non-profit, and the role is built on methods I developed with that student, who won a best-paper prize at the field’s main conference in 2024. A master’s student moved to a provincial statistics unit and still co-authors with the group." },
         { r: "practice", t: "Every project in my group begins with a written agreement on authorship, data and ownership, revisited at the midpoint. The agreement takes an hour to draft, and authorship disputes, once common in my group, have stopped." },
         { r: "access", t: "Three years ago I removed the prior-experience requirement from my assistantship postings and began paying from the first week, because unpaid trial periods had been screening out applicants without family support. Two-thirds of the assistants hired since are the first in their family to attend university." },
@@ -2220,11 +2245,19 @@
         const enNums = (forNums.match(/\b\d+(?:[.,]\d+)?%?\b/g) || []).length + (forNums.match(NUMBER_WORD_RE) || []).length;
         // V-1: French number words count in French text, or in a short line with no other number and one French function word.
         const nums = enNums + (looksFrench(t) || (!enNums && /\b(?:avec|dans|une|sont|chez|auprès)\b/i.test(t)) /* X-3: unambiguous French words only */ ? (forNums.match(FR_NUMBER_WORD_RE) || []).length : 0);
+        // V8.8 (Prem, 2026-11-12): "100s", "hundreds" or "dozens" is a number too, but an estimate; a
+        // decade ("the 1990s") is a date. With no exact number, the message names the estimate.
+        const decade = /\b(?:1[89]|20)\d0s\b/.test(t);
+        const estimate = (t.replace(/\b(?:1[89]|20)\d0s\b/g, " ").match(/\b\d+(?:,\d{3})*s\b|\b(?:hundreds|thousands|dozens|a dozen|tens of|scores of)\b/i) || [])[0];
         if (nums && kind !== "roleLine") { out.strengths.push(nums + " specific number" + (nums > 1 ? "s" : "")); out.score++; } // r18-a-3: not on the role line
-        else if ((kind === "activities" || kind === "outcomes") && !/\b(?:19|20)\d{2}\b/.test(t)) {
+        else if (estimate && kind !== "roleLine") {
+          out.flags.push("“" + estimate + "” is an estimate. If you know the number, give it, such as “about 140 people over two years”.");
+          out.hits.push({ text: estimate, rule: "estimate" });
+        } else if ((kind === "activities" || kind === "outcomes") && !/\b(?:19|20)\d{2}\b/.test(t) && !decade) {
           // B-19 (amended): dropped off "outputs" — a list of things without numbers is a correct
-          // answer there. The check now fires only where the prompt actually asked for a quantity.
-          out.flags.push("No numbers or dates in this part. Is that right for this one?");
+          // answer there. The check fires only where the prompt asks for a quantity, and says what the prompt asked.
+          out.flags.push(kind === "activities" ? "This part asks how large the work was: how many people, sites or sources, and over what period. Add the numbers if you have them."
+            : "If you can, give a number for what changed, such as how many people, sites or programs use the work now.");
         } else out.score++;
       }
 
@@ -2336,7 +2369,20 @@
       }
       return out;
     };
-    const MENTEE_STAGES = [["doctoral", "Doctoral"], ["masters", "Master’s"], ["postdoc", "Postdoctoral"], ["undergrad", "Undergraduate research"], ["other", "Other"]];
+    const MENTEE_STAGES = [["postdoc", "Postdoctoral"], ["doctoral", "Doctoral"], ["masters", "Master’s"], ["undergrad", "Undergraduate research"], ["other", "Other"]];
+    // V8.8 (Prem): who the Other trainees are, chosen from a list; "Something else" opens a box for the name.
+    // [value, label in the list, words in the Totals line ("" keeps "other trainees")]
+    const OTHER_GROUPS = [["", "Who are they? (optional)", ""], ["staff", "Research staff", "research staff"], ["clinical", "Residents or clinical fellows", "residents and clinical fellows"],
+      ["community", "Community researchers", "community researchers"], ["visiting", "Visiting researchers", "visiting researchers"], ["mix", "A mix of these", ""], ["else", "Something else", ""]];
+    // A name typed before V8.8 opens as the matching option, or as "Something else" with the name kept.
+    const otherKind = () => {
+      if (ns.mentorOtherKind && OTHER_GROUPS.some(g => g[0] === ns.mentorOtherKind)) return ns.mentorOtherKind;
+      const t = one(ns.mentorOtherLabel).toLowerCase();
+      if (!t) return "";
+      const hit = OTHER_GROUPS.find(g => g[0] && (g[1].toLowerCase() === t || g[2] === t));
+      return hit ? hit[0] : "else";
+    };
+    const otherWords = () => { const k = otherKind(), g = OTHER_GROUPS.find(x => x[0] === k); return k === "else" ? one(ns.mentorOtherLabel) : (g && g[2]) || ""; };
     function classifyMenteeStage(t) {
       t = (t || "").toLowerCase();
       if (/post-?\s?doc/.test(t)) return "postdoc";
@@ -2380,7 +2426,7 @@
       contributions: [blankContribution()],
       mentorCounts: { phd: "", masters: "", undergrad: "", postdoc: "", other: "" },
       mentees: [blankMentee()],
-      mentorPhilosophy: "", mentorEDI: "", mentorCrossStage: "", mentorOtherLabel: "",
+      mentorPhilosophy: "", mentorEDI: "", mentorCrossStage: "", mentorOtherLabel: "", mentorOtherKind: "",
       ps: { role: "", institution: "", field: "", challenge: "", streams: "", pivot: "", standing: "", programFit: "", teamFit: "", horizon: "" },
       consultQuestions: "", selfCheck: {}, lastSavedAt: 0, visited: {},
       draftName: "", contentAt: 0, // Q-10: an optional name, and when the draft's content last changed
@@ -2402,7 +2448,7 @@
     function normalizeDraft(raw) {
       if (!isObj(raw)) throw new Error("not a draft");
       const d = JSON.parse(JSON.stringify(raw));
-      ["mode", "stageKey", "consultQuestions", "mentorOtherLabel", "draftName"].concat(MENTOR_TEXT_KEYS).forEach(k => { if (k in d) d[k] = str(d[k]); });
+      ["mode", "stageKey", "consultQuestions", "mentorOtherLabel", "mentorOtherKind", "draftName"].concat(MENTOR_TEXT_KEYS).forEach(k => { if (k in d) d[k] = str(d[k]); });
       ["ui", "ps", "mentorCounts", "visited", "selfCheck", "xray", "feedback", "session"].forEach(k => { if (k in d && !isObj(d[k])) delete d[k]; });
       if ("lens" in d && !isObj(d.lens)) delete d.lens;
       const L = d.lens || {};
@@ -2782,7 +2828,7 @@
       ps: {
         challenge: {
           q: "What is the problem your whole research program keeps returning to?",
-          help: "One or two sentences on the idea that connects your projects.",
+          help: "Answer in one or two sentences.",
           variants: {
             humanities: "What is the central question your work keeps asking?",
             creative: "What question does your body of work keep asking?",
@@ -2791,9 +2837,9 @@
             early: "What problem or question does your work keep returning to?" // r14-b-7
           }
         },
-        streams: { q: "Name two to four strands of your work. What one idea connects them?", help: "A reviewer should see one coherent program.",
-          helpVariants: { early: "A reviewer should see how the strands connect, including a change of field." } }, // r14-b-7
-        pivot: { q: "How did you come to this work?", help: "Many strong statements describe a change in direction, such as a move from another field or an important collaboration. It explains why your work looks the way it does. Leaves and other career interruptions usually go in the appendix of the application. Check the instructions and eligibility criteria for your funding opportunity, especially if you apply as an early-career researcher, and ask your research advisor. If a leave, a move between institutions or another interruption shaped your record and you want to discuss it, you can say so here in one or two factual sentences: when it was, how long it lasted and what the work did in the meantime.", isNew: true },
+        streams: { q: "Name two to four strands of your work. What one idea connects them?", help: "",
+          helpVariants: { early: "If you changed field, name the earlier field as one of the strands." } }, // r14-b-7
+        pivot: { q: "How did you come to this work?", help: "Many strong statements describe a change in direction, such as a move from another field or an important collaboration. Leaves and other career interruptions usually go in the appendix of the application. Check the instructions and eligibility criteria for your funding opportunity, especially if you apply as an early-career researcher, and ask your research advisor. If a leave, a move between institutions or another interruption shaped your record and you want to discuss it, you can say so here in one or two factual sentences: when it was, how long it lasted and what the work did in the meantime.", isNew: true },
         standing: {
           q: "List the strongest signs that others recognize your work.",
           help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA (the San Francisco Declaration on Research Assessment) treats as an unreliable measure of an individual’s work. The citation count for a single article or book can support what you say about it.",
@@ -2821,13 +2867,13 @@
         horizon: { q: "What do you plan to do next in this work?", help: "Name the direction of the work in the final sentence." }
       },
       contrib: {
-        title: { q: "What one line would help a reviewer remember this work?", help: "Short, plain and easy to remember. Name what the work was for; the paper’s title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
-          helpVariants: { creative: "Short, plain and easy to remember. Name what the work was for; the title of the exhibition or work belongs in the evidence list.",
-            humanities: "Short, plain and easy to remember. Name what the work was for; the title of the book or article belongs in the evidence list.",
-            stem: "Short, plain and easy to remember. Name what the work was for; the title of the paper, release or patent belongs in the evidence list." } },
+        title: { q: "What one line would help a reviewer remember this work?", help: "Name what the work was for. The paper’s title goes in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
+          helpVariants: { creative: "Name what the work was for. The title of the exhibition or work goes in the evidence list.",
+            humanities: "Name what the work was for. The title of the book or article goes in the evidence list.",
+            stem: "Name what the work was for. The title of the paper, release or patent goes in the evidence list." } },
         // Q-18 (Prem, 2026-11-01): one part, "The problem or question", whose question follows the field.
         // The main field decides; community-engaged wording applies where the field has none of its own.
-        stakes: { q: "What problem did this work address, and who did it affect?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true,
+        stakes: { q: "What problem did this work address, and who did it affect?", help: "", isNew: true,
           variants: {
             social: "What problem or question did this work address, and who did it affect?",
             humanities: "What question did you take up in this work, and why did it matter?",
@@ -2835,10 +2881,8 @@
             community: "What need or question did this work take up, and who raised it?"
           },
           helpVariants: {
-            social: "Strong contributions open with the problem or question they took up, and the method follows.",
-            humanities: "Strong contributions open with the question they took up, such as a gap in the record, an unasked question or a source at risk, and the method follows.",
-            creative: "Strong contributions open with the question they explored, such as what an existing form, site or audience was leaving out, and the making follows.",
-            community: "Strong contributions open with the need or question the work took up. Where the partners set it, say so."
+            humanities: "For example, a gap in the record, an open question or a source at risk.",
+            creative: "For example, what an existing form, site or audience was leaving out."
           } },
         roleLine: {
           q: "In one line, what was your own part in this work?",
@@ -2855,19 +2899,19 @@
           helpVariants: { creative: "Give numbers where you can: works made, hours recorded, people interviewed, venues, and how long.", stem: "Give numbers where you can: how many sites, structures, sensors, models, datasets or systems, how long, how many people.", humanities: "Give numbers where you can: how many sources or collections, how long, how many people.",
             community: "Give numbers where you can: how many people and communities took part, over what period, and how many people worked on it." } },
         outputs: {
-          q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "Write a sentence that names what the work produced, such as “The study produced a protocol and three papers.” Its effects belong in the next field.",
+          q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "Write a sentence that names what the work produced, such as “The study produced a protocol and three papers.” What changed because of it goes under What already changed.",
           // r9-a-3, r9-b-4: the example follows the field; in community-engaged work, say who holds each output.
           helpVariants: {
-            creative: "Write a sentence that names what the work produced, such as “The cycle produced three staged works, a film and a public archive of scores.” Its effects belong in the next field.",
-            stem: "Write a sentence that names what the work produced, such as “The project produced a tool, a method and three papers.” Its effects belong in the next field.", // r10-b-10
-            humanities: "Write a sentence that names what the work produced, such as “The project produced a critical edition and two articles.” Its effects belong in the next field.",
-            social: "Write a sentence that names what the work produced, such as “The study produced a survey instrument, a public report and three papers.” Its effects belong in the next field.",
-            community: "Write a sentence that names what the work produced and who holds it, such as “The program produced a nursing protocol and a dataset the health authority holds.” Its effects belong in the next field."
+            creative: "Write a sentence that names what the work produced, such as “The cycle produced three staged works, a film and a public archive of scores.” What changed because of it goes under What already changed.",
+            stem: "Write a sentence that names what the work produced, such as “The project produced a tool, a method and three papers.” What changed because of it goes under What already changed.", // r10-b-10
+            humanities: "Write a sentence that names what the work produced, such as “The project produced a critical edition and two articles.” What changed because of it goes under What already changed.",
+            social: "Write a sentence that names what the work produced, such as “The study produced a survey, a public report and three papers.” What changed because of it goes under What already changed.",
+            community: "Write a sentence that names what the work produced and who keeps it, such as “The program produced a nursing protocol and a dataset the health authority keeps.” What changed because of it goes under What already changed."
           },
           variants: { creative: "Which exhibitions, films, performances or published works came out of it?", humanities: "Which books, editions, exhibitions, public works or collections came out of it?",
-            social: "Which papers, reports, datasets, instruments or programs came out of it, and how many?",
+            social: "Which papers, reports, datasets, surveys or programs came out of it, and how many?",
             stem: "Which papers, datasets, software releases, patents, standards, design guides or technical reports came out of it, and how many?", // r13-b-4, r15-b-9
-            health: "Which guidelines, care pathways, tools, protocols, programs or papers came out of it, and how many?" } // r15-a-11
+            health: "Which guidelines, tools, protocols, programs or papers came out of it, and how many?" } // r15-a-11
         },
         outcomes: {
           q: "Who has used this work so far, and what is different for them now?", help: "If there is no change to report yet, leave this blank and put what you expect under What could change.",
@@ -2889,20 +2933,20 @@
           helpVariants: {
             creative: "Cautious words such as “could” or “might” suit this part, because it describes what may follow. What has already happened belongs under What already changed. Influence on a practice counts fully here: how a form is made, taught, credited or funded."
           } },
-        translational: { q: "Which one occasion shows the work reaching a specific person or group?", variants: { community: "Which one occasion shows the work in use by a specific person or group?" }, help: "One real case in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. It gives one concrete instance of What already changed. Optional. Name a community or a person only with their agreement.",
+        translational: { q: "Which one occasion shows the work reaching a specific person or group?", variants: { community: "Which one occasion shows the work in use by a specific person or group?" }, help: "One real case in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. Optional. Name a community or a person only with their agreement.",
           helpVariants: {
-            health: "One real case in two sentences, such as a patient, a clinic, a classroom or a committee that used the work. It gives one concrete instance of What already changed. Optional. Leave out details that could identify a person, and name a person, clinic or community only with their agreement.", // r18-b-11
-            stem: "One real case in two sentences, such as a control room, a field site, a deployment, a release review, an inspection or a standards committee where the work was used. It gives one concrete instance of What already changed. Optional. Name a community or a person only with their agreement.", // r10-b-10
-            humanities: "One real case in two sentences, such as a reader, a classroom, an archive, a museum or a community meeting that used the work. It gives one concrete instance of What already changed. Optional. Name a community or a person only with their agreement.",
-            creative: "One real case in two sentences, such as an audience, a venue, a classroom or a community meeting where the work was seen or used. It gives one concrete instance of What already changed. Optional. Name a community or a person only with their agreement."
+            health: "One real case in two sentences, such as a patient, a clinic, a classroom or a committee that used the work. Optional. Leave out details that could identify a person, and name a person, clinic or community only with their agreement.", // r18-b-11
+            stem: "One real case in two sentences, such as a control room, a field site, a deployment, a release review, an inspection or a standards committee where the work was used. Optional. Name a community or a person only with their agreement.", // r10-b-10
+            humanities: "One real case in two sentences, such as a reader, a classroom, an archive, a museum or a community meeting that used the work. Optional. Name a community or a person only with their agreement.",
+            creative: "One real case in two sentences, such as an audience, a venue, a classroom or a community meeting where the work was seen or used. Optional. Name a community or a person only with their agreement."
           },
           gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
         evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter (a, b, c), and the letter appears in your draft beside the sentence it backs up. Under each item there is room for two lines on what it found, or why the dataset or tool was useful, so a reviewer has the point without opening the source." }
       },
       mentor: {
-        philosophy: { q: "What is one concrete thing you do that shows how you mentor?", help: "One practice you follow, described concretely. How you run a first meeting, how you decide authorship, how you hand a project over when someone is ready for it.",
-          helpVariants: { creative: "One practice you follow, described concretely. How you run a first meeting, how you credit the people who made a work with you, how you hand a project over when someone is ready for it.",
-            community: "One practice you follow, described concretely. How you run a first meeting, how authorship and data rights are agreed with partners, how you hand a project over when someone is ready for it." } },
+        philosophy: { q: "What is one concrete thing you do that shows how you mentor?", help: "For example, how you run a first meeting, how you decide authorship or how you hand a project over when someone is ready for it.",
+          helpVariants: { creative: "For example, how you run a first meeting, how you credit the people who made a work with you or how you hand a project over when someone is ready for it.",
+            community: "For example, how you run a first meeting, how authorship and data rights are agreed with partners or how you hand a project over when someone is ready for it." } },
         edi: { // r9-b-8: the community variant asks who decides
           // B-30/B-31: the "Equity in practice —" label is dropped (the abstract noun summoned
           // boilerplate); the question underneath already asks for a structure, not a statement.
@@ -2932,6 +2976,8 @@
       s.push({ key: "ps", short: isFrq() ? "Background and skills" : "Personal statement", group: "app" });
       s.push({ key: "review", short: "Review", group: "draft" });
       s.push({ key: "export", short: "Export", group: "draft" });
+      // V8.8 (Prem, 2026-11-12): the end questions are a step of their own after Export, for testers only.
+      if (TESTER_ON && tester.email) s.push({ key: "finish", short: "Finish your test", group: "draft" });
       if (FEEDBACK_ON) s.push({ key: "feedback", short: "Feedback", group: "draft" });
       return s;
     };
@@ -2941,7 +2987,7 @@
     const RENDERERS = {
       start: (c) => renderStart(c), setup: (c) => renderSetup(c), xray: (c) => renderXray(c),
       contrib: (c) => renderContributions(c), mentor: (c) => renderMentorship(c),
-      ps: (c) => renderPersonal(c), review: (c) => renderReview(c), export: (c) => renderExport(c),
+      ps: (c) => renderPersonal(c), review: (c) => renderReview(c), export: (c) => renderExport(c), finish: (c) => renderFinish(c),
       feedback: (c) => renderFeedback(c)
     };
     // V7-5: a step turns green once it has been opened and something entered in it (no funder sets
@@ -2955,7 +3001,7 @@
       const t = (k) => !!(c[k] || "").trim();
       return t("title") && (t("roleLine") || !!c.roleMode) && REVIEW_MIN_JOBS.filter(t).length >= 2;
     });
-    const isLockedStage = (key) => (key === "review" || key === "export") && !reviewReady();
+    const isLockedStage = (key) => (key === "review" || key === "export" || key === "finish") && !reviewReady();
     const PS_ANSWER_KEYS = () => ["challenge", "streams", "pivot", "standing", "programFit"].concat(isFrq() ? ["teamFit"] : [], ["horizon"]);
     const psAnswered = () => {
       const p = ns.ps;
@@ -2967,7 +3013,7 @@
     const mentorTotal = () => Object.values(ns.mentorCounts).reduce((n, v) => n + (parseInt(cleanCount(v), 10) || 0), 0);
     // "14 doctoral students, 1 master's student": the totals line every output prints.
     // r5-b-5: the Other group prints under the name the researcher gives it ("7 community researchers").
-    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out.replace(/^(Students?|Postdocs?|Postdoctoral|Fellows?|Clinical|Research|Residents?|Interns?|Trainees?|Researchers?|Nurses?|Teachers?|Technicians?|Assistants?|Apprentices?|Community|Staff|Coordinators?|Volunteers?|Undergraduates?|Graduate|Doctoral|Visiting|Lab|Industry|High|School|Summer|Peer|Youth|Co-op|Agents?|Assistantes?|Stagiaires?)\b/, w => w.toLowerCase()) /* AD-1, AD-2: only common words are lowered; "Algonquin youth" stays as typed */ : countNoun(n, out))); // r11-a-10, r16-a-7: as typed, a phone's capital lowered
+    const mentorTotalsParts = () => MENTOR_COUNT_LABELS.map(([k, , out]) => [cleanCount(ns.mentorCounts[k]), k === "other" && otherWords() ? otherWords() : out]).filter(([n]) => +n > 0).map(([n, out], k, all) => n + " " + (out === one(ns.mentorOtherLabel) ? out.replace(/^(Students?|Postdocs?|Postdoctoral|Fellows?|Clinical|Research|Residents?|Interns?|Trainees?|Researchers?|Nurses?|Teachers?|Technicians?|Assistants?|Apprentices?|Community|Staff|Coordinators?|Volunteers?|Undergraduates?|Graduate|Doctoral|Visiting|Lab|Industry|High|School|Summer|Peer|Youth|Co-op|Agents?|Assistantes?|Stagiaires?)\b/, w => w.toLowerCase()) /* AD-1, AD-2: only common words are lowered; "Algonquin youth" stays as typed */ : countNoun(n, out))); // r11-a-10, r16-a-7: as typed, a phone's capital lowered
     const menteesDescribed = () => ns.mentees.filter(menteeHasContent).length;
     const stageDone = (key) => {
       const v = !!ns.visited[key];
@@ -2978,6 +3024,7 @@
       if (key === "review") return v;
       if (key === "export") return v && !!ns.ui.exported;
       if (key === "feedback") return ns.feedback.sent.length > 0;
+      if (key === "finish") return !!tester.endSent;
       return false;
     };
     // V7-6, pass B: a plain number beside a rail item and an optional sub-row joined by an L line.
@@ -3367,7 +3414,7 @@
       }
       saveState();
     };
-    const STEP_HASH = { start: "start", setup: "profile", contrib: "contributions", mentor: "mentorship", ps: "statement", review: "review", export: "export", feedback: "feedback" };
+    const STEP_HASH = { start: "start", setup: "profile", contrib: "contributions", mentor: "mentorship", ps: "statement", review: "review", export: "export", finish: "finish-test", feedback: "feedback" };
     const stepFromHash = () => { const h = location.hash.slice(1); return Object.keys(STEP_HASH).find(k => STEP_HASH[k] === h) || ""; };
     let popping = false, replaceNext = false, histN = 0, skipping = 0;
     const stepName = (k) => k === "start" ? "the start page" : ((stages().find(x => x.key === k) || {}).short || "this step"); // J-2
@@ -3575,7 +3622,7 @@
       host.appendChild(el("span", "v4-meta", meta));
       if (res.flags.length && res.hits && res.hits.length && (!conditional || readbackAddsInfo(res))) {
         // r11-b-5: the read-back repeats the answer, so screen readers skip it; the flags above name the words.
-        const rbh = el("span", "v4-meta", "The highlighted words below are the ones the checks refer to:"); rbh.setAttribute("aria-hidden", "true"); host.appendChild(rbh);
+        const rbh = el("span", "v4-meta", "The words these suggestions refer to are highlighted below:"); rbh.setAttribute("aria-hidden", "true"); host.appendChild(rbh);
         const rb = renderReadback(t, res.hits); rb.setAttribute("aria-hidden", "true"); host.appendChild(rb);
       }
     };
@@ -3725,7 +3772,7 @@
       if (opts.note) nav.appendChild(el("p", "v4-help v7-nav-note", opts.note));
       // Q-15 (Prem, 2026-11-03): Save a draft file sits in every step's bottom row too, so it is in reach on a phone mid-step.
       const end = el("span", "v7-nav-end");
-      if (ns.stageKey !== "export") {
+      if (ns.stageKey !== "export" && ns.stageKey !== "finish") {
         const sv = el("button", "btn btn-outline v7-nav-save", "Save a draft file"); sv.type = "button";
         const svn = el("span", "v4-meta v7-nav-saved"); svn.setAttribute("aria-live", "polite");
         sv.addEventListener("click", () => { saveDraftFile(); svn.textContent = "Saved " + draftFileName() + " to your downloads."; });
@@ -3920,7 +3967,7 @@
     function renderXray(c) {
       tailoredBar(c);
       stageHead(c, "Structural read", "What your draft already has, and what it doesn’t",
-        "Paste your existing draft. The tool splits it into paragraphs, runs the same fixed-rule checks on each, then maps it against the moves a developed narrative CV makes. It is a rough reading. Anything you paste stays here, with the rest of your draft.",
+        "Paste your existing draft. The tool splits it into paragraphs, gives the same suggestions on each, then maps it against the moves a developed narrative CV makes. It is a rough reading. Anything you paste stays here, with the rest of your draft.",
         "What the format expects in each section", "three");
 
       const taWrap = el("div", "contribution-field");
@@ -3972,7 +4019,7 @@
             // H3/B-16: the same read-back the Contributions fields show — the paragraph with every
             // triggering word marked. Flagged paragraphs only; headings are never linted.
             if (pr.lint.flags.length && pr.lint.hits.length) {
-              checks.appendChild(el("span", "v4-meta", "The highlighted words below are the ones the checks refer to:"));
+              checks.appendChild(el("span", "v4-meta", "The words these suggestions refer to are highlighted below:"));
               checks.appendChild(renderReadback(pr.text, pr.lint.hits));
             }
             card.appendChild(checks);
@@ -4086,7 +4133,35 @@
       // scrolls (Prem, 2026-10-30). Before any scroll, and just after a field opens, it marks isCur.
       const target = opts.target || (id => card.querySelector('.v7-f[data-f="' + id + '"]') || (id === "ev" ? card.querySelector(".v7-ev-row, .v7-ev-area") : null));
       card._spy = null;
+      // V8.8 (Prem, 2026-11-12): each marker sits beside its own field, level with the field's first
+      // line, and the triangle marks the open field. A field not on the page yet (a Setup question not
+      // revealed) stacks below the last placed marker. This replaces the sticky column and its scroll-spy.
+      const lis = btns.map(([b]) => b.parentNode);
+      card._place = () => {
+        if (!nav.offsetParent || getComputedStyle(nav).display === "none") return;
+        nav.classList.add("is-placed");
+        const top0 = nav.getBoundingClientRect().top;
+        let last = -24;
+        btns.forEach(([b, it], k) => {
+          const t = target(it.id);
+          let y;
+          if (t && t.offsetParent) {
+            const cs = getComputedStyle(t), r = t.getBoundingClientRect();
+            const line = Math.min(28, parseFloat(cs.lineHeight) || 22);
+            y = r.top - top0 + (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.borderTopWidth) || 0) + line / 2 - 12;
+          } else y = last + 24;
+          y = Math.max(y, last + 24);
+          lis[k].style.top = Math.round(y) + "px";
+          last = y;
+        });
+      };
+      let placeFrame = 0;
+      const placeSoon = () => { if (!placeFrame) placeFrame = requestAnimationFrame(() => { placeFrame = 0; if (card.isConnected) card._place(); }); };
+      if (window.ResizeObserver) { const ro = new ResizeObserver(placeSoon); ro.observe(card); }
+      card.addEventListener("transitionend", placeSoon);
+      requestAnimationFrame(placeSoon);
       card._spyCalc = () => {
+        return; // V8.8: no scroll-spy; the triangle stays on the open field.
         if (!nav.offsetParent || performance.now() < spyHold) return;
         let spy = null;
         // At the foot of the page the last items cannot rise to their squares: the triangle marks isCur.
@@ -4105,13 +4180,14 @@
         }
         if (spy !== card._spy) { card._spy = spy; card._colSync(); }
       };
-      // Scroll so an item sits level with its square, the column held at its sticky top.
+      // Scroll so an item sits a little below the top bar (its marker moves with it).
       card._level = (id) => {
         const t = target(id), pair = btns.find(([, it]) => it.id === id);
         if (!t || !pair || !nav.offsetParent) return false;
-        const stick = parseFloat(getComputedStyle(nav).top) || 59;
-        const dy = t.getBoundingClientRect().top - (stick + (pair[0].getBoundingClientRect().top - nav.getBoundingClientRect().top));
-        glide(dy);
+        const bar = (document.querySelector(".proto-banner") || {}).offsetHeight || 43;
+        const head = card.querySelector(":scope > .v7-card-h");
+        const hh = head && getComputedStyle(head).position === "sticky" ? head.offsetHeight : 0;
+        glide(t.getBoundingClientRect().top - (bar + hh + 24));
         return true;
       };
       card._colSync = () => btns.forEach(([b, it]) => {
@@ -4120,7 +4196,7 @@
         b.disabled = lock; if (lock) b.setAttribute("aria-disabled", "true"); else b.removeAttribute("aria-disabled");
         b.setAttribute("aria-label", it.label + ", " + (lock ? (opts.lockW || "not open yet") : on ? onW : offW));
         if (cur) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
-      });
+      }) || placeSoon();
       card._colSync();
       return nav;
     }
@@ -4148,6 +4224,7 @@
     const holdSpy = () => { spyHold = performance.now() + motionMs(200) + 700; root.querySelectorAll(".v7-card-col").forEach(c => { c._spy = null; }); };
     root.addEventListener("input", () => requestAnimationFrame(syncCols));
     root.addEventListener("click", () => requestAnimationFrame(syncCols));
+    root.addEventListener("focusin", () => requestAnimationFrame(syncCols)); // V8.8: the triangle follows the focused question in Setup
     // A square in the column opens its field: the field opens in place (no anchoring to the old line),
     // then the page scrolls to it once the fields have settled. No smooth scrolling under reduced motion.
     function jumpToField(id) {
@@ -4184,14 +4261,15 @@
     function tailoredBar(parent, opts) {
       opts = opts || {};
       const L = ns.lens, bar = el("div", "v7-tailored" + (UI.chg ? " is-open" : ""));
-      bar.appendChild(el("span", "v7-tailored-k", opts.lead || "Profile:"));
+      const head = el("div", "v7-tailored-head");
+      head.appendChild(el("span", "v7-tailored-k", opts.lead || "Profile:"));
+      bar.appendChild(head);
       const pills = el("span", "v7-tailored-pills" + (opts.text ? " v7-tailored-text" : ""));
       if (opts.text) pills.textContent = opts.text;
       else {
         profilePills().forEach(t => pills.appendChild(el("span", "v7-pill", t)));
         if (!pills.childNodes.length) pills.appendChild(el("span", "v7-pill", "Profile not set yet"));
       }
-      bar.appendChild(pills);
       // Pass D (Prem): Change is a disclosure like the example buttons: a triangle, no fill at rest.
       const ch = el("button", "btn btn-outline v7-btn-small v7-disc");
       ch.appendChild(el("span", "v7-tri", "▸")).setAttribute("aria-hidden", "true");
@@ -4218,7 +4296,8 @@
         const first = pn.querySelector("select, input, button");
         if (first) first.focus();
       });
-      bar.appendChild(ch);
+      head.appendChild(ch);
+      bar.appendChild(pills);
       if (UI.chg) bar.appendChild(changePanel(close));
       parent.appendChild(bar);
     }
@@ -4472,7 +4551,7 @@
         // V7-23: the note that checks are suggestions, the first time a check fires, once per draft.
         if (checks.querySelector(".v4-flag") && (!ns.ui.checksNoteSeen || ns.ui.checksNoteField === id)) {
           ns.ui.checksNoteSeen = true; ns.ui.checksNoteField = id;
-          checks.appendChild(el("span", "v4-meta v7-first-note", "The checks under each field are suggestions about content (numbers, your role, cautious words); they do not check grammar or spelling. They are written for English; in French text only the number, list, link, length and journal-metric checks apply. You can continue without acting on them; they carry no score and stay here with your draft."));
+          checks.appendChild(el("span", "v4-meta v7-first-note", "These suggestions are about content, such as numbers and your role. They do not cover grammar or spelling, and in French text only some of them apply. You can continue without acting on them."));
         }
       };
       runChecks();
@@ -4719,7 +4798,9 @@
         if (!wrap._level(id)) blk.scrollIntoView({ block: "center", behavior: motionMs(1) ? "smooth" : "auto" });
       };
       wrap.appendChild(fieldCol(wrap, "", qs.map((q, i) => ({ id: "pq-" + i, label: q.label, has: () => !!q.has, locked: () => i > reveal })),
-        id => +id.slice(3) === curQ, jumpQ, { label: "Questions in your profile", on: "answered", off: "not answered yet", lockW: "not open yet",
+        // V8.8: the triangle marks the question that holds focus, else the next one to answer.
+        id => { const fb = document.activeElement && document.activeElement.closest ? document.activeElement.closest(".v7-qblock") : null;
+          return fb && list.contains(fb) ? fb.dataset.pq === id.slice(3) : +id.slice(3) === curQ; }, jumpQ, { label: "Questions in your profile", on: "answered", off: "not answered yet", lockW: "not open yet",
           target: id => list.querySelector('.v7-qblock[data-pq="' + id.slice(3) + '"]') }));
       // After an answer, the next open question scrolls up level with its square (Prem, 2026-10-30).
       // W-06 (inferred): focus moves with it, to the next question's heading, at every width; on a
@@ -4799,7 +4880,7 @@
             yr.appendChild(b);
           });
           blk.appendChild(radioKeys(yr));
-          if (L.year) { // r11-b-9: a radio keeps its choice; this button clears it, as "Clear the level" does
+          if (L.year) { // r11-b-9: a radio keeps its choice; this button clears it, as "Clear your choice" does
             const cy = el("button", "v7-linkbtn v7-lv-clear", "Clear the year"); cy.type = "button";
             cy.addEventListener("click", () => { L.year = ""; saveState(); renderStage(); announce("Year cleared."); const n = document.getElementById("v7-year-" + YEARS[0]); if (n) n.focus({ preventScroll: true }); });
             blk.appendChild(cy);
@@ -5089,7 +5170,7 @@
           if ((f.k === "activities" || f.k === "outcomes") && (ns.lens.workMode || []).includes("industry")) helpExtra = " If an agreement keeps the partner or its figures private, describe the partner by its sector and size, give what you can, and say the rest is withheld.";
           // r16-b-11: in community-engaged work, who asked for the work and what may be named.
           if (f.k === "translational" && d2 === "health" && ns.lens.discipline !== "health") helpExtra = " A ward, a clinic or a bedside also fits; leave out details that could identify a patient."; /* AD-5 */ // r19-b-2
-          if (f.k === "stakes" && isCommunity() && !/partners set it/.test(resolveHelp(f.def))) helpExtra /* AA-5: once */ = " If a partner or community asked for this work, say so. Name a partner, a community, its Elders or its protocols only as they agree."; // r18-a-5
+          if (f.k === "stakes" && isCommunity() && !/partners set it/.test(resolveHelp(f.def))) helpExtra /* AA-5: once */ = "If a partner or community asked for this work, say so. Name a partner, a community, its Elders or its protocols only as they agree."; // r18-a-5
           // r12-b-5: the second field adds a line to What you did and What already changed too.
           if ((f.k === "activities" || f.k === "outcomes") && d2 && d2 !== "none" && d2 !== ns.lens.discipline) {
             const SECOND = {
@@ -5123,13 +5204,13 @@
                 const b = el("button", "v7-mini v7-box-sib", l); b.type = "button";
                 b.setAttribute("role", "radio"); b.setAttribute("aria-checked", contrib.roleMode === v ? "true" : "false");
                 b.addEventListener("click", () => {
-                  // r9-b-13, S-3: a level behaves as a radio (a second press keeps it); "Clear the level" removes it.
+                  // r9-b-13, S-3: a level behaves as a radio (a second press keeps it); "Clear your choice" removes it.
                   if (contrib.roleMode === v) return;
                   contrib.roleMode = v; saveState(); setLevel();
                 });
                 minis.appendChild(b);
               });
-              const clr = el("button", "v7-linkbtn v7-lv-clear", "Clear the level"); clr.type = "button";
+              const clr = el("button", "v7-linkbtn v7-lv-clear", "Clear your choice"); clr.type = "button";
               const setLevel = (said) => {
                 minis.querySelectorAll(".v7-mini").forEach((x, k) => x.setAttribute("aria-checked", ROLE_LEVELS[k][0] === contrib.roleMode ? "true" : "false"));
                 clr.hidden = !contrib.roleMode;
@@ -5143,7 +5224,7 @@
               });
               lv.appendChild(radioKeys(minis));
               lv.appendChild(clr);
-              lv.appendChild(el("p", "v4-help v7-lv-note", "The level you choose appears in the charts and the checks. Only the line you write appears in your draft."));
+              lv.appendChild(el("p", "v4-help v7-lv-note", "Review uses your choice to show your role across all your contributions. Only the line you write in the box appears in your draft."));
               inner.appendChild(lv);
             } : null
           }));
@@ -5574,36 +5655,46 @@
         inp.addEventListener("keydown", e => { if (["-", "+", ".", ",", "e", "E"].includes(e.key)) e.preventDefault(); });
         inp.addEventListener("input", e => { const v = cleanCount(e.target.value); if (e.target.value !== v) e.target.value = v; ns.mentorCounts[k] = v; saveState(); setSum(); setPc(); refreshRail(); announceCount(sum.textContent + ". " + pc.textContent); });
         tile.appendChild(l); tile.appendChild(inp);
-        if (k === "other") {
-          tile.classList.add("v7-tile-wide");
-          const on = el("input", "v7-input v7-tile-name"); on.type = "text"; on.id = "v7-t-other-name"; on.value = ns.mentorOtherLabel || "";
-          on.placeholder = "Who are they?"; on.setAttribute("aria-label", "Name the Other group, such as community researchers (optional)");
-          on.addEventListener("input", e => { ns.mentorOtherLabel = e.target.value; saveState(); });
-          on.addEventListener("blur", () => { on.scrollLeft = 0; }); // r12-b-8: the start of the name shows
-          tile.appendChild(on);
-        }
         tiles.appendChild(tile);
       });
       dash.appendChild(tiles);
-      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "Under Other, count " + ({ stem: "technicians, industry-embedded trainees", health: "research staff, residents, clinical fellows, community researchers", creative: "apprentices, assistant artists", humanities: "research assistants, archive interns" }[ns.lens.discipline] || "community researchers") + " and other trainees who are not students, and name the group in its box. These totals have no set period. Check the instructions for your funding opportunity in case it sets one."));
+      // V8.8 (Prem): who the Other trainees are, as a list on its own row under the boxes, so it reads in full.
+      {
+        const row = el("div", "v7-other-row");
+        const kind = otherKind();
+        const ol = el("label", "v7-other-lab", "Who are the Other trainees?"); ol.htmlFor = "v7-t-other-kind";
+        const sel = el("select", "v7-select v7-other-sel"); sel.id = "v7-t-other-kind";
+        OTHER_GROUPS.forEach(([v, l]) => { const o = el("option", null, v ? l : "Choose (optional)"); o.value = v; if (v === kind) o.selected = true; sel.appendChild(o); });
+        row.appendChild(ol); row.appendChild(sel);
+        const on = el("input", "v7-input v7-other-name"); on.type = "text"; on.id = "v7-t-other-name"; on.value = kind === "else" ? (ns.mentorOtherLabel || "") : "";
+        on.setAttribute("aria-label", "Name the Other group"); on.placeholder = "Name the group"; on.hidden = kind !== "else";
+        on.addEventListener("input", e => { ns.mentorOtherLabel = e.target.value; saveState(); });
+        on.addEventListener("blur", () => { on.scrollLeft = 0; }); // r12-b-8: the start of the name shows
+        sel.addEventListener("change", () => {
+          ns.mentorOtherKind = sel.value;
+          const g = OTHER_GROUPS.find(x => x[0] === sel.value);
+          if (sel.value !== "else") ns.mentorOtherLabel = (g && g[2]) || "";
+          else ns.mentorOtherLabel = on.value;
+          on.hidden = sel.value !== "else"; saveState();
+          if (sel.value === "else") on.focus();
+        });
+        row.appendChild(on);
+        dash.appendChild(row);
+      }
+      dash.appendChild(el("p", "v7-quiet v7-tiles-help", "These totals have no set period. Check the instructions for your funding opportunity in case it sets one."));
       c.appendChild(dash);
 
       const sh = el("div", "v7-section-t");
-      sh.appendChild(el("h3", "v7-h3", "A few of the people you " + trainedWord() + ", and " + wentWord() + "."));
+      sh.appendChild(el("h3", "v7-h3", "Highlight a few people you " + trainedWord()));
       const pc = el("span", "v7-counter");
       // r4-a-6: more people described than counted reads as a gap, here and in Still missing.
       const setPc = () => { const t = mentorTotal(), d = menteesDescribed(); pc.textContent = t ? (d > t ? d + " described, more than the " + t + " in your totals. Check the totals." : d + " of " + t + " described") : (d ? d + (d === 1 ? " person" : " people") + " described" : "0 described so far"); pc.classList.toggle("is-warn", !!t && d > t); };
       setPc(); sh.appendChild(pc); c.appendChild(sh);
-      { // r15-a-2: the people note as short lines, one point each.
-        const ul = el("ul", "v7-quiet v7-people-help v7-short-lines");
-        ["Leave out names, to protect the privacy of the people you " + trainedWord() + ".",
-          "Describe each person by their level and " + wentWord() + ".",
-          "Add any " + (ns.lens.discipline === "creative" ? "prizes, residencies or major grants" : "best-paper prizes or major scholarships") + " they held or went on to win.",
-          "Count students you co-supervise, and say that the supervision is shared. Someone still training with you can be described by level and project.", "For people under 18, describe them only as closely as they and a parent or guardian agree.",
-          "In a small community an organization and a position can identify a person, so describe them only as closely as they agree to."
-        ].forEach(t => ul.appendChild(el("li", null, t)));
-        c.appendChild(ul);
-      }
+      // V8.8 (Prem, 2026-11-12): one line of context and one privacy line replace the six bullets. The
+      // level, where they are now and prizes have their own boxes on each card; co-supervision moved there.
+      // "Relates to this application" is advice: no funder rule says the people must (INFERRED).
+      c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers read where your trainees went next as evidence of how you mentor. Choose the people whose paths show this best and, where you can, some whose work relates to this application."));
+      c.appendChild(el("p", "v7-quiet v7-people-help", "Leave out names. For someone under 18, or in a small community where a role can identify a person, describe them only as closely as they (and a parent or guardian) agree."));
       ns.mentees.forEach((m, i) => c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)));
       const addP = el("button", "v7-add", "+ Add a person"); addP.type = "button"; addP.id = "v7-add-person";
       addP.addEventListener("click", () => {
@@ -5705,6 +5796,8 @@
       pair.appendChild(lvl);
       pair.appendChild(select("v7-pw" + i, "Where are they now?", MENTEE_KINDS, m.kind, v => { const was = m.kind; m.kind = v; changed(); renderStage(); if (v && !was) announce(v === "university" ? "University and Department or discipline added." : "Organization and Unit or position added."); }));
       card.appendChild(pair);
+      // V8.8 (Prem): the co-supervision line, moved here from the section's bullets.
+      lvl.appendChild(el("p", "v4-help v7-lvl-help", "If you co-supervise this person, say so. Someone still training with you can be described by their project."));
       // W-24: "Describe their level" sits in the Level column, under its select.
       if (m.stageKind === "other") lvl.appendChild(input("v7-po" + i, "Describe their level", false, m.stageOther, v => { m.stageOther = v; m.stage = v; changed(); }));
       if (m.kind) {
@@ -6473,7 +6566,6 @@
       const font = /Arial/.test(PRINT_FONT[a] || "") ? "12-point Arial" : "12-point Times New Roman";
       tailoredBar(c, { lead: "Set up for:", text: unsure ? "Agency not chosen yet · Tri-agency CV layout · 12-point Times New Roman"
         : labelOf(AGENCIES, a) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV") + " · " + font });
-      renderTesterEnd(c);
       // r2-a-16: links the format does not allow are named here too, before anything is downloaded.
       { const dw = draftWords(), ol = overLimit(dw); if (ol) { const ov = el("p", "v7-note v7-unfinished-note v7-over-note", "Your draft is about " + roughWords(dw).toLocaleString("en-CA") + " words, " + pagesRange(dw) + " pages. The limit in English is " + PAGE_LIMIT_EN + " pages, " + (ol === 2 ? "so it needs cutting before it goes into the template." : "so it may need cutting; check the page count in the template.")); ov.setAttribute("role", "note"); c.appendChild(ov); } } // r6-a-4, M-4
       // r16-a-3: a draft written in French is told which sentences the tool still writes in English (Q-23).

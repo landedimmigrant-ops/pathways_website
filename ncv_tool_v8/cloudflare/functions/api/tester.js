@@ -10,7 +10,7 @@ import { neon } from "@neondatabase/serverless";
 
 const ID_RE = /^[0-9a-f-]{8,64}$/i;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const STEPS = ["start", "setup", "xray", "contrib", "mentor", "ps", "review", "export", "feedback"];
+const STEPS = ["start", "setup", "xray", "contrib", "mentor", "ps", "review", "export", "finish", "feedback"];
 // Answer keys from tester-questions-proposal-2026-11-03.md. Rows from the first set (funding, before,
 // want, useful, stuck) stay in the table as they were sent.
 const START_KEYS = ["source", "due", "concern"];
@@ -74,7 +74,7 @@ async function tester(request, env) {
   }
   if (b.action === "finish") {
     const r = await sql`update testers set end_answers = ${JSON.stringify(pick(b.answers, END_KEYS))}::jsonb, finished_at = now(),
-      last_step = 'export', profile = ${profile}::jsonb where tester_id = ${b.id} returning tester_id`;
+      last_step = 'finish', profile = ${profile}::jsonb where tester_id = ${b.id} returning tester_id`;
     return r.length ? json(200, { ok: true }) : json(404, { error: "unknown tester" });
   }
   return json(400, { error: "action" });
