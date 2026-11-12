@@ -14,7 +14,7 @@ This folder's `index.html` is a thin redirect.
 | **Decisions so far** (DECIDED vs INFERRED) | [`../narrative-cv-v7-decisions.md`](../narrative-cv-v7-decisions.md) |
 | **Audit loop log and findings** | [`../ncv_tool_v7/audit-loop-2026-10-31.md`](../ncv_tool_v7/audit-loop-2026-10-31.md) |
 | **Open questions for Prem** | [`../ncv_tool_v7/questions-for-prem.md`](../ncv_tool_v7/questions-for-prem.md) |
-| **Version history** (8.0 to 8.5; which one is on Cloudflare) | [`CHANGELOG.md`](CHANGELOG.md) |
+| **Version history** (8.0 to 8.7; which one is on Cloudflare) | [`CHANGELOG.md`](CHANGELOG.md) |
 | **Related versions** | V7 (frozen, the version before the audit loop): [`../ncv_tool_v7/README.md`](../ncv_tool_v7/README.md) |
 
 Storage: the draft lives in `localStorage` under `ncv-v8`, so V7 and V8 can be tested side by side in one browser.
@@ -43,6 +43,7 @@ The GitHub Pages copy (`/ncv_tool_v8/`) keeps working with no sign-up and no net
   - what they will do with the draft next;
   - which parts they would reuse for the next application (choose any; "None, I would start again" clears the others), with a box for anything else;
   - the one change that would help most.
+- **Feedback on each step** (V8.7, Prem 2026-11-12): a "?" Feedback on this step button sits above each step’s bottom row (not on the start page). It opens a box with the reminder "This note goes to the Pathways to Impact team to help improve the tool. It is not part of your CV." Each note is sent as `note` with the step and the profile to the table `tester_notes`, at most 50 per tester. An unsent note is kept in the tester record. To read them: `select * from notes_by_step;`
 - **What is never sent:** draft text.
 - **Where the record lives in the browser:** under its own key, `ncv-v8-tester`, so Reset draft and Load your draft leave it alone.
 - **Database:** Neon project `ncv-testing` (`lucky-tree-08109926`, AWS US East 1).
@@ -59,6 +60,7 @@ The endpoint is `POST /api/tester`:
 - Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
 INFERRED, for Prem to confirm or change:
+- the feedback box: its question ("What was clear or confusing in this step, and what would help?"), the reminder wording, a tester may send several notes per step, and the box shows on testers’ copies only;
 - the wording of the answer options (the questions were agreed in chat on 2026-11-03);
 - the sign-up card replaces the path cards and every step until the tester signs up;
 - the Export questions sit at the top of Export;

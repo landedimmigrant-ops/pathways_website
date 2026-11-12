@@ -950,7 +950,7 @@ async function seed(state, extra) {
       const ch=q('[data-f="ps-challenge"] .v7-box'); ch.focus(); setv(ch, ch.value+' '); await w(80); a.ps=qa('[data-f="ps-challenge"] .v4-flag').map(x=>x.textContent).join('|');
       return a;`);
     check("'Phase I' is not the writer, and a role line that only says 'we' does not silence the card's check (K-2, K-4)", /“we”/.test(r.act), r);
-    check("the statement's first sentence does not silence its 'we' check (K-3); 'may use' in What could change is praised as a hedge (K-5)", /“we”/.test(r.ps) && /Hedged/.test(r.imp), r);
+    check("the statement's first sentence does not silence its 'we' check (K-3); 'may use' in What could change is praised as a hedge (K-5)", /“we”/.test(r.ps) && /Cautious words/.test(r.imp), r);
   }
 
   console.log("Audit loop, round 7");
@@ -1843,6 +1843,86 @@ async function seed(state, extra) {
     await tabKey(true);
     r = await js(H + `const e=document.activeElement; return {f:e.closest('.v7-f')?.dataset.f, cls:e.className, before:(()=>{const fs=qa('.v7-card .v7-f'); const k=fs.findIndex(x=>/-activities$/.test(x.dataset.f)); return fs[k-1]?.dataset.f;})()};`);
     check("a11y (keyboard): Shift+Tab from an open box reaches the field before it by its answer", r.f === r.before && /v7-ans/.test(r.cls), r);
+  }
+
+  console.log("V8.7: the feedback box at the foot of each step");
+  {
+    const TP = () => PAGE() + "?tester=1";
+    const tseed = async (state, tester) => {
+      await go(HOME());
+      await js("localStorage.clear();" + (state ? "localStorage.setItem('ncv-v8'," + JSON.stringify(JSON.stringify(state)) + ");" : "") + (tester ? "localStorage.setItem('ncv-v8-tester'," + JSON.stringify(JSON.stringify(tester)) + ");" : ""));
+      await go(TP());
+    };
+    const tstate = { id: "1234abcd-0000-4000-8000-000000000002", email: "tester@example.org", start: {}, startSent: true, lastStep: "contrib" };
+    const draft = (key) => Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: key, ui: { profileNote: false } });
+
+    // Off on the plain address.
+    await seed(draft("contrib"));
+    r = await js(H + "await w(200); return {fb:qa('.v8-fb').length};");
+    check("the feedback box is off on the plain address", r.fb === 0, r);
+
+    apiMode = "ok"; apiPosts.length = 0;
+    await tseed(draft("contrib"), tstate);
+    r = await js(H + `await w(300); const b=q('.v8-fb-btn'), p=b&&document.getElementById(b.getAttribute('aria-controls'));
+      const a={btn:!!b, text:b&&b.innerText.replace(/\\s+/g,' ').trim(), qHidden:b&&b.querySelector('.v8-fb-q')?.getAttribute('aria-hidden'), exp:b&&b.getAttribute('aria-expanded'), hidden:p&&p.hidden,
+        h:b&&b.getBoundingClientRect().height, beforeNav:!!(b&&b.closest('.v8-fb').nextElementSibling?.classList.contains('narrative-nav'))};
+      b.click(); await w(150);
+      const ta=p.querySelector('textarea');
+      a.exp2=b.getAttribute('aria-expanded'); a.hidden2=p.hidden; a.focus=document.activeElement===ta; a.role=p.getAttribute('role');
+      a.region=document.getElementById(p.getAttribute('aria-labelledby'))?.innerText; a.label=q('label[for="'+ta.id+'"]')?.innerText;
+      a.desc=document.getElementById(ta.getAttribute('aria-describedby'))?.innerText;
+      p.querySelector('.btn-primary').click(); await w(200); a.emptyStatus=p.querySelector('[aria-live]').innerText; a.posts=0;
+      return a;`);
+    check("a signed-up tester sees a \"?\" Feedback on this step button above the bottom row, collapsed, at least 44 px tall", r.btn && r.text === "? Feedback on this step" && r.qHidden === "true" && r.exp === "false" && r.hidden && r.h >= 44 && r.beforeNav, r);
+    check("a11y: the button opens a named region, moves focus to a labelled box, and the box is described by the reminder that the note is not part of the CV",
+      r.exp2 === "true" && !r.hidden2 && r.focus && r.role === "region" && r.region === "Your feedback on Contributions" && /clear or confusing in this step/.test(r.label || "")
+      && /goes to the Pathways to Impact team to help improve the tool\. It is not part of your CV\./.test(r.desc || ""), r);
+    check("an empty note is not sent; the live status says what to do", /Write your note in the box/.test(r.emptyStatus) && apiPosts.filter(p => p.action === "note").length === 0, r.emptyStatus);
+
+    r = await js(H + `const p=q('.v8-fb-panel'), ta=p.querySelector('textarea'); setv(ta,'A made-up note on the role line.');
+      p.querySelector('.btn-primary').click(); await w(400);
+      return {status:p.querySelector('[aria-live]').innerText, ta:ta.value, sent:p.querySelector('.v8-fb-sent').innerText, focus:document.activeElement===ta,
+        t:JSON.parse(localStorage.getItem('ncv-v8-tester')).notes};`);
+    const note = apiPosts.find(p => p.action === "note") || {};
+    check("Send feedback posts one note for this tester and step, with the profile and no draft text", note.id === tstate.id && note.step === "contrib" && note.note === "A made-up note on the role line."
+      && note.profile && !("contributions" in note) && !("text" in note) && Object.keys(note).sort().join() === "action,id,note,profile,step,version", note);
+    check("after sending, the status thanks the tester, the box clears and keeps focus, and a line counts the notes sent", /reached the team/.test(r.status) && r.ta === "" && r.focus && /sent 1 note on this step/.test(r.sent) && r.t.contrib.sent === 1, r);
+
+    // A failed send keeps the note; a reload keeps an unsent note.
+    apiMode = "fail";
+    r = await js(H + `const p=q('.v8-fb-panel'), ta=p.querySelector('textarea'); setv(ta,'Kept note.'); p.querySelector('.btn-primary').click(); await w(400);
+      return {status:p.querySelector('[aria-live]').innerText, ta:ta.value};`);
+    check("a failed send keeps the note and gives the team's email", r.ta === "Kept note." && /did not send/.test(r.status) && /impact@concordia\.ca/.test(r.status), r);
+    apiMode = "ok";
+    await go(TP());
+    r = await js(H + `await w(300); q('.v8-fb-btn').click(); await w(100); return q('.v8-fb-panel textarea').value;`);
+    check("an unsent note is still there after a reload", r === "Kept note.", r);
+
+    // One box on every step, named for the step.
+    const seen = [];
+    for (const k of ["setup", "mentor", "ps", "review", "export"]) {
+      await tseed(Object.assign(draft(k), k === "setup" ? { profileConfirmed: false } : {}), tstate);
+      seen.push(await js(H + `await w(300); const b=q('.v8-fb-btn'); if(!b) return 'none'; b.click(); await w(100); return qa('.v8-fb').length + ':' + q('.v8-fb-panel h3').innerText;`));
+    }
+    check("each step has one feedback box, headed with the step's name", seen.every(x => /^1:Your feedback on /.test(x)) && /Mentorship/.test(seen[1]) && /Review/.test(seen[3]) && /Export/.test(seen[4]), seen);
+
+    // The start page has none, before or after sign-up.
+    await tseed(null, tstate);
+    r = await js(H + "await w(200); return qa('.v8-fb').length;");
+    check("the start page has no feedback box", r === 0, r);
+  }
+
+  console.log("Plain-language rewrites (Q-6, V8.7)");
+  {
+    const src = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v8.html"), "utf8");
+    const code = src.split("\n").filter(l => !/^\s*\/\//.test(l)).join("\n");
+    const OLD = ["Standing\"", "signals of standing", "Hedged", "is a hedge", "throughline", "single thread", "grammatical person", "unique contribution", "taken up more widely", "at what scale", "told as a scene", "Who gets in", "where they went", "take precedence", "pick up where you left off", "frames the whole", "beyond the prose"];
+    const left = OLD.filter(x => code.includes(x));
+    check("Q-6: the replaced wording is gone from the tool", left.length === 0, left);
+    const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "The six parts in each contribution", "One real case in two sentences"];
+    const missing = NEW.filter(x => !code.includes(x));
+    check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
+    check("Q-6: the version is 8.7 in the script and the tab title", /VERSION_NUM = "8\.7"/.test(src) && /<title>Narrative CV — V8\.7 beta/.test(src));
   }
 
   console.log("Network and errors");

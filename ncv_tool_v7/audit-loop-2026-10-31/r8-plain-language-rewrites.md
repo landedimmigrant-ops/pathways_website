@@ -4,6 +4,18 @@ From the r8-b walk (a rehabilitation clinician-scientist writing in a third lang
 
 Mark each line **Yes**, **Edit: …** or **No** in the Decision column, and the next round applies it.
 
+## Decisions, 2026-11-09 (Fable review; applied in V8.7)
+
+Prem asked Fable to review the list once more and apply what holds up. Each line was checked against V8.6 and the house register. The wording in the tool is the record; where it differs from the Proposed column below, the line is listed as edited. Prem can override any of these.
+
+| Decision | Lines |
+|---|---|
+| **Applied as proposed, or close to it** (29) | P-2, P-4, P-6, P-10, P-11, P-13, P-14, P-18, P-19, P-20, P-22, P-29, P-38, P-39, P-40, P-41, P-42, P-43, P-45, P-46, P-47, P-48, P-49, P-51, P-52, P-53, P-56, P-59, P-60 |
+| **Edited, then applied** (23) | P-3 ("Examples of the six parts in [field]."); P-5 (the opening was already in place; the rest applied); P-8 (keeps "appears N times"; "no sentence says what you did yourself"); P-9 ("expresses a possibility"; the field examples were already in place); P-12 ("The highlighted words below are the ones the checks refer to:"); P-15 (the V8 line had changed; rewritten in the same sense); P-16 ("they leave the choice between “I” and “we” to you"); P-17 (the "repeat it back" sentence removed); P-21 ("used", "seen or used", "read or used" by field); P-25 ("supports"; "appear after"); P-28 (label "Who joins", which keeps the equity question of who; the proposal was "How people join"); P-30 ("where they are now" for every profile, since a trainee may be studying); P-32; P-33 (keeps "strands", the part's name; "What one idea connects them?"); P-34 (question only; the part is still "How you got here"); P-35 ("signs that others recognize your work"; the field examples kept); P-36 ("fit your work and your career stage"); P-37 ("What do you plan to do next in this work?"); P-44 ("the one closest to this competition"); P-54 (follows the field: "How do you usually do your research?", and "How do you usually make your work?" for Creative; INFERRED wording); P-55 (deadline phrase only; "get familiar with" is Concordia house phrasing and stays); P-57 ("If the instructions for your funding opportunity differ, follow them."); P-58 (two of three; "You start with your contributions." stays) |
+| **Not applied** (2) | P-7 (the rail abbreviates by design and has no room for "may be over 5 pages"; the screen-reader text is already in full); P-27 ("built on it" is standard academic usage; "holds" is the term communities use for documents and data in their keeping) |
+| **Already done or replaced** (4) | P-1 (2026-11-01); P-23 (the DOI wording changed in 8.6); P-26 (a placeholder for this kind exists); P-31 (replaced by Eli’s answer on totals, 8.6) |
+| **Waiting on Eli** (2) | P-24 (the reason for the no-links rule); P-50 (the FRQ sentence) |
+
 ## Applied in round 8 (tied to a finding)
 
 | Where | Was | Now |

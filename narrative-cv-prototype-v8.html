@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.6 beta</title>
+  <title>Narrative CV — V8.7 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -227,6 +227,16 @@
     .v8-tq-ta { width: 100%; min-height: 4.5em; }
     .v8-tq-err { color: #a4161a; font-size: 0.85rem; margin: 4px 0 0; min-height: 0; }
     .v8-tester-privacy { margin: 0 0 16px; max-width: 72ch; }
+    /* V8.7: a feedback box at the foot of each step, for signed-up testers (Prem, 2026-11-12) */
+    .v8-fb { margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--v7-card-b); }
+    .v8-fb-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 14px; border: 1px solid #e5a712; border-radius: 22px; background: #fff8e6; color: var(--text); font: inherit; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
+    .v8-fb-btn:hover { background: #fdefc9; }
+    .v8-fb-btn:focus-visible { outline: 2px solid var(--v7-accent, #912338); outline-offset: 2px; }
+    .v8-fb-q { display: inline-flex; align-items: center; justify-content: center; width: 1.5em; height: 1.5em; border-radius: 50%; background: #e5a712; color: #1a1a1a; font-weight: 700; font-size: 0.9rem; line-height: 1; flex: none; }
+    .v8-fb-panel { margin-top: 12px; padding: 14px 16px; border: 1px solid #e5a712; border-radius: 8px; background: #fff; max-width: 72ch; }
+    .v8-fb-panel[hidden] { display: none; }
+    .v8-fb-panel .v8-tester-promise { margin-bottom: 12px; }
+    .v8-fb-sent { font-size: 0.85rem; color: var(--v7-done); margin: 8px 0 0; }
     .v8-tester-promise { margin: 0 0 12px; padding: 8px 12px; border-left: 4px solid #e5a712; background: #fff8e6; max-width: 72ch; }
     .v7-quiet { font-size: 0.85rem; color: var(--muted); margin: 8px 0 0; }
     .v7-small { font-size: 0.78rem; }
@@ -864,7 +874,7 @@
     <h1 class="proto-title"><a href="#" id="v7-home" title="Back to the start page">Narrative CV</a></h1>
     <p class="proto-subtitle">A drafting tool for your Tri-agency CV or CV-FRQ.</p>
     <div id="v7-start-intro" hidden>
-      <p class="v7-intro">This tool helps you get familiar with how a narrative CV asks you to think about your work and describe it. You build a first outline in your own words: your contributions, your mentorship record and a personal statement. A full first draft can take a day or more, so allow time before your deadline. English only for now.</p>
+      <p class="v7-intro">This tool helps you get familiar with how a narrative CV asks you to think about your work and describe it. You build a first outline in your own words: your contributions, your mentorship record and a personal statement. A full first draft can take a day or more, so start well before your deadline. English only for now.</p>
       <p class="v7-intro">We recommend reading the <a id="v4-guide-top" href="https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html" target="_blank" rel="noopener">narrative CV guide</a> before you start, and consulting it as you go.</p>
     </div>
     <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The checks are fixed rules. Your draft leaves this device only if you send it by email. A connection is needed to open the tool; after that it runs offline. If you close the tab, save a draft file first.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
@@ -912,7 +922,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.6", VERSION_DATE = "2026-11-04";
+    const VERSION_NUM = "8.7", VERSION_DATE = "2026-11-12";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -1152,6 +1162,72 @@
       row.appendChild(send); card.appendChild(row); card.appendChild(status);
       c.appendChild(card);
     }
+    // V8.7 (Prem, 2026-11-12): a feedback box at the foot of each step. A signed-up tester opens it with
+    // the "?" button and sends a note on that step; notes go to the Neon `tester_notes` table with the
+    // step and the profile. The box reminds the tester that the note is not part of the CV. An unsent
+    // note is kept with the tester record, so a redraw or a reload keeps it.
+    const UI_FB = {};
+    function testerNoteBox() {
+      if (!TESTER_ON || !tester.email || !ns.stageKey || ns.stageKey === "start") return null;
+      const key = ns.stageKey;
+      const st = (stages().find(x => x.key === key) || {}).short || "this step";
+      tester.notes = tester.notes || {};
+      const rec = tester.notes[key] = tester.notes[key] || { draft: "", sent: 0 };
+      const box = el("div", "v8-fb");
+      const pid = "v8-fb-" + key;
+      const btn = el("button", "v8-fb-btn"); btn.type = "button";
+      const ic = el("span", "v8-fb-q", "?"); ic.setAttribute("aria-hidden", "true");
+      btn.appendChild(ic); btn.appendChild(el("span", null, "Feedback on this step"));
+      btn.setAttribute("aria-controls", pid);
+      const panel = el("div", "v8-fb-panel"); panel.id = pid;
+      const open = !!UI_FB[key];
+      btn.setAttribute("aria-expanded", open ? "true" : "false"); panel.hidden = !open;
+      const h = el("h3", "v7-h3", "Your feedback on " + st); h.id = pid + "-h"; panel.appendChild(h);
+      panel.setAttribute("role", "region"); panel.setAttribute("aria-labelledby", h.id);
+      const promise = el("p", "v8-tester-promise");
+      promise.appendChild(el("strong", null, "This note goes to the Pathways to Impact team to help improve the tool. It is not part of your CV."));
+      promise.id = pid + "-p"; panel.appendChild(promise);
+      const wrap = el("div", "v8-tq");
+      const lab = el("label", "v4-q", "What was clear or confusing in this step, and what would help?"); lab.htmlFor = pid + "-ta";
+      wrap.appendChild(lab);
+      const ta = el("textarea", "contribution-textarea v8-tq-ta"); ta.id = pid + "-ta"; ta.maxLength = 2000; ta.rows = 4;
+      ta.setAttribute("aria-describedby", promise.id);
+      ta.value = rec.draft || "";
+      ta.addEventListener("input", () => { rec.draft = ta.value; testerSave(); });
+      wrap.appendChild(ta); panel.appendChild(wrap);
+      const row = el("div", "v4-note-row");
+      const send = el("button", "btn btn-primary", "Send feedback"); send.type = "button";
+      row.appendChild(send); panel.appendChild(row);
+      const status = el("p", "v7-quiet"); status.setAttribute("aria-live", "polite"); panel.appendChild(status);
+      const sentLine = el("p", "v8-fb-sent", rec.sent ? (rec.sent === 1 ? "You have sent 1 note on this step. You can send another." : "You have sent " + rec.sent + " notes on this step. You can send another.") : "");
+      if (!rec.sent) sentLine.hidden = true;
+      panel.appendChild(sentLine);
+      btn.addEventListener("click", () => {
+        UI_FB[key] = !UI_FB[key];
+        btn.setAttribute("aria-expanded", UI_FB[key] ? "true" : "false"); panel.hidden = !UI_FB[key];
+        if (UI_FB[key]) ta.focus();
+      });
+      send.addEventListener("click", async () => {
+        const text = ta.value.trim();
+        if (!text) { status.textContent = "Write your note in the box, then send it."; ta.focus(); return; }
+        send.disabled = true; status.textContent = "Sending…";
+        if (!tester.startSent) { tester.startSent = await testerPost({ action: "start", email: tester.email, answers: tester.start || {}, profile: testerProfile() }); testerSave(); }
+        const ok = tester.startSent && await testerPost({ action: "note", step: key, note: text, profile: testerProfile() });
+        send.disabled = false;
+        if (ok) {
+          rec.sent = (rec.sent || 0) + 1; rec.draft = ""; testerSave();
+          ta.value = "";
+          status.textContent = "Your note reached the team. Thank you.";
+          sentLine.hidden = false;
+          sentLine.textContent = rec.sent === 1 ? "You have sent 1 note on this step. You can send another." : "You have sent " + rec.sent + " notes on this step. You can send another.";
+          ta.focus();
+        } else {
+          status.textContent = "Your note did not send, perhaps because the connection dropped. It is kept here. Try again, or email it to " + FEEDBACK.email + ".";
+        }
+      });
+      box.appendChild(btn); box.appendChild(panel);
+      return box;
+    }
     const DISCIPLINES = [
       { v: "stem", l: "STEM / engineering" }, { v: "health", l: "Health / clinical" },
       { v: "social", l: "Social sciences" }, { v: "humanities", l: "Humanities" },
@@ -1197,7 +1273,7 @@
         { beat: "activities", text: "the co-design, the pilot, the measurement" },
         { beat: "outputs", text: "protocols, training, tools, trials" },
         { beat: "outcomes", text: "clinics, pathways, guidelines, referrals" },
-        { beat: "impact", text: "care at system scale, and for whom" }
+        { beat: "impact", text: "how care could change across the health system, and for whom" }
       ],
       social: [
         { beat: "stakes", text: "a gap in how a problem is understood or governed, or a question the field has not settled" },
@@ -1911,11 +1987,11 @@
         { r: "programFit", t: "I am applying to a competition that funds research designed with the sector it studies. That is how this work has been built since 2019, and sustained partnership is where my record is strongest." },
         { r: "horizon", t: "The next phase follows the same households into care work, where scheduling volatility is growing fastest and longitudinal data are scarce." }
       ],
-      legend: ["Anchor", "The problem or question", "Strands", "How you got here", "Standing", "Why this competition", "What’s next"]
+      legend: ["Anchor", "The problem or question", "Strands", "How you got here", "Recognition", "Why this competition", "What’s next"]
     };
     // Kickers for the PS fields below the example — same names as the legend, so the box's
     // vocabulary is the one the stage repeats (engineer note under S196).
-    const PS_KICKER = { challenge: "The problem or question", streams: "Strands", pivot: "How you got here", standing: "Standing", programFit: "Why this competition", teamFit: "How you complement the team", horizon: "What’s next" };
+    const PS_KICKER = { challenge: "The problem or question", streams: "Strands", pivot: "How you got here", standing: "Recognition", programFit: "Why this competition", teamFit: "How you complement the team", horizon: "What’s next" };
     // Guide sync (P-25): master's and doctoral are graduate supervision; postdoctoral is its own line.
     // [state key, label in the grid, label in the exports]
     const MENTOR_COUNT_LABELS = [["phd", "Doctoral", "doctoral students"], ["masters", "Master’s", "master’s students"],
@@ -1932,7 +2008,7 @@
         { r: "access", t: "Three years ago I removed the prior-experience requirement from my assistantship postings and began paying from the first week, because unpaid trial periods had been screening out applicants without family support. Two-thirds of the assistants hired since are the first in their family to attend university." },
         { r: "crossStage", t: "I also mentor two early-career colleagues in other departments and run a monthly writing group that anyone in the faculty can join." }
       ],
-      legend: ["Totals", "People, and where they went", "One thing you do", "Who gets in", "Who else you mentor"]
+      legend: ["Totals", "People, and where they are now", "One thing you do", "Who joins", "Who else you mentor"]
     };
 
     // ── T1 lint engine (restored from the V1/V2 prototype; ownership rule ──
@@ -2103,7 +2179,7 @@
         else if (iVerb) out.strengths.push("Your own role is named."); // r6-b-6: "my team ran it" names the team
       }
       if (weCount && !ownership && !ctx.roleNamed && kind !== "stakes" && kind !== "outputs") { // r8-b-2
-        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + " and no sentence names your own part. Name it beside the team’s or the partners’, for example " + (ctx.discipline === "creative" ? "“I direct and choreograph; the dancers co-create the movement material.”" : ctx.discipline === "stem" && !ctx.community ? "“I led the sensor design; the partner’s engineers set the alert thresholds.”" : ctx.community ? "“The partners lead the program and hold the data; I support the evaluation design.”" : "“I co-lead the methods; the partner communities hold the data.”") + "");
+        out.flags.push("“we” or “our” appears " + weCount + (weCount === 1 ? " time" : " times") + ", and no sentence says what you did yourself. Name your own part beside the team’s or the partners’, for example " + (ctx.discipline === "creative" ? "“I direct and choreograph; the dancers co-create the movement material.”" : ctx.discipline === "stem" && !ctx.community ? "“I led the sensor design; the partner’s engineers set the alert thresholds.”" : ctx.community ? "“The partners lead the program and hold the data; I support the evaluation design.”" : "“I co-lead the methods; the partner communities hold the data.”") + "");
         weMatches.forEach(m => out.hits.push({ text: m.text, rule: "ownership" }));
       }
       if (!ownership && !weCount && PASSIVE_KINDS.indexOf(kind) !== -1) {
@@ -2182,7 +2258,7 @@
       const journalTerms = prestige.filter(p => !AUTHOR_METRIC_RE.test(p) && !/^prestigious$/i.test(p));
       const authorTerms = prestige.filter(p => AUTHOR_METRIC_RE.test(p));
       if (journalTerms.length) out.flags.push(journalTerms.map(p => "“" + p + "”").join(", ") + ". Reviewers of Tri-agency applications are asked to disregard the Journal Impact Factor and other journal-based metrics. Say what the work changed.");
-      if (authorTerms.length) out.flags.push(authorTerms.map(p => "“" + p + "”").join(", ") + ". DORA treats the h-index as an unreliable measure of an individual’s work. The citation count for a single article or book can support what you say about that work.");
+      if (authorTerms.length) out.flags.push(authorTerms.map(p => "“" + p + "”").join(", ") + ". DORA (the San Francisco Declaration on Research Assessment) treats the h-index as an unreliable measure of an individual’s work. The citation count for a single article or book can support what you say about that work.");
 
       // Guide sync (P-17, P-31): links, by format. Evidence rows get their own note (see renderEvidence).
       if (links.length && ctx.format) {
@@ -2215,12 +2291,12 @@
         const hedges = [];
         HEDGES.forEach(h => { const ms = allMatches(hedgeText, h); if (ms.length) { hedges.push(h); ms.forEach(m => out.hits.push({ text: m.text, rule: "hedge", index: m.index })); } });
         if (kind === "impact") {
-          if (hedges.length) { out.strengths.push("Hedged, which fits this part."); out.score++; }
+          if (hedges.length) { out.strengths.push("Cautious words such as “could” or “might” suit this part."); out.score++; }
         } else if (kind === "generic") {
-          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " is a hedge" : " are hedges") + ". A hedge suits a sentence about what might follow; state what happened plainly.");
+          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " expresses a possibility" : " express a possibility") + ". Cautious words suit a sentence about what might follow. For what has happened, a plain statement fits.");
           else out.score++;
         } else {
-          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " is a hedge" : " are hedges") + ". " + (kind === "stakes" ? "This part describes the problem or question as it stood; a plain statement of the situation, or the question itself, fits here." : "This field describes what happened. State an uncertainty as a fact (such as “" + ({ health: "two of the five clinics did not report in 2023", social: "a third of the households did not respond in 2023", humanities: "two of the ledgers are undated", creative: "two of the six performances were not filmed" }[ctx.discipline] || "three reefs were not sampled in 2023") + "”), or move a possibility to What could change.") + "");
+          if (hedges.length) out.flags.push(hedges.map(h => "“" + h + "”").join(", ") + (hedges.length === 1 ? " expresses a possibility" : " express a possibility") + ". " + (kind === "stakes" ? "This part describes the problem or question as it stood; a plain statement of the situation, or the question itself, fits here." : "This part describes what has happened. State an uncertainty as a fact (such as “" + ({ health: "two of the five clinics did not report in 2023", social: "a third of the households did not respond in 2023", humanities: "two of the ledgers are undated", creative: "two of the six performances were not filmed" }[ctx.discipline] || "three reefs were not sampled in 2023") + "”), or move a possibility to What could change.") + "");
           else out.score++;
         }
       }
@@ -2621,7 +2697,7 @@
     // and many stay in their community, so the Mentorship wording widens for those profiles.
     const isCommunity = () => (ns.lens.workMode || []).includes("community");
     const trainedWord = () => isCommunity() ? "trained or mentored" : "trained";
-    const wentWord = () => isCommunity() ? "where they are now" : "where they went";
+    const wentWord = () => "where they are now"; // P-30: one wording for every profile
     const activeTokens = () => {
       const L = ns.lens, t = [];
       if (L.discipline) t.push(L.discipline);
@@ -2706,7 +2782,7 @@
       ps: {
         challenge: {
           q: "What is the problem your whole research program keeps returning to?",
-          help: "One or two sentences on the throughline that runs across your projects.",
+          help: "One or two sentences on the idea that connects your projects.",
           variants: {
             humanities: "What is the central question your work keeps asking?",
             creative: "What question does your body of work keep asking?",
@@ -2715,21 +2791,21 @@
             early: "What problem or question does your work keep returning to?" // r14-b-7
           }
         },
-        streams: { q: "Name two to four strands of your work. What single thread connects them?", help: "A reviewer should see one coherent program.",
+        streams: { q: "Name two to four strands of your work. What one idea connects them?", help: "A reviewer should see one coherent program.",
           helpVariants: { early: "A reviewer should see how the strands connect, including a change of field." } }, // r14-b-7
-        pivot: { q: "How did you get here?", help: "Many strong statements name a turning point, such as a field you came from, a pivot or a defining collaboration. It explains why your work looks the way it does. Leaves and other career interruptions usually go in the appendix of the application. Check the instructions and eligibility criteria for your funding opportunity, especially if you apply as an early-career researcher, and ask your research advisor. If a leave, a move between institutions or another interruption shaped your record and you want to discuss it, you can say so here in one or two factual sentences: when it was, how long it lasted and what the work did in the meantime.", isNew: true },
+        pivot: { q: "How did you come to this work?", help: "Many strong statements describe a change in direction, such as a move from another field or an important collaboration. It explains why your work looks the way it does. Leaves and other career interruptions usually go in the appendix of the application. Check the instructions and eligibility criteria for your funding opportunity, especially if you apply as an early-career researcher, and ask your research advisor. If a leave, a move between institutions or another interruption shaped your record and you want to discuss it, you can say so here in one or two factual sentences: when it was, how long it lasted and what the work did in the meantime.", isNew: true },
         standing: {
-          q: "List your strongest signals of standing.",
-          help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual’s work. The citation count for a single article or book can support what you say about it.",
+          q: "List the strongest signs that others recognize your work.",
+          help: "Funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA (the San Francisco Declaration on Research Assessment) treats as an unreliable measure of an individual’s work. The citation count for a single article or book can support what you say about it.",
           isNew: true,
-          variants: { creative: "List your strongest signals of standing, such as work shown, performed or published, residencies, commissions, grants or awards.",
-            humanities: "List your strongest signals of standing, such as books and articles, editions, fellowships, awards or an archive or collection you built.", // r10-a-10
-            early: "List your strongest signals so far, such as key papers, fellowships, awards or the scale of a dataset or collaboration. Name what you have." },
+          variants: { creative: "List the strongest signs that others recognize your work, such as work shown, performed or published, residencies, commissions, grants or awards.",
+            humanities: "List the strongest signs that others recognize your work, such as books and articles, editions, fellowships, awards or an archive or collection you built.", // r10-a-10
+            early: "List the strongest signs of recognition you have so far, such as key papers, fellowships, awards or the scale of a dataset or collaboration. Name what you have." },
           // r9-a-6, r9-b-7: the signals follow the field and the work mode.
           helpVariants: {
             creative: "Work shown or performed, commissions, residencies, awards, juried selections, critical reviews and the venues that programmed you. List them first, then gather them into one confident paragraph. Leave out journal-based metrics, which reviewers are asked to disregard.",
-            stem: "Funding, licences, products or tools in use, roles on standards bodies, industry co-funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual’s work.", // r19-b-6
-            community: "Funding, partnerships and agreements, recognition from partners and peers, reach. List them first, then gather them into one confident paragraph that names the partners’ part. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA treats as an unreliable measure of an individual’s work."
+            stem: "Funding, licences, products or tools in use, roles on standards bodies, industry co-funding, the scale of what you have built, recognition, reach. List them first, then gather them into one confident paragraph. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA (the San Francisco Declaration on Research Assessment) treats as an unreliable measure of an individual’s work.", // r19-b-6
+            community: "Funding, partnerships and agreements, recognition from partners and peers, reach. List them first, then gather them into one confident paragraph that names the partners’ part. Leave out the Journal Impact Factor, which reviewers are asked to disregard, and the h-index, which DORA (the San Francisco Declaration on Research Assessment) treats as an unreliable measure of an individual’s work."
           }
         },
         // Approved fix: with no competition named in Setup, ask about the competition itself
@@ -2737,21 +2813,21 @@
         // before the normal variants/interpolate path runs.
         // Guide sync (P-48): the TCV's first section focuses on your expertise relative to this
         // opportunity; the CV-FRQ's adds fit with the program's objectives (and the team, below).
-        programFit: { q: "You are aiming at “{program}” ({agency}). Why is this the right competition for where you are?", noProgramQ: "Which competition do you have in mind, and why does it fit where you are?",
+        programFit: { q: "You are aiming at “{program}” ({agency}). Why does this competition fit your work and your career stage?", noProgramQ: "Which competition do you have in mind, and why does it fit your work and your career stage?",
           help: "The TCV asks this section to show your expertise relative to this specific opportunity or project. Name what the competition funds and the expertise you bring to it.",
           helpVariants: { "cv-frq": "The CV-FRQ asks this section to show your expertise relative to this specific opportunity or project and your fit with the program’s objectives. Name the objectives and where your work meets them." },
           isNew: true },
         teamFit: { q: "How does your work complement the rest of the team on this application?", help: "The CV-FRQ asks for this in its first section. Name what you bring to the team: a method, a site, a population, a partnership or a stage of the work. If you are applying on your own, say how your work serves the program’s objectives." },
-        horizon: { q: "Where is this heading next?", help: "Name the direction of the work in the final sentence." }
+        horizon: { q: "What do you plan to do next in this work?", help: "Name the direction of the work in the final sentence." }
       },
       contrib: {
-        title: { q: "What one line would let a reviewer recall this work?", help: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the paper’s title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
-          helpVariants: { creative: "Short, plain and memorable. Name what the work was for; the title of the exhibition or work belongs in the evidence list.",
-            humanities: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the title of the book or article belongs in the evidence list.",
-            stem: "Short, plain and memorable. A reviewer should be able to repeat it back from memory. Name what the work was for; the title of the paper, release or patent belongs in the evidence list." } },
+        title: { q: "What one line would help a reviewer remember this work?", help: "Short, plain and easy to remember. Name what the work was for; the paper’s title belongs in the evidence list.", variants: { creative: "Name this body of work in one line a curator could use." },
+          helpVariants: { creative: "Short, plain and easy to remember. Name what the work was for; the title of the exhibition or work belongs in the evidence list.",
+            humanities: "Short, plain and easy to remember. Name what the work was for; the title of the book or article belongs in the evidence list.",
+            stem: "Short, plain and easy to remember. Name what the work was for; the title of the paper, release or patent belongs in the evidence list." } },
         // Q-18 (Prem, 2026-11-01): one part, "The problem or question", whose question follows the field.
         // The main field decides; community-engaged wording applies where the field has none of its own.
-        stakes: { q: "What problem did this work address, and who had it?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true,
+        stakes: { q: "What problem did this work address, and who did it affect?", help: "Strong contributions open with the problem they answered, and the method follows.", isNew: true,
           variants: {
             social: "What problem or question did this work address, and who did it affect?",
             humanities: "What question did you take up in this work, and why did it matter?",
@@ -2766,18 +2842,18 @@
           } },
         roleLine: {
           q: "In one line, what was your own part in this work?",
-          help: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the protocol.”",
-          variants: { team: "In one line, what was your unique contribution within the team?", partners: "In one line, what was your part in this work, and who led the other parts?", creative: "In one line, what was your part in this work, and who made the other parts?" },
-          helpVariants: { creative: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name who made the other parts and still make your own part clear: “I directed and edited the film; a sound designer composed the score.”", // r19-a-1
-            stem: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the method.”", // r10-b-10
-            humanities: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Concordia recommends the first person because it states your role most directly. You can name the people who worked with you and still make your own part clear: “I prepared the edition with two research assistants.”", // r10-a-7
-            community: "The instructions ask you to explain your role in each contribution and leave the grammatical person open. Name the partners’ leadership and your own part in the same line: “The community organizations set the priorities and run the outreach; I lead the evaluation design with their board.”" }
+          help: "The instructions ask you to explain your role in each contribution, and they leave the choice between “I” and “we” to you. Concordia recommends “I” because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the protocol.”",
+          variants: { team: "In one line, what did you do yourself within the team?", partners: "In one line, what was your part in this work, and who led the other parts?", creative: "In one line, what was your part in this work, and who made the other parts?" },
+          helpVariants: { creative: "The instructions ask you to explain your role in each contribution, and they leave the choice between “I” and “we” to you. Concordia recommends “I” because it states your role most directly. You can name who made the other parts and still make your own part clear: “I directed and edited the film; a sound designer composed the score.”", // r19-a-1
+            stem: "The instructions ask you to explain your role in each contribution, and they leave the choice between “I” and “we” to you. Concordia recommends “I” because it states your role most directly. You can name the team and still make your own part clear: “I led a team that developed the method.”", // r10-b-10
+            humanities: "The instructions ask you to explain your role in each contribution, and they leave the choice between “I” and “we” to you. Concordia recommends “I” because it states your role most directly. You can name the people who worked with you and still make your own part clear: “I prepared the edition with two research assistants.”", // r10-a-7
+            community: "The instructions ask you to explain your role in each contribution, and they leave the choice between “I” and “we” to you. Name the partners’ leadership and your own part in the same line: “The community organizations set the priorities and run the outreach; I lead the evaluation design with their board.”" }
         },
-        activities: { q: "Which methods, sites or partners did the work involve, and at what scale?", help: "Count where you can: how many sites, how long, how many people.",
-          variants: { creative: "What did making the work involve, and which part was yours?", humanities: "Which sources, archives, methods or partners did the work involve, and at what scale?",
+        activities: { q: "Which methods, sites or partners did the work involve, and how large was it?", help: "Give numbers where you can: how many sites, how long, how many people.",
+          variants: { creative: "What did making the work involve, and which part was yours?", humanities: "Which sources, archives, methods or partners did the work involve, and how large was it?",
             community: "Which methods, communities or partners did the work involve, and over what period?" },
-          helpVariants: { creative: "Give numbers where you can: works made, hours recorded, people interviewed, venues, and how long.", stem: "Count where you can: how many sites, structures, sensors, models, datasets or systems, how long, how many people.", humanities: "Count where you can: how many sources or collections, how long, how many people.",
-            community: "Count where you can: how many people and communities took part, over what period, and how many people worked on it." } },
+          helpVariants: { creative: "Give numbers where you can: works made, hours recorded, people interviewed, venues, and how long.", stem: "Give numbers where you can: how many sites, structures, sensors, models, datasets or systems, how long, how many people.", humanities: "Give numbers where you can: how many sources or collections, how long, how many people.",
+            community: "Give numbers where you can: how many people and communities took part, over what period, and how many people worked on it." } },
         outputs: {
           q: "Which papers, datasets, tools, protocols or programs came out of it, and how many?", help: "Write a sentence that names what the work produced, such as “The study produced a protocol and three papers.” Its effects belong in the next field.",
           // r9-a-3, r9-b-4: the example follows the field; in community-engaged work, say who holds each output.
@@ -2799,26 +2875,26 @@
             humanities: "Who has drawn on this work so far, such as scholars, archives, teachers or the public, and what is different for them now?",
             creative: "Who has seen, used or responded to the work so far, and what is different for them now?",
             community: "Which groups in the community or sector have used this, and what is different for them now?",
-            health: "Where has practice, care or policy shifted because of this work, and for whom?",
-            social: "Who took this up, whether scholars, practitioners, communities, the public or policy makers, and what shifted?"
+            health: "Where has practice, care or policy changed because of this work, and for whom?",
+            social: "Who took this up, whether scholars, practitioners, communities, the public or policy makers, and what changed?"
           }
         },
-        impact: { q: "If the work is taken up more widely, which field, sector or population could it affect, and how?", help: "Hedged language belongs in this part, where you say what could follow; what has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems and questions get framed.", academicTag: true,
+        impact: { q: "If the work is used more widely, which field, sector or population could it affect, and how?", help: "Cautious words such as “could” or “might” suit this part, because it describes what may follow. What has already happened belongs under What already changed. Academic impact counts fully here: influencing how others think, what gets studied and how problems and questions get framed.", academicTag: true,
           // r9-a-4, r9-b-4: the reach follows the field; partners decide whether community-held work goes further.
           variants: {
-            creative: "If the work is taken up more widely, which practice, audience or community could it reach, and how?",
-            humanities: "If the work is taken up more widely, which field, readership or public could it reach, and how?",
+            creative: "If the work is seen or used more widely, which practice, audience or community could it reach, and how?",
+            humanities: "If the work is read or used more widely, which field, readership or public could it reach, and how?",
             community: "If the work goes further, who could use it? Name who decides whether it does."
           },
           helpVariants: {
-            creative: "Hedged language belongs in this part, where you say what could follow; what has already happened belongs under What already changed. Influence on a practice counts fully here: how a form is made, taught, credited or funded."
+            creative: "Cautious words such as “could” or “might” suit this part, because it describes what may follow. What has already happened belongs under What already changed. Influence on a practice counts fully here: how a form is made, taught, credited or funded."
           } },
-        translational: { q: "Which one occasion shows the work reaching a specific person or group?", variants: { community: "Which one occasion shows the work in use by a specific person or group?" }, help: "One scene in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
+        translational: { q: "Which one occasion shows the work reaching a specific person or group?", variants: { community: "Which one occasion shows the work in use by a specific person or group?" }, help: "One real case in two sentences, such as a person, a clinic, a classroom, a community meeting or a committee that used it. It gives one concrete instance of What already changed. Optional. Name a community or a person only with their agreement.",
           helpVariants: {
-            health: "One scene in two sentences, such as a patient, a clinic, a classroom or a committee that used the work. One concrete instance of What already changed, told as a scene. Optional. Leave out details that could identify a person, and name a person, clinic or community only with their agreement.", // r18-b-11
-            stem: "One scene in two sentences, such as a control room, a field site, a deployment, a release review, an inspection or a standards committee where the work was used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.", // r10-b-10
-            humanities: "One scene in two sentences, such as a reader, a classroom, an archive, a museum or a community meeting that used the work. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement.",
-            creative: "One scene in two sentences, such as an audience, a venue, a classroom or a community meeting where the work was seen or used. One concrete instance of What already changed, told as a scene. Optional. Name a community or a person only with their agreement."
+            health: "One real case in two sentences, such as a patient, a clinic, a classroom or a committee that used the work. It gives one concrete instance of What already changed. Optional. Leave out details that could identify a person, and name a person, clinic or community only with their agreement.", // r18-b-11
+            stem: "One real case in two sentences, such as a control room, a field site, a deployment, a release review, an inspection or a standards committee where the work was used. It gives one concrete instance of What already changed. Optional. Name a community or a person only with their agreement.", // r10-b-10
+            humanities: "One real case in two sentences, such as a reader, a classroom, an archive, a museum or a community meeting that used the work. It gives one concrete instance of What already changed. Optional. Name a community or a person only with their agreement.",
+            creative: "One real case in two sentences, such as an audience, a venue, a classroom or a community meeting where the work was seen or used. It gives one concrete instance of What already changed. Optional. Name a community or a person only with their agreement."
           },
           gateModes: ["community", "industry"], gateDiscipline: ["health", "social"] },
         evidence: { help: "Add one item at a time: a citation, a named adoption, an award, a dataset, a piece of coverage. Then pick its type. Each item gets a letter (a, b, c), and the letter appears in your draft beside the sentence it backs up. Under each item there is room for two lines on what it found, or why the dataset or tool was useful, so a reviewer has the point without opening the source." }
@@ -2830,11 +2906,11 @@
         edi: { // r9-b-8: the community variant asks who decides
           // B-30/B-31: the "Equity in practice —" label is dropped (the abstract noun summoned
           // boilerplate); the question underneath already asks for a structure, not a statement.
-          q: "Who gets into your group, and what have you changed about how they get there?", help: "One change you made: a posting you rewrote, a requirement you dropped, a route you opened or a barrier in your environment you work against. Reviewers are asked to look at equity in the research process itself, so describe what you changed.",
+          q: "Who joins your group, and what have you changed about how they join?", help: "One change you made, such as a posting you rewrote, a requirement you removed, a new way to join or a barrier in your environment that you reduced. Reviewers are asked to look at equity in the research process itself, so describe what you changed.",
           variants: { community: "Who joins the research team, and who decides that? What changed so that they could join?",
-            humanities: "How do students come to work with you, and what have you changed about how they get there?", // r10-a-8
-            solo: "How do students come to work with you, and what have you changed about how they get there?",
-            early: "Who gets into the group, lab, studio or program you work in, and what have you done to change how they get there?" }, // r14-b-7
+            humanities: "How do students come to work with you, and what have you changed about how that happens?", // r10-a-8
+            solo: "How do students come to work with you, and what have you changed about how that happens?",
+            early: "Who joins the group, lab, studio or program you work in, and what have you done to change how they join?" }, // r14-b-7
           // r5-b-9: in community-led work the partners often choose who joins.
           helpVariants: { community: "One change you made, such as a role the partners defined, a requirement you dropped or a way of paying community researchers from the start. Where the partners choose who joins, say so, and say what you changed to make that possible." }
         },
@@ -2874,7 +2950,7 @@
     // Minimum to review (Prem, 2026-10-28): Review and Export stay ghosted until one contribution
     // has a headline, your role and at least two of the five job fields.
     const REVIEW_MIN_JOBS = ["stakes", "activities", "outputs", "outcomes", "impact"];
-    const REVIEW_MIN_NOTE = "Review and Export open once one contribution has a headline, your role and two more answered parts.";
+    const REVIEW_MIN_NOTE = "Review and Export become available when one contribution has a headline, your role and two more answered parts.";
     const reviewReady = () => ns.contributions.some(c => {
       const t = (k) => !!(c[k] || "").trim();
       return t("title") && (t("roleLine") || !!c.roleMode) && REVIEW_MIN_JOBS.filter(t).length >= 2;
@@ -3403,7 +3479,7 @@
       row(known || isFrq() ? "Section names" : "Section names (Tri-agency CV until you choose an agency)", isFrq()
         ? s.ps + " (" + s.psFr + ") · " + s.contrib + " (" + s.contribFr + ") · " + s.mentor + " (" + s.mentorFr + ")"
         : s.ps + " · " + s.contrib + " · " + s.mentor);
-      const foot = el("p", "v4-format-foot", "The agencies do not accept condensed fonts, and each sets its own file-size limit. The instructions for your funding opportunity take precedence. ");
+      const foot = el("p", "v4-format-foot", "The agencies do not accept condensed fonts, and each sets its own file-size limit. If the instructions for your funding opportunity differ, follow them. ");
       foot.appendChild(guideLink("TCV vs CV-FRQ, in the guide", "compare"));
       if (compact) {
         const det = el("details");
@@ -3499,7 +3575,7 @@
       host.appendChild(el("span", "v4-meta", meta));
       if (res.flags.length && res.hits && res.hits.length && (!conditional || readbackAddsInfo(res))) {
         // r11-b-5: the read-back repeats the answer, so screen readers skip it; the flags above name the words.
-        const rbh = el("span", "v4-meta", "Where these appear in your sentence:"); rbh.setAttribute("aria-hidden", "true"); host.appendChild(rbh);
+        const rbh = el("span", "v4-meta", "The highlighted words below are the ones the checks refer to:"); rbh.setAttribute("aria-hidden", "true"); host.appendChild(rbh);
         const rb = renderReadback(t, res.hits); rb.setAttribute("aria-hidden", "true"); host.appendChild(rb);
       }
     };
@@ -3670,6 +3746,7 @@
         end.appendChild(next);
       }
       nav.appendChild(end);
+      const fbBox = testerNoteBox(); if (fbBox) parent.appendChild(fbBox);
       parent.appendChild(nav);
     };
 
@@ -3726,7 +3803,7 @@
       const nwText = el("span");
       nwText.appendChild(el("h2", null, started ? (one(ns.draftName) ? "Continue " + gvCut(one(ns.draftName), 60) : "Continue your draft") : "Start your draft"));
       nwText.appendChild(el("p", null, started
-        ? "Your draft is saved in this browser" + (one((liveContributions()[0] || {}).c?.title) ? ", starting with “" + gvCut(one(liveContributions()[0].c.title), 70) + "”" : "") + ". You pick up where you left off."
+        ? "Your draft is saved in this browser" + (one((liveContributions()[0] || {}).c?.title) ? ", starting with “" + gvCut(one(liveContributions()[0].c.title), 70) + "”" : "") + ". You can continue where you stopped."
         : "You answer a series of prompts, one section at a time. At the end, you review your draft and set the order of your contributions."));
       go.appendChild(nwText);
       const nwArrow = el("span", "v7-arrow", "→"); nwArrow.setAttribute("aria-hidden", "true");
@@ -3895,7 +3972,7 @@
             // H3/B-16: the same read-back the Contributions fields show — the paragraph with every
             // triggering word marked. Flagged paragraphs only; headings are never linted.
             if (pr.lint.flags.length && pr.lint.hits.length) {
-              checks.appendChild(el("span", "v4-meta", "Where these appear in your sentence:"));
+              checks.appendChild(el("span", "v4-meta", "The highlighted words below are the ones the checks refer to:"));
               checks.appendChild(renderReadback(pr.text, pr.lint.hits));
             }
             card.appendChild(checks);
@@ -4611,7 +4688,7 @@
     }
     function renderSetup(c) {
       stageHead(c, "", "Set up your profile",
-        "Your answers set the prompts in each step, the fictional examples you see and the format template for your CV.", false);
+        "Your answers decide which prompts, examples and format notes the tool shows you. The examples are fictional.", false);
       if (ns.ui.profileNote) {
         const n = el("p", "v7-note");
         n.insertAdjacentHTML("afterbegin", INFO_SVG);
@@ -4712,7 +4789,7 @@
           blk.appendChild(row);
           const yl = el("span", "v7-field-label", ""); yl.id = "v7-yl";
           yl.appendChild(document.createTextNode("Year you plan to apply "));
-          yl.appendChild(el("span", "v7-opt", "(optional, if available)"));
+          yl.appendChild(el("span", "v7-opt", "(optional)"));
           blk.appendChild(yl);
           const yr = el("div", "v7-minis"); yr.setAttribute("role", "radiogroup"); yr.setAttribute("aria-labelledby", "v7-yl");
           YEARS.forEach(y => {
@@ -4730,12 +4807,12 @@
         }
         if (i === 2) {
           h("Which career stage are you at?");
-          blk.appendChild(explainBox("This changes a few of the prompts. Early career, for instance, gets prompts for the signals you have so far. If your funding opportunity defines early career, use its definition."));
+          blk.appendChild(explainBox("This changes a few of the prompts. For example, early-career researchers see prompts about what they have achieved so far. If your funding opportunity defines early career, use its definition."));
           blk.appendChild(choiceGrid(CAREER_STAGES, v => L.careerStage === v, v => pick(() => { L.careerStage = v; }, 2), { labelledby: "pq2", idp: "st" }));
         }
         if (i === 3) {
           h("Which field is your work closest to?");
-          blk.appendChild(explainBox("Your answer chooses the worked examples, the discipline notes and the wording of some questions, so they come from work like yours. Changing it later leaves your draft as it is."));
+          blk.appendChild(explainBox("Your answer chooses the worked examples, the discipline notes and the wording of some questions, so they come from work like yours. If you change it later, your draft stays the same."));
           blk.appendChild(choiceGrid(DISCIPLINES, v => L.discipline === v, v => pick(() => { L.discipline = v; if (L.discipline2 === v) { L.discipline2 = ""; announce("Another field cleared, because it matched your main field."); } }, 3), { labelledby: "pq3", idp: "di" }));
           // D-2: one line for a researcher whose field is missing.
           const miss = el("p", "v7-quiet");
@@ -4746,12 +4823,13 @@
         }
         if (i === 4) {
           h("Does your work also belong to another field?");
-          blk.appendChild(explainBox("With a second field, the Contributions step adds a worked example that spans both, and some questions add a line for it."));
+          blk.appendChild(explainBox("With a second field, the Contributions step adds a worked example that combines both fields, and some questions add a line for it."));
           const opts = [{ v: "none", l: "No, just this one", wide: true }].concat(DISCIPLINES.filter(d => d.v !== L.discipline));
           blk.appendChild(choiceGrid(opts, v => L.discipline2 === v, v => pick(() => { L.discipline2 = v; }, 4), { labelledby: "pq4", idp: "d2" }));
         }
         if (i === 5) {
-          h("How does your work usually happen? Choose any that apply.");
+          // P-54 (INFERRED, 2026-11-09): the question follows the field chosen two questions earlier; the label stays "How your work usually happens".
+          h((L.discipline === "creative" ? "How do you usually make your work?" : L.discipline ? "How do you usually do your research?" : "How do you usually work?") + " Choose any that apply.");
           blk.appendChild(explainBox("Many researchers work in more than one way. Your answer chooses the role and outcome prompts and the worked example you see."));
           blk.appendChild(choiceGrid(WORK_MODES, v => (L.workMode || []).indexOf(v) !== -1, v => {
             const m = L.workMode || (L.workMode = []); const ix = m.indexOf(v);
@@ -4771,6 +4849,7 @@
         const bi = qs.findIndex(x => !x.has), blocker = qs[bi];
         nav.appendChild(el("p", "v4-help v7-nav-note", !blocker ? "The next question opens when you answer this one."
           : "Answer “" + blocker.label + "” " + (bi + 1 < profileShown ? "to confirm your profile." : "to open the next question.")));
+        const fbBox = testerNoteBox(); if (fbBox) c.appendChild(fbBox);
         c.appendChild(nav);
       }
       c.appendChild(el("div", "v7-prof-room")).setAttribute("aria-hidden", "true");
@@ -4804,7 +4883,7 @@
       head.appendChild(el("h2", null, secName("contrib")));
       c.appendChild(head);
       c.appendChild(el("p", "v7-startline", "You start with your contributions."));
-      const lede = el("p", "narrative-intro-text v7-lede", "Describe up to 10 contributions that relate to this funding opportunity; they may differ from your most recent work. A contribution can be a single output or a group of related work, such as " + (ns.lens.discipline === "creative" ? "a body of work, a series of works" : "a cluster of papers") + ", a program or a partnership. Three or four well-explained contributions carry more weight than a long list. In the finished CV, each one reads as a single paragraph. The guide sets out ");
+      const lede = el("p", "narrative-intro-text v7-lede", "Describe up to 10 contributions that relate to this funding opportunity; they do not have to be your most recent work. A contribution can be a single output or a group of related work, such as " + (ns.lens.discipline === "creative" ? "a body of work, a series of works" : "a cluster of papers") + ", a program or a partnership. Three or four well-explained contributions count for more than a long list. In the finished CV, each one reads as a single paragraph. The guide sets out ");
       lede.appendChild(guideLink("what counts as a contribution", "three"));
       lede.appendChild(document.createTextNode("."));
       c.appendChild(lede);
@@ -4835,7 +4914,7 @@
           const box = el("div", "v7-exbox"); box.id = "v7-exbox";
           // W-33: with a second field, its cue list follows the first.
           [disc].concat(L.discipline2 && L.discipline2 !== disc && SHAPE_HINTS[L.discipline2] ? [L.discipline2] : []).forEach(dk => {
-            box.appendChild(el("h4", null, "In " + (labelOf(DISCIPLINES, dk) || "") + ", the six parts usually sound like this."));
+            box.appendChild(el("h4", null, "Examples of the six parts in " + (labelOf(DISCIPLINES, dk) || "") + "."));
             const ul = el("ul", "v7-hints");
             // r9-b-5: in community-engaged work a partner often raises the question and leads.
             // r12-b-4: the field's own cue stays first, with the partners added.
@@ -4849,7 +4928,7 @@
             });
             box.appendChild(ul);
           });
-          box.appendChild(el("p", "v7-exfoot", "These are examples. A part your record does not include can stay empty; Review lists empty parts so you can check each one."));
+          box.appendChild(el("p", "v7-exfoot", "These are examples. A part that does not apply to your work can stay empty. The Review step lists the empty parts so you can check each one."));
           return box;
         }
         return null;
@@ -4875,7 +4954,7 @@
         });
         c.appendChild(add);
       }
-      navRow(c, { note: "You will put these in order in Review, after the " + secName("ps").toLowerCase().replace(/^the /, "") + "." });
+      navRow(c, { note: "You will choose their order in Review, after the " + secName("ps").toLowerCase().replace(/^the /, "") + "." });
     }
     function contribFold(contrib, i) {
       const b = el("button", "v7-fold");
@@ -5064,7 +5143,7 @@
               });
               lv.appendChild(radioKeys(minis));
               lv.appendChild(clr);
-              lv.appendChild(el("p", "v4-help v7-lv-note", "The level feeds the charts and the checks. The draft prints your line."));
+              lv.appendChild(el("p", "v4-help v7-lv-note", "The level you choose appears in the charts and the checks. Only the line you write appears in your draft."));
               inner.appendChild(lv);
             } : null
           }));
@@ -5157,7 +5236,7 @@
       area.appendChild(el("div", "v7-f-k is-q", "Evidence"));
       const q = el("span", "v7-q", "What backs up this contribution?"); q.id = "evq" + contrib.cid;
       area.appendChild(q);
-      area.appendChild(explainBox("Evidence backs up what you have just described. Add the items a reviewer could check: " + (EV_INTRO_ITEMS[ns.lens.discipline] ? EV_INTRO_ITEMS[ns.lens.discipline] + (ns.lens.discipline2 === "health" && ns.lens.discipline !== "health" ? ", a trial registration or a clinical guideline" : "") /* r19-b-1 */ + (isCommunity() ? ", a document a community holds" : "") : "a paper, an edition or collection, a performance, exhibition or commission, a critical review, a policy or program that adopted your work, coverage, a dataset, an award, a document a community holds") + ". Add as many as you need. Each item gets a letter, and the letters follow the contribution in your draft. Name a community, an organization or a person only with their agreement.", guideLink("More kinds of evidence that count", "difference")));
+      area.appendChild(explainBox("Evidence supports what you have just described. Add the items a reviewer could check: " + (EV_INTRO_ITEMS[ns.lens.discipline] ? EV_INTRO_ITEMS[ns.lens.discipline] + (ns.lens.discipline2 === "health" && ns.lens.discipline !== "health" ? ", a trial registration or a clinical guideline" : "") /* r19-b-1 */ + (isCommunity() ? ", a document a community holds" : "") : "a paper, an edition or collection, a performance, exhibition or commission, a critical review, a policy or program that adopted your work, coverage, a dataset, an award, a document a community holds") + ". Add as many as you need. Each item gets a letter, and the letters appear after the contribution in your draft. Name a community, an organization or a person only with their agreement.", guideLink("More kinds of evidence that count", "difference")));
       const items = el("div", "v7-ev-items");
       (contrib.evidence || []).forEach((ev, j) => {
         const it = el("div", "v7-ev-item");
@@ -5333,7 +5412,7 @@
       const gaps = [];
       if (!one(contrib.stakes)) gaps.push("The problem or question part is empty. " + resolveQ(PROMPTS.contrib.stakes)); // r9-a-12: the field's own question
       if (!one(contrib.outcomes)) gaps.push("What already changed is empty. If there is no change to report yet, that is fine, and what you expect goes under What could change. If something concrete has changed, name it here.");
-      if (!one(contrib.impact)) gaps.push("What could change is empty. Who or what could this affect if it is taken up more widely? Hedged language is fine here.");
+      if (!one(contrib.impact)) gaps.push("What could change is empty. Who or what could this affect if it is used more widely? Cautious words such as “could” suit this part.");
       if (!refs.length) gaps.push("No evidence attached. Add one item a reviewer could check.");
       return { title: one(contrib.title), roleLine: one(contrib.roleLine), parts, refs, gaps };
     }
@@ -5361,7 +5440,7 @@
     const overLimit = (w) => w / 600 > PAGE_LIMIT_EN ? 2 : w / WORDS_PER_PAGE > PAGE_LIMIT_EN ? 1 : 0;
     function selectionNote(onReview) {
       const n = liveContributions().length;
-      return el("p", "v7-note v7-select-note", "You have " + n + " contributions. Reviewers read each one closely, and four or five written in full usually carry more weight than " + n + " in outline. Finish the ones that relate most to this application; " + (onReview ? "the order cards below show each one’s length and evidence." : "Review shows each one’s length and evidence."));
+      return el("p", "v7-note v7-select-note", "You have " + n + " contributions. Reviewers read each one closely, and four or five written in full usually count for more than " + n + " in outline. Finish the ones that relate most to this application; " + (onReview ? "the order cards below show each one’s length and evidence." : "Review shows each one’s length and evidence."));
     }
     // r6-a-3 (inferred): a removed contribution can be restored for ten seconds, as an evidence item can.
     function renderContribUndo(c) {
@@ -5448,7 +5527,7 @@
     // ── Stage: Mentorship (V7-27) ──────────────────────────────────────────
     const PF = () => [
       { k: "mentorPhilosophy", label: "One thing you do", def: PROMPTS.mentor.philosophy },
-      { k: "mentorEDI", label: "Who gets in", def: PROMPTS.mentor.edi },
+      { k: "mentorEDI", label: "Who joins", def: PROMPTS.mentor.edi },
       // r2-b-8 (inferred): early in a career there may be no one else to name, so the third prompt is optional.
       ns.lens.careerStage === "early" ? { k: "mentorCrossStage", label: "Who else you mentor (optional)", def: PROMPTS.mentor.crossStage, optional: true }
         : { k: "mentorCrossStage", label: "Who else you mentor", def: PROMPTS.mentor.crossStage }
@@ -5704,9 +5783,9 @@
       box.appendChild(el("b", "v7-cross-t", "A read across your " + r.count + " contributions"));
       if (r.recurring.length) {
         const p = el("p");
-        p.appendChild(document.createTextNode("Words that recur in more than one contribution: "));
+        p.appendChild(document.createTextNode("Words that appear in more than one contribution: "));
         p.appendChild(el("strong", null, r.recurring.slice(0, 5).join(", "))); // r15-a-3: five at most
-        p.appendChild(document.createTextNode(". A word that runs through several contributions may name the problem or question, or one of the strands."));
+        p.appendChild(document.createTextNode(". A word that appears in several contributions may name the problem or question, or one of the strands."));
         box.appendChild(p);
       }
       r.spanning.forEach(x => box.appendChild(el("p", null, "“" + (x.c.title || "Contribution " + (x.i + 1)) + "” shares words with each of your other contributions. It may be cross-cutting enough to belong in the statement itself, as the problem or question or as a strand, with the contribution kept for its evidence.")));
@@ -5716,9 +5795,9 @@
     function renderPersonal(c) {
       tailoredBar(c);
       stageHead(c, "", secName("ps"), "", false);
-      const lede = el("p", "narrative-intro-text v7-lede", "Who you are, and the thread through your work. " +
+      const lede = el("p", "narrative-intro-text v7-lede", "Who you are and what connects your work. " +
         (isFrq() ? "In the CV-FRQ this first section asks for your expertise relative to this specific opportunity or project, your fit with the program’s objectives and how your work complements the team. " : "") +
-        "It appears first in the finished CV and is written last, because it gathers what you wrote in your contributions. ");
+        "This section comes first in the finished CV. It is written last, because it draws on your contributions. ");
       lede.appendChild(guideLink("What the first section asks for, TCV and CV-FRQ", "compare"));
       c.appendChild(lede);
       exampleRow(c, [["psx", "See a finished example"]], () => {
@@ -5947,7 +6026,7 @@
       // r4-a-1 (inferred): the Profile bar and its Change on Review, as on the writing steps.
       tailoredBar(c);
       stageHead(c, "", "Review your CV", "", false);
-      const lede = el("p", "narrative-intro-text v7-lede", "This step shows your working draft, lets you put your contributions in order and shows what is still missing. ");
+      const lede = el("p", "narrative-intro-text v7-lede", "This step shows your working draft, lets you choose the order of your contributions and shows what is still missing. ");
       lede.appendChild(guideLink("What reviewers look for", "reviewers"));
       c.appendChild(lede);
 
@@ -5985,9 +6064,9 @@
         os.appendChild(p);
       } else {
         live.forEach(({ c: contrib, i }, pos) => {
-          if (pos === 0) { const s = el("p", "v7-slot"); s.appendChild(el("b", null, "First: ")); s.appendChild(document.createTextNode("the contribution that runs across most of your work. It opens the section and frames the others.")); os.appendChild(s); }
-          else if (pos === live.length - 1) { const s = el("p", "v7-slot"); s.appendChild(el("b", null, "Last: ")); s.appendChild(document.createTextNode("the one that leads most directly into ")); if (comp) { s.appendChild(document.createTextNode("this competition (")); s.appendChild(el("b", null, comp)); s.appendChild(document.createTextNode(")")); } else s.appendChild(document.createTextNode("the project you are applying for")); /* r18-a-7 */ s.appendChild(document.createTextNode(". It closes the section.")); os.appendChild(s); }
-          else if (pos === 1) os.appendChild(el("p", "v7-slot", "The ones in between follow the thread from the first to the last."));
+          if (pos === 0) { const s = el("p", "v7-slot"); s.appendChild(el("b", null, "First: ")); s.appendChild(document.createTextNode("the contribution that connects to most of your work. It opens the section and introduces the others.")); os.appendChild(s); }
+          else if (pos === live.length - 1) { const s = el("p", "v7-slot"); s.appendChild(el("b", null, "Last: ")); s.appendChild(document.createTextNode("the one closest to ")); if (comp) { s.appendChild(document.createTextNode("this competition (")); s.appendChild(el("b", null, comp)); s.appendChild(document.createTextNode(")")); } else s.appendChild(document.createTextNode("the project you are applying for")); /* r18-a-7 */ s.appendChild(document.createTextNode(". It closes the section.")); os.appendChild(s); }
+          else if (pos === 1) os.appendChild(el("p", "v7-slot", "The ones in between lead from the first to the last."));
           const oc = el("div", "v7-ocard" + (UI.moved === contrib.cid ? " moved" : ""));
           const n = el("span", "v7-n", String(pos + 1)); n.setAttribute("aria-hidden", "true"); oc.appendChild(n);
           const txt = el("div", "v7-otxt");
@@ -6077,10 +6156,10 @@
       const sc = el("section", "v7-card v7-selfcheck"); sc.setAttribute("aria-labelledby", "v7-sc-t");
       const sct = el("h3", "v7-h3", "Self-check before you export"); sct.id = "v7-sc-t"; sc.appendChild(sct);
       [
-        ["ownership", isCommunity() ? "Ownership: each contribution makes my own part clear and names the parts the partners led or hold." : "Ownership: each contribution makes my own role clear, even where the work was a team’s."], // r9-b-11
+        ["ownership", isCommunity() ? "Ownership: each contribution makes my own part clear and names the parts the partners led or hold." : "Ownership: each contribution makes my own role clear, even when a team did the work."], // r9-b-11
         ["specificity", "Specificity: my claims name outcomes, organizations and numbers where I am free to give them, and leave out journal-based metrics."], // r13-b-1
-        ["significance", "Significance: each contribution says what changed, and keeps what already changed apart from what could change."],
-        ["coherence", "Coherence: my " + (isFrq() ? "background and skills section" : "personal statement") + " frames the whole and ends pointed forward."],
+        ["significance", "Significance: each contribution says what changed, and keeps what already changed separate from what could change."],
+        ["coherence", "Coherence: my " + (isFrq() ? "background and skills section" : "personal statement") + " describes my whole record and ends with what I plan to do next."],
         ["selection", "Selection: each contribution relates to this application, and I chose them for this funding opportunity."],
         ["proofread", "Proofread: I read the draft aloud, or had it read to me, and fixed typing mistakes."], // r15-a-9
         ["mentorship", "Mentorship: my supervision and mentorship section names at least one person I " + trainedWord() + " and " + wentWord() + "."],
@@ -6160,7 +6239,7 @@
       const live = liveContributions();
       if (!live.length) return null;
       const parts = CF().filter(f => f.job).map(f => ({ k: f.k, job: f.job, meta: SEG_META.find(m => m[0] === f.job) }));
-      const title = "The six parts across your contributions";
+      const title = "The six parts in each contribution";
       const lx = 16, gx = 184, cw = (GV_W - gx - 8) / parts.length, sq = 18, rh = 34;
       let body = "";
       // Column heads wrapped at about nine characters a line, bottom-aligned above the squares;
@@ -6333,7 +6412,7 @@
       if (!list.length) return null;
       const sec = el("section", "v7-gv"); sec.setAttribute("aria-labelledby", "v7-gv-t");
       const h = el("h3", "v7-h3", opts.title || "At a glance"); h.id = "v7-gv-t"; sec.appendChild(h);
-      sec.appendChild(el("p", "v7-quiet v7-gv-lede", "Drawn from the details you entered, beyond the prose."));
+      sec.appendChild(el("p", "v7-quiet v7-gv-lede", "These charts use the details you entered as well as the text you wrote."));
       const grid = el("div", "v7-gv-grid");
       list.forEach(v => {
         const fig = el("figure", "v7-gv-box"); fig.dataset.gv = v.key;
@@ -6503,7 +6582,7 @@
 
       const kw = el("section", "v7-card"); kw.setAttribute("aria-labelledby", "v7-kw-t");
       const kwt = el("h3", "v7-h3", "Keep your work"); kwt.id = "v7-kw-t"; kw.appendChild(kwt);
-      kw.appendChild(el("p", "v7-body", "This saves your whole draft as a small file on your computer. Keep it somewhere safe. Later, choose Load your draft on the start page and open the file to carry on. It is not a Word file. Clearing your browser data erases the draft stored in the tool, so a saved file is your backup."));
+      kw.appendChild(el("p", "v7-body", "This saves your whole draft as a small file on your computer. Keep it somewhere safe. Later, choose Load your draft on the start page and open the file to continue. It is not a Word file. Clearing your browser data erases the draft stored in the tool, so a saved file is your backup."));
       const sv = el("button", "btn btn-outline", "Save a draft file"); sv.type = "button";
       const svs = el("span", "v7-copied"); svs.setAttribute("aria-live", "polite");
       sv.addEventListener("click", () => { saveDraftFile(); done("Saved " + draftFileName() + " to your downloads.", svs); });
@@ -6599,7 +6678,7 @@
     // W-19 (inferred): the .txt is the working copy. It carries the tool's notes in square brackets
     // (kinds, what is still missing, the mentorship prompts); the section copies hold the text to paste.
     const GAP_HINT = { stakes: "What problem or question was this work answering?", outcomes: "If there is no change to report yet, leave this blank and put what you expect under What could change.",
-      impact: "Who or what could this affect if it is taken up more widely? Hedged language is fine here.", /* r11-b-16 */ ev: "Add one item a reviewer could check." };
+      impact: "Who or what could this affect if it is used more widely? Cautious words such as “could” suit this part.", /* r11-b-16 */ ev: "Add one item a reviewer could check." };
     function buildExportText() {
       const lines = [], rule = "=".repeat(60);
       lines.push("NARRATIVE CV, WORKING DRAFT (" + TOOL_LABEL + ")");

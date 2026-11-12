@@ -25,3 +25,20 @@ create view tester_summary as
          (select string_agg(x, '; ') from jsonb_array_elements_text(coalesce(end_answers->'reuse', '[]'::jsonb)) x) as reuse,
          end_answers->>'reuseOther' as reuse_other, end_answers->>'change' as change
   from testers order by started_at desc;
+
+-- V8.7 (2026-11-12): feedback notes, one row per note, sent from the "?" box at the foot of each step.
+create table if not exists tester_notes (
+  note_id      bigserial primary key,
+  tester_id    text not null references testers (tester_id) on delete cascade,
+  step         text not null,
+  note         text not null,
+  profile      jsonb,
+  tool_version text,
+  created_at   timestamptz not null default now()
+);
+create index if not exists tester_notes_tester_idx on tester_notes (tester_id);
+drop view if exists notes_by_step;
+create view notes_by_step as
+  select n.created_at, n.step, t.email, n.profile->>'field' as field, n.profile->>'stage' as stage,
+         n.profile->>'agency' as agency, n.tool_version, n.note
+  from tester_notes n join testers t using (tester_id) order by n.step, n.created_at;

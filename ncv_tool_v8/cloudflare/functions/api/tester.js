@@ -3,13 +3,14 @@
 // by the browser's random tester id:
 //   start  { id, email, answers, profile, version }  sign-up on the start page
 //   step   { id, step, profile }                     the step a tester last opened
-//   finish { id, answers, profile }                  the three questions on Export
+//   finish { id, answers, profile }                  the questions on Export
+//   note   { id, step, note, profile, version }      a feedback note on one step (V8.7), kept in tester_notes
 // Only the tool's own origin may post. No draft text is accepted.
 import { neon } from "@neondatabase/serverless";
 
 const ID_RE = /^[0-9a-f-]{8,64}$/i;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const STEPS = ["start", "setup", "contrib", "mentor", "ps", "review", "export", "feedback"];
+const STEPS = ["start", "setup", "xray", "contrib", "mentor", "ps", "review", "export", "feedback"];
 // Answer keys from tester-questions-proposal-2026-11-03.md. Rows from the first set (funding, before,
 // want, useful, stuck) stay in the table as they were sent.
 const START_KEYS = ["source", "due", "concern"];
@@ -57,6 +58,19 @@ async function tester(request, env) {
     if (!STEPS.includes(b.step)) return json(400, { error: "step" });
     const r = await sql`update testers set last_step = ${b.step}, profile = ${profile}::jsonb where tester_id = ${b.id} returning tester_id`;
     return r.length ? json(200, { ok: true }) : json(404, { error: "unknown tester" });
+  }
+  if (b.action === "note") {
+    if (!STEPS.includes(b.step)) return json(400, { error: "step" });
+    const note = str(b.note, 2000);
+    if (!note) return json(400, { error: "note" });
+    const known = await sql`select 1 from testers where tester_id = ${b.id}`;
+    if (!known.length) return json(404, { error: "unknown tester" });
+    // At most 50 notes per tester, so a stuck button cannot fill the table.
+    const n = await sql`select count(*)::int as n from tester_notes where tester_id = ${b.id}`;
+    if (n[0].n >= 50) return json(429, { error: "too many notes" });
+    await sql`insert into tester_notes (tester_id, step, note, profile, tool_version)
+      values (${b.id}, ${b.step}, ${note}, ${profile}::jsonb, ${str(b.version, 80)})`;
+    return json(200, { ok: true });
   }
   if (b.action === "finish") {
     const r = await sql`update testers set end_answers = ${JSON.stringify(pick(b.answers, END_KEYS))}::jsonb, finished_at = now(),
