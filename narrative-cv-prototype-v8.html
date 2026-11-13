@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.9 beta</title>
+  <title>Narrative CV — V8.10 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -934,7 +934,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.9", VERSION_DATE = "2026-11-12";
+    const VERSION_NUM = "8.10", VERSION_DATE = "2026-11-13";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -1188,7 +1188,8 @@
         const ok = tester.startSent && await testerPost({ action: "finish", answers: tester.end, profile: testerProfile() });
         tester.endSent = !!ok; testerSave();
         if (ok) { announce("Your answers reached the team. Thank you for testing the tool."); renderStage(); const t = document.getElementById("v8-te-t"); if (t) { t.tabIndex = -1; t.focus(); } }
-        else { send.disabled = false; status.textContent = "Your answers did not send, perhaps because the connection dropped. They are kept here. Try again, or email them to " + FEEDBACK.email + "."; }
+        // V8.10 (Prem, 2026-11-13): the same wording as a sign-up that did not send; testerRetry sends them on the next visit.
+        else { send.disabled = false; status.textContent = "Thank you. Your answers did not reach the team yet; the tool sends them again the next time you open it."; }
       });
       row.appendChild(send); body.appendChild(row); body.appendChild(status);
       c.appendChild(card);

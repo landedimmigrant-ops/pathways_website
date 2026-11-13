@@ -1645,8 +1645,13 @@ async function seed(state, extra) {
     await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { end: { change: "Kept text." } }));
     r = await js(H + `await w(300); q('#v8-te-open').click(); await w(80); q('#v8-te-send').click(); await w(500);
       return {status:q('.v8-tester-end .v7-quiet[aria-live]')?.innerText, kept:q('#v8-te-change')?.value, dis:q('#v8-te-send').disabled, t:JSON.parse(localStorage.getItem('ncv-v8-tester'))};`);
-    check("a failed send keeps the answers, re-enables Send and names the email fallback", /did not send/.test(r.status || "") && /impact@concordia\.ca/.test(r.status) && r.kept === "Kept text." && !r.dis && !r.t.endSent, r);
+    check("V8.10: a failed send keeps the answers, re-enables Send and says, as at sign-up, that they go again next time", r.status === "Thank you. Your answers did not reach the team yet; the tool sends them again the next time you open it." && r.kept === "Kept text." && !r.dis && !r.t.endSent && r.t.endPending === true, r);
     apiMode = "ok";
+    // ...and they do go on the next visit.
+    apiPosts.length = 0;
+    await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, r.t, { startSent: true }));
+    await sleep(500);
+    check("V8.10: answers that did not send go again on the next visit", apiPosts.some(p => p.action === "finish" && p.answers && p.answers.change === "Kept text."), apiPosts.map(p => p.action));
 
     // A tester who chose no concern (or Something else) sees the general wording.
     await tseed(Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey: "export", ui: { profileNote: false } }), Object.assign({}, tstate, { start: { concern: "Something else" } }));
@@ -2005,7 +2010,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "The six parts in each contribution", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.9 in the script and the tab title", /VERSION_NUM = "8\.9"/.test(src) && /<title>Narrative CV — V8\.9 beta/.test(src));
+    check("the version is 8.10 in the script and the tab title", /VERSION_NUM = "8\.10"/.test(src) && /<title>Narrative CV — V8\.10 beta/.test(src));
   }
 
   console.log("Network and errors");
