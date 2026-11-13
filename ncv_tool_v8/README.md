@@ -59,10 +59,16 @@ The endpoint is `POST /api/tester`:
 - it keeps only the known answer keys, each up to 2,000 characters; a choose-any answer is kept as a list of up to ten options.
 - Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
+INFERRED in V8.13, for Prem to confirm or change:
+- Threads is asked on Review, inside the Coherence question (as Reach is), not on the statement step; the strands are typed by the researcher (up to four, a few words each), since the tool cannot read them from the statement;
+- a contribution can belong to more than one strand; "None of these" clears its marks;
+- the change year is one optional four-digit year per contribution, a column in the Reach table; it is shown there only and not used in any fact line yet;
+- removing a strand also removes its marks from every contribution.
+
 INFERRED in V8.12, for Prem to confirm or change:
 - the evidence kinds that count as "Where others used it": Policy / practice uptake, Media / public, Replication / citation and Community document (Award / recognition and Funding stay with "What you produced");
 - the Reach of change answers are asked on Review itself, in the table, rather than on each contribution; the six levels are People, Organization or community, City or region, Province or territory, Country, Field;
-- Threads and the optional "When did the change happen?" year are not built yet (next version);
+- Threads and the optional "When did the change happen?" year are not built yet (built in V8.13);
 - the working draft stays open by default, below the questions, with Shrink;
 - Selection and Specificity move to Before you export as plain ticks, since the tool has no data that answers them;
 - for a community-engaged profile, the Ownership question adds "Each one should make your own part clear and name the parts the partners led or hold.";

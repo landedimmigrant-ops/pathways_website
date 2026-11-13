@@ -281,6 +281,29 @@ async function seed(state, extra) {
   check("V8.12: a tick in a question saves to the self-check and shows ✓ Checked on the closed row", r.tick, r);
   check("V8.12: every question is a native disclosure (summary), so Enter and Space open it", r.summaryTag === 6, r.summaryTag);
   check("V8.12: Reach marks do not print", !/City or region|Country/.test(r.exportHas), "");
+  console.log("V8.13 Threads and the change year");
+  r = await js(H + `rail('Review').click(); await w(200); const a={};
+    const co=q('[data-rq=coherence]'); co.open=true; await w(40);
+    a.legend=(co.querySelector('.v7-th-list legend')||{}).innerText||''; a.noTable=/Name a strand to see the table/.test(co.innerText);
+    const i1=co.querySelector('.v7-th-in'); a.i1Label=(i1.closest('label')||{}).innerText||''; setv(i1,'Made-up strand one'); await w(40);
+    co.querySelector('.v7-th-add').click(); await w(40); const i2=qa('[data-rq=coherence] .v7-th-in')[1]; a.addFocus=document.activeElement===i2; setv(i2,'Made-up strand two'); await w(40);
+    const cell=co.querySelector('tbody tr .v7-th-cell'); const cid=cell.dataset.cid, sid=cell.dataset.s; a.before=cell.getAttribute('aria-pressed'); cell.click(); await w(60);
+    const back=document.activeElement; a.back=back.classList.contains('v7-th-cell') && back.dataset.cid===cid && back.dataset.s===sid; a.after=back.getAttribute('aria-pressed'); a.label=back.getAttribute('aria-label');
+    const st=JSON.parse(localStorage.getItem('ncv-v8')); a.saved=(st.contributions.find(c=>c.cid===cid).strandIds||[]).indexOf(sid)>-1 && st.strands.length===2;
+    a.fact=co.querySelector('.v7-rq-fact').innerText; a.facts=qa('[data-rq=coherence] .v7-th-facts li').map(l=>l.innerText);
+    co.querySelector('.v7-th-cell[data-cid="'+cid+'"][data-s=none]').click(); await w(60);
+    a.cleared=(JSON.parse(localStorage.getItem('ncv-v8')).contributions.find(c=>c.cid===cid).strandIds||[]).length===0;
+    const rc=q('[data-rq=reach]'); rc.open=true; await w(40); const y=rc.querySelector('.v7-reach-year'); a.yLabel=y.getAttribute('aria-label'); a.yHead=qa('[data-rq=reach] thead th').pop().innerText;
+    setv(y,'20x24'); await w(40); a.yVal=y.value; a.ySaved=JSON.parse(localStorage.getItem('ncv-v8')).contributions.find(c=>c.cid===y.dataset.cid).changeYear;
+    const rm=qa('[data-rq=coherence] .v7-th-row button')[1]; rm.click(); await w(60); a.removed=JSON.parse(localStorage.getItem('ncv-v8')).strands.length===1;
+    a.exportHas=(q('.v7-draft-body')||{}).innerText||'';
+    return a;`);
+  check("V8.13: Threads asks for the strands in a labelled field set; no table until a strand is named", /^The strands in your (statement|section), a few words each$/.test(r.legend) && r.noTable && /^Strand 1/.test(r.i1Label), r);
+  check("V8.13: + Add a strand puts focus in the new field", r.addFocus, r);
+  check("V8.13: a Threads box is a toggle button named with its contribution and strand; it saves, keeps focus and updates the fact line", r.before === "false" && r.after === "true" && r.back && /^Contribution \d: Made-up strand (one|two)$/.test(r.label) && r.saved && /fit none of the strands you named|Every contribution fits/.test(r.fact) && r.facts.length >= 1, r);
+  check("V8.13: None of these clears the contribution's strands", r.cleared, r);
+  check("V8.13: Reach has an optional, labelled year per contribution; only digits are kept and it saves", /^Contribution \d: the year the change happened \(optional\)$/.test(r.yLabel) && /Year of the change \(optional\)/.test(r.yHead) && r.yVal === "2024" && r.ySaved === "2024", r);
+  check("V8.13: removing a strand saves, and strands and years do not print", r.removed && !/Made-up strand/.test(r.exportHas) && !/Year of the change/.test(r.exportHas), r);
   console.log("Export");
   r = await js(H + `rail('Export').click(); await w(150);
     const blobs=[], names=[]; const oc=URL.createObjectURL; URL.createObjectURL=(b)=>{blobs.push(b);return oc(b);};
@@ -2043,7 +2066,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.12 in the script and the tab title", /VERSION_NUM = "8\.12"/.test(src) && /<title>Narrative CV — V8\.12 beta/.test(src));
+    check("the version is 8.13 in the script and the tab title", /VERSION_NUM = "8\.13"/.test(src) && /<title>Narrative CV — V8\.13 beta/.test(src));
   }
 
   console.log("Network and errors");

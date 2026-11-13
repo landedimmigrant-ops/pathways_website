@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.12 beta</title>
+  <title>Narrative CV — V8.13 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -822,7 +822,17 @@
     .v7-reach-mode { border: 0; padding: 0; margin: 0 0 8px; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; font-size: 0.9rem; }
     .v7-reach-mode legend { float: left; margin-right: 6px; padding: 0; }
     .v7-reach-mode label { display: flex; align-items: center; gap: 6px; cursor: pointer; min-height: 32px; }
-    .v7-reach-tab { min-width: 620px; table-layout: fixed; }
+    .v7-reach-tab { min-width: 700px; table-layout: fixed; }
+    .v7-reach-tab thead th.v7-reach-yh { width: 10%; }
+    .v7-reach-year { width: 4.6em; min-height: 36px; padding: 4px 6px; font: inherit; text-align: center; border: 1px solid #8a8a8a; border-radius: 4px; }
+    .v7-reach-year:focus-visible, .v7-th-in:focus-visible { outline: 2px solid #912338; outline-offset: 1px; }
+    .v7-th-list { border: 0; padding: 0; margin: 0 0 12px; display: grid; gap: 8px; }
+    .v7-th-list legend { font-weight: 600; margin-bottom: 4px; padding: 0; }
+    .v7-th-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+    .v7-th-row label { flex: 1 1 18em; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
+    .v7-th-in { flex: 1 1 14em; min-width: 0; min-height: 40px; padding: 6px 8px; font: inherit; border: 1px solid #8a8a8a; border-radius: 4px; }
+    .v7-th-tab { min-width: 520px; }
+    .v7-th-facts { margin: 10px 0 0; padding-left: 1.2em; font-weight: 600; }
     .v7-reach-tab thead th:first-child { width: 32%; }
     .v7-reach-tab thead th:not(:first-child) { text-align: center; font-size: 0.75rem; }
     .v7-reach-tab td { padding: 0; text-align: center; vertical-align: middle; }
@@ -1007,7 +1017,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.12", VERSION_DATE = "2026-11-13";
+    const VERSION_NUM = "8.13", VERSION_DATE = "2026-11-13";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -2511,6 +2521,7 @@
       mentorPhilosophy: "", mentorEDI: "", mentorCrossStage: "", mentorOtherLabel: "", mentorOtherKind: "",
       ps: { role: "", institution: "", field: "", challenge: "", streams: "", pivot: "", standing: "", programFit: "", teamFit: "", horizon: "" },
       consultQuestions: "", selfCheck: {}, lastSavedAt: 0, visited: {},
+      strands: [], // V8.13: the strands the statement names (Threads, on Review); not printed
       draftName: "", contentAt: 0, // Q-10: an optional name, and when the draft's content last changed
       // Feedback for the team: answers, notes taken during the session, and a local session log
       // (steps, time, exports). All of it stays on this device until the researcher sends it.
@@ -2549,6 +2560,8 @@
         strKeys(c, CONTRIB_TEXT_KEYS.concat(["cid"]));
         c.roleMode = inList(c.roleMode, ROLE_LEVELS) ? c.roleMode : "";
         c.reachNow = inList(c.reachNow, REACH_LEVELS) ? c.reachNow : ""; c.reachCould = inList(c.reachCould, REACH_LEVELS) ? c.reachCould : ""; // V8.12
+        c.changeYear = /^\d{4}$/.test(str(c.changeYear)) ? str(c.changeYear) : ""; // V8.13
+        c.strandIds = (Array.isArray(c.strandIds) ? c.strandIds : []).map(str).filter(Boolean); // V8.13
         if ("folded" in c && typeof c.folded !== "boolean") c.folded = !!c.folded;
         if ("later" in c) c.later = c.later === true; // Q-11: saved for later, kept and not printed
         if (!isObj(c.flags)) c.flags = {};
@@ -2557,6 +2570,7 @@
         return c;
       });
       if ("mentees" in d) d.mentees = (Array.isArray(d.mentees) ? d.mentees : []).filter(isObj).map(m => { strKeys(m, ["stage", "stageKind", "stageOther", "kind", "org", "unit", "recognition", "why", "destination"]); return m; });
+      if ("strands" in d) d.strands = (Array.isArray(d.strands) ? d.strands : []).filter(isObj).map(t => ({ id: str(t.id), text: str(t.text).slice(0, 80) })).filter(t => t.id).slice(0, 4); // V8.13
       if (d.ui && "exportFmt" in d.ui) d.ui.exportFmt = str(d.ui.exportFmt);
       return d;
     }
@@ -6390,7 +6404,7 @@
         { id: "evidence", quality: "Evidence", q: "Does each contribution point to something outside your CV?", fact: rqEvidenceFact, look: "For each contribution: what you produced, and where others used it. Select an item to edit it, or use + Add.", chart: rqEvidenceChart },
         { id: "reach", quality: "Reach", q: "How far did each change go?", fact: rqReachFact, look: "Mark where each change already happened, and where it could go next.", chart: rqReachChart },
         { id: "mentorship", quality: "Mentorship", q: "Does the section name people and where they are now?", fact: rqPeopleFact, look: "Please look at the people you " + trainedWord() + ". Each line joins one person you describe to their level.", chart: rqPeopleChart },
-        { id: "coherence", quality: "Coherence", q: "Does your " + (isFrq() ? "background and skills section" : "statement") + " describe your whole record and end with what is next?", fact: rqStatementFact, look: "There is no chart for this question.", chart: null }
+        { id: "coherence", quality: "Coherence", q: "Does your " + (isFrq() ? "background and skills section" : "statement") + " describe your whole record and end with what is next?", fact: rqCoherenceFact, look: "Name the strands of your work that your " + (isFrq() ? "background and skills section" : "statement") + " describes, then mark the strands each contribution belongs to.", chart: rqThreadsChart }
       ];
       rows.forEach(r => sec.appendChild(rqRow(r)));
       return sec;
@@ -6585,6 +6599,7 @@
         const sc = el("div", "v7-rqev-scroll"); const tb = el("table", "v7-reach-tab");
         const hr = el("tr"); const h0 = el("th", null, "Contribution"); h0.scope = "col"; hr.appendChild(h0);
         REACH_LEVELS.forEach(([, l]) => { const th = el("th", null, l); th.scope = "col"; hr.appendChild(th); });
+        const hy = el("th", "v7-reach-yh", "Year of the change (optional)"); hy.scope = "col"; hr.appendChild(hy);
         const th0 = el("thead"); th0.appendChild(hr); tb.appendChild(th0);
         const bd = el("tbody");
         liveContributions().forEach(({ c: x }, pos) => {
@@ -6604,13 +6619,18 @@
             });
             td.appendChild(btn); tr.appendChild(td);
           });
+          // V8.13: one optional year, when the change happened (Prem, 2026-11-13: in place of a timeline).
+          const ty = el("td", "v7-reach-yc"); const yi = el("input", "v7-reach-year"); yi.type = "text"; yi.inputMode = "numeric"; yi.maxLength = 4; yi.placeholder = "Year";
+          yi.value = x.changeYear || ""; yi.dataset.cid = x.cid; yi.setAttribute("aria-label", "Contribution " + (pos + 1) + ": the year the change happened (optional)");
+          yi.addEventListener("input", () => { yi.value = yi.value.replace(/\D/g, "").slice(0, 4); x.changeYear = yi.value; saveState(); });
+          ty.appendChild(yi); tr.appendChild(ty);
           bd.appendChild(tr);
         });
         tb.appendChild(bd); sc.appendChild(tb); wrap.appendChild(sc);
       };
       draw();
       art.appendChild(wrap);
-      art.appendChild(el("p", "v7-quiet v7-small", "A filled dot marks where the change already happened; a ring, where it could go next. The shaded boxes between them show the distance. The marks stay in the tool and do not print."));
+      art.appendChild(el("p", "v7-quiet v7-small", "A filled dot marks where the change already happened; a ring, where it could go next. The shaded boxes between them show the distance. The year is optional. The marks and years stay in the tool and do not print."));
     }
 
     // Mentorship: everyone trained, by level, joined to the people described (Prem, 2026-11-13).
@@ -6682,6 +6702,86 @@
       const n = printedWords(sectionText("ps")), name = isFrq() ? "Your background and skills section" : "Your statement";
       if (!n) return name + " is not written yet.";
       return name + " has " + n.toLocaleString("en-CA") + (n === 1 ? " word" : " words") + ((ns.ps.horizon || "").trim() ? " and ends with what you plan to do next." : "; it does not yet end with what you plan to do next.");
+    }
+
+    // Threads (V8.13, Prem 2026-11-13): the strands the statement names, against the contributions.
+    const newStrandId = () => "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const namedStrands = () => (ns.strands || []).filter(t => one(t.text));
+    function rqThreadFacts() {
+      const st = namedStrands(); if (!st.length) return [];
+      const live = liveContributions(), ids = st.map(t => t.id), out = [];
+      const none = live.map(({ c }, k) => (c.strandIds || []).some(i => ids.indexOf(i) > -1) ? 0 : k + 1).filter(Boolean);
+      const empty = st.filter(t => !live.some(({ c }) => (c.strandIds || []).indexOf(t.id) > -1));
+      out.push(none.length ? (none.length > 1 ? "Contributions " + listAnd(none.map(String)) + " fit" : "Contribution " + none[0] + " fits") + " none of the strands you named." : "Every contribution fits a strand you named.");
+      if (empty.length) out.push("No contribution is marked for " + listAnd(empty.map(t => "“" + one(t.text) + "”")) + ".");
+      return out;
+    }
+    function rqCoherenceFact() { return [rqStatementFact()].concat(rqThreadFacts()).join(" "); }
+    function rqThreadsChart(art, refresh) {
+      if (!Array.isArray(ns.strands)) ns.strands = [];
+      if (!ns.strands.length) ns.strands.push({ id: newStrandId(), text: "" });
+      const fs = el("fieldset", "v7-th-list"); fs.appendChild(el("legend", null, "The strands in your " + (isFrq() ? "section" : "statement") + ", a few words each"));
+      const tableBox = el("div");
+      const drawList = () => {
+        [...fs.querySelectorAll(".v7-th-row, .v7-th-add")].forEach(n => n.remove());
+        ns.strands.forEach((t, i) => {
+          const row = el("div", "v7-th-row"); const lab = el("label"); lab.appendChild(document.createTextNode("Strand " + (i + 1)));
+          const inp = el("input", "v7-th-in"); inp.type = "text"; inp.maxLength = 80; inp.value = t.text; inp.id = "v7-th-" + t.id;
+          inp.addEventListener("input", () => { t.text = inp.value; saveState(); drawTable(); refresh(); });
+          lab.appendChild(inp); row.appendChild(lab);
+          {
+            const rm = el("button", "v7-linkbtn", "Remove"); rm.type = "button"; rm.setAttribute("aria-label", "Remove strand " + (i + 1));
+            rm.addEventListener("click", () => {
+              ns.strands.splice(i, 1); liveContributions().forEach(({ c }) => { c.strandIds = (c.strandIds || []).filter(x => x !== t.id); });
+              if (!ns.strands.length) ns.strands.push({ id: newStrandId(), text: "" });
+              saveState(); drawList(); drawTable(); refresh(); announce("Strand removed.");
+              const next = fs.querySelector(".v7-th-in"); if (next) next.focus();
+            });
+            row.appendChild(rm);
+          }
+          fs.appendChild(row);
+        });
+        if (ns.strands.length < 4) {
+          const add = el("button", "v7-linkbtn v7-th-add", "+ Add a strand"); add.type = "button";
+          add.addEventListener("click", () => { const t = { id: newStrandId(), text: "" }; ns.strands.push(t); saveState(); drawList(); const f = document.getElementById("v7-th-" + t.id); if (f) f.focus(); });
+          fs.appendChild(add);
+        }
+      };
+      const drawTable = () => {
+        tableBox.innerHTML = "";
+        const st = namedStrands();
+        if (!st.length) { tableBox.appendChild(el("p", "v7-quiet v7-small", "Name a strand to see the table.")); return; }
+        const sc = el("div", "v7-rqev-scroll"); const tb = el("table", "v7-reach-tab v7-th-tab");
+        const cols = st.map(t => ({ id: t.id, l: one(t.text) })).concat([{ id: "", l: "None of these" }]);
+        const hr = el("tr"); const h0 = el("th", null, "Contribution"); h0.scope = "col"; hr.appendChild(h0);
+        cols.forEach(cl => { const th = el("th", null, cl.l); th.scope = "col"; hr.appendChild(th); });
+        const th0 = el("thead"); th0.appendChild(hr); tb.appendChild(th0);
+        const bd = el("tbody");
+        liveContributions().forEach(({ c: x }, pos) => {
+          const tr = el("tr"); const rh = el("th", null, (pos + 1) + ". " + (gvCut(one(x.title), 60) || "Untitled contribution")); rh.scope = "row"; tr.appendChild(rh);
+          const mine = (x.strandIds || []).filter(i => st.some(t => t.id === i));
+          cols.forEach((cl, j) => {
+            const on = cl.id ? mine.indexOf(cl.id) > -1 : !mine.length;
+            const td = el("td"); const btn = el("button", "v7-reach-cell v7-th-cell"); btn.type = "button"; btn.dataset.cid = x.cid; btn.dataset.s = cl.id || "none";
+            btn.setAttribute("aria-pressed", on ? "true" : "false");
+            btn.setAttribute("aria-label", "Contribution " + (pos + 1) + ": " + cl.l);
+            btn.appendChild(el("span", on ? "v7-rm v7-rm-now" : "v7-rm-dot")).setAttribute("aria-hidden", "true");
+            btn.addEventListener("click", () => {
+              if (!cl.id) x.strandIds = [];
+              else { const ids = (x.strandIds || []).slice(), at = ids.indexOf(cl.id); if (at > -1) ids.splice(at, 1); else ids.push(cl.id); x.strandIds = ids; }
+              saveState(); drawTable(); refresh();
+              const back = tableBox.querySelector('.v7-th-cell[data-cid="' + x.cid + '"][data-s="' + (cl.id || "none") + '"]'); if (back) back.focus();
+            });
+            td.appendChild(btn); tr.appendChild(td);
+          });
+          bd.appendChild(tr);
+        });
+        tb.appendChild(bd); sc.appendChild(tb); tableBox.appendChild(sc);
+        const ul = el("ul", "v7-th-facts"); rqThreadFacts().forEach(t => ul.appendChild(el("li", null, t))); tableBox.appendChild(ul);
+      };
+      drawList(); drawTable();
+      art.appendChild(fs); art.appendChild(tableBox);
+      art.appendChild(el("p", "v7-quiet v7-small", "A filled dot marks a strand the contribution belongs to; a contribution can belong to more than one. The strands and marks stay in the tool and do not print."));
     }
 
     // Before you export: the checks with no data behind them.
