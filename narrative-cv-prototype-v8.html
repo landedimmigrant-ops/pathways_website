@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.10 beta</title>
+  <title>Narrative CV — V8.11 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -266,10 +266,15 @@
     @keyframes v7reveal { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
     /* Tailored for bar (V7-19 update, D-16, D-18) */
-    .v7-tailored { display: block; background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 14px 22px 16px; margin: 0 0 18px; font-size: 0.85rem; }
-    /* V8.8 (Prem): the label and Change share the first row; the pills follow, as in the other cards */
-    .v7-tailored-head { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; }
+    .v7-tailored { display: block; background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 10px 16px; margin: 0 0 18px; font-size: 0.85rem; }
+    /* V8.11 (Prem, 2026-11-13): Change comes first, then the label and its value on the same row; less empty space */
+    .v7-tailored-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+    .v7-tailored-head + .v7-tailored-pills { margin-top: 8px; }
     .v7-tailored-k { font-weight: 700; color: #333; }
+    .v7-tailored .v7-disc .v7-tri { font-size: 1.45em; width: 14px; }
+    .v7-tailored-head .v7-tailored-text { flex: 1 1 14rem; min-width: 0; }
+    .v7-prof-name { flex: 1 1 12rem; max-width: 24rem; min-width: 0; font: inherit; font-size: 0.9rem; font-weight: 600; color: #222; padding: 5px 8px; border: 1px solid var(--v7-field); border-radius: 6px; background: #fff; }
+    .v7-prof-name:focus { outline: 2px solid #912338; outline-offset: 1px; }
     .v7-tailored-pills { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
     .v7-tailored-pills.v7-tailored-text { display: block; color: #333; font-size: 0.88rem; }
     .v7-pill { display: inline-block; background: var(--v7-tint); color: #912338; border-radius: 12px; padding: 2px 10px; font-size: 0.8rem; }
@@ -934,7 +939,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.10", VERSION_DATE = "2026-11-13";
+    const VERSION_NUM = "8.11", VERSION_DATE = "2026-11-13";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -4268,7 +4273,6 @@
       opts = opts || {};
       const L = ns.lens, bar = el("div", "v7-tailored" + (UI.chg ? " is-open" : ""));
       const head = el("div", "v7-tailored-head");
-      head.appendChild(el("span", "v7-tailored-k", opts.lead || "Profile:"));
       bar.appendChild(head);
       const pills = el("span", "v7-tailored-pills" + (opts.text ? " v7-tailored-text" : ""));
       if (opts.text) pills.textContent = opts.text;
@@ -4302,8 +4306,20 @@
         const first = pn.querySelector("select, input, button");
         if (first) first.focus();
       });
+      // V8.11 (Prem, 2026-11-13): Change first, then the label. Export shows "Template:" and its line on the
+      // same row; elsewhere "Profile:" is followed by the profile's name (the draft name from the start page).
       head.appendChild(ch);
-      bar.appendChild(pills);
+      if (opts.text) {
+        head.appendChild(el("span", "v7-tailored-k", opts.lead || "Profile:"));
+        head.appendChild(pills);
+      } else {
+        const lab = el("label", "v7-tailored-k", "Profile:"); lab.htmlFor = "v7-prof-name"; head.appendChild(lab);
+        const nm = el("input", "v7-prof-name"); nm.id = "v7-prof-name"; nm.type = "text"; nm.maxLength = 80; nm.autocomplete = "off";
+        nm.value = ns.draftName || ""; nm.placeholder = "Name this profile";
+        nm.addEventListener("input", () => { ns.draftName = nm.value; saveState(); });
+        head.appendChild(nm);
+        bar.appendChild(pills);
+      }
       if (UI.chg) bar.appendChild(changePanel(close));
       parent.appendChild(bar);
     }
@@ -6570,7 +6586,7 @@
         "You can take your draft out of the tool as a file, as sections to paste into the template, or as a saved draft file you can open here again later.", false);
       const a = ns.lens.agency, unsure = !a || a === "other";
       const font = /Arial/.test(PRINT_FONT[a] || "") ? "12-point Arial" : "12-point Times New Roman";
-      tailoredBar(c, { lead: "Set up for:", text: unsure ? "Agency not chosen yet · Tri-agency CV layout · 12-point Times New Roman"
+      tailoredBar(c, { lead: "Template:", text: unsure ? "Agency not chosen yet · Tri-agency CV layout · 12-point Times New Roman"
         : labelOf(AGENCIES, a) + " · " + (isFrq() ? "CV-FRQ" : "Tri-agency CV") + " · " + font });
       // r2-a-16: links the format does not allow are named here too, before anything is downloaded.
       { const dw = draftWords(), ol = overLimit(dw); if (ol) { const ov = el("p", "v7-note v7-unfinished-note v7-over-note", "Your draft is about " + roughWords(dw).toLocaleString("en-CA") + " words, " + pagesRange(dw) + " pages. The limit in English is " + PAGE_LIMIT_EN + " pages, " + (ol === 2 ? "so it needs cutting before it goes into the template." : "so it may need cutting; check the page count in the template.")); ov.setAttribute("role", "note"); c.appendChild(ov); } } // r6-a-4, M-4

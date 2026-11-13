@@ -264,7 +264,7 @@ async function seed(state, extra) {
     a.names=names; a.doc=await blobs[0].text(); a.txt=await blobs[1].text(); a.file=await blobs[2].text();
     a.exportGreen=rail('Export').classList.contains('is-done');
     return a;`);
-  check("Set up for line names the agency and font", /^Set up for:[^]*FRQ · CV-FRQ · 12-point Times New Roman/.test(r.setup), r.setup);
+  check("V8.11: the Template line names the agency and font", /^▸\s*Change\s*Template:\s*FRQ · CV-FRQ · 12-point Times New Roman/.test(r.setup) && !/Set up for/.test(r.setup), r.setup);
   check("three export cards", r.cards.join("|") === "Download or print|Paste into the template, one section at a time|Keep your work", r.cards);
   check("email nudge with the address printed as text", /impact@concordia\.ca about your experience/.test(r.nudge) && /Email us\s+impact@concordia\.ca/.test(r.nudge), r.nudge);
   check("downloads: Word, text and draft file", r.names[0] === "narrative-cv-draft-frq.doc" && r.names[1] === "narrative-cv-draft-frq.txt" && /^narrative-cv-draft-frq-\d{4}-\d{2}-\d{2}-\d{4}\.json$/.test(r.names[2]), r.names);
@@ -1935,7 +1935,17 @@ async function seed(state, extra) {
       return {head:!!head, k:k&&k.innerText, ch:!!ch, row:k&&ch?Math.abs(k.getBoundingClientRect().top+k.offsetHeight/2-(ch.getBoundingClientRect().top+ch.offsetHeight/2))<6:false,
         right:k&&ch?ch.getBoundingClientRect().left>k.getBoundingClientRect().right:false, below:pills&&ch?pills.getBoundingClientRect().top>=ch.getBoundingClientRect().bottom-1:false,
         order:[...bar.querySelectorAll('.v7-tailored-k, #v7-chg, .v7-pill')].map(x=>x.id||x.className.split(' ')[0]).slice(0,3).join(','), radius:getComputedStyle(bar).borderRadius};`);
-    check("note 1: the Profile box puts Change on the label's row, to its right, with the pills below, in card style; Tab reaches Change before the pills", r.head && r.k === "Profile:" && r.ch && r.row && r.right && r.below && r.order === "v7-tailored-k,v7-chg,v7-pill" && r.radius === "10px", r);
+    check("V8.11: the Profile box puts Change on the label's row, to its left, with the pills below, in card style", r.head && r.k === "Profile:" && r.ch && r.row && !r.right && r.below && r.radius === "10px", r);
+    r = await js(H + `await w(100); const bar=q('.v7-tailored'), ch=q('#v7-chg'), k=bar.querySelector('.v7-tailored-k'), nm=q('#v7-prof-name');
+      const a={order:[...bar.querySelectorAll('#v7-chg, .v7-tailored-k, #v7-prof-name, .v7-pill')].map(x=>x.id||x.className.split(' ')[0]).slice(0,4).join(','),
+        tri:parseFloat(getComputedStyle(ch.querySelector('.v7-tri')).fontSize)/parseFloat(getComputedStyle(ch).fontSize), forName:k.htmlFor, ph:nm&&nm.placeholder,
+        nameRow:nm?Math.abs(nm.getBoundingClientRect().top+nm.offsetHeight/2-(ch.getBoundingClientRect().top+ch.offsetHeight/2))<6:false,
+        h:Math.round(bar.getBoundingClientRect().height)};
+      nm.focus(); setv(nm,'SSHRC Insight, fall'); await w(100); a.saved=JSON.parse(localStorage.getItem('ncv-v8')).draftName;
+      rail('Mentorship').click(); await w(250); a.kept=q('#v7-prof-name')?.value; rail('Contributions').click(); await w(250); return a;`);
+    check("V8.11: Change, Profile:, the name box, then the pills, in reading and Tab order; the triangle is larger than the button text", r.order === "v7-chg,v7-tailored-k,v7-prof-name,v7-pill" && r.tri > 1.3, r);
+    check("a11y: Profile: labels the name box; the name sits on Change's row, saves as the draft name and stays on the next step", r.forName === "v7-prof-name" && r.ph === "Name this profile" && r.nameRow && r.saved === "SSHRC Insight, fall" && r.kept === "SSHRC Insight, fall", r);
+    check("V8.11: the Profile box is compact (at most 110 px tall at 1280 px wide with two rows of pills)", r.h <= 110, r);
 
     // Note 3 is in the feedback-box block. Note 6: estimates and decades.
     r = await js(H + `await w(200); const box=(k)=>q('[data-f$="-'+k+'"] .v7-box'); const fl=(k)=>qa('[data-f$="-'+k+'"] .v4-flag').map(x=>x.textContent).join('|');
@@ -2010,7 +2020,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "The six parts in each contribution", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.10 in the script and the tab title", /VERSION_NUM = "8\.10"/.test(src) && /<title>Narrative CV — V8\.10 beta/.test(src));
+    check("the version is 8.11 in the script and the tab title", /VERSION_NUM = "8\.11"/.test(src) && /<title>Narrative CV — V8\.11 beta/.test(src));
   }
 
   console.log("Network and errors");

@@ -2,7 +2,9 @@
 
 Prem's notes on the V8 tool. Kept here until Prem says to build them.
 
-## Notes of 2026-11-13 (after V8.10)
+## Notes of 2026-11-13 (after V8.10) — built in V8.11
+
+Note 1: the words are not in the tool since V8.9; a fresh load shows no such step. Notes 2 and 3 are built; the name choices are listed as INFERRED in the README.
 
 1. **"Finish your test" heading (Draft group).** Screenshot shows the heading "Finish your test" under DRAFT, with a grey highlight behind it. That step was removed in V8.9, and the words no longer appear in the tool. The screenshot is probably from a page loaded before 8.9; to check on a fresh load before building.
 

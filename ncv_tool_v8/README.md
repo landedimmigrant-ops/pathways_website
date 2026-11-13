@@ -59,6 +59,9 @@ The endpoint is `POST /api/tester`:
 - it keeps only the known answer keys, each up to 2,000 characters; a choose-any answer is kept as a list of up to ten options.
 - Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
+INFERRED in V8.11, for Prem to confirm or change:
+- the profile name is the draft name from the start page (one name, used in the file names and in "Continue …"), typed straight into the Profile box; the box shows "Name this profile" until a name is given; the name does not appear in the exported CV.
+
 INFERRED in V8.8, for Prem to confirm or change:
 - the Other list's groups (Research staff, Residents or clinical fellows, Community researchers, Visiting researchers, A mix of these, Something else) and that it sits on its own row under the boxes, since it was cut off inside the Other box;
 - the people section's line "where you can, some whose work relates to this application" is advice; no funder rule was found that requires it;
