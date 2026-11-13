@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.11 beta</title>
+  <title>Narrative CV — V8.12 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -767,6 +767,74 @@
     .v7-gv-box { margin: 0; background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 8px; padding: 12px 14px 10px; min-width: 0; }
     .v7-gv-cap { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
     .v7-gv-art svg { display: block; width: 100%; height: auto; max-width: 100%; }
+    /* V8.12: Review. The order instruction; the composition breakdown; the question rows. */
+    .v7-order-how { margin: 2px 0 10px; font-size: 0.92rem; }
+    .v7-comp-bar { position: relative; display: flex; height: 26px; background: var(--v7-track); border-radius: 4px; margin: 10px 0 4px; overflow: hidden; }
+    .v7-comp-seg { display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; border-right: 2px solid #fff; box-sizing: border-box; min-width: 0; overflow: hidden; }
+    .v7-comp-bar s { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed rgba(0,0,0,.35); }
+    .v7-comp-leg { list-style: none; margin: 8px 0 4px; padding: 0; display: grid; gap: 2px; font-size: 0.82rem; }
+    .v7-glance .v7-comp-leg li { border: 0; padding: 1px 0; display: flex; align-items: center; gap: 6px; }
+    .v7-comp-sw { width: 12px; height: 12px; border-radius: 3px; border: 1px solid #b9a0a5; flex-shrink: 0; }
+    .v7-rq { margin: 0 0 22px; }
+    .v7-rq .v7-h3 { margin: 0 0 4px; }
+    .v7-rq-lede { margin: 0 0 10px; }
+    .v7-rq-row { background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 8px; margin: 0 0 8px; }
+    .v7-rq-row > summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 2px 6px; padding: 12px 14px; min-height: 44px; }
+    .v7-rq-row > summary::-webkit-details-marker { display: none; }
+    .v7-rq-row > summary::before { content: "▸"; font-size: 1.3em; line-height: 1.1; color: #912338; grid-row: 1 / span 3; }
+    .v7-rq-row[open] > summary::before { content: "▾"; }
+    .v7-rq-row > summary:focus-visible { outline: 2px solid #912338; outline-offset: 2px; border-radius: 8px; }
+    .v7-rq-q { font-weight: 700; }
+    .v7-rq-k { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-right: 8px; }
+    .v7-rq-fact { font-size: 0.92rem; color: #333; }
+    .v7-rq-done { font-size: 0.82rem; color: var(--v7-done); font-weight: 600; }
+    .v7-rq-body { padding: 0 14px 14px 42px; }
+    .v7-rq-look { margin: 0 0 8px; font-size: 0.92rem; }
+    .v7-rq-tick { display: flex; gap: 10px; align-items: center; margin-top: 12px; font-size: 0.92rem; cursor: pointer; }
+    .v7-rq-tick input { width: 1.1rem; height: 1.1rem; accent-color: #912338; }
+    .v7-rq-ring { margin-top: 10px; }
+    .v7-rq-ring svg { max-width: 440px; }
+    .v7-rq-ringfact { font-weight: 600; margin: 6px 0 0; font-size: 0.92rem; }
+    .v7-wb-leg { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; margin: 0 0 8px; }
+    .v7-wb-leg i { display: inline-block; width: 12px; height: 12px; border: 1px solid #8a8a8a; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+    .v7-wb-row { margin: 0 0 10px; }
+    .v7-wb-t { font-size: 0.85rem; font-weight: 600; margin: 0 0 3px; }
+    .v7-wb-bar { display: flex; gap: 0; }
+    .v7-wb-seg { flex: 0 0 auto; min-width: 24px; height: 28px; border: 0; border-right: 2px solid #fff; padding: 0 4px; font: inherit; font-size: 0.75rem; text-align: left; cursor: pointer; color: #222; }
+    .v7-wb-seg:hover { box-shadow: inset 0 0 0 2px #222; }
+    .v7-wb-seg:focus-visible { outline: 3px solid #912338; outline-offset: 1px; position: relative; z-index: 1; }
+    .v7-wb-box { border: 1px solid var(--v7-card-b); border-left: 6px solid #912338; border-radius: 8px; padding: 10px 12px; margin: 8px 0 0; display: grid; gap: 6px; }
+    .v7-wb-n { color: var(--muted); font-weight: 400; }
+    .v7-wb-text { font: inherit; width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid var(--v7-field); border-radius: 6px; }
+    .v7-rqev-scroll { overflow-x: auto; }
+    .v7-rqev-tab, .v7-reach-tab { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+    .v7-rqev-tab th, .v7-rqev-tab td, .v7-reach-tab th, .v7-reach-tab td { text-align: left; vertical-align: top; padding: 8px; border-bottom: 1px solid var(--v7-rule); }
+    .v7-rqev-tab thead th, .v7-reach-tab thead th { background: var(--v7-card); font-size: 0.8rem; }
+    .v7-rqev-tab th[scope="row"], .v7-reach-tab th[scope="row"] { font-weight: 600; width: 40%; }
+    .v7-rqev-tab ul { list-style: none; margin: 0; padding: 0; }
+    .v7-rqev-item { display: block; text-align: left; font: inherit; background: none; border: 0; padding: 4px 0; min-height: 24px; cursor: pointer; color: inherit; }
+    .v7-rqev-item b { display: block; text-decoration: underline dotted; text-underline-offset: 3px; }
+    .v7-rqev-item span { display: block; font-size: 0.8rem; color: var(--muted); }
+    .v7-rqev-item:hover b, .v7-rqev-item:focus-visible b { color: #912338; }
+    .v7-rqev-none { display: block; font-weight: 600; }
+    .v7-rqev-add { font: inherit; font-size: 0.82rem; margin-top: 4px; min-height: 28px; padding: 2px 10px; border: 1px dashed #8a8a8a; border-radius: 6px; background: #fff; cursor: pointer; }
+    .v7-rqev-lab { font-size: 0.85rem; font-weight: 600; }
+    .v7-reach-mode { border: 0; padding: 0; margin: 0 0 8px; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; font-size: 0.9rem; }
+    .v7-reach-mode legend { float: left; margin-right: 6px; padding: 0; }
+    .v7-reach-mode label { display: flex; align-items: center; gap: 6px; cursor: pointer; min-height: 32px; }
+    .v7-reach-tab { min-width: 620px; table-layout: fixed; }
+    .v7-reach-tab thead th:first-child { width: 32%; }
+    .v7-reach-tab thead th:not(:first-child) { text-align: center; font-size: 0.75rem; }
+    .v7-reach-tab td { padding: 0; text-align: center; vertical-align: middle; }
+    .v7-reach-tab td.is-between { background: #f3e3e5; }
+    .v7-reach-cell { width: 100%; min-height: 44px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+    .v7-reach-cell:hover { background: #efeeea; }
+    .v7-reach-cell:focus-visible { outline: 2px solid #912338; outline-offset: -2px; }
+    .v7-rm { display: inline-block; width: 16px; height: 16px; border-radius: 50%; box-sizing: border-box; flex-shrink: 0; }
+    .v7-rm-now { background: #912338; }
+    .v7-rm-could { background: #fff; border: 3px solid #912338; }
+    .v7-rm-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #9a9a9a; }
+    @media (max-width: 40em) { .v7-rq-body { padding-left: 14px; } }
     .v7-gv-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--v7-rule); font-size: 0.85rem; }
     .v7-gv-exp { background: #fff; border: 1.5px solid var(--v7-card-b); border-radius: 10px; padding: 16px 22px 18px; margin: 0 0 16px; }
     @media (max-width: 48em) {
@@ -939,7 +1007,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.11", VERSION_DATE = "2026-11-13";
+    const VERSION_NUM = "8.12", VERSION_DATE = "2026-11-13";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -2480,6 +2548,7 @@
       if ("contributions" in d) d.contributions = (Array.isArray(d.contributions) ? d.contributions : []).filter(isObj).map(c => {
         strKeys(c, CONTRIB_TEXT_KEYS.concat(["cid"]));
         c.roleMode = inList(c.roleMode, ROLE_LEVELS) ? c.roleMode : "";
+        c.reachNow = inList(c.reachNow, REACH_LEVELS) ? c.reachNow : ""; c.reachCould = inList(c.reachCould, REACH_LEVELS) ? c.reachCould : ""; // V8.12
         if ("folded" in c && typeof c.folded !== "boolean") c.folded = !!c.folded;
         if ("later" in c) c.later = c.later === true; // Q-11: saved for later, kept and not printed
         if (!isObj(c.flags)) c.flags = {};
@@ -4972,6 +5041,8 @@
     // Q-20 (Prem, 2026-11-03): three more levels, shown to every researcher whatever the profile.
     const ROLE_LEVELS = [["led", "I led it"], ["coled", "I co-led it"], ["part", "I contributed a specific part"],
       ["partnerled", "The partners led it, and I took part"], ["cocreated", "I made it with others"], ["alone", "I did it on my own"]];
+    // V8.12 (Prem, 2026-11-13): Reach of change, where a change happened and where it could go next.
+    const REACH_LEVELS = [["people", "People"], ["org", "Organization or community"], ["city", "City or region"], ["province", "Province or territory"], ["country", "Country"], ["field", "Field"]];
     const cHas = (c, k) => k === "roleLine" ? !!((c.roleLine || "").trim() || c.roleMode) : !!(c[k] || "").trim();
     // Q-13 (Prem, 2026-11-03): the count covers the required parts only, so a finished card reads "8 of 8"; One moment is optional.
     const cCount = (c) => CF().filter(f => !f.optional && cHas(c, f.k)).length + (liveEvidence(c).length ? 1 : 0);
@@ -6137,14 +6208,27 @@
       if (m.person) { const s = document.getElementById("v7-ps0"); if (s) { s.focus(); s.scrollIntoView({ block: "center" }); } return; }
       if (m.field) { UI.active = m.field; renderStage(); focusField(m.field); }
     }
+    // V8.12 (Prem, 2026-11-13, the mockup comment round): Review runs in five parts. 1 the order;
+    // 2 At a glance (what is missing; the narrative composition breakdown); 3 Review your draft, one
+    // closed question per row, each with a fact line from the draft, a chart and a tick box; 4 the
+    // working draft; 5 Before you export. Descriptive only: counts and words, no scores, no claims
+    // about how reviewers read, and no question the tool cannot answer.
     function renderReview(c) {
       // r4-a-1 (inferred): the Profile bar and its Change on Review, as on the writing steps.
       tailoredBar(c);
       stageHead(c, "", "Review your CV", "", false);
-      const lede = el("p", "narrative-intro-text v7-lede", "This step shows your working draft, lets you choose the order of your contributions and shows what is still missing. ");
+      const lede = el("p", "narrative-intro-text v7-lede", "Put your contributions in order, see what is still missing, then review your draft one question at a time. ");
       lede.appendChild(guideLink("What reviewers look for", "reviewers"));
       c.appendChild(lede);
+      c.appendChild(reviewOrder());
+      c.appendChild(reviewGlance());
+      c.appendChild(reviewQuestions());
+      c.appendChild(reviewDraft());
+      c.appendChild(reviewBefore());
+      navRow(c);
+    }
 
+    function reviewDraft() {
       const shut = !!ns.ui.draftShut;
       const wd = el("section", "v7-card"); wd.setAttribute("aria-labelledby", "v7-wd-t");
       const wh = el("div", "v7-card-h");
@@ -6159,17 +6243,19 @@
       const dp = draftPreview("", "Working draft, read only");
       if (shut) dp.classList.add("is-shut");
       wd.appendChild(dp);
-      if (shut) wd.appendChild(el("p", "v7-quiet", "The draft is shrunk. Show it to read it again; it follows the order below."));
-      c.appendChild(wd);
+      if (shut) wd.appendChild(el("p", "v7-quiet", "The draft is shrunk. Show it to read it again; it follows the order above."));
+      return wd;
+    }
 
-      // V7-31: the order of contributions, with ↑ ↓.
+    // V7-31: the order of contributions, with ↑ ↓. V8.12: the first task on Review, with an instruction.
+    function reviewOrder() {
       const os = el("section", "v7-order"); os.setAttribute("aria-labelledby", "v7-oc-t");
       const oh = el("div", "v7-section-t");
-      const ot = el("h3", "v7-h3", "Order of contributions"); ot.id = "v7-oc-t"; oh.appendChild(ot);
-      oh.appendChild(el("span", "v7-counter", "The numbers in Contributions follow this order."));
+      const ot = el("h3", "v7-h3", "Put your contributions in order"); ot.id = "v7-oc-t"; oh.appendChild(ot);
       if (liveContributions().length > 5) os.appendChild(selectionNote(true));
       os.appendChild(oh);
       const live = liveContributions(), comp = competitionName();
+      if (live.length >= 2) os.appendChild(el("p", "v7-order-how", "Use ↑ and ↓ to move a contribution. The numbers in Contributions and in your draft follow this order."));
       if (live.length < 2) {
         const p = el("p", "v7-quiet", live.length ? "You have one contribution, so the order is already set. " : "No contributions written yet. ");
         const add = el("button", "v7-linkbtn", "+ Add a contribution"); add.type = "button";
@@ -6210,11 +6296,13 @@
           os.appendChild(oc);
         });
       }
-
       renderLater(os);
+      return os;
+    }
 
-      // At a glance: only what is missing, each a link to its field; the length.
-      const miss = missingList(), w = draftWords();
+    // At a glance: only what is missing, each a link to its field; the narrative composition breakdown.
+    function reviewGlance() {
+      const miss = missingList();
       const dash = el("section", "v7-dash"); dash.setAttribute("aria-labelledby", "v7-ag-t");
       const dh = el("div", "v7-dash-h"); const dt = el("h3", "v7-h3", "At a glance"); dt.id = "v7-ag-t"; dh.appendChild(dt); dash.appendChild(dh);
       const gl = el("div", "v7-glance");
@@ -6250,34 +6338,360 @@
         t1.appendChild(ul);
       }
       gl.appendChild(t1);
-      const t2 = el("div", "v7-tile"); t2.appendChild(el("span", "v7-tile-k", "Length"));
-      t2.appendChild(el("span", "v7-big", w / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(w).replace("roughly ", "")));
-      const over = w / WORDS_PER_PAGE > PAGE_LIMIT_EN;
-      t2.appendChild(el("span", "v7-quiet", (over ? "pages, roughly · about " : "of " + PAGE_LIMIT_EN + " pages, roughly · about ") + roughWords(w).toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (over ? ". The limit in English is " + PAGE_LIMIT_EN + " pages." : "")));
-      const pb = el("div", "v7-pages"); pb.setAttribute("aria-hidden", "true");
-      const fill = el("i"); fill.style.width = Math.min(100, w / (WORDS_PER_PAGE * PAGE_LIMIT_EN) * 100) + "%"; pb.appendChild(fill);
-      [20, 40, 60, 80].forEach(x => { const s = el("s"); s.style.left = x + "%"; pb.appendChild(s); });
-      t2.appendChild(pb);
-      const sc0 = el("div", "v7-pages-scale"); sc0.setAttribute("aria-hidden", "true"); sc0.appendChild(el("span", null, "0")); sc0.appendChild(el("span", null, PAGE_LIMIT_EN + " pages")); t2.appendChild(sc0);
-      t2.appendChild(el("p", "v7-quiet v7-small", "About 500 to 600 words fill a page at 12 points. The real length depends on the template, so check it there before you submit." + (w / 600 > PAGE_LIMIT_EN ? " This is over the English limit of 5 pages." : w / WORDS_PER_PAGE > PAGE_LIMIT_EN ? " This may be over the English limit of 5 pages." : "")));
-      gl.appendChild(t2);
+      gl.appendChild(compositionTile());
       dash.appendChild(gl);
-      c.appendChild(dash);
-      // W-52 (inferred, option A): working draft, At a glance, the order, then the visuals, at every width.
-      c.appendChild(os);
-      renderGlance(c, { title: "What your draft contains" });
+      return dash;
+    }
 
-      // Guide sync: the four qualities from "What reviewers look for", then selection and format.
+    // V8.12 (Prem, 2026-11-13): the Length tile and the length chart become one "Narrative composition
+    // breakdown": how the words divide between the statement, each contribution and Mentorship, on a
+    // scale of the page limit.
+    const COMP_TONES = { ps: "#e7cfd3", c: "#912338", mentor: "#c27a88" };
+    function compositionTile() {
+      const w = draftWords();
+      const t = el("div", "v7-tile v7-comp"); t.appendChild(el("span", "v7-tile-k", "Narrative composition breakdown"));
+      t.appendChild(el("span", "v7-big", w / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(w).replace("roughly ", "")));
+      const over = w / WORDS_PER_PAGE > PAGE_LIMIT_EN;
+      t.appendChild(el("span", "v7-quiet", (over ? "pages, roughly · about " : "of " + PAGE_LIMIT_EN + " pages, roughly · about ") + roughWords(w).toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (over ? ". The limit in English is " + PAGE_LIMIT_EN + " pages." : "")));
+      const segs = [];
+      const ps = printedWords(sectionText("ps")), mentor = printedWords(sectionText("mentor"));
+      if (ps) segs.push({ k: "ps", l: isFrq() ? "Background and skills" : "Personal statement", n: ps });
+      liveContributions().forEach(({ c: x }, pos) => { const n = cWords(x); if (n) segs.push({ k: "c", l: "Contribution " + (pos + 1), tag: String(pos + 1), n }); });
+      if (mentor) segs.push({ k: "mentor", l: "Mentorship", n: mentor });
+      const sum = segs.reduce((s, g) => s + g.n, 0);
+      if (sum) {
+        const scale = Math.max(WORDS_PER_PAGE * PAGE_LIMIT_EN, w);
+        const bar = el("div", "v7-comp-bar"); bar.setAttribute("role", "img");
+        bar.setAttribute("aria-label", "Narrative composition breakdown: " + segs.map(g => g.l + " " + g.n + (g.n === 1 ? " word" : " words")).join(", ") + ", against a limit of " + PAGE_LIMIT_EN + " pages.");
+        segs.forEach(g => { const s = el("span", "v7-comp-seg", g.tag && g.n / sum * w / scale > 0.05 ? g.tag : ""); s.style.width = (g.n / sum * w / scale * 100) + "%"; s.style.background = COMP_TONES[g.k]; if (g.k === "c") s.style.color = "#fff"; bar.appendChild(s); });
+        for (let pg = 1; pg < Math.floor(scale / WORDS_PER_PAGE) + 1; pg++) { const m = el("s"); m.style.left = (pg * WORDS_PER_PAGE / scale * 100) + "%"; bar.appendChild(m); }
+        t.appendChild(bar);
+        const sc0 = el("div", "v7-pages-scale"); sc0.setAttribute("aria-hidden", "true"); sc0.appendChild(el("span", null, "0")); sc0.appendChild(el("span", null, PAGE_LIMIT_EN + " pages")); t.appendChild(sc0);
+        const leg = el("ul", "v7-comp-leg"); leg.setAttribute("aria-hidden", "true");
+        segs.forEach(g => { const li = el("li"); const sw = el("span", "v7-comp-sw"); sw.style.background = COMP_TONES[g.k]; li.appendChild(sw); li.appendChild(document.createTextNode(g.l + ": " + g.n.toLocaleString("en-CA") + (g.n === 1 ? " word" : " words") + " (" + Math.round(g.n / sum * 100) + "%)")); leg.appendChild(li); });
+        t.appendChild(leg);
+      }
+      // Prem, 2026-11-13: "The length depends on the template, please review before submission."
+      t.appendChild(el("p", "v7-quiet v7-small", "The length depends on the template, please review before submission." + (w / 600 > PAGE_LIMIT_EN ? " This is over the English limit of 5 pages." : w / WORDS_PER_PAGE > PAGE_LIMIT_EN ? " This may be over the English limit of 5 pages." : "")));
+      return t;
+    }
+
+    // ── Review your draft: one closed question per row ──────────────────────
+    const RQ_ROLE_WORDS = { led: n => "led " + n, coled: n => "co-led " + n, part: n => "contributed a part to " + n, partnerled: n => "took part in " + n + " that partners led", cocreated: n => "made " + n + " with others", alone: n => "did " + n + " on your own" };
+    const listAnd = (a) => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+    function reviewQuestions() {
+      const sec = el("section", "v7-rq"); sec.setAttribute("aria-labelledby", "v7-rq-t");
+      const h = el("h3", "v7-h3", "Review your draft"); h.id = "v7-rq-t"; sec.appendChild(h);
+      if (!liveContributions().length) { sec.appendChild(el("p", "v7-quiet", "The questions appear once you have written a contribution.")); return sec; }
+      sec.appendChild(el("p", "v7-quiet v7-rq-lede", "Each question looks at one part of your draft. Open it to see what your draft shows, and tick it when you have checked."));
+      const rows = [
+        { id: "ownership", quality: "Ownership", q: "Is your own part clear in each contribution?", fact: rqRoleFact, look: "Please look at your role in each contribution." + (isCommunity() ? " Each one should make your own part clear and name the parts the partners led or hold." : ""), chart: rqRoleChart },
+        { id: "significance", quality: "Significance", q: "Does each contribution say what already changed?", fact: rqWordsFact, look: "Please look at where your words go. Each bar is one contribution, and each colour is one part. Select a part to edit it here; the bar changes as you type.", chart: rqWordsChart },
+        { id: "evidence", quality: "Evidence", q: "Does each contribution point to something outside your CV?", fact: rqEvidenceFact, look: "For each contribution: what you produced, and where others used it. Select an item to edit it, or use + Add.", chart: rqEvidenceChart },
+        { id: "reach", quality: "Reach", q: "How far did each change go?", fact: rqReachFact, look: "Mark where each change already happened, and where it could go next.", chart: rqReachChart },
+        { id: "mentorship", quality: "Mentorship", q: "Does the section name people and where they are now?", fact: rqPeopleFact, look: "Please look at the people you " + trainedWord() + ". Each line joins one person you describe to their level.", chart: rqPeopleChart },
+        { id: "coherence", quality: "Coherence", q: "Does your " + (isFrq() ? "background and skills section" : "statement") + " describe your whole record and end with what is next?", fact: rqStatementFact, look: "There is no chart for this question.", chart: null }
+      ];
+      rows.forEach(r => sec.appendChild(rqRow(r)));
+      return sec;
+    }
+    function rqRow(r) {
+      const d = el("details", "v7-rq-row"); d.dataset.rq = r.id;
+      if ((UI.rqOpen || {})[r.id]) d.open = true;
+      d.addEventListener("toggle", () => { (UI.rqOpen = UI.rqOpen || {})[r.id] = d.open; });
+      const s = el("summary");
+      const ql = el("span", "v7-rq-q"); ql.appendChild(el("span", "v7-rq-k", r.quality)); ql.appendChild(document.createTextNode(r.q)); s.appendChild(ql);
+      const f = el("span", "v7-rq-fact", r.fact()); s.appendChild(f);
+      const done = el("span", "v7-rq-done", "✓ Checked"); done.hidden = !ns.selfCheck[r.id]; s.appendChild(done);
+      d.appendChild(s);
+      const body = el("div", "v7-rq-body");
+      body.appendChild(el("p", "v7-rq-look", r.look));
+      if (r.chart) { const art = el("div", "v7-rq-art"); r.chart(art, () => { f.textContent = r.fact(); }); body.appendChild(art); }
+      const lab = el("label", "v7-rq-tick"); const cb = el("input"); cb.type = "checkbox"; cb.checked = !!ns.selfCheck[r.id];
+      cb.addEventListener("change", e => { ns.selfCheck[r.id] = e.target.checked; done.hidden = !e.target.checked; saveState(); });
+      lab.appendChild(cb); lab.appendChild(document.createTextNode("I have checked this.")); body.appendChild(lab);
+      d.appendChild(body);
+      return d;
+    }
+    const rqEmpty = (art, t, step, label) => { const p = el("p", "v7-quiet", t + " "); if (step) { const b = el("button", "v7-linkbtn", label); b.type = "button"; b.addEventListener("click", () => goStage(step)); p.appendChild(b); } art.appendChild(p); };
+
+    // Ownership
+    function rqRoleFact() {
+      const live = liveContributions(), by = ROLE_LEVELS.map(([v]) => [v, live.filter(({ c }) => c.roleMode === v).length]).filter(r => r[1]);
+      if (!by.length) return "No role level chosen yet.";
+      const none = live.length - by.reduce((s, r) => s + r[1], 0);
+      return "You " + listAnd(by.map(([v, n]) => RQ_ROLE_WORDS[v](n))) + "." + (none ? " " + none + (none === 1 ? " contribution has" : " contributions have") + " no role level yet." : "");
+    }
+    function rqRoleChart(art) {
+      const v = glanceRole();
+      if (!v) { rqEmpty(art, "Choose a role level on each contribution to see this chart.", "contrib", "Go to Contributions"); return; }
+      const box = el("div", "v7-gv-art"); box.innerHTML = v.svg; art.appendChild(box);
+    }
+
+    // Significance: where the words go, each part a button that opens its text.
+    const RQ_PARTS = () => ["stakes", "activities", "outputs", "outcomes", "translational", "impact"].map(k => {
+      const f = CF().find(x => x.k === k), meta = f.job ? SEG_META.find(m => m[0] === f.job) : null;
+      return { k, l: meta ? meta[1] : "One moment", tint: meta ? meta[2] : "#e8e2d2" };
+    });
+    function rqWordsFact() {
+      const live = liveContributions(), oc = live.map(({ c }) => countWords(c.outcomes || ""));
+      const empty = oc.map((n, k) => n ? 0 : k + 1).filter(Boolean);
+      if (empty.length) return "What already changed is empty in " + (empty.length > 1 ? "contributions " : "contribution ") + listAnd(empty.map(String)) + ".";
+      const lo = Math.min(...oc);
+      return live.length > 1 ? "What already changed is shortest in contribution " + (oc.indexOf(lo) + 1) + " (" + lo + (lo === 1 ? " word)." : " words).") : "What already changed has " + lo + (lo === 1 ? " word." : " words.");
+    }
+    function rqWordsChart(art, refresh) {
+      const parts = RQ_PARTS();
+      const leg = el("div", "v7-wb-leg"); leg.setAttribute("aria-hidden", "true");
+      parts.forEach(p => { const s = el("span"); const sw = el("i"); sw.style.background = p.tint; s.appendChild(sw); s.appendChild(document.createTextNode(p.l)); leg.appendChild(s); });
+      art.appendChild(leg);
+      const bars = el("div", "v7-wb"), ed = el("div", "v7-wb-ed");
+      const total = (x) => parts.reduce((s, p) => s + countWords(x[p.k] || ""), 0);
+      const max = Math.max(1, ...liveContributions().map(({ c }) => total(c))) * 1.2; // a fixed scale while the researcher types
+      const draw = () => {
+        bars.innerHTML = "";
+        liveContributions().forEach(({ c: x }, pos) => {
+          const row = el("div", "v7-wb-row");
+          row.appendChild(el("div", "v7-wb-t", (pos + 1) + ". " + (gvCut(one(x.title), 80) || "Untitled contribution")));
+          const bar = el("div", "v7-wb-bar");
+          parts.forEach(p => {
+            const n = countWords(x[p.k] || ""), b = el("button", "v7-wb-seg", n / max > 0.045 ? String(n) : "");
+            b.type = "button"; b.style.flexBasis = (n / max * 100) + "%"; b.style.background = p.tint;
+            b.dataset.cid = x.cid; b.dataset.k = p.k;
+            b.setAttribute("aria-label", "Edit contribution " + (pos + 1) + ", " + p.l + ": " + n + (n === 1 ? " word" : " words"));
+            b.addEventListener("click", () => open(x, pos, p));
+            bar.appendChild(b);
+          });
+          row.appendChild(bar); bars.appendChild(row);
+        });
+      };
+      const open = (x, pos, p) => {
+        ed.innerHTML = "";
+        const box = el("div", "v7-wb-box"); box.style.borderLeftColor = p.tint;
+        const id = "v7-wb-ta";
+        const lab = el("label"); lab.htmlFor = id; lab.appendChild(el("b", null, "Contribution " + (pos + 1) + ": " + p.l));
+        const cnt = el("span", "v7-wb-n"); lab.appendChild(cnt); box.appendChild(lab);
+        const ta = el("textarea", "v7-wb-text"); ta.id = id; ta.rows = 5; ta.value = x[p.k] || ""; box.appendChild(ta);
+        const setN = () => { const n = countWords(ta.value); cnt.textContent = " " + n + (n === 1 ? " word" : " words"); };
+        setN();
+        ta.addEventListener("input", () => { x[p.k] = ta.value; saveState(); setN(); draw(); refresh(); });
+        const row = el("div", "v7-actions");
+        const dn = el("button", "btn btn-outline v7-btn-small", "Done"); dn.type = "button";
+        dn.addEventListener("click", () => { ed.innerHTML = ""; const back = bars.querySelector('.v7-wb-seg[data-cid="' + x.cid + '"][data-k="' + p.k + '"]'); if (back) back.focus(); });
+        const go = el("button", "v7-linkbtn", "Open it on Contributions"); go.type = "button";
+        go.addEventListener("click", () => { x.folded = false; goStage("contrib"); focusField("c" + x.cid + "-" + p.k); });
+        row.appendChild(dn); row.appendChild(go); box.appendChild(row);
+        ed.appendChild(box); ta.focus();
+      };
+      draw();
+      art.appendChild(bars); art.appendChild(ed);
+    }
+
+    // Evidence: what you produced, and where others used it (Prem, 2026-11-13).
+    // INFERRED (V8.12): the kinds that show others used or cited the work.
+    const EV_USED = ["Policy / practice uptake", "Media / public", "Replication / citation", "Community document"];
+    const evUsed = (e) => EV_USED.indexOf(e.type) !== -1;
+    function rqEvidenceFact() {
+      const live = liveContributions(), none = live.map(({ c }, k) => liveEvidence(c).some(evUsed) ? 0 : k + 1).filter(Boolean);
+      if (!none.length) return "Every contribution has evidence that others used the work.";
+      if (none.length === live.length) return live.length > 1 ? "No contribution has evidence that others used the work yet." : "The contribution has no evidence that others used the work yet.";
+      return (none.length > 1 ? "Contributions " + listAnd(none.map(String)) + " have" : "Contribution " + none[0] + " has") + " no evidence that others used the work.";
+    }
+    function rqEvidenceChart(art, refresh) {
+      const wrap = el("div"), ed = el("div", "v7-wb-ed");
+      const draw = () => {
+        wrap.innerHTML = "";
+        const sc = el("div", "v7-rqev-scroll");
+        const tb = el("table", "v7-rqev-tab");
+        const hr = el("tr"); ["Contribution", "What you produced", "Where others used it"].forEach(t => { const th = el("th", null, t); th.scope = "col"; hr.appendChild(th); });
+        const th0 = el("thead"); th0.appendChild(hr); tb.appendChild(th0);
+        const bd = el("tbody");
+        liveContributions().forEach(({ c: x }, pos) => {
+          const tr = el("tr"); const rh = el("th", null, (pos + 1) + ". " + (gvCut(one(x.title), 70) || "Untitled contribution")); rh.scope = "row"; tr.appendChild(rh);
+          [false, true].forEach(used => {
+            const td = el("td"); const items = (x.evidence || []).map((e, k) => ({ e, k })).filter(({ e }) => (e.text || "").trim() && evUsed(e) === used);
+            if (items.length) {
+              const ul = el("ul");
+              items.forEach(({ e, k }) => {
+                const li = el("li"); const b = el("button", "v7-rqev-item"); b.type = "button";
+                b.appendChild(el("b", null, e.type || "Kind not chosen")); b.appendChild(el("span", null, gvCut(one(e.text), 60)));
+                b.setAttribute("aria-label", "Edit evidence for contribution " + (pos + 1) + ": " + (e.type || "kind not chosen") + ", " + gvCut(one(e.text), 60));
+                b.dataset.cid = x.cid; b.dataset.k = k;
+                b.addEventListener("click", () => open(x, pos, k, used));
+                li.appendChild(b); ul.appendChild(li);
+              });
+              td.appendChild(ul);
+            } else td.appendChild(el("span", "v7-rqev-none", "None yet"));
+            const add = el("button", "v7-rqev-add", "+ Add"); add.type = "button";
+            add.setAttribute("aria-label", "Add evidence to contribution " + (pos + 1) + (used ? ", where others used it" : ", what you produced"));
+            add.addEventListener("click", () => open(x, pos, -1, used));
+            td.appendChild(add); tr.appendChild(td);
+          });
+          bd.appendChild(tr);
+        });
+        tb.appendChild(bd); sc.appendChild(tb); wrap.appendChild(sc);
+      };
+      const open = (x, pos, k, used) => {
+        ed.innerHTML = "";
+        const isNew = k < 0, e = isNew ? { text: "", type: used ? EV_USED[0] : "Peer-reviewed" } : x.evidence[k];
+        const box = el("div", "v7-wb-box");
+        box.appendChild(el("b", null, "Contribution " + (pos + 1) + ": " + (isNew ? "add evidence" : "edit evidence")));
+        const kl = el("label", "v7-rqev-lab", "Kind"); const sel = el("select", "v7-select"); sel.id = "v7-ev-kind"; kl.htmlFor = sel.id;
+        (isNew ? EVIDENCE_TYPES.filter(t => (EV_USED.indexOf(t) !== -1) === used) : EVIDENCE_TYPES).forEach(t => { const o = el("option", null, t); o.value = t; if (t === e.type) o.selected = true; sel.appendChild(o); });
+        box.appendChild(kl); box.appendChild(sel);
+        const tl = el("label", "v7-rqev-lab", "Details"); const ta = el("textarea", "v7-wb-text"); ta.id = "v7-ev-text"; tl.htmlFor = ta.id; ta.rows = 3; ta.value = e.text || "";
+        box.appendChild(tl); box.appendChild(ta);
+        const row = el("div", "v7-actions");
+        const after = (msg) => { saveState(); draw(); refresh(); ed.innerHTML = ""; announce(msg); const back = wrap.querySelector('.v7-rqev-add'); if (back) back.focus(); };
+        const sv = el("button", "btn btn-primary v7-btn-small", "Save"); sv.type = "button";
+        sv.addEventListener("click", () => {
+          const v = { text: ta.value.trim(), type: sel.value };
+          if (!v.text) { ta.focus(); return; }
+          if (isNew) x.evidence = (x.evidence || []).concat([v]); else Object.assign(x.evidence[k], v);
+          after("Evidence saved for contribution " + (pos + 1) + ".");
+        });
+        row.appendChild(sv);
+        if (!isNew) { const rm = el("button", "btn btn-outline v7-btn-small", "Remove"); rm.type = "button"; rm.addEventListener("click", () => { x.evidence.splice(k, 1); after("Evidence removed from contribution " + (pos + 1) + "."); }); row.appendChild(rm); }
+        const cn = el("button", "btn btn-outline v7-btn-small", "Cancel"); cn.type = "button"; cn.addEventListener("click", () => { ed.innerHTML = ""; });
+        row.appendChild(cn); box.appendChild(row);
+        ed.appendChild(box); ta.focus();
+      };
+      draw();
+      art.appendChild(wrap); art.appendChild(ed);
+    }
+
+    // Reach of change (Prem, 2026-11-13): two marks per contribution, saved on the contribution.
+    const reachIdx = (v) => REACH_LEVELS.findIndex(r => r[0] === v);
+    function rqReachFact() {
+      const live = liveContributions().map(({ c }, k) => ({ c, n: k + 1 })).filter(({ c }) => c.reachNow);
+      if (!live.length) return "Not marked yet.";
+      const lo = Math.min(...live.map(({ c }) => reachIdx(c.reachNow))), low = live.filter(({ c }) => reachIdx(c.reachNow) === lo).map(x => String(x.n));
+      let t = (low.length > 1 ? "Contributions " + listAnd(low) + " have" : "Contribution " + low[0] + " has") + " the shortest reach so far: " + REACH_LEVELS[lo][1].toLowerCase() + ".";
+      const gaps = live.map(({ c, n }) => ({ n, c, g: c.reachCould ? reachIdx(c.reachCould) - reachIdx(c.reachNow) : 0 })), top = gaps.reduce((a, b) => b.g > a.g ? b : a, { g: 0 });
+      if (top.g > 0) t += " Contribution " + top.n + " could go furthest beyond where it is now: from " + REACH_LEVELS[reachIdx(top.c.reachNow)][1].toLowerCase() + " to " + REACH_LEVELS[reachIdx(top.c.reachCould)][1].toLowerCase() + ".";
+      return t;
+    }
+    function rqReachChart(art, refresh) {
+      const fs = el("fieldset", "v7-reach-mode"); fs.appendChild(el("legend", null, "Select a box to mark:"));
+      [["now", "Where it already changed"], ["could", "Where it could go next"]].forEach(([v, l]) => {
+        const lab = el("label"); const r = el("input"); r.type = "radio"; r.name = "v7-reach-mode"; r.value = v; r.checked = (UI.reachMode || "now") === v;
+        r.addEventListener("change", () => { UI.reachMode = v; });
+        lab.appendChild(r); lab.appendChild(el("span", "v7-rm v7-rm-" + v)).setAttribute("aria-hidden", "true"); lab.appendChild(document.createTextNode(l)); fs.appendChild(lab);
+      });
+      art.appendChild(fs);
+      const wrap = el("div");
+      const draw = () => {
+        wrap.innerHTML = "";
+        const sc = el("div", "v7-rqev-scroll"); const tb = el("table", "v7-reach-tab");
+        const hr = el("tr"); const h0 = el("th", null, "Contribution"); h0.scope = "col"; hr.appendChild(h0);
+        REACH_LEVELS.forEach(([, l]) => { const th = el("th", null, l); th.scope = "col"; hr.appendChild(th); });
+        const th0 = el("thead"); th0.appendChild(hr); tb.appendChild(th0);
+        const bd = el("tbody");
+        liveContributions().forEach(({ c: x }, pos) => {
+          const tr = el("tr"); const rh = el("th", null, (pos + 1) + ". " + (gvCut(one(x.title), 60) || "Untitled contribution")); rh.scope = "row"; tr.appendChild(rh);
+          const a = reachIdx(x.reachNow), b = reachIdx(x.reachCould);
+          REACH_LEVELS.forEach(([v, l], j) => {
+            const td = el("td"); if (a >= 0 && b > a && j > a && j < b) td.className = "is-between";
+            const now = j === a, could = j === b;
+            const btn = el("button", "v7-reach-cell"); btn.type = "button"; btn.dataset.cid = x.cid; btn.dataset.l = v;
+            btn.appendChild(el("span", now ? "v7-rm v7-rm-now" : could ? "v7-rm v7-rm-could" : "v7-rm-dot")).setAttribute("aria-hidden", "true");
+            btn.setAttribute("aria-label", "Contribution " + (pos + 1) + ", " + l + ": " + (now && could ? "already changed, and as far as it could go" : now ? "already changed here" : could ? "could go here next" : "not marked"));
+            btn.addEventListener("click", () => {
+              if ((UI.reachMode || "now") === "now") { if (x.reachNow === v) { x.reachNow = ""; } else { x.reachNow = v; if (!x.reachCould || reachIdx(x.reachCould) < j) x.reachCould = v; } }
+              else { if (x.reachCould === v) x.reachCould = x.reachNow || ""; else x.reachCould = (x.reachNow && reachIdx(x.reachNow) > j) ? x.reachNow : v; }
+              saveState(); draw(); refresh();
+              const back = wrap.querySelector('.v7-reach-cell[data-cid="' + x.cid + '"][data-l="' + v + '"]'); if (back) back.focus();
+            });
+            td.appendChild(btn); tr.appendChild(td);
+          });
+          bd.appendChild(tr);
+        });
+        tb.appendChild(bd); sc.appendChild(tb); wrap.appendChild(sc);
+      };
+      draw();
+      art.appendChild(wrap);
+      art.appendChild(el("p", "v7-quiet v7-small", "A filled dot marks where the change already happened; a ring, where it could go next. The shaded boxes between them show the distance. The marks stay in the tool and do not print."));
+    }
+
+    // Mentorship: everyone trained, by level, joined to the people described (Prem, 2026-11-13).
+    const RQ_LEVEL_OF = { postdoc: "postdoc", doctoral: "phd", masters: "masters", undergrad: "undergrad", other: "other" };
+    const RQ_ONE = { postdoc: "A postdoctoral fellow", doctoral: "A doctoral student", masters: "A master’s student", undergrad: "An undergraduate researcher" };
+    const rqCount = (k) => parseInt(cleanCount(ns.mentorCounts[k]), 10) || 0;
+    const rqDescribed = () => ns.mentees.filter(m => menteeHasContent(m) && m.stageKind);
+    function rqPeopleFact() {
+      const tot = MENTOR_COUNT_LABELS.reduce((s, [k]) => s + rqCount(k), 0), d = rqDescribed().length;
+      if (!tot && !d) return "No numbers or people entered on Mentorship yet.";
+      return "You " + trainedWord() + " " + tot + (tot === 1 ? " person" : " people") + " and describe " + (d === 0 ? "none" : d) + (d && tot ? " of them." : ".");
+    }
+    function rqLevelNoun(k) { const row = MENTOR_COUNT_LABELS.find(r => r[0] === k); return k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : row[2]; }
+    function rqPeopleChart(art) {
+      const tot = MENTOR_COUNT_LABELS.reduce((s, [k]) => s + rqCount(k), 0), ms = rqDescribed();
+      if (!tot && !ms.length) { rqEmpty(art, "Add the numbers on Mentorship to see this chart.", "mentor", "Go to Mentorship"); return; }
+      const order = MENTOR_COUNT_LABELS.map(r => r[0]);
+      const lv = MENTOR_COUNT_LABELS.filter(([k]) => rqCount(k) || ms.some(m => RQ_LEVEL_OF[m.stageKind] === k));
+      const sorted = ms.slice().sort((a, b) => order.indexOf(RQ_LEVEL_OF[a.stageKind]) - order.indexOf(RQ_LEVEL_OF[b.stageKind]));
+      const H = Math.max(260, sorted.length * 58), top = 30, gap = 6;
+      let body = gvText(16, 16, "Everyone you " + trainedWord() + ": " + tot, { size: 12, weight: 600 }) + gvText(270, 16, "The " + sorted.length + (sorted.length === 1 ? " person" : " people") + " you describe", { size: 12, weight: 600 });
+      let y = top; const mid = {};
+      const sumMin = lv.length * 40, avail = Math.max(H - gap * lv.length - sumMin, 0);
+      lv.forEach(([k, l]) => {
+        const n = rqCount(k), h = 40 + (tot ? n / tot * avail : 0), d = ms.filter(m => RQ_LEVEL_OF[m.stageKind] === k).length;
+        body += gvRect(176, y, 22, h, "#ddd7ea", ' stroke="#8a8a8a"');
+        body += gvText(16, y + h / 2 - 1, gvCut(k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : k === "undergrad" ? "Undergraduate" : l, 26), { size: 12 });
+        body += gvText(16, y + h / 2 + 14, n + " · " + (d ? d + " described" : "none described"), { size: 11, fill: GV_MUTED });
+        mid[k] = y + h / 2; y += h + gap;
+      });
+      const bh = 46, step = sorted.length > 1 ? Math.min(58, (H - bh) / (sorted.length - 1)) : 0;
+      sorted.forEach((m, j) => {
+        const a = mid[RQ_LEVEL_OF[m.stageKind]] != null ? mid[RQ_LEVEL_OF[m.stageKind]] : top, by = top + j * step, ty = by + bh / 2;
+        const who = RQ_ONE[m.stageKind] || "A " + gvCut(one(m.stageOther) || "trainee", 24).replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase());
+        const kind = (MENTEE_KINDS.find(r => r[0] === m.kind) || [, ""])[1];
+        body += '<path d="M198 ' + a + " C 232 " + a + ", 236 " + ty + ", 270 " + ty + '" fill="none" stroke="#912338" stroke-width="2" opacity=".75"/>';
+        body += gvRect(270, by, 244, bh, "#fbf3e6", ' rx="6" stroke="#8a8a8a"');
+        body += gvText(278, by + 18, who, { size: 12, weight: 600 });
+        body += gvText(278, by + 35, kind || one(m.org) ? gvCut("Now: " + [one(m.org), kind].filter(Boolean).join(", "), 38) : "Where they are now: not given", { size: 11.5 });
+      });
+      const fh = Math.max(y, top + (sorted.length ? (sorted.length - 1) * step + bh : 0)) + 20;
+      body += gvText(16, fh, "Each line joins one person you describe to their level. The others are counted, not described.", { size: 11, fill: GV_MUTED });
+      const label = "Everyone you " + trainedWord() + ", " + tot + " in all: " + lv.map(([k, l]) => l + " " + rqCount(k)).join(", ") + ". The people you describe: " + (sorted.length ? sorted.map(m => (RQ_ONE[m.stageKind] || "a trainee") + ((MENTEE_KINDS.find(r => r[0] === m.kind) || [, ""])[1] ? ", now " + (MENTEE_KINDS.find(r => r[0] === m.kind))[1].toLowerCase() : "")).join("; ") : "none") + ".";
+      const box = el("div", "v7-gv-art"); box.innerHTML = gvSvg(fh + 10, label, body); art.appendChild(box);
+      if (tot) {
+        // The ring: the share of each level, with the largest group named (Prem kept it, 2026-11-13).
+        const cols = ["#bfdce9", "#d3e0c4", "#f7e5b8", "#f7d4cc", "#ddd7ea"];
+        let a0 = -Math.PI / 2, rb = ""; const cx = 90, cy = 90, r1 = 76, r2 = 44;
+        const p = (an, rr) => (cx + rr * Math.cos(an)).toFixed(1) + " " + (cy + rr * Math.sin(an)).toFixed(1);
+        const rows = MENTOR_COUNT_LABELS.map(([k, l], i) => ({ k, l: k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : l, n: rqCount(k), col: cols[i] })).filter(r => r.n);
+        rows.forEach((r, i) => {
+          const a1 = a0 + r.n / tot * 2 * Math.PI;
+          if (rows.length === 1) rb += '<circle cx="' + cx + '" cy="' + cy + '" r="' + ((r1 + r2) / 2) + '" fill="none" stroke="' + r.col + '" stroke-width="' + (r1 - r2) + '"/>';
+          else rb += '<path d="M' + p(a0, r1) + " A" + r1 + " " + r1 + " 0 " + (a1 - a0 > Math.PI ? 1 : 0) + " 1 " + p(a1, r1) + " L" + p(a1, r2) + " A" + r2 + " " + r2 + " 0 " + (a1 - a0 > Math.PI ? 1 : 0) + " 0 " + p(a0, r2) + ' Z" fill="' + r.col + '" stroke="#ffffff" stroke-width="2"/>';
+          rb += gvRect(200, 22 + i * 26, 14, 14, r.col, ' rx="3" stroke="#8a8a8a"') + gvText(222, 34 + i * 26, gvCut(r.l, 30) + ": " + r.n + " (" + Math.round(r.n / tot * 100) + "%)", { size: 12 });
+          a0 = a1;
+        });
+        rb += gvText(cx, cy + 6, String(tot), { size: 18, weight: 700, anchor: "middle" });
+        const rl = "Share of people " + trainedWord() + " by level: " + rows.map(r => r.l + " " + r.n).join(", ") + ".";
+        const rbx = el("div", "v7-gv-art v7-rq-ring"); rbx.innerHTML = gvSvg(Math.max(184, 30 + rows.length * 26), rl, rb); art.appendChild(rbx);
+        const big = rows.reduce((x, y2) => y2.n > x.n ? y2 : x), d = ms.filter(m => RQ_LEVEL_OF[m.stageKind] === big.k).length;
+        const noun = rqLevelNoun(big.k);
+        art.appendChild(el("p", "v7-rq-ringfact", noun.charAt(0).toUpperCase() + noun.slice(1) + " are your largest group (" + big.n + " of " + tot + "), and you describe " + (d ? d : "none") + " of them."));
+      }
+    }
+
+    // Coherence: no chart; the fact line only.
+    function rqStatementFact() {
+      const n = printedWords(sectionText("ps")), name = isFrq() ? "Your background and skills section" : "Your statement";
+      if (!n) return name + " is not written yet.";
+      return name + " has " + n.toLocaleString("en-CA") + (n === 1 ? " word" : " words") + ((ns.ps.horizon || "").trim() ? " and ends with what you plan to do next." : "; it does not yet end with what you plan to do next.");
+    }
+
+    // Before you export: the checks with no data behind them.
+    function reviewBefore() {
       const sc = el("section", "v7-card v7-selfcheck"); sc.setAttribute("aria-labelledby", "v7-sc-t");
-      const sct = el("h3", "v7-h3", "Self-check before you export"); sct.id = "v7-sc-t"; sc.appendChild(sct);
+      const sct = el("h3", "v7-h3", "Before you export"); sct.id = "v7-sc-t"; sc.appendChild(sct);
       [
-        ["ownership", isCommunity() ? "Ownership: each contribution makes my own part clear and names the parts the partners led or hold." : "Ownership: each contribution makes my own role clear, even when a team did the work."], // r9-b-11
-        ["specificity", "Specificity: my claims name outcomes, organizations and numbers where I am free to give them, and leave out journal-based metrics."], // r13-b-1
-        ["significance", "Significance: each contribution says what changed, and keeps what already changed separate from what could change."],
-        ["coherence", "Coherence: my " + (isFrq() ? "background and skills section" : "personal statement") + " describes my whole record and ends with what I plan to do next."],
         ["selection", "Selection: each contribution relates to this application, and I chose them for this funding opportunity."],
+        ["specificity", "Specificity: my claims name outcomes, organizations and numbers where I am free to give them, and leave out journal-based metrics."], // r13-b-1
         ["proofread", "Proofread: I read the draft aloud, or had it read to me, and fixed typing mistakes."], // r15-a-9
-        ["mentorship", "Mentorship: my supervision and mentorship section names at least one person I " + trainedWord() + " and " + wentWord() + "."],
         // r5-b-7 (inferred): communities, partners and people are named only as they agreed to be.
         ["agreement", "Agreement: the communities, partners and people named in my CV agreed to how they" + (isCommunity() ? " and their data" : "") + " are described."],
         ["format", "Format: I will paste this into the current version of " + templateOf() + " template and keep within the page limit."]
@@ -6289,8 +6703,7 @@
         sc.appendChild(label);
       });
       sc.appendChild(el("p", "v7-closing", "Prepare your CV in the current version of " + templateOf() + " template (" + (isFrq() ? "the CV-FRQ" : "the TCV") + "), and keep the formatting it sets. Keep within the page limit: " + PAGE_LIMIT + "."));
-      c.appendChild(sc);
-      navRow(c);
+      return sc;
     }
 
     // ── At a glance visuals (Prem, 2026-10-29) ─────────────────────────────
@@ -6331,61 +6744,6 @@
     }
     const gvSummary = (title, rows) => title + ": " + rows.filter(r => r[1] > 0).map(r => r[0] + " " + r[1]).join(", ");
 
-    // 1. Evidence by type, across all contributions' live evidence items.
-    function glanceEvidence() {
-      const counts = EVIDENCE_TYPES.map(t => [t, 0]); let untyped = 0;
-      ns.contributions.filter(c => !c.later).forEach(c => liveEvidence(c).forEach(e => {
-        const row = counts.find(r => r[0] === e.type);
-        if (row) row[1]++; else untyped++;
-      }));
-      // r4-a-10: a label short enough for the chart.
-      counts.forEach(r => { if (/^Exhibition/.test(r[0])) r[0] = "Exhibition or performance"; });
-      if (untyped) counts.push(["Kind not chosen", untyped]);
-      const total = counts.reduce((n, r) => n + r[1], 0);
-      if (!total) return null;
-      const title = "Evidence by type";
-      const sub = gvText(16, 26, total + (total === 1 ? " evidence item" : " evidence items") + " across your contributions", { size: 12, fill: GV_MUTED });
-      const bars = gvBarRows(counts, 42, Math.max(...counts.map(r => r[1])));
-      return { key: "evidence", title, summary: gvSummary(title, counts), svg: gvSvg(42 + bars.h + 10, gvSummary(title, counts), sub + bars.svg) };
-    }
-
-    // 2. The six parts across contributions: one row per contribution, one column per part.
-    function glanceParts() {
-      const live = liveContributions();
-      if (!live.length) return null;
-      const parts = CF().filter(f => f.job).map(f => ({ k: f.k, job: f.job, meta: SEG_META.find(m => m[0] === f.job) }));
-      const title = "The six parts in each contribution";
-      const lx = 16, gx = 184, cw = (GV_W - gx - 8) / parts.length, sq = 18, rh = 34;
-      let body = "";
-      // Column heads wrapped at about nine characters a line, bottom-aligned above the squares;
-      // the head grows with the longest label ("The problem or question" takes four lines).
-      const heads = parts.map(p => { const lines = []; p.meta[1].split(" ").forEach(wd => { const last = lines.length - 1; if (last >= 0 && (lines[last] + " " + wd).length <= 9) lines[last] += " " + wd; else lines.push(wd); }); return lines; });
-      const headH = 18 + 12 * Math.max(3, ...heads.map(l => l.length));
-      parts.forEach((p, j) => {
-        const lines = heads[j], cx = gx + j * cw + cw / 2;
-        lines.forEach((ln, k) => { body += gvText(cx, headH - 10 - (lines.length - 1 - k) * 12, ln, { size: 10.5, fill: GV_MUTED, anchor: "middle" }); });
-      });
-      const said = [];
-      live.forEach(({ c }, pos) => {
-        const y = headH + pos * rh;
-        if (pos) body += '<line x1="' + lx + '" y1="' + (y - 4) + '" x2="' + (GV_W - 12) + '" y2="' + (y - 4) + '" stroke="' + GV_TRACK + '" stroke-width="1"/>';
-        body += gvText(lx, y + 12, "Contribution " + (pos + 1), { size: 12, weight: 600 });
-        body += gvText(lx, y + 26, gvCut(c.title || "No headline yet", 27), { size: 11, fill: GV_MUTED });
-        const have = [];
-        parts.forEach((p, j) => {
-          const on = cHas(c, p.k), x = gx + j * cw + (cw - sq) / 2;
-          body += on ? gvRect(x, y + 4, sq, sq, p.meta[2], ' rx="3" stroke="#8a8a8a" stroke-width="1"')
-            : gvRect(x + 0.75, y + 4.75, sq - 1.5, sq - 1.5, "#ffffff", ' rx="3" stroke="' + GV_HAIR + '" stroke-width="1.5"');
-          if (on) have.push(p.meta[1]);
-        });
-        // r11-b-20: name only what is missing.
-        const lacking = parts.filter(p => have.indexOf(p.meta[1]) === -1).map(p => p.meta[1]);
-        said.push("Contribution " + (pos + 1) + (!lacking.length ? " has all " + parts.length : " has " + have.length + " of " + parts.length + (have.length ? "; missing " + lacking.join(", ") : "")));
-      });
-      const label = title + ". " + said.join("; ") + ".";
-      return { key: "parts", title, summary: label, svg: gvSvg(headH + live.length * rh + 6, label, body) };
-    }
-
     // 3. Your role: the six levels (Q-20), across live contributions.
     const GV_ROLE = { led: "Led", coled: "Co-led", part: "Contributed a specific part", partnerled: "Partners led, I took part", cocreated: "Made with others", alone: "On my own" };
     function glanceRole() {
@@ -6403,33 +6761,6 @@
       return { key: "role", title, summary: gvSummary(title, rows), svg: gvSvg(42 + bars.h + 10, gvSummary(title, rows), sub + bars.svg) };
     }
 
-    // 4. People trained (counts by level) and where the trainees you described are now.
-    function glanceTrained() {
-      const levels = MENTOR_COUNT_LABELS.map(([k, l]) => [l, parseInt(cleanCount(ns.mentorCounts[k]), 10) || 0]);
-      const withContent = ns.mentees.filter(menteeHasContent);
-      // r3-b: short sector names, so a label fits the chart ("Health system", not the full option).
-      const kinds = MENTEE_KINDS.map(([k, l]) => [{ health: "Health system", arts: "Arts, culture or heritage", community: "Community agency", indigenous: "First Nations, Inuit or Métis", artist: "Self-employed artist", college: "College, CEGEP or school", ltc: "Long-term care or seniors" }[k] || l, withContent.filter(m => m.kind === k).length]);
-      const nL = levels.reduce((n, r) => n + r[1], 0), nK = kinds.reduce((n, r) => n + r[1], 0);
-      if (!nL && !nK) return null;
-      const title = "People " + trainedWord() + " and " + wentWord();
-      let body = "", y = 8;
-      const parts = [];
-      if (nL) {
-        body += gvText(16, y + 18, "By level (" + nL + " in total)", { size: 12.5, weight: 600 });
-        const b = gvBarRows(levels.filter(r => r[1] > 0), y + 30, Math.max(...levels.map(r => r[1])));
-        body += b.svg; y += 30 + b.h + 8;
-        parts.push("by level, " + levels.filter(r => r[1] > 0).map(r => r[0] + " " + r[1]).join(", "));
-      }
-      if (nK) {
-        body += gvText(16, y + 18, "Where the trainees you described are now (" + nK + ")", { size: 12.5, weight: 600 });
-        const b = gvBarRows(kinds.filter(r => r[1] > 0), y + 30, Math.max(...kinds.map(r => r[1])));
-        body += b.svg; y += 30 + b.h + 8;
-        parts.push("where they are now, " + kinds.filter(r => r[1] > 0).map(r => r[0] + " " + r[1]).join(", "));
-      }
-      const label = title + ": " + parts.join("; ");
-      return { key: "trained", title, summary: label, svg: gvSvg(y + 4, label, body) };
-    }
-
     // 5. Length against the page limit. The three groups mirror draftWords() exactly, so they add
     // up to the same total the Length tile shows.
     const gvCount = (parts) => countWords(parts.filter(Boolean).join(" "));
@@ -6442,144 +6773,6 @@
     }
     const GV_LEN_TONES = { contrib: "#912338", mentor: "#c27a88", ps: "#e7cfd3" };
     const roughWords = (n) => n > 100 ? Math.round(n / 10) * 10 : n;
-    function glanceLength() {
-      const s = glanceWordSplit(), total = s.contrib + s.mentor + s.ps;
-      if (!total) return null;
-      const title = "Length against the page limit";
-      const cap = WORDS_PER_PAGE * PAGE_LIMIT_EN, scale = Math.max(cap, total);
-      const bx = 16, bw = GV_W - 32, by = 50, bh = 26;
-      // W-51: the CV's order and the tool's short names; tens only above 100 words.
-      const segs = [["ps", isFrq() ? "Background and skills" : "Personal statement"], ["contrib", "Contributions"], ["mentor", "Mentorship"]].map(([k, l]) => ({ k, l, n: s[k] }));
-      let body = gvText(16, 26, "About " + gvNum(roughWords(total)) + (total === 1 ? " word, " : " words, ") + (total / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(total).replace("roughly ", "")) + (total / WORDS_PER_PAGE > PAGE_LIMIT_EN ? " pages, roughly; the limit is " + PAGE_LIMIT_EN : " of " + PAGE_LIMIT_EN + " pages, roughly"), { size: 12.5 });
-      body += gvRect(bx, by, bw, bh, GV_TRACK, ' rx="3"');
-      let x = bx;
-      segs.forEach(g => { if (!g.n) return; const w = bw * g.n / scale; body += gvRect(x, by, w, bh, GV_LEN_TONES[g.k], ' stroke="#ffffff" stroke-width="1"'); x += w; });
-      // Page ticks and the limit line.
-      for (let pg = 1; pg <= Math.floor(scale / WORDS_PER_PAGE); pg++) {
-        const tx = bx + bw * (pg * WORDS_PER_PAGE) / scale;
-        body += '<line x1="' + tx + '" y1="' + (by + bh) + '" x2="' + tx + '" y2="' + (by + bh + 5) + '" stroke="' + GV_MUTED + '" stroke-width="1"/>';
-        if (pg === PAGE_LIMIT_EN || pg === 1) body += gvText(tx, by + bh + 17, pg === PAGE_LIMIT_EN ? PAGE_LIMIT_EN + " pages (limit)" : "1 page", { size: 10.5, fill: GV_MUTED, anchor: pg === PAGE_LIMIT_EN && tx > GV_W - 60 ? "end" : "middle" });
-      }
-      const lim = bx + bw * cap / scale;
-      body += '<line x1="' + lim + '" y1="' + (by - 6) + '" x2="' + lim + '" y2="' + (by + bh + 5) + '" stroke="' + GV_INK + '" stroke-width="1.5" stroke-dasharray="3 2"/>';
-      // Legend, one line per section so long section names fit.
-      const ly0 = by + bh + 40;
-      segs.forEach((g, i) => {
-        const ly = ly0 + i * 20;
-        body += gvRect(16, ly - 10, 12, 12, GV_LEN_TONES[g.k], ' rx="2"' + (g.k === "ps" ? ' stroke="#b9a0a5" stroke-width="1"' : ""));
-        body += gvText(34, ly, g.l, { size: 12 });
-        body += gvText(GV_W - 16, ly, gvNum(g.n) + (g.n === 1 ? " word" : " words"), { size: 12, weight: 600, anchor: "end" });
-      });
-      const ly = ly0 + segs.length * 20 - 20;
-      body += gvText(16, ly + 24, "At 500 to 600 words a page. The template sets the real length.", { size: 11, fill: GV_MUTED });
-      const label = title + ": about " + total + " words against " + PAGE_LIMIT_EN + " pages; " + segs.map(g => g.l.toLowerCase() + " " + g.n).join(", ") + ".";
-      return { key: "length", title, summary: label, svg: gvSvg(ly + 36, label, body) };
-    }
-
-    // The saved image carries its own title band, since the page shows the title outside the SVG.
-    function gvForPng(v) {
-      const m = v.svg.match(/^(<svg[^>]*viewBox="0 0 (\d+) )(\d+)("[^>]*height=")(\d+)("[^>]*>)(<title>.*?<\/title>)([\s\S]*)<\/svg>$/);
-      if (!m) return v.svg;
-      const h = +m[3] + 30;
-      return m[1] + h + m[4] + h + m[6] + m[7] + gvRect(0, 0, GV_W, h, "#ffffff") + gvText(16, 24, v.title, { size: 15, weight: 700 }) +
-        '<g transform="translate(0 30)">' + m[8] + "</g></svg>";
-    }
-    // Every visual that has data, in a fixed order.
-    // [{key, title, summary, svg (string, for the page), png (string, for the saved image)}]
-    function glanceSvgs() {
-      return [glanceEvidence, glanceParts, glanceRole, glanceTrained, glanceLength].map(f => f()).filter(Boolean)
-        .map(v => Object.assign(v, { png: gvForPng(v) }));
-    }
-
-    // Renders an SVG (element or string) to a 2x canvas on white and downloads it as a PNG.
-    // A data: URL keeps it offline and leaves the canvas untainted.
-    function downloadPng(svg, filename) {
-      return new Promise((resolve) => {
-        const src = typeof svg === "string" ? svg : new XMLSerializer().serializeToString(svg);
-        const vb = (src.match(/viewBox="([\d.\s-]+)"/) || [])[1];
-        const dims = vb ? vb.trim().split(/\s+/).map(Number) : [GV_W, 300];
-        const w = dims[2] || GV_W, h = dims[3] || 300, scale = 2;
-        const img = new Image();
-        img.onload = () => {
-          const cv = document.createElement("canvas"); cv.width = Math.round(w * scale); cv.height = Math.round(h * scale);
-          const cx = cv.getContext("2d");
-          cx.fillStyle = "#ffffff"; cx.fillRect(0, 0, cv.width, cv.height);
-          cx.drawImage(img, 0, 0, cv.width, cv.height);
-          const fire = (href, revoke) => {
-            const a = el("a"); a.href = href; a.download = filename;
-            document.body.appendChild(a); a.click(); a.remove();
-            if (revoke) setTimeout(() => URL.revokeObjectURL(href), 1000);
-            resolve(true);
-          };
-          if (cv.toBlob) cv.toBlob(b => b ? fire(URL.createObjectURL(b), true) : fire(cv.toDataURL("image/png"), false), "image/png");
-          else fire(cv.toDataURL("image/png"), false);
-        };
-        img.onerror = () => resolve(false);
-        img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(src);
-      });
-    }
-    const gvFile = (key) => "narrative-cv-" + key + ".png";
-
-    // Review: the At a glance section. Renders nothing when no visual has data.
-    function renderGlance(parent, opts) {
-      opts = opts || {};
-      const list = glanceSvgs();
-      if (!list.length) return null;
-      const sec = el("section", "v7-gv"); sec.setAttribute("aria-labelledby", "v7-gv-t");
-      const h = el("h3", "v7-h3", opts.title || "At a glance"); h.id = "v7-gv-t"; sec.appendChild(h);
-      sec.appendChild(el("p", "v7-quiet v7-gv-lede", "These charts use the details you entered as well as the text you wrote."));
-      const grid = el("div", "v7-gv-grid");
-      list.forEach(v => {
-        const fig = el("figure", "v7-gv-box"); fig.dataset.gv = v.key;
-        const cap = el("figcaption", "v7-gv-cap", v.title); fig.appendChild(cap);
-        const art = el("div", "v7-gv-art"); art.innerHTML = v.svg; fig.appendChild(art);
-        const foot = el("div", "v7-gv-foot");
-        const b = el("button", "v7-linkbtn v7-gv-dl", "Download image"); b.type = "button";
-        b.setAttribute("aria-label", "Download image: " + v.title);
-        const st = el("span", "v7-copied"); st.setAttribute("aria-live", "polite");
-        b.addEventListener("click", async () => {
-          countEvent("glancePng");
-          const ok = await downloadPng(v.png, gvFile(v.key));
-          st.textContent = ok ? "Downloaded " + gvFile(v.key) + "." : "The image could not be made in this browser.";
-          setTimeout(() => { st.textContent = ""; }, 2500);
-        });
-        foot.appendChild(b); foot.appendChild(st); fig.appendChild(foot);
-        grid.appendChild(fig);
-      });
-      sec.appendChild(grid);
-      parent.appendChild(sec);
-      return sec;
-    }
-
-    // Export: one button that downloads each available visual as its own PNG, a little apart so
-    // the browser accepts several downloads.
-    function renderGlanceExport(parent) {
-      const list = glanceSvgs();
-      if (!list.length) return null;
-      const sec = el("section", "v7-gv-exp"); sec.setAttribute("aria-labelledby", "v7-gvx-t");
-      const h = el("h3", "v7-h3", "Visuals from your draft"); h.id = "v7-gvx-t"; sec.appendChild(h);
-      sec.appendChild(el("p", "v7-quiet v7-gap-b", "The " + (list.length === 1 ? "visual" : list.length + " visuals") + " from What your draft contains on the Review page, each saved as a separate PNG image: " + list.map(v => v.title.toLowerCase()).join("; ") + "."));
-      const b = el("button", "btn btn-outline", list.length === 1 ? "Download the visual" : "Download all visuals"); b.type = "button"; b.id = "v7-gv-all";
-      const st = el("span", "v7-copied"); st.setAttribute("aria-live", "polite");
-      // W-11: aria-disabled while the images download, so focus stays on the button; a second click waits.
-      let busy = false;
-      b.addEventListener("click", async () => {
-        if (busy) return;
-        countEvent("glancePngAll");
-        busy = true; b.setAttribute("aria-disabled", "true"); let n = 0;
-        for (let i = 0; i < list.length; i++) {
-          if (i) await new Promise(r => setTimeout(r, 350));
-          if (await downloadPng(list[i].png, gvFile(list[i].key))) n++;
-        }
-        busy = false; b.removeAttribute("aria-disabled");
-        st.textContent = n === list.length ? "Downloaded " + n + (n === 1 ? " image." : " images.") : n + " of " + list.length + " images downloaded.";
-        setTimeout(() => { st.textContent = ""; }, 3000);
-      });
-      const row = el("div", "v7-actions"); row.appendChild(b); row.appendChild(st); sec.appendChild(row);
-      parent.appendChild(sec);
-      return sec;
-    }
-
     // ── Stage: Export (V7-33) ──────────────────────────────────────────────
     function renderExport(c) {
       stageHead(c, "", "Export your draft",
@@ -6692,7 +6885,6 @@
       pt2.appendChild(row);
       renderFormatNote(pt2, false);
       c.appendChild(pt2);
-      renderGlanceExport(c);
 
       const kw = el("section", "v7-card"); kw.setAttribute("aria-labelledby", "v7-kw-t");
       const kwt = el("h3", "v7-h3", "Keep your work"); kwt.id = "v7-kw-t"; kw.appendChild(kwt);
@@ -7050,7 +7242,7 @@
         (Object.values(ns.mentorCounts).some(v => String(v).trim()) ? "yes" : "no") + ", " +
         [ns.mentorPhilosophy, ns.mentorEDI, ns.mentorCrossStage].filter(v => (v || "").trim()).length + " of 3 prompts answered");
       if (ns.mode === "xray" || ns.xray.text.trim()) out.push("Structural read: pasted text " + (ns.xray.text.trim() ? "present" : "empty") + ", runs " + (S.events.structuralRead || 0) + ", sample draft used " + (S.events.sampleDraft || 0) + "×");
-      { const ids = ["ownership", "specificity", "significance", "coherence", "selection", "proofread", "mentorship", "agreement", "format"]; out.push("Self-check ticked: " + ids.filter(id => ns.selfCheck[id]).length + " of " + ids.length); } // Z-3
+      { const ids = ["ownership", "significance", "evidence", "reach", "mentorship", "coherence", "selection", "specificity", "proofread", "agreement", "format"]; out.push("Self-check ticked: " + ids.filter(id => ns.selfCheck[id]).length + " of " + ids.length); } // Z-3
       out.push("Actions: " + [["downloadDraft", "draft downloaded"], ["downloadPacket", "advisor packet downloaded"], ["printView", "print view"],
         ["copyDraft", "draft copied"], ["downloadWord", "Word file downloaded"], ["copySection", "section copied"], ["orderMove", "contributions moved"],
         ["assemble", "assembled paragraph opened"]].map(([k, l]) => l + " " + (S.events[k] || 0)).join(", "));

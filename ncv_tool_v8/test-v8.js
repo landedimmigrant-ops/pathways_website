@@ -234,24 +234,53 @@ async function seed(state, extra) {
     q('[id$="-dn"]:not([disabled])').click(); await w(150);
     a.after=qa('.v7-ot').map(x=>x.innerText); a.focusOk=/^mv-/.test(document.activeElement.id); a.first=q('.v7-draft-body b').innerText;
     a.missing=qa('.v7-glance a').length;
-    a.gvHead=q('#v7-gv-t')?.innerText; a.gv=qa('.v7-gv-box').map(f=>f.dataset.gv); a.gvDl=qa('.v7-gv-box .v7-gv-dl').map(b=>b.innerText);
-    a.gvAria=qa('.v7-gv-box svg').map(s=>s.getAttribute('role')+'|'+s.getAttribute('aria-label')); a.gvText=q('.v7-gv')?.innerText||'';
-    a.gvBelow=!!(q('.v7-draft-body') && q('#v7-gv-t') && (q('.v7-draft-body').compareDocumentPosition(q('#v7-gv-t')) & Node.DOCUMENT_POSITION_FOLLOWING));
-    const gn=[], gt=[]; const oc2=URL.createObjectURL; URL.createObjectURL=(b)=>{gt.push(b.type);return oc2(b);};
-    const ocl2=HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click=function(){gn.push(this.download);};
-    q('.v7-gv-dl').click(); await w(500);
-    HTMLAnchorElement.prototype.click=ocl2; URL.createObjectURL=oc2; a.gvNames=gn;
+    a.heads=qa('#v4-stage-content .v7-h3, #v4-stage-content .v7-card-t').map(h=>h.innerText);
+    a.rq=qa('.v7-rq-row').map(d=>d.dataset.rq); a.rqOpen=qa('.v7-rq-row').filter(d=>d.open).length;
+    a.facts=qa('.v7-rq-fact').map(x=>x.innerText); a.comp=(q('.v7-comp')||{}).innerText||''; a.compAria=(q('.v7-comp-bar')||{getAttribute:()=>''}).getAttribute('aria-label')||'';
+    a.noGv=!q('.v7-gv') && !qa('button').some(b=>/Download image|Download all visuals/.test(b.innerText)); a.page=q('#v4-stage-content').innerText;
     const link=qa('.v7-glance a').find(x=>/What you did/.test(x.innerText)); a.link=link.innerText; link.click(); await w(300);
     a.jump={h:q('.narrative-stage-header h2').innerText, focus:document.activeElement.closest('.v7-f')?.dataset.f, open:q('.v7-f.is-open')?.dataset.f};
     return a;`);
   check("Order is part of Review, not the rail", r.rail.indexOf("Order of contributions") === -1 && r.rail.indexOf("Export") !== -1, r.rail);
   check("↑ ↓ reorder, the draft follows, focus stays on the moved card", r.after[0] === r.order[1] && r.first.indexOf(r.order[1]) !== -1 && r.focusOk, r);
-  check("Review has a What your draft contains section below the draft, with a Download image button on each visual", r.gvHead === "What your draft contains" && r.gvBelow && r.gv.length >= 3 && r.gvDl.length === r.gv.length && r.gvDl.every(x => /Download image/.test(x)), r);
-  check("visuals drawn from the draft: evidence, parts, trained and length; each an SVG image whose label carries numbers", r.gv.join(",") === "evidence,parts,trained,length" && r.gvAria.every(x => /^img\|.+\d/.test(x)) && /Policy \/ practice uptake 1/.test(r.gvAria[0]) && /Postdoctoral 1, Doctoral 2/.test(r.gvAria[2]), r.gvAria);
-  check("the parts visual names contributions, and the word job does not appear in the section", /Contribution 3 has/.test(r.gvAria[1]) && !/\bjobs?\b/i.test(r.gvText + r.gvAria.join(" ")), r.gvAria[1]);
-  check("Download image runs without a request (file name set)", /^narrative-cv-.+\.png$/.test(r.gvNames[0] || ""), r.gvNames);
+  check("V8.12: Review runs the order, At a glance, Review your draft, the working draft, then Before you export", r.heads.join("|") === "Put your contributions in order|At a glance|Review your draft|Your working draft|Before you export", r.heads);
+  check("V8.12: six closed questions, each with a fact line from the draft", r.rq.join(",") === "ownership,significance,evidence,reach,mentorship,coherence" && r.rqOpen === 0 && r.facts.length === 6 && r.facts.every(f => f.length > 5), r);
+  check("V8.12: the narrative composition breakdown names each part with its words, and carries Prem's length line", /Narrative composition breakdown/i.test(r.comp) && /Contribution 1: \d+ words/.test(r.comp) && /The length depends on the template, please review before submission\./.test(r.comp) && /^Narrative composition breakdown: .*Contribution 1 \d+ words/.test(r.compAria), r.comp);
+  check("V8.12: no chart gallery, no Download image, no claims about reviewers and no 'real' on Review", r.noGv && !/reviewers? (weigh|look for most|read)/i.test(r.page.replace(/What reviewers look for/g, "")) && !/\breal\b/i.test(r.page), r.noGv);
   check("At a glance: one line per contribution, linked to its first missing part, which opens with focus (r1-b-10)", r.missing > 0 && /^Contribution 1: The problem or question, .*What you did.* and Evidence$/.test(r.link) && /Most significant/.test(r.jump.h) && r.jump.focus === r.jump.open && /-stakes$/.test(r.jump.focus || ""), r);
 
+  console.log("V8.12 Review questions");
+  r = await js(H + `rail('Review').click(); await w(200); const a={};
+    const sig=q('[data-rq=significance]'); sig.querySelector('summary').click(); await w(60); a.open=sig.open;
+    const seg=sig.querySelector('.v7-wb-seg[data-k=outcomes]'); a.segLabel=seg.getAttribute('aria-label'); seg.click(); await w(60);
+    const ta=q('#v7-wb-ta'); a.taLabel=(q('label[for=v7-wb-ta]')||{}).innerText||''; a.taFocus=document.activeElement===ta;
+    const cid=seg.dataset.cid; setv(ta, ta.value+' Made-up extra words for the test.'); await w(60);
+    a.saved=JSON.parse(localStorage.getItem('ncv-v8')).contributions.find(c=>c.cid===cid).outcomes;
+    qa('.v7-wb-box .btn').find(b=>b.innerText==='Done').click(); await w(60); a.backFocus=document.activeElement.classList.contains('v7-wb-seg') && document.activeElement.dataset.k==='outcomes';
+    const ev=q('[data-rq=evidence]'); ev.open=true; await w(40); const before=ev.querySelector('.v7-rq-fact').innerText;
+    const adds=qa('[data-rq=evidence] tbody tr').map(tr=>tr.querySelectorAll('.v7-rqev-add')[1]); adds[0].click(); await w(60);
+    a.kinds=[...q('#v7-ev-kind').options].map(o=>o.value); setv(q('#v7-ev-text'),'Made-up Gazette (2025). A made-up article.'); q('#v7-ev-kind').value='Media / public';
+    qa('[data-rq=evidence] .btn').find(b=>b.innerText==='Save').click(); await w(80);
+    a.evSaved=JSON.parse(localStorage.getItem('ncv-v8')).contributions.some(c=>(c.evidence||[]).some(e=>/Made-up Gazette/.test(e.text)&&e.type==='Media / public'));
+    a.evFact=[before, q('[data-rq=evidence] .v7-rq-fact').innerText];
+    const rc=q('[data-rq=reach]'); rc.open=true; await w(40);
+    const cell=rc.querySelector('tbody tr .v7-reach-cell[data-l=city]'); const rcid=cell.dataset.cid; cell.click(); await w(60);
+    a.reachFocus=document.activeElement.getAttribute('aria-label'); q('[data-rq=reach] input[value=could]').click(); await w(20);
+    q('[data-rq=reach] .v7-reach-cell[data-cid="'+rcid+'"][data-l=country]').click(); await w(60);
+    const rcSt=JSON.parse(localStorage.getItem('ncv-v8')).contributions.find(c=>c.cid===rcid); a.reach=rcSt.reachNow+'>'+rcSt.reachCould;
+    a.reachFact=rc.querySelector('.v7-rq-fact').innerText; a.between=qa('[data-rq=reach] td.is-between').length; a.legend=(q('[data-rq=reach] legend')||{}).innerText;
+    const own=q('[data-rq=ownership]'); own.open=true; const cb=own.querySelector('.v7-rq-tick input'); cb.click(); await w(40);
+    a.tick=JSON.parse(localStorage.getItem('ncv-v8')).selfCheck.ownership===true && !own.querySelector('.v7-rq-done').hidden;
+    a.ring=(q('.v7-rq-ringfact')||{}).innerText||''; a.summaryTag=qa('.v7-rq-row > summary').length;
+    a.exportHas=(q('.v7-draft-body')||{}).innerText||'';
+    return a;`);
+  check("V8.12: a part of the bar is a button named with its contribution, part and words; it opens a labelled text box with focus", r.open && /^Edit contribution \d, What already changed: \d+ words?$/.test(r.segLabel) && /^Contribution \d: What already changed/.test(r.taLabel) && r.taFocus, r);
+  check("V8.12: typing in the box saves to the draft; Done returns focus to the same part", /Made-up extra words for the test\.$/.test(r.saved || "") && r.backFocus, r);
+  check("V8.12: + Add under Where others used it offers only those kinds, saves the item and updates the fact line", r.kinds.slice().sort().join("|") === "Community document|Media / public|Policy / practice uptake|Replication / citation" && r.evSaved && r.evFact[0] !== r.evFact[1], r);
+  check("V8.12: Reach marks save on the contribution, keep focus on the box, shade the distance and update the fact line", r.reach === "city>country" && /^Contribution \d, City or region: already changed, and as far as it could go$/.test(r.reachFocus) && r.between === 1 && /could go furthest beyond where it is now: from city or region to country/.test(r.reachFact) && /Select a box to mark/.test(r.legend), r);
+  check("V8.12: a tick in a question saves to the self-check and shows ✓ Checked on the closed row", r.tick, r);
+  check("V8.12: every question is a native disclosure (summary), so Enter and Space open it", r.summaryTag === 6, r.summaryTag);
+  check("V8.12: Reach marks do not print", !/City or region|Country/.test(r.exportHas), "");
   console.log("Export");
   r = await js(H + `rail('Export').click(); await w(150);
     const blobs=[], names=[]; const oc=URL.createObjectURL; URL.createObjectURL=(b)=>{blobs.push(b);return oc(b);};
@@ -276,8 +305,8 @@ async function seed(state, extra) {
   check("draft file has its format, version and no team notes", file.format === "pathways-narrative-cv-draft" && file.version === 1 && !("teamNotes" in file.draft) && !("feedback" in file.draft), Object.keys(file.draft));
   check("Export turns green once something is downloaded", r.exportGreen, r);
   const fileText = r.file;
-  r = await js(H + `rail('Export').click(); await w(150); const b=q('#v7-gv-all'); return {btn:b&&b.innerText, cls:!!q('.v7-gv-exp'), inCard:!!(b&&b.closest('.v7-card'))};`);
-  check("Export has a Download all visuals button in its own section", r.btn === "Download all visuals" && r.cls && !r.inCard, r);
+  r = await js(H + `rail('Export').click(); await w(150); return {btn:!!q('#v7-gv-all'), cls:!!q('.v7-gv-exp')};`);
+  check("V8.12: Export has no Download visuals section (Prem: dropped until the visuals are useful)", !r.btn && !r.cls, r);
 
   console.log("Draft file round trip");
   r = await js(H + `localStorage.removeItem('ncv-v8'); window.confirm=()=>true; window.alert=(m)=>{window.__a=m;};
@@ -315,8 +344,8 @@ async function seed(state, extra) {
   check("V6 draft offered and opened; V6 copy unchanged", r.offer && r.v6, r);
   check("saved Order step opens on Review", /Review your CV/.test(r.h), r.h);
   // The V6 draft opens on Review; the fixture has data for four visuals.
-  const gvs = await js("return [...document.querySelectorAll('.v7-gv-box')].map(f=>f.dataset.gv).join(',');");
-  check("V6 draft: the visuals that have data, and no others", gvs === "evidence,parts,trained,length", gvs);
+  const gvs = await js("return [...document.querySelectorAll('.v7-rq-row')].map(f=>f.dataset.rq).join(',');");
+  check("V6 draft: Review shows the six questions", gvs === "ownership,significance,evidence,reach,mentorship,coherence", gvs);
 
   check("trainee stages become choices; Other keeps the text", r.mentees.join(",") === "doctoral/,other/visiting researcher,masters/", r.mentees);
   check("blank evidence rows dropped; first card open, rest folded; stable ids", r.ev.join(",") === "1,0" && r.folded.join(",") === "false,true" && r.cids, r);
@@ -472,7 +501,7 @@ async function seed(state, extra) {
     return a;`);
   check("phone: text boxes, inputs and selects are 16 px, so iOS Safari does not zoom on focus", r.box === 16 && r.sel === 16 && r.inp === 16, r);
   check("phone: selects, inputs, icon buttons, rail-foot buttons and the mentorship count boxes are at least 44 px", r.selH >= 44 && r.inpH >= 44 && r.yrH >= 44 && r.icon[0] >= 44 && r.icon[1] >= 44 && r.foot.every(x => x >= 44) && r.tile >= 44, r);
-  r = await js(H + `rail('Review').click(); await w(300); const a={}; a.sw=document.documentElement.scrollWidth;
+  r = await js(H + `rail('Review').click(); await w(300); qa('.v7-rq-row').forEach(d=>{d.open=true;}); await w(100); const a={}; a.sw=document.documentElement.scrollWidth;
     const art=q('.v7-gv-art'), sv=art.querySelector('svg'); a.n=qa('.v7-gv-art').length; a.ov=getComputedStyle(art).overflowX; a.svw=Math.round(sv.getBoundingClientRect().width); a.artw=Math.round(art.getBoundingClientRect().width);
     const rv=rail('Review').cloneNode(true); rv.classList.remove('is-active'); rv.classList.add('is-done','is-ghost'); rail('Review').parentNode.appendChild(rv);
     const done=rail('Contributions').cloneNode(true); done.classList.remove('is-active','is-ghost'); done.classList.add('is-done'); rail('Review').parentNode.appendChild(done);
@@ -556,14 +585,8 @@ async function seed(state, extra) {
     HTMLInputElement.prototype.click=function(){ if(this.type==='file'){const dt=new DataTransfer(); dt.items.add(new File([${JSON.stringify(loadFile)}],'d.json',{type:'application/json'})); this.files=dt.files; this.dispatchEvent(new Event('change'));} };
     q('.v7-path-cont').click(); await w(150); await okWarn(); await w(150); HTMLInputElement.prototype.click=ic;
     const a={load:document.activeElement.matches('.narrative-stage-header h2')?document.activeElement.innerText:document.activeElement.id};
-    rail('Export').click(); await w(150);
-    const oc=URL.createObjectURL; URL.createObjectURL=(b)=>oc(b); const ocl=HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click=function(){};
-    const b=q('#v7-gv-all'); b.focus(); b.click(); await w(50);
-    a.dl={focus:document.activeElement===b, dis:b.disabled, aria:b.getAttribute('aria-disabled')};
-    await w(2500); a.dl.after=b.getAttribute('aria-disabled'); HTMLAnchorElement.prototype.click=ocl; URL.createObjectURL=oc;
     return a;`);
   check("focus lands on the step heading after Load", /Most significant/.test(r.load || ""), r);
-  check("Download all visuals keeps focus while it works (aria-disabled, not disabled)", r.dl.focus && !r.dl.dis && r.dl.aria === "true" && r.dl.after === null, r.dl);
 
   console.log("Audit loop, round 1 (2026-10-31)");
   {
@@ -744,7 +767,7 @@ async function seed(state, extra) {
       return a;`);
     check("the read across contributions shows once, under The problem; a place name is left out; no 'spanning' line when every card qualifies (W-39)", r.cross === 1 && r.under === "ps-challenge" && !r.span && !r.halifax, r);
     check("a first-sentence box is as wide as its text (W-40); the statement fields carry the legend's squares (W-42)", r.fit && r.jd >= 6, r);
-    check("Review runs At a glance, then the order, then the visuals (W-52)", r.order.indexOf("v7-ag-t") !== -1 && r.order.indexOf("v7-ag-t") < r.order.indexOf("v7-oc-t") && r.order.indexOf("v7-oc-t") < r.order.indexOf("v7-gv-t"), r.order);
+    check("V8.12: Review runs the order, At a glance, then the questions", r.order.indexOf("v7-oc-t") !== -1 && r.order.indexOf("v7-oc-t") < r.order.indexOf("v7-ag-t") && r.order.indexOf("v7-ag-t") < r.order.indexOf("v7-rq-t"), r.order);
     check("each step has an address; Back and Forward move between steps (W-47)", r.hash === "#review" && /Personal statement/.test(r.back) && r.hash2 === "#statement" && /Review/.test(r.fwd), r);
   }
 
@@ -1100,7 +1123,7 @@ async function seed(state, extra) {
       a.tabStops=qa('.v7-fcol .v7-fsq').filter(b=>b.tabIndex===0).length; a.sq=qa('.v7-fcol .v7-fsq').length;
       a.join=qa('.v4-connective').map(x=>x.textContent).join('|');
       rail('Personal statement').click(); await w(200); a.ps=(q('[data-f="ps-challenge"] .v7-q')||{}).innerText||'';
-      rail('Review').click(); await w(200); a.prev=(q('.v7-draft-body')||{}).innerText||''; a.self=(q('.v7-selfcheck')||{}).innerText||'';
+      rail('Review').click(); await w(200); a.prev=(q('.v7-draft-body')||{}).innerText||''; a.self=[q('.v7-rq'),q('.v7-selfcheck')].map(x=>(x||{}).textContent||'').join(' ');
       rail('Mentorship').click(); await w(200); a.mhead=qa('#ncv-v4-root h3').map(x=>x.innerText).join('|');
       rail('Export').click(); await w(150);
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
@@ -1117,7 +1140,7 @@ async function seed(state, extra) {
     check("the field column is one Tab stop (r9-b-14)", r.tabStops === 1 && r.sq > 5, { tabStops: r.tabStops, sq: r.sq });
     check("community-engaged wording: What you did, One moment, the join, Mentorship headings and the self-check; the main field's own statement wording comes first (r9-b-1, r9-b-4, r9-b-11)",
       /communities or partners/.test(r.q.act) && /in use by a specific person/.test(r.q.tr) && /in response/.test(r.join) && /keep returning to/.test(r.ps)
-      && /People you have trained or mentored/.test(r.mhead) && !/five years/.test(r.mhead) && /Highlight a few people you trained or mentored/.test(r.mhead) && /names the parts the partners led or hold/.test(r.self) && /their data/.test(r.self),
+      && /People you have trained or mentored/.test(r.mhead) && !/five years/.test(r.mhead) && /Highlight a few people you trained or mentored/.test(r.mhead) && /name the parts the partners led or hold/.test(r.self) && /their data/.test(r.self),
       { q: r.q, join: r.join, ps: r.ps, mhead: r.mhead });
     check("trainee answers: 'Now leads…' joins, a name before 'now' stays whole, a community researcher is one you mentored (R-3, r9-b-1)",
       /A doctoral student I trained now works at a made-up hospital and leads a made-up hospital program\./.test(r.mentor) && /I trained\. Rose now runs a made-up lab\./.test(r.mentor) && /A community researcher I mentored/.test(r.mentor), r.mentor);
@@ -1711,7 +1734,7 @@ async function seed(state, extra) {
     await seed(at("review", st => { st.mentees[1].kind = "artist"; st.mentees[1].org = ""; st.mentees[1].unit = ""; st.mentees[2].kind = "ltc"; st.mentees[2].org = ""; st.mentees[2].unit = ""; }));
     r = await js(H + `return {text:q('.v7-draft-body').innerText, labels:qa('svg[role=img]').map(x=>x.getAttribute('aria-label'))};`);
     check("Q-21: a trainee in a new destination reads as a sentence in the draft, and the chart counts it",
-      /now works as an independent artist/.test(r.text) && /now works in long-term care or a seniors’ organization/.test(r.text) && r.labels.some(l => /Self-employed artist 1/.test(l || "") && /Long-term care or seniors 1/.test(l || "")), { labels: r.labels });
+      /now works as an independent artist/.test(r.text) && /now works in long-term care or a seniors’ organization/.test(r.text) && r.labels.some(l => /now independent or self-employed artist/.test(l || "") && /now long-term care or seniors’ organization/.test(l || "")), { labels: r.labels });
 
     // Q-24: three more evidence kinds; a preprint has its own; the Review chart counts them.
     await seed(at("contrib"));
@@ -1719,8 +1742,8 @@ async function seed(state, extra) {
     check("Q-24: the evidence view offers Preprint, Conference talk or poster and Teaching or curriculum, before Other",
       ["Preprint", "Conference talk or poster", "Teaching or curriculum"].every(t => r.some(x => x.indexOf(t) === 0)) && /^Other/.test(r[r.length - 1]) && r.length === 14, r);
     await seed(at("review", st => { st.contributions[0].evidence = [{ id: "e1", type: "Preprint", text: "A made-up preprint, 2026.", note: "" }, { id: "e2", type: "Teaching or curriculum", text: "A made-up course, since 2024.", note: "" }]; }));
-    r = await js(H + labels);
-    check("Q-24: the Evidence by type chart counts the new kinds", r.some(l => /^Evidence by type: .*Preprint 1.*Teaching or curriculum 1/.test(l || "")), r.filter(l => /Evidence/.test(l || "")));
+    r = await js(H + `return qa('[data-rq=evidence] .v7-rqev-item b').map(b=>b.textContent);`);
+    check("V8.12: the Evidence question on Review lists the new kinds", r.includes("Preprint") && r.includes("Teaching or curriculum"), r);
 
     // Eli, 2026-11-04: SSHRC allows a link to an audio or visual work, as evidence; other TCV agencies do not.
     const avSeed = (agency) => at("review", st => { st.lens = Object.assign({}, st.lens, { agency, format: agency === "frq" ? "cv-frq" : "tcv" });
@@ -2017,10 +2040,10 @@ async function seed(state, extra) {
     const OLD = ["Standing\"", "signals of standing", "Hedged", "is a hedge", "throughline", "single thread", "grammatical person", "unique contribution", "taken up more widely", "at what scale", "told as a scene", "Who gets in", "where they went", "take precedence", "pick up where you left off", "frames the whole", "beyond the prose"];
     const left = OLD.filter(x => code.includes(x));
     check("Q-6: the replaced wording is gone from the tool", left.length === 0, left);
-    const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "The six parts in each contribution", "One real case in two sentences"];
+    const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.11 in the script and the tab title", /VERSION_NUM = "8\.11"/.test(src) && /<title>Narrative CV — V8\.11 beta/.test(src));
+    check("the version is 8.12 in the script and the tab title", /VERSION_NUM = "8\.12"/.test(src) && /<title>Narrative CV — V8\.12 beta/.test(src));
   }
 
   console.log("Network and errors");
