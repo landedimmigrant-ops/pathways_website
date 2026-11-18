@@ -65,7 +65,7 @@ INFERRED in V8.15, for Prem to confirm or change:
 - the Mentorship chart replaces the ring (kept on 13 Nov) because the chart now has to show where people went. It covers the people you describe; the counted-only people stay in the group headings;
 - the composition colours only tell contributions apart (six, then they repeat); none means better or worse;
 - from the voice pass: the page line reads "You may find this step easier on a computer."; Prem's length line ("The length depends on the template, please review before submission.") is kept as he wrote it; the one "do not print" line sits at the foot of the Review board, and Contributions and Personal statement no longer say it;
-- for Prem (from Fable): the Evidence question asks "Does each contribution point to something outside your CV?" while its fact line counts use by others. A closer question would be "Does each contribution show where others used the work?" Not changed.
+- the Evidence question is now "Does each contribution show where others used the work?", so it matches its fact line (Fable's suggestion; Prem agreed, 2026-11-18, V8.16).
 
 INFERRED in V8.14, for Prem to confirm or change (from Fable's walk-through, 2026-11-18):
 - the strands are typed once, as short names (up to four) under the Strands question on Personal statement; Review reads them and links back. The prose answer cannot be read reliably, so it is not parsed;

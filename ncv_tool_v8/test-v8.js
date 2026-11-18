@@ -264,7 +264,7 @@ async function seed(state, extra) {
     document.activeElement.dispatchEvent(new KeyboardEvent('keydown',{key:'End',bubbles:true})); await w(60); a.end=document.activeElement.id;
     document.activeElement.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true})); await w(60); a.wrap=document.activeElement.id;
     document.activeElement.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true})); await w(60); a.left=document.activeElement.id;
-    q('#v8-tab-words').click(); await w(60); a.noMv=qa('[role=tabpanel] [id^="mv-"]').length;
+    q('#v8-tab-evidence').click(); await w(60); a.evQ=q('#v8-rb-q').innerText; q('#v8-tab-words').click(); await w(60); a.noMv=qa('[role=tabpanel] [id^="mv-"]').length;
     a.saved=JSON.parse(localStorage.getItem('ncv-v8')).ui.reviewTab;
     rail('Contributions').click(); await w(150); rail('Review').click(); await w(200); a.kept=q('[role=tab][aria-selected=true]').id;
     const st=q('#v8-rb-st'); a.stHead=st.querySelector('h4').innerText; a.stEdit=qa('#v8-rb-st-in button').map(b=>b.innerText);
@@ -278,6 +278,7 @@ async function seed(state, extra) {
     return a;`);
   check("V8.14: ← → Home End move between tabs; selection follows focus; the panel shows that tab's question", r.right[0] === "v8-tab-words" && r.right[1] === "true" && r.right[2] === 0 && r.right[3] === "Does each contribution say what already changed?" && r.end === "v8-tab-reach" && r.wrap === "v8-tab-order" && r.left === "v8-tab-reach", r);
   check("V8.14: only the Order tab has ↑ ↓", r.noMv === 0, r.noMv);
+  check("V8.16: the Evidence tab asks whether each contribution shows where others used the work", r.evQ === "Does each contribution show where others used the work?", r.evQ);
   check("V8.14: the chosen tab is saved and kept when Review opens again", r.saved === "words" && r.kept === "v8-tab-words", r);
   check("V8.15: the statement sits above the tabs, full width, read only, with Edit on the statement step", /^Your (background and skills section|statement)$/i.test(r.stHead) && r.above && r.full && r.stEdit.length === 1 && /^Edit on /.test(r.stEdit[0]), r);
   check("V8.15: the statement text scrolls in a labelled region a keyboard can reach", r.body[0] === "region" && r.body[1] === 0 && /, read only$/.test(r.body[2]) && r.body[3] === "auto", r.body);
@@ -2186,7 +2187,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.15 in the script and the tab title", /VERSION_NUM = "8\.15"/.test(src) && /<title>Narrative CV — V8\.15 beta/.test(src));
+    check("the version is 8.16 in the script and the tab title", /VERSION_NUM = "8\.16"/.test(src) && /<title>Narrative CV — V8\.16 beta/.test(src));
   }
 
   console.log("Network and errors");
