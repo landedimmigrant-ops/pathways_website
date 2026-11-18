@@ -59,6 +59,16 @@ The endpoint is `POST /api/tester`:
 - it keeps only the known answer keys, each up to 2,000 characters; a choose-any answer is kept as a list of up to ten options.
 - Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
+INFERRED in V8.19, for Prem to confirm or change:
+- the editable box: Prem chose "the pencil in circle at the end of the box on the right side ... when over the circle appears". Read as: a plain pencil at rest, the circle on hover, focus and while open. The box then keeps its tint (it no longer turns solid accent, as blocks did in V8.18), so one rule covers a block, an evidence item and a person;
+- a block too narrow for the pencil (under 60px) shows its number alone; on hover the circle takes the number's place. An empty block shows a plus, the sign the "+ Add" button already uses;
+- a folded contribution is a row that opens a card, so it has the hover colours and no pencil;
+- the editors (under a block, an evidence item or a person) lose the thick coloured bar on the left and take a 1px border in the accent. Prem's note reached this build through his "Design improvement" session: "i need this conform to our design we dont use the side color panel ?". The 4px accent stripe on blocks, legend swatches and the folded-row parts is left as it is; whether it goes too is his call;
+- "one checklist ... before export download" is read as: the list lives on Export only. Review's five questions and the Mentorship question appear there in Review's words, above the five checks that were already there, each with "See on Review". The ticks and the ✓ on Review's tabs are removed. The heading stays "Before you export" until the vocabulary is settled;
+- "I have checked this." is gone with the ticks, so no "reviewed" wording was needed;
+- NOT built, waiting for Prem: his idea that marking something reviewed "just makes prompts disappear and you see the full text". One way to do it: on Contributions, a contribution with every part written can be switched to its paragraph as it prints, with "Edit" to bring the questions back. This overlaps the folded contribution and the paragraph strip, so it needs his word first;
+- the vocabulary list (`VOCABULARY.md`) is a proposal. No term in the tool changes until Prem approves it.
+
 INFERRED in V8.18, for Prem to confirm or change:
 - each block on "Edit what changed" opens its own part, in a box under its row, on every screen width. The side panel that opened the whole contribution, and the Edit button on each row, were built in this version and removed before release (Prem, 2026-11-18: "it was better to be able to edit each block on their own");
 - "at the beginning": Contributions already had a marker beside every part (written or not, select to jump), so no second map was added to the open contribution. The folded contribution now shows the seven parts as small blocks in Review's colours, in place of eight plain squares. They are not buttons; the row opens the contribution as before;
