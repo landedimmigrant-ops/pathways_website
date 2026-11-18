@@ -247,14 +247,14 @@ async function seed(state, extra) {
     a.jump={h:q('.narrative-stage-header h2').innerText, focus:document.activeElement.closest('.v7-f')?.dataset.f, open:q('.v7-f.is-open')?.dataset.f};
     return a;`);
   check("Order is part of Review, not the rail", r.rail.indexOf("Order of contributions") === -1 && r.rail.indexOf("Export") !== -1, r.rail);
-  check("V8.14: Review opens with “Review your draft” and one line: best reviewed on a computer", r.h === "Review your draft" && /^This step is best reviewed on a computer\./.test(r.lede), r);
-  check("V8.14: Review runs At a glance, the board, Mentorship, then Before you export; no order section, no First/Last lines, no working draft", r.heads.join("|") === "At a glance|Five questions about your draft|Mentorship|Before you export" && !/Put your contributions in order|First: the contribution|Last: the one closest/.test(r.page), r.heads);
-  check("V8.14: each block of the composition bar names its section, with a line saying so", /Each block is one section of your CV\. Its width is that section’s share of the words\./.test(r.comp) && r.segTitles.length > 0 && r.segTitles.every(t => /^(Personal statement|Background and skills|Contribution \d+|Mentorship)$/.test(t)) && r.segs.every(t => /^(Statement|Background|Contribution \d+|\d+|Mentorship)$/.test(t)) && /The length depends on the template, please review before submission\./.test(r.comp) && /^Narrative composition breakdown: .*Contribution 1 \d+ words/.test(r.compAria), r);
+  check("V8.15: Review opens with “Review your draft” and one line about a computer", r.h === "Review your draft" && /^You may find this step easier on a computer\./.test(r.lede), r);
+  check("V8.15: Review runs At a glance, the board, then Mentorship; Before you export moves to Export; no order section, no First/Last lines, no working draft", r.heads.join("|") === "At a glance|Five questions about your draft|Mentorship" && !/Put your contributions in order|First: the contribution|Last: the one closest/.test(r.page), r.heads);
+  check("V8.15: each block of the composition bar names its section; the page ticks are numbered, with no explaining line", !/Each block is one section/.test(r.comp) && /\n0\n1\n2\n3\n4\n5 pages\n/.test(r.comp) && r.segTitles.length > 0 && r.segTitles.every(t => /^(Personal statement|Background and skills|Contribution \d+|Mentorship)$/.test(t)) && r.segs.every(t => /^(Statement|Background|Contribution \d+|C\d+|Mentorship)$/.test(t)) && /The length depends on the template, please review before submission\./.test(r.comp) && /^Narrative composition breakdown: .*Contribution 1 \d+ words/.test(r.compAria), r);
   check("V8.14: no chart gallery, no claims about reviewers and no 'real' on Review", r.noGv && !/reviewers? (weigh|look for most|read)/i.test(r.page.replace(/What reviewers look for/g, "")) && !/\breal\b/i.test(r.page), "");
   check("V8.14: five tabs in a tablist, one selected, roving tabindex, panel named by its tab", r.tabs.join("|") === "Order and strands|Words|Role|Evidence|Reach" && r.sel === 1 && r.tabIdx === "0,-1,-1,-1,-1" && r.panel === "v8-tab-order", r);
   check("V8.14: the Order tab asks Prem's question; the fact line is a polite live region; the tab ends with the tick", r.q === "Based on your statement, does the order of your contributions still make sense?" && r.factLive === "polite" && r.ticks.join() === "I have checked this.", r);
   check("V8.14: ↑ ↓ move the contribution; the numbers stay in place; focus stays on the moved row; the move is announced and highlighted", r.nums.join() === r.nums2.join() && r.titles2[1] === r.titles[0] && r.titles2[0] === r.titles[1] && r.focusOk && r.moved && /moved to position 2 of/.test(r.said), r);
-  check("V8.14: with no strands named, the tab says so, links to the statement step and the fact line asks to name them", /^No strands are named yet\. Name them on /.test(r.strandLine) && /^Name your strands on .* to compare the order with your statement\./.test(r.fact) && /does not yet end with what you plan to do next|ends with what you plan to do next|is not written yet/.test(r.fact), r);
+  check("V8.14: with no strands named, the tab says so, links to the statement step and the fact line asks to name them", /^Name them on /.test(r.strandLine) && /^Name your strands on .* to compare the order with your statement\./.test(r.fact) && /does not yet end with what you plan to do next|ends with what you plan to do next|is not written yet/.test(r.fact), r);
   check("At a glance: one line per contribution, linked to its first missing part, which opens with focus (r1-b-10)", /^Contribution \d: The problem or question, .*What you did.* and Evidence$/.test(r.link) && /Most significant/.test(r.jump.h) && r.jump.focus === r.jump.open && /-stakes$/.test(r.jump.focus || ""), r);
 
   console.log("V8.14 tabs, keyboard and the statement panel");
@@ -267,14 +267,22 @@ async function seed(state, extra) {
     q('#v8-tab-words').click(); await w(60); a.noMv=qa('[role=tabpanel] [id^="mv-"]').length;
     a.saved=JSON.parse(localStorage.getItem('ncv-v8')).ui.reviewTab;
     rail('Contributions').click(); await w(150); rail('Review').click(); await w(200); a.kept=q('[role=tab][aria-selected=true]').id;
-    const st=q('#v8-rb-st'); a.stHead=st.querySelector('h4').innerText; a.stEdit=qa('#v8-rb-st button').map(b=>b.innerText);
-    const tg=q('.v8-rb-tog'); a.tg=[tg.innerText, tg.getAttribute('aria-expanded'), tg.getAttribute('aria-controls')]; tg.click(); await w(60);
-    a.tg2=[tg.innerText, tg.getAttribute('aria-expanded'), q('#v8-rb-st').hidden, JSON.parse(localStorage.getItem('ncv-v8')).ui.stmtShut]; tg.click(); await w(40);
+    const st=q('#v8-rb-st'); a.stHead=st.querySelector('h4').innerText; a.stEdit=qa('#v8-rb-st-in button').map(b=>b.innerText);
+    a.above=!!(st.compareDocumentPosition(q('[role=tablist]')) & Node.DOCUMENT_POSITION_FOLLOWING) && st.getBoundingClientRect().bottom <= q('[role=tablist]').getBoundingClientRect().top;
+    a.full=Math.abs(st.getBoundingClientRect().width - q('[role=tablist]').getBoundingClientRect().width) < 4;
+    const sb=q('.v8-rb-st-body'); a.body=[sb.getAttribute('role'), sb.tabIndex, sb.getAttribute('aria-label'), getComputedStyle(sb).overflowY];
+    const tg=q('#v8-rb-tog'); a.tg=[tg.innerText, tg.getAttribute('aria-expanded'), tg.getAttribute('aria-controls')]; tg.click(); await w(60);
+    a.tg2=[tg.innerText, tg.getAttribute('aria-expanded'), q('#v8-rb-st-in').hidden, JSON.parse(localStorage.getItem('ncv-v8')).ui.stmtShut];
+    q('#v8-tab-role').click(); await w(60); const see=q('[role=tabpanel] .v8-see'); a.see=see.innerText; window.scrollTo(0, document.body.scrollHeight); await w(40); see.click(); await w(500);
+    a.seen=[q('#v8-rb-st-in').hidden, document.activeElement.id, q('#v8-rb-tog').getAttribute('aria-expanded'), Math.round(q('#v8-rb-st').getBoundingClientRect().top) < window.innerHeight];
     return a;`);
   check("V8.14: ← → Home End move between tabs; selection follows focus; the panel shows that tab's question", r.right[0] === "v8-tab-words" && r.right[1] === "true" && r.right[2] === 0 && r.right[3] === "Does each contribution say what already changed?" && r.end === "v8-tab-reach" && r.wrap === "v8-tab-order" && r.left === "v8-tab-reach", r);
   check("V8.14: only the Order tab has ↑ ↓", r.noMv === 0, r.noMv);
   check("V8.14: the chosen tab is saved and kept when Review opens again", r.saved === "words" && r.kept === "v8-tab-words", r);
-  check("V8.14: the statement sits on the left, read only, with Edit on the statement step; Hide/Show is a labelled toggle that saves", /^Your (background and skills section|statement)$/i.test(r.stHead) && r.stEdit.length === 1 && /^Edit on /.test(r.stEdit[0]) && r.tg.join() === "Hide your statement,true,v8-rb-st" && r.tg2.join() === "Show your statement,false,true,true", r);
+  check("V8.15: the statement sits above the tabs, full width, read only, with Edit on the statement step", /^Your (background and skills section|statement)$/i.test(r.stHead) && r.above && r.full && r.stEdit.length === 1 && /^Edit on /.test(r.stEdit[0]), r);
+  check("V8.15: the statement text scrolls in a labelled region a keyboard can reach", r.body[0] === "region" && r.body[1] === 0 && /, read only$/.test(r.body[2]) && r.body[3] === "auto", r.body);
+  check("V8.15: Hide/Show is a labelled toggle that saves", r.tg.join() === "Hide your statement,true,v8-rb-st-in" && r.tg2.join() === "Show your statement,false,true,true", r);
+  check("V8.15: each tab has See your statement, which opens it, scrolls up to it and moves focus to its heading", r.see === "See your statement" && r.seen[0] === false && r.seen[1] === "v8-rb-st-t" && r.seen[2] === "true" && r.seen[3], r.seen);
 
   console.log("V8.14 strands are named once, on the statement step");
   r = await js(H + `rail('Review').click(); await w(200); q('#v8-tab-order').click(); await w(60); const a={};
@@ -345,7 +353,7 @@ async function seed(state, extra) {
     a.exportGreen=rail('Export').classList.contains('is-done');
     return a;`);
   check("V8.11: the Template line names the agency and font", /^▸\s*Change\s*Template:\s*FRQ · CV-FRQ · 12-point Times New Roman/.test(r.setup) && !/Set up for/.test(r.setup), r.setup);
-  check("three export cards", r.cards.join("|") === "Download or print|Paste into the template, one section at a time|Keep your work", r.cards);
+  check("V8.15: Export has Before you export, then the three export cards", r.cards.join("|") === "Before you export|Download or print|Paste into the template, one section at a time|Keep your work", r.cards);
   check("email nudge with the address printed as text", /impact@concordia\.ca about your experience/.test(r.nudge) && /Email us\s+impact@concordia\.ca/.test(r.nudge), r.nudge);
   check("downloads: Word, text and draft file", r.names[0] === "narrative-cv-draft-frq.doc" && r.names[1] === "narrative-cv-draft-frq.txt" && /^narrative-cv-draft-frq-\d{4}-\d{2}-\d{2}-\d{4}\.json$/.test(r.names[2]), r.names);
   const psDoc = (r.doc.match(/<h2>The candidate’s background and skills \/ <span lang='fr'>Parcours et compétences de la personne candidate<\/span><\/h2>(.*?)<h2>/s) || [])[1] || "";
@@ -819,7 +827,7 @@ async function seed(state, extra) {
       return a;`);
     check("the read across contributions shows once, under The problem; a place name is left out; no 'spanning' line when every card qualifies (W-39)", r.cross === 1 && r.under === "ps-challenge" && !r.span && !r.halifax, r);
     check("a first-sentence box is as wide as its text (W-40); the statement fields carry the legend's squares (W-42)", r.fit && r.jd >= 6, r);
-    check("V8.14: Review runs At a glance, the board, Mentorship, then Before you export", r.order.indexOf("v7-ag-t") !== -1 && r.order.indexOf("v7-ag-t") < r.order.indexOf("v8-rb-t") && r.order.indexOf("v8-rb-t") < r.order.indexOf("v8-rm-t") && r.order.indexOf("v8-rm-t") < r.order.indexOf("v7-sc-t") && r.order.indexOf("v7-oc-t") === -1, r.order);
+    check("V8.15: Review runs At a glance, the board, then Mentorship", r.order.indexOf("v7-ag-t") !== -1 && r.order.indexOf("v7-ag-t") < r.order.indexOf("v8-rb-t") && r.order.indexOf("v8-rb-t") < r.order.indexOf("v8-rm-t") && r.order.indexOf("v7-sc-t") === -1 && r.order.indexOf("v7-oc-t") === -1, r.order);
     check("each step has an address; Back and Forward move between steps (W-47)", r.hash === "#review" && /Personal statement/.test(r.back) && r.hash2 === "#statement" && /Review/.test(r.fwd), r);
   }
 
@@ -946,7 +954,7 @@ async function seed(state, extra) {
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
       const cb=qa('.btn').find(b=>/^Copy Supervisory/.test(b.innerText)); if(!cb) return {err:'no copy', btns:qa('.btn').map(b=>b.innerText).join('|')}; cb.click(); await w(40); a.mentor=clip; navigator.clipboard.writeText=ow;
       a.shared=!!q('.v7-shared-note'); a.agree=null;
-      rail('Review').click(); await w(150); a.agree=!!qa('.v7-selfcheck label').find(l=>/Agreement:/.test(l.innerText));
+      rail('Export').click(); await w(150); a.agree=!!qa('.v7-selfcheck label').find(l=>/Agreement:/.test(l.innerText));
       // history: Export, Back to Review, then lock Review from another tab and press Back: the closed entry is passed over
       rail('Export').click(); await w(150); const n0=history.state&&history.state.n;
       a.hasN=typeof n0==='number';
@@ -1175,7 +1183,7 @@ async function seed(state, extra) {
       a.tabStops=qa('.v7-fcol .v7-fsq').filter(b=>b.tabIndex===0).length; a.sq=qa('.v7-fcol .v7-fsq').length;
       a.join=qa('.v4-connective').map(x=>x.textContent).join('|');
       rail('Personal statement').click(); await w(200); a.ps=(q('[data-f="ps-challenge"] .v7-q')||{}).innerText||'';
-      rail('Export').click(); await w(200); a.prev=(q('.v7-draft-body')||{}).innerText||''; rail('Review').click(); await w(200); if (q('#v8-tab-role')) { q('#v8-tab-role').click(); await w(60); } a.self=[q('.v8-rb'),q('.v7-selfcheck')].map(x=>(x||{}).textContent||'').join(' ');
+      rail('Export').click(); await w(200); a.prev=(q('.v7-draft-body')||{}).innerText||''; rail('Review').click(); await w(200); if (q('#v8-tab-role')) { q('#v8-tab-role').click(); await w(60); } a.self=(q('.v8-rb')||{}).textContent||''; rail('Export').click(); await w(200); a.self+=' '+((q('.v7-selfcheck')||{}).textContent||''); rail('Review').click(); await w(200);
       rail('Mentorship').click(); await w(200); a.mhead=qa('#ncv-v4-root h3').map(x=>x.innerText).join('|');
       rail('Export').click(); await w(150);
       let clip=''; const ow=navigator.clipboard.writeText; navigator.clipboard.writeText=async(t)=>{clip=t;};
@@ -2113,7 +2121,7 @@ async function seed(state, extra) {
       const org=q('[id^="v8-pg-"]'); setv(org,'Made-up Firm'); await w(40); a.pNow=q('#'+pb.id).innerText.replace(/\\s+/g,' ');
       a.mSaved=JSON.parse(localStorage.getItem('ncv-v8')).mentees[0].kind+'|'+JSON.parse(localStorage.getItem('ncv-v8')).mentees[0].org;
       org.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); await w(60); a.pClose=[!q('.v8-pe'), document.activeElement.id===pb.id];
-      a.ring=(q('.v7-rq-ringfact')||{}).innerText||''; sec.querySelector('.v8-tick input').click(); await w(40); a.mTick=JSON.parse(localStorage.getItem('ncv-v8')).selfCheck.mentorship===true;
+      const fsv=q('.v8-rm-flow svg'); a.flow=fsv ? fsv.getAttribute('aria-label') : ''; a.flowText=fsv ? fsv.textContent : ''; a.noRing=!q('.v7-rq-ring'); sec.querySelector('.v8-tick input').click(); await w(40); a.mTick=JSON.parse(localStorage.getItem('ncv-v8')).selfCheck.mentorship===true;
       // contrast of the new parts, from their computed colours
       const rgb=(s)=>s.match(/\\d+(\\.\\d+)?/g).slice(0,3).map(Number); const L=(c)=>{const v=c.map(x=>{x/=255;return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4);});return 0.2126*v[0]+0.7152*v[1]+0.0722*v[2];};
       const bgOf=(e)=>{while(e){const b=getComputedStyle(e).backgroundColor; if(b && !/rgba\\(0, 0, 0, 0\\)|transparent/.test(b)) return b; e=e.parentElement;} return 'rgb(255,255,255)';};
@@ -2122,10 +2130,13 @@ async function seed(state, extra) {
       const pick=['#v8-tab-order','.v8-tab:not([aria-selected=true])','.v8-mark[aria-pressed=true]','.v8-mark[aria-pressed=false]','.v8-n','.v8-rb-st-t','.v8-strands','.v8-how','.v8-fact p','.v7-ow'];
       a.contrast=pick.map(s=>{const e=q(s); return [s, e ? Math.round(ratio(e)*10)/10 : null];});
       q('#v8-tab-reach').click(); await w(60); ['.v8-rc-h','.v8-tag','.v8-tag.is-none','.v8-rc-w .v7-quiet'].forEach(s2=>{const e=q(s2); a.contrast.push([s2, e ? Math.round(ratio(e)*10)/10 : null]);});
+      const cs=qa('.v7-comp-seg').filter(x=>/^Contribution/.test(x.title)); a.cTones=cs.map(x=>getComputedStyle(x).backgroundColor);
+      a.legTones=qa('.v7-comp-leg li').filter(li=>/^Contribution/.test(li.textContent)).map(li=>getComputedStyle(li.querySelector('.v7-comp-sw')).backgroundColor);
+      a.cContrast=cs.map(x=>Math.round(ratio(x)*10)/10); a.cLabels=cs.map(x=>x.textContent);
       rail('Export').click(); await w(250); a.exp=q('#v4-stage-content').innerText;
       return a;`);
     check("V8.14 Reach: asks Prem's yes/no question; no six-level ladder and no year box", r.q === "Do your words and evidence show the changes you marked?" && r.noLadder, r);
-    check("V8.14 Reach: the fact line counts the marks and says they are optional when there are none; each row reads back two equal columns beside the words and evidence", /^You marked changes on 4 of 4 contributions: \d+ already happened and \d+ expected\.$/.test(r.fact) && r.cols.join("|") === "Already happened|Expected|Your words and evidence" && /Who: People, A government or institution/.test(r.r1) && /What already changed: /.test(r.r1) && /where others used it/.test(r.r1), r);
+    check("V8.14 Reach: the fact line counts the marks and says they are optional when there are none; each row reads back two equal columns beside the words and evidence", /^You marked changes on 4 of 4 contributions: \d+ already happened and \d+ expected\.$/.test(r.fact) && r.cols.join("|") === "Already happened|Expected|Your words and evidence" && /Who: People, A government or institution/.test(r.r1) && /What already changed: /.test(r.r1) && /items? shows? that others used the work\./.test(r.r1), r);
     check("V8.14: strand tags show on the other tabs, with “No strand” for None of these", r.tags[0] === "Tenant-led data" && r.tags[3] === "No strand", r.tags);
     check("V8.14 Reach: Edit on Contributions is named for its contribution and opens What already changed", /^Edit the changes of contribution 1 on Contributions$/.test(r.goName) && /Contributions|Most significant/.test(r.where[0]) && /-outcomes$/.test(r.where[1] || ""), r);
     check("V8.14 Contributions: optional, labelled checkbox groups sit under What already changed and What could change", r.legN.join("|") === "Who changed? (optional)|What changed? (optional)" && r.legE.join("|") === "Who could change? (optional)|What could change for them? (optional)" && r.cbLab === "A field", r);
@@ -2134,8 +2145,10 @@ async function seed(state, extra) {
     check("V8.14 Mentorship: below the board, with Prem's question and a polite live fact line", r.mq === "Does the section name people and where they are now?" && r.mlive === "polite" && /^You trained or mentored 57 people and describe 4\. Where they are now is given for 4 of the 4\.$/.test(r.mfact), r);
     check("V8.14 Mentorship: people grouped by the level they trained at, each a button from their level to where they are now", /^Postdoctoral · 2 trained or mentored, 1 described$/.test(r.groups[0]) && /^A postdoctoral fellow → Now: /.test(r.pName) && r.pExp0 === "false", r);
     check("V8.14 Mentorship: selecting a person opens their entry under them, with focus; changes save and show on the button", r.pExp === "true" && r.pe && /^v8-pl-/.test(r.pFocus) && r.wLab === "Where are they now?" && /Made-up Firm/.test(r.pNow) && /Industry/.test(r.pNow) && r.mSaved === "industry|Made-up Firm", r);
-    check("V8.14 Mentorship: Escape closes the entry and focus goes back to the person; the ring stays; the tick saves", r.pClose[0] && r.pClose[1] && /largest group/.test(r.ring) && r.mTick, r);
+    check("V8.14 Mentorship: Escape closes the entry and focus goes back to the person; the tick saves", r.pClose[0] && r.pClose[1] && r.mTick, r);
+    check("V8.15 Mentorship: one chart from the level each person trained at to where they are now, named for screen readers", /^Where the people you describe went: Postdoctoral to Industry, 1; Doctoral to Community agency, 1; Master’s to Government, 1; Undergraduate to University, 1\.$/.test(r.flow) && /Trained as/.test(r.flowText) && /Industry · 1/.test(r.flowText) && r.noRing, r);
     check("V8.14: strands, change marks and ticks do not print", !/Tenant-led data|Shared analysis|Who changed|Already happened|I have checked this/.test(r.exp), "");
+    check("V8.15: each contribution's block has a colour of its own, the same in the legend, and reads Contribution N or CN", r.cTones.length === 4 && new Set(r.cTones).size === 4 && r.cTones.join() === r.legTones.join() && r.cLabels.every(t => /^(Contribution \d|C\d|)$/.test(t)) && r.cContrast.every(v => v >= 4.5), r);
     const low = r.contrast.filter(([, v]) => v === null || v < 4.5);
     check("V8.14: the new text and controls meet 4.5:1 contrast", low.length === 0, r.contrast);
     // The Word export (HTML) leaves the review marks out too.
@@ -2143,6 +2156,24 @@ async function seed(state, extra) {
       const wb=qa('button').find(b=>/Download Word/.test(b.innerText)); if (wb) { wb.click(); await w(300); } URL.createObjectURL=oc;
       return {n:doc.length, has:/Tenant-led data|Shared analysis|Who changed|Culture or values|Already happened/.test(doc)};`);
     check("V8.14: the Word file holds no strand names or change marks", r.n > 0 && !r.has, r);
+    // V8.15: Export opens with the whole CV, editable in place, then Before you export, then the export functions.
+    r = await js(H + `await w(100); const a={}; a.heads=qa('#v4-stage-content .v7-h3, #v4-stage-content .v7-card-t').map(h=>h.innerText);
+      const doc=q('.v8-edoc'); a.group=[doc.getAttribute('role'), doc.getAttribute('aria-label')];
+      const parts=qa('.v8-edoc .v8-ed-part'); a.n=parts.length; a.roles=parts.every(x=>x.getAttribute('role')==='textbox' && /^(Personal statement|Background and skills|Contribution \\d|Mentorship): /.test(x.getAttribute('aria-label')||''));
+      a.editable=parts.every(x=>/^(plaintext-only|true)$/.test(x.contentEditable));
+      const sp=parts.find(x=>x.getAttribute('aria-label')==='Contribution 1: What you did'); sp.focus(); sp.textContent='Made-up edited sentence on Export.'; sp.dispatchEvent(new Event('input',{bubbles:true})); await w(60);
+      a.saved=JSON.parse(localStorage.getItem('ncv-v8')).contributions[0].activities;
+      const ev=new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}); sp.dispatchEvent(ev); a.enter=ev.defaultPrevented;
+      sp.textContent=''; sp.dispatchEvent(new Event('input',{bubbles:true})); await w(40); a.ph=getComputedStyle(sp,'::before').content; sp.textContent='Made-up edited sentence on Export.'; sp.dispatchEvent(new Event('input',{bubbles:true}));
+      const fx=qa('.v8-edoc .v8-ed-fixed'); a.fixed=fx.length>0 && fx.every(x=>!x.isContentEditable) && fx.some(x=>/^Totals: /.test(x.textContent));
+      sp.focus(); a.focusRing=getComputedStyle(sp).outlineStyle;
+      rail('Review').click(); await w(200); a.noprint=qa('.v8-noprint').length; a.noprintT=(q('.v8-noprint')||{}).textContent;
+      rail('Contributions').click(); await w(200); a.noHelp=!/These marks are for your review/.test(q('#v4-stage-content').textContent);
+      return a;`);
+    check("V8.15 Export: the whole CV comes first, then Before you export, then the export functions", r.heads.slice(0, 3).join("|") === "Your narrative CV|Before you export|Download or print", r.heads);
+    check("V8.15 Export: each part is a labelled text box in the CV, in print order; the sentences the tool writes are not editable", r.group.join() === "group,Your narrative CV, editable" && r.n > 20 && r.roles && r.editable && r.fixed, r);
+    check("V8.15 Export: an edit saves to the part it came from; Enter adds no line; an empty part shows its name; focus is visible", r.saved === "Made-up edited sentence on Export." && r.enter && /\[What you did\]/.test(r.ph) && r.focusRing === "solid", r);
+    check("V8.15: one “do not print” line on Review, none on Contributions", r.noprint === 1 && r.noprintT === "Your strands, marks and ticks do not print." && r.noHelp, r);
   }
 
   console.log("Plain-language rewrites (Q-6, V8.7)");
@@ -2155,7 +2186,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.14 in the script and the tab title", /VERSION_NUM = "8\.14"/.test(src) && /<title>Narrative CV — V8\.14 beta/.test(src));
+    check("the version is 8.15 in the script and the tab title", /VERSION_NUM = "8\.15"/.test(src) && /<title>Narrative CV — V8\.15 beta/.test(src));
   }
 
   console.log("Network and errors");

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.14 beta</title>
+  <title>Narrative CV — V8.15 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -610,6 +610,10 @@
     .v7-pages i { position: absolute; top: 0; bottom: 0; left: 0; background: #7a7a7a; border-radius: 5px; }
     .v7-pages s { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; }
     .v7-pages-scale { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); }
+    .v8-pages-scale { position: relative; display: block; height: 1.2em; }
+    .v8-pages-scale span { position: absolute; top: 0; white-space: nowrap; }
+    .v8-pages-scale span.is-mid { transform: translateX(-50%); }
+    .v8-pages-scale span.is-end { transform: translateX(-100%); }
     .v7-selfcheck label { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; font-size: 0.9rem; color: #333; cursor: pointer; }
     .v7-selfcheck input { margin-top: 0.25em; width: 1rem; height: 1rem; accent-color: #912338; flex-shrink: 0; } /* r10-b-11 */
     .v7-closing { margin: 12px 0 0; padding: 10px 14px; border: 1.5px solid var(--v7-card-b); background: #fafafa; font-size: 0.88rem; border-radius: 8px; }
@@ -779,14 +783,28 @@
     .v7-rq .v7-h3 { margin: 0 0 4px; }
     .v7-rq-lede { margin: 0 0 10px; }
     /* V8.14 Review board: the statement on the left, five tabs, the same numbered rows on each. */
+    .v8-edoc { height: auto; overflow: visible; }
+    .v8-edoc .v8-ed-part { border-radius: 3px; padding: 0 1px; outline: 1px dashed transparent; cursor: text; }
+    .v8-edoc .v8-ed-part:hover { outline-color: #b8b8b8; background: #fbf7f8; }
+    .v8-edoc .v8-ed-part:focus { outline: 2px solid #912338; background: #fff; }
+    .v8-edoc .v8-ed-part:empty::before { content: "[" attr(data-ph) "]"; color: #6b6b6b; font-style: italic; }
+    .v8-edoc .v8-ed-part:empty { margin: 0 0.25em; }
+    .v8-rm-fh { margin: 0 0 4px; font-size: 0.9rem; font-weight: 700; }
+    .v8-edoc .v8-ed-title { margin-bottom: 2px; }
     .v8-rb { margin: 0 0 28px; }
-    .v8-rb-grid { display: grid; grid-template-columns: minmax(200px, 250px) minmax(0, 1fr); gap: 16px; align-items: start; }
-    .v8-rb-grid.is-shut { grid-template-columns: minmax(0, 1fr); }
-    .v8-rb-st { position: sticky; top: calc(var(--v7-bar, 43px) + 12px); max-height: 80vh; overflow: auto; background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 12px 14px; font-size: 0.9rem; }
-    .v8-rb-st-t { margin: 0 0 8px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: #555; }
+    .v8-rb-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .v8-rb-st { background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 10px 14px; font-size: 0.92rem; scroll-margin-top: calc(var(--v7-bar, 43px) + 12px); }
+    .v8-rb-st-h { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
+    .v8-rb-st-t { margin: 0; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: #555; }
+    .v8-rb-st-t:focus { outline: none; }
+    .v8-rb-st-t:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
+    .v8-rb-st-in { margin-top: 8px; }
+    .v8-rb-st-body { max-height: 15em; overflow: auto; padding-right: 6px; margin: 0 0 6px; }
+    .v8-rb-st-body:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
     .v8-rb-st-body p { margin: 0 0 8px; }
     .v8-rb-main { min-width: 0; }
-    .v8-rb-tog { display: inline-block; margin: 0 0 8px; font-size: 0.85rem; }
+    .v8-rb-tog { font-size: 0.85rem; }
+    .v8-see { font-size: inherit; }
     .v8-tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 2px solid #912338; margin: 0 0 12px; }
     .v8-tab { font: inherit; font-size: 0.88rem; min-height: 40px; padding: 6px 11px; border: 1px solid #b8b8b8; border-bottom: 0; border-radius: 6px 6px 0 0; background: #f4f2ef; color: #333; cursor: pointer; }
     .v8-tab[aria-selected="true"] { background: #912338; color: #fff; border-color: #912338; }
@@ -821,6 +839,7 @@
     .v8-mv .btn:disabled { opacity: .3; cursor: default; }
     .v8-leg { margin-left: 38px; }
     .v8-seg { position: relative; }
+    .v8-seg.is-empty { background: #fff !important; border: 1px dashed #6b6b6b; min-width: 24px; }
     .v8-seg::after { content: "✎"; position: absolute; right: 3px; top: 2px; font-size: 0.8rem; opacity: 0; }
     .v8-seg:hover::after, .v8-seg:focus-visible::after, .v8-seg.is-on::after { opacity: 1; }
     .v8-seg:hover, .v8-seg.is-on { box-shadow: inset 0 0 0 2px #912338; z-index: 1; }
@@ -837,6 +856,8 @@
     .v8-tick input, .v8-chg-o input { width: 18px; height: 18px; }
     .v8-rm { margin: 0 0 28px; }
     .v8-rm-g { margin: 0 0 10px; }
+    .v8-rm-flow { margin: 0 0 14px; }
+    .v8-rm-flow .v7-gv-art { max-width: 520px; }
     .v8-rm-gh { margin: 0 0 4px; font-size: 0.9rem; }
     .v8-rm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
     .v8-person { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.4fr); gap: 10px; align-items: center; width: 100%; text-align: left; font: inherit; font-size: 0.9rem; min-height: 44px; padding: 6px 10px; background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; cursor: pointer; color: inherit; }
@@ -854,8 +875,6 @@
     .v8-strand-row .v7-field-label { flex: 0 0 5em; margin: 0; }
     .v8-strand-in { flex: 1 1 16em; min-width: 0; }
     @media (max-width: 48em) {
-      .v8-rb-grid { grid-template-columns: minmax(0, 1fr); }
-      .v8-rb-st { position: static; max-height: none; }
       .v8-reach { grid-template-columns: minmax(0, 1fr); }
       .v8-person { grid-template-columns: minmax(0, 1fr); }
       .v8-p-arrow { display: none; }
@@ -1099,7 +1118,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.14", VERSION_DATE = "2026-11-18";
+    const VERSION_NUM = "8.15", VERSION_DATE = "2026-11-18";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -5745,7 +5764,6 @@
       row.appendChild(grp(CHANGE_WHO, "who", now ? "Who changed? (optional)" : "Who could change? (optional)"));
       row.appendChild(grp(CHANGE_WHAT, "what", now ? "What changed? (optional)" : "What could change for them? (optional)"));
       w.appendChild(row);
-      w.appendChild(el("p", "v4-help", "Choose any that apply, or none. These marks are for your review and do not print."));
       return w;
     }
     // V8.14: the strands are named once, here, in a few words each; Review reads them.
@@ -5753,7 +5771,7 @@
       if (!Array.isArray(ns.strands)) ns.strands = [];
       const fs = el("fieldset", "v8-strand-fs"); fs.appendChild(el("legend", null, "Name each strand in a few words (optional)"));
       const list = el("div"); fs.appendChild(list);
-      fs.appendChild(el("p", "v4-help", "Review uses these names to compare the order of your contributions with your statement. They do not print."));
+      fs.appendChild(el("p", "v4-help", "On Review, you can compare the order of your contributions with these strands."));
       const draw = (focusId) => {
         list.innerHTML = "";
         if (!ns.strands.length) ns.strands.push({ id: newStrandId(), text: "" });
@@ -5787,7 +5805,7 @@
     }
     function selectionNote(onReview) {
       const n = liveContributions().length;
-      return el("p", "v7-note v7-select-note", "You have " + n + " contributions. Reviewers read each one closely, and four or five written in full usually count for more than " + n + " in outline. Finish the ones that relate most to this application; " + (onReview ? "the Words and Evidence tabs show each one’s length and evidence." : "Review shows each one’s length and evidence."));
+      return el("p", "v7-note v7-select-note", "You have " + n + " contributions. If you cannot write all of them in full, you may want to finish the four or five that relate most to this application.");
     }
     // r6-a-3 (inferred): a removed contribution can be restored for ten seconds, as an evidence item can.
     function renderContribUndo(c) {
@@ -6296,6 +6314,66 @@
     const liveContributions = () => ns.contributions.map((c, i) => ({ c, i })).filter(({ c }) => cLive(c) && !c.later);
     const laterContributions = () => ns.contributions.map((c, i) => ({ c, i })).filter(({ c }) => cLive(c) && c.later);
     // The draft as the reader meets it: statement first, contributions in order, mentorship.
+    // V8.15 (Prem, 2026-11-18): Export opens with the whole narrative CV, editable in place, in the
+    // order and type it prints; the export functions follow. Each part is its own box, so an edit goes
+    // back to the part it came from. Sentences the tool writes (the first sentence, the totals, the
+    // trainee sentences, the evidence list) show as they print and are changed on their own step.
+    function edPart(label, get, set, ph) {
+      const s = el("span", "v8-ed-part");
+      try { s.contentEditable = "plaintext-only"; } catch (_) { s.contentEditable = "true"; }
+      if (s.contentEditable !== "plaintext-only") s.contentEditable = "true";
+      s.setAttribute("role", "textbox"); s.setAttribute("aria-label", label); s.spellcheck = true;
+      s.dataset.ph = ph || label;
+      const v = one(get()); s.textContent = v ? asSentence(v) : "";
+      s.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
+      s.addEventListener("input", () => {
+        set(s.textContent); saveState();
+        // A part that gets its first words takes a space before it when a part with words comes earlier.
+        if (s.textContent && s.previousSibling && s.previousSibling.nodeType === 1 && s.previousSibling.classList.contains("v8-ed-part")) {
+          let q = s.previousSibling; while (q && q.nodeType === 1 && q.classList.contains("v8-ed-part") && !q.textContent) q = q.previousSibling;
+          if (q && q.nodeType === 1 && q.classList.contains("v8-ed-part") && q.textContent) s.parentNode.insertBefore(document.createTextNode(" "), s);
+        }
+      });
+      s.addEventListener("blur", () => { const t = s.textContent.replace(/\s+/g, " ").trim(); if (t !== s.textContent) { s.textContent = t; set(t); saveState(); } });
+      return s;
+    }
+    function editableDraft() {
+      const body = el("div", "v7-draft-body v8-edoc " + (ns.lens.agency === "sshrc" ? "" : " tnr"));
+      body.setAttribute("role", "group"); body.setAttribute("aria-label", "Your narrative CV, editable");
+      const h4 = (t) => body.appendChild(el("h4", null, t));
+      // A space goes only between parts that have words, so the paragraph reads as it prints.
+      const join = (p, nodes) => { let any = false; nodes.forEach(n => { if (n.textContent) { if (any) p.appendChild(document.createTextNode(" ")); any = true; } p.appendChild(n); }); };
+      h4(docHeading("ps"));
+      const a = psAnchorText();
+      if (a) { const p = el("p"); p.appendChild(el("span", "v8-ed-fixed", a)); body.appendChild(p); }
+      const p1 = el("p");
+      join(p1, SF().filter(f => f.k !== "anchor").map(f => edPart(secName("ps") + ": " + f.label, () => ns.ps[f.k], v => { ns.ps[f.k] = v; }, f.label)));
+      body.appendChild(p1);
+      h4(docHeading("contrib"));
+      const live = liveContributions();
+      if (!live.length) body.appendChild(el("p", "v7-empty", "Not written yet."));
+      live.forEach(({ c: x }, pos) => {
+        const w = assembleContribution(x);
+        const t = el("p", "v8-ed-title"); const b = el("b"); b.appendChild(document.createTextNode((pos + 1) + ". "));
+        b.appendChild(edPart("Contribution " + (pos + 1) + ": headline", () => x.title, v => { x.title = v; }, "Headline")); t.appendChild(b); body.appendChild(t);
+        const p = el("p");
+        const keys = ["stakes", "roleLine", "activities", "outputs", "outcomes", "translational", "impact"];
+        join(p, keys.map(k => { const f = CF().find(z => z.k === k); const l = f ? (f.label || BEAT_LABEL[f.job]) : k; return edPart("Contribution " + (pos + 1) + ": " + l, () => x[k], v => { x[k] = v; }, l); }));
+        if (w.keys.length) p.appendChild(el("sup", null, w.keys.join(", ")));
+        body.appendChild(p);
+        if (w.refs.length) {
+          const refs = el("div", "v7-refs");
+          w.refs.forEach((r, j) => { if (j) refs.appendChild(el("br")); refs.appendChild(document.createTextNode(r.key + ". " + r.text)); if (r.note) { refs.appendChild(el("br")); refs.appendChild(el("span", "v7-ref-note", r.note)); } });
+          body.appendChild(refs);
+        }
+      });
+      h4(docHeading("mentor"));
+      const totals = mentorTotalsParts();
+      if (totals.length) body.appendChild(el("p", "v8-ed-fixed", "Totals: " + totals.join(", ")));
+      ns.mentees.filter(menteeHasContent).forEach(m => body.appendChild(el("p", "v8-ed-fixed", menteeSentence(m))));
+      PF().forEach(f => { const p = el("p"); p.appendChild(edPart("Mentorship: " + f.label, () => ns[f.k], v => { ns[f.k] = v; }, f.label)); body.appendChild(p); });
+      return body;
+    }
     function draftPreview(cls, label) {
       const wrap = el("div", "v7-draft");
       const body = el("div", "v7-draft-body " + (cls || "") + (ns.lens.agency === "sshrc" ? "" : " tnr"));
@@ -6392,13 +6470,12 @@
       tailoredBar(c);
       stageHead(c, "", "Review your draft", "", false);
       // V8.14 (Prem, 2026-11-16): one line; the order moves into the board's first tab.
-      const lede = el("p", "narrative-intro-text v7-lede", "This step is best reviewed on a computer. ");
+      const lede = el("p", "narrative-intro-text v7-lede", "You may find this step easier on a computer. ");
       lede.appendChild(guideLink("What reviewers look for", "reviewers"));
       c.appendChild(lede);
       c.appendChild(reviewGlance());
       c.appendChild(reviewBoard());
       c.appendChild(reviewMentorship());
-      c.appendChild(reviewBefore());
       navRow(c);
     }
 
@@ -6436,7 +6513,7 @@
       const links = linkList();
       if (links.length) {
         t1.appendChild(el("span", "v7-tile-k v7-tile-k2", isFrq() ? "Links to move to the evidence list" : "Links to take out"));
-        t1.appendChild(el("p", "v7-quiet", isFrq() ? "In the CV-FRQ, links belong with your references, in the evidence list of the contribution they support." : "The TCV does not permit links. Give the reference in words."));
+        if (!isFrq()) t1.appendChild(el("p", "v7-quiet", "The TCV does not permit links. Give the reference in words."));
         const ul = el("ul");
         links.forEach(m => { const li = el("li"); const a = el("a", null, m.label); a.href = "#"; a.addEventListener("click", e => { e.preventDefault(); jumpTo(m); }); li.appendChild(a); ul.appendChild(li); });
         t1.appendChild(ul);
@@ -6451,32 +6528,39 @@
     // breakdown": how the words divide between the statement, each contribution and Mentorship, on a
     // scale of the page limit.
     const COMP_TONES = { ps: "#e7cfd3", c: "#912338", mentor: "#c27a88" };
+    // V8.15 (Prem, 2026-11-18: "i still dont understand the 1, 2, 3, 4"): each contribution has a colour of
+    // its own, matched in the legend, and a block reads "C1" when "Contribution 1" does not fit. The colours
+    // only tell the blocks apart; none of them means better or worse. White text stays above 4.5:1 on each.
+    const COMP_C_TONES = ["#912338", "#00636e", "#2b5c8a", "#3d6b21", "#5b3a8c", "#7a4b12"];
+    const compTone = (g) => g.k === "c" ? COMP_C_TONES[(g.pos || 0) % COMP_C_TONES.length] : COMP_TONES[g.k];
     function compositionTile() {
       const w = draftWords();
       const t = el("div", "v7-tile v7-comp"); t.appendChild(el("span", "v7-tile-k", "Narrative composition breakdown"));
       t.appendChild(el("span", "v7-big", w / WORDS_PER_PAGE < 0.5 ? "under 0.5" : pagesRange(w).replace("roughly ", "")));
       const over = w / WORDS_PER_PAGE > PAGE_LIMIT_EN;
-      t.appendChild(el("span", "v7-quiet", (over ? "pages, roughly · about " : "of " + PAGE_LIMIT_EN + " pages, roughly · about ") + roughWords(w).toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (over ? ". The limit in English is " + PAGE_LIMIT_EN + " pages." : "")));
+      t.appendChild(el("span", "v7-quiet", (over ? "pages, roughly · about " : "of " + PAGE_LIMIT_EN + " pages, roughly · about ") + roughWords(w).toLocaleString("en-CA") + (w === 1 ? " word" : " words") + (over ? "." : "")));
       const segs = [];
       const ps = printedWords(sectionText("ps")), mentor = printedWords(sectionText("mentor"));
       // V8.14 (Prem, 2026-11-16: "is that the length of each section"): every block names its section.
       if (ps) segs.push({ k: "ps", l: isFrq() ? "Background and skills" : "Personal statement", tag: isFrq() ? "Background" : "Statement", n: ps });
-      liveContributions().forEach(({ c: x }, pos) => { const n = cWords(x); if (n) segs.push({ k: "c", l: "Contribution " + (pos + 1), tag: "Contribution " + (pos + 1), short: String(pos + 1), n }); });
+      liveContributions().forEach(({ c: x }, pos) => { const n = cWords(x); if (n) segs.push({ k: "c", pos, l: "Contribution " + (pos + 1), tag: "Contribution " + (pos + 1), short: "C" + (pos + 1), n }); });
       if (mentor) segs.push({ k: "mentor", l: "Mentorship", tag: "Mentorship", n: mentor });
       const sum = segs.reduce((s, g) => s + g.n, 0);
       if (sum) {
         const scale = Math.max(WORDS_PER_PAGE * PAGE_LIMIT_EN, w);
         const bar = el("div", "v7-comp-bar"); bar.setAttribute("role", "img");
         bar.setAttribute("aria-label", "Narrative composition breakdown: " + segs.map(g => g.l + " " + g.n + (g.n === 1 ? " word" : " words")).join(", ") + ", against a limit of " + PAGE_LIMIT_EN + " pages.");
-        segs.forEach(g => { const f = g.n / sum * w / scale; const s = el("span", "v7-comp-seg", f > 0.13 ? g.tag : f > 0.03 && g.short ? g.short : ""); s.title = g.l; s.style.width = (g.n / sum * w / scale * 100) + "%"; s.style.background = COMP_TONES[g.k]; if (g.k === "c") s.style.color = "#fff"; bar.appendChild(s); });
+        segs.forEach(g => { const f = g.n / sum * w / scale; const s = el("span", "v7-comp-seg", f > 0.13 ? g.tag : f > 0.03 && g.short ? g.short : ""); s.title = g.l; s.style.width = (g.n / sum * w / scale * 100) + "%"; s.style.background = compTone(g); if (g.k === "c") s.style.color = "#fff"; bar.appendChild(s); });
         for (let pg = 1; pg < Math.floor(scale / WORDS_PER_PAGE) + 1; pg++) { const m = el("s"); m.style.left = (pg * WORDS_PER_PAGE / scale * 100) + "%"; bar.appendChild(m); }
         t.appendChild(bar);
-        const sc0 = el("div", "v7-pages-scale"); sc0.setAttribute("aria-hidden", "true"); sc0.appendChild(el("span", null, "0")); sc0.appendChild(el("span", null, PAGE_LIMIT_EN + " pages")); t.appendChild(sc0);
+        // V8.15 (Fable's voice pass): the page ticks are numbered, so the width reads as pages without a sentence.
+        const sc0 = el("div", "v7-pages-scale v8-pages-scale"); sc0.setAttribute("aria-hidden", "true");
+        for (let pg = 0; pg <= Math.floor(scale / WORDS_PER_PAGE); pg++) { const sp = el("span", null, pg === PAGE_LIMIT_EN ? pg + " pages" : String(pg)); sp.style.left = (pg * WORDS_PER_PAGE / scale * 100) + "%"; if (pg) sp.classList.add("is-mid"); if (pg * WORDS_PER_PAGE >= scale - 1) sp.classList.add("is-end"); sc0.appendChild(sp); }
+        t.appendChild(sc0);
         const leg = el("ul", "v7-comp-leg"); leg.setAttribute("aria-hidden", "true");
-        segs.forEach(g => { const li = el("li"); const sw = el("span", "v7-comp-sw"); sw.style.background = COMP_TONES[g.k]; li.appendChild(sw); li.appendChild(document.createTextNode(g.l + ": " + g.n.toLocaleString("en-CA") + (g.n === 1 ? " word" : " words") + " (" + Math.round(g.n / sum * 100) + "%)")); leg.appendChild(li); });
+        segs.forEach(g => { const li = el("li"); const sw = el("span", "v7-comp-sw"); sw.style.background = compTone(g); li.appendChild(sw); li.appendChild(document.createTextNode(g.l + ": " + g.n.toLocaleString("en-CA") + (g.n === 1 ? " word" : " words") + " (" + Math.round(g.n / sum * 100) + "%)")); leg.appendChild(li); });
         t.appendChild(leg);
       }
-      if (sum) t.appendChild(el("p", "v7-quiet v7-small v7-comp-how", "Each block is one section of your CV. Its width is that section’s share of the words."));
       // Prem, 2026-11-13: "The length depends on the template, please review before submission."
       t.appendChild(el("p", "v7-quiet v7-small", "The length depends on the template, please review before submission." + (w / 600 > PAGE_LIMIT_EN ? " This is over the English limit of 5 pages." : w / WORDS_PER_PAGE > PAGE_LIMIT_EN ? " This may be over the English limit of 5 pages." : "")));
       return t;
@@ -6544,27 +6628,29 @@
         const go = el("button", "v7-linkbtn", "Go to Contributions"); go.type = "button"; go.addEventListener("click", () => goStage("contrib")); p.appendChild(go);
         sec.appendChild(p); renderLater(sec); return sec;
       }
+      // V8.15 (Prem, 2026-11-18): the statement sits above the tabs, as on a phone, and can be hidden;
+      // each tab has "See your statement", which opens it and scrolls back up to it.
       const shut = !!ns.ui.stmtShut;
-      const grid = el("div", "v8-rb-grid" + (shut ? " is-shut" : ""));
-      const aside = el("aside", "v8-rb-st"); aside.id = "v8-rb-st"; aside.setAttribute("aria-labelledby", "v8-rb-st-t"); aside.hidden = shut;
-      const ah = el("h4", "v8-rb-st-t", isFrq() ? "Your background and skills section" : "Your statement"); ah.id = "v8-rb-st-t"; aside.appendChild(ah);
-      const sb = el("div", "v8-rb-st-body" + (ns.lens.agency === "sshrc" ? "" : " tnr"));
+      const grid = el("div", "v8-rb-grid");
+      const aside = el("section", "v8-rb-st"); aside.id = "v8-rb-st"; aside.setAttribute("aria-labelledby", "v8-rb-st-t");
+      const sh = el("div", "v8-rb-st-h");
+      const ah = el("h4", "v8-rb-st-t", isFrq() ? "Your background and skills section" : "Your statement"); ah.id = "v8-rb-st-t"; ah.tabIndex = -1; sh.appendChild(ah);
+      const tg = el("button", "v7-linkbtn v8-rb-tog", shut ? "Show your statement" : "Hide your statement"); tg.type = "button"; tg.id = "v8-rb-tog";
+      tg.setAttribute("aria-expanded", shut ? "false" : "true"); tg.setAttribute("aria-controls", "v8-rb-st-in");
+      sh.appendChild(tg); aside.appendChild(sh);
+      const inner = el("div", "v8-rb-st-in"); inner.id = "v8-rb-st-in"; inner.hidden = shut;
+      const sb = el("div", "v8-rb-st-body" + (ns.lens.agency === "sshrc" ? "" : " tnr")); sb.tabIndex = 0; sb.setAttribute("role", "region"); sb.setAttribute("aria-label", (isFrq() ? "Your background and skills section" : "Your statement") + ", read only");
       const a = psAnchorText(), rest = psParts("").join(" ");
       if (a) sb.appendChild(el("p", null, a));
       if (rest) sb.appendChild(el("p", null, rest));
       if (!a && !rest) sb.appendChild(el("p", "v7-empty", "Not written yet."));
-      aside.appendChild(sb);
+      inner.appendChild(sb);
       const edp = el("button", "v7-linkbtn", "Edit on " + psStep()); edp.type = "button"; edp.addEventListener("click", () => goStage("ps"));
-      aside.appendChild(edp);
+      inner.appendChild(edp);
+      aside.appendChild(inner);
+      tg.addEventListener("click", () => setStmtShut(!ns.ui.stmtShut));
       grid.appendChild(aside);
       const main = el("div", "v8-rb-main");
-      const tg = el("button", "v7-linkbtn v8-rb-tog", shut ? "Show your statement" : "Hide your statement"); tg.type = "button";
-      tg.setAttribute("aria-expanded", shut ? "false" : "true"); tg.setAttribute("aria-controls", "v8-rb-st");
-      tg.addEventListener("click", () => {
-        ns.ui.stmtShut = !ns.ui.stmtShut; saveState(); const s2 = ns.ui.stmtShut;
-        aside.hidden = s2; grid.classList.toggle("is-shut", s2); tg.textContent = s2 ? "Show your statement" : "Hide your statement"; tg.setAttribute("aria-expanded", s2 ? "false" : "true");
-      });
-      main.appendChild(tg);
       if (!RV_TABS.some(t => t.id === ns.ui.reviewTab)) ns.ui.reviewTab = "order";
       const tl = el("div", "v8-tabs"); tl.setAttribute("role", "tablist"); tl.setAttribute("aria-label", "Questions about your contributions");
       const panel = el("div", "v8-panel"); panel.id = "v8-panel"; panel.setAttribute("role", "tabpanel");
@@ -6590,6 +6676,7 @@
         if (to < 0) return; e.preventDefault(); pick(RV_TABS[to].id, true);
       });
       main.appendChild(tl); main.appendChild(panel);
+      main.appendChild(el("p", "v7-quiet v7-small v8-noprint", "Your strands, marks and ticks do not print."));
       grid.appendChild(main); sec.appendChild(grid);
       pick(ns.ui.reviewTab, false);
       return sec;
@@ -6597,16 +6684,28 @@
 
     const RV_DEF = {
       order: { q: () => "Based on your statement, does the order of your contributions still make sense?", fact: rvOrderFacts, body: rvOrderBody,
-        how: () => namedStrands().length ? "Mark the strands each contribution belongs to. Use ↑ and ↓ to move a contribution. The numbers stay in place." : "Use ↑ and ↓ to move a contribution. The numbers stay in place." },
+        how: () => namedStrands().length ? "Mark the strands each contribution belongs to." : "" },
       words: { q: () => "Does each contribution say what already changed?", fact: () => [rqWordsFact()], body: rvWordsBody,
-        how: () => "Each bar is one contribution, and each colour is one part. Select a part to edit it; the text opens under its contribution." },
+        how: () => "Select a part to edit it." },
       role: { q: () => "Is your own part clear in each contribution?", fact: () => [rqRoleFact()], body: rvRoleBody,
-        how: () => "Please look at your role in each contribution. Change it here if it is not right." + (isCommunity() ? " Each one should make your own part clear and name the parts the partners led or hold." : "") },
+        how: () => "If a role is not right, you can change it here." + (isCommunity() ? " Each contribution should name the parts the partners led or hold." : "") },
       evidence: { q: () => "Does each contribution point to something outside your CV?", fact: () => [rqEvidenceFact()], body: rvEvidenceBody,
-        how: () => "For each contribution: what you produced, and where others used it. Select an item to edit it, or use + Add. The box opens under its contribution." },
+        how: () => "Select an item to edit it, or use + Add." },
       reach: { q: () => "Do your words and evidence show the changes you marked?", fact: () => [rvReachFact()], body: rvReachBody,
-        how: () => "This reads back what you marked on each contribution, beside your words and evidence. The two columns are not ranked." }
+        how: () => "" }
     };
+    function setStmtShut(v) {
+      ns.ui.stmtShut = v; saveState();
+      const inner = document.getElementById("v8-rb-st-in"), tg = document.getElementById("v8-rb-tog");
+      if (inner) inner.hidden = v;
+      if (tg) { tg.textContent = v ? "Show your statement" : "Hide your statement"; tg.setAttribute("aria-expanded", v ? "false" : "true"); }
+    }
+    function seeStatement() {
+      if (ns.ui.stmtShut) setStmtShut(false);
+      const st = document.getElementById("v8-rb-st"), h = document.getElementById("v8-rb-st-t");
+      if (st) st.scrollIntoView({ block: "start", behavior: motionMs(1) ? "smooth" : "auto" });
+      if (h) h.focus({ preventScroll: true });
+    }
     function drawPanel(panel, id) {
       const d = RV_DEF[id], t = RV_TABS.find(x => x.id === id);
       panel.innerHTML = "";
@@ -6614,7 +6713,9 @@
       const f = el("div", "v8-fact"); f.id = "v8-fact"; f.setAttribute("aria-live", "polite");
       const refresh = () => { const lines = d.fact(); while (f.children.length > lines.length) f.lastChild.remove(); lines.forEach((l, k) => { if (!f.children[k]) f.appendChild(el("p")); rvSame(f.children[k], l); }); };
       refresh(); panel.appendChild(f);
-      panel.appendChild(el("p", "v7-quiet v8-how", d.how()));
+      const how = el("p", "v7-quiet v8-how", d.how() + " ");
+      const see = el("button", "v7-linkbtn v8-see", "See your statement"); see.type = "button"; see.addEventListener("click", seeStatement);
+      how.appendChild(see); panel.appendChild(how);
       const body = el("div", "v8-body"); panel.appendChild(body);
       d.body(body, refresh, () => drawPanel(panel, id));
       panel.appendChild(rvTick(t.check));
@@ -6654,7 +6755,6 @@
       if (live.length > 5) body.appendChild(selectionNote(true));
       const sl = el("p", "v8-strands");
       if (st.length) sl.appendChild(document.createTextNode("Strands named on " + psStep() + ": " + st.map(t => "“" + one(t.text) + "”").join(", ") + ". "));
-      else sl.appendChild(document.createTextNode("No strands are named yet. "));
       const eb = el("button", "v7-linkbtn", st.length ? "Edit on " + psStep() : "Name them on " + psStep()); eb.type = "button"; eb.addEventListener("click", openStrands);
       sl.appendChild(eb); body.appendChild(sl);
       const ol = el("ol", "v8-rows v8-rows-mv");
@@ -6699,7 +6799,6 @@
       });
       body.appendChild(ol);
       renderLater(body);
-      body.appendChild(el("p", "v7-quiet v7-small", "The strands and marks stay in the tool and do not print."));
     }
 
     // Tab 2: Words. Each part of the bar is a button; its text opens under the contribution.
@@ -6732,7 +6831,8 @@
           b.type = "button"; b.style.flexBasis = (n / max * 100) + "%"; b.style.background = p.tint;
           b.dataset.cid = x.cid; b.dataset.k = p.k;
           b.setAttribute("aria-label", "Edit contribution " + (pos + 1) + ", " + p.l + ": " + n + (n === 1 ? " word" : " words"));
-          b.setAttribute("aria-expanded", "false");
+          b.setAttribute("aria-expanded", "false"); b.title = p.l + ": " + n + (n === 1 ? " word" : " words");
+          if (!n) b.classList.add("is-empty");
           b.addEventListener("click", () => open(x, pos, p, b, bar, ed));
           bar.appendChild(b);
         });
@@ -6754,7 +6854,7 @@
         setN();
         ta.addEventListener("input", () => {
           x[p.k] = ta.value; saveState(); const n = setN();
-          seg.style.flexBasis = (n / max * 100) + "%"; rvSame(seg, segText(n));
+          seg.style.flexBasis = (n / max * 100) + "%"; rvSame(seg, segText(n)); seg.classList.toggle("is-empty", !n); seg.title = p.l + ": " + n + (n === 1 ? " word" : " words");
           seg.setAttribute("aria-label", "Edit contribution " + (pos + 1) + ", " + p.l + ": " + n + (n === 1 ? " word" : " words"));
           refresh();
         });
@@ -6762,7 +6862,7 @@
         rvEditorKeys(box, close);
         const row = el("div", "v7-actions");
         const dn = el("button", "btn btn-outline v7-btn-small", "Done"); dn.type = "button"; dn.addEventListener("click", close);
-        const go = el("button", "v7-linkbtn", "Open it on Contributions"); go.type = "button";
+        const go = el("button", "v7-linkbtn", "Edit on Contributions"); go.type = "button";
         go.addEventListener("click", () => { x.folded = false; goStage("contrib"); focusField("c" + x.cid + "-" + p.k); });
         row.appendChild(dn); row.appendChild(go); box.appendChild(row);
         ed.appendChild(box); ta.focus();
@@ -6880,7 +6980,7 @@
     // Tab 5: Reach. It reads back the change marks from Contributions and asks nothing new.
     function rvReachFact() {
       const live = liveContributions(), on = live.filter(({ c }) => chgCount(c, "changed") + chgCount(c, "expected"));
-      if (!on.length) return "No changes are marked yet. The marks are optional.";
+      if (!on.length) return "No changes are marked yet.";
       const a = live.reduce((s, { c }) => s + chgCount(c, "changed"), 0), b = live.reduce((s, { c }) => s + chgCount(c, "expected"), 0);
       return "You marked changes on " + on.length + " of " + live.length + (live.length === 1 ? " contribution: " : " contributions: ") + a + " already happened and " + b + " expected.";
     }
@@ -6905,14 +7005,13 @@
         const p1 = el("p"); p1.appendChild(el("span", "v8-rc-k", "What already changed: ")); p1.appendChild(document.createTextNode(oc ? gvCut(oc, 110) : "Not written yet.")); wcol.appendChild(p1);
         const p2 = el("p"); p2.appendChild(el("span", "v8-rc-k", "What could change: ")); p2.appendChild(document.createTextNode(im ? gvCut(im, 110) : "Not written yet.")); wcol.appendChild(p2);
         const u = liveEvidence(x).filter(evUsed).length;
-        wcol.appendChild(el("p", "v7-quiet v7-small", u ? u + (u === 1 ? " item" : " items") + " where others used it." : "Nothing yet where others used it."));
+        wcol.appendChild(el("p", "v7-quiet v7-small", u ? u + (u === 1 ? " item shows" : " items show") + " that others used the work." : "No item shows yet that others used the work."));
         g.appendChild(wcol); card.appendChild(g);
         const go = el("button", "v7-linkbtn", "Edit on Contributions"); go.type = "button"; go.setAttribute("aria-label", "Edit the changes of contribution " + (pos + 1) + " on Contributions");
         go.addEventListener("click", () => jumpTo({ step: "contrib", i, field: "c" + x.cid + "-outcomes" }));
         card.appendChild(go);
       });
       body.appendChild(ol);
-      body.appendChild(el("p", "v7-quiet v7-small", "The change marks stay in the tool and do not print."));
     }
 
     // Mentorship, below the board: each person you describe, at the level they trained at, and
@@ -6941,7 +7040,7 @@
         box.innerHTML = "";
         const tot = MENTOR_COUNT_LABELS.reduce((s, [k]) => s + rqCount(k), 0), ms = rqDescribed();
         if (!tot && !ms.length) { rqEmpty(box, "Add the numbers on Mentorship to see the people here.", "mentor", "Go to Mentorship"); return; }
-        box.appendChild(el("p", "v7-quiet v8-how", "Each person you describe is under the level they trained at, with where they are now. Select a person to change their entry here."));
+        box.appendChild(el("p", "v7-quiet v8-how", "Select a person to change their entry."));
         const groups = MENTOR_COUNT_LABELS.map(([k, l]) => ({ k, l: k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel).replace(/^./, ch => ch.toUpperCase()) : k === "undergrad" ? "Undergraduate" : l, n: rqCount(k), people: ms.filter(m => RQ_LEVEL_OF[m.stageKind] === k) }));
         const loose = ms.filter(m => !RQ_LEVEL_OF[m.stageKind]);
         if (loose.length) groups.push({ k: "none", l: "Level not given", n: 0, people: loose, noCount: true });
@@ -6965,8 +7064,7 @@
           }
           box.appendChild(gw);
         });
-        if (tot > ms.length) box.appendChild(el("p", "v7-quiet v7-small", "The others are counted on Mentorship, not described."));
-        if (tot) rqRing(box, tot, ms);
+        rmFlow(box, ms);
         if (focusId) { const n = document.getElementById(focusId); if (n) n.focus(); }
       };
       draw();
@@ -6978,7 +7076,7 @@
       const changed = () => { saveState(); refresh(); };
       const sel = (id, label, list, cur, onCh) => {
         const w = el("div"); const l = el("label", "v7-field-label", label); l.htmlFor = id;
-        const s = el("select", "v7-input v7-select"); s.id = id; const o0 = el("option", null, "Choose…"); o0.value = ""; s.appendChild(o0);
+        const s = el("select", "v7-input v7-select"); s.id = id; const o0 = el("option", null, "Choose one"); o0.value = ""; s.appendChild(o0);
         list.forEach(([v, lab]) => { const o = el("option", null, lab); o.value = v; if (cur === v) o.selected = true; s.appendChild(o); });
         s.addEventListener("change", e => onCh(e.target.value)); w.appendChild(l); w.appendChild(s); return w;
       };
@@ -7003,32 +7101,43 @@
       rvEditorKeys(ed, close);
       const row = el("div", "v7-actions");
       const dn = el("button", "btn btn-outline v7-btn-small", "Done"); dn.type = "button"; dn.addEventListener("click", close);
-      const go = el("button", "v7-linkbtn", "Open on Mentorship"); go.type = "button";
+      const go = el("button", "v7-linkbtn", "Edit on Mentorship"); go.type = "button";
       go.addEventListener("click", () => { ns.mentees.forEach((x, j) => { x.folded = j !== mi; }); goStage("mentor"); const s = document.getElementById("v7-ps" + mi); if (s) { s.focus(); s.scrollIntoView({ block: "center" }); } });
       row.appendChild(dn); row.appendChild(go); ed.appendChild(row);
       return ed;
     }
     const rqEmpty = (art, t, step, label) => { const p = el("p", "v7-quiet", t + " "); if (step) { const b = el("button", "v7-linkbtn", label); b.type = "button"; b.addEventListener("click", () => goStage(step)); p.appendChild(b); } art.appendChild(p); };
-    // The ring: the share of each level, with the largest group named (Prem kept it, 2026-11-13).
-    function rqRing(art, tot, ms) {
-        // The ring: the share of each level, with the largest group named (Prem kept it, 2026-11-13).
-        const cols = ["#bfdce9", "#d3e0c4", "#f7e5b8", "#f7d4cc", "#ddd7ea"];
-        let a0 = -Math.PI / 2, rb = ""; const cx = 90, cy = 90, r1 = 76, r2 = 44;
-        const p = (an, rr) => (cx + rr * Math.cos(an)).toFixed(1) + " " + (cy + rr * Math.sin(an)).toFixed(1);
-        const rows = MENTOR_COUNT_LABELS.map(([k, l], i) => ({ k, l: k === "other" && one(ns.mentorOtherLabel) ? one(ns.mentorOtherLabel) : l, n: rqCount(k), col: cols[i] })).filter(r => r.n);
-        rows.forEach((r, i) => {
-          const a1 = a0 + r.n / tot * 2 * Math.PI;
-          if (rows.length === 1) rb += '<circle cx="' + cx + '" cy="' + cy + '" r="' + ((r1 + r2) / 2) + '" fill="none" stroke="' + r.col + '" stroke-width="' + (r1 - r2) + '"/>';
-          else rb += '<path d="M' + p(a0, r1) + " A" + r1 + " " + r1 + " 0 " + (a1 - a0 > Math.PI ? 1 : 0) + " 1 " + p(a1, r1) + " L" + p(a1, r2) + " A" + r2 + " " + r2 + " 0 " + (a1 - a0 > Math.PI ? 1 : 0) + " 0 " + p(a0, r2) + ' Z" fill="' + r.col + '" stroke="#ffffff" stroke-width="2"/>';
-          rb += gvRect(200, 22 + i * 26, 14, 14, r.col, ' rx="3" stroke="#8a8a8a"') + gvText(222, 34 + i * 26, gvCut(r.l, 30) + ": " + r.n + " (" + Math.round(r.n / tot * 100) + "%)", { size: 12 });
-          a0 = a1;
-        });
-        rb += gvText(cx, cy + 6, String(tot), { size: 18, weight: 700, anchor: "middle" });
-        const rl = "Share of people " + trainedWord() + " by level: " + rows.map(r => r.l + " " + r.n).join(", ") + ".";
-        const rbx = el("div", "v7-gv-art v7-rq-ring"); rbx.innerHTML = gvSvg(Math.max(184, 30 + rows.length * 26), rl, rb); art.appendChild(rbx);
-        const big = rows.reduce((x, y2) => y2.n > x.n ? y2 : x), d = ms.filter(m => RQ_LEVEL_OF[m.stageKind] === big.k).length;
-        const noun = rqLevelNoun(big.k);
-        art.appendChild(el("p", "v7-rq-ringfact", noun.charAt(0).toUpperCase() + noun.slice(1) + " are your largest group (" + big.n + " of " + tot + "), and you describe " + (d ? d : "none") + " of them."));
+    // V8.15 (Prem, 2026-11-18: "the graph has to talk about where they went"): one bounded chart from
+    // the level each person trained at to where they are now. Band width is the number of people.
+    const rmLevelName = (m) => m.stageKind === "other" ? (one(m.stageOther) || "Other").replace(/^(?:a|an)\s+/i, "").replace(/^./, ch => ch.toUpperCase()) : ((MENTEE_STAGES.find(x => x[0] === m.stageKind) || [, "Level not given"])[1]).replace(/ research$/, "");
+    const rmPlaceName = (m) => m.kind ? menteeKindLabel(m.kind).replace(/\s*\(.*\)$/, "") : "Not given yet";
+    function rmFlow(box, ms) {
+      if (!ms.length) return;
+      const order = MENTEE_STAGES.map(r => r[0]);
+      const L = [], R = [], links = {};
+      ms.slice().sort((a, b) => order.indexOf(a.stageKind) - order.indexOf(b.stageKind)).forEach(m => {
+        const l = rmLevelName(m), r = rmPlaceName(m);
+        if (L.indexOf(l) < 0) L.push(l); if (R.indexOf(r) < 0) R.push(r);
+        links[l + "|" + r] = (links[l + "|" + r] || 0) + 1;
+      });
+      R.sort((a, b) => (a === "Not given yet") - (b === "Not given yet"));
+      const unit = 22, gap = 10, top = 34, W = GV_W, lx = 150, rx = W - 230, nw = 14;
+      const cnt = (side, name) => Object.keys(links).filter(k => k.split("|")[side] === name).reduce((s, k) => s + links[k], 0);
+      const place = (names, side) => { let y = top; const o = {}; names.forEach(n => { const h = cnt(side, n) * unit; o[n] = { y, h, off: 0 }; y += h + gap; }); return { o, end: y }; };
+      const pl = place(L, 0), pr = place(R, 1), H = Math.max(pl.end, pr.end) + 8;
+      let svg = gvText(lx + nw, 18, "Trained as", { size: 12, weight: 700, anchor: "end" }) + gvText(rx, 18, "Now", { size: 12, weight: 700 });
+      Object.keys(links).forEach(k => {
+        const [l, r] = k.split("|"), n = links[k], h = n * unit, a = pl.o[l], b = pr.o[r];
+        const y1 = a.y + a.off, y2 = b.y + b.off; a.off += h; b.off += h;
+        const x1 = lx + nw, x2 = rx, cx = (x1 + x2) / 2;
+        svg += '<path d="M' + x1 + " " + y1 + " C" + cx + " " + y1 + " " + cx + " " + y2 + " " + x2 + " " + y2 + " L" + x2 + " " + (y2 + h) + " C" + cx + " " + (y2 + h) + " " + cx + " " + (y1 + h) + " " + x1 + " " + (y1 + h) + ' Z" fill="#912338" fill-opacity=".28" stroke="#912338" stroke-opacity=".5" stroke-width="1"/>';
+      });
+      L.forEach(n => { const a = pl.o[n]; svg += gvRect(lx, a.y, nw, a.h, "#912338") + gvText(lx - 8, a.y + a.h / 2 + 4, gvCut(n, 20) + " · " + cnt(0, n), { size: 12, anchor: "end" }); });
+      R.forEach(n => { const b = pr.o[n]; svg += gvRect(rx - nw, b.y, nw, b.h, n === "Not given yet" ? "#8a8a8a" : "#5b3a8c") + gvText(rx + 8, b.y + b.h / 2 + 4, gvCut(n, 30) + " · " + cnt(1, n), { size: 12 }); });
+      const label = "Where the people you describe went: " + Object.keys(links).map(k => k.replace("|", " to ") + ", " + links[k]).join("; ") + ".";
+      const fig = el("figure", "v8-rm-flow"); fig.appendChild(el("figcaption", "v8-rm-fh", "Where they went"));
+      const art = el("div", "v7-gv-art"); art.innerHTML = gvSvg(H, label, svg); fig.appendChild(art);
+      box.insertBefore(fig, box.firstChild.nextSibling);
     }
 
     // Before you export: the checks with no data behind them.
@@ -7165,11 +7274,13 @@
         box.appendChild(ul); c.appendChild(box);
       }
 
-      const pv = el("section", "v7-card"); pv.setAttribute("aria-labelledby", "v7-pv-t");
-      const ph = el("div", "v7-card-h"); const pt = el("h3", "v7-card-t", "Your draft"); pt.id = "v7-pv-t"; ph.appendChild(pt);
-      ph.appendChild(el("span", "v7-card-side", "Read only")); pv.appendChild(ph);
-      pv.appendChild(draftPreview("v7-preview", "Draft preview, read only"));
+      const pv = el("section", "v7-card v8-edcard"); pv.setAttribute("aria-labelledby", "v7-pv-t");
+      const ph = el("div", "v7-card-h"); const pt = el("h3", "v7-card-t", "Your narrative CV"); pt.id = "v7-pv-t"; ph.appendChild(pt);
+      ph.appendChild(el("span", "v7-card-side", "Edit any part in place. Changes save as you type.")); pv.appendChild(ph);
+      pv.appendChild(editableDraft());
       c.appendChild(pv);
+      // V8.15 (Prem, 2026-11-18): the export checks move here from the foot of Review.
+      c.appendChild(reviewBefore());
 
       // r2-a-4: a download names its file beside the button and aloud, and stays a little longer.
       // r3-a-4: the status span beside the button is the one live region for its message.

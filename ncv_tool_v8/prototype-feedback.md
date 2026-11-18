@@ -210,3 +210,11 @@ Board: https://claude.ai/artifact/Rvnq6rNBaQXZRTScJMURkQ (private). Notes only; 
 - No value or ranking: no ladder, no "bigger is better", no flag for local or hypothetical work. Work need not have reach to count.
 - Evidence items may point to the change they show.
 - Review then only reads this back beside the words and evidence; it asks nothing new. The People → Field reach ladder (V8.12–V8.13) and the Reach sketches are to be reconsidered against this.
+
+## Notes of 2026-11-18 (after V8.14), Prem, for the next build
+
+- **Statement on Review (built in V8.15):** the left pane did not work. The statement now sits above the tabs, as on a phone, and can be hidden; each tab has "See your statement", which opens it and scrolls up. A pop-up is the other option if this still does not work. Waiting for feedback.
+- **Composition bar (built in V8.15):** "i still dont understand the 1, 2, 3, 4". Each contribution now has its own colour, matched in the legend, and reads "C1" when "Contribution 1" does not fit.
+- **Export (built in V8.15):** it should be a step of its own, not reached at the bottom of Review. It opens with the full narrative CV, editable, and the export functions sit below it.
+- **Mentorship chart:** Prem likes changing a person's entry in place. The chart should show where people went, which "is a lot of insight": who they were (their type or level) and where they wound up (the destination), in one constrained chart. Built in V8.15: a chart from the level they trained at to where they are now, above the grouped list.
+- **Voice pass:** review all instruction text on Review in the house voice. Less is more: if a graph needs explaining, fix the graph rather than add words, and instructions are about doing. Fable's pass is applied in V8.15.

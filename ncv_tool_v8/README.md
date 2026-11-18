@@ -59,6 +59,14 @@ The endpoint is `POST /api/tester`:
 - it keeps only the known answer keys, each up to 2,000 characters; a choose-any answer is kept as a list of up to ten options.
 - Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
+INFERRED in V8.15, for Prem to confirm or change:
+- "the export window ... not at the bottom of your review" is read as: Before you export moves from the foot of Review to Export, between the CV and the downloads;
+- the CV on Export is edited part by part (each part a box in the running paragraph), so an edit goes back to the part it came from. The sentences the tool writes (the first sentence, Totals, the trainee sentences, the evidence list) show as they print and are changed on their own step;
+- the Mentorship chart replaces the ring (kept on 13 Nov) because the chart now has to show where people went. It covers the people you describe; the counted-only people stay in the group headings;
+- the composition colours only tell contributions apart (six, then they repeat); none means better or worse;
+- from the voice pass: the page line reads "You may find this step easier on a computer."; Prem's length line ("The length depends on the template, please review before submission.") is kept as he wrote it; the one "do not print" line sits at the foot of the Review board, and Contributions and Personal statement no longer say it;
+- for Prem (from Fable): the Evidence question asks "Does each contribution point to something outside your CV?" while its fact line counts use by others. A closer question would be "Does each contribution show where others used the work?" Not changed.
+
 INFERRED in V8.14, for Prem to confirm or change (from Fable's walk-through, 2026-11-18):
 - the strands are typed once, as short names (up to four) under the Strands question on Personal statement; Review reads them and links back. The prose answer cannot be read reliably, so it is not parsed;
 - "None of these" is saved as an answer of its own (`strandNone`), so the tool can tell "none" from "not marked yet";
