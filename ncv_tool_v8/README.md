@@ -59,6 +59,23 @@ The endpoint is `POST /api/tester`:
 - it keeps only the known answer keys, each up to 2,000 characters; a choose-any answer is kept as a list of up to ten options.
 - Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
+INFERRED in V8.14, for Prem to confirm or change (from Fable's walk-through, 2026-11-18):
+- the strands are typed once, as short names (up to four) under the Strands question on Personal statement; Review reads them and links back. The prose answer cannot be read reliably, so it is not parsed;
+- "None of these" is saved as an answer of its own (`strandNone`), so the tool can tell "none" from "not marked yet";
+- the order fact line names only the first place where the order departs from the strands ("Your statement names “A” before “B”. Contribution 1 is marked for “B” and contribution 3 for “A”."), then any contribution marked None of these or not marked; a second line always says whether the statement ends with what is next;
+- the board heading is "Five questions about your draft", since the page title is now "Review your draft";
+- the tabs are standard tabs (← → Home End); the chosen tab and the hidden statement are remembered; each tab's tick uses the old self-check ids (Order = coherence, Words = significance, Role = ownership, Evidence = evidence, Reach = reach);
+- each Order row keeps its words, page share and evidence count (Q-12), and its Save for later and Delete;
+- Role: a list labelled "How were you involved?", with the role sentence under it and "Edit on Contributions";
+- Reach: the question is "Do your words and evidence show the changes you marked?", so it can be ticked like the others; the fact line is a count ("You marked changes on 3 of 4 contributions: 5 already happened and 3 expected."), with "The marks are optional." when there are none;
+- the change marks are two checkbox groups under each of the two boxes: "Who changed?" and "What changed?" under What already changed, "Who could change?" and "What could change for them?" under What could change. Already happened or expected follows from the box, so the two are equal and no item needs a second control. They show while the box is open;
+- the old reach answers (`reachNow`, `reachCould`, `changeYear`) stay in saved drafts, unread and unshown; they have no match in the new marks;
+- Mentorship: "current level" is the level the person trained at, and "next step" is where they are now; no field is added. The people are grouped by level, the curve chart goes, and the ring stays (you kept it on 13 Nov). The others counted but not described are named in one line;
+- the working draft preview leaves Review; Export still has it;
+- Lists to rewrite is held back on Export and in the .txt header too, for the same reason as on At a glance;
+- the composition bar names a block only when the name fits (a contribution falls back to its number); every block carries its name on hover, and the legend lists them all;
+- not built: evidence items pointing to the change they show (note of 17 Nov), left for a later round.
+
 INFERRED in V8.13, for Prem to confirm or change:
 - Threads is asked on Review, inside the Coherence question (as Reach is), not on the statement step; the strands are typed by the researcher (up to four, a few words each), since the tool cannot read them from the statement;
 - a contribution can belong to more than one strand; "None of these" clears its marks;

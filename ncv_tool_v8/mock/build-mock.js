@@ -1,0 +1,124 @@
+// Builds a fully filled, made-up narrative CV draft file for a review run of the V8 tool.
+// Run: node ncv_tool_v8/mock/build-mock.js  → writes mock-narrative-cv-draft.json beside this script.
+// Everything here is invented: the researcher, partners, trainees, titles and numbers.
+const fs = require("fs"), path = require("path");
+
+const contributions = [
+  {
+    title: "A tenant-led survey that changed how Montréal counts unsafe housing",
+    stakes: "Tenants in older rental buildings in Montréal live with mould, pests and broken heating, yet the city's inspection data counted only formal complaints. Households who feared eviction rarely complained, so the worst conditions went unrecorded and unrepaired.",
+    roleMode: "coled",
+    roleLine: "I co-led the project with the Comité logement Saint-Pierre (a made-up tenant association) and designed the survey with its members.",
+    activities: "Over three years (2021 to 2024), 24 tenant researchers and I surveyed 1,140 households in 410 buildings across four boroughs. We ran 18 training sessions in French, English, Spanish and Tagalog, and paired each survey with a short building inspection.",
+    outputs: "A public dataset of 1,140 household records; two peer-reviewed articles, in Housing Studies and the Canadian Journal of Urban Research; a bilingual report for tenants; and an open survey kit that other tenant groups can reuse.",
+    outcomes: "In 2024 the city added proactive inspections in two of the four boroughs, and inspectors now use our building checklist. Three other tenant associations have run the survey kit in their own neighbourhoods.",
+    impact: "The survey kit could help other Canadian cities count housing conditions that complaint systems miss, and it may inform provincial standards for rental inspections.",
+    translational: "In March 2024 a tenant researcher presented the findings to the borough council, and the council voted that evening to fund a pilot of proactive inspections.",
+    evidence: [
+      { text: "Made-up Author, A., and Comité logement Saint-Pierre (2023). Counting what complaints miss: a tenant-led housing survey. Housing Studies 38(4): 612–634.", type: "Peer-reviewed" },
+      { text: "Ville de Montréal (2024). Made-up resolution CA24 0312: pilot of proactive inspections in two boroughs.", type: "Policy / practice uptake" },
+      { text: "Tenant Housing Conditions Survey, 2021–2024: open dataset of 1,140 household records (made-up repository link).", type: "Dataset / tool" },
+      { text: "Le Devoir (2024). Made-up article on the tenant survey and the council vote.", type: "Media / public" }
+    ],
+    flags: {}, notes: {}, folded: false
+  },
+  {
+    title: "A method for co-analysing interview data with community partners",
+    stakes: "Community partners in housing research often collect the stories but leave the analysis to academics, so the findings reflect the researchers' categories more than the partners' knowledge.",
+    roleMode: "led",
+    roleLine: "I led the development of the method and tested it with three partner organizations.",
+    activities: "Between 2019 and 2022 I ran 12 analysis workshops with 40 staff and members from three community organizations, coding 96 interviews together. I compared the shared codes with my own earlier coding to see what each approach found.",
+    outputs: "A methods article in Qualitative Research; a facilitation guide in French and English; and a graduate seminar module now taught in two universities.",
+    outcomes: "The guide has been downloaded about 2,300 times, and two other research teams used it in funded projects. The Réseau québécois de recherche partenariale (a made-up network) added it to its training for new partnerships.",
+    impact: "The method could change how partnered projects in the social sciences share analysis, and it might shorten the time partners wait to use their own findings.",
+    translational: "In 2022 the staff of a made-up community food centre used the guide on their own to analyse 20 interviews with members, and they presented the results to their board without a university partner.",
+    evidence: [
+      { text: "Made-up Author, A. (2022). Coding together: a method for co-analysis with community partners. Qualitative Research 22(6): 880–899.", type: "Peer-reviewed" },
+      { text: "Co-analysis facilitation guide (2022), French and English editions (made-up link).", type: "Teaching or curriculum" },
+      { text: "Cited in 41 later studies (Google Scholar, made-up count, 2026).", type: "Replication / citation" }
+    ],
+    flags: {}, notes: {}, folded: false
+  },
+  {
+    title: "Evidence that shaped Québec's 2023 rules on renovation evictions",
+    stakes: "Owners in Québec were using major renovations to remove long-term tenants and raise rents, and the province had little data on how often this happened or who was affected.",
+    roleMode: "part",
+    roleLine: "I contributed the analysis of tribunal records within a five-person team led by a made-up colleague at another university.",
+    activities: "I analysed 6,800 decisions from the housing tribunal between 2015 and 2021, and linked them to census data on the age, income and language of affected households.",
+    outputs: "A brief to the National Assembly committee on housing; a co-authored article in Canadian Public Policy; and a short public summary in French.",
+    outcomes: "The committee cited our brief in its 2023 report, and the final law added a requirement that owners give tenants a written notice of their right to return.",
+    impact: "The analysis may help other provinces measure renovation evictions with tribunal records they already hold.",
+    translational: "In 2023 a legal clinic in Sherbrooke used our public summary to prepare a tenant for a hearing, and the tribunal ordered the owner to offer the tenant the renovated unit at the former rent.",
+    evidence: [
+      { text: "Made-up Colleague, B., Made-up Author, A., et al. (2023). Renovation and displacement in Québec, 2015–2021. Canadian Public Policy 49(2): 201–219.", type: "Peer-reviewed" },
+      { text: "Brief to the Commission de l'aménagement du territoire (2023), cited in the committee's report (made-up reference).", type: "Policy / practice uptake" }
+    ],
+    flags: {}, notes: {}, folded: false
+  },
+  {
+    title: "A housing stories exhibition built with older tenants",
+    stakes: "Older tenants facing eviction are rarely heard in public debate about housing, and their knowledge of their neighbourhoods disappears when they move.",
+    roleMode: "cocreated",
+    roleLine: "I made the exhibition with a made-up community museum and 15 older tenants, and I wrote the research text.",
+    activities: "In 2023 we recorded 30 oral histories with tenants aged 65 to 92 and held six photography workshops in a seniors' centre.",
+    outputs: "A six-week exhibition at the community museum, a bilingual audio walk, and a chapter in an edited book on housing and memory.",
+    outcomes: "About 3,500 people visited the exhibition. The borough library added the audio walk to its local history collection.",
+    impact: "The format could help other neighbourhoods keep the knowledge of tenants who are displaced.",
+    translational: "A 91-year-old tenant led the opening tour, and two city councillors asked to meet the group afterwards.",
+    evidence: [
+      { text: "Our Rooms, Our Street (2023). Exhibition, made-up community museum, Montréal, 12 May to 23 June.", type: "Exhibition, performance or screening" },
+      { text: "Audio walk, French and English (made-up link).", type: "Audio or visual work" }
+    ],
+    flags: {}, notes: {}, folded: false
+  }
+];
+
+// V8.14: the strands named on Personal statement, each contribution's strand marks, and the
+// optional marks of who changed and what changed (already happened, expected). None of them print.
+const strands = [{ id: "s1", text: "Tenant-led data" }, { id: "s2", text: "Shared analysis" }, { id: "s3", text: "Renovation and displacement" }];
+const marks = [
+  { strandIds: ["s1"], changed: { who: ["gov", "people"], what: ["practice"] }, expected: { who: ["gov"], what: ["policy"] } },
+  { strandIds: ["s2"], changed: { who: ["org"], what: ["practice"] }, expected: { who: ["field"], what: ["practice"] } },
+  { strandIds: ["s3"], changed: { who: ["gov"], what: ["policy"] }, expected: { who: ["people"], what: ["awareness"] } },
+  { strandIds: [], strandNone: true, changed: { who: ["people"], what: ["awareness", "culture"] }, expected: { who: ["org"], what: [] } }
+];
+contributions.forEach((c, k) => Object.assign(c, marks[k] || {}));
+
+const draft = {
+  mode: "compose", stageKey: "review", profileConfirmed: true,
+  lens: { agency: "sshrc", format: "tcv", program: "Insight Grants", undecided: false, year: "2027", discipline: "social", discipline2: "", otherField: "", careerStage: "mid", workMode: ["community", "team"] },
+  ui: { profileNote: false },
+  xray: { text: "" },
+  contributions,
+  mentorCounts: { postdoc: "2", phd: "6", masters: "11", undergrad: "14", other: "24" },
+  mentorOtherKind: "community", mentorOtherLabel: "community researchers",
+  mentees: [
+    { stage: "", stageKind: "postdoc", stageOther: "", kind: "university", org: "Made-up University", unit: "School of Urban Planning", recognition: "SSHRC Postdoctoral Fellowship (2022)", why: "She led the tribunal data linkage in the renovation evictions study and now runs her own housing lab.", folded: false },
+    { stage: "", stageKind: "doctoral", stageOther: "", kind: "community", org: "Made-up Tenant Federation", unit: "Research and policy", recognition: "Vanier Canada Graduate Scholarship (2020)", why: "His thesis grew out of the tenant survey, and he trained 10 of the tenant researchers.", folded: false },
+    { stage: "", stageKind: "masters", stageOther: "", kind: "government", org: "Made-up City", unit: "Housing inspection service", recognition: "FRQSC master’s scholarship (2021)", why: "She designed the building checklist that inspectors now use.", folded: false },
+    { stage: "", stageKind: "undergrad", stageOther: "", kind: "university", org: "Made-up University", unit: "Department of Geography", recognition: "Undergraduate research award (2024)", why: "He mapped the survey results and presented them to the borough council.", folded: false }
+  ],
+  mentorPhilosophy: "Each student co-authors a public summary of their work with a community partner before they write the thesis chapter on it, so they learn to explain their findings to the people affected.",
+  mentorEDI: "Half of the tenant researchers I trained were newcomers or older adults, and I pay them at the same rate as graduate assistants. I hold training sessions in four languages and in the evening, so people with day jobs can take part.",
+  mentorCrossStage: "Since 2021 I have mentored the tenant researchers alongside my students. One tenant researcher, a retired nurse, went on to lead the survey in her own building and now sits on the borough's housing committee.",
+  ps: {
+    role: "associate professor", institution: "Made-up University", field: "urban sociology",
+    challenge: "My research asks why the worst housing conditions in Canadian cities go unrecorded, and how tenants can produce the evidence that changes them.",
+    streams: "My work has three strands: tenant-led data on housing conditions, methods for sharing analysis with community partners, and the effects of renovation on displacement. One idea connects them: the people most affected by poor housing hold knowledge that official records miss.",
+    pivot: "I worked as a tenant organizer in Montréal for five years before my doctorate. That work showed me how little of what tenants knew reached the people who set housing policy.",
+    standing: "My work has received a SSHRC Partnership Development Grant (2020) and the Canadian Sociological Association's made-up award for public sociology (2024). I sit on the city's advisory committee on rental housing.",
+    programFit: "An Insight Grant would let me extend the tenant survey to three more Canadian cities and test whether the method holds outside Montréal. At mid career, this is the step from one city's partnership to a comparative program.",
+    teamFit: "",
+    horizon: "Over the next five years I plan to build a shared national dataset on rental conditions with tenant groups in Montréal, Toronto, Winnipeg and Halifax, and to train 20 more tenant researchers."
+  },
+  consultQuestions: "",
+  strands,
+  selfCheck: {}, visited: { setup: true, contrib: true, mentor: true, ps: true, review: true },
+  draftName: "SSHRC Insight Grant, fall 2026 (mock)",
+  contentAt: Date.now(), lastSavedAt: 0
+};
+
+const file = { format: "pathways-narrative-cv-draft", version: 1, tool: "V8.14 beta, 2026-11-18", savedAt: new Date().toISOString(), draft };
+const out = path.join(__dirname, "mock-narrative-cv-draft.json");
+fs.writeFileSync(out, JSON.stringify(file, null, 2));
+console.log("wrote " + out);
