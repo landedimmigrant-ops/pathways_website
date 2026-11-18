@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.16 beta</title>
+  <title>Narrative CV — V8.17 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -1118,7 +1118,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.16", VERSION_DATE = "2026-11-18";
+    const VERSION_NUM = "8.17", VERSION_DATE = "2026-11-18";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -6573,12 +6573,14 @@
     // scores, no ranking, no question the tool cannot answer. Strands, marks and ticks do not print.
     const RQ_ROLE_WORDS = { led: n => "led " + n, coled: n => "co-led " + n, part: n => "contributed a part to " + n, partnerled: n => "took part in " + n + " that partners led", cocreated: n => "made " + n + " with others", alone: n => "did " + n + " on your own" };
     const listAnd = (a) => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+    // V8.17 (Prem, 2026-11-18): each tab is named for what the researcher does in it (the edit),
+    // not for the section it shows, so no label needs decoding.
     const RV_TABS = [
-      { id: "order", check: "coherence", label: "Order and strands" },
-      { id: "words", check: "significance", label: "Words" },
-      { id: "role", check: "ownership", label: "Role" },
-      { id: "evidence", check: "evidence", label: "Evidence" },
-      { id: "reach", check: "reach", label: "Reach" }
+      { id: "order", check: "coherence", label: "Reorder contributions" },
+      { id: "words", check: "significance", label: "Edit what changed" },
+      { id: "role", check: "ownership", label: "Change your role" },
+      { id: "evidence", check: "evidence", label: "Add evidence" },
+      { id: "reach", check: "reach", label: "Check marked changes" }
     ];
     const psStep = () => isFrq() ? "Background and skills" : "Personal statement";
     const rvTitle = (x) => gvCut(one(x.title), 90) || "Untitled contribution";

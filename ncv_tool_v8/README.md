@@ -59,6 +59,9 @@ The endpoint is `POST /api/tester`:
 - it keeps only the known answer keys, each up to 2,000 characters; a choose-any answer is kept as a list of up to ten options.
 - Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
+INFERRED in V8.17, for Prem to confirm or change:
+- the tab names are verb phrases for the edit made in each tab: "Reorder contributions", "Edit what changed", "Change your role", "Add evidence", "Check marked changes". The last tab has no edit of its own (it reads the marks back), so it says "Check". If these still do not work, the other option is to drop the tabs and list the five questions in full.
+
 INFERRED in V8.15, for Prem to confirm or change:
 - "the export window ... not at the bottom of your review" is read as: Before you export moves from the foot of Review to Export, between the CV and the downloads;
 - the CV on Export is edited part by part (each part a box in the running paragraph), so an edit goes back to the part it came from. The sentences the tool writes (the first sentence, Totals, the trainee sentences, the evidence list) show as they print and are changed on their own step;

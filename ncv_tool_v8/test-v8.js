@@ -251,7 +251,7 @@ async function seed(state, extra) {
   check("V8.15: Review runs At a glance, the board, then Mentorship; Before you export moves to Export; no order section, no First/Last lines, no working draft", r.heads.join("|") === "At a glance|Five questions about your draft|Mentorship" && !/Put your contributions in order|First: the contribution|Last: the one closest/.test(r.page), r.heads);
   check("V8.15: each block of the composition bar names its section; the page ticks are numbered, with no explaining line", !/Each block is one section/.test(r.comp) && /\n0\n1\n2\n3\n4\n5 pages\n/.test(r.comp) && r.segTitles.length > 0 && r.segTitles.every(t => /^(Personal statement|Background and skills|Contribution \d+|Mentorship)$/.test(t)) && r.segs.every(t => /^(Statement|Background|Contribution \d+|C\d+|Mentorship)$/.test(t)) && /The length depends on the template, please review before submission\./.test(r.comp) && /^Narrative composition breakdown: .*Contribution 1 \d+ words/.test(r.compAria), r);
   check("V8.14: no chart gallery, no claims about reviewers and no 'real' on Review", r.noGv && !/reviewers? (weigh|look for most|read)/i.test(r.page.replace(/What reviewers look for/g, "")) && !/\breal\b/i.test(r.page), "");
-  check("V8.14: five tabs in a tablist, one selected, roving tabindex, panel named by its tab", r.tabs.join("|") === "Order and strands|Words|Role|Evidence|Reach" && r.sel === 1 && r.tabIdx === "0,-1,-1,-1,-1" && r.panel === "v8-tab-order", r);
+  check("V8.17: five tabs, each named for its edit, in a tablist, one selected, roving tabindex, panel named by its tab", r.tabs.join("|") === "Reorder contributions|Edit what changed|Change your role|Add evidence|Check marked changes" && r.sel === 1 && r.tabIdx === "0,-1,-1,-1,-1" && r.panel === "v8-tab-order", r);
   check("V8.14: the Order tab asks Prem's question; the fact line is a polite live region; the tab ends with the tick", r.q === "Based on your statement, does the order of your contributions still make sense?" && r.factLive === "polite" && r.ticks.join() === "I have checked this.", r);
   check("V8.14: ↑ ↓ move the contribution; the numbers stay in place; focus stays on the moved row; the move is announced and highlighted", r.nums.join() === r.nums2.join() && r.titles2[1] === r.titles[0] && r.titles2[0] === r.titles[1] && r.focusOk && r.moved && /moved to position 2 of/.test(r.said), r);
   check("V8.14: with no strands named, the tab says so, links to the statement step and the fact line asks to name them", /^Name them on /.test(r.strandLine) && /^Name your strands on .* to compare the order with your statement\./.test(r.fact) && /does not yet end with what you plan to do next|ends with what you plan to do next|is not written yet/.test(r.fact), r);
@@ -340,7 +340,7 @@ async function seed(state, extra) {
   check("V8.14 Role: a labelled role list on each row saves the choice and updates the fact line; each row links back to its role sentence", r.roleName === "How were you involved in contribution 1?" && r.roleLab === "How were you involved?" && r.role[0] === "alone" && r.role[1] && r.role[2] && r.roleBack, r);
   check("V8.14 Evidence: + Add opens the box in a row under its contribution, with only the kinds that show use by others", r.edUnder && r.edFocus === "v7-ev-text" && r.kinds.slice().sort().join("|") === "Community document|Media / public|Policy / practice uptake|Replication / citation", r);
   check("V8.14 Evidence: Save adds the item, updates the fact line and returns focus to the table; Escape closes the box", r.evSaved && r.evFact[0] !== r.evFact[1] && r.evBack && r.evEsc, r);
-  check("V8.14: a tab's tick saves to the self-check and the tab shows ✓ with “checked” for screen readers", r.tick[0] && r.tick[1] && /Evidence ✓ , checked/.test(r.tick[2]), r.tick);
+  check("V8.14: a tab's tick saves to the self-check and the tab shows ✓ with “checked” for screen readers", r.tick[0] && r.tick[1] && /Add evidence ✓ , checked/.test(r.tick[2]), r.tick);
   console.log("Export");
   r = await js(H + `rail('Export').click(); await w(150);
     const blobs=[], names=[]; const oc=URL.createObjectURL; URL.createObjectURL=(b)=>{blobs.push(b);return oc(b);};
@@ -2187,7 +2187,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.16 in the script and the tab title", /VERSION_NUM = "8\.16"/.test(src) && /<title>Narrative CV — V8\.16 beta/.test(src));
+    check("the version is 8.17 in the script and the tab title", /VERSION_NUM = "8\.17"/.test(src) && /<title>Narrative CV — V8\.17 beta/.test(src));
   }
 
   console.log("Network and errors");
