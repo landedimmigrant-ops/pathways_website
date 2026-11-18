@@ -13,7 +13,7 @@
 const fs = require("fs"), os = require("os"), path = require("path"), http = require("http"), { spawn } = require("child_process");
 const ROOT = path.join(__dirname, "..");
 const CHROME = process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const CDP_PORT = 9351, PROFILE = fs.mkdtempSync(path.join(os.tmpdir(), "ncv-v8-test-"));
+const CDP_PORT = +process.env.NCV_CDP_PORT || 9351, PROFILE = fs.mkdtempSync(path.join(os.tmpdir(), "ncv-v8-test-"));
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png" };
 let server, port, chrome, ws, nextId = 1;
 // The tester endpoint the Worker serves in production, answered here: "ok" or "fail" (500).
@@ -317,10 +317,18 @@ async function seed(state, extra) {
   console.log("V8.14 Words, Role and Evidence tabs");
   r = await js(H + `rail('Review').click(); await w(200); q('#v8-tab-words').click(); await w(60); const a={};
     a.legendFirst=!!q('[role=tabpanel] .v8-leg + .v8-rows'); const seg=q('.v8-seg[data-k=outcomes]'); a.segLabel=seg.getAttribute('aria-label'); a.pencil=getComputedStyle(seg,'::after').content;
-    seg.click(); await w(60); const ta=q('#v7-wb-ta'); a.under=ta.closest('.v8-row')===seg.closest('.v8-row'); a.taFocus=document.activeElement===ta; a.exp=seg.getAttribute('aria-expanded');
-    a.taLabel=(q('label[for=v7-wb-ta]')||{}).innerText||''; const cid=seg.dataset.cid; setv(ta, ta.value+' Made-up extra words for the test.'); await w(60);
-    a.saved=JSON.parse(localStorage.getItem('ncv-v8')).contributions.find(c=>c.cid===cid).outcomes;
-    ta.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); await w(60); a.esc=[!q('#v7-wb-ta'), document.activeElement===seg];
+    a.noPanel=!q('.v8-rowedit'); seg.click(); await w(150); const ta=q('#v7-wb-ta'); a.noPanel=a.noPanel && !q('#v8-side'); a.under=!!ta && ta.closest('.v8-row')===seg.closest('.v8-row'); a.taFocus=document.activeElement===ta; a.exp=seg.getAttribute('aria-expanded'); a.onlyOne=qa('.v8-seg[aria-expanded=true]').length; a.oneBox=qa('.v8-ed-slot textarea').length;
+    a.taLabel=(q('label[for=v7-wb-ta]')||{}).innerText||'';
+    await w(260); a.emptyOn=[seg.classList.contains('is-empty'), getComputedStyle(seg).backgroundColor, getComputedStyle(seg).borderTopStyle];
+    const cid=seg.dataset.cid; setv(ta, ta.value+' Made-up extra words for the test.'); await w(60);
+    a.saved=JSON.parse(localStorage.getItem('ncv-v8')).contributions.find(c=>c.cid===cid).outcomes; a.segLabel2=seg.getAttribute('aria-label'); await w(260);
+    { const on=getComputedStyle(seg); const rgb=(t)=>t.match(/\\d+(\\.\\d+)?/g).slice(0,3).map(Number), Lm=(c)=>{const v=c.map(x=>{x/=255;return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4);});return 0.2126*v[0]+0.7152*v[1]+0.0722*v[2];}; const f1=Lm(rgb(on.color)), b1=Lm(rgb(on.backgroundColor)); a.onLook=[on.backgroundColor, Math.round((Math.max(f1,b1)+0.05)/(Math.min(f1,b1)+0.05)*10)/10, getComputedStyle(q('.v8-ed-slot .v8-ed')).borderLeftColor]; }
+    const seg2=qa('.v8-row')[1].querySelector('.v8-seg[data-k=activities]'); seg2.click(); await w(150);
+    a.swap=[q('#v7-wb-ta').closest('.v8-row')===seg2.closest('.v8-row'), document.activeElement.id, qa('.v8-seg[aria-expanded=true]').length, seg.getAttribute('aria-expanded'), qa('.v8-ed-slot textarea').length, (q('label[for=v7-wb-ta]')||{}).innerText||''];
+    await w(260); const cs=getComputedStyle(seg); a.look=[cs.borderTopStyle, parseFloat(cs.borderTopWidth)>=1, cs.cursor, seg.offsetHeight>=24]; a.accent=[cs.boxShadow, cs.backgroundColor, getComputedStyle(q('.v8-leg i')).boxShadow];
+    document.activeElement.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); await w(60); a.esc=[!q('#v7-wb-ta'), document.activeElement===seg2, seg2.getAttribute('aria-expanded')];
+    seg.click(); await w(120); qa('.v8-ed-slot .btn').find(b=>b.innerText==='Done').click(); await w(60); a.done=[!q('#v7-wb-ta'), document.activeElement===seg];
+    a.sw=document.documentElement.scrollWidth<=window.innerWidth;
     q('#v8-tab-role').click(); await w(60); const s=q('[role=tabpanel] select'); a.roleName=s.getAttribute('aria-label'); a.roleLab=(q('label[for="'+s.id+'"]')||{}).innerText; const f0=q('#v8-fact').innerText;
     setsel(s,'alone'); await w(60); a.role=[JSON.parse(localStorage.getItem('ncv-v8')).contributions.find(c=>'v8-role-'+c.cid===s.id).roleMode, f0!==q('#v8-fact').innerText, /did 1 on your own/.test(q('#v8-fact').innerText)];
     a.roleBack=qa('[role=tabpanel] .v8-roleline button').length===qa('[role=tabpanel] .v8-row').length;
@@ -335,12 +343,52 @@ async function seed(state, extra) {
     const tk=q('[role=tabpanel] .v8-tick input'); tk.click(); await w(40); a.tick=[JSON.parse(localStorage.getItem('ncv-v8')).selfCheck.evidence===true, !q('#v8-tab-evidence .v8-tab-ck').hidden, q('#v8-tab-evidence').innerText.replace(/\\s+/g,' ')];
     return a;`);
   check("V8.14 Words: the legend sits above the bars; each part is a button named with contribution, part and words, with a pencil", r.legendFirst && /^Edit contribution \d, What already changed: \d+ words?$/.test(r.segLabel) && /✎/.test(r.pencil), r);
-  check("V8.14 Words: the text box opens under its own contribution with focus, and saves as you type", r.under && r.taFocus && r.exp === "true" && /^Contribution \d: What already changed/.test(r.taLabel) && /Made-up extra words for the test\.$/.test(r.saved || ""), r);
-  check("V8.14 Words: Escape closes the box and focus goes back to the part", r.esc[0] && r.esc[1], r.esc);
+  check("V8.18 Words: each block has a button's border and pointer; there is no row Edit button and no side panel", r.look[0] === "solid" && r.look[1] && r.look[2] === "pointer" && r.look[3] && r.noPanel, [r.look, r.noPanel]);
+  check("V8.18 Words: a block opens its own part, alone, in a box under its contribution, with focus and its name", r.under && r.taFocus && r.exp === "true" && r.onlyOne === 1 && r.oneBox === 1 && /^Contribution \d: What already changed/.test(r.taLabel), r);
+  check("V8.18: the parts follow the Pathways site's accent system: a pale tint with a solid stripe of the accent (orange for What already changed, gold for The problem or question), in the legend too", /rgb\(218, 58, 22\)/.test(r.accent[0]) && r.accent[1] === "rgb(247, 212, 204)" && /rgb\(229, 167, 18\)/.test(r.accent[2]), r.accent);
+  check("V8.18: the selected block is the solid accent with text at 4.5:1 or more, and its box has the same accent on its edge", (!r.emptyOn[0] || (r.emptyOn[1] !== "rgb(255, 255, 255)" && r.emptyOn[2] === "solid")) && r.onLook[0] === "rgb(218, 58, 22)" && r.onLook[1] >= 4.5 && r.onLook[2] === "rgb(218, 58, 22)", r.onLook);
+  check("V8.18 Words: typing in the box saves and updates its block", /Made-up extra words for the test\.$/.test(r.saved || "") && r.segLabel2 !== r.segLabel, r);
+  check("V8.18 Words: another block closes the first box and opens its own (one box, one block marked open)", r.swap[0] && r.swap[1] === "v7-wb-ta" && r.swap[2] === 1 && r.swap[3] === "false" && r.swap[4] === 1 && /What you did/.test(r.swap[5]), r.swap);
+  check("V8.18 Words: Escape or Done closes the box and focus goes back to its block; the page does not scroll sideways", r.esc[0] && r.esc[1] && r.esc[2] === "false" && r.done[0] && r.done[1] && r.sw, [r.esc, r.done, r.sw]);
   check("V8.14 Role: a labelled role list on each row saves the choice and updates the fact line; each row links back to its role sentence", r.roleName === "How were you involved in contribution 1?" && r.roleLab === "How were you involved?" && r.role[0] === "alone" && r.role[1] && r.role[2] && r.roleBack, r);
   check("V8.14 Evidence: + Add opens the box in a row under its contribution, with only the kinds that show use by others", r.edUnder && r.edFocus === "v7-ev-text" && r.kinds.slice().sort().join("|") === "Community document|Media / public|Policy / practice uptake|Replication / citation", r);
   check("V8.14 Evidence: Save adds the item, updates the fact line and returns focus to the table; Escape closes the box", r.evSaved && r.evFact[0] !== r.evFact[1] && r.evBack && r.evEsc, r);
   check("V8.14: a tab's tick saves to the self-check and the tab shows ✓ with “checked” for screen readers", r.tick[0] && r.tick[1] && /Add evidence ✓ , checked/.test(r.tick[2]), r.tick);
+
+  console.log("V8.18: a narrow window, and the parts on a folded contribution");
+  await send("Emulation.setDeviceMetricsOverride", { width: 800, height: 900, deviceScaleFactor: 1, mobile: false });
+  r = await js(H + `rail('Review').click(); await w(200); q('#v8-tab-words').click(); await w(80); const a={};
+    const seg=q('.v8-seg[data-k=outcomes]'); seg.click(); await w(80); const ta=q('#v7-wb-ta'); a.under=!!ta && ta.closest('.v8-row')===seg.closest('.v8-row'); a.taFocus=document.activeElement===ta;
+    const cid=seg.dataset.cid; setv(ta, ta.value+' Narrow words.'); await w(60); a.saved=JSON.parse(localStorage.getItem('ncv-v8')).contributions.find(c=>c.cid===cid).outcomes;
+    a.inCard=qa('.v8-bar').every(b=>b.scrollWidth<=b.clientWidth+1); a.sw=document.documentElement.scrollWidth<=window.innerWidth;
+    ta.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); await w(60); a.esc=[!q('#v7-wb-ta'), document.activeElement===seg];
+    return a;`);
+  check("V8.18 Words: in a narrow window a block still opens its own part under its contribution and saves; the bars stay inside their cards and the page does not scroll sideways", r.under && r.taFocus && /Narrow words\.$/.test(r.saved || "") && r.inCard && r.sw && r.esc[0] && r.esc[1], r);
+  await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
+  r = await js(H + `rail('Contributions').click(); await w(250); const a={}; const f=q('.v7-fold'); a.has=!!f; if (f) { const m=f.querySelector('.v8-mini'); a.hidden=m.getAttribute('aria-hidden'); a.n=m.children.length; a.on=m.querySelectorAll('i.on').length;
+      const cid=f.id.replace('fold-',''); const c=JSON.parse(localStorage.getItem('ncv-v8')).contributions.find(x=>x.cid===cid); a.written=['stakes','roleLine','activities','outputs','outcomes','translational','impact'].filter(k=>(c[k]||'').trim()).length;
+      a.tints=[...m.querySelectorAll('i.on')].map(i=>getComputedStyle(i).backgroundColor).filter((v,k,arr)=>arr.indexOf(v)===k).length; a.off=[...m.querySelectorAll('i:not(.on)')].every(i=>getComputedStyle(i).borderTopStyle==='dashed'); a.label=f.getAttribute('aria-label'); }
+    rail('Review').click(); await w(200); return a;`);
+  check("V8.18 Contributions: a folded contribution shows its parts in the colours Review uses, written or dashed, and its name still gives the count", r.has && r.hidden === "true" && r.n === 7 && r.on === r.written && (r.on < 2 || r.tints > 1) && r.off && /\d of 8 answered/.test(r.label), r);
+  console.log("V8.18: the hover rule of the Pathways site");
+  r = await js(H + `rail('Review').click(); await w(200); q('#v8-tab-words').click(); await w(120); const s=q('.v8-seg[data-k=outcomes]'); s.scrollIntoView({block:'center'}); await w(60); const b=s.getBoundingClientRect(), cs=getComputedStyle(s);
+    return {x:b.left+b.width/2, y:b.top+b.height/2, rest:cs.backgroundColor, radius:cs.borderTopLeftRadius, tr:cs.transitionDuration};`);
+  const segRest = r;
+  await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: segRest.x, y: segRest.y });
+  r = await js(H + `await w(400); const s=q('.v8-seg[data-k=outcomes]'), cs=getComputedStyle(s); const rgb=(t)=>t.match(/\\d+(\\.\\d+)?/g).slice(0,3).map(Number), Lm=(c)=>{const v=c.map(x=>{x/=255;return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4);});return 0.2126*v[0]+0.7152*v[1]+0.0722*v[2];};
+    const f=Lm(rgb(cs.color)), b=Lm(rgb(cs.backgroundColor)); const a={bg:cs.backgroundColor, border:cs.borderTopColor, ratio:Math.round((Math.max(f,b)+0.05)/(Math.min(f,b)+0.05)*10)/10};
+    q('#v8-tab-evidence').click(); await w(120); const it=q('.v7-rqev-item'); it.scrollIntoView({block:'center'}); await w(60); const ib=it.getBoundingClientRect(); a.ix=ib.left+ib.width/2; a.iy=ib.top+ib.height/2;
+    a.itemRest=[getComputedStyle(it).backgroundColor, getComputedStyle(it,'::after').backgroundColor, getComputedStyle(it,'::after').color]; return a;`);
+  const segHover = r;
+  await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: segHover.ix, y: segHover.iy });
+  r = await js(H + `await w(400); const it=q('.v7-rqev-item'), cs=getComputedStyle(it); return {bg:cs.backgroundColor, border:cs.borderTopColor, disc:[getComputedStyle(it,'::after').backgroundColor, getComputedStyle(it,'::after').color]};`);
+  check("V8.18: a block at rest is a pale tint with a 2px corner; under the pointer it becomes its solid accent (orange for What already changed), border included, with text at 4.5:1 or more", segRest.rest !== segHover.bg && segRest.radius === "2px" && segRest.tr !== "0s" && segHover.bg === "rgb(218, 58, 22)" && segHover.border === "rgb(218, 58, 22)" && segHover.ratio >= 4.5, [segRest, segHover]);
+  check("V8.18: an evidence item is white with a pale pencil disc at rest; under the pointer it fills with the burgundy tint, takes a burgundy border, and the disc inverts", segHover.itemRest[0] === "rgb(255, 255, 255)" && segHover.itemRest[1] === "rgb(246, 232, 235)" && segHover.itemRest[2] === "rgb(145, 35, 56)" && r.bg === "rgb(246, 232, 235)" && r.border === "rgb(145, 35, 56)" && r.disc[0] === "rgb(145, 35, 56)" && r.disc[1] === "rgb(255, 255, 255)", [segHover.itemRest, r]);
+  await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 2, y: 2 });
+  await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
+  r = await js(H + `await w(100); q('#v8-tab-words').click(); await w(120); return [getComputedStyle(q('.v8-seg')).transitionDuration, getComputedStyle(q('.v8-person')).transitionDuration];`);
+  check("V8.18: with reduced motion the colour change has no transition", r.every(t => t.split(",").every(d => parseFloat(d) <= 0.001)), r); // the page-wide reduced-motion rule leaves 0.00001s
+  await send("Emulation.setEmulatedMedia", { features: [] });
   console.log("Export");
   r = await js(H + `rail('Export').click(); await w(150);
     const blobs=[], names=[]; const oc=URL.createObjectURL; URL.createObjectURL=(b)=>{blobs.push(b);return oc(b);};
@@ -2187,7 +2235,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.17 in the script and the tab title", /VERSION_NUM = "8\.17"/.test(src) && /<title>Narrative CV — V8\.17 beta/.test(src));
+    check("the version is 8.18 in the script and the tab title", /VERSION_NUM = "8\.18"/.test(src) && /<title>Narrative CV — V8\.18 beta/.test(src));
   }
 
   console.log("Network and errors");

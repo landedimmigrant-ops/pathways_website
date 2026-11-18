@@ -59,6 +59,17 @@ The endpoint is `POST /api/tester`:
 - it keeps only the known answer keys, each up to 2,000 characters; a choose-any answer is kept as a list of up to ten options.
 - Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
+INFERRED in V8.18, for Prem to confirm or change:
+- each block on "Edit what changed" opens its own part, in a box under its row, on every screen width. The side panel that opened the whole contribution, and the Edit button on each row, were built in this version and removed before release (Prem, 2026-11-18: "it was better to be able to edit each block on their own");
+- "at the beginning": Contributions already had a marker beside every part (written or not, select to jump), so no second map was added to the open contribution. The folded contribution now shows the seven parts as small blocks in Review's colours, in place of eight plain squares. They are not buttons; the row opens the contribution as before;
+- one sign for "this opens for editing" on Review: a solid border and a pencil, on blocks, evidence items and people;
+- the hover rule is the one the Pathways site uses on its pathway cards ("tint fill, disc inverts", read from the live page on 2026-11-18): a pale tint at rest, and on hover or keyboard focus the accent takes the border and the mark inverts to the solid accent. A block is the mark, so the whole block inverts. Evidence items, people and folded contributions are cards: white at rest, the site's burgundy tint (#f6e8eb) and a burgundy border on hover, and the pencil disc inverts. Corners on the blocks are 2px, as on the site. The tints on the blocks stay the tool's own (stronger than the site's) so that neighbouring parts can be told apart in a bar.
+
+Seen in the design-principles run and left for Prem (not changed):
+- the editable CV on Export shows that a part can be edited only on hover or focus. A mark at rest would clutter the page that prints;
+- part colours are strong on the field labels (Contributions, Personal statement) and pale on Review's blocks. Same hues, two strengths;
+- Mentorship opens with "The most persuasive thing in this section is one person...", a claim the voice pass on Review would have cut. The steps before Review have not had that pass.
+
 INFERRED in V8.17, for Prem to confirm or change:
 - the tab names are verb phrases for the edit made in each tab: "Reorder contributions", "Edit what changed", "Change your role", "Add evidence", "Check marked changes". The last tab has no edit of its own (it reads the marks back), so it says "Check". If these still do not work, the other option is to drop the tabs and list the five questions in full.
 

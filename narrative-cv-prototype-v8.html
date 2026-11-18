@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.17 beta</title>
+  <title>Narrative CV — V8.18 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -532,7 +532,8 @@
     .v7-add { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; border: 1.5px dashed #c4c4c4; border-radius: 8px; background: none; padding: 12px; color: #555; font: inherit; font-size: 0.92rem; font-weight: 600; cursor: pointer; margin: 0 0 16px; }
     .v7-add:hover { border-color: #912338; color: #912338; }
     .v7-fold { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--v7-card); border: 1px solid var(--v7-card-b); border-radius: 10px; padding: 12px 16px; margin: 0 0 12px; cursor: pointer; font: inherit; color: var(--text); }
-    .v7-fold:hover { border-color: #bdbdbd; }
+    .v7-fold { transition: background-color 0.2s ease, border-color 0.15s ease-in-out; }
+    .v7-fold:hover { background: #f6e8eb; border-color: #912338; }
     .v7-fold-t { overflow-wrap: anywhere; flex: 1; min-width: 0; font-weight: 600; font-size: 0.92rem; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .v7-fold > .v7-tri { flex-shrink: 0; }
     .v7-fold-meta { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
@@ -838,10 +839,27 @@
     .v8-mv .btn { min-width: 44px; min-height: 44px; padding: 2px 10px; }
     .v8-mv .btn:disabled { opacity: .3; cursor: default; }
     .v8-leg { margin-left: 38px; }
-    .v8-seg { position: relative; }
-    .v8-seg.is-empty { background: #fff !important; border: 1px dashed #6b6b6b; min-width: 24px; }
-    .v8-seg::after { content: "✎"; position: absolute; right: 3px; top: 2px; font-size: 0.8rem; opacity: 0; }
+    .v8-bar { gap: 3px; min-width: 0; }
+    .v8-bar .v8-seg { flex-shrink: 1; } /* blocks give way before the bar can run past its card */
+    .v8-bar .v8-seg { position: relative; height: 36px; min-width: 28px; padding: 0 6px 0 10px; border: 1px solid #6b6b6b; border-radius: 2px; background: var(--pt, #e8e2d2); box-shadow: inset 4px 0 0 var(--pa, #6b6b6b), 0 1px 0 rgba(0,0,0,0.3); transition: background-color 0.2s ease, color 0.2s ease, border-color 0.15s ease-in-out; }
+    /* The hover rule of the Pathways site's pathway cards ("tint fill, disc inverts"): at rest a pale tint
+       with the accent as a mark; on hover or keyboard focus the accent takes the border and the mark
+       inverts to the solid accent with its ink colour. A block is the mark, so the whole block inverts. */
+    .v8-bar .v8-seg:hover, .v8-bar .v8-seg:focus-visible, .v8-bar .v8-seg.is-on { background: var(--pa, #6b6b6b); color: var(--pon, #fff); border-color: var(--pa, #6b6b6b); box-shadow: 0 1px 0 rgba(0,0,0,0.3); }
+    .v8-bar .v8-seg.is-on { box-shadow: none; }
+    .v8-leg i { background: var(--pt, #e8e2d2); box-shadow: inset 3px 0 0 var(--pa, #6b6b6b); }
+    .v8-bar .v8-seg.is-wide { padding-right: 20px; }
+    .v8-bar .v8-seg.is-empty { background: #fff !important; border: 1px dashed #6b6b6b; box-shadow: none; }
+    .v8-bar .v8-seg.is-empty:hover, .v8-bar .v8-seg.is-empty:focus-visible, .v8-bar .v8-seg.is-empty.is-on { background: var(--pt, #e8e2d2) !important; border: 1px solid var(--pa, #6b6b6b); color: #1a1a1a; }
+    @media (prefers-reduced-motion: reduce) { .v8-bar .v8-seg, .v7-rqev-item, .v7-rqev-item::after, .v8-person, .v8-person::after, .v7-fold { transition: none; } }
+    .v8-seg::after { content: "✎"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; opacity: 0; }
+    .v8-seg.is-wide::after { opacity: 0.75; }
     .v8-seg:hover::after, .v8-seg:focus-visible::after, .v8-seg.is-on::after { opacity: 1; }
+    .v8-bar .v8-seg:active { box-shadow: none; transform: translateY(1px); }
+    .v8-mini { display: inline-flex; gap: 2px; }
+    .v8-mini i { width: 14px; height: 12px; border-radius: 2px; box-sizing: border-box; border: 1px dashed #6b6b6b; background: #fff; }
+    .v8-mini i.on { border-style: solid; background: var(--pt, #e8e2d2); box-shadow: inset 3px 0 0 var(--pa, #6b6b6b); }
+    @media (max-width: 640px) { .v8-bar .v8-seg { height: 44px; } }
     .v8-seg:hover, .v8-seg.is-on { box-shadow: inset 0 0 0 2px #912338; z-index: 1; }
     .v8-seg.is-on { outline: 3px solid #912338; outline-offset: 1px; }
     .v8-role { display: grid; gap: 4px; }
@@ -860,9 +878,9 @@
     .v8-rm-flow .v7-gv-art { max-width: 520px; }
     .v8-rm-gh { margin: 0 0 4px; font-size: 0.9rem; }
     .v8-rm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-    .v8-person { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.4fr); gap: 10px; align-items: center; width: 100%; text-align: left; font: inherit; font-size: 0.9rem; min-height: 44px; padding: 6px 10px; background: #fff; border: 1px solid var(--v7-card-b); border-radius: 8px; cursor: pointer; color: inherit; }
-    .v8-person:hover { border-color: #912338; }
-    .v8-person[aria-expanded="true"] { border-color: #912338; background: #fcf7f8; }
+    .v8-person { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.4fr); gap: 10px; align-items: center; width: 100%; text-align: left; font: inherit; font-size: 0.9rem; min-height: 44px; padding: 6px 40px 6px 10px; position: relative; background: #fff; border: 1px solid #8a8a8a; box-shadow: 0 1px 0 rgba(0,0,0,0.2); border-radius: 8px; cursor: pointer; color: inherit; transition: background-color 0.2s ease, border-color 0.15s ease-in-out; }
+    .v8-person::after { top: 50%; transform: translateY(-50%); right: 10px; }
+    .v8-person:hover, .v8-person:focus-visible, .v8-person[aria-expanded="true"] { border-color: #912338; background: #f6e8eb; }
     .v8-p-who { font-weight: 600; }
     .v8-p-arrow { color: #912338; }
     .v8-chg { margin: 10px 0 0; }
@@ -913,8 +931,12 @@
     .v7-rqev-tab thead th, .v7-reach-tab thead th { background: var(--v7-card); font-size: 0.8rem; }
     .v7-rqev-tab th[scope="row"], .v7-reach-tab th[scope="row"] { font-weight: 600; width: 40%; overflow-wrap: anywhere; }
     .v7-rqev-tab ul { list-style: none; margin: 0; padding: 0; }
-    .v7-rqev-item { display: block; text-align: left; font: inherit; background: none; border: 0; padding: 4px 0; min-height: 24px; cursor: pointer; color: inherit; }
-    .v7-rqev-item b { display: block; text-decoration: underline dotted; text-underline-offset: 3px; }
+    /* V8.18: anything on Review that opens for editing has a button's border and the same pencil. */
+    .v7-rqev-item { position: relative; display: block; width: 100%; box-sizing: border-box; text-align: left; font: inherit; background: #fff; border: 1px solid #8a8a8a; border-radius: 6px; box-shadow: 0 1px 0 rgba(0,0,0,0.2); padding: 5px 34px 5px 8px; margin: 0 0 5px; min-height: 24px; cursor: pointer; color: inherit; transition: background-color 0.2s ease, border-color 0.15s ease-in-out; }
+    .v7-rqev-item::after, .v8-person::after { content: "✎"; position: absolute; right: 6px; top: 5px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 0.75rem; line-height: 1; background: #f6e8eb; color: #912338; transition: background-color 0.2s ease, color 0.2s ease; }
+    .v7-rqev-item:hover, .v7-rqev-item:focus-visible { background: #f6e8eb; border-color: #912338; }
+    .v7-rqev-item:hover::after, .v7-rqev-item:focus-visible::after, .v8-person:hover::after, .v8-person:focus-visible::after, .v8-person[aria-expanded="true"]::after { background: #912338; color: #fff; }
+    .v7-rqev-item b { display: block; }
     .v7-rqev-item span { display: block; font-size: 0.8rem; color: var(--muted); }
     .v7-rqev-item:hover b, .v7-rqev-item:focus-visible b { color: #912338; }
     .v7-rqev-none { display: block; font-weight: 600; }
@@ -1118,7 +1140,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.17", VERSION_DATE = "2026-11-18";
+    const VERSION_NUM = "8.18", VERSION_DATE = "2026-11-18";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -5267,7 +5289,11 @@
       t.appendChild(document.createTextNode(" · " + ((contrib.title || "").trim() || "No headline yet")));
       b.appendChild(t);
       // Pass D: the folded row uses the standard progress squares (one per field, green when written).
-      const jobs = dots(cCount(contrib), C_TOTAL); jobs.classList.add("v7-jobs");
+      // V8.18: the folded row shows the parts in the colours Review uses, written or still to write.
+      const jobs = el("span", "v7-jobs v8-mini"); jobs.setAttribute("aria-hidden", "true");
+      ["stakes", "roleLine", "activities", "outputs", "outcomes", "translational", "impact"].map(k => CF().find(f => f.k === k)).filter(Boolean).forEach(f => {
+        const on = cHas(contrib, f.k), b = el("i", on ? "on" : null); partPaint(b, f); b.title = partName(f) + (on ? ": written" : ": not written yet"); jobs.appendChild(b);
+      });
       b.appendChild(jobs);
       b.appendChild(el("span", "v7-prog-n", cCount(contrib) + " of " + C_TOTAL)).setAttribute("aria-hidden", "true"); // Q-13; the row's label says it
       const ne = liveEvidence(contrib).length;
@@ -6806,7 +6832,7 @@
     // Tab 2: Words. Each part of the bar is a button; its text opens under the contribution.
     const RQ_PARTS = () => ["stakes", "activities", "outputs", "outcomes", "translational", "impact"].map(k => {
       const f = CF().find(x => x.k === k), meta = f.job ? SEG_META.find(m => m[0] === f.job) : null;
-      return { k, l: meta ? meta[1] : "One moment", tint: meta ? meta[2] : "#e8e2d2" };
+      return { k, l: meta ? meta[1] : "One moment", tint: meta ? meta[2] : "#e8e2d2", f };
     });
     function rqWordsFact() {
       const live = liveContributions(), oc = live.map(({ c }) => countWords(c.outcomes || ""));
@@ -6815,51 +6841,65 @@
       const lo = Math.min(...oc);
       return live.length > 1 ? "What already changed is shortest in contribution " + (oc.indexOf(lo) + 1) + " (" + lo + (lo === 1 ? " word)." : " words).") : "What already changed has " + lo + (lo === 1 ? " word." : " words.");
     }
+    // V8.18 (Prem, 2026-11-18: the blocks "don't feel clickable"): each block has a button's border and
+    // a pencil. A block opens its own part, under its row. A side panel with the whole contribution was
+    // built and taken out the same day (Prem: "it was better to be able to edit each block on their own").
+    // The pencil shows only on a block wide enough to hold it beside its number.
+    const rvFitSegs = () => document.querySelectorAll(".v8-seg").forEach(b => b.classList.toggle("is-wide", b.offsetWidth >= 54));
+    const partTint = (f) => { const m = f.job ? SEG_META.find(z => z[0] === f.job) : null; return m ? m[2] : "#e8e2d2"; };
+    // V8.18 (Prem, 2026-11-18): the parts use the accent system of the Pathways site, as its pathway
+    // cards do: a pale tint, a solid stripe of the accent on the left, and the solid accent when selected.
+    // The six accents are the site's (--j-*); "One moment" is outside the six parts and stays neutral.
+    const PART_ACCENT = { stakes: "#e5a712", role: "#912338", activities: "#0072a8", outputs: "#508212", outcomes: "#da3a16", impact: "#573996" };
+    const partAccent = (f) => PART_ACCENT[f.job] || "#6b6b6b";
+    const partPaint = (node, f) => { node.style.setProperty("--pt", partTint(f)); node.style.setProperty("--pa", partAccent(f)); node.style.setProperty("--pon", f.job === "stakes" ? "#1a1a1a" : "#fff"); };
+    const partName = (f) => f.label || BEAT_LABEL[f.job] || "One moment";
+    window.addEventListener("resize", rvFitSegs);
+
     function rvWordsBody(body, refresh) {
       const parts = RQ_PARTS();
       const leg = el("div", "v7-wb-leg v8-leg"); leg.setAttribute("aria-hidden", "true");
-      parts.forEach(p => { const s = el("span"); const sw = el("i"); sw.style.background = p.tint; s.appendChild(sw); s.appendChild(document.createTextNode(p.l)); leg.appendChild(s); });
+      parts.forEach(p => { const s = el("span"); const sw = el("i"); partPaint(sw, p.f); s.appendChild(sw); s.appendChild(document.createTextNode(p.l)); leg.appendChild(s); });
       body.appendChild(leg);
       const total = (x) => parts.reduce((s, p) => s + countWords(x[p.k] || ""), 0);
       const max = Math.max(1, ...liveContributions().map(({ c }) => total(c))) * 1.2; // a fixed scale while the researcher types
       const ol = el("ol", "v8-rows");
       const segText = (n) => n / max > 0.045 ? String(n) : "";
+      const words = (n) => n + (n === 1 ? " word" : " words");
+      const paint = (seg, p, pos, n) => {
+        seg.style.flexBasis = (n / max * 100) + "%"; rvSame(seg, segText(n)); seg.classList.toggle("is-empty", !n); seg.classList.toggle("is-wide", seg.offsetWidth >= 54);
+        seg.title = p.l + ": " + words(n);
+        seg.setAttribute("aria-label", "Edit contribution " + (pos + 1) + ", " + p.l + ": " + words(n));
+      };
       liveContributions().forEach(({ c: x }, pos) => {
         const { card } = rvRow(ol, x, pos, true);
         const bar = el("div", "v7-wb-bar v8-bar");
         const ed = el("div", "v8-ed-slot");
         parts.forEach(p => {
-          const n = countWords(x[p.k] || ""), b = el("button", "v7-wb-seg v8-seg", segText(n));
-          b.type = "button"; b.style.flexBasis = (n / max * 100) + "%"; b.style.background = p.tint;
-          b.dataset.cid = x.cid; b.dataset.k = p.k;
-          b.setAttribute("aria-label", "Edit contribution " + (pos + 1) + ", " + p.l + ": " + n + (n === 1 ? " word" : " words"));
-          b.setAttribute("aria-expanded", "false"); b.title = p.l + ": " + n + (n === 1 ? " word" : " words");
-          if (!n) b.classList.add("is-empty");
-          b.addEventListener("click", () => open(x, pos, p, b, bar, ed));
+          const b = el("button", "v7-wb-seg v8-seg"); b.type = "button"; partPaint(b, p.f);
+          b.dataset.cid = x.cid; b.dataset.k = p.k; b.setAttribute("aria-expanded", "false");
+          paint(b, p, pos, countWords(x[p.k] || ""));
+          b.addEventListener("click", () => open(x, pos, p, b, ed));
           bar.appendChild(b);
         });
         card.appendChild(bar); card.appendChild(ed);
       });
       body.appendChild(ol);
-      const open = (x, pos, p, seg, bar, ed) => {
+      requestAnimationFrame(rvFitSegs);
+      const open = (x, pos, p, seg, ed) => {
         const was = document.querySelector(".v8-seg.is-on");
         document.querySelectorAll(".v8-ed-slot").forEach(s => { s.innerHTML = ""; });
         document.querySelectorAll(".v8-seg").forEach(s => { s.classList.remove("is-on"); s.setAttribute("aria-expanded", "false"); });
         if (was === seg) { seg.focus(); return; }
         seg.classList.add("is-on"); seg.setAttribute("aria-expanded", "true");
-        const box = el("div", "v7-wb-box v8-ed"); box.style.borderLeftColor = p.tint;
+        const box = el("div", "v7-wb-box v8-ed"); box.style.borderLeftColor = partAccent(p.f);
         const id = "v7-wb-ta";
         const lab = el("label"); lab.htmlFor = id; lab.appendChild(el("b", null, "Contribution " + (pos + 1) + ": " + p.l));
         const cnt = el("span", "v7-wb-n"); lab.appendChild(cnt); box.appendChild(lab);
         const ta = el("textarea", "v7-wb-text"); ta.id = id; ta.rows = 5; ta.value = x[p.k] || ""; box.appendChild(ta);
-        const setN = () => { const n = countWords(ta.value); cnt.textContent = " " + n + (n === 1 ? " word" : " words"); return n; };
+        const setN = () => { const n = countWords(ta.value); cnt.textContent = " " + words(n); return n; };
         setN();
-        ta.addEventListener("input", () => {
-          x[p.k] = ta.value; saveState(); const n = setN();
-          seg.style.flexBasis = (n / max * 100) + "%"; rvSame(seg, segText(n)); seg.classList.toggle("is-empty", !n); seg.title = p.l + ": " + n + (n === 1 ? " word" : " words");
-          seg.setAttribute("aria-label", "Edit contribution " + (pos + 1) + ", " + p.l + ": " + n + (n === 1 ? " word" : " words"));
-          refresh();
-        });
+        ta.addEventListener("input", () => { x[p.k] = ta.value; saveState(); paint(seg, p, pos, setN()); refresh(); });
         const close = () => { ed.innerHTML = ""; seg.classList.remove("is-on"); seg.setAttribute("aria-expanded", "false"); seg.focus(); };
         rvEditorKeys(box, close);
         const row = el("div", "v7-actions");
