@@ -59,6 +59,18 @@ The endpoint is `POST /api/tester`:
 - it keeps only the known answer keys, each up to 2,000 characters; a choose-any answer is kept as a list of up to ten options.
 - Rows sent before 2026-11-03 used the first set of keys (`funding`, `before`, `want`, `useful`, `stuck`); there were none in the table when the set changed.
 
+INFERRED in V8.20 (voice pass on the steps before Review, and Export), for Prem to confirm or change:
+- 35 of the 44 proposed rows are applied; the table is `voice-pass-2026-11-18.md`. Rows NOT applied, and why:
+  - row 7 ("This part asks how large the work was...") and row 25 ("Review uses your choice to show your role..."): both are worded to Prem's notes 5 and 6 of 2026-11-12, so they stay until he says otherwise, although each personifies a part or a step;
+  - row 21 ("You start with your contributions."), row 1 (the tool runs offline after it opens), row 9 (what Reset draft clears), row 38 ("Changes save as you type."): each tells the researcher something the screen does not otherwise say;
+  - row 4 (the caption over the highlighted words): without it the repeated answer has nothing to say why it is there;
+  - row 32 (the co-supervision line under Level) needs moving, and row 33 (the "received" help line) is tied to a tested behaviour; both left for a later change;
+- row 22: "Three or four well-explained contributions count for more than a long list." became "You should explain three or four contributions in full before you add more." The note shown past five contributions says "four or five". One number should serve both; Prem or Eli to say which;
+- row 26 keeps the purpose of the shaded words ("suggest links between the parts") and drops only the line about screen readers;
+- row 40 keeps "It is not a Word file.", since "draft file" alone does not say what the file is;
+- the check "visible text says six parts" now checks only that "six jobs" never shows, because the one line that said "six parts" was cut;
+- left for Prem in the proposal file: the tester card wording ("Five short questions" where six show), "Review your CV" on the Next button, straight apostrophes in six places, and whether alerts and the suggestions under an answer should leave the imperative.
+
 INFERRED in V8.19, for Prem to confirm or change:
 - the editable box: Prem chose "the pencil in circle at the end of the box on the right side ... when over the circle appears". Read as: a plain pencil at rest, the circle on hover, focus and while open. The box then keeps its tint (it no longer turns solid accent, as blocks did in V8.18), so one rule covers a block, an evidence item and a person;
 - a block too narrow for the pencil (under 60px) shows its number alone; on hover the circle takes the number's place. An empty block shows a plus, the sign the "+ Add" button already uses;

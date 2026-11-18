@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V8.19 beta</title>
+  <title>Narrative CV — V8.20 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -1097,10 +1097,10 @@
     <h1 class="proto-title"><a href="#" id="v7-home" title="Back to the start page">Narrative CV</a></h1>
     <p class="proto-subtitle">A drafting tool for your Tri-agency CV or CV-FRQ.</p>
     <div id="v7-start-intro" hidden>
-      <p class="v7-intro">This tool helps you get familiar with how a narrative CV asks you to think about your work and describe it. You build a first outline in your own words: your contributions, your mentorship record and a personal statement. A full first draft can take a day or more, so start well before your deadline. English only for now.</p>
+      <p class="v7-intro">This tool helps you get familiar with how a narrative CV asks you to think about your work and describe it. You build a first outline in your own words: your contributions, your mentorship record and a personal statement. A full first draft can take a day or more, so you should start well before your deadline. English only for now.</p>
       <p class="v7-intro">We recommend reading the <a id="v4-guide-top" href="https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html" target="_blank" rel="noopener">narrative CV guide</a> before you start, and consulting it as you go.</p>
     </div>
-    <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The suggestions under your answers come from fixed rules. Your draft leaves this device only if you send it by email. A connection is needed to open the tool; after that it runs offline. If you close the tab, save a draft file first.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
+    <p class="v4-privacy"><svg class="v7-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm8 12H7v-8h10v8z"/></svg> <span class="v4-privacy-full">No AI. Anything you write is your own and stays here, on this device. Clearing your browser data clears the draft too. The suggestions under your answers come from fixed rules. Your draft leaves this device only if you send it by email. A connection is needed to open the tool; after that it runs offline. Before you close the tab, you should save a draft file.</span><span class="v4-privacy-short">No AI. Anything you write stays here.</span></p>
     <p class="v4-save-warning" id="v4-save-warning" hidden>Saving has stopped working in this browser, so your latest changes are at risk. Use Save a draft file, or copy your draft on the Export page, before you close this tab.</p>
     <div id="ncv-v4-root"></div>
     <p class="v8-version" id="v8-version"></p>
@@ -1145,7 +1145,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "8.19", VERSION_DATE = "2026-11-18";
+    const VERSION_NUM = "8.20", VERSION_DATE = "2026-11-18";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -3223,7 +3223,7 @@
     // Minimum to review (Prem, 2026-10-28): Review and Export stay ghosted until one contribution
     // has a headline, your role and at least two of the five job fields.
     const REVIEW_MIN_JOBS = ["stakes", "activities", "outputs", "outcomes", "impact"];
-    const REVIEW_MIN_NOTE = "Review and Export become available when one contribution has a headline, your role and two more answered parts.";
+    const REVIEW_MIN_NOTE = "To open Review and Export, you need one contribution with a headline, your role and two more answered parts.";
     const reviewReady = () => ns.contributions.some(c => {
       const t = (k) => !!(c[k] || "").trim();
       return t("title") && (t("roleLine") || !!c.roleMode) && REVIEW_MIN_JOBS.filter(t).length >= 2;
@@ -3325,7 +3325,7 @@
         // G-2: an open Change panel holds a copy of the old profile, so it closes when the profile changed
         // elsewhere; the evidence view follows its card by id.
         let chgClosed = false;
-        if (UI.chg && JSON.stringify(ns.lens) !== lensBefore) { UI.chg = null; chgClosed = true; spoken = true; announce("Your profile was changed in another tab, so the Change panel closed."); }
+        if (UI.chg && JSON.stringify(ns.lens) !== lensBefore) { UI.chg = null; chgClosed = true; spoken = true; announce("Your profile was changed in another tab, so your profile answers were closed."); }
         UI.evCard = evCid ? ns.contributions.findIndex(c => c.cid === evCid) : -1;
         replaceNext = true; // a take-up is not a step the researcher chose
         renderStage();
@@ -4644,7 +4644,7 @@
         countEvent("profileChanged");
         renderStage();
         const b = document.getElementById("v7-chg"); if (b) b.focus();
-        announce(changedKeys.length ? "Profile updated: " + changedKeys.join(", ") + ". The prompts and examples follow the new answers." : "Profile unchanged.");
+        announce(changedKeys.length ? "Profile updated: " + changedKeys.join(", ") + "." : "Profile unchanged.");
       });
       // W-44 (inferred, option A): Cancel beside Confirm; Reset draft at the panel's foot, as on the start card.
       const cn = el("button", "btn btn-outline v7-btn-small", "Cancel"); cn.type = "button";
@@ -4789,7 +4789,7 @@
         // V7-23: the note that checks are suggestions, the first time a check fires, once per draft.
         if (checks.querySelector(".v4-flag") && (!ns.ui.checksNoteSeen || ns.ui.checksNoteField === id)) {
           ns.ui.checksNoteSeen = true; ns.ui.checksNoteField = id;
-          checks.appendChild(el("span", "v4-meta v7-first-note", "These suggestions are about content, such as numbers and your role. They do not cover grammar or spelling, and in French text only some of them apply. You can continue without acting on them."));
+          checks.appendChild(el("span", "v4-meta v7-first-note", "You can continue without acting on these suggestions. They do not cover grammar or spelling, and in French text only some of them apply."));
         }
       };
       runChecks();
@@ -5005,11 +5005,11 @@
     }
     function renderSetup(c) {
       stageHead(c, "", "Set up your profile",
-        "Your answers decide which prompts, examples and format notes the tool shows you. The examples are fictional.", false);
+        "The prompts, examples and format notes you see follow your answers. The examples are fictional.", false);
       if (ns.ui.profileNote) {
         const n = el("p", "v7-note");
         n.insertAdjacentHTML("afterbegin", INFO_SVG);
-        n.appendChild(el("span", null, "You can change these answers later with the Change button at the top of each step."));
+        n.appendChild(el("span", null, "You can change these answers later, at the top of each step."));
         c.appendChild(n);
       }
       const L = ns.lens, qs = profileQs();
@@ -5076,14 +5076,14 @@
           if (L.agency) {
             const fb = el("p", "v7-feedback");
             fb.textContent = "✓ " + (L.agency === "frq" ? "Format: the CV-FRQ."
-              : L.agency === "other" ? "Format: the Tri-agency CV layout for now. The format notes show every agency’s font rule until you choose."
+              : L.agency === "other" ? "Format: the Tri-agency CV layout for now."
               : "Format: the Tri-agency CV (TCV), with " + labelOf(AGENCIES, L.agency) + "'s font rules.");
             blk.appendChild(fb);
           }
         }
         if (i === 1) {
           h("Name the competition or funding you are applying for.");
-          blk.appendChild(explainBox("A narrative CV is written for a specific competition. If you name the competition here, the " + secName("ps").toLowerCase().replace(/^the /, "") + " prompt will ask about that competition by name. If you have not chosen one, select Undecided."));
+          blk.appendChild(explainBox("A narrative CV is written for a specific competition. If you have not chosen one, you can select Undecided."));
           const row = el("div", "v7-comp-row");
           const wrap = el("div");
           const lab = el("label", "v7-field-label", "Competition"); lab.htmlFor = "v7-comp";
@@ -5126,30 +5126,28 @@
         }
         if (i === 2) {
           h("Which career stage are you at?");
-          blk.appendChild(explainBox("This changes a few of the prompts. For example, early-career researchers see prompts about what they have achieved so far. If your funding opportunity defines early career, use its definition."));
+          blk.appendChild(explainBox("If your funding opportunity defines early career, use its definition."));
           blk.appendChild(choiceGrid(CAREER_STAGES, v => L.careerStage === v, v => pick(() => { L.careerStage = v; }, 2), { labelledby: "pq2", idp: "st" }));
         }
         if (i === 3) {
           h("Which field is your work closest to?");
-          blk.appendChild(explainBox("Your answer chooses the worked examples, the discipline notes and the wording of some questions, so they come from work like yours. If you change it later, your draft stays the same."));
+          blk.appendChild(explainBox("If you change your field later, your draft stays the same."));
           blk.appendChild(choiceGrid(DISCIPLINES, v => L.discipline === v, v => pick(() => { L.discipline = v; if (L.discipline2 === v) { L.discipline2 = ""; announce("Another field cleared, because it matched your main field."); } }, 3), { labelledby: "pq3", idp: "di" }));
           // D-2: one line for a researcher whose field is missing.
           const miss = el("p", "v7-quiet");
-          miss.appendChild(document.createTextNode("If your field is not listed, choose the closest one and let us know at "));
+          miss.appendChild(document.createTextNode("If your field is not listed, you can choose the closest one and let us know at "));
           const a = el("a", null, FEEDBACK.email); a.href = "mailto:" + FEEDBACK.email + "?subject=" + encodeURIComponent("Narrative CV tool: a field to add");
           miss.appendChild(a); miss.appendChild(document.createTextNode("."));
           blk.appendChild(miss);
         }
         if (i === 4) {
           h("Does your work also belong to another field?");
-          blk.appendChild(explainBox("With a second field, the Contributions step adds a worked example that combines both fields, and some questions add a line for it."));
           const opts = [{ v: "none", l: "No, just this one", wide: true }].concat(DISCIPLINES.filter(d => d.v !== L.discipline));
           blk.appendChild(choiceGrid(opts, v => L.discipline2 === v, v => pick(() => { L.discipline2 = v; }, 4), { labelledby: "pq4", idp: "d2" }));
         }
         if (i === 5) {
           // P-54 (INFERRED, 2026-11-09): the question follows the field chosen two questions earlier; the label stays "How your work usually happens".
           h((L.discipline === "creative" ? "How do you usually make your work?" : L.discipline ? "How do you usually do your research?" : "How do you usually work?") + " Choose any that apply.");
-          blk.appendChild(explainBox("Many researchers work in more than one way. Your answer chooses the role and outcome prompts and the worked example you see."));
           blk.appendChild(choiceGrid(WORK_MODES, v => (L.workMode || []).indexOf(v) !== -1, v => {
             const m = L.workMode || (L.workMode = []); const ix = m.indexOf(v);
             if (ix >= 0) m.splice(ix, 1); else { m.push(v); soloTeamSwap(m, v); }
@@ -5161,7 +5159,7 @@
       profileShown = Math.max(profileShown, reveal + 1);
       c.appendChild(wrap);
       if (n === 6) navRow(c, { nextLabel: "Confirm profile", onNext: confirmProfile,
-        note: ns.ui.profileNote ? "" : "You can change these answers later with the Change button at the top of each step." });
+        note: ns.ui.profileNote ? "" : "You can change these answers later, at the top of each step." });
       else {
         const nav = el("div", "narrative-nav v7-nav-quiet");
         // W-38: the line names the question that holds things up.
@@ -5210,7 +5208,7 @@
       head.appendChild(el("h2", null, secName("contrib")));
       c.appendChild(head);
       c.appendChild(el("p", "v7-startline", "You start with your contributions."));
-      const lede = el("p", "narrative-intro-text v7-lede", "Describe up to 10 contributions that relate to this funding opportunity; they do not have to be your most recent work. A contribution can be a single output or a group of related work, such as " + (ns.lens.discipline === "creative" ? "a body of work, a series of works" : "a cluster of papers") + ", a program or a partnership. Three or four well-explained contributions count for more than a long list. In the finished CV, each one reads as a single paragraph. The guide sets out ");
+      const lede = el("p", "narrative-intro-text v7-lede", "Describe up to 10 contributions that relate to this funding opportunity; they do not have to be your most recent work. A contribution can be a single output or a group of related work, such as " + (ns.lens.discipline === "creative" ? "a body of work, a series of works" : "a cluster of papers") + ", a program or a partnership. You should explain three or four contributions in full before you add more. In the finished CV, each one reads as a single paragraph. The guide sets out ");
       lede.appendChild(guideLink("what counts as a contribution", "three"));
       lede.appendChild(document.createTextNode("."));
       c.appendChild(lede);
@@ -5228,7 +5226,7 @@
           if (!L.discipline) match += " Choose your field in your profile and it changes to match.";
           return exampleBox({ title: "What a finished contribution reads like (" + (labelOf(DISCIPLINES, pick.disc) || "STEM / engineering") + ")", match,
             segs: pick.cell.segments.map(sg => ({ t: sg.t, keys: sg.keys, job: sg.r })), legend: SIX_LEGEND,
-            foot: "The content is fictional: the researcher, the project and the numbers are invented. In the finished CV these sentences run together as one paragraph, and each one still does one of the six parts." });
+            foot: "The content is fictional: the researcher, the project and the numbers are invented. In the finished CV these sentences run together as one paragraph." });
         }
         if (key === "two" && inter) {
           const pair = disciplineLabel(L).replace(" + ", " and ");
@@ -5255,7 +5253,7 @@
             });
             box.appendChild(ul);
           });
-          box.appendChild(el("p", "v7-exfoot", "These are examples. A part that does not apply to your work can stay empty. The Review step lists the empty parts so you can check each one."));
+          box.appendChild(el("p", "v7-exfoot", "These are examples. A part that does not apply to your work can stay empty."));
           return box;
         }
         return null;
@@ -5277,7 +5275,7 @@
           UI.active = "c" + nc.cid + "-title"; UI.evCard = -1;
           saveState(); renderStage();
           focusField(UI.active);
-          announce("Contribution " + (i + 1) + " added." + (ns.contributions.length >= 10 ? " This is the limit of ten." : ""));
+          announce("Contribution " + (i + 1) + " added." + (ns.contributions.length >= 10 ? " This is the limit of 10." : ""));
         });
         c.appendChild(add);
       }
@@ -5368,7 +5366,7 @@
       }
       head.appendChild(side);
       card.appendChild(head);
-      if (contrib.later) card.appendChild(el("p", "v7-note v7-later-note", "Saved for later: this contribution stays in your draft and does not print. Put it back under Order of contributions, on Review.")); // Q-11
+      if (contrib.later) card.appendChild(el("p", "v7-note v7-later-note", "Saved for later: this contribution stays in your draft and does not print. Put it back under Reorder contributions, on Review.")); // Q-11
       const colItems = CF().map(f => ({ id: "c" + contrib.cid + "-" + f.k, label: f.label || BEAT_LABEL[f.job], has: () => cHas(contrib, f.k) }))
         .concat([{ id: "ev", label: "Evidence", has: () => liveEvidence(contrib).length > 0 }]);
       // W-10 (inferred): the column is built here and placed after the fields, so the Tab order reads
@@ -5535,7 +5533,7 @@
       });
       if (w.refs.length) body.appendChild(document.createTextNode("(" + w.refs.map(r => r.key).join(", ") + ")"));
       s.appendChild(body);
-      if (body.querySelector(".v4-connective")) { const jn = el("p", "v7-quiet v7-join-note", "The shaded words with arrows between the parts suggest how to link them. They are not part of your draft, and screen readers skip them."); s.appendChild(jn); }
+      if (body.querySelector(".v4-connective")) { const jn = el("p", "v7-quiet v7-join-note", "The shaded words with arrows suggest links between the parts. They are not part of your draft."); s.appendChild(jn); }
       if (!isTop) {
         if (!contrib.stakes && (contrib.activities || contrib.outputs)) s.appendChild(el("span", "v4-gap", "The problem or question part is empty, so the paragraph opens on the work itself."));
         if (!contrib.outcomes && !contrib.impact && contrib.outputs) s.appendChild(el("span", "v4-gap", "What already changed and What could change are both empty, so the paragraph ends on what resulted."));
@@ -5568,7 +5566,7 @@
       area.appendChild(el("div", "v7-f-k is-q", "Evidence"));
       const q = el("span", "v7-q", "What backs up this contribution?"); q.id = "evq" + contrib.cid;
       area.appendChild(q);
-      area.appendChild(explainBox("Evidence supports what you have just described. Add the items a reviewer could check: " + (EV_INTRO_ITEMS[ns.lens.discipline] ? EV_INTRO_ITEMS[ns.lens.discipline] + (ns.lens.discipline2 === "health" && ns.lens.discipline !== "health" ? ", a trial registration or a clinical guideline" : "") /* r19-b-1 */ + (isCommunity() ? ", a document a community holds" : "") : "a paper, an edition or collection, a performance, exhibition or commission, a critical review, a policy or program that adopted your work, coverage, a dataset, an award, a document a community holds") + ". Add as many as you need. Each item gets a letter, and the letters appear after the contribution in your draft. Name a community, an organization or a person only with their agreement.", guideLink("More kinds of evidence that count", "difference")));
+      area.appendChild(explainBox("Add the items a reviewer could check: " + (EV_INTRO_ITEMS[ns.lens.discipline] ? EV_INTRO_ITEMS[ns.lens.discipline] + (ns.lens.discipline2 === "health" && ns.lens.discipline !== "health" ? ", a trial registration or a clinical guideline" : "") /* r19-b-1 */ + (isCommunity() ? ", a document a community holds" : "") : "a paper, an edition or collection, a performance, exhibition or commission, a critical review, a policy or program that adopted your work, coverage, a dataset, an award, a document a community holds") + ". Add as many as you need. Name a community, an organization or a person only with their agreement.", guideLink("More kinds of evidence that count", "difference")));
       const items = el("div", "v7-ev-items");
       (contrib.evidence || []).forEach((ev, j) => {
         const it = el("div", "v7-ev-item");
@@ -5936,7 +5934,7 @@
     function renderMentorship(c) {
       tailoredBar(c);
       stageHead(c, "", secName("mentor"), "", false);
-      const lede = el("p", "narrative-intro-text v7-lede", "Who you trained, and how you mentor. The most persuasive thing in this section is one person you " + trainedWord() + " and " + wentWord() + ". Formal supervision counts here, and so does informal mentoring. ");
+      const lede = el("p", "narrative-intro-text v7-lede", "Who you trained, and how you mentor. You should describe at least one person you " + trainedWord() + " and " + wentWord() + ". Formal supervision counts here, and so does informal mentoring. ");
       lede.appendChild(guideLink("What counts as mentorship activity", "three"));
       c.appendChild(lede);
       if (ns.lens.careerStage === "early") {
@@ -6008,7 +6006,7 @@
       // V8.8 (Prem, 2026-11-12): one line of context and one privacy line replace the six bullets. The
       // level, where they are now and prizes have their own boxes on each card; co-supervision moved there.
       // "Relates to this application" is advice: no funder rule says the people must (INFERRED).
-      c.appendChild(el("p", "v7-quiet v7-people-help", "Reviewers read where your trainees went next as evidence of how you mentor. Choose the people whose paths show this best and, where you can, some whose work relates to this application."));
+      c.appendChild(el("p", "v7-quiet v7-people-help", "You should choose the people whose paths after training show how you mentor and, where you can, some whose work relates to this application."));
       c.appendChild(el("p", "v7-quiet v7-people-help", "Leave out names. For someone under 18, or in a small community where a role can identify a person, describe them only as closely as they (and a parent or guardian) agree."));
       ns.mentees.forEach((m, i) => c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)));
       const addP = el("button", "v7-add", "+ Add a person"); addP.type = "button"; addP.id = "v7-add-person";
@@ -6197,7 +6195,7 @@
         box.appendChild(p);
       }
       r.spanning.forEach(x => box.appendChild(el("p", null, "“" + (x.c.title || "Contribution " + (x.i + 1)) + "” shares words with each of your other contributions. It may be cross-cutting enough to belong in the statement itself, as the problem or question or as a strand, with the contribution kept for its evidence.")));
-      box.appendChild(el("p", "v7-cross-m", "Worked out by counting repeated words on this device. It is a suggestion only."));
+      box.appendChild(el("p", "v7-cross-m", "It is a suggestion only."));
       return box;
     }
     function renderPersonal(c) {
@@ -6212,7 +6210,7 @@
         const b = borrowJobs(PS_EXAMPLE.segments, PS_EXAMPLE.legend);
         return exampleBox({ title: "What a finished personal statement reads like (Social sciences)", match: oneExampleNote(),
           segs: b.segs, legend: b.legend,
-          foot: (isFrq() ? "This example is a TCV personal statement; the team question is in the card below. " : "") + "The content is fictional: the researcher, the strands of work and the numbers are invented, and the institution is unnamed on purpose." });
+          foot: (isFrq() ? "This example is a TCV personal statement; the team question is below. " : "") + "The content is fictional: the researcher, the strands of work and the numbers are invented, and the institution is unnamed on purpose." });
       });
       const card = el("section", "v7-card"); card.setAttribute("aria-labelledby", "v7-ys-t");
       const ch = el("div", "v7-card-h");
@@ -6225,7 +6223,7 @@
       // W-10 (inferred): placed after the fields and the strip, as on the contribution cards.
       const col = fieldCol(card, "Your statement", SF().map(f => ({ id: "ps-" + f.k, label: f.label, has: () => psHas(f.k) })),
         (id) => UI.active === id, jumpToField);
-      card.appendChild(el("p", "v7-card-sub", "If a prompt feels hard, the answer is usually already in one of your contributions."));
+      card.appendChild(el("p", "v7-card-sub", "If a prompt is hard to answer, you can look for the answer in your contributions."));
       if (!UI.active || UI.active.indexOf("ps-") !== 0) { const first = SF().find(f => !psHas(f.k)); UI.active = "ps-" + (first ? first.k : "anchor"); }
       let strip = null;
       const update = () => {
@@ -6237,7 +6235,7 @@
       SF().forEach(f => {
         if (f.k === "anchor") {
           fields.appendChild(cardField({
-            id: "ps-anchor", label: f.label, q: "Finish this line.", help: "Your first sentence, plain and direct.",
+            id: "ps-anchor", label: f.label, q: "Finish this line.", help: "",
             get: () => psAnchorText(), has: () => psHas("anchor"), shown: psAnchorText, onChange: update,
             anchor: (fw) => {
               const line = el("div", "v7-anchor-line");
@@ -7300,14 +7298,14 @@
       const frMentor = looksFrench(MENTOR_TEXT_KEYS.map(k => ns[k] || "").join(" ") + " " + (ns.mentees || []).map(m => m.why || "").join(" "));
       if ((frC.length && frN * 2 > frC.length) || looksFrench(Object.values(ns.ps || {}).filter(v => typeof v === "string").join(" ")) || frMentor) {
         const fr = el("div", "v7-note"); fr.setAttribute("role", "note");
-        fr.appendChild(el("p", null, "Your draft reads as French. The sentences the tool writes around your text are in English for now: the first sentence of your statement, the trainee sentences and the totals line. Translate them before you paste."));
+        fr.appendChild(el("p", null, "Your draft reads as French. The sentences the tool writes around your text are in English for now: the first sentence of your statement, the trainee sentences and the totals line. You need to translate them before you paste."));
         c.appendChild(fr);
       }
       // r3-b-5 (inferred): contributions still missing parts are named, so stubs are not pasted by accident.
       const unfinished = [...new Set(missingList().filter(m => m.step === "contrib" && !/none written yet/.test(m.label)).map(m => m.i))];
       if (unfinished.length) {
         const box = el("div", "v7-note v7-unfinished-note"); box.setAttribute("role", "note");
-        const pp = el("p", null, (unfinished.length === 1 ? "1 contribution is" : unfinished.length + " contributions are") + " still missing parts. The copies below include them as they are. ");
+        const pp = el("p", null, (unfinished.length === 1 ? "One contribution is" : unfinished.length + " contributions are") + " still missing parts. The copies below include them as they are. ");
         const rv = el("button", "v7-linkbtn", "See what is missing on Review"); rv.type = "button"; rv.addEventListener("click", () => goStage("review"));
         pp.appendChild(rv); box.appendChild(pp); c.appendChild(box);
       }
@@ -7322,7 +7320,7 @@
       const lk = linkList();
       if (lk.length) {
         const box = el("div", "v7-note v7-links-note"); box.setAttribute("role", "note");
-        box.appendChild(el("p", null, (lk.length === 1 ? "1 link is" : lk.length + " links are") + " still in your draft. " + (isFrq() ? "In the CV-FRQ, links belong in the evidence list of the contribution they support." : "The TCV does not permit links; give the reference in words.")));
+        box.appendChild(el("p", null, (lk.length === 1 ? "One link is" : lk.length + " links are") + " still in your draft. " + (isFrq() ? "In the CV-FRQ, links belong in the evidence list of the contribution they support." : "The TCV does not permit links; give the reference in words.")));
         const ul = el("ul");
         lk.forEach(m => { const li = el("li"); const ln = el("a", null, m.label); ln.href = "#"; ln.addEventListener("click", e => { e.preventDefault(); jumpTo(m); }); li.appendChild(ln); ul.appendChild(li); });
         box.appendChild(ul); c.appendChild(box);
@@ -7385,7 +7383,7 @@
       const pt2 = el("section", "v7-card"); pt2.setAttribute("aria-labelledby", "v7-pt-t");
       const ptt = el("h3", "v7-h3", "Paste into the template, one section at a time"); ptt.id = "v7-pt-t"; pt2.appendChild(ptt);
       const whose = a === "frq" ? "the FRQ’s" : (!unsure ? labelOf(AGENCIES, a) + "'s" : "your agency’s");
-      pt2.appendChild(el("p", "v7-quiet v7-gap-b", "Each button copies one section as plain text, in the order the template sets, without the tool’s notes. Paste it into the matching section of " + whose + " template."));
+      pt2.appendChild(el("p", "v7-quiet v7-gap-b", "You can paste each section into the matching section of " + whose + " template."));
       const row = el("div", "v7-copy-row");
       ["ps", "contrib", "mentor"].forEach(k => {
         const w = el("div");
@@ -7400,12 +7398,12 @@
 
       const kw = el("section", "v7-card"); kw.setAttribute("aria-labelledby", "v7-kw-t");
       const kwt = el("h3", "v7-h3", "Keep your work"); kwt.id = "v7-kw-t"; kw.appendChild(kwt);
-      kw.appendChild(el("p", "v7-body", "This saves your whole draft as a small file on your computer. Keep it somewhere safe. Later, choose Load your draft on the start page and open the file to continue. It is not a Word file. Clearing your browser data erases the draft stored in the tool, so a saved file is your backup."));
+      kw.appendChild(el("p", "v7-body", "To continue later, you can save your whole draft as a draft file and open it with Load your draft on the start page. It is not a Word file. If you clear your browser data, the draft stored in the tool is erased, so the file is your backup."));
       const sv = el("button", "btn btn-outline", "Save a draft file"); sv.type = "button";
       const svs = el("span", "v7-copied"); svs.setAttribute("aria-live", "polite");
       sv.addEventListener("click", () => { saveDraftFile(); done("Saved " + draftFileName() + " to your downloads.", svs); });
       kw.appendChild(sv); kw.appendChild(svs);
-      kw.appendChild(el("p", "v7-quiet v7-shared-note", "On a shared computer, save a draft file, then choose Reset draft on the start page, so the next person who opens the tool here starts with no draft."));
+      kw.appendChild(el("p", "v7-quiet v7-shared-note", "On a shared computer, you should save a draft file and then choose Reset draft on the start page, so the next person who opens the tool here starts with no draft."));
       c.appendChild(kw);
 
       const contact = el("p", "v7-body v7-contact");

@@ -171,7 +171,7 @@ async function seed(state, extra) {
   check("rail after confirming: My narrative CV group (Contributions, Mentorship, the statement) and Draft group (Review, Export)", r.rail.length === 5 && r.rail[0] === "Contributions" && r.rail[1] === "Mentorship" && r.rail[3] === "Review" && r.rail[4] === "Export" && r.rail.indexOf("Set up your profile") === -1 && r.groups.join("|") === "MY NARRATIVE CV|DRAFT", r);
   check("finished example is the primary control and arrives open on an empty step, with a triangle", /See a finished example/.test(r.primary) && r.exArrive && r.tri, r);
   check("the See how it's built switch is gone; examples are always coloured", !r.sw && !r.sw2 && r.built === true && r.built2 === true && r.exClosedBtn === true && r.exStill === true, r);
-  check("visible text says six parts, never six jobs", r.six && !r.jobs, r);
+  check("visible text never says six jobs (V8.20: the line that said six parts was cut in the voice pass)", !r.jobs, r);
   check("the progress count is hidden text beside squares, not visible words", r.sr0 === "absolute", r.sr0);
   check("arrives with the headline open and the rest one line", r.states[0] === "is-open" && r.states.slice(1).every(x => x === "is-empty"), r.states);
   check("no self-assessment marks; the Profile bar has a Change button", r.marks === 0 && r.tailored, r);
@@ -182,7 +182,7 @@ async function seed(state, extra) {
   check("Review and Export stay ghosted and closed below the minimum", r.ghost.join("|") === "Review|Export" && /headline, your role and two more/.test(r.cap || "") && r.stayed && r.ghost3 === 2, r);
   check("they open once one card has a headline, role and two job fields", r.ghostAfter === 0 && !r.capAfter, r);
   check("header and counter build as you type", /Made-up headline/.test(r.header) && r.count === "1 of 8 answered" && r.cdots === 8 && r.con === 1, r);
-  check("wording checks fire in the open field, with the suggestions note", /we|our/i.test(r.checks) && /suggestions/.test(r.checks), r.checks);
+  check("wording checks fire in the open field, with the suggestions note", /⚠/.test(r.checks) && /suggestions/.test(r.checks), r.checks); // V8.20: this used to pass on the "our" inside "your role" in the note
   check("example reopens from its button, coloured", r.exOpen && r.built2, r);
   check("focus stays on the example button after it opens", r.exFocus === "v7-ex-finished", r.exFocus);
 
@@ -213,7 +213,7 @@ async function seed(state, extra) {
     return a;`);
   check("totals tiles have no set period (Eli, 2026-11-04) and add up", /^People you have/.test(r.tot) && !/five years/.test(r.tot) && r.sum === "3 in total", r);
   check("labels follow the sector; header builds", r.labels.join("|") === "Organization|Unit or position" && /Postdoctoral → A made-up ministry/.test(r.head), r);
-  check("people are lettered like evidence (Person A); the help says why names are left out", /^Person A\b/.test(r.head) && r.rm === "Remove person A" && /where your trainees went next/.test(r.help), r);
+  check("people are lettered like evidence (Person A); the help says why names are left out", /^Person A\b/.test(r.head) && r.rm === "Remove person A" && /paths after training show how you mentor/.test(r.help), r);
   check("Mentorship style arrives with one field open (D-4)", r.hm[0] === "is-open", r.hm);
 
   console.log("Background and skills (CV-FRQ)");
@@ -2137,7 +2137,7 @@ async function seed(state, extra) {
       && r.selVal === "else" && r.name === "Lab technicians" && r.nameShown && r.afterHidden && r.afterLabel === "community researchers" && r.afterKind === "community" && r.elseFocus === "v7-t-other-name", r);
     check("note 8: the help under the boxes keeps only the point on the period", r.help === "These totals have no set period. Check the instructions for your funding opportunity in case it sets one.", r.help);
     check("note 9: the people heading says Highlight; one context line and one privacy line replace the six bullets; co-supervision sits on the card",
-      /Highlight a few people you trained/.test(r.h) && r.people.length === 2 && r.bullets === 0 && /where your trainees went next/.test(r.people[0]) && /relates to this application/.test(r.people[0]) && /^Leave out names\./.test(r.people[1]) && /co-supervise/.test(r.co), r);
+      /Highlight a few people you trained/.test(r.h) && r.people.length === 2 && r.bullets === 0 && /paths after training show how you mentor/.test(r.people[0]) && /relates to this application/.test(r.people[0]) && /^Leave out names\./.test(r.people[1]) && /co-supervise/.test(r.co), r);
 
     // Note 10: the end questions get their own step.
     const tstate = { id: "1234abcd-0000-4000-8000-000000000003", email: "tester@example.org", start: {}, startSent: true, lastStep: "export" };
@@ -2252,7 +2252,7 @@ async function seed(state, extra) {
     const NEW = ["standing: \"Recognition\"", "label: \"Who joins\"", "What one idea connects them?", "How did you come to this work?", "Cautious words such as “could” or “might” suit this part", "DORA (the San Francisco Declaration on Research Assessment)", "One real case in two sentences"];
     const missing = NEW.filter(x => !code.includes(x));
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
-    check("the version is 8.19 in the script and the tab title", /VERSION_NUM = "8\.19"/.test(src) && /<title>Narrative CV — V8\.19 beta/.test(src));
+    check("the version is 8.20 in the script and the tab title", /VERSION_NUM = "8\.20"/.test(src) && /<title>Narrative CV — V8\.20 beta/.test(src));
   }
 
   console.log("Network and errors");
