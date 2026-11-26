@@ -1548,7 +1548,7 @@ async function seed(state, extra, opts) {
     r = await js(H + `await w(250); const a={}; const box=q('[data-f$="-outputs"] .v7-box'); box.focus(); await w(80);
       a.fs=parseFloat(getComputedStyle(box).fontSize); a.ring=getComputedStyle(box).boxShadow;
       a.outH=((q('[id$="-outputs-hp"]')||{}).textContent||'');
-      q('#ev-open-r104').click(); await w(800); /* V9: let the evidence view's smooth scroll finish (README) */ a.evIntro=((q('.v7-ev-area')||{}).innerText||'').slice(0,400);
+      q('#ev-open-r104').click(); await w(200); a.evIntro=((q('.v7-ev-area')||{}).innerText||'').slice(0,400);
       rail('Mentorship').click(); await w(300); const h=q('.narrative-stage-header h2')||q('h2'); a.hTop=Math.round(h.getBoundingClientRect().top); a.scrolled=window.scrollY;
       a.chartMax=(()=>{ const t=document.createElement('div'); t.className='v7-gv-art'; const sv=document.createElementNS('http://www.w3.org/2000/svg','svg'); t.appendChild(sv); document.body.appendChild(t); const m=getComputedStyle(sv).maxWidth; t.remove(); return m; })();
       return a;`);
@@ -1558,6 +1558,14 @@ async function seed(state, extra, opts) {
     check("at 28 px browser text, typed text scales above 16 px and a focused field shows a solid ring in its part's accent (r10-b-1, r10-b-12, row 12)", r.fs >= 24 && /rgb\(255, 255, 255\) 0px 0px 0px 2px, rgb\(80, 130, 18\) 0px 0px 0px 4px/.test(r.ring), { fs: r.fs, ring: r.ring });
     check("at 28 px, Setup's tile labels stay inside their tiles and the chart figure's cap grows with the text (r10-b-3, r10-b-4)", tiles.n > 0 && !tiles.over.length && r.chartMax === "1120px", { tiles, chartMax: r.chartMax });
     check("at 28 px in a short window, a step change brings the heading to the top (r10-b-7)", r.hTop < 200, { hTop: r.hTop, scrolled: r.scrolled });
+    { // V9.1: a step change straight after a field opens and the evidence view starts must not move the new heading.
+      const g = await js(H + `location.hash='#contributions'; await w(400);
+        const box=q('[data-f$="-outputs"] .v7-box'); if(box){ box.focus(); await w(20); }
+        const o=q('[id^=ev-open-], [id^=ev-add-]'); if(o) o.click(); await w(30);
+        location.hash='#mentorship'; await w(800);
+        const h=q('.narrative-stage-header h2'); return {h:h.innerText, top:Math.round(h.getBoundingClientRect().top), y:Math.round(scrollY)};`);
+      check("V9.1: a step change right after a field and the evidence view open keeps the new heading near the top", !!g.h && g.top >= 0 && g.top < 200, g);
+    }
     // r10-a-11, r10-b-2: a field reached by Tab is in view once it has opened.
     await send("Page.setFontSizes", { fontSizes: { standard: 20, fixed: 16 } });
     await send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 500, deviceScaleFactor: 1, mobile: false });
@@ -2507,7 +2515,7 @@ async function seed(state, extra, opts) {
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
     check("P6: the career stage reads Mid-career, stored value unchanged", /\{ v: "mid", l: "Mid-career" \}/.test(src));
     check("R12: a missing headline reads No headline yet on screen and [No headline yet] in the draft text and files; none says Untitled contribution", !/Untitled contribution/.test(src) && (src.match(/"\[No headline yet\]"/g) || []).length === 5 && /rvTitle = \(x\) => gvCut\(one\(x.title\), 90\) \|\| "No headline yet"/.test(src) && /- 3 \* liveContributions\(\)/.test(src));
-    check("the version is 9.0 in the script and the tab title", /VERSION_NUM = "9\.0"/.test(src) && /<title>Narrative CV — V9\.0 beta/.test(src));
+    check("the version is 9.1 in the script and the tab title", /VERSION_NUM = "9\.1"/.test(src) && /<title>Narrative CV — V9\.1 beta/.test(src));
   }
 
   console.log("Batch 4 and 6 (V9): Contributions and Personal statement wording");

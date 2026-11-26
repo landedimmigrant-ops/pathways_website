@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V9.0 beta</title>
+  <title>Narrative CV — V9.1 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -1181,7 +1181,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "9.0", VERSION_DATE = "2026-11-26";
+    const VERSION_NUM = "9.1", VERSION_DATE = "2026-11-26";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -3665,8 +3665,8 @@
       RENDERERS[ns.stageKey](c);
       // r3-b-13: a box takes the direction of what is typed in it (an Arabic or Hebrew name reads right to left).
       c.querySelectorAll("textarea, input[type=text]").forEach(x => { if (!x.dir) x.dir = "auto"; });
-      // V9: an instant scroll, so a smooth scroll still running (the evidence view's) cannot carry the new step away.
-      if (stageChanged) window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      // V9.1: a step change stops any glide still running, so it cannot carry the new step's heading away.
+      if (stageChanged) { glideId++; window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
       else window.scrollTo(0, scrollY);
       if (!stageChanged && focusId) {
         const n = document.getElementById(focusId);
@@ -4509,6 +4509,15 @@
         if (k < 1) requestAnimationFrame(step);
       })(t0);
     }
+    // V9.1: every smooth scroll the tool starts goes through glide, so a step change can stop it (glideId++ in
+    // renderStage). The browser's own smooth scrollIntoView kept running after a step change and carried the new
+    // step's heading away.
+    function glideTo(node, block) {
+      if (!node || !node.isConnected) return;
+      const r = node.getBoundingClientRect();
+      const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      glide(block === "center" ? r.top + r.height / 2 - window.innerHeight / 2 : r.top - pad);
+    }
     root.addEventListener("focusin", (e) => { if (!(e.target.classList && e.target.classList.contains("v7-box"))) glideId++; }, true); // r8-a-3
     window.addEventListener("scroll", () => {
       if (spyFrame) return;
@@ -4528,7 +4537,7 @@
       const b = document.getElementById(id) || f.querySelector(".v7-box");
       if (b) b.focus({ preventScroll: true });
       const ms = motionMs(210);
-      setTimeout(() => { const c = f.closest(".v7-card-col"); spyHold = 0; if (!(c && c._level && c._level(id))) f.scrollIntoView({ block: "center", behavior: ms ? "smooth" : "auto" }); }, ms);
+      setTimeout(() => { if (!f.isConnected) return; const c = f.closest(".v7-card-col"); spyHold = 0; if (!(c && c._level && c._level(id))) glideTo(f, "center"); }, ms);
     }
     const letter = (j) => String.fromCharCode(97 + j);
     const liveEvidence = (c) => (c.evidence || []).filter(e => (e.text || "").trim());
@@ -4941,6 +4950,9 @@
     function keepAnchor(node, top, ms) {
       const t0 = performance.now();
       (function step() {
+        // V9.1: a field that has left the page (a step change, a re-render) has nothing to hold in place;
+        // measuring it would read 0 and pull the page up on every frame.
+        if (!node.isConnected) return;
         const d = node.getBoundingClientRect().top - top;
         if (Math.abs(d) > 0.5) window.scrollBy(0, d);
         if (performance.now() - t0 < ms) requestAnimationFrame(step);
@@ -5108,7 +5120,7 @@
         if (!blk) return;
         const hq = blk.querySelector(".v7-q");
         if (hq) { hq.tabIndex = -1; hq.focus({ preventScroll: true }); }
-        if (!wrap._level(id)) blk.scrollIntoView({ block: "center", behavior: motionMs(1) ? "smooth" : "auto" });
+        if (!wrap._level(id)) glideTo(blk, "center");
       };
       wrap.appendChild(fieldCol(wrap, "", qs.map((q, i) => ({ id: "pq-" + i, label: q.label, has: () => !!q.has, locked: () => i > reveal })),
         // V8.8: the triangle marks the question that holds focus, else the next one to answer.
@@ -5589,7 +5601,7 @@
       if (t) t.focus({ preventScroll: true });
       const cc = a.closest(".v7-card-col");
       setTimeout(() => { if (t && t.isConnected) { const r = t.getBoundingClientRect(); if (r.top < 0 || r.bottom > window.innerHeight) t.scrollIntoView({ block: "center" }); } }, motionMs(300) + 50); // r8-a-4
-      if (!(cc && cc._level && cc._level("ev"))) a.scrollIntoView({ block: "start", behavior: motionMs(1) ? "smooth" : "auto" });
+      if (!(cc && cc._level && cc._level("ev"))) glideTo(a, "start");
     }
     // V7-26: one element. "Your paragraph so far" while writing; "What you wrote" over the evidence.
     function contribStrip(contrib, isTop, i) {
@@ -6833,7 +6845,7 @@
     function seeStatement() {
       if (ns.ui.stmtShut) setStmtShut(false);
       const st = document.getElementById("v8-rb-st"), h = document.getElementById("v8-rb-st-t");
-      if (st) st.scrollIntoView({ block: "start", behavior: motionMs(1) ? "smooth" : "auto" });
+      if (st) glideTo(st, "start");
       if (h) h.focus({ preventScroll: true });
     }
     function drawPanel(panel, id) {
