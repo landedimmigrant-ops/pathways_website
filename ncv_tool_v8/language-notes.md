@@ -210,3 +210,13 @@ Claude proposes, Prem approves or suggests. Rows are numbered by step: S = start
 ## Applied in V9.0 (2026-11-26)
 
 Every Decided row above is applied in `narrative-cv-prototype-v9.html` (V8 frozen at 8.20), except PS4-T (question tree, in progress in ps4-tree-optimize) and row 13 (new example drafts, awaiting Prem's review). L1 and L2 are audit logs. Choices the rows did not settle are listed under "INFERRED in V9.0" in `ncv_tool_v9/README.md`, for Prem's overrides. One open question from the build: changing an evidence item's kind on Contributions keeps the column it was added under on Review (EV-1); clear it or keep it?
+
+## After V9.0
+
+| # | Where | Now | Prem's note and decision | Type | Status |
+|---|---|---|---|---|---|
+| EV-1b | Review, Add evidence: an item's column and Remove; and the other removals without Undo (closes the EV-1 question in "Applied in V9.0") | V9.1: an item added under a column on Review keeps that column when its kind changes; the Review editor (Kind, Details, Save, Remove, Cancel) cannot move an item to the other column, so a wrong column means Remove and + Add; Remove on Review has no Undo. Elsewhere without Undo: Remove area (Areas of research; it also unticks the area on every contribution), Remove person (Mentorship, confirm only), Delete contribution (`deleteContribution`, confirm only). Contribution and evidence removal on Contributions have Undo; Clear draft has a confirm and a backup file. | Prem (2026-11-26), on keep or clear: "Hmm ok I don't want people to look for solutions, I want them to be able to change things or undo when they need to". Proposed: (1) the Review editor offers the column as a choice, the two column names, set to the item's column; Save moves the item. (2) A kind change keeps the column, since the column can now be changed where it is shown. (3) Each removal above offers Undo, as on Contributions, until the next change. | Feature | Proposed |
+
+## Applied in V9.2 (2026-11-26)
+
+Prem: "Build all of it". EV-1b is applied in `narrative-cv-prototype-v9.html` as proposed: the column choice in Review's evidence editor ("Column": What you produced · Where others used it), a kind change keeps the column, and Undo for Remove on Review's evidence, Remove area, Remove person and Delete on Review. The EV-1 question in "Applied in V9.0" is closed by it. Choices under "INFERRED in V9.2" in `ncv_tool_v9/README.md`.

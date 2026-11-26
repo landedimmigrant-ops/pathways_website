@@ -2143,7 +2143,7 @@ async function seed(state, extra, opts) {
     r = await js(H + `const oc=qa('.v8-rows-mv .v8-row')[0]; const t=oc.querySelector('.v8-ct-t').innerText; oc.querySelector('.v7-odel').click(); await w(100);
       const wq=q('.v7-warn p')?.innerText, wf=document.activeElement.classList.contains('v7-warn'); q('.v7-warn .btn-primary').click(); await w(200);
       return {t, wq, wf, n:JSON.parse(localStorage.getItem('ncv-v9')).contributions.length, focus:document.activeElement.id, live:q('#v7-live').textContent};`);
-    check("Q-11: Delete asks first, naming the words, then removes the contribution; focus goes to the order heading", /^Delete “.*” and its [\d,]+ words? from your draft\?$/.test(r.wq || "") && r.wf && r.n === 1 && r.focus === "v8-rb-q" && /deleted\./.test(r.live), r);
+    check("Q-11, EV-1b: Delete asks first, naming the words, then removes the contribution; focus goes to its Undo", /^Delete “.*” and its [\d,]+ words? from your draft\?$/.test(r.wq || "") && r.wf && r.n === 1 && r.focus === "x-undo" && /deleted\. Undo is available until your next change\.$/.test(r.live), r);
     await seed(at("contrib", st => { st.contributions[1].later = true; }));
     r = await js(H + `return {fold:qa('.v7-fold').map(f=>f.getAttribute('aria-label')+' / '+(f.querySelector('.v7-fold-meta')||{}).innerText)};`);
     check("Q-11: in Contributions a contribution saved for later says so on its row", r.fold.some(t => /saved for later/.test(t) && /Saved for later ·/.test(t)), r);
@@ -2515,7 +2515,7 @@ async function seed(state, extra, opts) {
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
     check("P6: the career stage reads Mid-career, stored value unchanged", /\{ v: "mid", l: "Mid-career" \}/.test(src));
     check("R12: a missing headline reads No headline yet on screen and [No headline yet] in the draft text and files; none says Untitled contribution", !/Untitled contribution/.test(src) && (src.match(/"\[No headline yet\]"/g) || []).length === 5 && /rvTitle = \(x\) => gvCut\(one\(x.title\), 90\) \|\| "No headline yet"/.test(src) && /- 3 \* liveContributions\(\)/.test(src));
-    check("the version is 9.1 in the script and the tab title", /VERSION_NUM = "9\.1"/.test(src) && /<title>Narrative CV — V9\.1 beta/.test(src));
+    check("the version is 9.2 in the script and the tab title", /VERSION_NUM = "9\.2"/.test(src) && /<title>Narrative CV — V9\.2 beta/.test(src));
   }
 
   console.log("Batch 4 and 6 (V9): Contributions and Personal statement wording");
@@ -2813,6 +2813,87 @@ async function seed(state, extra, opts) {
     check("EV-1: a Dataset / tool item with the used column stored counts as used; a Media coverage item stored as produced does not; no stored column falls back to the kind", r.f0 === "Contributions 2 and 4 have no evidence that others used the work.", r);
     check("EV-1: an item added on Review under 'Where others used it' stores used: true whatever its kind, and the status line follows", r.s1 === true && r.f1 === "Contribution 2 has no evidence that others used the work.", r);
     check("EV-1: an item added under 'What you produced' stores used: false, even for Media coverage; it does not count as used (the Reach tab agrees)", r.s2 === false && r.f2 === r.f1 && r.cols.indexOf("Made-up added coverage") > -1 && r.cols.indexOf("Made-up added coverage") < r.cols.indexOf("Made-up policy") && r.reach.join("|") === "1 item shows that others used the work.|No item shows yet that others used the work.|1 item shows that others used the work.|1 item shows that others used the work.", r);
+
+    // EV-1b (Prem, 2026-11-26): "I want them to be able to change things or undo when they need to".
+    const evCell = `const cell=(cid,n)=>sq(q('.v7-rqev-tab tbody tr[data-cid="'+cid+'"]').querySelectorAll('td')[n].innerText);
+      const stored=(cid,t)=>{ const c=JSON.parse(localStorage.getItem('ncv-v9')).contributions.find(x=>x.cid===cid); const e=c.evidence.find(x=>x.text===t); return !e ? 'missing' : ('used' in e ? e.used : 'none'); };
+      const save=()=>qa('.v8-edrow .btn').find(b=>b.innerText==='Save').click();
+      const tdOf=(n)=>{ const td=n&&n.closest('td'); return td ? [...td.closest('tr').querySelectorAll('td')].indexOf(td) : -1; };`;
+    await seed(stAt(st => { st.contributions = [
+      mkC("m1", { evidence: [{ text: "Made-up paper.", type: "Peer-reviewed", note: "" }] }),
+      mkC("m2", { evidence: [{ text: "Made-up guideline.", type: "Policy / practice uptake", note: "", used: true }] })]; }));
+    r = await js(H + squash + evCell + `await w(200); q('#v8-tab-evidence').click(); await w(80); const a={};
+      q('.v7-rqev-item[data-cid="m1"]').click(); await w(80);
+      a.legend=sq(q('.v9-ev-col legend').innerText); a.opts=qa('.v9-ev-col label').map(l=>sq(l.innerText)); a.checked=(q('.v9-ev-col input:checked')||{}).id;
+      a.named=qa('.v9-ev-col input').every(i=>i.type==='radio'&&i.labels.length===1); a.group=q('.v9-ev-col').tagName;
+      setv(q('#v7-ev-text'),'Made-up paper, 2024.'); save(); await w(120); a.sText=stored('m1','Made-up paper, 2024.');
+      q('.v7-rqev-item[data-cid="m1"]').click(); await w(80); q('#v9-ev-col-1').click(); save(); await w(150);
+      a.moved=[cell('m1',0), cell('m1',1)]; a.s1=stored('m1','Made-up paper, 2024.'); a.focusTd=tdOf(document.activeElement); a.focusItem=document.activeElement.classList.contains('v7-rqev-item'); a.live=q('#v7-live').textContent;
+      q('.v7-rqev-item[data-cid="m2"]').click(); await w(80); a.m2checked=(q('.v9-ev-col input:checked')||{}).id; setsel(q('#v7-ev-kind'),'Peer-reviewed'); save(); await w(120);
+      a.kindKept=[cell('m2',0), cell('m2',1)]; a.s2=stored('m2','Made-up guideline.');
+      return a;`);
+    check("EV-1b: Review's evidence editor offers the column ('Column': What you produced · Where others used it) as labelled radio buttons, set to where the item is", r.group === "FIELDSET" && r.legend === "Column" && r.opts.join("|") === "What you produced|Where others used it" && r.named && r.checked === "v9-ev-col-0" && r.m2checked === "v9-ev-col-1", r);
+    check("EV-1b: saving with only the details changed stores no column, so the item still follows its kind", r.sText === "none", r.sText);
+    check("EV-1b: choosing Where others used it and Save moves the item there, stores the column, keeps focus on the item and says so", /^None yet/.test(r.moved[0]) && /Made-up paper, 2024/.test(r.moved[1]) && r.s1 === true && r.focusTd === 1 && r.focusItem && r.live === "Evidence saved for contribution 1, under Where others used it.", r);
+    check("EV-1: changing the kind on Review keeps the item's column", /^None yet/.test(r.kindKept[0]) && /^Peer-reviewed Made-up guideline/.test(r.kindKept[1]) && r.s2 === true, r);
+
+    await seed(stAt(st => { st.contributions = [mkC("u1", { evidence: [{ text: "Made-up atlas.", type: "Peer-reviewed", note: "" }, { text: "Made-up guideline.", type: "Policy / practice uptake", note: "" }] })]; }));
+    r = await js(H + squash + evCell + `await w(200); q('#v8-tab-evidence').click(); await w(80); const a={};
+      const evs=()=>JSON.parse(localStorage.getItem('ncv-v9')).contributions.find(x=>x.cid==='u1').evidence.map(e=>e.text);
+      const rm=()=>qa('.v8-edrow .btn').find(b=>b.innerText==='Remove').click();
+      q('.v7-rqev-item[data-cid="u1"][data-k="1"]').click(); await w(80); rm(); await w(150);
+      a.n1=evs().length; a.focus=document.activeElement.id; a.row=sq((q('.v9-xundo')||{}).innerText); a.rowTd=tdOf(q('.v9-xundo')); a.live=q('#v7-live').textContent;
+      q('#x-undo').click(); await w(150);
+      a.order=evs().join('|'); a.focus2=document.activeElement.dataset ? document.activeElement.dataset.cid+'-'+document.activeElement.dataset.k : ''; a.live2=q('#v7-live').textContent; a.row2=!!q('.v9-xundo');
+      q('.v7-rqev-item[data-cid="u1"][data-k="1"]').click(); await w(80); rm(); await w(150); a.u3=!!q('#x-undo');
+      q('.v7-rqev-item[data-cid="u1"][data-k="0"]').click(); await w(80); save(); await w(150); a.u4=!!q('#x-undo');
+      return a;`);
+    check("EV-1b: Remove on Review leaves 'Evidence removed. Undo' in the item's column, with focus on Undo, and says Undo is available", r.n1 === 1 && r.focus === "x-undo" && r.row === "Evidence removed. Undo" && r.rowTd === 1 && r.live === "Evidence removed from contribution 1. Undo is available until your next change.", r);
+    check("EV-1b: Undo on Review puts the item back in its place and column, with focus on it", r.order === "Made-up atlas.|Made-up guideline." && r.focus2 === "u1-1" && r.live2 === "Evidence restored for contribution 1." && !r.row2, r);
+    check("EV-1b: saving another item ends the Undo on Review", r.u3 && !r.u4, r);
+
+    await seed(stAt(st => { st.strands = [{ id: "sa", text: "Made-up area one" }, { id: "sb", text: "Made-up area two" }]; st.contributions = [mkC("a1", { strandIds: ["sb"] }), mkC("a2", { strandIds: ["sa", "sb"] })]; }));
+    r = await js(H + squash + `await w(200); qa('.v8-strands button')[0].click(); await w(300); const a={};
+      const st=()=>JSON.parse(localStorage.getItem('ncv-v9')); const ids=(cid)=>(st().contributions.find(c=>c.cid===cid).strandIds||[]).join(',');
+      qa('button').find(b=>b.getAttribute('aria-label')==='Remove area 2').click(); await w(150);
+      a.focus=document.activeElement.id; a.row=sq((q('.v9-xundo')||{}).innerText); a.place=[...q('.v8-strand-fs > div').children].map(n=>n.classList.contains('v9-xundo')?'U':n.classList.contains('v8-strand-row')?'R':'X').join('');
+      a.s1=[st().strands.length, ids('a1'), ids('a2')].join('/'); a.live=q('#v7-live').textContent;
+      q('#x-undo').click(); await w(250);
+      a.s2=[st().strands.map(t=>t.id).join(','), ids('a1'), ids('a2')].join('/'); a.focus2=document.activeElement.id; a.live2=q('#v7-live').textContent;
+      return a;`);
+    check("EV-1b: removing a named area leaves 'Area 2, “Made-up area two”, removed. Undo' in its place, with focus on Undo; its marks go with it", r.focus === "x-undo" && r.row === "Area 2, “Made-up area two”, removed. Undo" && r.place.indexOf("RU") === 0 && r.s1 === "1//sa" && r.live === "Area 2 removed. Undo is available until your next change.", r);
+    check("EV-1b: Undo puts the area back in its place with its marks on each contribution", r.s2 === "sa,sb/sb/sa,sb" && r.focus2 === "v8-strand-sb" && r.live2 === "Area 2 restored.", r);
+
+    await seed(stAt(st => { st.stageKey = "mentor"; st.mentees = [
+      { stageKind: "doctoral", stage: "Doctoral", kind: "industry", org: "Made-up firm A", unit: "", recognition: "", why: "now leads a made-up team", folded: false },
+      { stageKind: "masters", stage: "Master's", kind: "public", org: "Made-up agency B", unit: "", recognition: "", why: "", folded: true }]; }));
+    r = await js(H + squash + `await w(250); const a={};
+      const orgs=()=>JSON.parse(localStorage.getItem('ncv-v9')).mentees.map(m=>m.org).join('|');
+      qa('button').find(b=>b.getAttribute('aria-label')==='Remove person A').click(); await w(120); await okWarn(); await w(150);
+      a.n1=orgs(); a.focus=document.activeElement.id; a.row=sq((q('.v9-xundo')||{}).innerText); a.next=sq(((q('.v9-xundo')||{}).nextElementSibling||{}).innerText).slice(0,40); a.live=q('#v7-live').textContent;
+      q('#x-undo').click(); await w(250);
+      a.n2=orgs(); const f=document.activeElement; a.focus2=(f.closest('[id^=v7-ph]')||f).id; a.live2=q('#v7-live').textContent;
+      return a;`);
+    check("EV-1b: removing a person with text leaves 'Person A removed. Undo' in their place, with focus on Undo", r.n1 === "Made-up agency B" && r.focus === "x-undo" && r.row === "Person A removed. Undo" && /Person A/.test(r.next) && r.live === "Person A removed. Undo is available until your next change.", r);
+    check("EV-1b: Undo puts the person back in their place, open, with focus on their card", r.n2 === "Made-up firm A|Made-up agency B" && r.focus2 === "v7-ph0" && r.live2 === "Person A restored.", r);
+
+    const delUndo = (cidTo) => H + squash + `await w(200); const a={};
+      const cids=()=>JSON.parse(localStorage.getItem('ncv-v9')).contributions.map(c=>c.cid+(c.later?'*':'')).join(',');
+      qa('.v7-odel').find(b=>b.getAttribute('aria-label')==='Delete: Made-up ${cidTo}').click(); await w(120); await okWarn(); await w(200);
+      a.n1=cids(); a.focus=document.activeElement.id; a.row=sq((q('.v9-xundo')||{}).innerText); a.inLater=!!(q('.v9-xundo')&&q('.v9-xundo').closest('.v7-later')); a.live=q('#v7-live').textContent; a.stage=JSON.parse(localStorage.getItem('ncv-v9')).stageKey;
+      const u=q('#x-undo')||q('#c-undo'); if (u) { u.click(); await w(250); }
+      a.n2=cids(); a.focus2=document.activeElement.id; a.live2=q('#v7-live').textContent;
+      return a;`;
+    await seed(stAt(st => { st.contributions = [mkC("d1"), mkC("d2"), mkC("d3")]; }));
+    r = await js(delUndo("d2"));
+    check("EV-1b: Delete on Review's order leaves '“Made-up d2” deleted. Undo' above the order, with focus on Undo", r.n1 === "d1,d3" && r.focus === "x-undo" && r.row === "“Made-up d2” deleted. Undo" && !r.inLater && r.live === "“Made-up d2” deleted. Undo is available until your next change.", r);
+    check("EV-1b: Undo puts the contribution back in its place in the order, with focus on its Save for later", r.n2 === "d1,d2,d3" && r.focus2 === "oa-d2" && r.live2 === "“Made-up d2” restored.", r);
+    await seed(stAt(st => { st.contributions = [mkC("l1"), mkC("l2", { later: true })]; }));
+    r = await js(delUndo("l2"));
+    check("EV-1b: Delete in Saved for later offers Undo there, and Undo puts it back as saved for later", r.n1 === "l1" && r.focus === "x-undo" && r.row === "“Made-up l2” deleted. Undo" && r.n2 === "l1,l2*" && r.focus2 === "oa-l2", r);
+    await seed(stAt(st => { st.contributions = [mkC("z1")]; }), null, { raw: true });
+    r = await js(delUndo("z1"));
+    check("EV-1b: deleting the only complete contribution on Review opens Contributions with its Undo line, which puts it back", r.stage === "contrib" && r.focus === "c-undo" && r.n2 === "z1", r);
 
     // R-1 (R8a) and R7: the role status counts written role sentences and names a contribution with a level and no sentence.
     await seed(stAt(st => { st.contributions = [mkC("r1", { roleMode: "led" }), mkC("r2", { roleMode: "coled", roleLine: "" }), mkC("r3", { roleMode: "part", roleLine: "" })]; }));

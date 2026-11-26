@@ -44,7 +44,7 @@ Storage: the draft lives in `localStorage` under `ncv-v9`. On the first V9 load 
 - Batch 6 (PS5, PS7, PS3, PS12): early career gets both hints; community help ends ", and name your partners’ part."; the PS3 panel's button keeps its label, toggles with aria-expanded and closes with Escape, empty text "No contributions written yet."; the card and strip text are the same for the CV-FRQ.
 - Batch 6 (PS9a foot): CV-FRQ "This example is fictional. It includes a sentence for the CV-FRQ team question."; TCV "This example is fictional."
 - Batch 8 (R8 hints): Public talk or outreach, kind card "a public talk, a podcast or an op-ed you made for the public", item "The title, the venue or platform and the date; for your own series, its audience", note "Whom it reached, and how it bears on your question". Media coverage, kind card "news coverage or a critical review of your work", item "The outlet, the title and the date", note "What the piece says about the work".
-- Batch 8 (EV-1): Review's Add-evidence kind list shows all 15 kinds and defaults to the column's first kind. **Open for Prem:** changing an item's kind on Contributions does not clear its stored column (`used`), since the row says the stored column decides.
+- Batch 8 (EV-1): Review's Add-evidence kind list shows all 15 kinds and defaults to the column's first kind. Changing an item's kind on Contributions keeps its stored column (`used`); Prem answered in EV-1b (V9.2): the column can be changed on Review, where it is shown.
 - Batch 8 (R5, R-1, R10, R-2, R9): the R5 question and "See …" link use the lower-case section name ("your background and skills" for the CV-FRQ); a missing statement reads "Your personal statement is not written yet."; R-1 counts a level only with its role sentence, and a sentence with no level reads "No role is chosen yet."; R10 names "the doctoral student", or "the person" with no level, and the chart's screen-reader label begins "Where the people you describe are now:"; R-2 also covers What could change; the R9 fact holds while marks change within the same contributions.
 - Batch 9 (E3): page ranges print with an en dash ("6–7"), one page as "6"; one link keeps "One link is…", other counts are numerals.
 - Batch 9 (E5): the old "format" tick is replaced by Reader, Template and Page limit; a saved "format" tick no longer shows.
@@ -52,3 +52,18 @@ Storage: the draft lives in `localStorage` under `ncv-v9`. On the first V9 load 
 - Batch 9 (E10): What already changed's hint in the text file reads "[question] If there has been no impact yet, please describe the potential impact under What could change, or tick No impact yet on Contributions."; every other part's hint is its own question.
 - Batch 9 (E11): the FRQ sentence sits before "Please delete this note…".
 - Batch 9 (sweep): the Change panel's ways of working have no grey lines (it is a compact panel); its "Choose at least one way your work usually happens." is unchanged, since Set up has no decided wording for it. Export's edit card heading wraps at phone width (it reached 401 px at 375 px).
+
+## INFERRED in V9.2
+
+From EV-1b (Prem, 2026-11-26: "I don't want people to look for solutions, I want them to be able to change things or undo when they need to").
+
+- Review's evidence editor names the choice "Column", with the two column headings as its answers; it sits between Kind and Details, in the Reach tab's radio style.
+- An item with no stored column stores one only when it is moved (or added on Review), so it goes on following its kind until then. A kind change, on Review or on Contributions, keeps a stored column.
+- Saving a moved item says where it went: "Evidence saved for contribution 1, under Where others used it."
+- One Undo at a time: a new removal ends the last Undo. Save in a Review editor, an area mark on Review, Save for later, Add back and "+ Add an area" now count as changes that end an Undo.
+- Where the Undo line sits: Review evidence, in the column the item left; Areas of research, in the removed area's place; Mentorship, in the person's place; the Review order, above the list; Saved for later, in its box (or where the box was).
+- The lines read "Evidence removed.", "Area 2, “[name]”, removed.", "Person B removed." and "“[headline]” deleted.", each followed by Undo; the removal is spoken with "Undo is available until your next change.", as on Contributions.
+- An area with no name and no marks, and a person with nothing written, go without Undo, as an empty contribution does.
+- Deleting the last complete contribution on Review closes Review and opens Contributions; its own Undo line ("Contribution 1 … removed. Undo") takes over there.
+- A restore that would pass the cap (4 areas, 10 contributions) says so and waits, as on Contributions.
+- On a phone, Review's evidence editor stays at the width of the screen while its table scrolls sideways (in V9.1 Details and Save could sit partly off the edge).

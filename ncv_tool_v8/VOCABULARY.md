@@ -346,3 +346,8 @@ Terms now in the tool; the rows in `language-notes.md` hold the reasons.
 | where they are now | where they went next | E5 |
 | research advisor(s) or colleagues | — | E1, E5a, E10 |
 | No headline yet · [No headline yet] in files | Untitled contribution | R12 |
+
+## Added in V9.2 (EV-1b)
+
+- **"Column"**: the label of the choice in Review's evidence editor; its answers are the two column headings, "What you produced" and "Where others used it". Plain, and it names what the researcher sees.
+- **Undo lines**: "Evidence removed.", "Area 2, “[name]”, removed.", "Person B removed.", "“[headline]” deleted.", each with **Undo**, as "Contribution 2 removed. Undo" on Contributions.

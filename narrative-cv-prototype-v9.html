@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V9.1 beta</title>
+  <title>Narrative CV — V9.2 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -1093,7 +1093,15 @@
     .v4-fb-nudge { border: 1px solid #f9ca24; background: #fff8e1; border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem 0 0; font-size: 0.9rem; }
     /* r18-b-3, r18-b-4: Undo and Reset are full-size targets on phones and touch screens. */
     @media (max-width: 48em), (pointer: coarse) { .v7-undo .v7-linkbtn { min-height: 44px; display: inline-flex; align-items: center; } .v7-path-reset { min-height: 44px; margin-top: 12px; } }
-    /* R11a: the tick boxes beside What already changed and the evidence. */
+    /* EV-1b: the column choice in Review's evidence editor takes the Reach tab's radio style. */
+.v9-ev-col { margin: 4px 0 6px; }
+.v9-ev-col input { width: 18px; height: 18px; margin: 0; accent-color: #912338; }
+@media (pointer: coarse), (max-width: 48em) { .v9-ev-col label { min-height: 44px; } }
+.v7-rqev-tab td .v9-xundo { margin: 6px 0 0; }
+/* EV-1b: on a phone the evidence table scrolls sideways; its editor stays in view at the width of the screen. */
+.v7-rqev-scroll { container-type: inline-size; }
+.v7-rqev-scroll .v8-ed { position: sticky; left: 0; box-sizing: border-box; max-width: calc(100cqw - 16px); }
+/* R11a: the tick boxes beside What already changed and the evidence. */
 .v9-tick { display: inline-flex; align-items: center; gap: 8px; min-height: 24px; margin: 6px 0 0; font-size: 0.9rem; color: #333; cursor: pointer; }
 .v9-tick input { width: 18px; height: 18px; margin: 0; accent-color: #912338; cursor: pointer; }
 .v7-ev-row .v9-tick { margin: 0 0 0 12px; }
@@ -1181,7 +1189,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "9.1", VERSION_DATE = "2026-11-26";
+    const VERSION_NUM = "9.2", VERSION_DATE = "2026-11-26";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -3368,8 +3376,8 @@
       const raw = otherTab; otherTab = undefined;
       const keep = { teamNotes: ns.teamNotes, feedback: ns.feedback, session: ns.session, stageKey: ns.stageKey };
       const lensBefore = JSON.stringify(ns.lens), evCid = UI.evCard >= 0 ? (ns.contributions[UI.evCard] || {}).cid : null;
-      const hadUndo = !!(UI.cUndo || UI.evUndo), hadConfirm = !!document.querySelector(".v7-warn"); // r13-a-3
-      UI.cUndo = null; UI.evUndo = null; // M-1: an Undo belongs to this tab's copy, which is being replaced
+      const hadUndo = !!(UI.cUndo || UI.evUndo || UI.xUndo), hadConfirm = !!document.querySelector(".v7-warn"); // r13-a-3
+      UI.cUndo = null; UI.evUndo = null; UI.xUndo = null; // M-1: an Undo belongs to this tab's copy, which is being replaced
       saveMuted = true;
       try {
         if (raw === null) { ns = defaultState(); ns.lastSavedAt = Date.now(); /* AC-3: a mirrored Reset counts once */ ns.ui.histGen = Date.now(); resetUI(); resumeStore(); ns.stageKey = "start"; }
@@ -3458,8 +3466,8 @@
     // r14-a-1: an Undo on offer ends with the next change anywhere (typing, choosing, adding, removing) or a
     // step change; a change made with focus on the Undo row itself does not end it.
     function endUndo() {
-      if (!UI.cUndo && !UI.evUndo) return;
-      UI.cUndo = null; UI.evUndo = null;
+      if (!UI.cUndo && !UI.evUndo && !UI.xUndo) return;
+      UI.cUndo = null; UI.evUndo = null; UI.xUndo = null;
       document.querySelectorAll(".v7-undo").forEach(r => { if (!r.contains(document.activeElement)) r.remove(); });
     }
     root.addEventListener("input", (e) => { if (!(e.target.closest && e.target.closest(".v7-undo"))) endUndo(); }, true);
@@ -3467,9 +3475,23 @@
     root.addEventListener("change", (e) => { if (!(e.target.closest && e.target.closest(".v7-undo"))) endUndo(); }, true);
     // Z-2: only controls that change the draft end it (navigation, folding, Cancel and views do not).
     root.addEventListener("click", (e) => {
-      const b = e.target.closest && e.target.closest(".v7-choice, .v7-kind, .v7-add, #v7-add-contrib, .v7-mini, .v7-lv-clear, [id^='mv-'], .v7-warn .btn-primary, #v7-chg-panel .btn-primary");
+      const b = e.target.closest && e.target.closest(".v7-choice, .v7-kind, .v7-add, #v7-add-contrib, .v7-mini, .v7-lv-clear, [id^='mv-'], .v7-warn .btn-primary, #v7-chg-panel .btn-primary, .v8-ed .btn-primary, .v8-mark, [id^='oa-']"); // EV-1b: Save on Review, an area mark, Save for later and Add back are changes too
       if (b && !b.closest(".v7-undo")) endUndo();
     }, true);
+    // EV-1b (Prem, 2026-11-26): every removal can be undone. One Undo at a time (a new one ends the last); the
+    // line sits where the removed thing was and holds until the next change or a step change (endUndo).
+    function offerUndo(rec) { endUndo(); UI.xUndo = rec; }
+    function undoRow(key) {
+      const un = UI.xUndo;
+      if (!un || un.key !== key) return null;
+      const row = el("p", "v7-undo v9-xundo");
+      row.appendChild(document.createTextNode(un.text + " "));
+      const ub = el("button", "v7-linkbtn", "Undo"); ub.type = "button"; ub.id = "x-undo";
+      ub.addEventListener("click", () => { if (UI.xUndo === un) UI.xUndo = null; un.restore(); });
+      row.appendChild(ub);
+      return row;
+    }
+    const UNDO_SPOKEN = " Undo is available until your next change.";
     const goStage = (key) => {
       endUndo();
       UI.railOpen = false;
@@ -4312,7 +4334,7 @@
     // Screen state that is not part of the draft: the open field, the open example, the evidence
     // view. Reset when the step changes, so every step arrives in the same quiet state.
     const UI = { active: "", ex: "", evCard: -1, moved: "", chg: null };
-    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; UI.kindOpen = ""; UI.railOpen = false; UI.evUndo = null; UI.cUndo = null; UI.rvEdit = null; UI.rmOpen = -1; };
+    const resetUI = () => { UI.active = ""; UI.ex = ""; UI.evCard = -1; UI.moved = ""; UI.chg = null; UI.kindOpen = ""; UI.railOpen = false; UI.evUndo = null; UI.cUndo = null; UI.xUndo = null; UI.rvEdit = null; UI.rmOpen = -1; };
     const motionMs = (ms) => (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) ? 0 : ms;
     // W-07: the live region is in the page from the start (#v7-live); this only rebuilds a lost one.
     const announceEl = () => {
@@ -5889,7 +5911,9 @@
       const draw = (focusId) => {
         list.innerHTML = "";
         if (!ns.strands.length) ns.strands.push({ id: newStrandId(), text: "" });
+        const ur = undoRow("area");
         ns.strands.forEach((t, k) => {
+          if (ur && UI.xUndo.k === k) list.appendChild(ur); // EV-1b: in the removed area's place
           const r = el("div", "v8-strand-row");
           const id = "v8-strand-" + t.id;
           const lab = el("label", "v7-field-label", "Area " + (k + 1)); lab.htmlFor = id;
@@ -5900,16 +5924,29 @@
           if (ns.strands.length > 1 || one(t.text)) {
             const rm = el("button", "v7-linkbtn", "Remove"); rm.type = "button"; rm.setAttribute("aria-label", "Remove area " + (k + 1));
             rm.addEventListener("click", () => {
-              ns.strands.splice(k, 1); ns.contributions.forEach(c => { c.strandIds = (c.strandIds || []).filter(x => x !== t.id); });
-              saveState(); announce("Area " + (k + 1) + " removed."); draw("first");
+              const marked = ns.contributions.filter(c => (c.strandIds || []).indexOf(t.id) > -1);
+              ns.strands.splice(k, 1); marked.forEach(c => { c.strandIds = c.strandIds.filter(x => x !== t.id); });
+              // EV-1b: Undo puts the area back in its place, with its marks.
+              if (one(t.text) || marked.length) offerUndo({ key: "area", k, text: "Area " + (k + 1) + (one(t.text) ? ", “" + gvCut(one(t.text), 40) + "”," : "") + " removed.", restore: () => {
+                if (ns.strands.indexOf(t) > -1) return;
+                if (ns.strands.length === 1 && !one(ns.strands[0].text) && ns.strands[0] !== t) ns.strands = []; // the blank row left in its place
+                if (ns.strands.length >= 4) return announce("There are already 4 areas. Remove one to restore this one.");
+                ns.strands.splice(Math.min(k, ns.strands.length), 0, t);
+                marked.forEach(c => { if (ns.contributions.indexOf(c) > -1 && (c.strandIds || []).indexOf(t.id) === -1) { c.strandIds = (c.strandIds || []).concat([t.id]); c.strandNone = false; } });
+                saveState(); renderStage(); const n = document.getElementById("v8-strand-" + t.id); if (n) n.focus();
+                announce("Area " + (k + 1) + " restored.");
+              } });
+              saveState(); draw(UI.xUndo && UI.xUndo.key === "area" ? "x-undo" : "first");
+              announce("Area " + (k + 1) + " removed." + (UI.xUndo && UI.xUndo.key === "area" ? UNDO_SPOKEN : ""));
             });
             r.appendChild(rm);
           }
           list.appendChild(r);
         });
+        if (ur && UI.xUndo.k >= ns.strands.length) list.appendChild(ur);
         if (ns.strands.length < 4) {
           const add = el("button", "v7-linkbtn", "+ Add an area"); add.type = "button";
-          add.addEventListener("click", () => { const t = { id: newStrandId(), text: "" }; ns.strands.push(t); saveState(); draw("v8-strand-" + t.id); });
+          add.addEventListener("click", () => { endUndo(); const t = { id: newStrandId(), text: "" }; ns.strands.push(t); saveState(); draw("v8-strand-" + t.id); });
           list.appendChild(add);
         }
         if (focusId) { const n = focusId === "first" ? list.querySelector(".v8-strand-in") : document.getElementById(focusId); if (n) n.focus(); }
@@ -6094,7 +6131,9 @@
       // "Relates to this application" is advice: no funder rule says the people must (INFERRED).
       c.appendChild(el("p", "v7-quiet v7-people-help", "Please choose people whose career paths after training show your mentorship style, and if possible, some whose work relates directly to your application."));
       c.appendChild(el("p", "v7-quiet v7-people-help", "Please leave out names. For someone under 18, or in a small community where a role could identify them, describe them only as closely as they (and a parent or guardian) agree."));
-      ns.mentees.forEach((m, i) => c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)));
+      const pur = undoRow("person"); // EV-1b: in the removed person's place
+      ns.mentees.forEach((m, i) => { if (pur && UI.xUndo.i === i) c.appendChild(pur); c.appendChild(m.folded ? personFold(m, i) : personCard(m, i, setPc)); });
+      if (pur && UI.xUndo.i >= ns.mentees.length) c.appendChild(pur);
       const addP = el("button", "v7-add", "+ Add a person"); addP.type = "button"; addP.id = "v7-add-person";
       addP.addEventListener("click", () => {
         ns.mentees.forEach(x => { x.folded = true; });
@@ -6158,14 +6197,25 @@
       }
       const rm = el("button", "v7-icon-btn", "×"); rm.type = "button"; rm.setAttribute("aria-label", "Remove person " + letter(i).toUpperCase());
       const removeP = () => {
+        const gone = ns.mentees[i], L = letter(i).toUpperCase();
         ns.mentees.splice(i, 1); if (!ns.mentees.length) ns.mentees.push(blankMentee());
         if (!ns.mentees.some(x => !x.folded)) ns.mentees[ns.mentees.length - 1].folded = false;
+        // EV-1b: a person with something written can be put back, in their place.
+        if (menteeHasContent(gone)) offerUndo({ key: "person", i, text: "Person " + L + " removed.", restore: () => {
+          if (ns.mentees.indexOf(gone) > -1) return;
+          const blank = ns.mentees.length === 1 && !menteeHasContent(ns.mentees[0]);
+          ns.mentees.forEach(x => { x.folded = true; }); gone.folded = false;
+          if (blank) ns.mentees = [gone]; else ns.mentees.splice(Math.min(i, ns.mentees.length), 0, gone);
+          saveState(); renderStage();
+          const h = focusable(document.getElementById("v7-ph" + ns.mentees.indexOf(gone))); if (h) h.focus();
+          announce("Person " + L + " restored.");
+        } });
         saveState(); renderStage();
-        // W-04: focus goes to the person now in this place (else the one before), and the removal is spoken.
+        // W-04: focus goes to the Undo line, else the person now in this place (else the one before), and the removal is spoken.
         const k = Math.min(i, ns.mentees.length - 1), nm = ns.mentees[k];
         const n = nm && (nm.folded ? document.getElementById("pfold-" + k) : focusable(document.getElementById("v7-ph" + k)));
-        (n || document.getElementById("v7-add-person") || stepHeading()).focus();
-        announce("Person " + letter(i).toUpperCase() + (ns.mentees.length === 1 && i === 0 && !menteeHasContent(ns.mentees[0]) ? " cleared." : " removed."));
+        ((UI.xUndo && UI.xUndo.key === "person" && document.getElementById("x-undo")) || n || document.getElementById("v7-add-person") || stepHeading()).focus();
+        announce("Person " + L + (ns.mentees.length === 1 && i === 0 && !menteeHasContent(ns.mentees[0]) && !(UI.xUndo && UI.xUndo.key === "person") ? " cleared." : " removed.") + (UI.xUndo && UI.xUndo.key === "person" ? UNDO_SPOKEN : ""));
       };
       rm.addEventListener("click", () => {
         if (!menteeHasContent(m)) return removeP();
@@ -6418,11 +6468,24 @@
     function deleteContribution(contrib, i, wrap, after, trigger) {
       const name = gvCut(one(contrib.title), 60), nw = cWords(contrib);
       inlineConfirm(wrap, "Delete " + (name ? "“" + name + "”" : "this contribution") + " and its " + nw.toLocaleString("en-CA") + (nw === 1 ? " word" : " words") + " from your draft?", trigger, "Delete", () => {
+        const gone = ns.contributions[i], said = name ? "“" + name + "”" : "The contribution";
         ns.contributions.splice(i, 1);
         if (!ns.contributions.length) ns.contributions = [blankContribution()];
+        // EV-1b: Undo puts the contribution back in its place in the order (or in Saved for later).
+        offerUndo({ key: gone.later ? "later" : "order", text: said + " deleted.", restore: () => {
+          if (ns.contributions.indexOf(gone) > -1) return;
+          const blank = ns.contributions.length === 1 && !cLive(ns.contributions[0]);
+          if (!blank && ns.contributions.length >= 10) return announce("There are already 10 contributions. Remove one to restore this one.");
+          if (blank) ns.contributions = [gone]; else ns.contributions.splice(Math.min(i, ns.contributions.length), 0, gone);
+          saveState(); renderStage();
+          const b = document.getElementById("oa-" + gone.cid); if (b) b.focus();
+          announce(said + " restored.");
+        } });
         ns.ui.orderDone = true; saveState(); renderStage();
-        const h = document.getElementById("v8-rb-q") || document.getElementById("v8-rb-t"); if (h) { h.tabIndex = -1; h.focus(); }
-        announce((name ? "“" + name + "”" : "The contribution") + " deleted.");
+        // With no complete contribution left, Review closes and Contributions opens: its own Undo line takes over there.
+        if (ns.stageKey !== "review") { UI.xUndo = null; UI.cUndo = { c: gone, i, until: Infinity }; renderStage(); }
+        const h = document.getElementById("x-undo") || document.getElementById("c-undo") || document.getElementById("v8-rb-q") || document.getElementById("v8-rb-t"); if (h) { if (!/-undo$/.test(h.id)) h.tabIndex = -1; h.focus(); }
+        announce(said + " deleted." + UNDO_SPOKEN);
       }, { after });
     }
     function orderActions(contrib, i, oc, wrap) {
@@ -6444,11 +6507,12 @@
       return row;
     }
     function renderLater(os) {
-      const later = laterContributions();
-      if (!later.length) return;
+      const later = laterContributions(), ur = undoRow("later"); // EV-1b
+      if (!later.length) { if (ur) os.appendChild(ur); return; }
       const box = el("div", "v7-later"); box.setAttribute("role", "group"); box.setAttribute("aria-labelledby", "v7-later-t");
       const h = el("h4", "v7-later-t", "Saved for later"); h.id = "v7-later-t"; box.appendChild(h);
       box.appendChild(el("p", "v7-quiet", "These stay in your draft and do not print or count toward the length. Add one back to place it last in the order."));
+      if (ur) box.appendChild(ur);
       later.forEach(({ c: contrib, i }) => {
         const oc = el("div", "v7-ocard is-later");
         const txt = el("div", "v7-otxt");
@@ -6771,7 +6835,7 @@
       if (!live.length) {
         const p = el("p", "v7-quiet", "To answer these questions, please complete at least one contribution. ");
         const go = el("button", "v7-linkbtn", "Go to Contributions"); go.type = "button"; go.addEventListener("click", () => goStage("contrib")); p.appendChild(go);
-        sec.appendChild(p); renderLater(sec); return sec;
+        sec.appendChild(p); { const ur = undoRow("order"); if (ur) sec.appendChild(ur); } renderLater(sec); return sec;
       }
       // V8.15 (Prem, 2026-11-18): the statement sits above the tabs, as on a phone, and can be hidden;
       // each tab has "See personal statement", which opens it and scrolls back up to it.
@@ -6898,6 +6962,7 @@
       if (st.length) sl.appendChild(document.createTextNode("Areas of research: " + st.map(t => "“" + one(t.text) + "”").join(", ") + ". "));
       const eb = el("button", "v7-linkbtn", st.length ? "Edit on " + psStep() : "Name your areas on " + psStep()); eb.type = "button"; eb.addEventListener("click", openStrands);
       sl.appendChild(eb); body.appendChild(sl);
+      { const ur = undoRow("order"); if (ur) body.appendChild(ur); } // EV-1b: above the order the contribution left
       const ol = el("ol", "v8-rows v8-rows-mv");
       live.forEach(({ c: x, i }, pos) => {
         const { li, card } = rvRow(ol, x, pos, false);
@@ -7103,6 +7168,7 @@
             });
             td.appendChild(ul);
           } else td.appendChild(el("span", "v7-rqev-none", !used && x.noEvidenceYet ? "No evidence yet" : "None yet")); // R12
+          { const ur = undoRow("rvev-" + x.cid + "-" + (used ? 1 : 0)); if (ur) td.appendChild(ur); } // EV-1b
           const add = el("button", "v7-rqev-add", "+ Add"); add.type = "button"; add.dataset.cid = x.cid; add.dataset.used = used ? "1" : "0";
           add.setAttribute("aria-label", "Add evidence to contribution " + (pos + 1) + (used ? ", where others used it" : ", what you produced"));
           add.addEventListener("click", () => { UI.rvEdit = { tab: "evidence", cid: x.cid, k: -1, used, back: "add-" + (used ? 1 : 0) }; redraw(); });
@@ -7122,22 +7188,46 @@
       const kl = el("label", "v7-rqev-lab", "Kind"); const sel = el("select", "v7-select"); sel.id = "v7-ev-kind"; kl.htmlFor = sel.id;
       EVIDENCE_TYPES.forEach(t => { const o = el("option", null, t); o.value = t; if (t === e.type) o.selected = true; sel.appendChild(o); });
       box.appendChild(kl); box.appendChild(sel);
+      // EV-1b: the column the item shows under, set to where it is now (or the + Add column); Save moves it there.
+      // A kind change, here or on Contributions, keeps the column (EV-1).
+      const col = el("fieldset", "v7-reach-mode v9-ev-col"); col.appendChild(el("legend", "v7-rqev-lab", "Column"));
+      const colNow = isNew ? used : evUsed(e);
+      [[false, "What you produced"], [true, "Where others used it"]].forEach(([u, l]) => {
+        const lab = el("label"); const r = el("input"); r.type = "radio"; r.name = "v9-ev-col"; r.id = "v9-ev-col-" + (u ? "1" : "0"); r.value = u ? "1" : "0"; r.checked = u === colNow;
+        lab.appendChild(r); lab.appendChild(el("span", null, l)); col.appendChild(lab);
+      });
+      box.appendChild(col);
       const tl = el("label", "v7-rqev-lab", "Details"); const ta = el("textarea", "v7-wb-text"); ta.id = "v7-ev-text"; tl.htmlFor = ta.id; ta.rows = 3; ta.value = e.text || "";
       box.appendChild(tl); box.appendChild(ta);
-      const back = () => { const sel2 = ed.back.indexOf("add-") === 0 ? '.v7-rqev-add[data-cid="' + x.cid + '"][data-used="' + ed.back.slice(4) + '"]' : '.v7-rqev-item[data-cid="' + x.cid + '"][data-k="' + ed.back.slice(5) + '"]'; const b = document.querySelector(sel2) || document.querySelector('.v7-rqev-add[data-cid="' + x.cid + '"]'); if (b) b.focus(); };
+      const back = () => { if (ed.back === "undo" && document.getElementById("x-undo")) return document.getElementById("x-undo").focus(); const sel2 = ed.back.indexOf("add-") === 0 ? '.v7-rqev-add[data-cid="' + x.cid + '"][data-used="' + ed.back.slice(4) + '"]' : '.v7-rqev-item[data-cid="' + x.cid + '"][data-k="' + ed.back.slice(5) + '"]'; const b = document.querySelector(sel2) || document.querySelector('.v7-rqev-add[data-cid="' + x.cid + '"]'); if (b) b.focus(); };
       const after = (msg) => { saveState(); UI.rvEdit = null; redraw(); if (msg) announce(msg); back(); };
       rvEditorKeys(box, () => after(""));
       const row = el("div", "v7-actions");
       const sv = el("button", "btn btn-primary v7-btn-small", "Save"); sv.type = "button";
       sv.addEventListener("click", () => {
         const v = { text: ta.value.trim(), type: sel.value };
-        if (isNew) v.used = used; // EV-1: the column it was added under
+        const pick = col.querySelector("input:checked"), u = pick ? pick.value === "1" : colNow;
+        // EV-1, EV-1b: a new item stores its column; an item that has one keeps the one chosen; an item that has
+        // none stores one only when it is moved, so it goes on following its kind until then.
+        if (isNew || typeof e.used === "boolean" || u !== evUsed(Object.assign({}, e, v))) v.used = u;
         if (!v.text) { ta.focus(); return; }
+        const moved = !isNew && u !== colNow;
         if (isNew) x.evidence = (x.evidence || []).concat([v]); else Object.assign(x.evidence[k], v);
-        after("Evidence saved for contribution " + (pos + 1) + ".");
+        if (moved) { ed.back = "item-" + k; }
+        after("Evidence saved for contribution " + (pos + 1) + (moved ? ", under " + (u ? "Where others used it." : "What you produced.") : "."));
       });
       row.appendChild(sv);
-      if (!isNew) { const rm = el("button", "btn btn-outline v7-btn-small", "Remove"); rm.type = "button"; rm.addEventListener("click", () => { x.evidence.splice(k, 1); ed.back = "add-0"; after("Evidence removed from contribution " + (pos + 1) + "."); }); row.appendChild(rm); }
+      if (!isNew) { const rm = el("button", "btn btn-outline v7-btn-small", "Remove"); rm.type = "button"; rm.addEventListener("click", () => {
+        const gone = x.evidence.splice(k, 1)[0], wasUsed = evUsed(gone);
+        // EV-1b: the Undo line sits in the column the item left; Undo puts the item back in its place.
+        offerUndo({ key: "rvev-" + x.cid + "-" + (wasUsed ? 1 : 0), text: "Evidence removed.", restore: () => {
+          if ((x.evidence || []).indexOf(gone) > -1) return;
+          x.evidence = x.evidence || []; x.evidence.splice(Math.min(k, x.evidence.length), 0, gone); saveState(); renderStage(); // the board may have been drawn again since
+          const b = document.querySelector('.v7-rqev-item[data-cid="' + x.cid + '"][data-k="' + x.evidence.indexOf(gone) + '"]'); if (b) b.focus();
+          announce("Evidence restored for contribution " + (pos + 1) + ".");
+        } });
+        ed.back = "undo"; after("Evidence removed from contribution " + (pos + 1) + "." + UNDO_SPOKEN);
+      }); row.appendChild(rm); }
       const cn = el("button", "btn btn-outline v7-btn-small", "Cancel"); cn.type = "button"; cn.addEventListener("click", () => after(""));
       row.appendChild(cn); box.appendChild(row);
       td.appendChild(box);
