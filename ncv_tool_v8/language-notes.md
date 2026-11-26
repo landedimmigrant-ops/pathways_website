@@ -220,3 +220,10 @@ Every Decided row above is applied in `narrative-cv-prototype-v9.html` (V8 froze
 ## Applied in V9.2 (2026-11-26)
 
 Prem: "Build all of it". EV-1b is applied in `narrative-cv-prototype-v9.html` as proposed: the column choice in Review's evidence editor ("Column": What you produced · Where others used it), a kind change keeps the column, and Undo for Remove on Review's evidence, Remove area, Remove person and Delete on Review. The EV-1 question in "Applied in V9.0" is closed by it. Choices under "INFERRED in V9.2" in `ncv_tool_v9/README.md`.
+
+
+## After V9.2
+
+| # | Where | Now | Prem's note and decision | Type | Status |
+|---|---|---|---|---|---|
+| EV-1c | The whole tool, against EV-1b | V9.2: no Undo after Clear draft or after opening a backup file over a draft; Undecided and "None of these" empty what they replace for good; Export's tool-written sentences cannot be edited in the card and do not link to their answers (the E4 hint names the steps only) | Prem (2026-11-26): "check the rest of the tool for the same gap, check ayting else and lets push it". Applied in V9.3: Undo for Clear draft and for opening a backup file; pressing Undecided or "None of these" again brings back what they emptied; an **Edit** after each tool-written sentence on Export that opens its answer. Left as they are: Save for later (Add back), a role level (C17), single choices, the Change panel (works on a copy), typing (the browser's undo). | Feature | Applied (V9.3) |

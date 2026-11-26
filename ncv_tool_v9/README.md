@@ -67,3 +67,14 @@ From EV-1b (Prem, 2026-11-26: "I don't want people to look for solutions, I want
 - Deleting the last complete contribution on Review closes Review and opens Contributions; its own Undo line ("Contribution 1 … removed. Undo") takes over there.
 - A restore that would pass the cap (4 areas, 10 contributions) says so and waits, as on Contributions.
 - On a phone, Review's evidence editor stays at the width of the screen while its table scrolls sideways (in V9.1 Details and Save could sit partly off the edge).
+
+## INFERRED in V9.3
+
+Prem: "check the rest of the tool for the same gap, check anything else and lets push it". Every removal, clear and reset in V9.2, and every line shown without a way to change it there, was checked.
+
+- Clear draft (start page and Change panel) offers "Draft cleared. Undo" at the top of the start page; Undo brings the draft back with the step it was on ("Draft restored."). An empty draft goes without Undo.
+- Opening a backup file over a draft offers "Your previous draft was replaced. Undo" under the "Backup file … opened." banner; Undo brings back the draft that was open ("Previous draft restored."). Focus stays where the opened step puts it; the Undo is spoken with the banner.
+- Undecided (Set up and the Change panel) still empties the competition (P5); pressing it again brings back the name it emptied. The name is kept for the session only, not in the saved draft.
+- "None of these" on Review still clears a contribution's areas; pressing it again brings them back (session only). Pressing an area forgets them.
+- Export: each sentence the tool writes (the first sentence, each evidence list, the totals line, each trainee sentence) has an "Edit" button after it that opens the answer it is written from. The visible word is "Edit", to keep the draft readable; the button's name says what it opens ("Edit person B on Mentorship"). The decided hint above the draft (E4) stays.
+- Left as they are: Save for later (Add back reverses it, last in the order, Q-11); a role level (C17: picking another level is enough); Solo and Team-based, and the second field (one choice each, picked again where shown); profile changes (the Change panel works on a copy, Cancel drops it); text in boxes (the browser's own undo).

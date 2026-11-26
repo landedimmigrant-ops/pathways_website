@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V9.2 beta</title>
+  <title>Narrative CV — V9.3 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -1093,7 +1093,10 @@
     .v4-fb-nudge { border: 1px solid #f9ca24; background: #fff8e1; border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem 0 0; font-size: 0.9rem; }
     /* r18-b-3, r18-b-4: Undo and Reset are full-size targets on phones and touch screens. */
     @media (max-width: 48em), (pointer: coarse) { .v7-undo .v7-linkbtn { min-height: 44px; display: inline-flex; align-items: center; } .v7-path-reset { min-height: 44px; margin-top: 12px; } }
-    /* EV-1b: the column choice in Review's evidence editor takes the Reach tab's radio style. */
+    /* V9.3: Edit after a sentence the tool writes on Export. */
+.v8-edoc .v9-fix-go { margin-left: 6px; font-size: 0.85rem; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 24px; }
+@media (pointer: coarse), (max-width: 48em) { .v8-edoc .v9-fix-go { min-height: 44px; } }
+/* EV-1b: the column choice in Review's evidence editor takes the Reach tab's radio style. */
 .v9-ev-col { margin: 4px 0 6px; }
 .v9-ev-col input { width: 18px; height: 18px; margin: 0; accent-color: #912338; }
 @media (pointer: coarse), (max-width: 48em) { .v9-ev-col label { min-height: 44px; } }
@@ -1189,7 +1192,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "9.2", VERSION_DATE = "2026-11-26";
+    const VERSION_NUM = "9.3", VERSION_DATE = "2026-11-26";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -2942,6 +2945,7 @@
       return "";
     }
     let openedPending = "";
+    let pendingUndo = null; // V9.3: an Undo for the whole draft, offered on the step that opens next
     // W-45: opening over a draft asks first, inline under the Load card; a file that is not a draft
     // gets a line there (was alert()).
     function openDraftFile(e) {
@@ -2966,10 +2970,13 @@
         if (!f) return;
         const r = new FileReader();
         r.onload = () => {
+          const before = ns; // applySaved replaces ns, so this is the draft that was open
           const err = readDraftFile(String(r.result || ""));
           if (err) { showLoadError(err); return; }
           countEvent("draftFileOpened");
           ns.stageKey = resumeStep();
+          // V9.3: the draft that was open comes back with Undo.
+          if (before && draftHasContent(before)) pendingUndo = { key: "draft", text: "Your previous draft was replaced.", restore: () => restoreDraft(before, "Previous draft restored.") };
           renderStage();
         };
         r.readAsText(f);
@@ -3681,9 +3688,11 @@
         const banner = el("div", "narrative-session-banner", openedPending);
         banner.setAttribute("role", "status");
         c.appendChild(banner);
-        announce(openedPending);
+        announce(openedPending + (pendingUndo ? UNDO_SPOKEN : ""));
       }
       openedPending = "";
+      if (pendingUndo) { offerUndo(pendingUndo); pendingUndo = null; }
+      { const ur = undoRow("draft"); if (ur) c.appendChild(ur); } // V9.3: under the step's banner
       RENDERERS[ns.stageKey](c);
       // r3-b-13: a box takes the direction of what is typed in it (an Arabic or Hebrew name reads right to left).
       c.querySelectorAll("textarea, input[type=text]").forEach(x => { if (!x.dir) x.dir = "auto"; });
@@ -4682,7 +4691,7 @@
       inp.addEventListener("input", () => {
         d.program = inp.value;
         // P5: typing in the field ends Undecided.
-        if (d.undecided && d.program.trim()) { d.undecided = false; und.setAttribute("aria-pressed", "false"); announce("Undecided turned off."); }
+        if (d.undecided && d.program.trim()) { d.undecided = false; UI.chg.compWas = ""; und.setAttribute("aria-pressed", "false"); announce("Undecided turned off."); }
         setAgNote();
       });
       inp.addEventListener("keydown", e => { if (e.key === "Enter") e.preventDefault(); });
@@ -4690,7 +4699,9 @@
       und.setAttribute("aria-pressed", d.undecided ? "true" : "false");
       und.addEventListener("click", () => {
         d.undecided = !d.undecided;
-        if (d.undecided) { d.program = ""; inp.value = ""; } // P5: pressing Undecided empties the field
+        // P5: pressing Undecided empties the field; V9.3: pressing it again brings back the name it emptied.
+        if (d.undecided) { UI.chg.compWas = d.program || ""; d.program = ""; inp.value = ""; }
+        else if (!one(d.program) && UI.chg.compWas) { d.program = UI.chg.compWas; inp.value = d.program; UI.chg.compWas = ""; }
         und.setAttribute("aria-pressed", d.undecided ? "true" : "false"); setAgNote();
       });
       const yr = select("v7-chg-yr", [["", "Year (optional)"]].concat(YEARS.map(y => [y, y])), d.year, v => { d.year = v; });
@@ -5204,7 +5215,7 @@
             const before = !!(L.program || "").trim();
             L.program = e.target.value;
             // P5: typing in the field ends Undecided.
-            if (L.undecided && L.program.trim()) { L.undecided = false; const ub = document.getElementById("v7-undecided"); if (ub) ub.setAttribute("aria-pressed", "false"); announce("Undecided turned off."); }
+            if (L.undecided && L.program.trim()) { L.undecided = false; UI.compWas = ""; const ub = document.getElementById("v7-undecided"); if (ub) ub.setAttribute("aria-pressed", "false"); announce("Undecided turned off."); }
             saveState();
             if (before !== !!L.program.trim()) renderStage(); else refreshRail();
           });
@@ -5215,7 +5226,8 @@
           row.appendChild(wrap);
           const und = el("button", "v7-mini", "Undecided"); und.type = "button"; und.id = "v7-undecided";
           und.setAttribute("aria-pressed", L.undecided ? "true" : "false");
-          und.addEventListener("click", () => pick(() => { L.undecided = !L.undecided; if (L.undecided) L.program = ""; }, 1)); // P5: pressing Undecided empties the field
+          // P5: pressing Undecided empties the field; V9.3: pressing it again brings back the name it emptied.
+          und.addEventListener("click", () => pick(() => { L.undecided = !L.undecided; if (L.undecided) { UI.compWas = L.program || ""; L.program = ""; } else if (!one(L.program) && UI.compWas) { L.program = UI.compWas; UI.compWas = ""; } }, 1));
           row.appendChild(und);
           blk.appendChild(row);
           const yl = el("span", "v7-field-label", ""); yl.id = "v7-yl";
@@ -6558,14 +6570,16 @@
       const join = (p, nodes) => { let any = false; nodes.forEach(n => { if (n.textContent) { if (any) p.appendChild(document.createTextNode(" ")); any = true; } p.appendChild(n); }); };
       h4(docHeading("ps"));
       const a = psAnchorText();
-      if (a) { const p = el("p"); p.appendChild(el("span", "v8-ed-fixed", a)); body.appendChild(p); }
+      // V9.3: each sentence the tool writes has its own Edit, which opens the answer it is written from.
+      const fixGo = (aria, go) => { const b = el("button", "v7-linkbtn v9-fix-go", "Edit"); b.type = "button"; b.setAttribute("aria-label", aria); b.addEventListener("click", go); return b; };
+      if (a) { const p = el("p"); p.appendChild(el("span", "v8-ed-fixed", a)); p.appendChild(fixGo("Edit the first sentence on " + psStep(), () => jumpTo({ step: "ps", field: "ps-anchor" }))); body.appendChild(p); }
       const p1 = el("p");
       join(p1, SF().filter(f => f.k !== "anchor").map(f => edPart(secName("ps") + ": " + f.label, () => ns.ps[f.k], v => { ns.ps[f.k] = v; }, f.label)));
       body.appendChild(p1);
       h4(docHeading("contrib"));
       const live = liveContributions();
       if (!live.length) body.appendChild(el("p", "v7-empty", "Not written yet."));
-      live.forEach(({ c: x }, pos) => {
+      live.forEach(({ c: x, i: xi }, pos) => {
         const w = assembleContribution(x);
         const t = el("p", "v8-ed-title"); const b = el("b"); b.appendChild(document.createTextNode((pos + 1) + ". "));
         b.appendChild(edPart("Contribution " + (pos + 1) + ": headline", () => x.title, v => { x.title = v; }, "Headline")); t.appendChild(b); body.appendChild(t);
@@ -6577,13 +6591,19 @@
         if (w.refs.length) {
           const refs = el("div", "v7-refs");
           w.refs.forEach((r, j) => { if (j) refs.appendChild(el("br")); refs.appendChild(document.createTextNode(r.key + ". " + r.text)); if (r.note) { refs.appendChild(el("br")); refs.appendChild(el("span", "v7-ref-note", r.note)); } });
+          refs.appendChild(fixGo("Edit the evidence of contribution " + (pos + 1) + " on Contributions", () => jumpTo({ step: "contrib", i: xi, ev: true })));
           body.appendChild(refs);
         }
       });
       h4(docHeading("mentor"));
       const totals = mentorTotalsParts();
-      if (totals.length) body.appendChild(el("p", "v8-ed-fixed", "Totals: " + totals.join(", ")));
-      ns.mentees.filter(menteeHasContent).forEach(m => body.appendChild(el("p", "v8-ed-fixed", menteeSentence(m))));
+      if (totals.length) { const p = el("p", "v8-ed-fixed", "Totals: " + totals.join(", ")); p.appendChild(fixGo("Edit the totals on Mentorship", () => { goStage("mentor"); const n = document.getElementById("v7-t-" + MENTOR_COUNT_LABELS[0][0]); if (n) { n.focus(); n.scrollIntoView({ block: "center" }); } })); body.appendChild(p); }
+      ns.mentees.forEach((m, mi) => {
+        if (!menteeHasContent(m)) return;
+        const p = el("p", "v8-ed-fixed", menteeSentence(m));
+        p.appendChild(fixGo("Edit person " + letter(mi).toUpperCase() + " on Mentorship", () => { ns.mentees.forEach((x, j) => { x.folded = j !== mi; }); goStage("mentor"); const s2 = document.getElementById("v7-ps" + mi); if (s2) { s2.focus(); s2.scrollIntoView({ block: "center" }); } }));
+        body.appendChild(p);
+      });
       PF().forEach(f => { const p = el("p"); p.appendChild(edPart("Mentorship: " + f.label, () => ns[f.k], v => { ns[f.k] = v; }, f.label)); body.appendChild(p); });
       return body;
     }
@@ -6978,8 +6998,13 @@
             b.dataset.cid = x.cid; b.dataset.s = t.id || "none";
             b.setAttribute("aria-label", "Contribution " + (pos + 1) + ": " + one(t.text));
             b.addEventListener("click", () => {
-              if (!t.id) { x.strandIds = []; x.strandNone = !on; }
-              else { const ids = (x.strandIds || []).slice(), at = ids.indexOf(t.id); if (at > -1) ids.splice(at, 1); else ids.push(t.id); x.strandIds = ids; x.strandNone = false; }
+              // V9.3: "None of these" keeps the areas it cleared, and pressing it again brings them back.
+              const was = UI.noneWas || (UI.noneWas = {});
+              if (!t.id) {
+                if (!on) { was[x.cid] = (x.strandIds || []).slice(); x.strandIds = []; x.strandNone = true; }
+                else { x.strandNone = false; x.strandIds = (was[x.cid] || []).filter(id => st.some(s2 => s2.id === id)); delete was[x.cid]; }
+              }
+              else { delete was[x.cid]; const ids = (x.strandIds || []).slice(), at = ids.indexOf(t.id); if (at > -1) ids.splice(at, 1); else ids.push(t.id); x.strandIds = ids; x.strandNone = false; }
               saveState(); redraw();
               const back = document.querySelector('.v8-mark[data-cid="' + x.cid + '"][data-s="' + (t.id || "none") + '"]'); if (back) back.focus();
             });
@@ -8210,9 +8235,17 @@
 
     // ── Reset & boot ────────────────────────────────────────────────────────
     // Reset: the clear itself. The confirm before it is resetWarning().
+    // V9.3: the draft that was open comes back, with the step it was on.
+    function restoreDraft(before, said) {
+      ns = before; resumeStore(); resetUI(); saveState(); renderStage();
+      const h = stepHeading(); if (h) h.focus({ preventScroll: true });
+      announce(said);
+    }
     function resetDraft(e) {
       if (e) e.preventDefault();
-      setTimeout(() => { const h = stepHeading(); if (h) h.focus({ preventScroll: true }); announce("Draft cleared."); }, 0);
+      const before = ns, undoable = draftHasContent(before);
+      setTimeout(() => { const u = document.getElementById("x-undo"), h = stepHeading(); if (u) u.focus({ preventScroll: true }); else if (h) h.focus({ preventScroll: true }); announce("Draft cleared." + (u ? UNDO_SPOKEN : "")); }, 0);
+      if (undoable) pendingUndo = { key: "draft", text: "Draft cleared.", restore: () => restoreDraft(before, "Draft restored.") };
       resumeStore();
       try { localStorage.setItem(NCV_KEY + "-reset", String(Date.now())); } catch (_) {} // Z-6: the mark first, so other tabs see it
       try { localStorage.removeItem(NCV_KEY); } catch (_) {} // AA-2: the removal never depends on the mark

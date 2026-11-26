@@ -351,3 +351,8 @@ Terms now in the tool; the rows in `language-notes.md` hold the reasons.
 
 - **"Column"**: the label of the choice in Review's evidence editor; its answers are the two column headings, "What you produced" and "Where others used it". Plain, and it names what the researcher sees.
 - **Undo lines**: "Evidence removed.", "Area 2, “[name]”, removed.", "Person B removed.", "“[headline]” deleted.", each with **Undo**, as "Contribution 2 removed. Undo" on Contributions.
+
+## Added in V9.3
+
+- **"Draft cleared." · Undo**, **"Your previous draft was replaced." · Undo**; then **"Draft restored."**, **"Previous draft restored."**
+- **"Edit"** after each sentence the tool writes on Export; its spoken name says what it opens ("Edit the totals on Mentorship").

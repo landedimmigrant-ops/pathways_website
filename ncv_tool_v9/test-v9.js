@@ -2515,7 +2515,7 @@ async function seed(state, extra, opts) {
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
     check("P6: the career stage reads Mid-career, stored value unchanged", /\{ v: "mid", l: "Mid-career" \}/.test(src));
     check("R12: a missing headline reads No headline yet on screen and [No headline yet] in the draft text and files; none says Untitled contribution", !/Untitled contribution/.test(src) && (src.match(/"\[No headline yet\]"/g) || []).length === 5 && /rvTitle = \(x\) => gvCut\(one\(x.title\), 90\) \|\| "No headline yet"/.test(src) && /- 3 \* liveContributions\(\)/.test(src));
-    check("the version is 9.2 in the script and the tab title", /VERSION_NUM = "9\.2"/.test(src) && /<title>Narrative CV — V9\.2 beta/.test(src));
+    check("the version is 9.3 in the script and the tab title", /VERSION_NUM = "9\.3"/.test(src) && /<title>Narrative CV — V9\.3 beta/.test(src));
   }
 
   console.log("Batch 4 and 6 (V9): Contributions and Personal statement wording");
@@ -2894,6 +2894,66 @@ async function seed(state, extra, opts) {
     await seed(stAt(st => { st.contributions = [mkC("z1")]; }), null, { raw: true });
     r = await js(delUndo("z1"));
     check("EV-1b: deleting the only complete contribution on Review opens Contributions with its Undo line, which puts it back", r.stage === "contrib" && r.focus === "c-undo" && r.n2 === "z1", r);
+
+    // V9.3: the rest of the tool checked against EV-1b.
+    const cidsJs = `const cids=()=>(JSON.parse(localStorage.getItem('ncv-v9')||'{}').contributions||[]).map(c=>c.cid).join(',');`;
+    await seed(stAt(st => { st.stageKey = "start"; st.contributions = [mkC("k1"), mkC("k2")]; }));
+    r = await js(H + squash + cidsJs + `await w(250); const a={};
+      q('.v7-path-reset').click(); await w(150); qa('.v7-warn .btn').find(b=>b.innerText==='Clear draft').click(); await w(300);
+      a.c1=cids(); a.focus=document.activeElement.id; a.row=sq((q('.v9-xundo')||{}).innerText); a.live=q('#v7-live').textContent;
+      q('#x-undo').click(); await w(300);
+      a.c2=cids(); a.live2=q('#v7-live').textContent; a.card2=(q('.v7-path-new h2')||{}).innerText; a.row2=!!q('.v9-xundo');
+      return a;`);
+    check("V9.3: Clear draft leaves 'Draft cleared. Undo' on the start page, with focus on Undo", !/k1/.test(r.c1) && r.focus === "x-undo" && r.row === "Draft cleared. Undo" && r.live === "Draft cleared. Undo is available until your next change.", r);
+    check("V9.3: Undo brings the cleared draft back", r.c2 === "k1,k2" && r.live2 === "Draft restored." && /^Continue/.test(r.card2 || "") && !r.row2, r);
+
+    const fileB = JSON.stringify({ format: "pathways-narrative-cv-draft", version: 1, draft: Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, stageKey: "contrib", mode: "compose", contributions: [DONE("f1")] }) });
+    await seed(stAt(st => { st.stageKey = "start"; st.contributions = [mkC("k1"), mkC("k2")]; }));
+    r = await js(H + squash + cidsJs + `await w(250); const a={};
+      const ic=HTMLInputElement.prototype.click;
+      HTMLInputElement.prototype.click=function(){ if(this.type==='file'){const dt=new DataTransfer(); dt.items.add(new File([${JSON.stringify(fileB)}],'d.json',{type:'application/json'})); this.files=dt.files; this.dispatchEvent(new Event('change'));} };
+      q('.v7-path-cont').click(); await w(150); await okWarn(); await w(300); HTMLInputElement.prototype.click=ic;
+      a.c1=cids(); a.row=sq((q('.v9-xundo')||{}).innerText); a.afterBanner=!!(q('.v9-xundo')&&q('.v9-xundo').previousElementSibling&&q('.v9-xundo').previousElementSibling.classList.contains('narrative-session-banner')); a.live=q('#v7-live').textContent;
+      q('#x-undo').click(); await w(300);
+      a.c2=cids(); a.live2=q('#v7-live').textContent;
+      return a;`);
+    check("V9.3: opening a backup file over a draft offers Undo under the banner and says so", r.c1 === "f1" && r.row === "Your previous draft was replaced. Undo" && r.afterBanner && /opened\..* Undo is available until your next change\.$/.test(r.live), r);
+    check("V9.3: Undo brings back the draft that was open before the file", r.c2 === "k1,k2" && r.live2 === "Previous draft restored.", r);
+
+    await seed(null);
+    r = await js(H + `q('.v7-path-new').click(); await w(150); const a={};
+      q('#ag-sshrc').click(); await w(150); const c=q('#v7-comp'); c.focus(); setv(c,'Made-up Grants'); c.blur(); await w(60);
+      q('#v7-undecided').click(); await w(150); a.emptied=q('#v7-comp').value;
+      q('#v7-undecided').click(); await w(150); a.back=q('#v7-comp').value; a.pressed=q('#v7-undecided').getAttribute('aria-pressed'); a.saved=JSON.parse(localStorage.getItem('ncv-v9')).lens.program;
+      return a;`);
+    check("V9.3: on Set up, pressing Undecided again brings back the competition it emptied", r.emptied === "" && r.back === "Made-up Grants" && r.pressed === "false" && r.saved === "Made-up Grants", r);
+    await seed(stAt(st => { st.stageKey = "contrib"; st.lens = Object.assign({}, st.lens, { program: "Made-up Insight Grant", undecided: false }); }));
+    r = await js(H + `await w(250); q('#v7-chg').click(); await w(150); const a={};
+      const und=qa('.v7-chg .v7-mini').find(b=>b.innerText==='Undecided');
+      und.click(); await w(60); a.emptied=q('#v7-chg-comp').value; und.click(); await w(60); a.back=q('#v7-chg-comp').value;
+      qa('#v7-chg-panel .btn-primary').find(b=>b.innerText==='Confirm').click(); await w(200); a.saved=JSON.parse(localStorage.getItem('ncv-v9')).lens.program;
+      return a;`);
+    check("V9.3: in the Change panel, pressing Undecided again brings back the competition it emptied", r.emptied === "" && r.back === "Made-up Insight Grant" && r.saved === "Made-up Insight Grant", r);
+
+    await seed(stAt(st => { st.strands = [{ id: "sa", text: "Made-up area one" }, { id: "sb", text: "Made-up area two" }]; st.contributions = [mkC("n1", { strandIds: ["sa", "sb"] })]; }));
+    r = await js(H + `await w(250); const a={};
+      const ids=()=>(JSON.parse(localStorage.getItem('ncv-v9')).contributions.find(c=>c.cid==='n1').strandIds||[]).join(',');
+      q('.v8-mark[data-cid="n1"][data-s=none]').click(); await w(80); a.none=ids();
+      q('.v8-mark[data-cid="n1"][data-s=none]').click(); await w(80); a.back=ids(); a.pressed=['sa','sb','none'].map(s=>q('.v8-mark[data-cid="n1"][data-s='+s+']').getAttribute('aria-pressed')).join(',');
+      return a;`);
+    check("V9.3: pressing None of these again brings back the areas it cleared", r.none === "" && r.back === "sa,sb" && r.pressed === "true,true,false", r);
+
+    await seed(stAt(st => { st.stageKey = "export"; st.contributions = [mkC("x1")];
+      st.ps = Object.assign({}, st.ps, { role: "Assistant professor", institution: "Made-up University", field: "sociology" });
+      st.mentorCounts = Object.assign({}, st.mentorCounts, { phd: "3" });
+      st.mentees = [{ stageKind: "doctoral", stage: "Doctoral", kind: "industry", org: "Made-up firm A", unit: "", recognition: "", why: "now leads a made-up team", folded: false }]; }));
+    r = await js(H + `await w(300); const a={};
+      a.labels=qa('.v8-edoc .v9-fix-go').map(b=>b.innerText+'|'+b.getAttribute('aria-label'));
+      const go=async(re)=>{ const b=qa('.v8-edoc .v9-fix-go').find(x=>re.test(x.getAttribute('aria-label'))); b.click(); await w(350); const st=JSON.parse(localStorage.getItem('ncv-v9')).stageKey; const f=document.activeElement; const out=[st, f.id||'', f.tagName]; rail('Export').click(); await w(300); return out; };
+      a.first=await go(/first sentence/); a.ev=await go(/evidence of contribution 1/); a.tot=await go(/totals/); a.person=await go(/person A/);
+      return a;`);
+    check("V9.3: each sentence the tool writes on Export has an Edit button named for what it opens", r.labels.length === 4 && r.labels.every(l => /^Edit\|Edit /.test(l)) && r.labels.some(l => /^Edit\|Edit the first sentence on (Personal statement|Background and skills)$/.test(l)) && r.labels.indexOf("Edit|Edit the evidence of contribution 1 on Contributions") > -1 && r.labels.indexOf("Edit|Edit the totals on Mentorship") > -1 && r.labels.indexOf("Edit|Edit person A on Mentorship") > -1, r.labels);
+    check("V9.3: Edit opens the answer each sentence is written from (first sentence, evidence, totals, person)", r.first[0] === "ps" && /INPUT|TEXTAREA|DIV|BUTTON/.test(r.first[2]) && r.ev[0] === "contrib" && /^evt/.test(r.ev[1]) && r.tot[0] === "mentor" && r.tot[1] === "v7-t-postdoc" && r.person[0] === "mentor" && r.person[1] === "v7-ps0", r);
 
     // R-1 (R8a) and R7: the role status counts written role sentences and names a contribution with a level and no sentence.
     await seed(stAt(st => { st.contributions = [mkC("r1", { roleMode: "led" }), mkC("r2", { roleMode: "coled", roleLine: "" }), mkC("r3", { roleMode: "part", roleLine: "" })]; }));
