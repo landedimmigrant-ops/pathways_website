@@ -1,0 +1,13 @@
+# NCV tool V9: versions
+
+Each batch of changes gets the next number (9.1, 9.2 and so on). The number appears at the foot of the tool, in the tab title, in the Word file and print view, and in a saved backup file.
+
+To make a new version:
+1. Raise `VERSION_NUM` and set `VERSION_DATE` near the top of the script in `narrative-cv-prototype-v9.html`. Also change the number in the `<title>` tag.
+2. Add an entry at the top of the list below.
+3. Commit, then tag it as `ncv-v9.N`.
+4. When it is deployed to Cloudflare, update the "Where it is live" column.
+
+| Version | Date | What changed | Commit | Where it is live |
+|---|---|---|---|---|
+| 9.0 | 2026-11-26 | V9 forked from V8.20 to apply the language pass: every row Prem decided in `ncv_tool_v8/language-notes.md` from 2026-11-19 to 2026-11-26, except the question tree (PS4-T) and the new example drafts (row 13). Plain words on every step (Start/Continue, backup file, Clear draft, Areas of research, where they are now, research advisor(s) or colleagues). A contribution is complete when its headline and six parts are written and it has evidence; "No impact yet" and "No evidence yet" tick boxes count for What already changed and the evidence, and Review and Export open with one complete contribution. New ways of working (P9), two evidence kinds in place of Media / public (R8), the stored column decides "used by others" (EV-1), a role-sentence status (R-1). Export says it makes a draft and adds the advisor or colleague step. A V8 draft in the same browser opens once as the V9 draft. | — | — |

@@ -1,5 +1,7 @@
 # Narrative CV tool (V8 beta) — developer pointer
 
+> **Frozen at V8.20 (2026-11-26).** V9 continues in [`../ncv_tool_v9/`](../ncv_tool_v9/README.md) with the language pass applied. The Cloudflare project now builds V9; its folder moved to `ncv_tool_v9/cloudflare/`.
+
 Clean address for **V8 beta**, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop (commit `ada6b7f`).
 V8 holds every fix from the loop; new work goes into V8. V7 was put back to the version before the loop (commit `f852933`)
 and stays frozen as a reference.

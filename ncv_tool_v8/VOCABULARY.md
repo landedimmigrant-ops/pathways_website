@@ -325,3 +325,24 @@ These were found in the code, the comments or the README. A string search found 
 9. "Narrative composition breakdown" dates from V8.12. Approve "Length of each section"?
 10. Was "Headline" chosen to keep researchers from pasting a paper's title? If so, "Title of the contribution" needs the help line to stay.
 11. Should the phrase "trained or mentored" apply to every profile, or only to community-engaged work as it does now?
+
+## Decided in the language pass (2026-11-19 to 2026-11-26), applied in V9.0
+
+Terms now in the tool; the rows in `language-notes.md` hold the reasons.
+
+| Term in the tool | Replaces | Row |
+|---|---|---|
+| Start / Continue (the start page's name) | Start page | S0 |
+| backup file · Save a backup file · Open a backup file | draft file · Save a draft file · Load your draft | S4, S8, S9 |
+| Clear draft | Reset draft | S8 |
+| CV sections (rail group) | My narrative CV | W1 |
+| Mid-career | Mid career | P6 |
+| Team-based · Community-engaged · Indigenous communities · Solo · Industry · Public sector · Health system · Non-profit · Cultural sector | Team-based · Community-engaged · Largely solo · Partnered with industry, government or health systems | P9 |
+| Areas of research | Strands | PS rows |
+| No impact yet · No evidence yet (tick boxes) | — | R11a |
+| complete / incomplete (a contribution) | — | R11, E3 |
+| Public talk or outreach · Media coverage (evidence kinds) | Media / public | R8 |
+| A real use case (optional) | One moment | C rows |
+| where they are now | where they went next | E5 |
+| research advisor(s) or colleagues | — | E1, E5a, E10 |
+| No headline yet · [No headline yet] in files | Untitled contribution | R12 |
