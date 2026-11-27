@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Part box test: before and after</title>
+<style>body{margin:0;padding:16px;font:14px system-ui,sans-serif;color:#222;background:#f4f2ee}h2{font-size:15px;margin:18px 0 6px;color:#912338}
+.row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}.c{background:#fff;border:1px solid #ddd;padding:6px}.c b{display:block;font-size:12px;margin:0 0 4px}
+img{display:block;height:auto}</style></head><body>
+<div id="x"></div>
+<script>
+const S=[["1. Part name above a question (320 px)",[["Stripe (today)","contrib-open-320-stripe.png"],["Part box","contrib-open-320-box.png"]]],
+["2. Squares on folded contributions (1280 px)",[["Stripe","contrib-folded-1280-stripe.png"],["Part box","contrib-folded-1280-box.png"]]],
+["3. Finished example (1280 px)",[["Stripe","example-1280-stripe.png"],["Part box, each line boxed","example-1280-box.png"],["Part box, one box per sentence (slice)","example-1280-slice.png"]]],
+["4. Finished example on a phone, with WCAG text spacing",[["Stripe","example-320-stripe-spacing.png"],["Part box, each line boxed","example-320-box-spacing.png"],["Slice","example-320-slice-spacing.png"]]],
+["5. Review word bar (1280 px)",[["Stripe","review-words-1280-stripe.png"],["Part box","review-words-1280-box.png"]]],
+["6. A word-bar block: rest, hover, keyboard focus",[["Stripe rest","block-1280-stripe-rest.png"],["Stripe hover","block-1280-stripe-hover.png"],["Stripe focus","block-1280-stripe-focus.png"],["Box rest","block-1280-box-rest.png"],["Box hover","block-1280-box-hover.png"],["Box focus","block-1280-box-focus.png"]]],
+["7. Windows high contrast (forced colours)",[["Example, stripe","example-1280-stripe-forced.png"],["Example, part box","example-1280-box-forced.png"],["Block rest, box","block-1280-box-rest-forced.png"],["Block hover, box","block-1280-box-hover-forced.png"],["Block rest, stripe","block-1280-stripe-rest-forced.png"]]],
+["8. Review, a block open (1280 px)",[["Stripe","review-open-1280-stripe.png"],["Part box","review-open-1280-box.png"]]]];
+const x=document.getElementById("x");
+S.forEach(([h,imgs])=>{const H=document.createElement("h2");H.textContent=h;x.appendChild(H);const r=document.createElement("div");r.className="row";
+ imgs.forEach(([l,f])=>{const c=document.createElement("div");c.className="c";c.innerHTML="<b>"+l+"</b>";const i=new Image();i.src=f;i.onload=()=>{i.width=Math.min(i.naturalWidth/2, imgs.length>3?260:640);};c.appendChild(i);r.appendChild(c);});x.appendChild(r);});
+</script></body></html>

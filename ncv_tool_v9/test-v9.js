@@ -355,7 +355,7 @@ async function seed(state, extra, opts) {
     { const on=getComputedStyle(seg); const rgb=(t)=>t.match(/\\d+(\\.\\d+)?/g).slice(0,3).map(Number), Lm=(c)=>{const v=c.map(x=>{x/=255;return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4);});return 0.2126*v[0]+0.7152*v[1]+0.0722*v[2];}; const f1=Lm(rgb(on.color)), b1=Lm(rgb(on.backgroundColor)); a.onLook=[on.backgroundColor, Math.round((Math.max(f1,b1)+0.05)/(Math.min(f1,b1)+0.05)*10)/10, getComputedStyle(q('.v8-ed-slot .v8-ed')).borderLeftColor, on.borderTopColor, getComputedStyle(seg,'::after').backgroundColor, getComputedStyle(seg,'::after').color, getComputedStyle(q('.v8-ed-slot .v8-ed')).borderLeftWidth, getComputedStyle(q('.v8-ed-slot .v8-ed')).borderTopColor]; }
     const seg2=qa('.v8-row')[1].querySelector('.v8-seg[data-k=activities]'); seg2.click(); await w(150);
     a.swap=[q('#v7-wb-ta').closest('.v8-row')===seg2.closest('.v8-row'), document.activeElement.id, qa('.v8-seg[aria-expanded=true]').length, seg.getAttribute('aria-expanded'), qa('.v8-ed-slot textarea').length, (q('label[for=v7-wb-ta]')||{}).innerText||''];
-    await w(260); const cs=getComputedStyle(seg); a.look=[cs.borderTopStyle, parseFloat(cs.borderTopWidth)>=1, cs.cursor, seg.offsetHeight>=24]; a.accent=[cs.boxShadow, cs.backgroundColor, getComputedStyle(q('.v8-leg i')).boxShadow];
+    await w(260); const cs=getComputedStyle(seg); a.look=[cs.borderTopStyle, parseFloat(cs.borderTopWidth)>=1, cs.cursor, seg.offsetHeight>=24]; { const lg=getComputedStyle(q('.v8-leg i')); a.accent=[cs.borderTopColor, cs.backgroundColor, lg.borderTopColor, cs.boxShadow, lg.boxShadow, ['Top','Right','Bottom','Left'].map(x=>cs['border'+x+'Width']).join(','), q('.v8-leg i').getBoundingClientRect().width, cs.borderTopLeftRadius]; }
     document.activeElement.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); await w(60); a.esc=[!q('#v7-wb-ta'), document.activeElement===seg2, seg2.getAttribute('aria-expanded')];
     seg.click(); await w(120); qa('.v8-ed-slot .btn').find(b=>b.innerText==='Done').click(); await w(60); a.done=[!q('#v7-wb-ta'), document.activeElement===seg];
     a.sw=document.documentElement.scrollWidth<=window.innerWidth;
@@ -379,7 +379,7 @@ async function seed(state, extra, opts) {
   check("V8.14 Words: the legend sits above the bars; each part is a button named with contribution, part and words, with a pencil (V8.19: a plus when the part is empty)", r.legendFirst && /^Edit contribution \d, What already changed: \d+ words?$/.test(r.segLabel) && (/ 0 words$/.test(r.segLabel) ? /\+/.test(r.pencil) : /✎/.test(r.pencil)), r);
   check("V8.18 Words: each block has a button's border and pointer; there is no row Edit button and no side panel", r.look[0] === "solid" && r.look[1] && r.look[2] === "pointer" && r.look[3] && r.noPanel, [r.look, r.noPanel]);
   check("V8.18 Words: a block opens its own part, alone, in a box under its contribution, with focus and its name", r.under && r.taFocus && r.exp === "true" && r.onlyOne === 1 && r.oneBox === 1 && /^Contribution \d: What already changed/.test(r.taLabel), r);
-  check("V8.18: the parts follow the Pathways site's accent system: a pale tint with a solid stripe of the accent (orange for What already changed, gold for The problem or question), in the legend too", /rgb\(218, 58, 22\)/.test(r.accent[0]) && r.accent[1] === "rgb(247, 212, 204)" && /rgb\(229, 167, 18\)/.test(r.accent[2]), r.accent);
+  check("V9.5 (ST-1a): a block is a part box, its tint with a 1px line of its colour all round and 2px corners, no stripe (orange for What already changed); the legend is a small block with gold's line #8a6200", r.accent[0] === "rgb(218, 58, 22)" && r.accent[1] === "rgb(247, 212, 204)" && r.accent[2] === "rgb(138, 98, 0)" && r.accent[3] === "none" && r.accent[4] === "none" && r.accent[5] === "1px,1px,1px,1px" && r.accent[6] >= 20 && r.accent[7] === "2px", r.accent);
   check("V8.19: the open block keeps its tint, takes its accent on the border and shows the pencil in a circle of the accent; its text stays at 4.5:1 or more; the box it opens has that accent on a 1px border all round, with no bar down the side", (!r.emptyOn[0] || (r.emptyOn[1] !== "rgb(255, 255, 255)" && r.emptyOn[2] === "solid")) && r.onLook[0] === "rgb(247, 212, 204)" && r.onLook[1] >= 4.5 && r.onLook[2] === "rgb(218, 58, 22)" && r.onLook[3] === "rgb(218, 58, 22)" && r.onLook[4] === "rgb(218, 58, 22)" && r.onLook[5] === "rgb(255, 255, 255)" && r.onLook[6] === "1px" && r.onLook[7] === "rgb(218, 58, 22)", r.onLook);
   check("V8.18 Words: typing in the box saves and updates its block", /Made-up extra words for the test\.$/.test(r.saved || "") && r.segLabel2 !== r.segLabel, r);
   check("V8.18 Words: another block closes the first box and opens its own (one box, one block marked open)", r.swap[0] && r.swap[1] === "v7-wb-ta" && r.swap[2] === 1 && r.swap[3] === "false" && r.swap[4] === 1 && /What you did/.test(r.swap[5]), r.swap);
@@ -417,7 +417,7 @@ async function seed(state, extra, opts) {
   const segHover = r;
   await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: segHover.ix, y: segHover.iy });
   r = await js(H + `await w(400); const it=q('.v7-rqev-item'), cs=getComputedStyle(it); return {bg:cs.backgroundColor, border:cs.borderTopColor, disc:[getComputedStyle(it,'::after').backgroundColor, getComputedStyle(it,'::after').color]};`);
-  check("V8.19: a block at rest is a pale tint with a grey border and no circle; under the pointer it keeps the tint, takes its accent on the border (orange for What already changed), and the pencil gets a circle of the accent", segRest.rest === "rgb(247, 212, 204)" && segRest.restBorder === "rgb(107, 107, 107)" && /rgba\(0, 0, 0, 0\)|transparent/.test(segRest.restDisc) && segRest.radius === "2px" && segRest.tr !== "0s" && segHover.bg === "rgb(247, 212, 204)" && segHover.border === "rgb(218, 58, 22)" && segHover.ratio >= 4.5 && segHover.disc[0] === "rgb(218, 58, 22)" && segHover.disc[1] === "rgb(255, 255, 255)", [segRest, segHover]);
+  check("V8.19, V9.5: a block at rest is a pale tint with a 1px line of its colour and no circle; under the pointer it keeps the tint, takes its accent on the border (orange for What already changed), and the pencil gets a circle of the accent", segRest.rest === "rgb(247, 212, 204)" && segRest.restBorder === "rgb(218, 58, 22)" && /rgba\(0, 0, 0, 0\)|transparent/.test(segRest.restDisc) && segRest.radius === "2px" && segRest.tr !== "0s" && segHover.bg === "rgb(247, 212, 204)" && segHover.border === "rgb(218, 58, 22)" && segHover.ratio >= 4.5 && segHover.disc[0] === "rgb(218, 58, 22)" && segHover.disc[1] === "rgb(255, 255, 255)", [segRest, segHover]);
   check("V8.19: an evidence item is white with a burgundy pencil and no circle at rest; under the pointer it fills with the burgundy tint, takes a burgundy border, and the circle appears", segHover.itemRest[0] === "rgb(255, 255, 255)" && /rgba\(0, 0, 0, 0\)|transparent/.test(segHover.itemRest[1]) && segHover.itemRest[2] === "rgb(145, 35, 56)" && r.bg === "rgb(246, 232, 235)" && r.border === "rgb(145, 35, 56)" && r.disc[0] === "rgb(145, 35, 56)" && r.disc[1] === "rgb(255, 255, 255)", [segHover.itemRest, r]);
   r = await js(H + `await w(100); const a={}; const geo=(e)=>{const p=getComputedStyle(e,'::after'); return [Math.abs(parseFloat(p.top)-e.clientHeight/2)<=2, parseFloat(p.right)>=3 && parseFloat(p.right)<=12, p.width, p.content];};
     a.items=qa('.v7-rqev-item').length; a.itemsEb=qa('.v7-rqev-item.v8-eb').length; a.item=geo(q('.v7-rqev-item'));
@@ -2515,7 +2515,7 @@ async function seed(state, extra, opts) {
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
     check("P6: the career stage reads Mid-career, stored value unchanged", /\{ v: "mid", l: "Mid-career" \}/.test(src));
     check("R12: a missing headline reads No headline yet on screen and [No headline yet] in the draft text and files; none says Untitled contribution", !/Untitled contribution/.test(src) && (src.match(/"\[No headline yet\]"/g) || []).length === 5 && /rvTitle = \(x\) => gvCut\(one\(x.title\), 90\) \|\| "No headline yet"/.test(src) && /- 3 \* liveContributions\(\)/.test(src));
-    check("the version is 9.4 in the script and the tab title", /VERSION_NUM = "9\.4"/.test(src) && /<title>Narrative CV — V9\.4 beta/.test(src));
+    check("the version is 9.5 in the script and the tab title", /VERSION_NUM = "9\.5"/.test(src) && /<title>Narrative CV — V9\.5 beta/.test(src));
   }
 
   console.log("Batch 4 and 6 (V9): Contributions and Personal statement wording");
@@ -2584,13 +2584,13 @@ async function seed(state, extra, opts) {
     r = await js(PAGE_JS + `await w(250); const out=[]; const parts=['stakes','roleLine','activities','outputs','outcomes','impact'];
       parts.forEach(k=>{ const f=q('[data-f$="-'+k+'"]'); const pill=f.querySelector('.v9-pill'); const qe=f.querySelector(':scope > .v7-q'); const box=f.querySelector('.v7-box');
         const ps=getComputedStyle(pill); const r1=pill.getBoundingClientRect(), r2=qe.getBoundingClientRect();
-        out.push({k, text:pill.textContent, shown:r1.width>2&&r1.height>2, above:r1.bottom<=r2.top+1, sq:f.querySelectorAll('.v7-jd, .v7-q-dot').length, textC:cr(ps.color,ps.backgroundColor), edge:ps.boxShadow!=='none', border:cr(getComputedStyle(box).borderTopColor,'rgb(255,255,255)'), w:getComputedStyle(box).borderTopWidth});});
+        out.push({k, text:pill.textContent, shown:r1.width>2&&r1.height>2, above:r1.bottom<=r2.top+1, sq:f.querySelectorAll('.v7-jd, .v7-q-dot').length, textC:cr(ps.color,ps.backgroundColor), edge:ps.boxShadow==='none'&&['Top','Right','Bottom','Left'].every(x=>ps['border'+x+'Style']==='solid'&&ps['border'+x+'Width']==='1px')&&ps.borderTopLeftRadius==='2px'&&cr(ps.borderTopColor,ps.backgroundColor)>=3, gold:pill.classList.contains('v9-pill-stakes')?[ps.borderTopColor,getComputedStyle(box).borderTopColor]:null, border:cr(getComputedStyle(box).borderTopColor,'rgb(255,255,255)'), w:getComputedStyle(box).borderTopWidth});});
       const tr=q('[data-f$="-translational"]'); const hl=q('[data-f$="-title"]');
       return {out, trPill:!!tr.querySelector('.v9-pill'), hlPill:!!hl.querySelector('.v9-pill')};`);
-    check("Row 12: each part has its name as a pill above its question, in the part's colour, and no small square before the question",
+    check("Row 12, V9.5: each part has its name above its question as a part box (1px line of its colour all round, 3:1 or more on its tint, 2px corners, no stripe), and no small square before the question",
       r.out.every(x => x.shown && x.above && x.sq === 0 && x.edge) && r.out.map(x => x.text).join("|") === "The problem or question|Your role|What you did|What resulted|What already changed|What could change" && !r.trPill && !r.hlPill, r);
-    check("Row 12: the pill's text is 4.5:1 or more against its fill, and every part's text box has an accent border of 3:1 or more against white (gold is #b07d00)",
-      r.out.every(x => x.textC >= 4.5 && x.border >= 3), r.out.map(x => [x.k, +x.textC.toFixed(2), +x.border.toFixed(2)]));
+    check("Row 12: the pill's text is 4.5:1 or more against its fill, and every part's text box has an accent border of 3:1 or more against white (gold is #8a6200 on both, V9.5)",
+      r.out.every(x => x.textC >= 4.5 && x.border >= 3) && r.out[0].gold && r.out[0].gold.every(c => c === "rgb(138, 98, 0)"), r.out.map(x => [x.k, +x.textC.toFixed(2), +x.border.toFixed(2)]));
 
     // C19, C20, C21: the suggestions
     await seed(mkState(), null, { raw: true });
@@ -2954,6 +2954,55 @@ async function seed(state, extra, opts) {
       return a;`);
     check("V9.3: each sentence the tool writes on Export has an Edit button named for what it opens", r.labels.length === 4 && r.labels.every(l => /^Edit\|Edit /.test(l)) && r.labels.some(l => /^Edit\|Edit the first sentence on (Personal statement|Background and skills)$/.test(l)) && r.labels.indexOf("Edit|Edit the evidence of contribution 1 on Contributions") > -1 && r.labels.indexOf("Edit|Edit the totals on Mentorship") > -1 && r.labels.indexOf("Edit|Edit person A on Mentorship") > -1, r.labels);
     check("V9.3: Edit opens the answer each sentence is written from (first sentence, evidence, totals, person)", r.first[0] === "ps" && /INPUT|TEXTAREA|DIV|BUTTON/.test(r.first[2]) && r.ev[0] === "contrib" && /^evt/.test(r.ev[1]) && r.tot[0] === "mentor" && r.tot[1] === "v7-t-postdoc" && r.person[0] === "mentor" && r.person[1] === "v7-ps0", r);
+
+    // V9.5 (ST-1a): every part colour is a part box: tint, a 1px line of its colour all round, 2px corners, no stripe.
+    const PB = `const rgbA=(c)=>(c.match(/[\\d.]+/g)||[]).slice(0,3).map(Number); const Lm=(c)=>{const v=rgbA(c).map(x=>{x/=255;return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4);});return 0.2126*v[0]+0.7152*v[1]+0.0722*v[2];};
+      const crt=(a,b)=>{const x=Lm(a),y=Lm(b);return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05);};
+      const audit=(sel)=>qa(sel).filter(e=>e.getClientRects().length).map(e=>{ const cs=getComputedStyle(e); const sides=['Top','Right','Bottom','Left'];
+        const stripe=/\\) [1-9]\\d*(\\.\\d+)?px 0px 0px 0px inset/.test(cs.boxShadow); const all=sides.every(x=>cs['border'+x+'Style']!=='none'&&cs['border'+x+'Width']===cs.borderTopWidth);
+        return {c:(e.className||'').toString().slice(0,40), stripe, all, w:cs.borderTopWidth, rad:parseFloat(cs.borderTopLeftRadius), line:+crt(cs.borderTopColor, cs.backgroundColor==='rgba(0, 0, 0, 0)'?'rgb(255,255,255)':cs.backgroundColor).toFixed(2), bdb:cs.boxDecorationBreak||cs.webkitBoxDecorationBreak}; });`;
+    await seed(stAt(st => { st.stageKey = "contrib"; st.contributions = [mkC("p1"), mkC("p2", { impact: "", folded: true })]; }));
+    r = await js(H + PB + `await w(250); const a={}; const b=qa('button').find(x=>/finished example/i.test(x.innerText)); b.click(); await w(400);
+      a.pills=audit('.v9-pill'); a.segs=audit('.built .v7-exemplar .v7-seg[class*="v7-seg-"]'); a.leg=audit('.v7-legend span');
+      const m=q('.v7-fold .v8-mini'); a.on=[...m.querySelectorAll('i.on')].map(i=>{const cs=getComputedStyle(i); return [cs.backgroundColor===cs.borderTopColor, +crt(cs.backgroundColor, getComputedStyle(i.closest('.v7-fold')).backgroundColor).toFixed(2)];});
+      a.off=[...m.querySelectorAll('i:not(.on)')].map(i=>[getComputedStyle(i).borderTopStyle, getComputedStyle(i).backgroundColor]);
+      return a;`);
+    const okBox = (x) => !x.stripe && x.all && x.w === "1px" && x.rad <= 2 && x.line >= 3;
+    check("V9.5: the part names, the example's sentences and its legend are part boxes: a 1px line of the part's colour all round (3:1 or more on the tint), 2px corners, no stripe", r.pills.length >= 6 && r.segs.length >= 6 && r.leg.length >= 6 && [...r.pills, ...r.segs, ...r.leg].every(okBox), { pills: r.pills.filter(x => !okBox(x)), segs: r.segs.filter(x => !okBox(x)), leg: r.leg.filter(x => !okBox(x)) });
+    check("V9.5: a sentence of the example keeps one box across the lines it wraps (slice), so the passage reads as one paragraph", r.segs.every(x => x.bdb === "slice"), r.segs.map(x => x.bdb));
+    check("V9.5: on a folded contribution a written part is a solid square of its colour (3:1 or more on the card) and a part not yet written is white with a dashed line", r.on.length >= 5 && r.on.every(x => x[0] && x[1] >= 3) && r.off.length >= 1 && r.off.every(x => x[0] === "dashed" && x[1] === "rgb(255, 255, 255)"), r);
+
+    await seed(stAt(st => { st.contributions = [mkC("q1"), mkC("q2")]; st.ui = Object.assign({}, st.ui, { reviewTab: "words" }); }));
+    r = await js(H + PB + `await w(250); q('#v8-tab-words').click(); await w(150); const a={};
+      a.blocks=audit('.v8-bar .v8-eb-block:not(.is-empty)'); a.leg=qa('.v8-leg i').map(i=>{const r=i.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)];});
+      const bl=qa('.v8-bar .v8-eb-block:not(.is-empty)'); a.rest=getComputedStyle(bl[1]).boxShadow;
+      bl[0].click(); await w(250); a.open=getComputedStyle(bl[0]).boxShadow; a.openExp=bl[0].getAttribute('aria-expanded');
+      bl[1].scrollIntoView({block:'center'}); await w(150); const r0=bl[1].getBoundingClientRect(); a.pt=[r0.left+r0.width/2, r0.top+r0.height/2]; return a;`);
+    await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: r.pt[0], y: r.pt[1] }); await sleep(250);
+    const hov = await js(H + `return getComputedStyle(qa('.v8-bar .v8-eb-block:not(.is-empty)')[1]).boxShadow;`);
+    await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 2, y: 2 });
+    check("V9.5: word-bar blocks are part boxes; the legend marks are small blocks (wider than tall), not squares", r.blocks.length >= 10 && r.blocks.every(okBox) && r.leg.length >= 5 && r.leg.every(([w, h]) => w > h + 4), { bad: r.blocks.filter(x => !okBox(x)), leg: r.leg });
+    check("V9.5: a block at rest has a 1px line, on hover 2px, and the open block 3px, so the open one stands out from the others", r.rest === "none" && /0px 0px 0px 1px inset/.test(hov) && /0px 0px 0px 2px inset/.test(r.open) && r.openExp === "true", { rest: r.rest, hov, open: r.open });
+
+    // Forced colours (Windows high contrast): the open block keeps a mark; the example's legend is not labelled twice; written squares stay filled.
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value: "active" }] }); await sleep(200);
+    r = await js(H + `await w(150); const a={}; const bl=qa('.v8-bar .v8-eb-block:not(.is-empty)'); a.restW=getComputedStyle(bl[1]).borderTopWidth; a.openW=getComputedStyle(bl[0]).borderTopWidth; return a;`);
+    await seed(stAt(st => { st.stageKey = "contrib"; st.contributions = [mkC("p1"), mkC("p2", { impact: "", folded: true })]; }));
+    const fc = await js(H + `await w(250); const b=qa('button').find(x=>/finished example/i.test(x.innerText)); b.click(); await w(400); const a={};
+      a.legBefore=qa('.v7-legend span').map(s=>getComputedStyle(s,'::before').content); a.segBefore=qa('.v7-exemplar .v7-seg[class*="v7-seg-"]').map(s=>getComputedStyle(s,'::before').content);
+      const on=q('.v7-fold .v8-mini i.on'), off=q('.v7-fold .v8-mini i:not(.on)'); a.sq=[getComputedStyle(on).backgroundColor, getComputedStyle(off).backgroundColor]; return a;`);
+    await send("Emulation.setEmulatedMedia", { features: [] });
+    check("V9.5, forced colours: the open block takes a 3px line (the others 1px), so it is still marked when colours are replaced", r.openW === "3px" && r.restW === "1px", r);
+    check("V9.5, forced colours: the example's sentences start with their part's name in brackets and its legend is not labelled twice", fc.segBefore.length >= 6 && fc.segBefore.every(c => /^"\[/.test(c)) && fc.legBefore.every(c => c === "none" || c === "normal"), fc);
+    check("V9.5, forced colours: a written part on a folded contribution stays filled, and a part not yet written stays empty", fc.sq[0] !== fc.sq[1] && fc.sq[0] !== "rgba(0, 0, 0, 0)", fc.sq);
+
+    // Phone, with the WCAG 1.4.12 text spacing: no word-bar block cuts off its number.
+    await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 720, deviceScaleFactor: 2, mobile: true });
+    await seed(stAt(st => { st.contributions = [mkC("q1"), mkC("q2", { impact: "Made-up short." })]; st.ui = Object.assign({}, st.ui, { reviewTab: "words" }); }));
+    r = await js(H + `await w(250); q('#v8-tab-words').click(); await w(150); const s=document.createElement('style'); s.textContent='* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }'; document.head.appendChild(s); await w(300);
+      const bl=qa('.v8-bar .v8-eb-block:not(.is-empty)'); const cut=bl.filter(b=>b.scrollWidth>b.clientWidth+1||b.scrollHeight>b.clientHeight+1).map(b=>b.getAttribute('aria-label')); s.remove(); return {n:bl.length, cut, sw:document.documentElement.scrollWidth};`);
+    await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
+    check("V9.5: on a phone with WCAG text spacing, no word-bar block cuts off its number", r.n >= 10 && r.cut.length === 0 && r.sw <= 320, r);
 
     // R-1 (R8a) and R7: the role status counts written role sentences and names a contribution with a level and no sentence.
     await seed(stAt(st => { st.contributions = [mkC("r1", { roleMode: "led" }), mkC("r2", { roleMode: "coled", roleLine: "" }), mkC("r3", { roleMode: "part", roleLine: "" })]; }));

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Part colour sketch</title>
+<style>
+body{margin:0;background:#f4f2ee;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#222}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:16px;max-width:760px}
+.col{background:#fff;border:1px solid #d8d3cc;border-radius:4px;padding:14px;display:flex;flex-direction:column;gap:14px}
+.col.rec{border:2px solid #912338}
+.h{font-size:15px;font-weight:600;margin:0}
+.k{font-size:12px;color:#5a5a5a;margin:0 0 4px}
+.tg{display:inline-block;font-size:13px;padding:2px 8px;background:var(--pt);color:#1a1a1a}
+.sn{font-size:13px;line-height:1.75;margin:0}
+.sn span{background:var(--pt);padding:0 3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.bar{display:flex;gap:3px}
+.bar i{font-style:normal;height:30px;flex:var(--w);background:var(--pt);font-size:11px;display:flex;align-items:center;padding-left:5px;color:#1a1a1a}
+.now .tg{border-radius:10px;box-shadow:inset 3px 0 0 var(--pa)}
+.now .sn span{border-radius:6px;box-shadow:inset 3px 0 0 var(--pa)}
+.now .bar i,.str .bar i{border-radius:2px;border:1px solid #6b6b6b;border-left:4px solid var(--pa)}
+.box .tg,.box .sn span,.box .bar i{border-radius:2px;border:1px solid var(--pi)}
+.str .tg,.str .sn span{border-radius:2px;box-shadow:inset 3px 0 0 var(--pi)}
+.str .sn span{padding-left:6px}
+.p1{--pa:#e5a712;--pi:#8a6200;--pt:#f7e8bf}.p2{--pa:#0072a8;--pi:#0072a8;--pt:#c7dfec}.p3{--pa:#508212;--pi:#508212;--pt:#d6e5c6}.p4{--pa:#da3a16;--pi:#da3a16;--pt:#f6d0c6}.p5{--pa:#573996;--pi:#573996;--pt:#ddd5ec}
+.badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:2px;background:#f1e6e8;color:#912338;align-self:flex-start;margin-bottom:-8px}
+</style></head>
+<body>
+<div class="g" id="g"></div>
+<script>
+const looks = [["now", "Today"], ["box rec", "Part box"], ["str", "Straight stripe"]];
+const words = [37, 40, 36, 33, 24];
+document.getElementById("g").innerHTML = looks.map(([c, name]) => `
+  <div class="col ${c}">
+    ${c.includes("rec") ? '<span class="badge">Recommended</span>' : ""}
+    <p class="h">${name}</p>
+    <div><p class="k">Part name</p><span class="tg p4">What already changed</span></div>
+    <div><p class="k">Finished example</p><p class="sn"><span class="p1">Tenant reports were left out of the city's counts of unsafe housing.</span> <span class="p4">Two inspection units now count them every year.</span></p></div>
+    <div><p class="k">Word bar</p><div class="bar">${words.map((n, k) => `<i class="p${k + 1}" style="--w:${n}">${n}</i>`).join("")}</div></div>
+  </div>`).join("");
+</script>
+</body></html>

@@ -16,6 +16,7 @@ The rules the Narrative CV tool is built to. Read this before changing a screen,
 ## 2. Language
 
 - The voice is the house voice: `voice/voice-checklist.md` and the `pathways-voice` skill.
+- The language rules from the 2026-11 block-by-block pass are in `ncv_tool_v8/LANGUAGE-RULES.md` (message types, plain verbs, examples versus hints, accuracy, testing every check). Decided wording, row by row, is in `ncv_tool_v8/language-notes.md`.
 - The words are the ones in `ncv_tool_v8/VOCABULARY.md`. A term the funders or the Narrative CV guide already use is preferred to a word the tool made up.
 - A label says what the researcher does ("Edit what changed"), in plain words, with no name of a tool part (tab, block, mark, tick, strand) unless the researcher typed or chose that thing under that name.
 - A question and the fact line under it are about the same thing.
@@ -30,16 +31,16 @@ One look for anything that opens for editing. Written once in the stylesheet; a 
 
 | State | Ground | Border | Mark at the right end |
 |---|---|---|---|
-| Rest | white (a block: its part's tint) | grey, solid | pencil in the accent colour, no circle |
-| Hover, keyboard focus | tint | accent | pencil in a circle of the accent |
-| Open (its editor is showing) | as hover, kept | as hover | as hover |
+| Rest | white (a block: its part's tint) | grey, solid (a block: its part's line, 1px) | pencil in the accent colour, no circle |
+| Hover, keyboard focus | tint | accent (a block: 2px) | pencil in a circle of the accent |
+| Open (its editor is showing) | as hover, kept | as hover (a block: 3px) | as hover |
 | Empty | white | grey, dashed | plus sign in place of the pencil |
 
 - **Tokens:** `--pa` accent, `--pt` tint, `--pon` ink on the accent, `--pi` the accent for lines (the pencil at rest and the border on hover; it is darker than `--pa` for gold, which is too pale for a line). The default is the Pathways site's burgundy (`#912338` on `#f6e8eb`). A block sets the tokens of its part.
 - **Mark:** 22px circle, 8px from the right edge, centred top to bottom.
 - **Motion:** 0.2s on colour, none under reduced motion.
 - **Focus ring:** 3px burgundy, 2px offset, as elsewhere in the tool.
-- **Block variant (`.v8-eb-block`):** a block in a bar. Its ground is the part's tint with the accent as a stripe on the left edge; corners are 2px. A block narrower than 60px shows its number alone, and the circle takes the number's place on hover or focus.
+- **Block variant (`.v8-eb-block`):** a block in a bar, drawn as a part box (below): the part's tint and a 1px line of its colour all round, 2px corners, no stripe (V9.5). Hover and focus take a 2px line, the open block 3px. A block narrower than 60px shows its number alone, and the circle takes the number's place on hover or focus.
 - **Used by:** the blocks on "Edit what changed", evidence items on "Add evidence", people on Review's Mentorship.
 - **The editor it opens:** a white box under its row with the same accent on a 1px border all round, a label that names the thing, Done, and a link to the step where the thing is written. No coloured bar down the side.
 
@@ -53,6 +54,8 @@ One look for anything that opens for editing. Written once in the stylesheet; a 
 ## 4. Colour
 
 The part colours are the Pathways site's accents. Each part has one accent everywhere it appears (field label, block, legend, folded contribution, editor edge).
+
+**The part box (ST-1a, V9.5).** A shape that carries a part's colour is drawn as a part box: the part's tint as the ground, a 1px line of the part's line colour (`--pi`; gold `#8a6200`) all round, 2px corners, dark text. No colour on one edge of a shape: concordia.ca never bends a coloured edge round a corner. A sentence keeps one box across the lines it wraps. Small progress marks (a folded contribution's parts) are solid squares in the line colour; a part not yet written is white with a dashed grey line.
 
 | Part | Accent | Tint |
 |---|---|---|

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V9.4 beta</title>
+  <title>Narrative CV — V9.5 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -146,20 +146,20 @@
 
     /* Genre skeleton exemplar */
     .v4-exemplar { font-size: 0.92rem; line-height: 1.75; color: var(--text); }
-    .v4-exemplar .seg { border-radius: 4px; padding: 1px 2px; transition: background 0.2s; }
+    .v4-exemplar .seg { border-radius: 2px; padding: 1px 2px; transition: background 0.2s; }
     /* Skeleton highlights — tints of the Concordia accent family used in styles.css:
        gold #e5a712, burgundy #912338, blue #0072a8, green #508212, orange #da3a16, purple #573996.
-       One step deeper than V4 (B-9) + 3px left border in the beat's own colour. #444 text stays
-       >= 4.5:1 on every fill — see the contrast check in the engineering report. */
-    .v4-skeleton-on .seg-stakes     { background: #f7e5b8; box-shadow: 0 0 0 1px #e0b563; border-left: 3px solid #e5a712; padding-left: 5px; }
-    .v4-skeleton-on .seg-role       { background: #e7cfd3; box-shadow: 0 0 0 1px #d9a8b0; border-left: 3px solid #912338; padding-left: 5px; }
-    .v4-skeleton-on .seg-activities { background: #bfdce9; box-shadow: 0 0 0 1px #8fc0d8; border-left: 3px solid #0072a8; padding-left: 5px; }
-    .v4-skeleton-on .seg-outputs    { background: #d3e0c4; box-shadow: 0 0 0 1px #aac590; border-left: 3px solid #508212; padding-left: 5px; }
-    .v4-skeleton-on .seg-outcomes   { background: #f7d4cc; box-shadow: 0 0 0 1px #ecab97; border-left: 3px solid #da3a16; padding-left: 5px; }
-    .v4-skeleton-on .seg-impact     { background: #ddd7ea; box-shadow: 0 0 0 1px #bcaed7; border-left: 3px solid #573996; padding-left: 5px; }
+       One step deeper than V4 (B-9), as part boxes (ST-1a, V9.5): a 1px line of the beat's colour all round, 2px
+       corners (gold line #8a6200). #444 text stays >= 4.5:1 on every fill. Not on any screen in V9 (renderExemplarBox is unused). */
+    .v4-skeleton-on .seg-stakes     { background: #f7e5b8; border: 1px solid #8a6200; border-radius: 2px; }
+    .v4-skeleton-on .seg-role       { background: #e7cfd3; border: 1px solid #912338; border-radius: 2px; }
+    .v4-skeleton-on .seg-activities { background: #bfdce9; border: 1px solid #0072a8; border-radius: 2px; }
+    .v4-skeleton-on .seg-outputs    { background: #d3e0c4; border: 1px solid #508212; border-radius: 2px; }
+    .v4-skeleton-on .seg-outcomes   { background: #f7d4cc; border: 1px solid #da3a16; border-radius: 2px; }
+    .v4-skeleton-on .seg-impact     { background: #ddd7ea; border: 1px solid #573996; border-radius: 2px; }
     .v4-skel-legend { display: none; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
     .v4-skeleton-on .v4-skel-legend { display: flex; }
-    .v4-skel-chip { font-size: 0.72rem; font-weight: 600; border-radius: 10px; padding: 2px 9px; color: #444; }
+    .v4-skel-chip { font-size: 0.72rem; font-weight: 600; border-radius: 2px; padding: 2px 9px; color: #444; }
     .v4-fiction-tag { display: inline-block; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #fff; background: #1a1a1a; border-radius: 4px; padding: 3px 9px; margin: 0 0 8px; }
     .v4-exemplar-source { font-size: 0.78rem; color: var(--muted); margin: 8px 0 0; }
     .v4-exemplar-match { font-size: 0.8rem; color: var(--muted); margin: -6px 0 10px; }
@@ -373,17 +373,20 @@
     .v7-exbox h4 { margin: 0 0 4px; font-size: 0.98rem; }
     .v7-match { font-size: 0.8rem; color: var(--muted); margin: 0 0 10px; }
     .v7-exemplar { font-size: 0.92rem; line-height: 1.8; margin: 0; }
-    .v7-seg { border-radius: 4px; padding: 1px 2px; transition: background 200ms, box-shadow 200ms; }
-    .built .v7-seg-stakes, .v7-legend .v7-seg-stakes { background: var(--jt-stakes); box-shadow: inset 3px 0 0 var(--j-stakes); }
-    .built .v7-seg-role, .v7-legend .v7-seg-role { background: var(--jt-role); box-shadow: inset 3px 0 0 var(--j-role); }
-    .built .v7-seg-activities, .v7-legend .v7-seg-activities { background: var(--jt-activities); box-shadow: inset 3px 0 0 var(--j-activities); }
-    .built .v7-seg-outputs, .v7-legend .v7-seg-outputs { background: var(--jt-outputs); box-shadow: inset 3px 0 0 var(--j-outputs); }
-    .built .v7-seg-outcomes, .v7-legend .v7-seg-outcomes { background: var(--jt-outcomes); box-shadow: inset 3px 0 0 var(--j-outcomes); }
-    .built .v7-seg-impact, .v7-legend .v7-seg-impact { background: var(--jt-impact); box-shadow: inset 3px 0 0 var(--j-impact); }
-    .built .v7-seg[class*="v7-seg-"] { padding-left: 6px; }
+    /* ST-1a (V9.5): a part is shown as a part box: its tint, a 1px line of its colour all round (gold uses #8a6200, which passes 3:1),
+       2px corners and dark text. No stripe on any edge. A sentence keeps one box across the lines it wraps (slice). */
+    .v7-seg { border-radius: 2px; padding: 1px 2px; transition: background 200ms, border-color 200ms; -webkit-box-decoration-break: slice; box-decoration-break: slice; }
+    .built .v7-seg-stakes, .v7-legend .v7-seg-stakes { --pb: #8a6200; background: var(--jt-stakes); }
+    .built .v7-seg-role, .v7-legend .v7-seg-role { --pb: var(--j-role); background: var(--jt-role); }
+    .built .v7-seg-activities, .v7-legend .v7-seg-activities { --pb: var(--j-activities); background: var(--jt-activities); }
+    .built .v7-seg-outputs, .v7-legend .v7-seg-outputs { --pb: var(--j-outputs); background: var(--jt-outputs); }
+    .built .v7-seg-outcomes, .v7-legend .v7-seg-outcomes { --pb: var(--j-outcomes); background: var(--jt-outcomes); }
+    .built .v7-seg-impact, .v7-legend .v7-seg-impact { --pb: var(--j-impact); background: var(--jt-impact); }
+    .built .v7-seg[class*="v7-seg-"], .v7-legend [class*="v7-seg-"] { border: 1px solid var(--pb); }
+    .built .v7-seg[class*="v7-seg-"] { padding: 0 3px; }
     .v7-legend { display: none; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
     .built .v7-legend { display: flex; }
-    .v7-legend span { font-size: 0.74rem; font-weight: 600; border-radius: 10px; padding: 2px 9px; color: #333; }
+    .v7-legend span { font-size: 0.74rem; font-weight: 600; border-radius: 2px; padding: 1px 8px; color: #333; }
     .v7-exfoot { font-size: 0.78rem; color: var(--muted); margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--v7-rule); }
     .v7-hints { margin: 0; padding-left: 0; list-style: none; font-size: 0.88rem; }
     .v7-hints li { margin: 0 0 4px; }
@@ -466,19 +469,19 @@
     .v7-prof-room { height: calc(100vh - 320px); }
     .v7-qblock.is-answered > .v7-f-k { font-size: 0.85rem; margin-bottom: 8px; }
     .v7-q-dot { margin-right: 7px; vertical-align: 0.1em; }
-    /* Row 12 (V9): the part's name stands above its question as the pill the example legend uses (tint fill, accent
-       edge, dark text), and the part's accent outlines its text box. Text in the accent itself fails contrast for
-       gold and green on white, so the pill's text is dark; box borders need 3:1, so gold is #b07d00 (3.6:1). */
+    /* Row 12 (V9): the part's name stands above its question as the part box the example legend uses, and the part's
+       colour outlines its text box. Text in the accent itself fails contrast for gold and green on white, so the name is
+       dark; lines need 3:1, so gold lines are #8a6200 (5.5:1 on white, 4.4:1 on the gold tint) (ST-1a, V9.5). */
     .v7-f.v7-pilled:not(.is-filled) > .v7-f-k, .v7-f.v7-pilled > .v7-f-k {
       position: static; width: fit-content; max-width: 100%; height: auto; overflow: visible; clip: auto; white-space: normal; margin: 0 0 6px; }
-    .v7-f .v7-f-k.v9-pill, .v7-f.is-open .v7-f-k.v9-pill { display: inline-flex; font-size: 0.78rem; font-weight: 600; color: #333; border-radius: 10px; padding: 2px 10px 2px 13px; }
-    .v9-pill-stakes { background: var(--jt-stakes); box-shadow: inset 3px 0 0 var(--j-stakes); }
-    .v9-pill-role { background: var(--jt-role); box-shadow: inset 3px 0 0 var(--j-role); }
-    .v9-pill-activities { background: var(--jt-activities); box-shadow: inset 3px 0 0 var(--j-activities); }
-    .v9-pill-outputs { background: var(--jt-outputs); box-shadow: inset 3px 0 0 var(--j-outputs); }
-    .v9-pill-outcomes { background: var(--jt-outcomes); box-shadow: inset 3px 0 0 var(--j-outcomes); }
-    .v9-pill-impact { background: var(--jt-impact); box-shadow: inset 3px 0 0 var(--j-impact); }
-    .v9-b-stakes { --jb: #b07d00; } .v9-b-role { --jb: #912338; } .v9-b-activities { --jb: #0072a8; }
+    .v7-f .v7-f-k.v9-pill, .v7-f.is-open .v7-f-k.v9-pill { display: inline-flex; font-size: 0.78rem; font-weight: 600; color: #333; border: 1px solid var(--pb); border-radius: 2px; padding: 1px 8px; }
+    .v9-pill-stakes { --pb: #8a6200; background: var(--jt-stakes); }
+    .v9-pill-role { --pb: var(--j-role); background: var(--jt-role); }
+    .v9-pill-activities { --pb: var(--j-activities); background: var(--jt-activities); }
+    .v9-pill-outputs { --pb: var(--j-outputs); background: var(--jt-outputs); }
+    .v9-pill-outcomes { --pb: var(--j-outcomes); background: var(--jt-outcomes); }
+    .v9-pill-impact { --pb: var(--j-impact); background: var(--jt-impact); }
+    .v9-b-stakes { --jb: #8a6200; } .v9-b-role { --jb: #912338; } .v9-b-activities { --jb: #0072a8; }
     .v9-b-outputs { --jb: #508212; } .v9-b-outcomes { --jb: #da3a16; } .v9-b-impact { --jb: #573996; }
     .v7-f[class*="v9-b-"] .v7-box:not(.v7-ans) { border-color: var(--jb); }
     .v7-f[class*="v9-b-"] .v7-box:focus, .v7-f[class*="v9-b-"].is-open .v7-box { border-width: 2px; border-color: var(--jb); padding: 7px 9px; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--jb); }
@@ -871,10 +874,10 @@
     .v8-mv .btn:disabled { opacity: .3; cursor: default; }
     .v8-leg { margin-left: 38px; }
     .v8-bar { gap: 3px; min-width: 0; }
-    .v8-leg i { background: var(--pt, #e8e2d2); box-shadow: inset 3px 0 0 var(--pa, #6b6b6b); }
+    .v8-leg i { background: var(--pt, #e8e2d2); }
     .v8-mini { display: inline-flex; gap: 2px; }
     .v8-mini i { width: 14px; height: 12px; border-radius: 2px; box-sizing: border-box; border: 1px dashed #6b6b6b; background: #fff; }
-    .v8-mini i.on { border-style: solid; background: var(--pt, #e8e2d2); box-shadow: inset 3px 0 0 var(--pa, #6b6b6b); }
+    .v8-mini i.on { border: 1px solid var(--pi, #6b6b6b); background: var(--pi, #6b6b6b); }
     .v8-role { display: grid; gap: 4px; }
     .v8-role .v7-select { max-width: 28em; }
     .v8-roleline { margin: 4px 0 0; font-size: 0.9rem; }
@@ -928,7 +931,7 @@
     .v7-rq-ring svg { max-width: 440px; }
     .v7-rq-ringfact { font-weight: 600; margin: 6px 0 0; font-size: 0.92rem; }
     .v7-wb-leg { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; margin: 0 0 8px; }
-    .v7-wb-leg i { display: inline-block; width: 12px; height: 12px; border: 1px solid #8a8a8a; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+    .v7-wb-leg i { display: inline-block; width: 20px; height: 12px; border: 1px solid var(--pi, #6b6b6b); border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
     .v7-wb-row { margin: 0 0 10px; }
     .v7-wb-t { font-size: 0.85rem; font-weight: 600; margin: 0 0 3px; }
     .v7-wb-bar { display: flex; gap: 0; }
@@ -936,7 +939,7 @@
     .v7-wb-seg:hover { box-shadow: inset 0 0 0 2px #222; }
     .v7-wb-seg:focus-visible { outline: 3px solid #912338; outline-offset: 1px; position: relative; z-index: 1; }
     /* The editor an editable box opens: the same accent on a 1px border all round, and no coloured bar down the side (Prem, 2026-11-18). */
-    .v7-wb-box { background: #fff; border: 1px solid var(--pi, var(--pa, #912338)); border-radius: 6px; padding: 10px 12px; margin: 8px 0 0; display: grid; gap: 6px; }
+    .v7-wb-box { background: #fff; border: 1px solid var(--pi, var(--pa, #912338)); border-radius: 2px; padding: 10px 12px; margin: 8px 0 0; display: grid; gap: 6px; }
     .v7-wb-n { color: var(--muted); font-weight: 400; }
     .v7-wb-text { font: inherit; width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid var(--v7-field); border-radius: 6px; }
     .v7-rqev-scroll { overflow-x: auto; }
@@ -961,9 +964,10 @@
     .v8-eb:focus-visible { outline: 3px solid #912338; outline-offset: 2px; z-index: 1; }
     .v8-eb.is-empty { border-style: dashed; }
     .v8-eb.is-empty::after { content: "+"; font-size: 1rem; font-weight: 700; }
-    /* A block in a bar: the ground is its part's tint and the accent is a stripe on its left edge. A block
-       too narrow for the pencil shows its number alone; the circle takes the number's place on hover. */
-    .v8-bar .v8-eb-block { flex-shrink: 1; height: 36px; min-width: 28px; padding: 0 6px 0 10px; font-size: 0.75rem; background: var(--pt); border: 1px solid #6b6b6b; border-radius: 2px; box-shadow: inset 4px 0 0 var(--pa); }
+    /* A block in a bar is a part box: its part's tint and a 1px line of its colour all round (ST-1a, V9.5). Hover and focus
+       take a 2px line and the pencil circle; the open block a 3px line. A block too narrow for the pencil shows its number
+       alone; the circle takes the number's place on hover. */
+    .v8-bar .v8-eb-block { flex-shrink: 1; height: 36px; min-width: 28px; padding: 0 6px; font-size: 0.75rem; background: var(--pt); border: 1px solid var(--pi, var(--pa)); border-radius: 2px; }
     .v8-bar .v8-eb-block:hover, .v8-bar .v8-eb-block:focus-visible, .v8-bar .v8-eb-block[aria-expanded="true"] { border-color: var(--pi, var(--pa)); box-shadow: inset 0 0 0 1px var(--pi, var(--pa)); }
     .v8-bar .v8-eb-block::after { right: 5px; opacity: 0; }
     .v8-bar .v8-eb-block.is-wide { padding-right: 30px; }
@@ -972,6 +976,7 @@
     .v8-bar .v8-eb-block:not(.is-wide):hover, .v8-bar .v8-eb-block:not(.is-wide):focus-visible, .v8-bar .v8-eb-block:not(.is-wide)[aria-expanded="true"] { color: transparent; }
     .v8-bar .v8-eb-block.is-empty { background: #fff; border: 1px dashed #6b6b6b; box-shadow: none; }
     .v8-bar .v8-eb-block.is-empty:hover, .v8-bar .v8-eb-block.is-empty:focus-visible, .v8-bar .v8-eb-block.is-empty[aria-expanded="true"] { background: var(--pt); border: 1px solid var(--pi, var(--pa)); }
+    .v8-bar .v8-eb-block[aria-expanded="true"] { box-shadow: inset 0 0 0 2px var(--pi, var(--pa)); }
     .v7-rqev-add:hover, .v7-rqev-add:focus-visible { background: #f6e8eb; border-color: #912338; }
     @media (max-width: 640px) { .v8-bar .v8-eb-block { height: 44px; } }
     @media (prefers-reduced-motion: reduce) { .v8-eb, .v8-eb::after, .v7-fold { transition: none; } }
@@ -1129,9 +1134,11 @@ button.v7-linkbtn { min-height: 24px; }
     }
     /* r17-b-1 to r17-b-4: Windows high contrast keeps every state and the example's parts visible without colour. */
     @media (forced-colors: active) {
-      .built .v7-seg-stakes::before { content: "[The problem or question] "; } .built .v7-seg-role::before { content: "[Your role] "; } .built .v7-seg-activities::before { content: "[What you did] "; }
-      .built .v7-seg-outputs::before { content: "[What resulted] "; } .built .v7-seg-outcomes::before { content: "[What already changed] "; } .built .v7-seg-impact::before { content: "[What could change] "; }
-      .built [class*="v7-seg-"]::before { font-weight: 700; }
+      .v7-exemplar .v7-seg-stakes::before { content: "[The problem or question] "; } .v7-exemplar .v7-seg-role::before { content: "[Your role] "; } .v7-exemplar .v7-seg-activities::before { content: "[What you did] "; }
+      .v7-exemplar .v7-seg-outputs::before { content: "[What resulted] "; } .v7-exemplar .v7-seg-outcomes::before { content: "[What already changed] "; } .v7-exemplar .v7-seg-impact::before { content: "[What could change] "; }
+      .v7-exemplar [class*="v7-seg-"]::before { font-weight: 700; }
+      .v8-bar .v8-eb-block[aria-expanded="true"] { border: 3px solid Highlight; padding: 0 4px; } .v8-bar .v8-eb-block.is-wide[aria-expanded="true"] { padding-right: 28px; }
+      .v8-mini i.on { forced-color-adjust: none; background: CanvasText; border-color: CanvasText; }
       .v7-ri.is-done .narrative-stage-dot, .v7-fsq.is-on i { forced-color-adjust: none; background: CanvasText; }
       .v7-mini[aria-checked="true"]::before, .v7-mini[aria-pressed="true"]::before { content: "✓ "; }
       .v7-input:focus, .v7-box:focus { outline: 2px solid CanvasText; outline-offset: 1px; }
@@ -1202,7 +1209,7 @@ button.v7-linkbtn { min-height: 24px; }
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "9.4", VERSION_DATE = "2026-11-26";
+    const VERSION_NUM = "9.5", VERSION_DATE = "2026-11-26";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -7063,8 +7070,8 @@ button.v7-linkbtn { min-height: 24px; }
     // The pencil shows only on a block wide enough to hold it beside its number.
     const rvFitSegs = () => document.querySelectorAll(".v8-seg").forEach(b => b.classList.toggle("is-wide", b.offsetWidth >= 60));
     const partTint = (f) => { const m = f.job ? SEG_META.find(z => z[0] === f.job) : null; return m ? m[2] : "#e8e2d2"; };
-    // V8.18 (Prem, 2026-11-18): the parts use the accent system of the Pathways site, as its pathway
-    // cards do: a pale tint, a solid stripe of the accent on the left, and the solid accent when selected.
+    // V8.18 (Prem, 2026-11-18): the parts use the six accents of the Pathways site. ST-1a (V9.5): as on concordia.ca,
+    // no coloured edge on one side: a part is a part box (its tint, a 1px line of its colour all round, 2px corners).
     // The six accents are the site's (--j-*); "One moment" is outside the six parts and stays neutral.
     const PART_ACCENT = { stakes: "#e5a712", role: "#912338", activities: "#0072a8", outputs: "#508212", outcomes: "#da3a16", impact: "#573996" };
     const partAccent = (f) => PART_ACCENT[f.job] || "#6b6b6b";

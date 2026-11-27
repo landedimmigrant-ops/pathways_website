@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Part colours, no edge stripe</title>
+<!-- Design mock-up, 2026-11-26. Self-contained; all content invented. Review notes: accent-review-2026-11-26.md -->
+<style>
+  :root {
+    --ink: #1a1a1a; --muted: #555; --rule: #e0e0e0; --burgundy: #912338;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 16px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+  main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; line-height: 1.25; margin: 0 0 8px; color: var(--burgundy); }
+  h2 { font-size: 1.15rem; margin: 40px 0 4px; padding-top: 16px; border-top: 1px solid var(--rule); }
+  h3 { font-size: 0.95rem; margin: 0 0 10px; }
+  p { margin: 0 0 10px; }
+  .lede { max-width: 70ch; }
+  .where { font-size: 0.85rem; color: var(--muted); margin: 0 0 14px; max-width: 80ch; }
+  .rules { margin: 12px 0 0; padding-left: 1.2em; max-width: 72ch; }
+  .rules li { margin: 0 0 4px; }
+  code { font-size: 0.85em; background: #f3f3f3; padding: 0 3px; border-radius: 2px; }
+
+  /* Comparison grid: three across on a desktop, stacked on a phone */
+  .cmp { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; align-items: start; }
+  .pn { border: 1px solid var(--rule); border-radius: 2px; padding: 14px; background: #fff; min-width: 0; }
+  .pn-h { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6b6b; margin: 0 0 10px; }
+  .pn-h.rec { color: var(--burgundy); }
+  .pn-note { font-size: 0.82rem; color: var(--muted); margin: 12px 0 0; }
+
+  /* The part tokens, one set per part: --pa accent, --pi line colour (3:1 on white and on the tint), --pt tint */
+  .p-stakes     { --pa: #e5a712; --pi: #8a6200; --pt: #f7e5b8; --jb: #b07d00; }
+  .p-role       { --pa: #912338; --pi: #912338; --pt: #e7cfd3; --jb: #912338; }
+  .p-activities { --pa: #0072a8; --pi: #0072a8; --pt: #bfdce9; --jb: #0072a8; }
+  .p-outputs    { --pa: #508212; --pi: #508212; --pt: #d3e0c4; --jb: #508212; }
+  .p-outcomes   { --pa: #da3a16; --pi: #da3a16; --pt: #f7d4cc; --jb: #da3a16; }
+  .p-impact     { --pa: #573996; --pi: #573996; --pt: #ddd7ea; --jb: #573996; }
+  .p-moment     { --pa: #6b6b6b; --pi: #6b6b6b; --pt: #e8e2d2; --jb: #6b6b6b; }
+
+  /* ── NOW: copied from narrative-cv-prototype-v9.html (V9.4) ── */
+  .n-pill { display: inline-flex; font-size: 0.78rem; font-weight: 600; color: #333; border-radius: 10px; padding: 2px 10px 2px 13px; background: var(--pt); box-shadow: inset 3px 0 0 var(--pa); margin: 0 0 6px; }
+  .n-box { display: block; width: 100%; height: calc(3 * 1.5em + 18px); border: 1px solid var(--jb); border-radius: 6px; background: #fff; padding: 8px 10px; font-size: 0.92rem; color: #6b6b6b; }
+  .n-seg { border-radius: 4px; padding: 1px 2px 1px 6px; background: var(--pt); box-shadow: inset 3px 0 0 var(--pa); }
+  .n-leg { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+  .n-leg span { font-size: 0.74rem; font-weight: 600; border-radius: 10px; padding: 2px 9px; color: #333; background: var(--pt); box-shadow: inset 3px 0 0 var(--pa); }
+  .n-mini { display: inline-flex; gap: 2px; }
+  .n-mini i { width: 14px; height: 12px; border-radius: 2px; border: 1px dashed #6b6b6b; background: #fff; }
+  .n-mini i.on { border-style: solid; background: var(--pt); box-shadow: inset 3px 0 0 var(--pa); }
+  .n-wleg { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; margin: 0 0 8px; }
+  .n-wleg i { display: inline-block; width: 12px; height: 12px; border: 1px solid #8a8a8a; border-radius: 3px; margin-right: 5px; vertical-align: -1px; background: var(--pt); box-shadow: inset 3px 0 0 var(--pa); }
+  .n-blk { position: relative; flex: 0 1 var(--w); min-width: 28px; height: 36px; padding: 0 6px 0 10px; font-size: 0.75rem; display: flex; align-items: center; background: var(--pt); border: 1px solid #6b6b6b; border-radius: 2px; box-shadow: inset 4px 0 0 var(--pa); color: var(--ink); }
+  .n-blk.on { border-color: var(--pi); box-shadow: inset 0 0 0 1px var(--pi); }
+  .n-blk.empty { background: #fff; border: 1px dashed #6b6b6b; box-shadow: none; }
+  .n-ed { background: #fff; border: 1px solid var(--pi); border-radius: 6px; padding: 10px 12px; margin: 8px 0 0; font-size: 0.85rem; }
+
+  /* ── RECOMMENDED: the part box. Tint ground, 1px line colour all round, 2px corners, no edge stripe ── */
+  .r-tag { display: inline-flex; align-items: center; font-size: 0.78rem; font-weight: 600; color: var(--ink); background: var(--pt); border: 1px solid var(--pi); border-radius: 2px; padding: 1px 8px; margin: 0 0 6px; }
+  .r-box { display: block; width: 100%; height: calc(3 * 1.5em + 18px); border: 1px solid var(--pi); border-radius: 6px; background: #fff; padding: 8px 10px; font-size: 0.92rem; color: #6b6b6b; }
+  .r-seg { background: var(--pt); border: 1px solid var(--pi); border-radius: 2px; padding: 0 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .r-leg { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+  .r-leg .r-tag { margin: 0; font-size: 0.74rem; }
+  .r-mini { display: inline-flex; gap: 2px; }
+  .r-mini i { width: 14px; height: 12px; border-radius: 2px; border: 1px dashed #6b6b6b; background: #fff; }
+  .r-mini i.on { border: 1px solid var(--pi); background: var(--pt); }
+  .r-wleg { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; margin: 0 0 8px; }
+  .r-wleg i { display: inline-block; width: 12px; height: 12px; border: 1px solid var(--pi); border-radius: 2px; margin-right: 5px; vertical-align: -1px; background: var(--pt); }
+  .r-blk { position: relative; flex: 0 1 var(--w); min-width: 28px; height: 36px; padding: 0 6px; font-size: 0.75rem; display: flex; align-items: center; background: var(--pt); border: 1px solid var(--pi); border-radius: 2px; color: var(--ink); }
+  .r-blk.on { box-shadow: inset 0 0 0 1px var(--pi); }
+  .r-blk.empty { background: #fff; border: 1px dashed #6b6b6b; }
+  .r-ed { background: #fff; border: 1px solid var(--pi); border-radius: 2px; padding: 10px 12px; margin: 8px 0 0; font-size: 0.85rem; }
+
+  /* ── ALTERNATIVE: keep a stripe, but straight: 2px corners, as the live landing page's pathway list ── */
+  .a-tag { display: inline-flex; font-size: 0.78rem; font-weight: 600; color: var(--ink); border-radius: 2px; padding: 2px 10px 2px 12px; background: var(--pt); box-shadow: inset 3px 0 0 var(--pi); margin: 0 0 6px; }
+
+  /* Shared bits */
+  .q { font-size: 0.95rem; font-weight: 600; margin: 0 0 8px; }
+  .fld { margin: 0 0 16px; }
+  .ex { font-size: 0.92rem; line-height: 1.85; margin: 0; }
+  .fic { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #6b6b6b; margin: 0 0 6px; }
+  .bar { display: flex; gap: 3px; min-width: 0; }
+  .row-t { font-size: 0.85rem; font-weight: 600; margin: 0 0 4px; }
+  .bars > li { margin: 0 0 12px; }
+  .bars { list-style: none; margin: 0; padding: 0; }
+  .pen { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 0.78rem; background: var(--pa); color: #fff; }
+  .p-stakes .pen { color: var(--ink); }
+  .blk-wide { padding-right: 30px; }
+  .ed-h { font-weight: 700; display: block; margin: 0 0 6px; }
+  .ed-ta { border: 1px solid #949494; border-radius: 6px; padding: 8px; min-height: 64px; color: #333; background: #fff; }
+  .ed-act { display: flex; gap: 14px; align-items: center; margin: 8px 0 0; font-size: 0.85rem; }
+  .btn-o { border: 1px solid var(--burgundy); color: var(--burgundy); border-radius: 4px; padding: 4px 12px; background: #fff; font: inherit; }
+  .lnk { color: var(--burgundy); text-decoration: underline; }
+  .fold { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; border: 1px solid #e0e0e0; border-radius: 10px; background: #fafafa; padding: 10px 12px; font-size: 0.9rem; }
+  .fold .tri { color: var(--burgundy); }
+  .fold .num { color: var(--burgundy); }
+  .fold .t { flex: 1 1 14em; min-width: 0; }
+  .fold .cnt, .fold .op { font-size: 0.82rem; color: var(--muted); }
+
+  /* Phone frames: WB-1 option A */
+  .phones { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 288px), 1fr)); gap: 24px; align-items: start; }
+  .phone { width: 100%; max-width: 288px; border: 1px solid #d8d3cc; border-radius: 18px; padding: 14px 12px; background: #fff; }
+  .card { border: 1px solid #cfcfcf; border-radius: 10px; padding: 10px; margin: 0 0 10px; }
+  .card .t { font-weight: 700; font-size: 0.9rem; line-height: 1.3; margin: 0 0 8px; }
+  .rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  /* now (as proposed in mock/word-bar-phone.html) */
+  .n-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; padding: 0 10px 0 12px; border: 1px solid #b8b8b8; border-left: 4px solid var(--pa); border-radius: 3px; font-size: 0.82rem; background: #fff; overflow: hidden; }
+  .n-row::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--pt); }
+  .n-row span { position: relative; }
+  .n-row.on { border-color: var(--pa); box-shadow: inset 0 0 0 1px var(--pa); }
+  .n-ped { border: 1px solid var(--pa); border-left: 4px solid var(--pa); border-radius: 3px; padding: 8px 10px; font-size: 0.8rem; background: #fff; margin: 0 0 4px; }
+  /* recommended */
+  .r-row { position: relative; display: grid; gap: 4px; min-height: 44px; padding: 6px 36px 7px 10px; border: 1px solid #8a8a8a; border-radius: 2px; font-size: 0.82rem; line-height: 1.3; background: #fff; }
+  .r-row .nm { min-width: 0; }
+  .r-row .ln { display: flex; align-items: center; gap: 8px; }
+  .r-row .trk { flex: 1 1 auto; min-width: 0; height: 10px; }
+  .r-row .fill { display: block; height: 10px; width: calc(100% * var(--f)); min-width: 0; background: var(--pt); border: 1px solid var(--pi); border-radius: 2px; }
+  .r-row .n { flex: none; white-space: nowrap; font-variant-numeric: tabular-nums; font-size: 0.75rem; color: #333; }
+  .r-row .pr { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; display: grid; place-items: center; font-size: 0.78rem; color: var(--pi); border-radius: 50%; }
+  .r-row.on { border-color: var(--pi); box-shadow: inset 0 0 0 1px var(--pi); }
+  .r-row.on .pr { background: var(--pa); color: #fff; }
+  .r-row.empty { border-style: dashed; }
+  .r-ped { border: 1px solid var(--pi); border-radius: 2px; padding: 8px 10px; font-size: 0.8rem; background: #fff; margin: 0 0 4px; }
+
+  /* Reference: concordia.ca, recreated from the live CSS (values in the review) */
+  .ref { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; }
+  .ref-card { border: 1px solid rgba(0,0,0,.1); border-radius: 4px; overflow: hidden; }
+  .ref-card .fill { padding: 16px; color: #fff; font-weight: 600; }
+  .ref-card .body { padding: 10px 16px; font-size: 0.82rem; color: var(--muted); }
+  .ref-fig { background: #912338; color: #fff; border-radius: 2px; padding: 16px; display: grid; gap: 8px; }
+  .ref-lab { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: .8; }
+  .ref-trait { padding: 8px 16px; border: 1px solid rgba(255,255,255,.4); border-radius: 2px; background: rgba(255,255,255,.1); font-size: 0.85rem; font-weight: 500; }
+  .ref-pw { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-left: 4px solid var(--c); border-radius: 2px; background: #fff; color: var(--ink); font-size: 0.85rem; }
+  .ref-mark { width: 26px; height: 26px; flex: none; border-radius: 2px; background: var(--s); display: grid; place-items: center; }
+  .ref-mark b { width: 10px; height: 10px; border: 1.5px solid var(--c); border-radius: 50%; }
+  .ref-chip { display: inline-block; padding: 4px 12px; border: 1px solid rgba(255,255,255,.4); border-radius: 9999px; background: rgba(255,255,255,.1); font-size: 0.8rem; margin: 0 4px 4px 0; }
+
+  /* Six parts table */
+  .tbl-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; min-width: 560px; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ececec; vertical-align: middle; }
+  thead th { font-size: 0.78rem; background: #fafafa; }
+  .sw { display: inline-block; width: 14px; height: 14px; border-radius: 2px; vertical-align: -2px; margin-right: 4px; border: 1px solid rgba(0,0,0,.15); }
+  .pass { color: #2a6e2a; font-weight: 600; }
+  .fail { color: #b3261e; font-weight: 600; }
+
+  @media (max-width: 640px) {
+    h1 { font-size: 1.3rem; }
+    .n-blk, .r-blk { height: 44px; }
+    /* As in the tool: a block under 60px shows the circle in place of its number */
+    .blk-wide { color: transparent; padding-right: 6px; }
+    .blk-wide .pen { right: 50%; transform: translate(50%, -50%); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Part colours without the edge stripe</h1>
+  <p class="lede">A before-and-after of every place the Narrative CV tool draws a part's colour as a stripe on one edge of a rounded shape. All content here is invented. Notes, evidence and the full list: <code>accent-review-2026-11-26.md</code>.</p>
+  <p class="lede"><strong>Recommended:</strong> a part's colour is shown as a <em>part box</em> (the part's pale tint as the ground, a 1px line of the part's colour all round, and 2px corners) and never as a stripe on one edge. The part's name stays in text.</p>
+  <ul class="rules">
+    <li>No colour on one edge only. In Concordia's shared stylesheet a one-sided line marks only the current page in a menu; on the Pathways pages the one exception is the landing page's pathway list, and there the line is straight.</li>
+    <li>Corners of 2px on anything that carries a part colour (Concordia's own corner size for cards and buttons).</li>
+    <li>Gold uses a darker line (#8a6200) so the line reaches 3:1 on white and on the gold tint.</li>
+  </ul>
+
+  <h2>What concordia.ca does</h2>
+  <p class="where">Recreated from the live CSS of the Pathways pages on concordia.ca, read 26 November 2026. Five of the six Pathways pages checked have no coloured edge at all.</p>
+  <div class="ref">
+    <div>
+      <h3>Pathway cards (Explore › Pathways)</h3>
+      <div class="ref-card"><div class="fill" style="background:#da3a16">Innovation</div><div class="body">The whole card is filled with the pathway's colour. Corners 4px, 1px border.</div></div>
+    </div>
+    <div>
+      <h3>"Impact can be…" (landing page)</h3>
+      <div class="ref-fig"><span class="ref-lab">Impact can be…</span><span class="ref-trait">Positive or negative</span><span class="ref-trait">Different times and scales</span></div>
+      <p class="pn-note">A box with a 1px line all round and 2px corners. The prototype site draws the same list with a 3px burgundy stripe on its left.</p>
+    </div>
+    <div>
+      <h3>Seven pathways list (landing page)</h3>
+      <div class="ref-fig">
+        <div class="ref-pw" style="--c:#0072a8;--s:#e6f3f8"><span class="ref-mark"><b></b></span>Policy</div>
+        <div class="ref-pw" style="--c:#b07d00;--s:#f8f1dd"><span class="ref-mark"><b></b></span>Communications</div>
+      </div>
+      <p class="pn-note">The one coloured edge on the live site: a straight 4px line on a row with 2px corners, beside a square mark. It never bends round a rounded corner.</p>
+    </div>
+    <div>
+      <h3>Neutral chips (landing page)</h3>
+      <div class="ref-fig"><div><span class="ref-chip">Office of Research</span><span class="ref-chip">Library</span></div></div>
+      <p class="pn-note">Fully rounded shapes are used only for neutral chips, with no colour on an edge.</p>
+    </div>
+  </div>
+
+  <h2>1. The part's name above its question</h2>
+  <p class="where">Contributions and Personal statement: the pill above each question (<code>.v9-pill</code>), and the text box outlined in the part's colour (<code>.v9-b-*</code>). The pill is the one in Prem's screenshot.</p>
+  <div class="cmp">
+    <div class="pn">
+      <p class="pn-h">Now</p>
+      <div class="fld p-stakes"><span class="n-pill">The problem or question</span><p class="q">What problem did this work address, and who did it affect?</p><div class="n-box">Type here…</div></div>
+      <div class="fld p-outcomes"><span class="n-pill">What already changed</span><p class="q">Who has used this work so far, and what was the impact?</p><div class="n-box">Type here…</div></div>
+      <p class="pn-note">A 3px stripe on a 10px corner, so it bends round the corner. The gold stripe is 1.7:1 against its tint.</p>
+    </div>
+    <div class="pn">
+      <p class="pn-h rec">Recommended</p>
+      <div class="fld p-stakes"><span class="r-tag">The problem or question</span><p class="q">What problem did this work address, and who did it affect?</p><div class="r-box">Type here…</div></div>
+      <div class="fld p-outcomes"><span class="r-tag">What already changed</span><p class="q">Who has used this work so far, and what was the impact?</p><div class="r-box">Type here…</div></div>
+      <p class="pn-note">A part box: tint, a 1px line in the part's colour all round, 2px corners, dark text. The text box keeps its outline; gold uses the same line colour as the tag.</p>
+    </div>
+    <div class="pn">
+      <p class="pn-h">Alternative</p>
+      <div class="fld p-stakes"><span class="a-tag">The problem or question</span><p class="q">What problem did this work address, and who did it affect?</p><div class="r-box">Type here…</div></div>
+      <div class="fld p-outcomes"><span class="a-tag">What already changed</span><p class="q">Who has used this work so far, and what was the impact?</p><div class="r-box">Type here…</div></div>
+      <p class="pn-note">Keep a stripe, but straight: 2px corners, as on the live landing page's pathway list. If chosen, this look applies to every element below.</p>
+    </div>
+  </div>
+
+  <h2>2. "See a finished example"</h2>
+  <p class="where">Contributions, under a card: the example passage coloured by part (<code>.v7-seg-*</code>) and its legend (<code>.v7-legend</code>).</p>
+  <div class="cmp">
+    <div class="pn">
+      <p class="pn-h">Now</p>
+      <span class="fic">Fictional example</span>
+      <p class="ex"><span class="n-seg p-stakes">Small farms on a fictional river were losing up to two metres of bank a year, and no local guide said which plantings held.</span> <span class="n-seg p-role">I led the field design and wrote the guide with two farming co-operatives.</span> <span class="n-seg p-activities">Over three seasons we tested five planting mixes on 40 plots.</span> <span class="n-seg p-outputs">The work produced a 24-page field guide and an open plot dataset.</span> <span class="n-seg p-outcomes">Eleven farms have replanted 6 km of bank using the guide.</span> <span class="n-seg p-impact">Used on similar rivers, it could reduce bank loss across the watershed.</span></p>
+      <div class="n-leg"><span class="p-stakes">The problem or question</span><span class="p-role">Your role</span><span class="p-activities">What you did</span><span class="p-outputs">What resulted</span><span class="p-outcomes">What already changed</span><span class="p-impact">What could change</span></div>
+    </div>
+    <div class="pn">
+      <p class="pn-h rec">Recommended</p>
+      <span class="fic">Fictional example</span>
+      <p class="ex"><span class="r-seg p-stakes">Small farms on a fictional river were losing up to two metres of bank a year, and no local guide said which plantings held.</span> <span class="r-seg p-role">I led the field design and wrote the guide with two farming co-operatives.</span> <span class="r-seg p-activities">Over three seasons we tested five planting mixes on 40 plots.</span> <span class="r-seg p-outputs">The work produced a 24-page field guide and an open plot dataset.</span> <span class="r-seg p-outcomes">Eleven farms have replanted 6 km of bank using the guide.</span> <span class="r-seg p-impact">Used on similar rivers, it could reduce bank loss across the watershed.</span></p>
+      <div class="r-leg"><span class="r-tag p-stakes">The problem or question</span><span class="r-tag p-role">Your role</span><span class="r-tag p-activities">What you did</span><span class="r-tag p-outputs">What resulted</span><span class="r-tag p-outcomes">What already changed</span><span class="r-tag p-impact">What could change</span></div>
+      <p class="pn-note">Each sentence is a part box; the legend uses the same tags as the questions above.</p>
+    </div>
+  </div>
+
+  <h2>3. A folded contribution</h2>
+  <p class="where">Contributions, a closed card: the small squares, one per part, written or not (<code>.v8-mini i</code>). Hidden on a phone.</p>
+  <div class="cmp">
+    <div class="pn">
+      <p class="pn-h">Now</p>
+      <div class="fold"><span class="tri">▸</span><span class="t"><span class="num">Contribution 1</span> · A field guide to river-bank erosion</span>
+        <span class="n-mini"><i class="on p-stakes"></i><i class="on p-role"></i><i class="on p-activities"></i><i class="on p-outputs"></i><i class="on p-outcomes"></i><i class="p-moment"></i><i class="on p-impact"></i></span>
+        <span class="cnt">6 of 7</span><span class="op">Open</span></div>
+    </div>
+    <div class="pn">
+      <p class="pn-h rec">Recommended</p>
+      <div class="fold"><span class="tri">▸</span><span class="t"><span class="num">Contribution 1</span> · A field guide to river-bank erosion</span>
+        <span class="r-mini"><i class="on p-stakes"></i><i class="on p-role"></i><i class="on p-activities"></i><i class="on p-outputs"></i><i class="on p-outcomes"></i><i class="p-moment"></i><i class="on p-impact"></i></span>
+        <span class="cnt">6 of 7</span><span class="op">Open</span></div>
+      <p class="pn-note">Written: a small part box. Not written yet: white with a dashed grey line, as now.</p>
+    </div>
+  </div>
+
+  <h2>4. Review, "Edit what already changed"</h2>
+  <p class="where">Review, second tab: the legend (<code>.v8-leg</code>), a bar of blocks per contribution (<code>.v8-eb-block</code>), and the box a block opens (<code>.v8-ed</code>). Shown with "What already changed" open in contribution 1.</p>
+  <div class="cmp">
+    <div class="pn">
+      <p class="pn-h">Now</p>
+      <div class="n-wleg"><span class="p-stakes"><i></i>The problem or question</span><span class="p-activities"><i></i>What you did</span><span class="p-outputs"><i></i>What resulted</span><span class="p-outcomes"><i></i>What already changed</span><span class="p-moment"><i></i>A real use case (optional)</span><span class="p-impact"><i></i>What could change</span></div>
+      <ol class="bars">
+        <li><p class="row-t">1. A field guide to river-bank erosion</p>
+          <div class="bar"><span class="n-blk p-stakes" style="--w:16.9%">34</span><span class="n-blk p-activities" style="--w:20.3%">41</span><span class="n-blk p-outputs" style="--w:13.9%">28</span><span class="n-blk p-outcomes on blk-wide" style="--w:16.4%">33<span class="pen">✎</span></span><span class="n-blk p-moment empty" style="--w:0%"></span><span class="n-blk p-impact" style="--w:10.9%">22</span></div>
+          <div class="n-ed p-outcomes"><span class="ed-h">Contribution 1: What already changed <span style="font-weight:400;color:#555">33 words</span></span><div class="ed-ta">Eleven farms have replanted 6 km of bank using the guide…</div><div class="ed-act"><span class="btn-o">Done</span><span class="lnk">Edit on Contributions</span></div></div>
+        </li>
+        <li><p class="row-t">2. An open dataset of bus-stop access</p>
+          <div class="bar"><span class="n-blk p-stakes" style="--w:12.9%">26</span><span class="n-blk p-activities" style="--w:18.8%">38</span><span class="n-blk p-outputs" style="--w:14.9%">30</span><span class="n-blk p-outcomes" style="--w:9.4%">19</span><span class="n-blk p-moment" style="--w:11.9%">24</span><span class="n-blk p-impact" style="--w:15.4%">31</span></div>
+        </li>
+      </ol>
+      <p class="pn-note">A 4px stripe on each block and in the legend. Gold's stripe is 1.7:1 against its tint.</p>
+    </div>
+    <div class="pn">
+      <p class="pn-h rec">Recommended</p>
+      <div class="r-wleg"><span class="p-stakes"><i></i>The problem or question</span><span class="p-activities"><i></i>What you did</span><span class="p-outputs"><i></i>What resulted</span><span class="p-outcomes"><i></i>What already changed</span><span class="p-moment"><i></i>A real use case (optional)</span><span class="p-impact"><i></i>What could change</span></div>
+      <ol class="bars">
+        <li><p class="row-t">1. A field guide to river-bank erosion</p>
+          <div class="bar"><span class="r-blk p-stakes" style="--w:16.9%">34</span><span class="r-blk p-activities" style="--w:20.3%">41</span><span class="r-blk p-outputs" style="--w:13.9%">28</span><span class="r-blk p-outcomes on blk-wide" style="--w:16.4%">33<span class="pen">✎</span></span><span class="r-blk p-moment empty" style="--w:0%"></span><span class="r-blk p-impact" style="--w:10.9%">22</span></div>
+          <div class="r-ed p-outcomes"><span class="ed-h">Contribution 1: What already changed <span style="font-weight:400;color:#555">33 words</span></span><div class="ed-ta">Eleven farms have replanted 6 km of bank using the guide…</div><div class="ed-act"><span class="btn-o">Done</span><span class="lnk">Edit on Contributions</span></div></div>
+        </li>
+        <li><p class="row-t">2. An open dataset of bus-stop access</p>
+          <div class="bar"><span class="r-blk p-stakes" style="--w:12.9%">26</span><span class="r-blk p-activities" style="--w:18.8%">38</span><span class="r-blk p-outputs" style="--w:14.9%">30</span><span class="r-blk p-outcomes" style="--w:9.4%">19</span><span class="r-blk p-moment" style="--w:11.9%">24</span><span class="r-blk p-impact" style="--w:15.4%">31</span></div>
+        </li>
+      </ol>
+      <p class="pn-note">Each block is a part box, and the legend square is the same box in small. Open: a 2px line and the pencil in a circle, as now. The box it opens keeps its line all round, with 2px corners.</p>
+    </div>
+  </div>
+  <p class="where" style="margin-top:12px">Alternative for this screen: leave the blocks as they are now. They already have 2px corners, so their stripe is straight, like the live landing page's pathway list.</p>
+
+  <h2>5. On a phone (WB-1, option A, still pending)</h2>
+  <p class="where">The proposed phone layout from <code>ncv_tool_v9/mock/word-bar-phone.html</code>: one row per part, the tint filling the row in proportion to its words. Width 288px inside a 320px screen.</p>
+  <div class="phones">
+    <section>
+      <p class="pn-h">Now (as proposed)</p>
+      <div class="phone">
+        <div class="card"><p class="t">A field guide to river-bank erosion</p>
+          <ul class="rows">
+            <li><div class="n-row p-stakes" style="--w:82.9%"><span>The problem or question</span><span>34 words</span></div></li>
+            <li><div class="n-row p-activities" style="--w:100%"><span>What you did</span><span>41 words</span></div></li>
+            <li><div class="n-row p-outputs" style="--w:68.3%"><span>What resulted</span><span>28 words</span></div></li>
+            <li><div class="n-row p-outcomes on" style="--w:80.5%"><span>What already changed</span><span>33 words</span></div>
+              <div class="n-ped p-outcomes"><b>Contribution 1: What already changed · 33 words</b><div class="ed-ta" style="margin-top:4px">Eleven farms have replanted 6 km of bank…</div></div></li>
+            <li><div class="n-row p-moment" style="--w:0%"><span>A real use case (optional)</span><span>0 words</span></div></li>
+            <li><div class="n-row p-impact" style="--w:53.7%"><span>What could change</span><span>22 words</span></div></li>
+          </ul>
+        </div>
+      </div>
+      <p class="pn-note">A 4px stripe on every row, and on the editor's left side (which the design rules already rule out for the editor).</p>
+    </section>
+    <section>
+      <p class="pn-h rec">Recommended</p>
+      <div class="phone">
+        <div class="card"><p class="t">A field guide to river-bank erosion</p>
+          <ul class="rows">
+            <li><div class="r-row p-stakes" style="--f:0.829"><span class="nm">The problem or question</span><span class="ln"><span class="trk"><span class="fill"></span></span><span class="n">34 words</span></span><span class="pr">✎</span></div></li>
+            <li><div class="r-row p-activities" style="--f:1"><span class="nm">What you did</span><span class="ln"><span class="trk"><span class="fill"></span></span><span class="n">41 words</span></span><span class="pr">✎</span></div></li>
+            <li><div class="r-row p-outputs" style="--f:0.683"><span class="nm">What resulted</span><span class="ln"><span class="trk"><span class="fill"></span></span><span class="n">28 words</span></span><span class="pr">✎</span></div></li>
+            <li><div class="r-row p-outcomes on" style="--f:0.805"><span class="nm">What already changed</span><span class="ln"><span class="trk"><span class="fill"></span></span><span class="n">33 words</span></span><span class="pr">✎</span></div>
+              <div class="r-ped p-outcomes"><b>Contribution 1: What already changed · 33 words</b><div class="ed-ta" style="margin-top:4px">Eleven farms have replanted 6 km of bank…</div></div></li>
+            <li><div class="r-row p-moment empty" style="--f:0"><span class="nm">A real use case (optional)</span><span class="ln"><span class="trk"></span><span class="n">0 words</span></span><span class="pr">+</span></div></li>
+            <li><div class="r-row p-impact" style="--f:0.537"><span class="nm">What could change</span><span class="ln"><span class="trk"><span class="fill"></span></span><span class="n">22 words</span></span><span class="pr">✎</span></div></li>
+          </ul>
+        </div>
+      </div>
+      <p class="pn-note">Each row is an editable box (grey line, pencil) that names its part. Under the name, the words are a thin part box of proportional width, on one scale for every contribution, so no text sits across a line. Open: the row takes the part's line and the pencil circle; the editor has its line all round.</p>
+    </section>
+  </div>
+
+  <h2>The six parts and the neutral one</h2>
+  <p class="where">Line colour = the 1px line of a part box. Text on every tint is #1a1a1a (11.8:1 or more).</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th scope="col">Part</th><th scope="col">Now</th><th scope="col">Recommended</th><th scope="col">Accent</th><th scope="col">Line</th><th scope="col">Tint</th><th scope="col">Line on white</th><th scope="col">Line on tint</th></tr></thead>
+      <tbody>
+        <tr class="p-stakes"><th scope="row">The problem or question</th><td><span class="n-pill" style="margin:0">Problem</span></td><td><span class="r-tag" style="margin:0">Problem</span></td><td><span class="sw" style="background:#e5a712"></span>#e5a712</td><td><span class="sw" style="background:#8a6200"></span>#8a6200</td><td><span class="sw" style="background:#f7e5b8"></span>#f7e5b8</td><td class="pass">5.5:1</td><td class="pass">4.4:1</td></tr>
+        <tr class="p-role"><th scope="row">Your role</th><td><span class="n-pill" style="margin:0">Role</span></td><td><span class="r-tag" style="margin:0">Role</span></td><td><span class="sw" style="background:#912338"></span>#912338</td><td>same</td><td><span class="sw" style="background:#e7cfd3"></span>#e7cfd3</td><td class="pass">8.4:1</td><td class="pass">5.7:1</td></tr>
+        <tr class="p-activities"><th scope="row">What you did</th><td><span class="n-pill" style="margin:0">Did</span></td><td><span class="r-tag" style="margin:0">Did</span></td><td><span class="sw" style="background:#0072a8"></span>#0072a8</td><td>same</td><td><span class="sw" style="background:#bfdce9"></span>#bfdce9</td><td class="pass">5.3:1</td><td class="pass">3.7:1</td></tr>
+        <tr class="p-outputs"><th scope="row">What resulted</th><td><span class="n-pill" style="margin:0">Resulted</span></td><td><span class="r-tag" style="margin:0">Resulted</span></td><td><span class="sw" style="background:#508212"></span>#508212</td><td>same</td><td><span class="sw" style="background:#d3e0c4"></span>#d3e0c4</td><td class="pass">4.6:1</td><td class="pass">3.4:1</td></tr>
+        <tr class="p-outcomes"><th scope="row">What already changed</th><td><span class="n-pill" style="margin:0">Changed</span></td><td><span class="r-tag" style="margin:0">Changed</span></td><td><span class="sw" style="background:#da3a16"></span>#da3a16</td><td>same</td><td><span class="sw" style="background:#f7d4cc"></span>#f7d4cc</td><td class="pass">4.6:1</td><td class="pass">3.3:1</td></tr>
+        <tr class="p-impact"><th scope="row">What could change</th><td><span class="n-pill" style="margin:0">Could</span></td><td><span class="r-tag" style="margin:0">Could</span></td><td><span class="sw" style="background:#573996"></span>#573996</td><td>same</td><td><span class="sw" style="background:#ddd7ea"></span>#ddd7ea</td><td class="pass">8.6:1</td><td class="pass">6.2:1</td></tr>
+        <tr class="p-moment"><th scope="row">A real use case (optional)</th><td><span class="n-pill" style="margin:0">Use case</span></td><td><span class="r-tag" style="margin:0">Use case</span></td><td><span class="sw" style="background:#6b6b6b"></span>#6b6b6b</td><td>same</td><td><span class="sw" style="background:#e8e2d2"></span>#e8e2d2</td><td class="pass">5.3:1</td><td class="pass">4.1:1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="where" style="margin-top:10px">The six accents are Concordia's own colour tokens (yellow, burgundy, blue, green, orange, mauve). The gold stripe used today (#e5a712) is <span class="fail">1.7:1</span> against its tint and 2.1:1 on white.</p>
+</main>
+</body>
+</html>

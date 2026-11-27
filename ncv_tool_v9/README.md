@@ -79,6 +79,19 @@ Prem: "check the rest of the tool for the same gap, check anything else and lets
 - Export: each sentence the tool writes (the first sentence, each evidence list, the totals line, each trainee sentence) has an "Edit" button after it that opens the answer it is written from. The visible word is "Edit", to keep the draft readable; the button's name says what it opens ("Edit person B on Mentorship"). The decided hint above the draft (E4) stays.
 - Left as they are: Save for later (Add back reverses it, last in the order, Q-11); a role level (C17: picking another level is enough); Solo and Team-based, and the second field (one choice each, picked again where shown); profile changes (the Change panel works on a copy, Cancel drops it); text in boxes (the browser's own undo).
 
+## INFERRED in V9.5
+
+From the part box test (`design/part-box-test/findings.md`). Prem said "Will you fix all these and push"; read as choosing the part box over the straight stripe.
+
+- The example's sentences use `box-decoration-break: slice` (one box per sentence, open where a line wraps), not the `clone` in the designer's spec, which boxed every line.
+- The open word-bar block takes a 3px line (hover and focus 2px, rest 1px). A deeper tint was considered and left out, so text contrast stays as tested.
+- High contrast: the open block takes a 3px `Highlight` line, and written parts on a folded contribution stay filled (`CanvasText`), like the progress squares.
+- Written parts on a folded contribution are solid squares in the part's line colour (`--pi`), so they read as progress and not as checkboxes; Review's legend marks are 20 by 12 px part boxes, the bar's blocks in small. The two differ on purpose: one shows progress, the other names a colour.
+- Word-bar blocks lose the 4px of left padding that made room for the stripe (padding 0 6px); this is what stops the numbers being cut off with WCAG text spacing on a phone.
+- The unused skeleton view (`renderExemplarBox`) was converted to part boxes, not deleted.
+- Gold stays #8a6200 even though, for some colour-blind readers, it matches the orange or green line: every gold dark enough for 3:1 does (6 shades tested). Tints and names still separate the parts.
+- Corners elsewhere (cards 10px, text boxes 6px) are unchanged until Prem answers Q3. The prototype site is unchanged until Q2.
+
 ## INFERRED in V9.4
 
 From the accessibility audit (`a11y-audit-2026-11-26.md`).

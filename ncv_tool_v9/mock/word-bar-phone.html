@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word bar on a phone</title>
+<style>
+  :root { --muted: #555; --line: #d8d3cc; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #222; background: #fff; font-size: 16px; }
+  .wrap { display: grid; gap: 28px; padding: 16px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); max-width: 1000px; }
+  h1 { font-size: 1.1rem; margin: 16px 16px 0; }
+  h2 { font-size: 0.95rem; margin: 0 0 4px; color: #912338; }
+  .note { font-size: 0.82rem; color: var(--muted); margin: 0 0 10px; line-height: 1.4; }
+  .phone { width: 288px; border: 1px solid var(--line); border-radius: 18px; padding: 14px 12px; background: #fff; }
+  .card { border: 1px solid #cfcfcf; border-radius: 10px; padding: 10px; margin-bottom: 10px; }
+  .t { font-weight: 700; font-size: 0.95rem; line-height: 1.3; margin: 0 0 8px; }
+  /* Today */
+  .leg { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 0.78rem; margin-bottom: 10px; }
+  .leg i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; border: 1px solid #6b6b6b; }
+  .bar { display: flex; gap: 3px; }
+  .seg { height: 44px; min-width: 28px; border: 1px solid #6b6b6b; border-left: 4px solid var(--pa); border-radius: 2px; background: var(--pt); font-size: 0.75rem; display: flex; align-items: center; padding-left: 4px; box-sizing: border-box; }
+  /* Proposed: one row per part */
+  .rows { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+  .row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; padding: 0 10px 0 12px; border: 1px solid #b8b8b8; border-left: 4px solid var(--pa); border-radius: 3px; font-size: 0.86rem; background: #fff; overflow: hidden; }
+  .row::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--pt); z-index: 0; }
+  .row span { position: relative; z-index: 1; }
+  .row .n { font-variant-numeric: tabular-nums; color: #333; }
+  .row.on { border-color: var(--pa); box-shadow: inset 0 0 0 1px var(--pa); }
+  .ed { border: 1px solid var(--pa); border-left: 4px solid var(--pa); border-radius: 3px; padding: 8px 10px; font-size: 0.82rem; background: #fff; margin: 0 0 4px; }
+  .ed b { display: block; margin-bottom: 4px; }
+  .ed .ta { border: 1px solid #8a8a8a; border-radius: 4px; padding: 6px; min-height: 54px; color: #333; }
+  /* Alternative: the bar plus named buttons */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { min-height: 44px; display: inline-flex; align-items: center; padding: 0 10px; border: 1px solid #8a8a8a; border-left: 4px solid var(--pa); border-radius: 3px; font-size: 0.8rem; background: var(--pt); }
+  .tag { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; background: #f1e6e8; color: #912338; margin-bottom: 6px; }
+</style></head>
+<body>
+<h1>Word bar on "Edit what already changed", at 320 px (mock CV)</h1>
+<div class="wrap" id="wrap"></div>
+<script>
+  const PARTS = [["The problem or question", "#e5a712", "#f7e8bf"], ["What you did", "#0072a8", "#c7dfec"], ["What resulted", "#508212", "#d6e5c6"],
+    ["What already changed", "#da3a16", "#f6d0c6"], ["A real use case (optional)", "#6b6b6b", "#e8e2d2"], ["What could change", "#573996", "#ddd5ec"]];
+  const C = [["A tenant-led survey that changed how Montréal counts unsafe housing", [37, 40, 36, 33, 26, 24]],
+             ["A method for co-analysing interview data with community partners", [27, 38, 23, 35, 34, 26]]];
+  const max = Math.max(...C.flatMap(c => c[1]));
+  const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+  const paint = (e, p) => { e.style.setProperty("--pa", p[1]); e.style.setProperty("--pt", p[2]); };
+  const col = (tag, title, note, build) => { const d = el("section"); const tg = el("span", "tag", tag); d.appendChild(tg); d.appendChild(el("h2", null, title)); d.appendChild(el("p", "note", note)); const ph = el("div", "phone"); build(ph); d.appendChild(ph); document.getElementById("wrap").appendChild(d); };
+
+  col("Now", "The bar, as today", "Each part keeps a minimum width, so 37 and 24 words look almost the same, and each colour is matched to a six-line legend. The narrowest parts are 28 to 37 px wide.", ph => {
+    const leg = el("div", "leg"); PARTS.forEach(p => { const s = el("span"); const i = el("i"); i.style.background = p[2]; i.style.borderLeft = "3px solid " + p[1]; s.appendChild(i); s.appendChild(document.createTextNode(p[0])); leg.appendChild(s); }); ph.appendChild(leg);
+    C.forEach(([t, w]) => { const c = el("div", "card"); c.appendChild(el("p", "t", t)); const b = el("div", "bar"); w.forEach((n, k) => { const s = el("div", "seg", String(n)); paint(s, PARTS[k]); s.style.flexBasis = (n / (max * 6 * 1.2) * 100) + "%"; b.appendChild(s); }); c.appendChild(b); ph.appendChild(c); });
+  });
+  col("Recommended", "A: one row per part", "On a phone only. Each row names its part and its words; the tint fills the row in proportion to its words (same scale for every contribution). The whole row opens the part's text under it, as the bar does now. No legend needed. Every row is the full width and 44 px tall.", ph => {
+    C.forEach(([t, w], ci) => { const c = el("div", "card"); c.appendChild(el("p", "t", t)); const ul = el("ul", "rows");
+      w.forEach((n, k) => { const li = el("li"); const r = el("div", "row" + (ci === 0 && k === 3 ? " on" : "")); paint(r, PARTS[k]); r.style.setProperty("--w", (n / max * 100) + "%");
+        r.appendChild(el("span", null, PARTS[k][0])); r.appendChild(el("span", "n", n + " words")); li.appendChild(r);
+        if (ci === 0 && k === 3) { const ed = el("div", "ed"); paint(ed, PARTS[k]); ed.appendChild(el("b", null, "Contribution 1: What already changed · 33 words")); ed.appendChild(el("div", "ta", "Two made-up city inspection units now count tenant reports in their yearly figures…")); li.appendChild(ed); }
+        ul.appendChild(li); });
+      c.appendChild(ul); ph.appendChild(c); });
+  });
+  col("Alternative", "B: the bar, then named buttons", "The bar stays as a picture (not tappable); a row of named buttons under it opens each part. Shorter than A, but the bar and the buttons repeat each other, and the bar keeps its uneven widths.", ph => {
+    C.forEach(([t, w]) => { const c = el("div", "card"); c.appendChild(el("p", "t", t)); const b = el("div", "bar"); w.forEach((n, k) => { const s = el("div", "seg", String(n)); paint(s, PARTS[k]); s.style.flexBasis = (n / (max * 6 * 1.2) * 100) + "%"; b.appendChild(s); }); c.appendChild(b);
+      const ch = el("div", "chips"); w.forEach((n, k) => { const x = el("span", "chip", PARTS[k][0].replace(" (optional)", "")); paint(x, PARTS[k]); ch.appendChild(x); }); c.appendChild(ch); ph.appendChild(c); });
+  });
+</script>
+</body></html>
