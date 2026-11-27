@@ -66,3 +66,33 @@ Severity:
 
 - **Forced colours:** every site stripe is a `border-left`, so all 18 elements stay outlined before and after.
 - **Line contrast:** every new line passes 3:1. The lowest is #b07d00 at 3.08; #8a6200 for Communications would give 4.45.
+
+## Built (ST-2, 2026-11-26)
+
+Prem: "Match pathways website ..". The part box was not used on the site. Each element follows the live concordia.ca treatment:
+
+- `.pathway-card`: filled with the pathway colour, 4px corners, 1px line at 10% black. Text is white, or #1a1a1a on gold, and passes 4.5:1 on every fill (lowest 4.57). Hover lifts the card and underlines the name. The selected card has a ring.
+- `.pw`: a straight 4px line on 2px corners, with square icon tiles, as the landing page's pathway list.
+- `.ncv-expand-block[data-pathway]`: no stripe and a neutral title. A 10px square mark keeps the pathway colour.
+- `.s2-traits`: boxes with a 1px line and 2px corners.
+- Notes (`.ncv-callout`, `.booking-notice`, `.modal-external-note`, `.modal-provider`, `.research-module-context`, `.recommended-section`, `.narrative-funder-note`, `.pro-tip-banner`, `.ps-preview`): the tint alone, no line, square corners, as Concordia's alerts.
+  - `.booking-waitlist-banner` takes a blue information tint, so it no longer matches the form's error box.
+  - The provider label is darker (#6b6b6b), which fixes its 3.22:1.
+- `.modal-pullquote`: a neutral 1px line all round, as the live blockquote.
+- `.pathway-dev-notice`: a white card with a 1px line and 4px corners. Its gold-free eyebrow now passes, because the white ground fixes the 4.39:1.
+- `.context-bar` is unchanged: a straight line on a square bar, and not shown on the site today.
+- `.vision-definition` and `.learn-cta` (unused) are deleted.
+
+**Re-measured with the same harness:**
+
+- No new contrast failure and no sideways scroll.
+- The only one-sided lines left are `.pw` (as on concordia.ca) and `.context-bar`.
+- Failures left from before:
+  - the Research Creation icon in `.pw` (1.45:1, decorative);
+  - two card texts inside `.recommended-section` (not shown on the site);
+  - the "Preview" label in `.ps-preview` (not mounted).
+
+**Copies:**
+
+- `narrative-cv-guide-standalone.html` and `LONGFORM_LAYOUT_TEMPLATE.md` are updated.
+- `pathways_migration_june_2026/*.html` are June snapshots and were not regenerated.

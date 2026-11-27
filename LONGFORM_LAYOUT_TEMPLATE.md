@@ -76,8 +76,8 @@ card.appendChild(el("p", null, "The one sentence that captures the section."));
 ```
 
 ### Callout
-Left-border accent box for a sharp aside. Default is burgundy; add `--blue` for a
-secondary tone.
+A tinted box for a sharp aside: the tint alone, with no line and square corners, as
+concordia.ca's alerts. Default is burgundy (#f9ebed); add `--blue` for a secondary tone.
 
 ```js
 const callout = el("div", "ncv-callout");          // or "ncv-callout ncv-callout--blue"
@@ -188,7 +188,7 @@ cta.appendChild(el("button", "btn btn-primary", "Start →"));
 | `.ncv-body` | Standard 15px body paragraph |
 | `.ncv-list` | Bulleted list at section scale |
 | `.ncv-summary-card` | Bordered key-takeaway / definition card |
-| `.ncv-callout` / `.ncv-callout--blue` | Left-border accent aside |
+| `.ncv-callout` / `.ncv-callout--blue` | Tinted aside: the tint alone, no line, square corners, as concordia.ca's alerts (no coloured left edge since 2026-11-26) |
 | `.ncv-section-cards` + `.ncv-section-card` | Responsive card grid (2–4 up) |
 | `.ncv-expand-block` / `-btn` / `-body` + `.ncv-chevron` | Accordion (use `.is-open` on body) |
 | `.ncv-tag-row` + `.ncv-tag` | Pill chips |

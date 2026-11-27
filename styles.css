@@ -427,8 +427,7 @@ label {
   margin-top: 12px;
   padding: 10px 14px;
   background: #fef9f0;
-  border-left: 3px solid #d4a843;
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 /* ── Booking redirect modal (MS Bookings) ──────────────────── */
@@ -451,13 +450,13 @@ label {
 
 /* ── Booking modal (prototype) ─────────────────────────────── */
 
+/* ST-2 (2026-11-26): as concordia.ca's alerts, a note is its tint alone: no line, no stripe, square corners. */
 .booking-notice {
   font-size: 14px;
   color: #555;
   padding: 14px 18px;
   background: #fef9f0;
-  border-left: 3px solid #d4a843;
-  border-radius: 4px;
+  border-radius: 0;
   margin-bottom: 24px;
   line-height: 1.6;
 }
@@ -1712,17 +1711,18 @@ label {
   gap: 16px;
 }
 
+/* ST-2 (2026-11-26): as concordia.ca's Explore › Pathways, each card is filled with its pathway's colour, with 4px
+   corners and no stripe; white text (dark on gold) passes 4.5:1 on every fill. */
 .pathway-card {
   text-align: left;
-  border: 1px solid var(--border);
-  border-left: 8px solid var(--border);
-  background: #fff;
-  color: var(--text);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--pc, #f5f5f5);
+  color: var(--pc-text, var(--text));
   padding: 16px;
   font: inherit;
   cursor: pointer;
-  border-radius: 8px;
-  transition: box-shadow 0.15s ease;
+  border-radius: 4px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .pathway-card h3,
@@ -1765,31 +1765,32 @@ label {
   overflow: hidden;
 }
 
-.pathway-card[data-pathway="academic"]          { --pc: #912338; --pc-text: #fff; border-left-color: #912338; }
-.pathway-card[data-pathway="academic"]          .pathway-card-label { color: #912338; }
+.pathway-card[data-pathway="academic"]          { --pc: #912338; --pc-text: #fff; }
 
-.pathway-card[data-pathway="community"]         { --pc: #db0272; --pc-text: #fff; border-left-color: #db0272; }
-.pathway-card[data-pathway="community"]         .pathway-card-label { color: #db0272; }
+.pathway-card[data-pathway="community"]         { --pc: #db0272; --pc-text: #fff; }
 
-.pathway-card[data-pathway="innovation"]        { --pc: #da3a16; --pc-text: #fff; border-left-color: #da3a16; }
-.pathway-card[data-pathway="innovation"]        .pathway-card-label { color: #da3a16; }
+.pathway-card[data-pathway="innovation"]        { --pc: #da3a16; --pc-text: #fff; }
 
-.pathway-card[data-pathway="commercialization"] { --pc: #573996; --pc-text: #fff; border-left-color: #573996; }
-.pathway-card[data-pathway="commercialization"] .pathway-card-label { color: #573996; }
+.pathway-card[data-pathway="commercialization"] { --pc: #573996; --pc-text: #fff; }
 
-.pathway-card[data-pathway="communications"]    { --pc: #e5a712; --pc-text: #1a1a1a; border-left-color: #b07d00; }
-.pathway-card[data-pathway="communications"]    .pathway-card-label { color: #b07d00; }
+.pathway-card[data-pathway="communications"]    { --pc: #e5a712; --pc-text: #1a1a1a; }
 
-.pathway-card[data-pathway="policy"]            { --pc: #0072a8; --pc-text: #fff; border-left-color: #0072a8; }
-.pathway-card[data-pathway="policy"]            .pathway-card-label { color: #0072a8; }
+.pathway-card[data-pathway="policy"]            { --pc: #0072a8; --pc-text: #fff; }
 
-.pathway-card[data-pathway="research-creation"] { --pc: #508212; --pc-text: #fff; border-left-color: #508212; }
-.pathway-card[data-pathway="research-creation"] .pathway-card-label { color: #508212; }
+.pathway-card[data-pathway="research-creation"] { --pc: #508212; --pc-text: #fff; }
+
+.pathway-card-label,
+.pathway-card .pathway-card-summary {
+  color: var(--pc-text, var(--text));
+}
 
 .pathway-card:hover {
-  background: var(--pc, #f5f5f5);
-  color: var(--pc-text, var(--text));
-  border-left-color: var(--pc, var(--border));
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);
+}
+
+.pathway-card:hover .pathway-card-label {
+  text-decoration: underline;
 }
 
 .pathway-card:hover .pathway-card-label,
@@ -1798,16 +1799,9 @@ label {
   opacity: 1;
 }
 
-.pathway-card:hover .pathway-card-summary {
-  opacity: 0.85;
-}
-
-.pathway-card.is-active {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
+.pathway-card.is-active,
 .pathway-card.is-active:hover {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--pc, var(--burgundy));
 }
 
 
@@ -1956,10 +1950,9 @@ label {
 .pathway-dev-notice {
   margin-top: 36px;
   padding: 26px 30px;
-  background: #faf9f6;
+  background: #fff;
   border: 1px solid var(--border);
-  border-left: 4px solid var(--dev-notice-accent, var(--burgundy));
-  border-radius: 10px;
+  border-radius: 4px;
 }
 
 .pathway-dev-notice-eyebrow {
@@ -2179,9 +2172,8 @@ label {
 .research-module-context {
   margin: 0.75rem 0 0;
   padding: 10px 14px;
-  background: #faf6f7;
-  border-left: 3px solid var(--burgundy);
-  border-radius: 0 6px 6px 0;
+  background: #f6e8eb;
+  border-radius: 0;
 }
 
 .research-module-context-desc {
@@ -2873,13 +2865,6 @@ label {
   margin-bottom: 8px;
 }
 
-.vision-definition {
-  background: #f3f3f3;
-  border-left: 3px solid var(--burgundy);
-  padding: 12px 14px;
-  font-size: 1.02em;
-}
-
 .vision-expander {
   margin: 0 0 24px;
   border: 1px solid var(--border);
@@ -3045,8 +3030,7 @@ label {
   margin: 0 0 24px;
   padding: 14px 16px;
   background: #f7f3f4;
-  border-left: 3px solid var(--burgundy);
-  border-radius: 6px;
+  border-radius: 0;
 }
 .modal-provider-label {
   display: block;
@@ -3054,7 +3038,7 @@ label {
   letter-spacing: 0.08em;
   font-size: 10px;
   font-weight: 700;
-  color: #888;
+  color: #6b6b6b;
   margin-bottom: 4px;
 }
 .modal-provider-name {
@@ -3099,9 +3083,9 @@ label {
   font-size: 20px;
   line-height: 1.5;
   color: #2a2a2a;
-  border-left: 4px solid var(--accent, #c8102e);
+  border: 1px solid var(--border);
   background: #f8f8f8;
-  border-radius: 0 6px 6px 0;
+  border-radius: 0;
 }
 
 .modal-body {
@@ -3171,11 +3155,10 @@ label {
   font-size: 14px;
   line-height: 1.6;
   padding: 14px 18px;
-  background: #fdecea;
-  border-left: 3px solid #c44b3d;
-  border-radius: 4px;
+  background: #eaf1f8;
+  border-radius: 0;
   margin-bottom: 24px;
-  color: #4a1a14;
+  color: #1a1a1a;
 }
 .booking-waitlist-banner strong {
   display: block;
@@ -3526,16 +3509,6 @@ label {
   font-weight: 500;
 }
 
-/* ── Learn CTA ───────────────────────────────────────────────── */
-
-.learn-cta {
-  margin-top: 48px;
-  padding: 36px 32px;
-  background: #f9f3f4;
-  border-left: 4px solid var(--burgundy);
-  border-radius: 4px;
-}
-
 .learn-cta .section-title {
   margin-bottom: 20px;
 }
@@ -3756,8 +3729,7 @@ label {
   margin-bottom: 32px;
   padding: 20px 24px;
   background: #f9f3f4;
-  border-radius: 6px;
-  border-left: 4px solid var(--pathway-thread-color, var(--burgundy));
+  border-radius: 0;
 }
 
 .recommended-label {
@@ -4284,18 +4256,17 @@ label {
 }
 
 /* Callout */
+/* ST-2 (2026-11-26): as concordia.ca's alerts, a note is its tint alone: no line, no stripe, square corners. */
 .ncv-callout {
-  border-left: 3px solid var(--burgundy);
   background: #f9ebed;
   padding: 14px 18px;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0;
   margin: 18px 0;
   font-size: 15px;
   line-height: 1.6;
 }
 
 .ncv-callout.ncv-callout--blue {
-  border-left-color: #1a5276;
   background: #eaf1f8;
 }
 
@@ -4441,25 +4412,19 @@ label {
   display: block;
 }
 
-/* Pathway-coloured accordions (Vision page) — each of the 7 pathways carries its
-   signature colour as a left border + label, reusing the Explore pathway palette.
-   Communications uses the darker #b07d00 for border/text (the gold #e5a712 is too
-   low-contrast as a line/label), matching the .pw / .pathway-card treatment. */
-.ncv-expand-block[data-pathway] { border-left-width: 4px; border-left-style: solid; }
-.ncv-expand-block[data-pathway="academic"]          { border-left-color: #912338; }
-.ncv-expand-block[data-pathway="academic"] .ncv-expand-btn          { color: #912338; }
-.ncv-expand-block[data-pathway="research-creation"] { border-left-color: #508212; }
-.ncv-expand-block[data-pathway="research-creation"] .ncv-expand-btn { color: #508212; }
-.ncv-expand-block[data-pathway="community"]         { border-left-color: #db0272; }
-.ncv-expand-block[data-pathway="community"] .ncv-expand-btn         { color: #db0272; }
-.ncv-expand-block[data-pathway="innovation"]        { border-left-color: #da3a16; }
-.ncv-expand-block[data-pathway="innovation"] .ncv-expand-btn        { color: #da3a16; }
-.ncv-expand-block[data-pathway="commercialization"] { border-left-color: #573996; }
-.ncv-expand-block[data-pathway="commercialization"] .ncv-expand-btn { color: #573996; }
-.ncv-expand-block[data-pathway="policy"]            { border-left-color: #0072a8; }
-.ncv-expand-block[data-pathway="policy"] .ncv-expand-btn            { color: #0072a8; }
-.ncv-expand-block[data-pathway="communications"]    { border-left-color: #b07d00; }
-.ncv-expand-block[data-pathway="communications"] .ncv-expand-btn    { color: #b07d00; }
+/* Pathway accordions (Vision page). ST-2 (2026-11-26): as on the live Vision page, no stripe and no coloured title;
+   a 10px square mark before the title keeps the pathway's colour (as concordia.ca's pathway mark does).
+   Communications uses the darker #b07d00 for the mark (3:1 on white). */
+.ncv-expand-block[data-pathway] .ncv-expand-btn { justify-content: flex-start; }
+.ncv-expand-block[data-pathway] .ncv-expand-btn::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--pw-c, var(--burgundy)); flex-shrink: 0; }
+.ncv-expand-block[data-pathway] .ncv-chevron { margin-left: auto; }
+.ncv-expand-block[data-pathway="academic"]          { --pw-c: #912338; }
+.ncv-expand-block[data-pathway="research-creation"] { --pw-c: #508212; }
+.ncv-expand-block[data-pathway="community"]         { --pw-c: #db0272; }
+.ncv-expand-block[data-pathway="innovation"]        { --pw-c: #da3a16; }
+.ncv-expand-block[data-pathway="commercialization"] { --pw-c: #573996; }
+.ncv-expand-block[data-pathway="policy"]            { --pw-c: #0072a8; }
+.ncv-expand-block[data-pathway="communications"]    { --pw-c: #b07d00; }
 
 .ncv-expand-body .ncv-body {
   font-size: 14px;
@@ -4790,9 +4755,8 @@ label {
 }
 .narrative-funder-note {
   background: #f5f5f5;
-  border-left: 3px solid var(--burgundy);
   padding: 0.75rem 1rem;
-  border-radius: 0 6px 6px 0;
+  border-radius: 0;
   font-size: 0.9rem;
   margin: 0.5rem 0 1rem;
   color: #444;
@@ -5062,9 +5026,8 @@ label {
 
 .pro-tip-banner {
   background: #fef9e7;
-  border-left: 4px solid var(--gold, #e5a712);
   padding: 0.75rem 1rem;
-  border-radius: 0 6px 6px 0;
+  border-radius: 0;
   font-size: 0.9rem;
   margin: 1.5rem 0;
   font-style: italic;
@@ -5103,8 +5066,7 @@ label {
 .ps-input:focus { background: #f5edf0; }
 .ps-preview {
   background: #f8f6f8;
-  border-left: 3px solid var(--burgundy);
-  border-radius: 0 8px 8px 0;
+  border-radius: 0;
   padding: 1.25rem;
   margin: 0.75rem 0 1rem;
 }
@@ -5409,10 +5371,9 @@ label {
 .s2-body { font-size: 15px; color: #555; line-height: 1.78; max-width: 400px; }
 .s2-body strong { color: #912338; font-weight: 700; }
 .s2-right { padding: 36px 60px 36px 20px; display: flex; align-items: center; justify-content: center; }
-.s2-traits { border-left: 3px solid #912338; padding-left: 24px; }
-.s2-trait-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #912338; font-weight: 700; margin-bottom: 16px; }
-.s2-trait-item { font-size: 15px; color: #333; font-weight: 600; line-height: 1.4; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
-.s2-trait-item:last-child { border-bottom: none; }
+.s2-traits { display: grid; gap: 8px; } /* ST-2: boxes with a 1px line, as concordia.ca's landing page */
+.s2-trait-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #912338; font-weight: 700; margin-bottom: 8px; }
+.s2-trait-item { font-size: 15px; color: #333; font-weight: 600; line-height: 1.4; padding: 8px 16px; border: 1px solid rgba(145, 35, 56, 0.3); border-radius: 2px; background: #fff; }
 
 /* ── S3 The Challenge ───────────────────────────────────────────────── */
 .s3 { background: #0d1f2d; grid-template-columns: 1fr; align-items: center; }
@@ -5462,7 +5423,7 @@ label {
   gap: 8px;
 }
 .pw {
-  border-radius: 8px;
+  border-radius: 2px; /* ST-2: straight line on square corners, as concordia.ca's pathway list */
   border: 1px solid #eee;
   border-left-width: 4px;
   padding: 12px 14px 10px;
@@ -5472,7 +5433,7 @@ label {
 }
 .pw:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
 .pw-top { display: flex; align-items: center; gap: 10px; }
-.pw-icon { width: 30px; height: 30px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.pw-icon { width: 30px; height: 30px; border-radius: 2px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .pw-name { font-size: 12.5px; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
 .pw-desc { font-size: 11.5px; color: #666; line-height: 1.55; }
 .pw.featured {
@@ -5485,7 +5446,7 @@ label {
   align-items: start;
   padding: 18px 20px;
 }
-.pw.featured .pw-icon { width: 52px; height: 52px; border-radius: 10px; grid-row: span 2; align-self: center; }
+.pw.featured .pw-icon { width: 52px; height: 52px; border-radius: 2px; grid-row: span 2; align-self: center; }
 .pw.featured .pw-name { font-size: 15px; margin-bottom: 4px; }
 .pw.featured .pw-desc { font-size: 13px; color: #555; }
 

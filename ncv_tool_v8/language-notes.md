@@ -240,3 +240,9 @@ Prem: "Build all of it". EV-1b is applied in `narrative-cv-prototype-v9.html` as
 - Folded contributions: a written part is a solid square of its colour; a part not yet written stays white with a dashed line. Review's legend marks are small blocks (20 by 12 px).
 - Fixed on the way: the example's legend was labelled twice in high contrast; word-bar blocks cut off their numbers on a phone with WCAG text spacing.
 - Not changed: the prototype site (`styles.css`); corners elsewhere in the tool (Q3).
+
+## Site, after V9.5
+
+| # | Where | Now | Prem's note and decision | Type | Status |
+|---|---|---|---|---|---|
+| ST-2 | The prototype site (`styles.css`): every coloured side-stripe | 17 stripes, 14 on rounded shapes; the part box fails contrast on pathway cards, `.pw` and the Vision accordions (`ncv_tool_v9/design/part-box-test-site/findings.md`) | Prem: "Match pathways website ..". Built element by element from the live concordia.ca treatments: pathway cards filled with the pathway colour (4px corners, white text, dark on gold); home "Seven pathways" keeps a straight 4px line on 2px corners with square marks; Vision accordions lose the stripe and the coloured title, a 10px square mark keeps the colour; "Impact can be…" becomes boxes with a 1px line; notes and callouts become the tint alone, no line, square corners (Concordia's alerts); the pull-quote a 1px line all round; the waitlist banner a blue info tint (it looked like the form error); the in-development notice a white card with a 1px line. Two unused rules deleted. | Design | Applied 2026-11-26 |
