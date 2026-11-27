@@ -79,6 +79,17 @@ Prem: "check the rest of the tool for the same gap, check anything else and lets
 - Export: each sentence the tool writes (the first sentence, each evidence list, the totals line, each trainee sentence) has an "Edit" button after it that opens the answer it is written from. The visible word is "Edit", to keep the draft readable; the button's name says what it opens ("Edit person B on Mentorship"). The decided hint above the draft (E4) stays.
 - Left as they are: Save for later (Add back reverses it, last in the order, Q-11); a role level (C17: picking another level is enough); Solo and Team-based, and the second field (one choice each, picked again where shown); profile changes (the Change panel works on a copy, Cancel drops it); text in boxes (the browser's own undo).
 
+## INFERRED in V9.8
+
+Prem asked: "wondering if we need to put a note to use this app on desktop?" Proposed one line on the start page, on a phone only; Prem: "Yes, add it" (DV-1).
+
+- The wording is the example given with the proposal, unchanged: "To write and export your CV, we recommend a computer."
+- "On a phone" is 640 px wide or less, as WB-1. A tablet (641 px and up) does not see it.
+- It is the third line of the start page's intro, after the guide link and before the privacy line, in the intro's own style (no note box, no icon). It shows only where the intro shows, so not on the tester sign-up screen and not on later steps.
+- It advises and blocks nothing: the tool still works on a phone.
+- Review's intro already says "We recommend completing this step on a computer." It stays as it is.
+- Not changed, logged as DV-2 for Prem: the full privacy line says "works offline on your computer", which a tablet shows. Proposed: "in this browser".
+
 ## INFERRED in V9.7
 
 Prem chose option A for the word bar on a phone (WB-1): "Yes, option A".

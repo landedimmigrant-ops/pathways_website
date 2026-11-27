@@ -2515,7 +2515,7 @@ async function seed(state, extra, opts) {
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
     check("P6: the career stage reads Mid-career, stored value unchanged", /\{ v: "mid", l: "Mid-career" \}/.test(src));
     check("R12: a missing headline reads No headline yet on screen and [No headline yet] in the draft text and files; none says Untitled contribution", !/Untitled contribution/.test(src) && (src.match(/"\[No headline yet\]"/g) || []).length === 5 && /rvTitle = \(x\) => gvCut\(one\(x.title\), 90\) \|\| "No headline yet"/.test(src) && /- 3 \* liveContributions\(\)/.test(src));
-    check("the version is 9.7 in the script and the tab title", /VERSION_NUM = "9\.7"/.test(src) && /<title>Narrative CV — V9\.7 beta/.test(src));
+    check("the version is 9.8 in the script and the tab title", /VERSION_NUM = "9\.8"/.test(src) && /<title>Narrative CV — V9\.8 beta/.test(src));
   }
 
   console.log("Batch 4 and 6 (V9): Contributions and Personal statement wording");
@@ -3075,6 +3075,24 @@ async function seed(state, extra, opts) {
       await send("Emulation.setEmulatedMedia", { features: [] });
       await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
       check("V9.7 (WB-1): in high contrast each row's box stays filled, so its length still shows", r.w > 4 && r.bg !== "rgba(0, 0, 0, 0)" && r.bg !== r.row, r);
+    }
+
+    // V9.8 (DV-1; Prem: "Yes, add it"): on a phone (640px or narrower) the start page's intro ends with one line that
+    // advises a computer. Wider screens show nothing, and screen readers there read nothing.
+    {
+      const NOTE = "To write and export your CV, we recommend a computer.";
+      const look = `await w(150); const n=document.getElementById('v9-phone-note'), b=n.getBoundingClientRect(), ps=[...document.querySelectorAll('#v7-start-intro > p')];
+        return {shown:getComputedStyle(n).display!=='none' && b.height>0, t:n.textContent.trim(), inIntro:n.parentElement.id==='v7-start-intro', last:ps[ps.length-1]===n,
+          before:!!(n.compareDocumentPosition(q('.v4-privacy')) & Node.DOCUMENT_POSITION_FOLLOWING), sw:document.documentElement.scrollWidth, vw:innerWidth, fs:getComputedStyle(n).fontSize};`;
+      const axHas = async () => { await send("Accessibility.enable"); const ax = await send("Accessibility.getFullAXTree"); return ax.nodes.some(n => !n.ignored && n.name && n.name.value === NOTE); };
+      const at = async (width, height, mobile) => { await send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: mobile ? 2 : 1, mobile }); await seed(null); const v = await js(H + look); v.ax = await axHas(); return v; };
+      const ph = await at(320, 720, true), edge = await at(640, 900, true);
+      const later = await js(H + `q('.v7-path-new').click(); await w(200); const n=document.getElementById('v9-phone-note'); return {shown:n.getBoundingClientRect().height>0, step:q('.narrative-stage-header h2')?.innerText||''};`);
+      const tab = await at(641, 900, false), desk = await at(1180, 900, false);
+      check("V9.8 (DV-1): on a phone the start page's intro ends with the decided line, before the privacy line, at 16px, with no sideways scroll; a screen reader reads it",
+        ph.shown && ph.t === NOTE && ph.inIntro && ph.last && ph.before && ph.fs === "16px" && ph.sw <= ph.vw && ph.ax && edge.shown && edge.ax, { ph, edge });
+      check("V9.8 (DV-1): the line is on the start page only; the next step does not show it", !later.shown && later.step !== "", later);
+      check("V9.8 (DV-1): wider than 640px (a tablet or a desktop) the line is not shown and not in the accessibility tree", !tab.shown && !tab.ax && !desk.shown && !desk.ax, { tab, desk });
     }
 
     // R-1 (R8a) and R7: the role status counts written role sentences and names a contribution with a level and no sentence.

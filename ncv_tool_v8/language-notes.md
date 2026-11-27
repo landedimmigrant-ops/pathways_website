@@ -248,6 +248,13 @@ Prem: "Build all of it". EV-1b is applied in `narrative-cv-prototype-v9.html` as
 | WB-1 | Review, "Edit what already changed", the word bar on a phone | Six blocks in one line at 320 px, the narrowest under 44 px, matched to a legend | Prem: "Yes, option A". Built in V9.7 as the designer redrew it for the part box: one full-width row per part (name, a part box sized by its words, "N words"), opening its part under it; no legend on a phone; desktop unchanged. | Design | Applied in V9.7 |
 | ST-3 | Every corner in the NCV tool (Q3 of the designer’s review) | Cards 10px, answer boxes and editors 6px, chips and some buttons fully round, beside 2px part boxes | Prem: "Yes, 0–4px", then "just focus on narrative cv tool". Built in V9.6: fields and notes 0, buttons, chips, part names and editable boxes 2px, cards and panels 4px, circles stay round. The site is not changed. | Design | Applied in V9.6 |
 
+## Applied in V9.8 (2026-11-27)
+
+| # | Where | Now | Prem’s note and decision | Type | Status |
+|---|---|---|---|---|---|
+| DV-1 | Start page, on a phone (640 px or narrower) | No device advice before Review; Review's intro says "We recommend completing this step on a computer." | Prem asked whether the tool needs a note to use it on a desktop. Proposed: one line on the start page, shown on a phone only, no block: "To write and export your CV, we recommend a computer." (the draft stays in the browser where it was started; Word and backup files are awkward to save on a phone; Safari is not yet checked, Q-28). Prem: "Yes, add it". Built in V9.8 as the third line of the start page's intro. | Guidance | Applied in V9.8 |
+| DV-2 | Privacy line, full version (shown wider than 480 px, so on a tablet too) | "This tool uses no AI and works offline on your computer." | Found with DV-1: on a tablet "on your computer" is not accurate. Proposed: "works offline in this browser" (VOCABULARY row 29: "this browser"). Not applied; waits on Prem. Phones show the short line ("No AI. Anything you write stays here."), so they are not affected. | Wording | Proposed |
+
 ## Site, after V9.5
 
 | # | Where | Now | Prem's note and decision | Type | Status |
