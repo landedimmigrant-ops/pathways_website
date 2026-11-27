@@ -79,6 +79,17 @@ Prem: "check the rest of the tool for the same gap, check anything else and lets
 - Export: each sentence the tool writes (the first sentence, each evidence list, the totals line, each trainee sentence) has an "Edit" button after it that opens the answer it is written from. The visible word is "Edit", to keep the draft readable; the button's name says what it opens ("Edit person B on Mentorship"). The decided hint above the draft (E4) stays.
 - Left as they are: Save for later (Add back reverses it, last in the order, Q-11); a role level (C17: picking another level is enough); Solo and Team-based, and the second field (one choice each, picked again where shown); profile changes (the Change panel works on a copy, Cancel drops it); text in boxes (the browser's own undo).
 
+## INFERRED in V9.6
+
+Prem chose "Yes, 0–4px" for corners, then "just focus on narrative cv tool": the tool only, not the site.
+
+- Each shape takes the Concordia token for its kind (`design/accent-review-2026-11-26.md`, Corners): fields (inputs, text boxes, selects) 0, as `.form-control`; notes and hints 0, as `.alert`; buttons, chips, tags, part names and editable boxes 2px, as `.btn`; cards, panels, choice tiles, the example box and the step list 4px, as the Pathways cards.
+- Chips and tags are 2px, not fully round. Concordia keeps neutral chips fully round; in the tool every tag sits beside a part name, which is already a 2px box, so one shape was kept.
+- Circles stay round: the pencil disc, number badges, ticks and dots. They have no corners.
+- Only corners changed. Notes keep their lines and colours; Concordia alerts have no line, and that is not changed here.
+- Two panels come from the site stylesheet (the step list and the session banner); the tool overrides their corners in its own styles, so `styles.css` is untouched.
+- The check is `design/corners-audit.js` (every screen, desktop and phone, no corner over 4px except circles) and two V9.6 tests in `test-v9.js`.
+
 ## INFERRED in V9.5
 
 From the part box test (`design/part-box-test/findings.md`). Prem said "Will you fix all these and push"; read as choosing the part box over the straight stripe.
@@ -90,7 +101,7 @@ From the part box test (`design/part-box-test/findings.md`). Prem said "Will you
 - Word-bar blocks lose the 4px of left padding that made room for the stripe (padding 0 6px); this is what stops the numbers being cut off with WCAG text spacing on a phone.
 - The unused skeleton view (`renderExemplarBox`) was converted to part boxes, not deleted.
 - Gold stays #8a6200 even though, for some colour-blind readers, it matches the orange or green line: every gold dark enough for 3:1 does (6 shades tested). Tints and names still separate the parts.
-- Corners elsewhere (cards 10px, text boxes 6px) are unchanged until Prem answers Q3. The prototype site is unchanged until Q2.
+- Corners elsewhere (cards 10px, text boxes 6px) were unchanged until Prem answered Q3 (built in V9.6). The prototype site was unchanged until Q2 (ST-2).
 
 ## INFERRED in V9.4
 

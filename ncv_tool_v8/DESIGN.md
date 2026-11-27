@@ -51,6 +51,10 @@ One look for anything that opens for editing. Written once in the stylesheet; a 
 - **Text edited in place (the CV on Export):** a dashed outline on hover and a solid burgundy outline on focus. It has no mark at rest, so the page reads as it prints.
 - **Checklist:** one, on Export, under "Before you export". Review's questions appear there in Review's own words, each with "See on Review".
 
+### Corners (ST-3, V9.6)
+
+Corners follow concordia.ca, 0 to 4px: fields and notes 0; buttons, chips, tags, part names and editable boxes 2px; cards, panels and choice tiles 4px. Only true circles (the pencil disc, number badges, dots) are round. No pill shapes. `ncv_tool_v9/design/corners-audit.js` checks every screen.
+
 ## 4. Colour
 
 The part colours are the Pathways site's accents. Each part has one accent everywhere it appears (field label, block, legend, folded contribution, editor edge).

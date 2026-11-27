@@ -241,6 +241,12 @@ Prem: "Build all of it". EV-1b is applied in `narrative-cv-prototype-v9.html` as
 - Fixed on the way: the example's legend was labelled twice in high contrast; word-bar blocks cut off their numbers on a phone with WCAG text spacing.
 - Not changed: the prototype site (`styles.css`); corners elsewhere in the tool (Q3).
 
+## Applied in V9.6 (2026-11-27)
+
+| # | Where | Now | Prem’s note and decision | Type | Status |
+|---|---|---|---|---|---|
+| ST-3 | Every corner in the NCV tool (Q3 of the designer’s review) | Cards 10px, answer boxes and editors 6px, chips and some buttons fully round, beside 2px part boxes | Prem: "Yes, 0–4px", then "just focus on narrative cv tool". Built in V9.6: fields and notes 0, buttons, chips, part names and editable boxes 2px, cards and panels 4px, circles stay round. The site is not changed. | Design | Applied in V9.6 |
+
 ## Site, after V9.5
 
 | # | Where | Now | Prem's note and decision | Type | Status |

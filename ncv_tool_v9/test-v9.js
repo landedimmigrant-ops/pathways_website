@@ -2346,7 +2346,7 @@ async function seed(state, extra, opts) {
       return {head:!!head, k:k&&k.innerText, ch:!!ch, row:k&&ch?Math.abs(k.getBoundingClientRect().top+k.offsetHeight/2-(ch.getBoundingClientRect().top+ch.offsetHeight/2))<6:false,
         right:k&&ch?ch.getBoundingClientRect().left>k.getBoundingClientRect().right:false, below:pills&&ch?pills.getBoundingClientRect().top>=ch.getBoundingClientRect().bottom-1:false,
         order:[...bar.querySelectorAll('.v7-tailored-k, #v7-chg, .v7-pill')].map(x=>x.id||x.className.split(' ')[0]).slice(0,3).join(','), radius:getComputedStyle(bar).borderRadius};`);
-    check("V8.11: the Profile box puts Change on the label's row, to its left, with the pills below, in card style", r.head && r.k === "Profile:" && r.ch && r.row && !r.right && r.below && r.radius === "10px", r);
+    check("V8.11: the Profile box puts Change on the label's row, to its left, with the pills below, in card style", r.head && r.k === "Profile:" && r.ch && r.row && !r.right && r.below && r.radius === "4px", r);
     r = await js(H + `await w(100); const bar=q('.v7-tailored'), ch=q('#v7-chg'), k=bar.querySelector('.v7-tailored-k'), nm=q('#v7-prof-name');
       const a={order:[...bar.querySelectorAll('#v7-chg, .v7-tailored-k, #v7-prof-name, .v7-pill')].map(x=>x.id||x.className.split(' ')[0]).slice(0,4).join(','),
         tri:parseFloat(getComputedStyle(ch.querySelector('.v7-tri')).fontSize)/parseFloat(getComputedStyle(ch).fontSize), forName:k.htmlFor, ph:nm&&nm.placeholder,
@@ -2515,7 +2515,7 @@ async function seed(state, extra, opts) {
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
     check("P6: the career stage reads Mid-career, stored value unchanged", /\{ v: "mid", l: "Mid-career" \}/.test(src));
     check("R12: a missing headline reads No headline yet on screen and [No headline yet] in the draft text and files; none says Untitled contribution", !/Untitled contribution/.test(src) && (src.match(/"\[No headline yet\]"/g) || []).length === 5 && /rvTitle = \(x\) => gvCut\(one\(x.title\), 90\) \|\| "No headline yet"/.test(src) && /- 3 \* liveContributions\(\)/.test(src));
-    check("the version is 9.5 in the script and the tab title", /VERSION_NUM = "9\.5"/.test(src) && /<title>Narrative CV — V9\.5 beta/.test(src));
+    check("the version is 9.6 in the script and the tab title", /VERSION_NUM = "9\.6"/.test(src) && /<title>Narrative CV — V9\.6 beta/.test(src));
   }
 
   console.log("Batch 4 and 6 (V9): Contributions and Personal statement wording");
@@ -3003,6 +3003,37 @@ async function seed(state, extra, opts) {
       const bl=qa('.v8-bar .v8-eb-block:not(.is-empty)'); const cut=bl.filter(b=>b.scrollWidth>b.clientWidth+1||b.scrollHeight>b.clientHeight+1).map(b=>b.getAttribute('aria-label')); s.remove(); return {n:bl.length, cut, sw:document.documentElement.scrollWidth};`);
     await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
     check("V9.5: on a phone with WCAG text spacing, no word-bar block cuts off its number", r.n >= 10 && r.cut.length === 0 && r.sw <= 320, r);
+
+    // V9.6 (ST-3): corners follow concordia.ca (0 to 4px). Fields and notes 0, buttons, tags and editable boxes 2px,
+    // cards and panels 4px; only true circles (the pencil disc, number badges) are round.
+    {
+      const scanC = H + `const vis=(e)=>{const r=e.getBoundingClientRect(), s=getComputedStyle(e); return r.width>0&&r.height>0&&s.visibility!=='hidden'&&s.display!=='none';};
+        const px=(v,ref)=>{ v=String(v).trim().split(/\\s+/)[0]; return v.endsWith('%')?parseFloat(v)/100*ref:parseFloat(v)||0; };
+        const bad=[]; const look=(e,cs,w,h,p)=>{ const m=Math.max(...['TopLeft','TopRight','BottomRight','BottomLeft'].map(k=>px(cs['border'+k+'Radius'],Math.min(w,h)))); if(m<=4.01) return; if(Math.abs(w-h)<=2.5&&m>=Math.min(w,h)/2-1.5) return; bad.push((e.className||e.tagName).toString().slice(0,40)+(p||'')+' '+cs.borderTopLeftRadius); };
+        qa('body *').forEach(e=>{ if(vis(e)){ const r=e.getBoundingClientRect(); look(e,getComputedStyle(e),r.width,r.height); } ['::before','::after'].forEach(p=>{ const cs=getComputedStyle(e,p); if(!cs.content||cs.content==='none'||cs.display==='none') return; const w=parseFloat(cs.width)||0,h=parseFloat(cs.height)||0; if(w&&h) look(e,cs,w,h,p); }); });
+        return bad;`;
+      const stg = (k, ui) => Object.assign({}, fixture, { stageKey: k, mode: "compose", profileConfirmed: true, ui: Object.assign({}, fixture.ui || {}, { profileNote: false }, ui || {}) });
+      const over = [];
+      for (const vp of [[1180, 900, false], [320, 720, true]]) {
+        await send("Emulation.setDeviceMetricsOverride", { width: vp[0], height: vp[1], deviceScaleFactor: vp[2] ? 2 : 1, mobile: vp[2] });
+        for (const s of [null, stg("start"), stg("setup"), stg("contrib"), stg("mentor"), stg("ps"), stg("review", { reviewTab: "words" }), stg("review", { reviewTab: "evidence" }), stg("review", { reviewTab: "order" }), stg("export")]) {
+          await seed(s); await js(H + `await w(250);`);
+          if (s && s.stageKey === "contrib") await js(H + `const b=q('.v7-ex-btn'); if(b){b.click(); await w(350);}`);
+          if (s && s.ui.reviewTab === "words") await js(H + `const b=q('.v8-bar .v8-eb-block'); if(b){b.click(); await w(300);}`);
+          for (const b of await js(scanC)) over.push((s ? s.stageKey + (s.ui.reviewTab ? "/" + s.ui.reviewTab : "") : "new") + "@" + vp[0] + ": " + b);
+        }
+      }
+      await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
+      check("V9.6 (ST-3): no corner over 4px on any screen, at desktop and phone width, except true circles", over.length === 0, over.slice(0, 12));
+      await seed(stg("contrib"));
+      r = await js(H + `await w(250); const b=q('.v7-ex-btn'); if(b){b.click(); await w(350);} const g=(s,p)=>{const e=q(s); return e?getComputedStyle(e,p).borderTopLeftRadius:'missing';};
+        const f=qa('.v7-ans')[0]; if(f){f.click(); await w(300);}
+        return {field:g('textarea.v7-box'), note:g('.v7-explain'), btn:g('.btn'), card:g('.v7-card'), example:g('.v7-exbox'), pill:g('.v9-pill'), steps:g('.narrative-progress-panel'), disc:g('.v8-eb','::after')};`);
+      check("V9.6 (ST-3): a field and a note have square corners, a button and a part name 2px, a card, the example and the step list 4px", r.field === "0px" && r.note === "0px" && r.btn === "2px" && r.pill === "2px" && r.card === "4px" && r.example === "4px" && r.steps === "4px", r);
+      await seed(stg("review", { reviewTab: "words" }));
+      r = await js(H + `await w(250); const e=q('.v8-person.v8-eb')||q('.v8-eb'); return {box:getComputedStyle(e).borderTopLeftRadius, disc:getComputedStyle(e,'::after').borderTopLeftRadius};`);
+      check("V9.6 (ST-3): an editable box has 2px corners and its pencil disc stays round", r.box === "2px" && r.disc === "50%", r);
+    }
 
     // R-1 (R8a) and R7: the role status counts written role sentences and names a contribution with a level and no sentence.
     await seed(stAt(st => { st.contributions = [mkC("r1", { roleMode: "led" }), mkC("r2", { roleMode: "coled", roleLine: "" }), mkC("r3", { roleMode: "part", roleLine: "" })]; }));
