@@ -100,7 +100,7 @@ async function seed(state, extra, opts) {
   check("S1-S5, S9: the Start page wording is the decided text", r.sub === "A drafting tool for your Tri-agency CV or CV-FRQ."
     && r.intro[0] === "Write your contributions, mentorship and personal statement in your own words. A first draft can take a day or more, so please start well before your deadline. English only for now."
     && r.intro[1] === "It is recommended that you take the time to read the narrative CV guide." && r.guide === "narrative CV guide"
-    && r.priv.trim() === "This tool uses no AI and works offline on your computer. Clearing your browser data erases your draft. To keep working later, please save a backup file from Export and open it here."
+    && r.priv.trim() === "This tool uses no AI and works offline in this browser. Clearing your browser data erases your draft. To keep working later, please save a backup file from Export and open it here."
     && r.newP === "You will answer a series of questions that take you through each component of a narrative CV and organize your work for the funding opportunity you are applying to. Your responses will be assembled as a draft you can review and export."
     && r.loadP === "" && r.loadH === "Open a backup file", r);
   check("no rail on the start page", !r.rail, r);
@@ -2515,7 +2515,7 @@ async function seed(state, extra, opts) {
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
     check("P6: the career stage reads Mid-career, stored value unchanged", /\{ v: "mid", l: "Mid-career" \}/.test(src));
     check("R12: a missing headline reads No headline yet on screen and [No headline yet] in the draft text and files; none says Untitled contribution", !/Untitled contribution/.test(src) && (src.match(/"\[No headline yet\]"/g) || []).length === 5 && /rvTitle = \(x\) => gvCut\(one\(x.title\), 90\) \|\| "No headline yet"/.test(src) && /- 3 \* liveContributions\(\)/.test(src));
-    check("the version is 9.8 in the script and the tab title", /VERSION_NUM = "9\.8"/.test(src) && /<title>Narrative CV — V9\.8 beta/.test(src));
+    check("the version is 9.9 in the script and the tab title", /VERSION_NUM = "9\.9"/.test(src) && /<title>Narrative CV — V9\.9 beta/.test(src));
   }
 
   console.log("Batch 4 and 6 (V9): Contributions and Personal statement wording");
