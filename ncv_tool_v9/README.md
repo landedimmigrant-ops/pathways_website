@@ -79,6 +79,18 @@ Prem: "check the rest of the tool for the same gap, check anything else and lets
 - Export: each sentence the tool writes (the first sentence, each evidence list, the totals line, each trainee sentence) has an "Edit" button after it that opens the answer it is written from. The visible word is "Edit", to keep the draft readable; the button's name says what it opens ("Edit person B on Mentorship"). The decided hint above the draft (E4) stays.
 - Left as they are: Save for later (Add back reverses it, last in the order, Q-11); a role level (C17: picking another level is enough); Solo and Team-based, and the second field (one choice each, picked again where shown); profile changes (the Change panel works on a copy, Cancel drops it); text in boxes (the browser's own undo).
 
+## INFERRED in V9.7
+
+Prem chose option A for the word bar on a phone (WB-1): "Yes, option A".
+
+- Built as the designer redrew A for the part box (`design/accent-review-2026-11-26.md`, T7): each row is an editable box (white, grey line, pencil) with a 10px part box under the name. The first mock-up filled the row itself with the tint; that was drawn before the part box was chosen.
+- "On a phone" is 640 px wide or less, the tool's phone width elsewhere.
+- The scale is the longest single part across all contributions, plus a fifth, fixed while the researcher types; a part that grows past it fills the row.
+- A part not yet written is a dashed row with "+" and "0 words", and no box.
+- The open row takes a 3px line in its colour, as the open block on a desktop (the designer suggested 2px).
+- One button serves as the desktop block and the phone row, so the label, the open state and Undo are shared. If the width changes while a part is open, its editor moves between the bar and the row and keeps the focus.
+- The open part's text box now grows with its text (at least 5 lines), as the tool's other boxes do. On a phone, 5 fixed lines cut off the start of a 33-word part; on a desktop the change shows only for a long part.
+
 ## INFERRED in V9.6
 
 Prem chose "Yes, 0–4px" for corners, then "just focus on narrative cv tool": the tool only, not the site.

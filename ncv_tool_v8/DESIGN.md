@@ -40,7 +40,7 @@ One look for anything that opens for editing. Written once in the stylesheet; a 
 - **Mark:** 22px circle, 8px from the right edge, centred top to bottom.
 - **Motion:** 0.2s on colour, none under reduced motion.
 - **Focus ring:** 3px burgundy, 2px offset, as elsewhere in the tool.
-- **Block variant (`.v8-eb-block`):** a block in a bar, drawn as a part box (below): the part's tint and a 1px line of its colour all round, 2px corners, no stripe (V9.5). Hover and focus take a 2px line, the open block 3px. A block narrower than 60px shows its number alone, and the circle takes the number's place on hover or focus.
+- **Block variant (`.v8-eb-block`):** a block in a bar, drawn as a part box (below): the part's tint and a 1px line of its colour all round, 2px corners, no stripe (V9.5). Hover and focus take a 2px line, the open block 3px. A block narrower than 60px shows its number alone, and the circle takes the number's place on hover or focus. **On a phone (640px or less, V9.7, WB-1):** each block is a full-width row, an editable box that names its part, with a 10px part box sized by its words (one scale for every contribution) and "N words"; the row opens its part under it, and there is no legend.
 - **Used by:** the blocks on "Edit what changed", evidence items on "Add evidence", people on Review's Mentorship.
 - **The editor it opens:** a white box under its row with the same accent on a 1px border all round, a label that names the thing, Done, and a link to the step where the thing is written. No coloured bar down the side.
 

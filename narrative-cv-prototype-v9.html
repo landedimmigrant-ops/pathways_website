@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V9.6 beta</title>
+  <title>Narrative CV — V9.7 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -978,7 +978,28 @@
     .v8-bar .v8-eb-block.is-empty:hover, .v8-bar .v8-eb-block.is-empty:focus-visible, .v8-bar .v8-eb-block.is-empty[aria-expanded="true"] { background: var(--pt); border: 1px solid var(--pi, var(--pa)); }
     .v8-bar .v8-eb-block[aria-expanded="true"] { box-shadow: inset 0 0 0 2px var(--pi, var(--pa)); }
     .v7-rqev-add:hover, .v7-rqev-add:focus-visible { background: #f6e8eb; border-color: #912338; }
-    @media (max-width: 640px) { .v8-bar .v8-eb-block { height: 44px; } }
+    /* WB-1, option A (V9.7): on a phone each part is a full-width row, an editable box that names its part. Under the name,
+       a part box whose width follows the part's words (one scale for every contribution), then "N words". The row opens its
+       part under it. No legend on a phone: each row names its part. Desktop keeps the bar. */
+    .v8-seg-ph { display: none; }
+    @media (max-width: 640px) {
+      .v7-wb-leg { display: none; }
+      .v8-bar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+      .v8-bar .v8-eb-block, .v8-bar .v8-eb-block.is-wide { height: auto; min-height: 44px; min-width: 0; width: 100%; padding: 6px 40px 8px 10px; font-size: 0.86rem; line-height: 1.3; background: #fff; border: 1px solid #8a8a8a; text-align: left; }
+      .v8-bar .v8-eb-block:hover, .v8-bar .v8-eb-block:focus-visible, .v8-bar .v8-eb-block[aria-expanded="true"] { background: var(--pt); }
+      .v8-bar .v8-eb-block:not(.is-wide):hover, .v8-bar .v8-eb-block:not(.is-wide):focus-visible, .v8-bar .v8-eb-block:not(.is-wide)[aria-expanded="true"] { color: inherit; }
+      .v8-bar .v8-eb-block::after, .v8-bar .v8-eb-block:not(.is-wide)::after { right: 8px; transform: translateY(-50%); opacity: 1; }
+      .v8-bar .v8-eb-block .v8-seg-n { display: none; }
+      .v8-bar .v8-eb-block .v8-seg-ph { display: grid; gap: 4px; }
+      .v8-seg-name { font-weight: 600; }
+      .v8-seg-meter { display: flex; align-items: center; gap: 8px; }
+      .v8-seg-track { flex: 1 1 auto; min-width: 0; }
+      .v8-seg-track i { display: block; height: 10px; min-width: 4px; box-sizing: border-box; background: var(--pt); border: 1px solid var(--pi, var(--pa)); border-radius: 2px; }
+      .v8-bar .v8-eb-block.is-empty .v8-seg-track i { display: none; }
+      .v8-seg-w { flex: 0 0 auto; min-width: 5.5em; text-align: right; font-variant-numeric: tabular-nums; color: #444; }
+      .v8-ed-slot:empty { display: none; }
+      .v8-bar .v7-wb-box { margin: 0 0 4px; }
+    }
     @media (prefers-reduced-motion: reduce) { .v8-eb, .v8-eb::after, .v7-fold { transition: none; } }
     .v7-rqev-none { display: block; font-weight: 600; }
     .v7-rqev-add { font: inherit; font-size: 0.82rem; margin-top: 4px; min-height: 28px; padding: 2px 10px; border: 1px dashed #8a8a8a; border-radius: 2px; background: #fff; cursor: pointer; }
@@ -1143,6 +1164,8 @@ button.v7-linkbtn { min-height: 24px; }
       .v7-mini[aria-checked="true"]::before, .v7-mini[aria-pressed="true"]::before { content: "✓ "; }
       .v7-input:focus, .v7-box:focus { outline: 2px solid CanvasText; outline-offset: 1px; }
     }
+    @media (forced-colors: active) { .v8-seg-track i { forced-color-adjust: none; background: CanvasText; border-color: CanvasText; } }
+    @media (forced-colors: active) and (max-width: 640px) { .v8-bar .v8-eb-block[aria-expanded="true"], .v8-bar .v8-eb-block.is-wide[aria-expanded="true"] { padding: 4px 38px 6px 8px; } }
     /* V9.6 (ST-3): corners follow concordia.ca: 0 on fields and notes, 2px on buttons, tags and editable boxes, 4px on cards and panels; circles stay round. These two come from styles.css. */
     .narrative-progress-panel { border-radius: 4px; }
     .narrative-session-banner { border-radius: 0; }
@@ -1212,7 +1235,7 @@ button.v7-linkbtn { min-height: 24px; }
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "9.6", VERSION_DATE = "2026-11-27";
+    const VERSION_NUM = "9.7", VERSION_DATE = "2026-11-27";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -7081,6 +7104,15 @@ button.v7-linkbtn { min-height: 24px; }
     const partPaint = (node, f) => { node.style.setProperty("--pt", partTint(f)); node.style.setProperty("--pa", partAccent(f)); node.style.setProperty("--pon", f.job === "stakes" ? "#1a1a1a" : "#fff"); node.style.setProperty("--pi", f.job === "stakes" ? "#8a6200" : partAccent(f)); };
     const partName = (f) => f.label || BEAT_LABEL[f.job] || "A real use case (optional)";
     window.addEventListener("resize", rvFitSegs);
+    // WB-1 (V9.7): on a phone the open part's editor sits under its row; on a desktop, under the bar. It moves if the width changes.
+    const WB_PHONE = window.matchMedia("(max-width: 640px)");
+    const wbPlace = (seg, slot) => { if (WB_PHONE.matches) { if (seg.nextElementSibling !== slot) seg.after(slot); } else if (seg.parentElement.nextElementSibling !== slot) seg.parentElement.after(slot); };
+    WB_PHONE.addEventListener("change", () => {
+      const seg = document.querySelector(".v8-seg.is-on"), row = seg && seg.closest(".v8-row"), slot = row && row.querySelector(".v8-ed-slot");
+      if (!slot) return;
+      const had = slot.contains(document.activeElement) ? document.activeElement : null;
+      wbPlace(seg, slot); growBox(slot.querySelector("textarea"), 5); if (had) had.focus();
+    });
 
     function rvWordsBody(body, refresh) {
       const parts = RQ_PARTS();
@@ -7089,11 +7121,13 @@ button.v7-linkbtn { min-height: 24px; }
       body.appendChild(leg);
       const total = (x) => parts.reduce((s, p) => s + countWords(x[p.k] || ""), 0);
       const max = Math.max(1, ...liveContributions().map(({ c }) => total(c))) * 1.2; // a fixed scale while the researcher types
+      const maxPart = Math.max(1, ...liveContributions().flatMap(({ c }) => parts.map(p => countWords(c[p.k] || "")))) * 1.2; // WB-1: the phone rows' scale
       const ol = el("ol", "v8-rows");
       const segText = (n) => n / max > 0.045 ? String(n) : "";
       const words = (n) => n + (n === 1 ? " word" : " words");
       const paint = (seg, p, pos, n) => {
-        seg.style.flexBasis = (n / max * 100) + "%"; rvSame(seg, segText(n)); seg.classList.toggle("is-empty", !n); seg.classList.toggle("is-wide", seg.offsetWidth >= 60);
+        seg.style.flexBasis = (n / max * 100) + "%"; rvSame(seg.querySelector(".v8-seg-n"), segText(n));
+        seg.querySelector(".v8-seg-track i").style.width = Math.min(100, n / maxPart * 100) + "%"; rvSame(seg.querySelector(".v8-seg-w"), words(n)); seg.classList.toggle("is-empty", !n); seg.classList.toggle("is-wide", seg.offsetWidth >= 60);
         seg.title = p.l + ": " + words(n);
         seg.setAttribute("aria-label", "Edit contribution " + (pos + 1) + ", " + p.l + ": " + words(n));
       };
@@ -7104,6 +7138,11 @@ button.v7-linkbtn { min-height: 24px; }
         parts.forEach(p => {
           const b = el("button", "v7-wb-seg v8-seg v8-eb v8-eb-block"); b.type = "button"; partPaint(b, p.f);
           b.dataset.cid = x.cid; b.dataset.k = p.k; b.setAttribute("aria-expanded", "false");
+          // WB-1: the number shows on the desktop bar; the name, its part box and "N words" on a phone row.
+          const ph = el("span", "v8-seg-ph"), mt = el("span", "v8-seg-meter"), tr = el("span", "v8-seg-track");
+          tr.appendChild(el("i")); mt.appendChild(tr); mt.appendChild(el("span", "v8-seg-w"));
+          ph.appendChild(el("span", "v8-seg-name", p.l)); ph.appendChild(mt);
+          b.appendChild(el("span", "v8-seg-n")); b.appendChild(ph);
           paint(b, p, pos, countWords(x[p.k] || ""));
           b.addEventListener("click", () => open(x, pos, p, b, ed));
           bar.appendChild(b);
@@ -7118,6 +7157,7 @@ button.v7-linkbtn { min-height: 24px; }
         document.querySelectorAll(".v8-seg").forEach(s => { s.classList.remove("is-on"); s.setAttribute("aria-expanded", "false"); });
         if (was === seg) { seg.focus(); return; }
         seg.classList.add("is-on"); seg.setAttribute("aria-expanded", "true");
+        wbPlace(seg, ed); // WB-1: under its row on a phone, under the bar on a desktop
         const box = el("div", "v7-wb-box v8-ed"); partPaint(box, p.f);
         const id = "v7-wb-ta";
         const lab = el("label"); lab.htmlFor = id; lab.appendChild(el("b", null, "Contribution " + (pos + 1) + ": " + p.l));
@@ -7125,7 +7165,7 @@ button.v7-linkbtn { min-height: 24px; }
         const ta = el("textarea", "v7-wb-text"); ta.id = id; ta.rows = 5; ta.value = x[p.k] || ""; box.appendChild(ta);
         const setN = () => { const n = countWords(ta.value); cnt.textContent = " " + words(n); return n; };
         setN();
-        ta.addEventListener("input", () => { x[p.k] = ta.value; saveState(); paint(seg, p, pos, setN()); refresh(); });
+        ta.addEventListener("input", () => { x[p.k] = ta.value; saveState(); paint(seg, p, pos, setN()); refresh(); growBox(ta, 5); });
         const close = () => { ed.innerHTML = ""; seg.classList.remove("is-on"); seg.setAttribute("aria-expanded", "false"); seg.focus(); };
         rvEditorKeys(box, close);
         const row = el("div", "v7-actions");
@@ -7133,7 +7173,7 @@ button.v7-linkbtn { min-height: 24px; }
         const go = el("button", "v7-linkbtn", "Edit on Contributions"); go.type = "button";
         go.addEventListener("click", () => { x.folded = false; goStage("contrib"); focusField("c" + x.cid + "-" + p.k); });
         row.appendChild(dn); row.appendChild(go); box.appendChild(row);
-        ed.appendChild(box); ta.focus();
+        ed.appendChild(box); growBox(ta, 5); ta.focus(); // V9.7: the box grows with the part, so a phone shows all of it
       };
     }
 

@@ -2515,7 +2515,7 @@ async function seed(state, extra, opts) {
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
     check("P6: the career stage reads Mid-career, stored value unchanged", /\{ v: "mid", l: "Mid-career" \}/.test(src));
     check("R12: a missing headline reads No headline yet on screen and [No headline yet] in the draft text and files; none says Untitled contribution", !/Untitled contribution/.test(src) && (src.match(/"\[No headline yet\]"/g) || []).length === 5 && /rvTitle = \(x\) => gvCut\(one\(x.title\), 90\) \|\| "No headline yet"/.test(src) && /- 3 \* liveContributions\(\)/.test(src));
-    check("the version is 9.6 in the script and the tab title", /VERSION_NUM = "9\.6"/.test(src) && /<title>Narrative CV — V9\.6 beta/.test(src));
+    check("the version is 9.7 in the script and the tab title", /VERSION_NUM = "9\.7"/.test(src) && /<title>Narrative CV — V9\.7 beta/.test(src));
   }
 
   console.log("Batch 4 and 6 (V9): Contributions and Personal statement wording");
@@ -3033,6 +3033,48 @@ async function seed(state, extra, opts) {
       await seed(stg("review", { reviewTab: "words" }));
       r = await js(H + `await w(250); const e=q('.v8-person.v8-eb')||q('.v8-eb'); return {box:getComputedStyle(e).borderTopLeftRadius, disc:getComputedStyle(e,'::after').borderTopLeftRadius};`);
       check("V9.6 (ST-3): an editable box has 2px corners and its pencil disc stays round", r.box === "2px" && r.disc === "50%", r);
+    }
+
+    // V9.7 (WB-1, option A; Prem: "Yes, option A"): on a phone each part of the word bar is a full-width row that names
+    // its part, with a part box sized by its words (one scale for every contribution) and "N words". The row opens its part
+    // under it. The desktop keeps the bar and its legend.
+    {
+      const stw = stAt(st => { st.contributions = [mkC("w1"), mkC("w2", { impact: "Made-up short." })]; st.ui = Object.assign({}, st.ui, { reviewTab: "words" }); });
+      await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 720, deviceScaleFactor: 2, mobile: true });
+      await seed(stw);
+      r = await js(H + `await w(250); q('#v8-tab-words').click(); await w(250); const bars=qa('.v8-bar'), bw=bars[0].getBoundingClientRect().width;
+        const rows=bars.map(b=>[...b.querySelectorAll('.v8-eb-block')]);
+        const geo=rows[0].map(s=>{const r=s.getBoundingClientRect(); return {w:Math.round(r.width), h:Math.round(r.height), t:s.innerText.replace(/\\s+/g,' ').trim()};});
+        const iw=(s)=>Math.round(s.querySelector('.v8-seg-track i').getBoundingClientRect().width*10)/10;
+        const k=(i,key)=>rows[i].find(s=>s.dataset.k===key);
+        return {bw:Math.round(bw), geo, leg:getComputedStyle(q('.v7-wb-leg')).display, sw:document.documentElement.scrollWidth,
+          same:['stakes','activities','outputs','outcomes'].filter(x=>k(0,x)&&k(1,x)).map(x=>[iw(k(0,x)), iw(k(1,x))]),
+          impact:[iw(k(0,'impact')), iw(k(1,'impact'))], labels:rows[0].map(s=>s.getAttribute('aria-label'))};`);
+      check("V9.7 (WB-1): on a phone each part is a full-width row at least 44px tall that names its part and its words, with no legend and no sideways scroll",
+        r.geo.length >= 5 && r.geo.every(g => Math.abs(g.w - r.bw) <= 1 && g.h >= 44) && /^The problem or question \d+ words?$/.test(r.geo[0].t) && r.leg === "none" && r.sw <= 320 && r.labels.every(l => /^Edit contribution 1, .+: \d+ words?$/.test(l)), r);
+      check("V9.7 (WB-1): each row's part box follows its words on one scale: the same words give the same width in every contribution, fewer words a narrower box",
+        r.same.length >= 3 && r.same.every(([a, b]) => a === b && a > 4) && r.impact[1] < r.impact[0], r);
+      r = await js(H + `const seg=qa('.v8-bar')[0].querySelectorAll('.v8-eb-block')[1]; const w0=seg.querySelector('.v8-seg-track i').getBoundingClientRect().width; seg.click(); await w(250);
+        const ta=q('#v7-wb-ta'), slot=ta.closest('.v8-ed-slot'); const a={under:seg.nextElementSibling===slot, inBar:slot.parentElement===seg.parentElement, focus:document.activeElement===ta, exp:seg.getAttribute('aria-expanded')};
+        ta.value += ' made up words added here to test the box'; ta.dispatchEvent(new Event('input',{bubbles:true})); await w(150);
+        a.grew=seg.querySelector('.v8-seg-track i').getBoundingClientRect().width > w0; a.fits=ta.scrollHeight<=ta.clientHeight+2; a.words=seg.querySelector('.v8-seg-w').innerText; a.cnt=q('.v7-wb-n').innerText.trim();
+        ta.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); await w(150);
+        a.closed=!q('#v7-wb-ta'); a.back=document.activeElement===seg; a.exp2=seg.getAttribute('aria-expanded'); return a;`);
+      check("V9.7 (WB-1): on a phone a row opens its part right under it with the focus in the text; the text box shows the whole part; typing updates its box and words; Escape closes it and returns the focus",
+        r.under && r.inBar && r.focus && r.exp === "true" && r.grew && r.fits && r.words === r.cnt && r.closed && r.back && r.exp2 === "false", r);
+      // The width changes while a part is open: the editor moves under the bar and keeps the focus, then back under its row.
+      await js(H + `qa('.v8-bar')[0].querySelectorAll('.v8-eb-block')[2].click(); await w(250);`);
+      await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
+      const wide = await js(H + `await w(300); const slot=q('#v7-wb-ta').closest('.v8-ed-slot'); return {afterBar:slot.previousElementSibling===qa('.v8-bar')[0], focus:document.activeElement.id, leg:getComputedStyle(q('.v7-wb-leg')).display, ph:getComputedStyle(q('.v8-seg-ph')).display, num:q('.v8-bar .v8-eb-block').innerText.trim()};`);
+      await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 720, deviceScaleFactor: 2, mobile: true });
+      const narrow = await js(H + `await w(300); const seg=qa('.v8-bar')[0].querySelectorAll('.v8-eb-block')[2], slot=q('#v7-wb-ta').closest('.v8-ed-slot'); return {under:seg.nextElementSibling===slot, focus:document.activeElement.id};`);
+      check("V9.7 (WB-1): on a desktop the bar, its numbers and its legend are as before, and an open part moves between the bar and its row with the width, keeping the focus",
+        wide.afterBar && wide.focus === "v7-wb-ta" && wide.leg !== "none" && wide.ph === "none" && /^\d+$/.test(wide.num) && narrow.under && narrow.focus === "v7-wb-ta", { wide, narrow });
+      await send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value: "active" }] });
+      r = await js(H + `await w(200); const i=q('.v8-bar .v8-eb-block:not(.is-empty) .v8-seg-track i'); return {bg:getComputedStyle(i).backgroundColor, row:getComputedStyle(i.closest('.v8-eb-block')).backgroundColor, w:i.getBoundingClientRect().width};`);
+      await send("Emulation.setEmulatedMedia", { features: [] });
+      await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
+      check("V9.7 (WB-1): in high contrast each row's box stays filled, so its length still shows", r.w > 4 && r.bg !== "rgba(0, 0, 0, 0)" && r.bg !== r.row, r);
     }
 
     // R-1 (R8a) and R7: the role status counts written role sentences and names a contribution with a level and no sentence.
