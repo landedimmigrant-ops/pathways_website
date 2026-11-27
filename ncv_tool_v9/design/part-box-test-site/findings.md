@@ -79,7 +79,7 @@ Prem: "Match pathways website ..". The part box was not used on the site. Each e
   - `.booking-waitlist-banner` takes a blue information tint, so it no longer matches the form's error box.
   - The provider label is darker (#6b6b6b), which fixes its 3.22:1.
 - `.modal-pullquote`: a neutral 1px line all round, as the live blockquote.
-- `.pathway-dev-notice`: a white card with a 1px line and 4px corners. Its gold-free eyebrow now passes, because the white ground fixes the 4.39:1.
+- `.pathway-dev-notice`: a white card with a 1px line and 4px corners. On white its eyebrow passes: Research Creation is 4.62:1, where it was 4.39:1.
 - `.context-bar` is unchanged: a straight line on a square bar, and not shown on the site today.
 - `.vision-definition` and `.learn-cta` (unused) are deleted.
 
