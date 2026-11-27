@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Narrative CV — V9.3 beta</title>
+  <title>Narrative CV — V9.4 beta</title>
   <link rel="stylesheet" href="styles.css?v=131" />
   <!--
     Narrative CV tool — V8 beta, forked on 2026-11-02 from V7 as it stood after the 20-round audit loop
@@ -1093,7 +1093,17 @@
     .v4-fb-nudge { border: 1px solid #f9ca24; background: #fff8e1; border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem 0 0; font-size: 0.9rem; }
     /* r18-b-3, r18-b-4: Undo and Reset are full-size targets on phones and touch screens. */
     @media (max-width: 48em), (pointer: coarse) { .v7-undo .v7-linkbtn { min-height: 44px; display: inline-flex; align-items: center; } .v7-path-reset { min-height: 44px; margin-top: 12px; } }
-    /* V9.3: Edit after a sentence the tool writes on Export. */
+    /* V9.3 (accessibility audit, 2026-11-26): targets of 24 px on every screen (WCAG 2.5.8) and 44 px on a phone or
+   touch screen (D-14), for the controls the audit found smaller; the Mentorship chart that scrolls sideways shows focus. */
+button.v7-linkbtn { min-height: 24px; }
+.v7-rail-home { display: flex; align-items: center; min-height: 24px; }
+@media (max-width: 48em), (pointer: coarse) {
+  button.v7-linkbtn { min-height: 44px; min-width: 44px; } /* the 24 px rule above must not undo the phone's 44 px */
+  .v8-tab, .v8-mark, .v7-rqev-add, .v7-ex-btn.is-primary, .v7-prof-name, .v7-path-foot .v7-path-reset { min-height: 44px; }
+  #v7-home { display: inline-flex; align-items: center; min-height: 44px; }
+}
+.v7-gv-art:focus-visible { outline: 2px solid #912338; outline-offset: 2px; }
+/* V9.3: Edit after a sentence the tool writes on Export. */
 .v8-edoc .v9-fix-go { margin-left: 6px; font-size: 0.85rem; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 24px; }
 @media (pointer: coarse), (max-width: 48em) { .v8-edoc .v9-fix-go { min-height: 44px; } }
 /* EV-1b: the column choice in Review's evidence editor takes the Reach tab's radio style. */
@@ -1192,7 +1202,7 @@
     const GUIDE_URL = "https://www.concordia.ca/research/pathways-to-impact/learn/impact-101/narrative-cv.html";
     // Version numbers: one step (8.1, 8.2, …) per batch of changes; ncv_tool_v8/CHANGELOG.md says what
     // each holds and where it is live. The number goes with the draft file, the feedback and each tester row.
-    const VERSION_NUM = "9.3", VERSION_DATE = "2026-11-26";
+    const VERSION_NUM = "9.4", VERSION_DATE = "2026-11-26";
     const TOOL_VERSION = "V" + VERSION_NUM + " beta, " + VERSION_DATE;
     // W-21: the name researchers see in the Word file and the print view; the draft file keeps TOOL_VERSION.
     const TOOL_LABEL = "V" + VERSION_NUM + " beta";
@@ -7422,11 +7432,22 @@
       L.forEach(n => { const a = pl.o[n]; svg += gvRect(lx, a.y, nw, a.h, "#912338") + gvText(lx - 8, a.y + a.h / 2 + 4, gvCut(n, 20) + " · " + cnt(0, n), { size: 12, anchor: "end" }); });
       R.forEach(n => { const b = pr.o[n]; svg += gvRect(rx - nw, b.y, nw, b.h, n === "Not given yet" ? "#8a8a8a" : "#5b3a8c") + gvText(rx + 8, b.y + b.h / 2 + 4, gvCut(n, 30) + " · " + cnt(1, n), { size: 12 }); });
       const label = "Where the people you describe are now: " + Object.keys(links).map(k => k.replace("|", " to ") + ", " + links[k]).join("; ") + ".";
-      const fig = el("figure", "v8-rm-flow"); fig.appendChild(el("figcaption", "v8-rm-fh", "Where they are now"));
+      const fig = el("figure", "v8-rm-flow"); const cap = el("figcaption", "v8-rm-fh", "Where they are now"); cap.id = "v8-rm-fh"; fig.appendChild(cap);
       const art = el("div", "v7-gv-art"); art.innerHTML = gvSvg(H, label, svg); fig.appendChild(art);
+      scrollFocus(art, cap.id); // V9.3 (accessibility audit): on a phone the chart scrolls sideways
       box.insertBefore(fig, box.firstChild.nextSibling);
     }
 
+    // V9.3 (accessibility audit, axe scrollable-region-focusable): a box that scrolls sideways takes keyboard focus,
+    // named by its caption, so the arrow keys can scroll it; when it fits, it is not a tab stop.
+    function scrollFocus(box, labelId) {
+      const fit = () => {
+        if (!box.isConnected) { window.removeEventListener("resize", fit); return; }
+        if (box.scrollWidth > box.clientWidth + 1) { box.tabIndex = 0; box.setAttribute("role", "group"); box.setAttribute("aria-labelledby", labelId); }
+        else { box.removeAttribute("tabindex"); box.removeAttribute("role"); box.removeAttribute("aria-labelledby"); }
+      };
+      requestAnimationFrame(fit); window.addEventListener("resize", fit);
+    }
     // Before you export: the checks with no data behind them.
     // V8.19 (Prem, 2026-11-18: "if its a check list we need one check list ... before export download"):
     // one list, here. Its first lines are Review's own questions, in Review's words, each with a way

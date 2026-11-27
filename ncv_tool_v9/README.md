@@ -78,3 +78,11 @@ Prem: "check the rest of the tool for the same gap, check anything else and lets
 - "None of these" on Review still clears a contribution's areas; pressing it again brings them back (session only). Pressing an area forgets them.
 - Export: each sentence the tool writes (the first sentence, each evidence list, the totals line, each trainee sentence) has an "Edit" button after it that opens the answer it is written from. The visible word is "Edit", to keep the draft readable; the button's name says what it opens ("Edit person B on Mentorship"). The decided hint above the draft (E4) stays.
 - Left as they are: Save for later (Add back reverses it, last in the order, Q-11); a role level (C17: picking another level is enough); Solo and Team-based, and the second field (one choice each, picked again where shown); profile changes (the Change panel works on a copy, Cancel drops it); text in boxes (the browser's own undo).
+
+## INFERRED in V9.4
+
+From the accessibility audit (`a11y-audit-2026-11-26.md`).
+
+- Every link-style button (`button.v7-linkbtn`) is at least 24 px tall on every screen, including those inside a sentence, where it can add a pixel or two to the line; on a phone or touch screen they are 44 by 44 px, as before, and short ones ("Edit", "Undo", "Hide") widen to 44 px.
+- The Mentorship chart box becomes a tab stop only while it scrolls sideways (role group, named by its caption), and stops being one when the window is wide enough.
+- The word bar's narrowest parts on a 320 px phone stay 28 to 37 px wide (WCAG 2.5.8 met, D-14 not): widening them would misstate the word shares. Open for Prem.

@@ -2515,7 +2515,7 @@ async function seed(state, extra, opts) {
     check("Q-6: the plainer wording is in place (part names, questions, checks)", missing.length === 0, missing);
     check("P6: the career stage reads Mid-career, stored value unchanged", /\{ v: "mid", l: "Mid-career" \}/.test(src));
     check("R12: a missing headline reads No headline yet on screen and [No headline yet] in the draft text and files; none says Untitled contribution", !/Untitled contribution/.test(src) && (src.match(/"\[No headline yet\]"/g) || []).length === 5 && /rvTitle = \(x\) => gvCut\(one\(x.title\), 90\) \|\| "No headline yet"/.test(src) && /- 3 \* liveContributions\(\)/.test(src));
-    check("the version is 9.3 in the script and the tab title", /VERSION_NUM = "9\.3"/.test(src) && /<title>Narrative CV — V9\.3 beta/.test(src));
+    check("the version is 9.4 in the script and the tab title", /VERSION_NUM = "9\.4"/.test(src) && /<title>Narrative CV — V9\.4 beta/.test(src));
   }
 
   console.log("Batch 4 and 6 (V9): Contributions and Personal statement wording");
@@ -3164,6 +3164,24 @@ async function seed(state, extra, opts) {
     check("S8 in the Change panel: the foot holds Clear draft alone", r.foot === "Clear draft", r.foot);
     const srcB = fs.readFileSync(path.join(ROOT, "narrative-cv-prototype-v9.html"), "utf8");
     check("dead code is gone: buildAdvisorPacket, and buildWeave's unused gaps", !/buildAdvisorPacket|downloadPacket|gaps: w\.gaps|const gaps = \[\]/.test(srcB), "");
+  }
+
+  console.log("V9.3 accessibility audit fixes (ncv_tool_v9/a11y-audit.js)");
+  {
+    const st93 = (stageKey, ui, patch) => { const st = Object.assign({}, JSON.parse(JSON.stringify(fixture)), { profileConfirmed: true, mode: "compose", stageKey, ui: Object.assign({ profileNote: false }, ui || {}) }); if (patch) patch(st); return st; };
+    const people = (st) => { st.mentees = [{ stageKind: "doctoral", stage: "Doctoral", kind: "industry", org: "Made-up firm A", unit: "", recognition: "", why: "", folded: true }, { stageKind: "masters", stage: "Master's", kind: "public", org: "Made-up agency B", unit: "", recognition: "", why: "", folded: true }]; st.mentorCounts = Object.assign({}, st.mentorCounts, { phd: "2", masters: "3" }); };
+    await seed(st93("review", { reviewTab: "role" }, people));
+    r = await js(H + `await w(300); const hgt=(e)=>e?Math.round(e.getBoundingClientRect().height):0; const art=q('.v7-gv-art');
+      return {home:hgt(q('.v7-rail-home')), edit:hgt(qa('.v7-linkbtn').find(b=>b.innerText.trim()==='Edit on Contributions')), art: art ? [art.tabIndex, art.getAttribute('role')] : null};`);
+    check("V9.3 a11y: link-style buttons that stand alone are at least 24 px tall (WCAG 2.5.8); the Mentorship chart is not a tab stop when it fits", r.home >= 24 && r.edit >= 24 && r.art && r.art[0] === -1 && r.art[1] === null, r);
+    await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 720, deviceScaleFactor: 2, mobile: true });
+    await seed(st93("review", { reviewTab: "evidence" }, people));
+    r = await js(H + `await w(400); const sz=(e)=>e?[Math.round(e.getBoundingClientRect().width),Math.round(e.getBoundingClientRect().height)]:null; const art=q('.v7-gv-art');
+      return {tab:sz(q('.v8-tab')), add:sz(q('.v7-rqev-add')), home:sz(q('#v7-home')), see:sz(q('.v8-see')), tog:sz(q('#v8-rb-tog')), sw:document.documentElement.scrollWidth,
+        art: art ? [art.tabIndex, art.getAttribute('role'), (q('#'+art.getAttribute('aria-labelledby'))||{}).textContent] : null};`);
+    await send("Emulation.setDeviceMetricsOverride", { width: 1180, height: 900, deviceScaleFactor: 1, mobile: false });
+    check("V9.3 a11y: at 320 px the Review tabs, + Add, the title link and the link-style buttons are at least 44 px (D-14)", r.tab[1] >= 44 && r.add[1] >= 44 && r.home[1] >= 44 && r.see[0] >= 44 && r.see[1] >= 44 && (!r.tog || (r.tog[0] >= 44 && r.tog[1] >= 44)) && r.sw === 320, r);
+    check("V9.3 a11y: at 320 px the Mentorship chart scrolls sideways and takes keyboard focus, named “Where they are now” (axe scrollable-region-focusable)", r.art && r.art[0] === 0 && r.art[1] === "group" && r.art[2] === "Where they are now", r.art);
   }
 
   console.log("Network and errors");
